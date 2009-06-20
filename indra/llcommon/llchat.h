@@ -42,7 +42,8 @@ typedef enum e_chat_source_type
 {
 	CHAT_SOURCE_SYSTEM = 0,
 	CHAT_SOURCE_AGENT = 1,
-	CHAT_SOURCE_OBJECT = 2
+	CHAT_SOURCE_OBJECT = 2,
+	CHAT_SOURCE_LUA = 3
 } EChatSourceType;
 
 typedef enum e_chat_type
@@ -54,7 +55,8 @@ typedef enum e_chat_type
 	CHAT_TYPE_STOP = 5,
 	CHAT_TYPE_DEBUG_MSG = 6,
 	CHAT_TYPE_REGION = 7,
-	CHAT_TYPE_OWNER = 8
+	CHAT_TYPE_OWNER = 8,
+	CHAT_TYPE_ERROR = 9
 } EChatType;
 
 typedef enum e_chat_audible_level
