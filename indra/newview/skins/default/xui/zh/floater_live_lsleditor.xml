@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<floater name="script ed float" title="脚本：新的脚本">
+	<button label="重至" label_selected="重至" name="Reset" />
+	<check_box label="运行" name="running" />
+</floater>

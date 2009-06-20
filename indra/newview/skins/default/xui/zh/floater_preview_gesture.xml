@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<floater name="gesture" title="动作">
+	<text name="desc_label">
+		描述:
+	</text>
+	<text name="trigger_label">
+		引发源:
+	</text>
+	<text name="replace_text"
+	     tool_tip="Replace the trigger word(s) with these words. For example, trigger &apos;hello&apos; replace with &apos;howdy&apos; will turn the chat &apos;I wanted to say hello&apos; into &apos;I wanted to say howdy&apos; as well as playing the gesture!">
+		替换为:
+	</text>
+	<line_editor name="replace_editor"
+	     tool_tip="Replace the trigger word(s) with these words. For example, trigger &apos;hello&apos; replace with &apos;howdy&apos; will turn the chat &apos;I wanted to say hello&apos; into &apos;I wanted to say howdy&apos; as well as playing the gesture" />
+	<text name="key_label">
+		快捷键:
+	</text>
+	<combo_box label="都不" name="modifier_combo" />
+	<combo_box label="都不" name="key_combo" />
+	<text>
+		图书馆:
+	</text>
+	<text>
+		步骤:
+	</text>
+	<button label="添加&gt;&gt;" name="add_btn" />
+	<button label="上移" name="up_btn" />
+	<button label="下移" name="down_btn" />
+	<button label="移除" name="delete_btn" />
+	<text name="help_label">
+		所有的步骤都是自行发生，除非你添加了等待步骤。
+	</text>
+	<radio_group name="animation_trigger_type">
+		<radio_item>
+			开始
+		</radio_item>
+		<radio_item>
+			停止
+		</radio_item>
+	</radio_group>
+	<check_box label="直到动画完成" name="wait_anim_check" />
+	<check_box label="时间计算精确到秒" name="wait_time_check" />
+	<check_box label="激活" name="active_check"
+	     tool_tip="Active gestures can be triggered by chatting their trigger phrases or pressing their hot keys.  Gestures usually become inactive when there is a key binding conflict." />
+	<button label="预览" name="preview_btn" />
+	<button label="存储" name="save_btn" />
+</floater>

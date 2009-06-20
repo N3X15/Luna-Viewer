@@ -1,0 +1,235 @@
+<llsd>
+    <map>
+    <key>BusyModeResponse</key>
+        <map>
+        <key>Comment</key>
+            <string>Auto response to instant messages while in busy mode.</string>
+        <key>Persist</key>
+            <integer>1</integer>
+        <key>Type</key>
+            <string>String</string>
+        <key>Value</key>
+            <string>The Resident you messaged is in &apos;busy mode&apos; which means they have requested not to be disturbed.  Your message will still be shown in their IM panel for later viewing.</string>
+        </map>
+    <key>IMLogTimestamp</key>
+        <map>
+        <key>Comment</key>
+            <string>Log Timestamp of Instant Messages</string>
+        <key>Persist</key>
+            <integer>1</integer>
+        <key>Type</key>
+            <string>Boolean</string>
+        <key>Value</key>
+            <integer>1</integer>
+        </map>
+    <key>InstantMessageLogPath</key>
+        <map>
+        <key>Comment</key>
+            <string>Path to your log files.</string>
+        <key>Persist</key>
+            <integer>1</integer>
+        <key>Type</key>
+            <string>String</string>
+        <key>Value</key>
+            <string />
+        </map>
+    <key>LastLogoff</key>
+        <map>
+        <key>Comment</key>
+            <string>Last logoff</string>
+        <key>Persist</key>
+            <integer>1</integer>
+        <key>Type</key>
+            <string>U32</string>
+        <key>Value</key>
+            <integer>0</integer>
+        </map>
+    <key>LogChat</key>
+        <map>
+        <key>Comment</key>
+            <string>Log Chat</string>
+        <key>Persist</key>
+            <integer>1</integer>
+        <key>Type</key>
+            <string>Boolean</string>
+        <key>Value</key>
+            <integer>0</integer>
+        </map>
+    <key>LogChatIM</key>
+        <map>
+        <key>Comment</key>
+            <string>Log Incoming Instant Messages with Chat</string>
+        <key>Persist</key>
+            <integer>1</integer>
+        <key>Type</key>
+            <string>Boolean</string>
+        <key>Value</key>
+            <integer>0</integer>
+        </map>
+    <key>LogChatTimestamp</key>
+        <map>
+        <key>Comment</key>
+            <string>Log Timestamp of Chat</string>
+        <key>Persist</key>
+            <integer>1</integer>
+        <key>Type</key>
+            <string>Boolean</string>
+        <key>Value</key>
+            <integer>0</integer>
+        </map>
+    <key>LogInstantMessages</key>
+        <map>
+        <key>Comment</key>
+            <string>Log Instant Messages</string>
+        <key>Persist</key>
+            <integer>1</integer>
+        <key>Type</key>
+            <string>Boolean</string>
+        <key>Value</key>
+            <integer>1</integer>
+        </map>
+    <key>LogShowHistory</key>
+        <map>
+        <key>Comment</key>
+            <string>Log Show History</string>
+        <key>Persist</key>
+            <integer>1</integer>
+        <key>Type</key>
+            <string>Boolean</string>
+        <key>Value</key>
+            <integer>1</integer>
+        </map>
+    <key>LogTimestampDate</key>
+        <map>
+        <key>Comment</key>
+            <string>Include Date with Timestamp</string>
+        <key>Persist</key>
+            <integer>1</integer>
+        <key>Type</key>
+            <string>Boolean</string>
+        <key>Value</key>
+            <integer>1</integer>
+        </map>
+      <key>EmeraldInstantMessageResponseFriends</key>
+      <map>
+        <key>Comment</key>
+        <string>Whether to auto-respond to non-friends</string>
+        <key>Persist</key>
+        <integer>1</integer>
+        <key>Type</key>
+        <string>Boolean</string>
+        <key>Value</key>
+        <integer>0</integer>
+      </map>
+      <key>EmeraldInstantMessageResponseMuted</key>
+      <map>
+        <key>Comment</key>
+        <string>Whether to auto-respond to muted people</string>
+        <key>Persist</key>
+        <integer>1</integer>
+        <key>Type</key>
+        <string>Boolean</string>
+        <key>Value</key>
+        <integer>0</integer>
+      </map>
+      <key>EmeraldInstantMessageResponseAnyone</key>
+      <map>
+        <key>Comment</key>
+        <string>Whether to auto-respond to anyone</string>
+        <key>Persist</key>
+        <integer>1</integer>
+        <key>Type</key>
+        <string>Boolean</string>
+        <key>Value</key>
+        <integer>0</integer>
+      </map>
+      <key>EmeraldInstantMessageShowResponded</key>
+      <map>
+        <key>Comment</key>
+        <string>Whether to hide IMs entirely from those you have chosen to send autoresponses</string>
+        <key>Persist</key>
+        <integer>1</integer>
+        <key>Type</key>
+        <string>Boolean</string>
+        <key>Value</key>
+        <integer>0</integer>
+      </map>
+      <key>EmeraldInstantMessageShowOnTyping</key>
+      <map>
+        <key>Comment</key>
+        <string>Whether to perform the autorespond the moment they begin to type instead of waiting for a actual message</string>
+        <key>Persist</key>
+        <integer>1</integer>
+        <key>Type</key>
+        <string>Boolean</string>
+        <key>Value</key>
+        <integer>0</integer>
+      </map>
+      <key>EmeraldInstantMessageResponseRepeat</key>
+      <map>
+        <key>Comment</key>
+        <string>Whether to keep on resending the autoresponse every line they send</string>
+        <key>Persist</key>
+        <integer>1</integer>
+        <key>Type</key>
+        <string>Boolean</string>
+        <key>Value</key>
+        <integer>0</integer>
+      </map>
+      <key>EmeraldInstantMessageResponseItem</key>
+      <map>
+        <key>Comment</key>
+        <string>Whether to send a item along with the autoresponse</string>
+        <key>Persist</key>
+        <integer>1</integer>
+        <key>Type</key>
+        <string>Boolean</string>
+        <key>Value</key>
+        <integer>0</integer>
+      </map>
+      <key>EmeraldInstantMessageResponse</key>
+      <map>
+        <key>Comment</key>
+        <string>Auto response to instant messages</string>
+        <key>Persist</key>
+        <integer>1</integer>
+        <key>Type</key>
+        <string>String</string>
+        <key>Value</key>
+        <string>This is a autoresponse!</string>
+      </map>
+      <key>EmeraldInstantMessageResponseItemData</key>
+      <map>
+        <key>Comment</key>
+        <string>UUID</string>
+        <key>Persist</key>
+        <integer>1</integer>
+        <key>Type</key>
+        <string>String</string>
+        <key>Value</key>
+        <string></string>
+      </map>
+      <key>EmeraldInstantMessageAnnounceIncoming</key>
+      <map>
+        <key>Comment</key>
+        <string>Open a new IM tab when another person begins typing to you and announce that they are doing so.</string>
+        <key>Persist</key>
+        <integer>1</integer>
+        <key>Type</key>
+        <string>Boolean</string>
+        <key>Value</key>
+        <integer>0</integer>
+      </map>
+      <key>EmeraldInstantMessageAnnounceStealFocus</key>
+      <map>
+        <key>Comment</key>
+        <string>Steal focus when opening new IM tab due to other person begins first typing this session</string>
+        <key>Persist</key>
+        <integer>1</integer>
+        <key>Type</key>
+        <string>Boolean</string>
+        <key>Value</key>
+        <integer>1</integer>
+      </map>
+    </map>
+</llsd>
