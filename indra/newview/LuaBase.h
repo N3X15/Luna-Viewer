@@ -1,6 +1,6 @@
 /*
 ** Lua binding: LuaBase
-** Generated automatically by tolua++-1.0.92 on 10/23/08 22:05:11.
+** Generated automatically by tolua++-1.0.92 on Fri Jun 19 21:02:09 2009.
 */
 
 #ifndef __cplusplus
@@ -16,18 +16,16 @@ TOLUA_API int  tolua_LuaBase_open (lua_State* tolua_S);
 #include "LuaBase_f.h"
 #include "LuaAvatar_f.h"
 #include "llworld.h"
-#include "SHLCopyComm.h"
 #include "LuaAgent_f.h"
 #include "llworldmap.h"
 
 /* function to register type */
 static void tolua_reg_types (lua_State* tolua_S)
 {
- tolua_usertype(tolua_S,"LuaAgent");
- tolua_usertype(tolua_S,"LLSimInfo");
- tolua_usertype(tolua_S,"SHLCopyComm");
- tolua_usertype(tolua_S,"LLViewerRegion");
  tolua_usertype(tolua_S,"LuaWorldMap");
+ tolua_usertype(tolua_S,"LLSimInfo");
+ tolua_usertype(tolua_S,"LLViewerRegion");
+ tolua_usertype(tolua_S,"LuaAgent");
 }
 
 /* method: LuaGetFullName of class  LuaAgent */
@@ -46,7 +44,7 @@ static int tolua_LuaBase_agent_getFullName00(lua_State* tolua_S)
  {
   LuaAgent* self = (LuaAgent*)  tolua_tousertype(tolua_S,1,0);
 #ifndef TOLUA_RELEASE
-  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'LuaGetFullName'",NULL);
+  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'LuaGetFullName'", NULL);
 #endif
   {
    std::string tolua_ret = (std::string)  self->LuaGetFullName();
@@ -78,7 +76,7 @@ static int tolua_LuaBase_agent_getID00(lua_State* tolua_S)
  {
   LuaAgent* self = (LuaAgent*)  tolua_tousertype(tolua_S,1,0);
 #ifndef TOLUA_RELEASE
-  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'LuaGetID'",NULL);
+  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'LuaGetID'", NULL);
 #endif
   {
    std::string tolua_ret = (std::string)  self->LuaGetID();
@@ -112,7 +110,7 @@ static int tolua_LuaBase_agent_setTyping00(lua_State* tolua_S)
   LuaAgent* self = (LuaAgent*)  tolua_tousertype(tolua_S,1,0);
   bool On = ((bool)  tolua_toboolean(tolua_S,2,0));
 #ifndef TOLUA_RELEASE
-  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'LuaSetTyping'",NULL);
+  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'LuaSetTyping'", NULL);
 #endif
   {
    self->LuaSetTyping(On);
@@ -143,7 +141,7 @@ static int tolua_LuaBase_agent_isTyping00(lua_State* tolua_S)
  {
   LuaAgent* self = (LuaAgent*)  tolua_tousertype(tolua_S,1,0);
 #ifndef TOLUA_RELEASE
-  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'LuaGetTyping'",NULL);
+  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'LuaGetTyping'", NULL);
 #endif
   {
    bool tolua_ret = (bool)  self->LuaGetTyping();
@@ -177,7 +175,7 @@ static int tolua_LuaBase_agent_follow00(lua_State* tolua_S)
   LuaAgent* self = (LuaAgent*)  tolua_tousertype(tolua_S,1,0);
   const char* name = ((const char*)  tolua_tostring(tolua_S,2,0));
 #ifndef TOLUA_RELEASE
-  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'LuaFollow'",NULL);
+  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'LuaFollow'", NULL);
 #endif
   {
    self->LuaFollow(name);
@@ -210,11 +208,11 @@ static int tolua_LuaBase_worldmap_getSimFromName00(lua_State* tolua_S)
   LuaWorldMap* self = (LuaWorldMap*)  tolua_tousertype(tolua_S,1,0);
   const char* name = ((const char*)  tolua_tostring(tolua_S,2,0));
 #ifndef TOLUA_RELEASE
-  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'LuaGetSimFromName'",NULL);
+  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'LuaGetSimFromName'", NULL);
 #endif
   {
     LLSimInfo* tolua_ret = (  LLSimInfo*)  self->LuaGetSimFromName(name);
-   tolua_pushusertype(tolua_S,(void*)tolua_ret,"LLSimInfo");
+    tolua_pushusertype(tolua_S,(void*)tolua_ret,"LLSimInfo");
   }
  }
  return 1;
@@ -387,7 +385,7 @@ static int tolua_LuaBase_RegionFromName00(lua_State* tolua_S)
   const char* msg = ((const char*)  tolua_tostring(tolua_S,1,0));
   {
    LLViewerRegion* tolua_ret = (LLViewerRegion*)  LuaRegionFromName(msg);
-   tolua_pushusertype(tolua_S,(void*)tolua_ret,"LLViewerRegion");
+    tolua_pushusertype(tolua_S,(void*)tolua_ret,"LLViewerRegion");
   }
  }
  return 1;
@@ -414,7 +412,7 @@ static int tolua_LuaBase_getCurrentRegion00(lua_State* tolua_S)
  {
   {
    LLViewerRegion* tolua_ret = (LLViewerRegion*)  LuaGetCurrentRegion();
-   tolua_pushusertype(tolua_S,(void*)tolua_ret,"LLViewerRegion");
+    tolua_pushusertype(tolua_S,(void*)tolua_ret,"LLViewerRegion");
   }
  }
  return 1;
@@ -952,30 +950,6 @@ static int tolua_LuaBase_setTEImage00(lua_State* tolua_S)
 }
 #endif //#ifndef TOLUA_DISABLE
 
-/* get function: gCopybot */
-#ifndef TOLUA_DISABLE_tolua_get_gCopybot_ptr
-static int tolua_get_gCopybot_ptr(lua_State* tolua_S)
-{
-  tolua_pushusertype(tolua_S,(void*)gCopybot,"SHLCopyComm");
- return 1;
-}
-#endif //#ifndef TOLUA_DISABLE
-
-/* set function: gCopybot */
-#ifndef TOLUA_DISABLE_tolua_set_gCopybot_ptr
-static int tolua_set_gCopybot_ptr(lua_State* tolua_S)
-{
-#ifndef TOLUA_RELEASE
-  tolua_Error tolua_err;
-  if (!tolua_isusertype(tolua_S,2,"SHLCopyComm",0,&tolua_err))
-   tolua_error(tolua_S,"#vinvalid type in variable assignment.",&tolua_err);
-#endif
-  gCopybot = ((SHLCopyComm*)  tolua_tousertype(tolua_S,2,0))
-;
- return 0;
-}
-#endif //#ifndef TOLUA_DISABLE
-
 /* get function: gAllowWorldMap */
 #ifndef TOLUA_DISABLE_tolua_get_gAllowWorldMap
 static int tolua_get_gAllowWorldMap(lua_State* tolua_S)
@@ -1044,7 +1018,6 @@ TOLUA_API int tolua_LuaBase_open (lua_State* tolua_S)
   tolua_function(tolua_S,"wear",tolua_LuaBase_wear00);
   tolua_function(tolua_S,"RemoveAllWearables",tolua_LuaBase_RemoveAllWearables00);
   tolua_function(tolua_S,"setTEImage",tolua_LuaBase_setTEImage00);
-  tolua_variable(tolua_S,"gCopybot",tolua_get_gCopybot_ptr,tolua_set_gCopybot_ptr);
   tolua_variable(tolua_S,"gAllowWorldMap",tolua_get_gAllowWorldMap,tolua_set_gAllowWorldMap);
  tolua_endmodule(tolua_S);
  return 1;

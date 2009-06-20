@@ -44,10 +44,10 @@ public:
 	~SHLLua();
 
 	bool callLuaHook(const char *EventName,int numargs,...);
-	void SHLLua::run();
+	void run();
 
 	void RunFile(std::string file);
-	static bool SHLLua::isMacro(const std::string what);
+	static bool isMacro(const std::string what);
 	void RunMacro(const std::string what);
 private:
 	lua_State *L; // Lua stack
@@ -58,18 +58,18 @@ extern SHLLua *gLuaHooks;
 
 void SHLHooks_CreateMetatable(lua_State *L);
 void SHLHooks_InitTable(lua_State *L, SHLLua* lol);
-static int SHLHooks_SetHook(lua_State* l);
+int SHLHooks_SetHook(lua_State* l);
 
-static int LuaBase_SendChat(lua_State *L);
+int LuaBase_SendChat(lua_State *L);
 void LuaBase_CreateMetatable(lua_State *L);
 
 void Lua_RegisterMethod(lua_State* l, const char* name, lua_CFunction fn);
-static void Lua_SetClass(lua_State *l,const char* classname);
+void Lua_SetClass(lua_State *l,const char* classname);
 void Lua_CreateClassMetatable(lua_State* l, const char* name);
 void Lua_CheckArgs(lua_State* l,int minArgs, int maxArgs, const char* errorMessage);
-static void Lua_PushClass(lua_State* l, const char* classname);
+void Lua_PushClass(lua_State* l, const char* classname);
 
-static int luaOnPanic(lua_State *L);
+int luaOnPanic(lua_State *L);
 std::string Lua_getErrorMessage(lua_State *L);
 
 void LuaSetAvOverlay(const char *uuid,int type);

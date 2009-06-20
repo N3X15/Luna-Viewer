@@ -1,9 +1,9 @@
 /**
  * @file LuaBase.pkg
- * @brief ShoopedLife Lua Integration Framework
+ * @brief FlexLife Lua Integration Framework
  * @author N3X15
  *
- *  Copyright (C) 2008 Patriotic Nigras
+ *  Copyright (C) 2008-2009 N3X15
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
 $#include "LuaBase_f.h"
 $#include "LuaAvatar_f.h"
 $#include "llworld.h"
-$#include "SHLCopyComm.h"
+//$#include "SHLCopyComm.h"
  
 $pfile "LuaAgent.pkg"	// Lua gAgent bindings, etc.
 //$pfile "LuaBuild.pkg"	// Prim manipulation and shit.
@@ -63,7 +63,7 @@ const char * LuaGetCWD @ getCWD();
 void LuaError @ error(const char* rawmsg);
 
 // $$ say "oh ok"
-// $$ say "shitcocks" 20
+// $$ say "Derp" 20
 //
 // lol
 void LuaSay @ say(const char* msg, const char* channel="0");
@@ -105,5 +105,5 @@ void LuaWear @ wear(const char* assetid);
 void LuaRemoveAllWearables @ RemoveAllWearables();
 void LuaSetTEImage @ setTEImage(int index,const char *UUID);
 
-extern SHLCopyComm *gCopybot;
+//extern SHLCopyComm *gCopybot;
 extern bool gAllowWorldMap;

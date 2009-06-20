@@ -63,4 +63,4 @@ std::string  toLuaString(F32 t);
 
 extern bool gAllowWorldMap;
 
-#endif;
+#endif

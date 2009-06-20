@@ -37,7 +37,7 @@ include(LLKDU)
 include(Emerald)
 include(LUA)
 include(ViewerMiscLibs)
-include(toluapp)
+#include(toluapp)
 
 if (WINDOWS)
     include(CopyWinLibs)
@@ -450,11 +450,11 @@ set(viewer_SOURCE_FILES
     tsstuff.cpp
     tslua.cpp
     LuaAgent_f.cpp
-	LuaAvatar_f.cpp
-	LuaBase_f.cpp
-	LuaBuild_f.cpp
-	LuaUI_f.cpp
-	SHLLua.cpp
+    LuaAvatar_f.cpp
+    LuaBase_f.cpp
+    LuaBuild_f.cpp
+    LuaUI_f.cpp
+    SHLLua.cpp
     )
 
 set(VIEWER_BINARY_NAME "secondlife-bin" CACHE STRING
