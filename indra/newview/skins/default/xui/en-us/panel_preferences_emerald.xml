@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<panel border="true" bottom="-409" enabled="true" follows="left|top|right|bottom"
+     height="408" label="Emerald" left="102" mouse_opaque="true"
+     name="Emerald panel" width="517">
+  <tab_container label="o.o" bottom="0" height="408" left="0" mouse_opaque="false" name="tab"
+	     tab_min_width="50" tab_position="top" width="500" bg_opaque_color="0,0,0,0.0">
+    <panel border="true" bottom="-408" follows="left|top|right|bottom" height="408"
+		     label="Teleport/Login" left="1" mouse_opaque="true" name="Teleport/Login" width="517">
+      <check_box bottom_delta="-50" enabled="true"
+           follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+           label="Double-click Teleport" left_delta="10" mouse_opaque="true"
+           name="double_click_tp_toggle" radio_style="false" width="270" control_name="EmeraldDoubleClickTeleport" />
+      <check_box bottom_delta="-25" enabled="true"
+           follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+           label="Velocity Interpolate Double-click Teleports" left_delta="50" mouse_opaque="true"
+           name="login_screen_toggle" radio_style="false" width="270" control_name="EmeraldVelocityDoubleClickTeleport" />
+      <check_box bottom_delta="-50" enabled="true"
+           follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+           label="Disable Teleport Screens" left_delta="-50" mouse_opaque="true"
+           name="tp_screen_toggle" radio_style="false" width="270" control_name="EmeraldDisableTeleportScreens" />
+      <check_box bottom_delta="-25" enabled="true"
+           follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+           label="Disable Login Progress Screen" left_delta="0" mouse_opaque="true"
+           name="login_screen_toggle" radio_style="false" width="270" control_name="EmeraldDisableLoginScreens" />
+      <check_box bottom_delta="-25" enabled="true"
+           follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+           label="Disable Logout Progress Screen" left_delta="0" mouse_opaque="true"
+           name="logout_screen_toggle" radio_style="false" width="270" control_name="EmeraldDisableLogoutScreens" />
+      <spinner decimal_digits="1" follows="left|top" height="18" increment="1" initial_val="0"
+           label="Login Precaching Delay" label_width="125" left_delta="0" bottom_delta="-25" max_val="9001" min_val="0"
+           name="Login Precaching Delay"
+           tool_tip="Controls the time on login it waits to let you in"
+           width="175" control_name="PrecachingDelay" />
+    </panel>
+    <panel border="true" bottom="-580" follows="left|top|right|bottom" height="525"
+		     label="Voice" left="1" mouse_opaque="true" name="Voice" width="418">
+      <button
+             name="revert_production_voice_btn"
+             label="Revert to default"
+             tool_tip="Revert Production Grid Voice Server"
+             left_delta="10"
+             bottom_delta="-50"
+             width="100"
+             height="20"
+             font="SansSerifSmall"
+             follows="left|top"
+			       />
+      <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+           bottom_delta="0" drop_shadow_visible="true" enabled="true" follows="left|top"
+           font="SansSerifSmall" h_pad="0" halign="left" height="16" left_delta="110"
+           mouse_opaque="true" name="disp_0" v_pad="0" width="400">
+        'Main grid' voice server
+      </text>
+      <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom_delta="-25"
+           follows="left|top" font="SansSerifSmall" height="20" left_delta="-110"
+           max_length="256" mouse_opaque="true" name="production_voice_field"
+           tool_tip="This is the production grid voice channel" control_name="vivoxProductionServerName" width="200" />
+      <button
+             name="revert_debug_voice_btn"
+             label="Revert to default"
+             tool_tip="Revert Debug Grid Voice Server"
+             left_delta="240"
+             bottom_delta="25"
+             width="100"
+             height="20"
+             font="SansSerifSmall"
+             follows="left|top"
+			       />
+      <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+           bottom_delta="0" drop_shadow_visible="true" enabled="true" follows="left|top"
+           font="SansSerifSmall" h_pad="0" halign="left" height="16" left_delta="110"
+           mouse_opaque="true" name="disp_0" v_pad="0" width="400">
+        'Debug grid' voice server
+      </text>
+      <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom_delta="-25"
+           follows="left|top" font="SansSerifSmall" height="20" left_delta="-110"
+           max_length="256" mouse_opaque="true" name="debug_voice_field"
+           tool_tip="This is the 'debug grid' voice channel" control_name="vivoxDebugServerName" width="200" />
+    </panel>
+    <panel border="true" bottom="-580" follows="left|top|right|bottom" height="525"
+		     label="Shields" left="1" mouse_opaque="true" name="Shields" width="418">
+      <check_box bottom_delta="-50" enabled="true"
+           follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+           label="Clothing Layer Protection" left_delta="10" mouse_opaque="true"
+           name="clothing_protect_toggle" radio_style="false" width="270" control_name="EmeraldClothingLayerProtection" />
+      <panel 
+             name="scanner_options"
+             left_delta="-5"
+             width="250"
+             height="50"
+             bottom_delta="-55"
+             border="true"
+             mouse_opaque="true"
+             bevel_style="in"
+             background_visible="true"
+             background_opaque="true"
+             follows="top|left"
+             bg_opaque_color="0,0,0,0.1"
+             bg_alpha_color="blue"
+             can_resize="false"
+	>
+      </panel>
+    </panel>
+    <panel border="true" bottom="-580" follows="left|top|right|bottom" height="525"
+		     label="IM/Autoresponse" left="1" mouse_opaque="true" name="Misc" width="418">
+      <check_box bottom_delta="-40" enabled="true"
+           follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+           label="Announce incoming instant messages" left_delta="10" mouse_opaque="true"
+           name="EmeraldInstantMessageAnnounceIncoming" radio_style="false" width="270" />
+      <check_box bottom_delta="-20" enabled="true"
+           follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+           label="Steal focus" left_delta="10" mouse_opaque="true"
+           name="EmeraldInstantMessageAnnounceStealFocus" radio_style="false" width="270" />
+      <check_box bottom_delta="-20" enabled="true"
+           follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+           label="Autorespond to non-friends" left_delta="-10" mouse_opaque="true"
+           name="EmeraldInstantMessageResponseFriends" radio_style="false" width="270" />
+      <check_box bottom_delta="-20" enabled="true"
+           follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+           label="Autorespond to people you have muted" left_delta="0" mouse_opaque="true"
+           name="EmeraldInstantMessageResponseMuted" radio_style="false" width="270" />
+      <check_box bottom_delta="-20" enabled="true"
+           follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+           label="Autorespond to anyone" left_delta="0" mouse_opaque="true"
+           name="EmeraldInstantMessageResponseAnyone" radio_style="false" width="270" />
+      <check_box bottom_delta="-20" enabled="true"
+           follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+           label="Don't show instant messages from people you've chosen to send auto-responses" left_delta="25" mouse_opaque="true"
+           name="EmeraldInstantMessageShowResponded" radio_style="false" width="270" />
+      <check_box bottom_delta="-20" enabled="true"
+           follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+           label="Send as soon as they start typing" left_delta="0" mouse_opaque="true"
+           name="EmeraldInstantMessageShowOnTyping" radio_style="false" width="270" />
+      <check_box bottom_delta="-20" enabled="true"
+           follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+           label="Autorespond on every message, not just first one they send" left_delta="25" mouse_opaque="true"
+           name="EmeraldInstantMessageResponseRepeat" radio_style="false" width="270" />
+      <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+           bottom_delta="-10" drop_shadow_visible="true" enabled="true" follows="left|top"
+           font="SansSerifSmall" h_pad="0" halign="left" height="10" left_delta="-50"
+           mouse_opaque="false" name="text_box3" v_pad="0" width="256">
+        Instant Message Response:
+      </text>
+      <text_editor type="string" length="1" bottom_delta="-80" embedded_items="false" enabled="true" follows="left|top"
+           font="SansSerifSmall" height="75" left_delta="0" max_length="225"
+           mouse_opaque="true" name="im_response" width="330" word_wrap="true" />
+      <check_box bottom_delta="-20" enabled="true"
+           follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+           label="Send a item along with the response" left_delta="0" mouse_opaque="true"
+           name="EmeraldInstantMessageResponseItem" radio_style="false" width="270" />
+      <view_border blevel_style="in" bottom_delta="-20" follows="left|top" height="16" left_delta="0"
+			     mouse_opaque="false" name="im_give_drop_target_rect" width="400" />
+      <text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+			     bottom_delta="0" drop_shadow_visible="true" follows="left|top"
+			     font="SansSerifSmall" h_pad="0" halign="center" height="16" left_delta="0"
+			     mouse_opaque="true" name="Give inventory"
+			     tool_tip="Drop a inventory item here." v_pad="2"
+			     width="400">
+        Drop a inventory item here to have it given along with the auto-response.
+      </text>
+      <view_border blevel_style="in" bottom_delta="-18" follows="left|top" height="16" left_delta="0"
+			     mouse_opaque="false" name="im_give_disp_rect" width="400" />
+      <text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+			     bottom_delta="0" drop_shadow_visible="true" follows="left|top"
+			     font="SansSerifSmall" h_pad="0" halign="center" height="16" left_delta="0"
+			     mouse_opaque="true" name="im_give_disp_rect_txt"
+			     tool_tip="" v_pad="2"
+			     width="400">
+        Currently set to: ITEM
+      </text>
+<check_box bottom_delta="-40" enabled="true"
+		 follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+		 label="Vertical IM tabs (requires restart)" left_delta="0" mouse_opaque="true"
+		 name="vertical-imtabs-toggle" radio_style="false" width="270" control_name="EmeraldVerticalIMTabs" />
+    </panel>
+	  
+	<panel border="true" bottom="-580" follows="left|top|right|bottom" height="525"
+		     label="Misc" left="1" mouse_opaque="true" name="AvatarEffects" width="418">
+			 <panel 
+             name="avatar_options"
+             left_delta="5"
+             width="310"
+             height="75"
+             bottom_delta="-80"
+             border="true"
+             mouse_opaque="true"
+             bevel_style="in"
+             background_visible="true"
+             background_opaque="true"
+             follows="top|left"
+             bg_opaque_color="0,0,0,0.1"
+             bg_alpha_color="red"
+             can_resize="false"
+	>
+      </panel>
+      <check_box bottom_delta="50" enabled="true"
+           follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+           label="Enable Always Fly" left_delta="0" mouse_opaque="true"
+           name="alwaysflytoggle" radio_style="false" width="270" control_name="EmeraldAlwaysFly" />
+      <check_box bottom_delta="-25" enabled="true"
+           follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+           label="Enable Ctrl-Alt-P to become visually phantom" left_delta="0" mouse_opaque="true"
+           name="allowphantomtoggle" radio_style="false" width="270" control_name="EmeraldAllowPhantomToggle" />
+      <check_box bottom_delta="-25" enabled="true"
+           follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+           label="Enable Ctrl-Alt-S to ground sit anywhere" left_delta="0" mouse_opaque="true"
+           name="allowsittoggle" radio_style="false" width="270" control_name="EmeraldAllowSitToggle" />
+    <panel 
+             name="scanner_options"
+             left_delta="0"
+             width="310"
+             height="90"
+             bottom_delta="-100"
+             border="true"
+             mouse_opaque="true"
+             bevel_style="in"
+             background_visible="true"
+             background_opaque="true"
+             follows="top|left"
+             bg_opaque_color="0,0,0,0.1"
+             bg_alpha_color="blue"
+             can_resize="false"
+		>
+    </panel>
+    <check_box bottom_delta="65" enabled="true"
+         follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+         label="Display radar info to chat" left_delta="0" mouse_opaque="true"
+         name="radar_chat_toggle" radio_style="false" width="270" control_name="EmeraldRadarChatAlerts" />
+    <check_box bottom_delta="-20" enabled="true"
+         follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+         label="Display on avatars entering / exiting simulator" left_delta="25" mouse_opaque="true"
+         name="radar_chat_sim_toggle" radio_style="false" width="270" control_name="EmeraldRadarAlertSim" />
+    <check_box bottom_delta="-20" enabled="true"
+         follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+         label="Display on avatars entering / exiting draw distance" left_delta="0" mouse_opaque="true"
+         name="radar_chat_draw_toggle" radio_style="false" width="270" control_name="EmeraldRadarAlertDraw" />
+    <check_box bottom_delta="-20" enabled="true"
+         follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+         label="Display on avatars entering / exiting chat range" left_delta="0" mouse_opaque="true"
+         name="radar_chat_chatrange_toggle" radio_style="false" width="270" control_name="EmeraldRadarAlertChatRange" />
+    <check_box bottom_delta="-30" enabled="true"
+         follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+         label="Enable wearing of objects in inventory via double-click" left_delta="-25" mouse_opaque="true"
+         name="wear-inv-toggle" radio_style="false" width="270" control_name="EmeraldDoubleClickWearInventoryObjects" />
+    <check_box bottom_delta="-20" enabled="true"
+         follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+         label="Block sitting on objects via left-click" left_delta="0" mouse_opaque="true"
+         name="sit-click-toggle" radio_style="false" width="270" control_name="EmeraldBlockClickSit" />
+	<check_box bottom_delta="-40" enabled="true"
+		 follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+		 label="Enable transmission of selection beam end position" left_delta="0" mouse_opaque="true"
+		 name="lol-toggle" radio_style="false" width="270" control_name="EmeraldParticleChat" />
+	<check_box bottom_delta="-40" enabled="true"
+		 follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+		 label="Hear typing sound when people type" left_delta="0" mouse_opaque="true"
+		 name="typing-sound-toggle" radio_style="false" width="270" control_name="PlayTypingSound" />	
+    </panel>
+    <panel border="true" bottom="-580" follows="left|top|right|bottom" height="525"
+           label="CmdLine" left="1" mouse_opaque="true" name="CmdLine" width="418">
+      <text bottom_delta="-20" follows="left|top" font="SansSerifSmall" height="16" left_delta="5" name="loltxt" width="512">
+        ("cmd" in the usage and examples refers to the text in the textbox)
+Leave any command blank to deactivate it.
+      </text>
+      <check_box bottom_delta="-40" enabled="true"
+           follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+           label="Enable usage of chat bar as a command line" left_delta="0" mouse_opaque="true"
+           name="chat_cmd_toggle" radio_style="false" width="270" control_name="EmeraldCmdLine" />
+      <text bottom_delta="-18" follows="left|top" font="SansSerifSmall" height="16" left_delta="10" name="loltxt" width="512">
+        Command to teleport to a position within the region (usage: cmd x y z) (ex: cmd 128 192 50)
+      </text>
+      <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom_delta="-18"
+           follows="left|top" font="SansSerifSmall" height="20" left_delta="0"
+           max_length="256" mouse_opaque="true"
+           tool_tip="" name="EmeraldCmdLinePos" control_name="EmeraldCmdLinePos" width="200" />
+      <text bottom_delta="-18" follows="left|top" font="SansSerifSmall" height="16" left_delta="0" name="loltxt" width="512">
+        Command to teleport to terrain ground level (usage: cmd) (ex: cmd)
+      </text>
+      <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom_delta="-18"
+           follows="left|top" font="SansSerifSmall" height="20" left_delta="0"
+           max_length="256" mouse_opaque="true"
+           tool_tip="" name="EmeraldCmdLineGround" control_name="EmeraldCmdLineGround" width="200" />
+      <text bottom_delta="-18" follows="left|top" font="SansSerifSmall" height="16" left_delta="0" name="loltxt" width="512">
+        Command to teleport to a particular height (usage: cmd z) (ex: cmd 100)
+      </text>
+      <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom_delta="-18"
+           follows="left|top" font="SansSerifSmall" height="20" left_delta="0"
+           max_length="256" mouse_opaque="true"
+           tool_tip="" name="EmeraldCmdLineHeight" control_name="EmeraldCmdLineHeight" width="200" />
+      <text bottom_delta="-18" follows="left|top" font="SansSerifSmall" height="16" left_delta="0" name="loltxt" width="512">
+        Command to teleport home (usage: cmd) (ex: cmd)
+      </text>
+      <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom_delta="-18"
+           follows="left|top" font="SansSerifSmall" height="20" left_delta="0"
+           max_length="256" mouse_opaque="true"
+           tool_tip="" name="EmeraldCmdLineTeleportHome" control_name="EmeraldCmdLineTeleportHome" width="200" />
+      <text bottom_delta="-18" follows="left|top" font="SansSerifSmall" height="16" left_delta="0" name="loltxt" width="512">
+        Command to rez a platform (usage: cmd) (ex: cmd)
+      </text>
+      <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom_delta="-18"
+           follows="left|top" font="SansSerifSmall" height="20" left_delta="0"
+           max_length="256" mouse_opaque="true"
+           tool_tip="" name="EmeraldCmdLineRezPlatform" control_name="EmeraldCmdLineRezPlatform" width="200" />
+      <text bottom_delta="-18" follows="left|top" font="SansSerifSmall" height="16" left_delta="0" name="loltxt" width="512">
+        Command to teleport to a region by name rapidly (usage: cmd simname) (ex: cmd Bug Island)
+      </text>
+      <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom_delta="-18"
+           follows="left|top" font="SansSerifSmall" height="20" left_delta="0"
+           max_length="256" mouse_opaque="true"
+           tool_tip="" name="EmeraldCmdLineMapTo" control_name="EmeraldCmdLineMapTo" width="200" />
+      <check_box bottom_delta="0" enabled="true"
+           follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+           label="Use position in this sim as position in new sim" left_delta="200" mouse_opaque="true"
+           name="toggle" radio_style="false" width="270" control_name="EmeraldMapToKeepPos" />
+    </panel>
+  </tab_container>
+</panel>

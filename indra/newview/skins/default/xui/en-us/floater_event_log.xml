@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<floater
+	name="event log"
+	title="Event Log"
+	can_resize="true"
+	can_minimize="true"
+	can_close="true"
+	can_drag_on_left="false"
+	rect_control="FloaterEventLogRect"
+	min_width="700"
+	min_height="350">
+	<scroll_list
+		    name="event_log"
+		    left="10"
+		    right="-10"
+		    top="-20"
+		    bottom="220"
+		    column_padding="0"
+		    can_resize="true"
+		    follows="left|top|bottom|right"
+		    draw_heading="true"
+		    multi_select="true"
+		    search_column="1"
+		    tool_tip="Hold shift or control while clicking to select multiple avatars"
+		    >
+		<!-- Icons relating to the avatar, currently: tracking, and marked -->
+		<column name="type_icon" label="Type" width="20" />
+		<column name="owner_name" label="Owner Name" dynamicwidth="true" />
+		<column name="object_name" label="Object Name" dynamicwidth="true" />
+		<column name="id" label="UUID" dynamicwidth="true" />
+		<column name="distance" label="Distance" width="80"/>
+		<column name="count" label="Count" width="70"/>
+		<column name="duration" label="Duration" width="100"/>
+		<column name="age" label="Age" width="50"/>
+		<column name="score" label="Score" width="50"/>
+	</scroll_list>
+	
+	
+	
+	<check_box height="16" label="Enabled" left="10" bottom_delta="-20" name="enabled_cb" width="100" follows="bottom|left"
+		   initial_value="true" enabled="true" radio_style="false" tool_tip="Set whether events will be gathered. Disabling this reduces CPU usage." />
+	
+	<check_box height="16" label="Update list" left_delta="100" bottom_delta="0" name="update_list_cb" width="150" follows="bottom|left"
+		   initial_value="true" enabled="true" radio_style="false" tool_tip="Set whether the event list will be updated" />
+	
+	<check_box height="16" label="Show null UUIDs" left_delta="100" bottom_delta="0" name="show_null_cb" width="150" follows="bottom|left"
+		   initial_value="true" enabled="true" radio_style="false" tool_tip="Show particles with the default texture"/>
+	
+	<check_box height="16" label="Show zero count" left_delta="125" bottom_delta="0" name="show_zero_count_cb" width="150" follows="bottom|left"
+		   initial_value="false" enabled="true" radio_style="false" tool_tip="Show events with a count of 0. These events have no visible effect in-world."/>
+	
+	
+	
+	<panel background_opaque="true" background_visible="true" bevel_style="in"
+	       bg_alpha_color="blue" bg_opaque_color="0,0,0,0.3" border="true" bottom_delta="-140"
+	       can_resize="false" follows="left|right|bottom" height="130" left="10"
+	       mouse_opaque="true" name="particle_info_container" right="-350" visible="true">
+		
+		<!-- Texture picker for the texture on the selected item -->
+		<texture_picker bottom_delta="-110" follows="left|bottom" height="100" left="10" name="selected_texture" width="100" enabled="false" />
+		
+		<text bottom_delta="80" left_delta="110" drop_shadow_visible="true" follows="left|bottom" height="24" name="part_pattern" width="281">
+			[PATTERN]
+		</text>	
+		<text bottom_delta="-12" drop_shadow_visible="true" follows="left|bottom" height="24" name="part_texture" width="281">
+			Texture: [TEXTURE]
+		</text>		
+		<text bottom_delta="-12" drop_shadow_visible="true" follows="left|bottom" height="24" name="part_burst_rate" width="281">
+			Burst: [BURST_COUNT]/[BURST_RATE]s = [PARTICLE_COUNT] particles/s
+		</text>
+		<text bottom_delta="-12" drop_shadow_visible="true" follows="left|bottom" height="24" name="part_radius" width="281">
+			Radius: [RADIUS]m
+		</text>	
+		<text bottom_delta="-12" drop_shadow_visible="true" follows="left|bottom" height="24" name="part_angle" width="281">
+			Angle: [ANGLE_BEGIN] to [ANGLE_END] rad
+		</text>	
+		<text bottom_delta="-12" drop_shadow_visible="true" follows="left|bottom" height="24" name="part_speed" width="281">
+			Speed: [SPEED_MIN] to [SPEED_MAX]
+		</text>	
+		<text bottom_delta="-12" drop_shadow_visible="true" follows="left|bottom" height="24" name="part_size" width="281">
+			Size: [SCALE_BEGIN] to [SCALE_END]
+		</text>
+		<text bottom_delta="-12" drop_shadow_visible="true" follows="left|bottom" height="24" name="part_color" width="281">
+			Color: [COLOR_BEGIN] to [COLOR_END]
+		</text>
+		<text bottom_delta="-12" drop_shadow_visible="true" follows="left|bottom" height="24" name="part_alpha" width="281">
+			Alpha: [ALPHA_BEGIN] to [ALPHA_END]
+		</text>
+		<text bottom_delta="-12" drop_shadow_visible="true" follows="left|bottom" height="24" name="part_flags" width="281">
+			Flags: [FLAGS]
+		</text>
+		
+	</panel>	
+	
+	<!-- Texture pickers that automatically display the most active textured effects -->
+	<text left="-330" bottom_delta="110" follows="right|bottom" height="24" name="hiscore_name_0" width="281">[NAME]</text>
+	<text left_delta="0" bottom_delta="-12" follows="right|bottom" height="24" name="hiscore_owner_0" width="281">[OWNER]</text>
+	<texture_picker bottom_delta="-90" follows="right|bottom" height="100" left="-330" name="hiscore_texture_0" width="100" enabled="false" />
+	<button bottom_delta="-10" follows="right|bottom" label="[FUNCTION]" left_delta="0" name="hiscore_action_0" width="100" height="22"/>
+	
+	<!-- Alignment issue here, why delta=112 and not 110? -->
+	<text left_delta="110" bottom_delta="112" follows="right|bottom" height="24" name="hiscore_name_1" width="281">[NAME]</text>
+	<text left_delta="0" bottom_delta="-12" follows="right|bottom" height="24" name="hiscore_owner_1" width="281">[OWNER]</text>
+	<texture_picker bottom_delta="-90" follows="right|bottom" height="100" left_delta="0" name="hiscore_texture_1" width="100" enabled="false" />
+	<button bottom_delta="-10" follows="right|bottom" label="[FUNCTION]" left_delta="0" name="hiscore_action_1" width="100" height="22"/>
+	
+	
+	<text left_delta="110" bottom_delta="112" follows="right|bottom" height="24" name="hiscore_name_2" width="281">[NAME]</text>
+	<text left_delta="0" bottom_delta="-12" follows="right|bottom" height="24" name="hiscore_owner_2" width="281">[OWNER]</text>
+	<texture_picker bottom_delta="-90" follows="right|bottom" height="100" left_delta="0" name="hiscore_texture_2" width="100" enabled="false" />
+	<button bottom_delta="-10" follows="right|bottom" label="[FUNCTION]" left_delta="0" name="hiscore_action_2" width="100" height="22"/>
+	
+	
+	<tab_container border="false" bottom_delta="-45" height="45" left="6" mouse_opaque="false"
+		       name="actions_tab_container" tab_position="top" follows="left|right|bottom">
+		
+		<panel background_opaque="true" background_visible="true" bevel_style="in"
+		       bg_alpha_color="blue" bg_opaque_color="0,0,0,0.3" border="true" bottom_delta="-30"
+		       can_resize="false" follows="left|right|bottom" height="30" left="10"
+		       mouse_opaque="true" name="rights_container" right="-10" label="Avatar">
+			
+			<button bottom_delta="-25" follows="top|left" label="Profile" left_delta="10" name="av_profile_btn" tool_tip="Show picture, groups, and other
+				information" width="80" height="22"/>
+			<button bottom_delta="0" follows="top|left" label="Get key" left_delta="90" name="av_get_key_btn" tool_tip="Copy the source's key to the clipboard" width="80" height="22"/>		
+			<button bottom_delta="0" follows="top|left" label="Track" left_delta="90" name="av_track_btn" tool_tip="Track event's source on the map" width="80" height="22"/>
+			<button bottom_delta="0" follows="top|left" label="Mute" left_delta="90" name="av_mute_btn" tool_tip="Mute source object or avatar. This hides particles and silences sounds" width="80" height="22"/>
+			<button bottom_delta="0" follows="top|left" label="Eject" left_delta="90" name="av_eject_btn" tool_tip="Eject the avatar who is causing this event" width="80" height="22"/>
+			<button bottom_delta="0" follows="top|left" label="Gohome" left_delta="90" name="av_luskwood_gohome_btn" tool_tip="Use luskwood gohome command on the avatar causing this event" width="80" height="22"/>
+		</panel>
+		
+		<panel background_opaque="true" background_visible="true" bevel_style="in"
+		       bg_alpha_color="blue" bg_opaque_color="0,0,0,0.3" border="true" bottom_delta="-30"
+		       can_resize="false" follows="left|right|bottom" height="30" left="10"
+		       mouse_opaque="true" name="rights_container" right="-10" label="Object">
+			
+			<button bottom_delta="-25" follows="top|left" label="Get key" left_delta="10" name="obj_get_key_btn" tool_tip="Copy the source's key to the clipboard" width="80" height="22"/>
+			<button bottom_delta="0" follows="top|left" label="Track" left_delta="90" name="obj_track_btn" tool_tip="Track event's source on the map" width="80" height="22"/>
+			<button bottom_delta="0" follows="top|left" label="Mute" left_delta="90" name="obj_mute_btn" tool_tip="Mute source object. This hides particles and silences sounds" width="80" height="22"/>
+			<button bottom_delta="0" follows="top|left" label="Return" left_delta="90" name="obj_return_btn" tool_tip="Return the object from the land" width="80" height="22"/>
+		</panel>
+		
+		<panel background_opaque="true" background_visible="true" bevel_style="in"
+		       bg_alpha_color="blue" bg_opaque_color="0,0,0,0.3" border="true" bottom_delta="-30"
+		       can_resize="false" follows="left|right|bottom" height="30" left="10"
+		       mouse_opaque="true" name="rights_container" right="-10" label="UUID">
+			
+			<button bottom_delta="-25" follows="top|left" label="Blacklist" left_delta="10" name="uuid_blacklist_btn" tool_tip="Add the texture/sound UUID to the blacklist" width="100" height="22"/>
+			<button bottom_delta="0" follows="top|left" label="Whitelist" left_delta="110" name="uuid_whitelist_btn" tool_tip="Add the texture/sound UUID to the whitelist" width="100" height="22"/>
+			<button bottom_delta="0" follows="top|left" label="Add to mute list" left_delta="110" name="uuid_mutelist_btn" tool_tip="Add the texture/sound UUID to the mute list" width="150" height="22"/>
+		</panel>
+		
+		
+	</tab_container>
+</floater>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<floater bottom="-397" can_close="true" can_drag_on_left="false" can_minimize="true"
+     can_resize="true" enabled="true" height="150" left="83"
+     min_height="150" min_width="425" mouse_opaque="true" name="lua console"
+     rect_control="LuaConsoleRect" title="Lua Console" width="425">
+    <text_editor type="string" length="1" bg_readonly_color="ChatHistoryBgColor" bg_writeable_color="ChatHistoryBgColor"
+         bottom="-122" embedded_items="false" enabled="false"
+         follows="left|top|right|bottom" font="SansSerif" height="80" left="5"
+         max_length="2147483647" mouse_opaque="true" name="Lua Output Editor"
+         text_color="ChatHistoryTextColor"
+         text_readonly_color="ChatHistoryTextColor" width="415" word_wrap="true" />
+    <button bottom="-38" follows="left|top" height="20" label="Clear" left="5"
+        mouse_opaque="true" name="Clear" tool_tip="Clear Console" width="70" />
+    <button bottom="-38" follows="left|top" height="20" label="Abort" left="80"
+        mouse_opaque="true" name="Abort" toop_tip="Abort Execution" width="70" />
+    <button bottom="-38" follows="left|top" height="20" label="Reset" left="155"
+        mouse_opaque="true" name="Reset" toop_tip="Restart Lua" width="70" />
+    <panel bottom="-145" follows="left|right|bottom" left="5" name="lua_panel" width="400"
+         tab_group="1" height="20">
+        <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom="0"
+             enabled="true" follows="left|right|bottom" font="SansSerif"
+             handle_edit_keys_directly="false" height="20" label="Lua Entry Box"
+             left="0" max_length="254" mouse_opaque="true" name="Lua Editor"
+             right="-70" select_all_on_focus_received="false" select_on_focus="false"
+             tab_group="1" />
+        <button bottom="0" follows="right|bottom" height="20" label="Send" left="-65"
+             mouse_opaque="true" name="Send" tool_tip="(Enter)"
+             width="70" />
+    </panel>
+</floater>
