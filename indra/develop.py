@@ -546,7 +546,7 @@ class WindowsSetup(PlatformSetup):
             self.run_vstool()
 
     def run_vstool(self):
-            for build_dir in self.build_dirs():
+        for build_dir in self.build_dirs():
             stamp = os.path.join(build_dir, 'vstool.txt')
             try:
                 prev_build = open(stamp).read().strip()
@@ -561,7 +561,7 @@ class WindowsSetup(PlatformSetup):
                           ' --config ' + self.build_type +
                           ' --startup secondlife-bin')
             print 'Running %r in %r' % (vstool_cmd, getcwd())
-                self.run(vstool_cmd)        
+            self.run(vstool_cmd)        
             print >> open(stamp, 'w'), self.build_type
         
     def run_build(self, opts, targets):
