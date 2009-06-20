@@ -1,0 +1,37 @@
+/**
+ * ShoopedLife Copybot REST Protocol Lua Bindings
+ *	By N3X15
+ *
+ * bool = connect2Copybot(password,port)
+ * bool = copybotTeleport(simname,x,y,z)
+ * bool = copybotClone(avname)
+ * (string(xmlname)/nil) = copybotExport(uuid)
+ * bool = copybotRenameXML(oldname,newname)
+ * bool = copybotImport(xmlname)
+ * copybotSay(something)
+ * copybotShout(something)
+ * copybotWhisper(something)
+ * 
+ *  Copyright (C) 2008 Patriotic Nigras
+ *
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ * $Id$
+ */
+ 
+ boolean copybotTeleport(const char* simname, double x, double y, double z); 
+ boolean copybotClone(const char* avname);
+ boolean copybotExport(const char* uuid,const char* xmlname)
+ boolean
