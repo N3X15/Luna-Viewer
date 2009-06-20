@@ -888,14 +888,10 @@ set(LUA_FILES
 	lua/Hooks/HTMLChatlog/_init_.lua
 	lua/Hooks/InitLuaAgent/_init_.lua
 	lua/Hooks/LogAvs/_init_.lua
-	lua/JLU.lua
 	lua/ltn12.lua
 	lua/Macros/appearance_ogre.lua
-	lua/Macros/cloneavatar.lua
 	lua/Macros/dumpvisparams.lua
-	lua/Macros/niggerspam.lua
 	lua/Macros/obfuscatelsl.lua
-	lua/Macros/resetsigns.lua
 	lua/Macros/saveappearance.lua
 	lua/Macros/testmacro.lua
 	lua/Macros/unit_tests.lua

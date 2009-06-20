@@ -9,12 +9,15 @@
 	     name="voice_unavailable" tab_stop="false" width="450" word_wrap="true">
 		Voice Chat Is Not Available
 	</text_editor>
-	<check_box bottom_delta="0" control_name="EnableVoiceChat" enabled="true"
+	<check_box bottom_delta="0" enabled="true"
 	     follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
 	     label="Enable voice chat" left="8" mouse_opaque="true"
 	     name="enable_voice_check" radio_style="false" width="200" />
+  <button bottom_delta="0" follows="left" font="SansSerif" halign="center" height="20"
+         label="Reset Voice" left_delta="150" mouse_opaque="true"
+         name="reset_voice" width="100" />
 	<radio_group bottom_delta="-40" draw_border="false" follows="left|top" height="40"
-	     left_delta="20" name="ear_location" width="364">
+	     left_delta="-130" name="ear_location" width="364">
 		<radio_item type="string" length="1" bottom="-19" follows="left|top" height="16" left="3" name="0" width="315">
 			Hear Voice Chat from camera position.
 		</radio_item>
@@ -36,7 +39,7 @@
 	     name="voice_chat_description" tab_stop="false" width="450" word_wrap="true">
 		Push-to-Talk mode lets you control when your voice is transmitted. When in toggle mode, press and release the push-to-talk trigger to switch your microphone on and off. When not in toggle mode, the microphone is active only when the trigger is held down.
 	</text_editor>
-	<check_box bottom_delta="-20" control_name="PushToTalkToggle" enabled="true"
+	<check_box bottom_delta="-20" enabled="true"
 	     follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
 	     label="Use Push-to-Talk in toggle mode" left_delta="0" mouse_opaque="true"
 	     name="push_to_talk_toggle_check" radio_style="false" width="200" />
@@ -48,7 +51,7 @@
 		Push-to-Talk trigger:
 	</text>
 	<line_editor border_drop_shadow_visible="false" border_visible="false" bottom_delta="-20"
-	     control_name="PushToTalkButton" drop_shadow_visible="true" enabled="false"
+	     drop_shadow_visible="true" enabled="false"
 	     follows="top|left" font="SansSerifSmall" halign="right" height="19"
 	     left_delta="0" max_length="254" mouse_opaque="false" name="modifier_combo"
 	     width="280" />
@@ -63,7 +66,7 @@
 	     left="28" name="privacy_heading" width="445">
 		Privacy Options
 	</text>
-	<check_box bottom_delta="-20" control_name="VoiceCallsFriendsOnly" enabled="true"
+	<check_box bottom_delta="-20" enabled="true"
 	     follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
 	     label="Only accept voice calls from people on My Friends list"
 	     left_delta="20" mouse_opaque="true" name="voice_call_friends_only_check"
@@ -76,6 +79,6 @@
 	     font="SansSerifSmall" height="35" hide_border="true" hide_scrollbar="true"
 	     left="28" max_length="65535" mouse_opaque="true"
 	     name="device_settings_text" tab_stop="false" width="450" word_wrap="true">
-		NOTE: Running the Device Settings will temporarily disconnect you from Voice Chat.
+		NOTE: Running the Device Settings will temporarily disconnect you from Voice Chat, and changes you make will be immediately applied.
 	</text_editor>
 </panel>

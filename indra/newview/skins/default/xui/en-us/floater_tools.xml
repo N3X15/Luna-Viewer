@@ -363,30 +363,46 @@
 			     mouse_opaque="true" name="button owner profile" scale_image="TRUE"
 			     width="78" />
 			<text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
-			     bottom="-106" drop_shadow_visible="true" follows="left|top"
+			     bottom_delta="-20" drop_shadow_visible="true" follows="left|top"
+			     font="SansSerifSmall" h_pad="0" halign="left" height="16" left="10"
+			     mouse_opaque="true" name="LastOwner:" v_pad="0" width="78">
+        Last Owner:
+      </text>
+      <text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+			     bottom_delta="0" drop_shadow_visible="true" follows="left|top"
+			     font="SansSerifSmall" h_pad="0" halign="left" height="16" left_delta="78"
+			     mouse_opaque="true" name="Last Owner Name" v_pad="0" width="88">
+        Thrax Linden
+      </text>
+			<button bottom_delta="0" follows="top|right" font="SansSerifSmall" halign="center"
+			     height="16" label="Profile..." label_selected="Profile..." left_delta="94"
+			     mouse_opaque="true" name="button last owner profile" scale_image="TRUE"
+			     width="78" />
+			<text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+			     bottom="-126" drop_shadow_visible="true" follows="left|top"
 			     font="SansSerifSmall" h_pad="0" halign="left" height="16" left="10"
 			     mouse_opaque="true" name="Group:" v_pad="0" width="78">
 				Group:
 			</text>
 			<text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
-			     bottom="-106" drop_shadow_visible="true" follows="left|top"
+			     bottom="-126" drop_shadow_visible="true" follows="left|top"
 			     font="SansSerifSmall" h_pad="0" halign="left" height="16" left_delta="78"
 			     mouse_opaque="true" name="Group Name Proxy" v_pad="0" visible="false"
 			     width="88">
 				The Lindens
 			</text>
-			<button bottom="-106" follows="top|right" font="SansSerifSmall" halign="center"
+			<button bottom="-126" follows="top|right" font="SansSerifSmall" halign="center"
 			     height="16" label="Set..." label_selected="Set..." left_delta="94"
 			     mouse_opaque="true" name="button set group" scale_image="TRUE" width="78" />
 			<text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
-			     bottom="-126" drop_shadow_visible="true" follows="left|top"
+			     bottom="-146" drop_shadow_visible="true" follows="left|top"
 			     font="SansSerifSmall" h_pad="0" halign="left" height="16" left="10"
 			     mouse_opaque="true" name="prim info" v_pad="0" width="166">
 				1 Object, 1 Primitive
 			</text>
 			<text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
-			     bottom_delta="-20" drop_shadow_visible="true" follows="left|top"
-			     font="SansSerifSmall" h_pad="0" halign="left" height="16" left="10"
+			     bottom_delta="0" drop_shadow_visible="true" follows="left|top"
+			     font="SansSerifSmall" h_pad="0" halign="left" height="16" left_delta="190"
 			     mouse_opaque="true" name="Permissions:" v_pad="0" width="85">
 				Permissions:
 			</text>
@@ -603,15 +619,15 @@
 			     mouse_opaque="true" name="label position" v_pad="0" width="121">
 				Position (meters)
 			</text>
-			<spinner bottom_delta="-20" decimal_digits="3" follows="left|top" height="16"
+			<spinner bottom_delta="-20" decimal_digits="4" follows="left|top" height="16"
 			     increment="0.01" initial_val="0" label="X" label_width="10" left="10"
 			     max_val="512" min_val="-256" mouse_opaque="true" name="Pos X"
 			     text_enabled_color="110, 15, 15, 255" width="87" />
-			<spinner bottom_delta="-18" decimal_digits="3" follows="left|top" height="16"
+			<spinner bottom_delta="-18" decimal_digits="4" follows="left|top" height="16"
 			     increment="0.01" initial_val="0" label="Y" label_width="10" left="10"
 			     max_val="512" min_val="-256" mouse_opaque="true" name="Pos Y"
 			     text_enabled_color="0, 100, 40, 255" width="87" />
-			<spinner bottom_delta="-18" decimal_digits="3" follows="left|top" height="16"
+			<spinner bottom_delta="-18" decimal_digits="4" follows="left|top" height="16"
 			     increment="0.01" initial_val="0" label="Z" label_width="10" left="10"
 			     max_val="4096" min_val="0" mouse_opaque="true" name="Pos Z"
 			     text_enabled_color="0, 67, 132, 255" width="87" />
@@ -621,15 +637,15 @@
 			     mouse_opaque="true" name="label size" v_pad="0" width="121">
 				Size (meters)
 			</text>
-			<spinner bottom_delta="-20" decimal_digits="3" follows="left|top" height="16"
+			<spinner bottom_delta="-20" decimal_digits="5" follows="left|top" height="16"
 			     increment="0.01" initial_val="0" label="X" label_width="10" left="10"
 			     max_val="10" min_val="0.01" mouse_opaque="true" name="Scale X"
 			     text_enabled_color="1, 1, 1, 1" width="87" />
-			<spinner bottom_delta="-18" decimal_digits="3" follows="left|top" height="16"
+			<spinner bottom_delta="-18" decimal_digits="5" follows="left|top" height="16"
 			     increment="0.01" initial_val="0" label="Y" label_width="10" left="10"
 			     max_val="10" min_val="0.01" mouse_opaque="true" name="Scale Y"
 			     text_enabled_color="1, 1, 1, 1" width="87" />
-			<spinner bottom_delta="-18" decimal_digits="3" follows="left|top" height="16"
+			<spinner bottom_delta="-18" decimal_digits="5" follows="left|top" height="16"
 			     increment="0.01" initial_val="0" label="Z" label_width="10" left="10"
 			     max_val="10" min_val="0.01" mouse_opaque="true" name="Scale Z"
 			     text_enabled_color="1, 1, 1, 1" width="87" />
@@ -714,6 +730,36 @@
 				<combo_item name="Sculpted" value="Sculpted">
 					Sculpted
 				</combo_item>
+        <combo_item name="PathLineProfileHalfCircle" value="PathLineProfileHalfCircle">
+          Line->Half-Circle
+        </combo_item>
+        <combo_item name="PathCircleProfileHalfCircle" value="PathCircleProfileHalfCircle">
+          Circle->Half-Circle
+        </combo_item>
+        <combo_item name="PathCircle2ProfileSquare" value="PathCircle2ProfileSquare">
+          Circle2->Square
+        </combo_item>
+        <combo_item name="PathCircle2ProfileTriangle" value="PathCircle2ProfileTriangle">
+          Circle2->Triangle
+        </combo_item>
+        <combo_item name="PathCircle2ProfileCircle" value="PathCircle2ProfileCircle">
+          Circle2->Circle
+        </combo_item>
+        <combo_item name="PathCircle2ProfileHalfCircle" value="PathCircle2ProfileHalfCircle">
+          Circle2->Half-Circle
+        </combo_item>
+        <combo_item name="PathTestProfileSquare" value="PathTestProfileSquare">
+          Test->Square
+        </combo_item>
+        <combo_item name="PathTestProfileTriangle" value="PathTestProfileTriangle">
+          Test->Triangle
+        </combo_item>
+        <combo_item name="PathTestProfileCircle" value="PathTestProfileCircle">
+          Test->Circle
+        </combo_item>
+        <combo_item name="PathTestProfileHalfCircle" value="PathTestProfileHalfCircle">
+          Test->Half-Circle
+        </combo_item>
 			</combo_box>
 			<text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
 			     bottom_delta="-12" drop_shadow_visible="true" follows="left|top"
@@ -722,10 +768,10 @@
 				Path Cut Begin and End
 			</text>
 			<spinner bottom_delta="-22" decimal_digits="3" follows="left|top" height="16"
-			     increment="0.05" initial_val="0" label="B" label_width="10" left="121"
+			     increment="0.025" initial_val="0" label="B" label_width="10" left="121"
 			     max_val="0.98" min_val="0" mouse_opaque="true" name="cut begin" width="68" />
 			<spinner bottom_delta="0" decimal_digits="3" follows="left|top" height="16"
-			     increment="0.05" initial_val="1" label="E" label_width="10" left_delta="73"
+			     increment="0.025" initial_val="1" label="E" label_width="10" left_delta="73"
 			     max_val="1" min_val="0.02" mouse_opaque="true" name="cut end" width="68" />
 			<text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
 			     bottom_delta="-14" drop_shadow_visible="true" follows="left|top"
@@ -743,7 +789,7 @@
 			     increment="5" initial_val="0" left="121" max_val="95" min_val="0"
 			     mouse_opaque="true" name="Scale 1" width="68" />
 			<spinner bottom_delta="0" decimal_digits="2" follows="left|top" height="16"
-			     increment="0.05" initial_val="0" left_delta="73" max_val="0.95"
+			     increment="0.025" initial_val="0" left_delta="73" max_val="1.0"
 			     min_val="-0.95" mouse_opaque="true" name="Skew" width="68" />
 			<text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
 			     bottom_delta="-15" drop_shadow_visible="true" follows="left|top"
@@ -793,11 +839,11 @@
 				Hole Size
 			</text>
 			<spinner bottom_delta="-20" decimal_digits="2" follows="left|top" height="16"
-			     increment="0.05" initial_val="0" label="X" label_width="10" left="121"
+			     increment="0.025" initial_val="0" label="X" label_width="10" left="121"
 			     max_val="1" min_val="-1" mouse_opaque="true" name="Taper Scale X"
 			     width="68" />
 			<spinner bottom_delta="0" decimal_digits="2" follows="left|top" height="16"
-			     increment="0.05" initial_val="0" label="Y" label_width="10" left_delta="73"
+			     increment="0.025" initial_val="0" label="Y" label_width="10" left_delta="73"
 			     max_val="1" min_val="-1" mouse_opaque="true" name="Taper Scale Y"
 			     width="68" />
 			<text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
@@ -807,10 +853,10 @@
 				Top Shear
 			</text>
 			<spinner bottom_delta="-20" decimal_digits="2" follows="left|top" height="16"
-			     increment="0.05" initial_val="0" label="X" label_width="10" left="121"
+			     increment="0.025" initial_val="0" label="X" label_width="10" left="121"
 			     max_val="0.5" min_val="-0.5" mouse_opaque="true" name="Shear X" width="68" />
 			<spinner bottom_delta="0" decimal_digits="2" follows="left|top" height="16"
-			     increment="0.05" initial_val="0" label="Y" label_width="10" left_delta="73"
+			     increment="0.025" initial_val="0" label="Y" label_width="10" left_delta="73"
 			     max_val="0.5" min_val="-0.5" mouse_opaque="true" name="Shear Y" width="68" />
 			<text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
 			     bottom_delta="-14" drop_shadow_visible="true" follows="left|top"
@@ -825,11 +871,11 @@
 				Dimple Begin and End
 			</text>
 			<spinner bottom_delta="-19" decimal_digits="3" follows="left|top" height="16"
-			     increment="0.05" initial_val="0" label="B" label_width="10" left="121"
+			     increment="0.025" initial_val="0" label="B" label_width="10" left="121"
 			     max_val="0.95" min_val="0" mouse_opaque="true" name="Path Limit Begin"
 			     width="68" />
 			<spinner bottom_delta="0" decimal_digits="3" follows="left|top" height="16"
-			     increment="0.05" initial_val="1" label="E" label_width="10" left_delta="73"
+			     increment="0.025" initial_val="1" label="E" label_width="10" left_delta="73"
 			     max_val="1" min_val="0.05" mouse_opaque="true" name="Path Limit End"
 			     width="68" />
 			<text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
@@ -839,10 +885,10 @@
 				Taper
 			</text>
 			<spinner bottom_delta="-19" decimal_digits="2" follows="left|top" height="16"
-			     increment="0.05" initial_val="0" label="X" label_width="10" left="121"
+			     increment="0.025" initial_val="0" label="X" label_width="10" left="121"
 			     max_val="1" min_val="-1" mouse_opaque="true" name="Taper X" width="68" />
 			<spinner bottom_delta="0" decimal_digits="2" follows="left|top" height="16"
-			     increment="0.05" initial_val="0" label="Y" label_width="10" left_delta="73"
+			     increment="0.025" initial_val="0" label="Y" label_width="10" left_delta="73"
 			     max_val="1" min_val="-1" mouse_opaque="true" name="Taper Y" width="68" />
 			<text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
 			     bottom_delta="-12" drop_shadow_visible="true" follows="left|top"
@@ -857,7 +903,7 @@
 				Revolutions
 			</text>
 			<spinner bottom_delta="-19" decimal_digits="3" follows="left|top" height="16"
-			     increment="0.05" initial_val="0" left="121" max_val="1" min_val="-1"
+			     increment="0.025" initial_val="0" left="121" max_val="1" min_val="-1"
 			     mouse_opaque="true" name="Radius Offset" width="68" />
 			<spinner bottom_delta="0" decimal_digits="2" follows="left|top" height="16"
 			     increment="0.1" initial_val="1" left_delta="73" max_val="4" min_val="1"
@@ -926,33 +972,33 @@
 			     name="Flexible1D Checkbox Ctrl"
 			     tool_tip="Allows object to flex about the Z axis. (Client-side only)"
 			     width="121" />
-			<spinner bottom_delta="-20" decimal_digits="3" follows="left|top" height="16"
+			<spinner bottom_delta="-20" decimal_digits="5" follows="left|top" height="16"
 			     increment="1" initial_val="2" label="Softness" label_width="65" left="10"
 			     max_val="3" min_val="0" mouse_opaque="true" name="FlexNumSections"
 			     width="128" />
-			<spinner bottom_delta="-20" decimal_digits="3" follows="left|top" height="16"
+			<spinner bottom_delta="-20" decimal_digits="5" follows="left|top" height="16"
 			     increment="0.5" initial_val="0.3" label="Gravity" label_width="65"
 			     left="10" max_val="10" min_val="-10" mouse_opaque="true" name="FlexGravity"
 			     width="128" />
-			<spinner bottom_delta="-20" decimal_digits="3" follows="left|top" height="16"
+			<spinner bottom_delta="-20" decimal_digits="5" follows="left|top" height="16"
 			     increment="0.5" initial_val="2" label="Drag" label_width="65" left="10"
 			     max_val="10" min_val="0" mouse_opaque="true" name="FlexFriction"
 			     width="128" />
-			<spinner bottom_delta="-20" decimal_digits="3" follows="left|top" height="16"
+			<spinner bottom_delta="-20" decimal_digits="5" follows="left|top" height="16"
 			     increment="0.5" initial_val="0" label="Wind" label_width="65" left="10"
 			     max_val="10" min_val="0" mouse_opaque="true" name="FlexWind" width="128" />
-			<spinner bottom_delta="-20" decimal_digits="3" follows="left|top" height="16"
+			<spinner bottom_delta="-20" decimal_digits="5" follows="left|top" height="16"
 			     increment="0.5" initial_val="1" label="Tension" label_width="65" left="10"
 			     max_val="10" min_val="0" mouse_opaque="true" name="FlexTension" width="128" />
-			<spinner bottom_delta="-20" decimal_digits="3" follows="left|top" height="16"
+			<spinner bottom_delta="-20" decimal_digits="5" follows="left|top" height="16"
 			     increment="0.01" initial_val="0" label="Force X" label_width="65" left="10"
 			     max_val="10" min_val="-10" mouse_opaque="true" name="FlexForceX"
 			     width="128" />
-			<spinner bottom_delta="-20" decimal_digits="3" follows="left|top" height="16"
+			<spinner bottom_delta="-20" decimal_digits="5" follows="left|top" height="16"
 			     increment="0.01" initial_val="0" label="Force Y" label_width="65" left="10"
 			     max_val="10" min_val="-10" mouse_opaque="true" name="FlexForceY"
 			     width="128" />
-			<spinner bottom_delta="-20" decimal_digits="3" follows="left|top" height="16"
+			<spinner bottom_delta="-20" decimal_digits="5" follows="left|top" height="16"
 			     increment="0.01" initial_val="0" label="Force Z" label_width="65" left="10"
 			     max_val="10" min_val="-10" mouse_opaque="true" name="FlexForceZ"
 			     width="128" />
@@ -970,15 +1016,15 @@
 			     can_apply_immediately="true" color="0.5, 0.5, 0.5, 1" follows="left|top"
 			     height="48" label="" left_delta="67" mouse_opaque="true" name="colorswatch"
 			     tool_tip="Click to open Color Picker" width="32" />
-			<spinner bottom_delta="-4" decimal_digits="3" follows="left|top" height="16"
+			<spinner bottom_delta="-4" decimal_digits="5" follows="left|top" height="16"
 			     increment="0.1" initial_val="0.5" label="Intensity" label_width="65"
 			     left="10" max_val="1" min_val="0" mouse_opaque="true"
 			     name="Light Intensity" width="128" />
-			<spinner bottom_delta="-20" decimal_digits="3" follows="left|top" height="16"
+			<spinner bottom_delta="-20" decimal_digits="5" follows="left|top" height="16"
 			     increment="0.1" initial_val="5" label="Radius" label_width="65"
 			     left_delta="0" max_val="20" min_val="0" mouse_opaque="true"
 			     name="Light Radius" width="128" />
-			<spinner bottom_delta="-20" decimal_digits="3" follows="left|top" height="16"
+			<spinner bottom_delta="-20" decimal_digits="5" follows="left|top" height="16"
 			     increment="0.25" initial_val="1" label="Falloff" label_width="65"
 			     left_delta="0" max_val="2" min_val="0" mouse_opaque="true"
 			     name="Light Falloff" width="128" />
@@ -1003,7 +1049,7 @@
 				Transparency %
 			</text>
 			<spinner bottom_delta="-20" decimal_digits="0" follows="left|top" height="16"
-			     increment="2" initial_val="0" left="180" max_val="90" min_val="0"
+			     increment="2" initial_val="0" left="180" max_val="100" min_val="0"
 			     mouse_opaque="true" name="ColorTrans" width="80" />
 			<text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
 			     bottom_delta="-12" drop_shadow_visible="true" follows="left|top"
@@ -1125,15 +1171,15 @@
 			     mouse_opaque="true" name="tex scale" v_pad="0" width="160">
 				Repeats per Face
 			</text>
-			<spinner bottom="-178" decimal_digits="3" follows="left|top" height="16" increment="0.1"
+			<spinner bottom="-178" decimal_digits="5" follows="left|top" height="16" increment="0.1"
 			     initial_val="0" label="Horizontal (U)" label_width="90" left="20"
-			     max_val="100" min_val="0" mouse_opaque="true" name="TexScaleU" width="160" />
+			     max_val="10000" min_val="0" mouse_opaque="true" name="TexScaleU" width="160" />
 			<check_box bottom="-179" follows="left|top" font="SansSerifSmall" height="16"
 			     initial_value="false" label="Flip" left_delta="170" mouse_opaque="true"
 			     name="checkbox flip s" width="70" />
-			<spinner bottom="-196" decimal_digits="3" follows="left|top" height="16" increment="0.1"
+			<spinner bottom="-196" decimal_digits="5" follows="left|top" height="16" increment="0.1"
 			     initial_val="0" label="Vertical (V)" label_width="90" left="20"
-			     max_val="100" min_val="0" mouse_opaque="true" name="TexScaleV" width="160" />
+			     max_val="10000" min_val="0" mouse_opaque="true" name="TexScaleV" width="160" />
 			<check_box bottom="-197" follows="left|top" font="SansSerifSmall" height="16"
 			     initial_value="false" label="Flip" left_delta="170" mouse_opaque="true"
 			     name="checkbox flip t" width="70" />
@@ -1170,10 +1216,10 @@
 			     mouse_opaque="true" name="tex offset" v_pad="0" width="160">
 				Offset
 			</text>
-			<spinner bottom="-308" decimal_digits="3" follows="left|top" height="16" increment="0.1"
+			<spinner bottom="-308" decimal_digits="5" follows="left|top" height="16" increment="0.1"
 			     initial_val="0" label="Horizontal (U)" label_width="90" left="20"
 			     max_val="1" min_val="-1" mouse_opaque="true" name="TexOffsetU" width="160" />
-			<spinner bottom_delta="-18" decimal_digits="3" follows="left|top" height="16"
+			<spinner bottom_delta="-18" decimal_digits="5" follows="left|top" height="16"
 			     increment="0.1" initial_val="0" label="Vertical (V)" label_width="90"
 			     left="20" max_val="1" min_val="-1" mouse_opaque="true" name="TexOffsetV"
 			     width="160" />
@@ -1191,9 +1237,12 @@
 		<panel border="true" bottom="-383" follows="left|top|right|bottom" height="367"
 		     label="Content" left="1" mouse_opaque="false" name="Contents" width="270">
 			<button bottom="-30" follows="left|top" font="SansSerif" halign="center" height="20"
-			      label="New Script..." label_selected="New Script..."
+			      label="New Script" label_selected="New Script"
 			     left="10" mouse_opaque="true" name="button new script" scale_image="TRUE"
-			     width="130" />
+			     width="100" />
+      <button bottom_delta="0" left_delta="110" width="100" height="20" follows="left|top"
+            label="Permissions..." name="button permissions" font="SansSerif" halign="center"
+            mouse_opaque="true" scale_image="TRUE" />
 			<panel bottom_delta="-330" follows="left|top" height="325"  left="10"
 			     mouse_opaque="true" name="ContentsInventory" width="252" />
 		</panel>

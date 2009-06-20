@@ -367,9 +367,9 @@ according to the Community Standards.
 	</alert>
 	<alert modal="true" name="ClickPublishHelpAvatar">
 		<message name="message">
-			Selecting &quot;Show in Search&quot; will show:
-			- my profile in search results
-			- a link to my profile in public group pages
+Selecting &quot;Show in Search&quot; will show:
+- my profile in search results
+- a link to my profile in public group pages
 		</message>
 	</alert>
 	<alert modal="true" name="ClickPartnerHelpAvatar">
@@ -473,7 +473,7 @@ Do you wish to proceed?
 	<alert modal="true" name="JoinGroupCannotAfford">
 		<message name="message">
 			Joining this group costs L$[COST].
-You do not have a sufficient balance to join this group.
+You do not have enough L$ to join this group.
 		</message>
 	</alert>
 	<alert modal="true" name="LandBuyPass">
@@ -665,7 +665,7 @@ to set its Landing Point.
 	</alert>
 	<alert modal="true" name="PromptRecipientEmail">
 		<message name="message">
-			Please enter the recipient&apos;s email address.
+			Please enter a valid email address for the recipient(s).
 		</message>
 	</alert>
 	<alert modal="true" name="PromptSelfEmail">
@@ -725,24 +725,18 @@ The outfit folder contains no clothing, body parts, or attachments.
 			You can not wear that item because it has not yet loaded. Please try again in a minute.
 		</message>
 	</alert>
-	<alert modal="true" name="MustHaveAccountToLogInNoLinks">
-		<message name="message">
-			You must have an account to connect to [SECOND_LIFE].
-		</message>
-		<option name="OK">
-			Close
-		</option>
-	</alert>
 	<alert modal="true" name="MustHaveAccountToLogIn">
 		<message name="message">
-			You must have an account to connect to [SECOND_LIFE].
-Go to www.secondlife.com to create an account?
+Oops! Something was left blank.
+You need to enter both the First and Last name of your avatar.
+
+You need an account to enter [SECOND_LIFE]. Would you like to create one now?
 		</message>
 		<option name="OK">
-			OK
+			Create a new account
 		</option>
 		<option name="Cancel">
-			Cancel
+			Try again
 		</option>
 	</alert>
 	<alert modal="true" name="AddClassified">
@@ -1345,7 +1339,7 @@ Do you really want to give these items?
 	<alert modal="true" name="CannotGiveCategory">
 		<message name="message">
 			You do not have permission to transfer
-			the selected folder.
+the selected folder.
 		</message>
 	</alert>
 	<alert modal="true" name="FreezeAvatar">
@@ -1394,6 +1388,20 @@ chat, or interact with the world.
 			Cancel
 		</option>
 	</alert>
+  <alert modal="true" name="EjectAvatarEstate">
+    <message name="message">
+      Eject this avatar from the estate?
+    </message>
+    <option name="Eject">
+      Eject
+    </option>
+    <option name="EjectandBan">
+      Eject and Ban
+    </option>
+    <option name="Cancel">
+      Cancel
+    </option>
+  </alert>
 	<alert modal="true" name="EjectAvatarFullname">
 		<message name="message">
 			Eject [AVATAR_NAME] from your land?
@@ -1408,7 +1416,29 @@ chat, or interact with the world.
 			Cancel
 		</option>
 	</alert>
-	<alert modal="true" name="InvalidUUID">
+    <alert modal="true" name="EjectAvatarNoBan">
+        <message name="message">
+            Eject this avatar from your land?
+        </message>
+        <option name="Eject">
+            Eject
+        </option>
+        <option name="Cancel">
+            Cancel
+        </option>
+    </alert>
+    <alert modal="true" name="EjectAvatarFullnameNoBan">
+        <message name="message">
+            Eject [AVATAR_NAME] from your land?
+        </message>
+        <option name="Eject">
+            Eject
+        </option>
+        <option name="Cancel">
+            Cancel
+        </option>
+    </alert>
+    <alert modal="true" name="InvalidUUID">
 		<message name="message">
 			Not a valid UUID.
 		</message>
@@ -1590,12 +1620,12 @@ Expected [VALIDS]
 	</alert>
 	<alert modal="true" name="InsufficientFundsToUploadFile">
 		<message name="message">
-			Insufficient L$ to upload file: the price is L$[COST], your balance is L$[BALANCE]
+			Not enough L$ to upload file: the price is L$[COST], your balance is L$[BALANCE]
 		</message>
 	</alert>
 	<alert modal="true" name="InsufficientFundsToFinishUpload">
 		<message name="message">
-			Insufficient L$ to finish uploading [FILE]: the price is L$[COST], your balance is L$[BALANCE]
+			Not enough L$ to finish uploading [FILE]: the price is L$[COST], your balance is L$[BALANCE]
 		</message>
 	</alert>
 	<alert modal="true" name="CannotUploadReason">
@@ -1782,7 +1812,7 @@ No parcel selected.
 	<alert modal="true" name="CannotBuyLandNoRegion">
 		<message name="message">
 			Unable to buy land:
-			Cannot find the region this land is in.
+Cannot find the region this land is in.
 		</message>
 	</alert>
 	<alert modal="true" name="CannotCloseFloaterBuyLand">
@@ -2082,14 +2112,15 @@ www.secondlife.com/support.
 		<message name="message">
 You have been logged out of [SECOND_LIFE]:
             [MESSAGE]
-You can still look at existing IM and chat by clicking 'View IM &amp; Chat'. Otherwise, click 'Quit' to exit [SECOND_LIFE] immediately.
+
+You can still look at existing IM and chat; If you have any unsaved notecards or scripts open, you should copy their contents to your hard drive before closing out, as they will not be saved.
     </message>
-    <option name="Continue">
+    <!-- <option name="Continue">
 			View IM &amp; Chat
 		</option>
 		<option name="Quit">
 			Quit
-		</option>
+		</option> -->
 	</alert>
 	<alert modal="true" name="OnlyOfficerCanBuyLand">
 		<message name="message">
@@ -2098,6 +2129,20 @@ You do not have permission to buy land for your active group.
 		</message>
 	</alert>
 	<alert modal="true" name="AddFriend" title="Add Friend">
+		<message name="message">
+Friends can give permissions to track each
+other on the map and receive online status updates.
+
+Offer friendship to [NAME]?
+		</message>
+		<option name="Offer">
+			OK
+		</option>
+		<option name="Cancel">
+			Cancel
+		</option>
+	</alert>
+	<alert modal="true" name="AddFriendWithMessage" title="Add Friend">
 		<message name="message">
 Friends can give permissions to track each
 other on the map and receive online status updates.
@@ -2543,7 +2588,7 @@ You can change your mind later.
 	</alert>
 	<alert modal="true" name="NotEnoughCurrency">
 		<message name="message">
-			[NAME] L$ [PRICE] You don&apos;t have enough currency to do that.
+			[NAME] L$ [PRICE] You don&apos;t have enough L$ to do that.
 		</message>
 	</alert>
 	<alert modal="true" name="GrantedModifyRights">
@@ -2556,6 +2601,11 @@ You can change your mind later.
 			Your privilege to modify [FIRST_NAME] [LAST_NAME]&apos;s objects has been revoked
 		</message>
 	</alert>
+  <alert modal="true" name="FriendshipDissolved">
+    <message name="message">
+      Your friendship with [FIRST_NAME] [LAST_NAME] has been dissolved.
+    </message>
+  </alert>
 	<alert modal="true" name="FlushMapVisibilityCaches">
 		<message name="message">
 			This will flush the map caches on this region.
@@ -2596,7 +2646,7 @@ Please select only one object and try again.
 	<alert modal="true" name="EstateObjectReturn">
 		<message name="message">
 			Are you sure you want to return objects owned by
-			[USER_NAME] ?
+[USER_NAME] ?
 		</message>
 		<option name="Return">
 			OK
@@ -2970,20 +3020,6 @@ Download to your Applications folder?
 			Cancel
 		</option>
 	</alert>
-	<alert modal="true" name="WebLaunchReleaseNotes">
-		<message name="message">
-			View the [SECOND_LIFE] Release Notes?
-		</message>
-		<ignore name="ignore">
-			When launching web browser to view the Release Notes
-		</ignore>
-		<option name="Gotopage">
-			OK
-		</option>
-		<option name="Cancel">
-			Cancel
-		</option>
-	</alert>
 	<alert modal="true" name="ReturnToOwner">
 		<message name="message">
 			Are you sure you want to return the selected
@@ -3167,7 +3203,7 @@ from the &apos;Edit&apos; menu.
 		<message name="message">
 			Kick this user with what message?
 		</message>
-		<editline>
+		<editline name="editline">
 			An administrator has logged you off.
 		</editline>
 		<option name="OK">
@@ -3181,7 +3217,7 @@ from the &apos;Edit&apos; menu.
 		<message name="message">
 			Kick everyone currently on the grid with what message?
 		</message>
-		<editline>
+		<editline name="editline">
 			An administrator has logged you off.
 		</editline>
 		<option name="OK">
@@ -3195,7 +3231,7 @@ from the &apos;Edit&apos; menu.
 		<message name="message">
 			Freeze this user with what message?
 		</message>
-		<editline>
+		<editline name="editline">
 			You have been frozen. You cannot move or chat. An administrator will contact you via instant message (IM).
 		</editline>
 		<option name="OK">
@@ -3209,7 +3245,7 @@ from the &apos;Edit&apos; menu.
 		<message name="message">
 			Unfreeze this user with what message?
 		</message>
-		<editline>
+		<editline name="editline">
 			You are no longer frozen.
 		</editline>
 		<option name="OK">
@@ -3235,7 +3271,7 @@ from the &apos;Edit&apos; menu.
 		<message name="message">
 			Offer a teleport to your location with the following message?
 		</message>
-		<editline>
+		<editline name="editline">
 			Join me in [REGION]
 		</editline>
 		<option name="OK">
@@ -3249,7 +3285,7 @@ from the &apos;Edit&apos; menu.
 		<message name="message">
 			God summon user to your location?
 		</message>
-		<editline>
+		<editline name="editline">
 			Join me in [REGION]
 		</editline>
 		<option name="OK">
@@ -3278,7 +3314,7 @@ from the &apos;Edit&apos; menu.
 			Type a short announcement which will be
 sent to everyone currently in your estate.
 		</message>
-		<editline />
+		<editline name="editline" />
 		<option name="OK">
 			OK
 		</option>
@@ -3569,7 +3605,7 @@ Does this group contain Mature content?
 			Type a short announcement which will be
 sent to everyone in this region.
 		</message>
-		<editline />
+		<editline name="editline" />
 		<option name="OK">
 			OK
 		</option>
@@ -4260,9 +4296,9 @@ http://secondlife.com/corporate/cs.php
 
 All reported abuses of the Terms of Service and Community Standards 
 are investigated and resolved. You can view the incident 
-resolution on the Police Blotter at:
+resolution on the Incident Report at:
 
-http://secondlife.com/community/blotter.php
+http://secondlife.com/support/incidentreport.php
 		</message>
 	</alert>
 	<alert modal="true" name="HelpReportAbuseEmailEO">
@@ -4439,8 +4475,7 @@ the contents of your Trash folder?
 	</alert>
 	<alert modal="true" name="ConfirmClearCookies">
 		<message name="message">
-			Are you sure you want to clear 
-your cookies?
+			Are you sure you want to clear your cookies?
 		</message>
 		<option default="true" name="Yes">
 			Yes
@@ -4801,7 +4836,7 @@ with the the D slider.
 		<message name="message">
 			Give me a name for the new sky.
 		</message>
-		<editline>
+		<editline name="editline">
 			New Preset
 		</editline>
 		<option name="OK">
@@ -4820,7 +4855,7 @@ with the the D slider.
 		<message name="message">
 			Give me a name for the new water preset.
 		</message>
-		<editline>
+		<editline name="editline">
 			New Preset
 		</editline>
 		<option name="OK">
@@ -4870,7 +4905,7 @@ with the the D slider.
 	<alert modal="true" name="Cannot_Purchase_an_Attachment">
 		<message name="message">
 			Items may not be purchased while
-			they are part of an attachment.
+they are part of an attachment.
 		</message>
 	</alert>
 	<alert modal="true" name="DebitPermissionDetails"

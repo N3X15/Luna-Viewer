@@ -6103,7 +6103,9 @@ BOOL LLVOAvatar::loadMeshNodes()
 
 		//	llinfos << "Parsing mesh data for " << type << "..." << llendl;
 
-		mesh->setColor( 0.8f, 0.8f, 0.8f, 1.0f );
+		// If this isn't set to white (1.0), avatars will *ALWAYS* be darker than their surroundings.
+		// Do not touch!!!
+		mesh->setColor( 1.0f, 1.0f, 1.0f, 1.0f );
 
 		LLPolyMesh *poly_mesh = NULL;
 
@@ -7341,7 +7343,7 @@ BOOL LLVOAvatar::bindScratchTexture( LLGLenum format )
 	GLuint gl_name = getScratchTexName( format, &texture_bytes );
 	if( gl_name )
 	{
-		LLImageGL::bindExternalTexture( gl_name, 0, GL_TEXTURE_2D );
+		gGL.getTexUnit(0)->bindManual(LLTexUnit::TT_TEXTURE, gl_name);
 		stop_glerror();
 
 		F32* last_bind_time = LLVOAvatar::sScratchTexLastBindTime.getIfThere( format );
@@ -7399,7 +7401,7 @@ LLGLuint LLVOAvatar::getScratchTexName( LLGLenum format, U32* texture_bytes )
 		glGenTextures(1, &name );
 		stop_glerror();
 
-		LLImageGL::bindExternalTexture( name, 0, GL_TEXTURE_2D ); 
+		gGL.getTexUnit(0)->bindManual(LLTexUnit::TT_TEXTURE, name);
 		stop_glerror();
 
 		glTexImage2D(
@@ -7414,7 +7416,7 @@ LLGLuint LLVOAvatar::getScratchTexName( LLGLenum format, U32* texture_bytes )
 		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
 		stop_glerror();
 
-		LLImageGL::unbindTexture(0, GL_TEXTURE_2D); 
+		gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
 		stop_glerror();
 
 		LLVOAvatar::sScratchTexNames.addData( format, new LLGLuint( name ) );
@@ -9023,7 +9025,7 @@ void LLVOAvatar::onBakedTextureMasksLoaded( BOOL success, LLViewerImage *src_vi,
 			glGenTextures(1, (GLuint*) &gl_name );
 			stop_glerror();
 
-			LLImageGL::bindExternalTexture( gl_name, 0, GL_TEXTURE_2D ); 
+			gGL.getTexUnit(0)->bindManual(LLTexUnit::TT_TEXTURE, gl_name);
 			stop_glerror();
 
 			glTexImage2D(
@@ -9429,9 +9431,26 @@ void LLVOAvatar::cullAvatarsByPixelArea()
 		}
 	}
 
-	if( LLVOAvatar::areAllNearbyInstancesBaked() )
+	S32 grey_avatars = 0;
+	if( LLVOAvatar::areAllNearbyInstancesBaked(grey_avatars) )
 	{
 		LLVOAvatar::deleteCachedImages();
+	}
+	else
+	{
+		if (gFrameTimeSeconds != sUnbakedUpdateTime) // only update once per frame
+		{
+			sUnbakedUpdateTime = gFrameTimeSeconds;
+			sUnbakedTime += gFrameIntervalSeconds;
+		}
+		if (grey_avatars > 0)
+		{
+			if (gFrameTimeSeconds != sGreyUpdateTime) // only update once per frame
+			{
+				sGreyUpdateTime = gFrameTimeSeconds;
+				sGreyTime += gFrameIntervalSeconds;
+			}
+		}
 	}
 }
 

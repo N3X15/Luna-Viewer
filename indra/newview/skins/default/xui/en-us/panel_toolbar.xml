@@ -18,6 +18,9 @@
 	       list_position="above"
 	       width="50" follows="left|right" user_resize="false"/>
     <icon image_name="spacer24.tga" width="2" height="2" follows="left|right" auto_resize="false" color="0,0,0,0"/>
+    <button bottom="0" font="SansSerif" height="24" label="Radar"
+        name="avatar_list_btn" tool_tip="Radar"
+	       width="50" follows="left|right" user_resize="false"/>
     <button bottom="0" font="SansSerif" height="24" label="Fly"
         image_overlay="icn_toolbar_fly.tga" image_overlay_alignment="left"
                         image_selected="toolbar_btn_selected.tga"
@@ -65,6 +68,10 @@
              image_unselected="toolbar_btn_enabled.tga"
              image_disabled="toolbar_btn_disabled.tga" scale_image="true"
 	       name="inventory_btn" tool_tip="Your items. (Ctrl-I)" width="50" follows="left|right" user_resize="false"/>
+<slider bottom="0" control_name="RenderFarClip"
+	     decimal_digits="0" enabled="true" follows="bottom" height="20"
+	     increment="8" initial_val="160" label=""
+	     label_width="0" max_val="512" min_val="24" mouse_opaque="true"
+	     name="DrawDistance" show_text="true" width="100" auto_resize="false" tool_tip="Change your Draw Distance"/>
   </layout_stack>
-
 </panel>

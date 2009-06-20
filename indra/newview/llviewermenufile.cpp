@@ -1046,20 +1046,20 @@ void upload_new_resource(const LLTransactionID &tid, LLAssetType::EType asset_ty
 	{
 		if(temporary_up == FALSE)
 		{
-		llinfos << "NewAgentInventory capability not found, new agent inventory via asset system." << llendl;
-		// check for adequate funds
-		// TODO: do this check on the sim
-		if (LLAssetType::AT_SOUND == asset_type ||
-			LLAssetType::AT_TEXTURE == asset_type ||
-			LLAssetType::AT_ANIMATION == asset_type)
-		{
-			S32 upload_cost = LLGlobalEconomy::Singleton::getInstance()->getPriceUpload();
-			S32 balance = gStatusBar->getBalance();
-			if (balance < upload_cost)
+			llinfos << "NewAgentInventory capability not found, new agent inventory via asset system." << llendl;
+			// check for adequate funds
+			// TODO: do this check on the sim
+			if (LLAssetType::AT_SOUND == asset_type ||
+				LLAssetType::AT_TEXTURE == asset_type ||
+				LLAssetType::AT_ANIMATION == asset_type)
 			{
-				// insufficient funds, bail on this upload
-				LLFloaterBuyCurrency::buyCurrency("Uploading costs", upload_cost);
-				return;
+				S32 upload_cost = LLGlobalEconomy::Singleton::getInstance()->getPriceUpload();
+				S32 balance = gStatusBar->getBalance();
+				if (balance < upload_cost)
+				{
+					// insufficient funds, bail on this upload
+					LLFloaterBuyCurrency::buyCurrency("Uploading costs", upload_cost);
+					return;
 				}
 			}
 		}
