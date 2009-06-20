@@ -8,7 +8,7 @@
 #endif
 #include "string.h"
 
-#include "tolua++.h"
+#include "lua/tolua++.h"
 
 /* Exported function */
 TOLUA_API int  tolua_LuaBase_open (lua_State* tolua_S);

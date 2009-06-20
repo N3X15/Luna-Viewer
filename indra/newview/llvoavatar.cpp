@@ -3085,7 +3085,7 @@ void resolve_client(LLColor4& avatar_name_color, std::string& client, LLVOAvatar
 	if(LLVOAvatar::ClientResolutionList.has("isComplete") && LLVOAvatar::ClientResolutionList.has(idx.asString()))
 	{
 		LLSD cllsd = LLVOAvatar::ClientResolutionList[idx.asString()];
-		client = cllsd["name"];
+		client = cllsd["name"].asString();
 		LLColor4 colour;
 		colour.setValue(cllsd["color"]);
 		avatar_name_color += colour;

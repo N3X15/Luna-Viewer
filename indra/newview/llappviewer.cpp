@@ -875,7 +875,8 @@ bool LLAppViewer::init()
 
 	LLViewerJoystick::getInstance()->init(false);
 
-	TSStuff::init();
+	// Todo: Use the pieces for our own purposes...
+//	TSStuff::init();
 
 	return true;
 }
@@ -1152,7 +1153,8 @@ bool LLAppViewer::mainLoop()
 
 bool LLAppViewer::cleanup()
 {
-	TSStuff::cleanupClass();
+	// Todo: Take the pieces of TSStuff for use in SHLLua.
+	//TSStuff::cleanupClass();
 	
 	//flag all elements as needing to be destroyed immediately
 	// to ensure shutdown order

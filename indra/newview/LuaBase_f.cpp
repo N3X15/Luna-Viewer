@@ -14,7 +14,7 @@
 #include "lldir.h"
 #include "llviewerstats.h"
 
-#include <direct.h>
+//#include <direct.h>
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -170,8 +170,6 @@ void Lua_tp(const char* SimName, int x, int y, int z)
 	LLVector3 pl(x,y,z);
 	LLSimInfo *si=LLWorldMap::getInstance()->simInfoFromName(simname);
 	gAgent.teleportRequest(si->mHandle,pl);
-	std::string o=llformat("Teleporting to: %s/%d/%d/%d",si->mName,x,y,z);
-	LuaPrint(o.c_str());
 }
 
 bool Lua_exists(const char* Filename)

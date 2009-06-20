@@ -44,6 +44,7 @@ public:
 	~SHLLua();
 
 	bool callLuaHook(const char *EventName,int numargs,...);
+	void RunString(std::string s);
 	void run();
 
 	void RunFile(std::string file);

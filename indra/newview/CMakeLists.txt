@@ -37,7 +37,7 @@ include(LLKDU)
 include(Emerald)
 include(LUA)
 include(ViewerMiscLibs)
-#include(toluapp)
+include(toluapp)
 
 if (WINDOWS)
     include(CopyWinLibs)
@@ -447,14 +447,15 @@ set(viewer_SOURCE_FILES
     llxmlrpctransaction.cpp
     noise.cpp
     pipeline.cpp
-    tsstuff.cpp
-    tslua.cpp
+#    tsstuff.cpp
+#    tslua.cpp
     LuaAgent_f.cpp
     LuaAvatar_f.cpp
     LuaBase_f.cpp
     LuaBuild_f.cpp
     LuaUI_f.cpp
     SHLLua.cpp
+    flexconsole.cpp
     )
 
 set(VIEWER_BINARY_NAME "secondlife-bin" CACHE STRING
@@ -867,8 +868,8 @@ set(viewer_HEADER_FILES
     noise.h
     pipeline.h
     randgauss.h
-    tsstuff.h
-    tslua.h
+#    tsstuff.h
+#    tslua.h
     VertexCache.h
     VorbisFramework.h
     SHLLua.h
@@ -879,6 +880,7 @@ set(viewer_HEADER_FILES
 	LuaBase_f.h
 	LuaBuild_f.h
 	LuaUI_f.h
+	flexconsole.h
     )
 
 
@@ -1321,8 +1323,8 @@ target_link_libraries(${VIEWER_BINARY_NAME}
     ${XMLRPCEPI_LIBRARIES}
     ${ELFIO_LIBRARIES}
     ${EMERALD_LIBRARIES}
-	${TOLUA_LIBRARIES}
-    ${LUA_LIBRARIES}
+    ${TOLUA_LIBRARIES}
+    ${LUA_LIBRARY}
     )
 
 build_version(viewer)

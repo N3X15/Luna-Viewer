@@ -47,9 +47,10 @@ extern "C" {
 #include "llgl.h"
 #include "llrender.h"
 #include "llglheaders.h"
+#include "llversionviewer.h"
 
 /* tolua++ */
-#include "tolua++.h"
+#include "lua/tolua++.h"
 
 /* Lua classes */
 #include "LuaBase.h"
@@ -81,7 +82,12 @@ void SHLLua::run()
 	tolua_LuaBase_open(L);
 
 	std::string  version; 
-	version = llformat("_SHL_VERSION=\"%d.%d.%d.%d\"",SHL_VERSION_MAJOR,SHL_VERSION_MINOR,SHL_VERSION_PATCH,SHL_VERSION_BUILD);
+	// Assign _SLUA_VERSION, which contains the version number of the host viewer.
+	version = llformat("_SLUA_VERSION=\"%d.%d.%d.%d\"",LL_VERSION_MAJOR,LL_VERSION_MINOR,LL_VERSION_PATCH,LL_VERSION_BUILD);
+	luaL_dostring(L, version.c_str());
+	
+	// Assign _SLUA_CHANNEL, which contains the channel name of the host client.
+	version = llformat("_SLUA_CHANNEL=\"%s\"",LL_CHANNEL);
 	luaL_dostring(L, version.c_str());
 
 	RunFile(gDirUtilp->getExpandedFilename(SHL_PATH_LUA,"_init_.lua"));
@@ -102,6 +108,11 @@ void SHLHooks_InitTable(lua_State *l, SHLLua* lol)
 SHLLua::~SHLLua()
 {
 	lua_close(L);
+}
+
+void SHLLua::RunString(std::string s)
+{
+	luaL_dostring(L,s.c_str());
 }
 
 void SHLLua::RunFile(std::string  file)
@@ -211,7 +222,7 @@ bool SHLLua::callLuaHook(const char *EventName,int numargs,...)
 	
 
 	va_list arglist;
-    va_start(arglist,numargs);
+    	va_start(arglist,numargs);
 
 	lua_getglobal(L,"CallHook");
 #ifdef LUA_HOOK_SPAM
@@ -221,9 +232,9 @@ bool SHLLua::callLuaHook(const char *EventName,int numargs,...)
 	{
 		lua_pushstring(L,EventName);
 		for(int i = 0;i<numargs;i++)
-        {
+        	{
 			lua_pushstring(L,va_arg(arglist,const char *));
-        }
+        	}
 
 		if(lua_pcall(L,numargs+1,0,0)!=0)
 		{
@@ -267,7 +278,6 @@ void Lua_CreateClassMetatable(lua_State* l, const char* name)
 	lua_pushliteral(l, "__index");
 	lua_pushvalue(l, -2);
 	lua_rawset(l, -3);
-
 }
 
 void Lua_CheckArgs(lua_State* l,int minArgs, int maxArgs, const char* errorMessage)
@@ -279,7 +289,7 @@ void Lua_CheckArgs(lua_State* l,int minArgs, int maxArgs, const char* errorMessa
 	}
 }
 
-static bool Lua_IsType(lua_State* l, int index, int id)
+ bool Lua_IsType(lua_State* l, int index, int id)
 {
 	// get registry[metatable]
 	if (!lua_getmetatable(l, index))
@@ -307,12 +317,12 @@ static bool Lua_IsType(lua_State* l, int index, int id)
 	return false;
 }
 
-static void Lua_PushClass(lua_State* l, const char* classname)
+void Lua_PushClass(lua_State* l, const char* classname)
 {
 	lua_pushlstring(l, classname, strlen(classname));
 }
 
-static int luaOnPanic(lua_State *L)
+int luaOnPanic(lua_State *L)
 {	
 	throw std::runtime_error("Lua Error: "+Lua_getErrorMessage(L));
 	return 0;
@@ -328,7 +338,7 @@ std::string  Lua_getErrorMessage(lua_State *L)
 	return "";
 }
 
-static void Lua_SetClass(lua_State *l,const char* classname)
+void Lua_SetClass(lua_State *l,const char* classname)
 {
 	Lua_PushClass(l,classname);
 	lua_rawget(l, LUA_REGISTRYINDEX);
@@ -339,7 +349,7 @@ static void Lua_SetClass(lua_State *l,const char* classname)
 }
 
 
-
+/*
 void LuaSetAvOverlay(const char *uuid,int type)
 {
 	/// NOT IMPLEMENTED YET ///
@@ -393,3 +403,4 @@ void LuaAvatarOverlay::setParentPos( const LLVector3 p )
 {
 	this->mParentPos=p;
 }
+*/
