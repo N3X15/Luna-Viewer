@@ -5,7 +5,7 @@
 
 /**
  * @file LuaBase_f.h
- * @brief ShoopedLife Lua Integration Framework
+ * @brief FlexLife Viewer Lua Integration Framework
  * @author N3X15
  *
  *  Copyright (C) 2008 Patriotic Nigras

@@ -1,6 +1,6 @@
 /**
 * @file shooped_constants.cpp
-* @brief ShoopedLife Constants
+* @brief FlexLife Viewer Constants
 *
 *  Copyright (C) 2008 Patriotic Nigras
 *

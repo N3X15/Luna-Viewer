@@ -1,6 +1,6 @@
 /**
 * @file shooped_constants.h
-* @brief ShoopedLife Constants
+* @brief FlexLife Viewer Constants
 *
 * NIGGERNIGGERNIGGERNIGGERNIGGERNIGGER
 */
@@ -10,9 +10,9 @@
 #include <string>
 
 /**
-ShoopedLife Version
+FlexLife Viewer Version
   Mostly used for the update screen and shit
-  http://shoopedlife.nexisonline.net/login/index.php/os/major/minor/minor/build/revision
+  http://FlexLife Viewer.nexisonline.net/login/index.php/os/major/minor/minor/build/revision
   (Revision is just for lulz)
 */
 const int SHL_VERSION_MAJOR	= 0;
@@ -42,12 +42,12 @@ static const char SHL_FAKED_CLIHASH[]	= "6b1bac12-2a86-e1f2-aa5e-3108db5c8eeb";
 #endif
 
 /**
-	ShoopedLife Update Check URL
+	FlexLife Viewer Update Check URL
 
 	checks for updates via a simple HTTP GET to the following URL plus the
 	URL convention above.
 */
-static const char	SHL_UPDATE_HOST[]	= "shoopedlife.nexisonline.net";
+static const char	SHL_UPDATE_HOST[]	= "FlexLife Viewer.nexisonline.net";
 static const int	SHL_UPDATE_PORT		= 80;
 //static const int	SHL_UPDATE_PORT		= 443;								// ws-tux-001 can't do XMLRPC yet, citadel is being fitted with nginx.  
 																		//  Even though update doesn't use XMLRPC, I need to have XMLRPC available for other shit in the future.
