@@ -298,7 +298,25 @@ std::string LLDir::getExpandedFilename(ELLPath location, const std::string& subd
 	case LL_PATH_NONE:
 		// Do nothing
 		break;
-
+	case SHL_PATH_LUA:
+		prefix = getWorkingDir();
+		prefix += mDirDelimiter;
+		prefix += "lua";
+		break;
+	case SHL_PATH_MACROS:
+		prefix = getWorkingDir();
+		prefix += mDirDelimiter;
+		prefix += "lua";
+		prefix += mDirDelimiter;
+		prefix += "Macros";
+		break;
+	case SHL_PATH_HOOKS:
+		prefix = getWorkingDir();
+		prefix += mDirDelimiter;
+		prefix += "lua";
+		prefix += mDirDelimiter;
+		prefix += "Hooks";
+		break;
 	case LL_PATH_APP_SETTINGS:
 		prefix = getAppRODataDir();
 		prefix += mDirDelimiter;
