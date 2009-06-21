@@ -1557,7 +1557,7 @@ bool idle_startup()
 			   && first_sim.isOk()
 			   && gAgent.mInventoryRootID.notNull())
 			{
-				LLStartUp::setStartupState( STATE_LUA_LOAD );
+				LLStartUp::setStartupState( STATE_WORLD_INIT );
 			}
 			else
 			{
@@ -1666,7 +1666,7 @@ bool idle_startup()
 		gAgent.setPositionAgent(agent_start_position_region);
 
 		display_startup();
-		LLStartUp::setStartupState( STATE_WORLD_INIT );
+		LLStartUp::setStartupState( STATE_LUA_LOAD );
 		return FALSE;
 	}
 
@@ -1698,7 +1698,7 @@ bool idle_startup()
 		else
 			set_startup_status(0.40f, "Initializing Lua...", "Lua startup failed.");
 
-		LLStartUp::setStartupState( STATE_WORLD_INIT );
+		LLStartUp::setStartupState( STATE_MULTIMEDIA_INIT );
 		return FALSE;
 	}
 
