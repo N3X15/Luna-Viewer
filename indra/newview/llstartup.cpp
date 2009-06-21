@@ -1666,7 +1666,7 @@ bool idle_startup()
 		gAgent.setPositionAgent(agent_start_position_region);
 
 		display_startup();
-		LLStartUp::setStartupState( STATE_MULTIMEDIA_INIT );
+		LLStartUp::setStartupState( STATE_WORLD_INIT );
 		return FALSE;
 	}
 

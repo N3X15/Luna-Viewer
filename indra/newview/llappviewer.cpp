@@ -163,7 +163,7 @@
 
 #include "llcommandlineparser.h"
 
-#include "tsstuff.h"
+//#include "tsstuff.h"
 // FlexLife Lua includes (TODO: Rename)
 #include "SHLLua.h"
 
@@ -3120,6 +3120,7 @@ void LLAppViewer::idle()
 	{
 		if (gRenderStartTime.getElapsedTimeF32() > qas)
 		{
+			//TODO add a "never idle log out" setting for noobs
 			LLAppViewer::instance()->forceQuit();
 		}
 	}
