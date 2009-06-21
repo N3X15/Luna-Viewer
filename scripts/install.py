@@ -467,7 +467,7 @@ windows/i686/vs/2003 -- specify a windows visual studio 2003 package"""
                 if os.path.exists(filename):
                     remove_dir_set.add(os.path.dirname(filename))
                     try:
-                    os.remove(filename)
+                        os.remove(filename)
                     except OSError:
                         # This is just for cleanup, so we don't care
                         # about normal failures.
