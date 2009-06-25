@@ -27,9 +27,9 @@
 
 /* Lua libraries */
 extern "C" {
-	#include "lua/lua.h"
-	#include "lua/lauxlib.h"
-	#include "lua/lualib.h"
+	#include "lua.h"
+	#include "lauxlib.h"
+	#include "lualib.h"
 }
 
 /* LL Objs */
@@ -50,7 +50,7 @@ extern "C" {
 #include "llversionviewer.h"
 
 /* tolua++ */
-#include "lua/tolua++.h"
+#include "tolua++.h"
 
 /* Lua classes */
 #include "LuaBase.h"
@@ -58,16 +58,26 @@ extern "C" {
 
 extern LLAgent gAgent;
 
-SHLLua* gLuaHooks=NULL;
-
-
 //#define LUA_HOOK_SPAM 1
 
-SHLLua::SHLLua() :
-	LLThread("Lua"),
+FlexLua::FlexLua() :
+	LLThread(std::string("Lua")),
 	L(NULL)
 {
-	run();
+	
+}
+SHLLua* SHLLua::sInstance = NULL;
+SHLLua* SHLLua::getInstance()
+{
+	return sInstance;
+}
+
+void SHLLua::Init()
+{
+	LL_INFOS("Lua") << "Starting Lua..." << llendl;
+	sInstance=new SHLLua();
+	sInstance->callLuaHook("OnLuaInit",0);
+	LL_INFOS("Lua") << "Lua started." << llendl;
 }
 
 void SHLLua::run()

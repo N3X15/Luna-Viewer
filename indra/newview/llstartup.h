@@ -68,8 +68,7 @@ typedef enum {
 	STATE_PRECACHE,					// Wait a bit for textures to download
 	STATE_WEARABLES_WAIT,			// Wait for clothing to download
 	STATE_CLEANUP,					// Final cleanup
-	STATE_STARTED,					// Up and running in-world
-	STATE_LUA_LOAD					// Activate Lua VM
+	STATE_STARTED					// Up and running in-world
 } EStartupState;
 
 // exported symbols

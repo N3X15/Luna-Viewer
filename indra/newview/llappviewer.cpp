@@ -876,7 +876,7 @@ bool LLAppViewer::init()
 	LLViewerJoystick::getInstance()->init(false);
 
 	// Todo: Use the pieces for our own purposes...
-//	TSStuff::init();
+	SHLLua::init();
 
 	return true;
 }

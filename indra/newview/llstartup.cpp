@@ -194,7 +194,7 @@
 #include "lldxhardware.h"
 #endif
 
-#include "SHLLua.h"
+//#include "SHLLua.h"
 //
 // exported globals
 //
@@ -1666,7 +1666,7 @@ bool idle_startup()
 		gAgent.setPositionAgent(agent_start_position_region);
 
 		display_startup();
-		LLStartUp::setStartupState( STATE_LUA_LOAD );
+		LLStartUp::setStartupState( STATE_MULTIMEDIA_INIT );
 		return FALSE;
 	}
 
@@ -1679,26 +1679,6 @@ bool idle_startup()
 	{
 		LLStartUp::multimediaInit();
 		LLStartUp::setStartupState( STATE_SEED_GRANTED_WAIT );
-		return FALSE;
-	}
-
-	if(STATE_LUA_LOAD==LLStartUp::getStartupState())
-	{
-		set_startup_status(0.40f, "Initializing Lua...", "Initializing Lua VM");
-		// fffff
-		gLuaHooks= new SHLLua();
-		set_startup_status(0.40f, "Initializing Lua...", "Checking Lua status");
-		if(gLuaHooks) 
-		{
-			set_startup_status(0.40f, "Initializing Lua...", "LUA SUCCESSFULLY INITIALIZED.");
-
-			// LUAHOOK:  OnLuaInit
-			gLuaHooks->callLuaHook("OnLuaInit",0);
-		}
-		else
-			set_startup_status(0.40f, "Initializing Lua...", "Lua startup failed.");
-
-		LLStartUp::setStartupState( STATE_MULTIMEDIA_INIT );
 		return FALSE;
 	}
 
@@ -1718,7 +1698,7 @@ bool idle_startup()
 	if (STATE_SEED_CAP_GRANTED == LLStartUp::getStartupState())
 	{
 		// LUAHOOK: OnSeedCapGranted
-		if(gLuaHooks) gLuaHooks->callLuaHook("OnSeedCapGranted",0);
+		SHLLua::getInstance()->callLuaHook("OnSeedCapGranted",0);
 
 		update_texture_fetch();
 
@@ -2210,7 +2190,7 @@ bool idle_startup()
 		if (gSavedSettings.getBOOL("FirstLoginThisInstall"))
 		{
 			// LUAHOOK: OnFirstLogin
-			if(gLuaHooks) gLuaHooks->callLuaHook("OnFirstLogin",0);
+			SHLLua::getInstance()->callLuaHook("OnFirstLogin",0);
 
 			// This is actually a pessimistic computation, because TCP may not have enough
 			// time to ramp up on the (small) default inventory file to truly measure max
