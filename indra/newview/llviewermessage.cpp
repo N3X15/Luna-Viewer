@@ -5495,7 +5495,7 @@ void process_script_teleport_request(LLMessageSystem* msg, void**)
 	msg->getVector3("Data", "SimPosition", pos);
 	msg->getVector3("Data", "LookAt", look_at);
 
-	gLuaHooks->callLuaHook("OnScriptTPRequest",2,object_name.c_str(),sim_name.c_str());
+	SHLLua::getInstance()->callLuaHook("OnScriptTPRequest",2,object_name.c_str(),sim_name.c_str());
 	if(gAllowWorldMap)
 	{
 		gFloaterWorldMap->trackURL(sim_name, (S32)pos.mV[VX], (S32)pos.mV[VY], (S32)pos.mV[VZ]);

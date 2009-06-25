@@ -43,6 +43,9 @@ public:
 	SHLLua();
 	~SHLLua();
 
+	static void init();
+	static SHLLua* getInstance();
+
 	bool callLuaHook(const char *EventName,int numargs,...);
 	void RunString(std::string s);
 	void run();
@@ -52,10 +55,11 @@ public:
 	void RunMacro(const std::string what);
 private:
 	lua_State *L; // Lua stack
+	static SHLLua *sInstance;
 public:
 };
 
-extern SHLLua *gLuaHooks;
+//extern SHLLua *gLuaHooks;
 
 void SHLHooks_CreateMetatable(lua_State *L);
 void SHLHooks_InitTable(lua_State *L, SHLLua* lol);

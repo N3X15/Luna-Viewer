@@ -60,7 +60,7 @@ extern LLAgent gAgent;
 
 //#define LUA_HOOK_SPAM 1
 
-FlexLua::FlexLua() :
+SHLLua::SHLLua() :
 	LLThread(std::string("Lua")),
 	L(NULL)
 {
@@ -72,7 +72,8 @@ SHLLua* SHLLua::getInstance()
 	return sInstance;
 }
 
-void SHLLua::Init()
+// Static
+void SHLLua::init()
 {
 	LL_INFOS("Lua") << "Starting Lua..." << llendl;
 	sInstance=new SHLLua();

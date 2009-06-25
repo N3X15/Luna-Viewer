@@ -1333,7 +1333,7 @@ LLViewerObject *LLViewerObjectList::createObject(const LLPCode pcode, LLViewerRe
 
 	updateActive(objectp);
 
-	if(gLuaHooks) gLuaHooks->callLuaHook("OnObjectCreated",2,fullid.asString().c_str(),LLPrimitive::pCodeToString(pcode).c_str());
+	SHLLua::getInstance()->callLuaHook("OnObjectCreated",2,fullid.asString().c_str(),LLPrimitive::pCodeToString(pcode).c_str());
 
 	return objectp;
 }
