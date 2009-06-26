@@ -58,13 +58,13 @@ extern "C" {
 
 extern LLAgent gAgent;
 
-//#define LUA_HOOK_SPAM 1
+#define LUA_HOOK_SPAM 1
 
 SHLLua::SHLLua() :
 	LLThread(std::string("Lua")),
 	L(NULL)
 {
-	
+	run();	
 }
 SHLLua* SHLLua::sInstance = NULL;
 SHLLua* SHLLua::getInstance()
@@ -77,7 +77,7 @@ void SHLLua::init()
 {
 	LL_INFOS("Lua") << "Starting Lua..." << llendl;
 	sInstance=new SHLLua();
-	//sInstance->callLuaHook("OnLuaInit",0);
+	sInstance->callLuaHook("OnLuaInit",0);
 	LL_INFOS("Lua") << "Lua started." << llendl;
 }
 
