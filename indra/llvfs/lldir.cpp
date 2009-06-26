@@ -299,19 +299,19 @@ std::string LLDir::getExpandedFilename(ELLPath location, const std::string& subd
 		// Do nothing
 		break;
 	case SHL_PATH_LUA:
-		prefix = getExecutableDir();
+		prefix = getAppRODataDir();
 		prefix += mDirDelimiter;
 		prefix += "lua";
 		break;
 	case SHL_PATH_MACROS:
-		prefix = getExecutableDir();
+		prefix = getAppRODataDir();
 		prefix += mDirDelimiter;
 		prefix += "lua";
 		prefix += mDirDelimiter;
 		prefix += "Macros";
 		break;
 	case SHL_PATH_HOOKS:
-		prefix = getExecutableDir();
+		prefix = getAppRODataDir();
 		prefix += mDirDelimiter;
 		prefix += "lua";
 		prefix += mDirDelimiter;
