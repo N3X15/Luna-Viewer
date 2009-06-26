@@ -77,7 +77,7 @@ void SHLLua::init()
 {
 	LL_INFOS("Lua") << "Starting Lua..." << llendl;
 	sInstance=new SHLLua();
-	sInstance->callLuaHook("OnLuaInit",0);
+	//sInstance->callLuaHook("OnLuaInit",0);
 	LL_INFOS("Lua") << "Lua started." << llendl;
 }
 
