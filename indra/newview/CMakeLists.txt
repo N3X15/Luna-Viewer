@@ -1455,4 +1455,4 @@ if (INSTALL)
   include(${CMAKE_CURRENT_SOURCE_DIR}/ViewerInstall.cmake)
 endif (INSTALL)
 
-ADD_VIEWER_BUILD_TEST(llagentaccess viewer)
+#ADD_VIEWER_BUILD_TEST(llagentaccess viewer)
