@@ -17,7 +17,8 @@
  * There are special exceptions to the terms and conditions of the GPL as
  * it is applied to this Source Code. View the full text of the exception
  * in the file doc/FLOSS-exception.txt in this software distribution, or
- * online at http://secondlifegrid.net/programs/open_source/licensing/flossexception
+ * online at
+ * http://secondlifegrid.net/programs/open_source/licensing/flossexception
  * 
  * By copying, modifying or distributing this software, you acknowledge
  * that you have read and understood your obligations described above,
@@ -70,6 +71,7 @@
 #include "llchatbar.h"
 #include "lllogchat.h"
 #include "lltexteditor.h"
+#include "lltextparser.h"
 #include "llfloaterhtml.h"
 #include "llweb.h"
 #include "llstylemap.h"
@@ -262,6 +264,9 @@ void LLFloaterChat::addChatHistory(const LLChat& chat, bool log_to_file)
 	history_editor->setParseHTML(TRUE);
 	history_editor_with_mute->setParseHTML(TRUE);
 	
+	history_editor->setParseHighlights(TRUE);
+	history_editor_with_mute->setParseHighlights(TRUE);
+	
 	if (!chat.mMuted)
 	{
 		add_timestamped_line(history_editor, chat, color);
@@ -392,15 +397,22 @@ void LLFloaterChat::addChat(const LLChat& chat,
 			text_color = gSavedSettings.getColor("IMChatColor");
 			size = INSTANT_MSG_SIZE;
 		}
-		gConsole->addLine(chat.mText, size, text_color);
+		// We display anything if it's not an IM. If it's an IM, check pref...
+		if	( !from_instant_message || gSavedSettings.getBOOL("IMInChatConsole") ) 
+		{
+			gConsole->addLine(chat.mText, size, text_color);
+		}
 	}
 
 	if(from_instant_message && gSavedPerAccountSettings.getBOOL("LogChatIM"))
 		log_chat_text(chat);
 	
-	if(from_instant_message && gSavedSettings.getBOOL("IMInChatHistory"))
+	if(from_instant_message && gSavedSettings.getBOOL("IMInChatHistory")) 	 
 		addChatHistory(chat,false);
-	
+
+	LLTextParser* highlight = LLTextParser::getInstance();
+	highlight->triggerAlerts(gAgent.getID(), gAgent.getPositionGlobal(), chat.mText, gViewerWindow->getWindow());
+
 	if(!from_instant_message)
 		addChatHistory(chat);
 }

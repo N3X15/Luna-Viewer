@@ -548,6 +548,8 @@ public:
 	 * @brief Returns a string with the selected names in the list
 	 */
 	std::string getSelectedNames(const std::string& separator = ", ");
+	std::string getSelectedName();
+	LLUUID getSelectedID();
 
 private:
 	static LLFloaterAvatarList* sInstance;
@@ -624,14 +626,10 @@ private:
 	static void onClickTeleport(void *userdata);
 	static void onClickEjectFromEstate(void *userdata);
 
-	static void callbackFreeze(S32 option, void *userdata);
-//	static void callbackUnfreeze(S32 option, void *userdata);
-	static void callbackEject(S32 option, void *userdata);
-//	static void callbackBan(S32 option, void *userdata);
-//	static void callbackMute(S32 option, void *userdata);
-//	static void callbackUnmute(void *userdata);
+	static void callbackFreeze(const LLSD& notification, const LLSD& response);
+	static void callbackEject(const LLSD& notification, const LLSD& response);
 	static void callbackAR(void *userdata);
-	static void callbackEjectFromEstate(S32 option, void *userdata);
+	static void callbackEjectFromEstate(const LLSD& notification, const LLSD& response);
 
 	static void callbackIdle(void *userdata);
 

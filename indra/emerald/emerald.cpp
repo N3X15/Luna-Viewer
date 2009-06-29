@@ -33,6 +33,10 @@
 #include <sstream>
 #include <cstring>
 
+#include <openssl/evp.h>
+#include <openssl/dh.h>
+#include <openssl/dsa.h>
+
 //-- Ascii85 encoder and decoder
 
 typedef unsigned int U32;
@@ -220,8 +224,6 @@ std::vector<unsigned char> EAscii85::decode(const std::string &in)
 }
 
 //-- AES wrapper
-
-#include <openssl/evp.h>
 
 class EAESEncrypt::EncryptImpl {
 public:

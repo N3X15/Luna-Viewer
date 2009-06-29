@@ -18,7 +18,8 @@
  * There are special exceptions to the terms and conditions of the GPL as
  * it is applied to this Source Code. View the full text of the exception
  * in the file doc/FLOSS-exception.txt in this software distribution, or
- * online at http://secondlifegrid.net/programs/open_source/licensing/flossexception
+ * online at
+ * http://secondlifegrid.net/programs/open_source/licensing/flossexception
  * 
  * By copying, modifying or distributing this software, you acknowledge
  * that you have read and understood your obligations described above,
@@ -96,7 +97,7 @@ BOOL LLPrefsIMImpl::postBuild()
 	childSetLabelArg("send_im_to_email", "[EMAIL]", getString("log_in_to_change"));
 
 	// Don't enable this until we get personal data
-	childDisable("include_im_in_chat_history");
+	childDisable("include_im_in_chat_console");
 	childDisable("show_timestamps_check");
 	childDisable("friends_online_notify_checkbox");
 	
@@ -114,7 +115,7 @@ BOOL LLPrefsIMImpl::postBuild()
 
 	childSetText("busy_response", getString("log_in_to_change"));
 
-	childSetValue("include_im_in_chat_history", gSavedSettings.getBOOL("IMInChatHistory"));
+	childSetValue("include_im_in_chat_console", gSavedSettings.getBOOL("IMInChatConsole"));
 	childSetValue("show_timestamps_check", gSavedSettings.getBOOL("IMShowTimestamps"));
 	childSetValue("friends_online_notify_checkbox", gSavedSettings.getBOOL("ChatOnlineNotification"));
 
@@ -163,7 +164,7 @@ void LLPrefsIMImpl::apply()
 
 		gSavedPerAccountSettings.setString("BusyModeResponse", std::string(wstring_to_utf8str(busy_response)));
 
-		gSavedSettings.setBOOL("IMInChatHistory", childGetValue("include_im_in_chat_history").asBoolean());
+		gSavedSettings.setBOOL("IMInChatConsole", childGetValue("include_im_in_chat_console").asBoolean());
 		gSavedSettings.setBOOL("IMShowTimestamps", childGetValue("show_timestamps_check").asBoolean());
 		gSavedSettings.setBOOL("ChatOnlineNotification", childGetValue("friends_online_notify_checkbox").asBoolean());
 		
@@ -234,7 +235,7 @@ void LLPrefsIMImpl::setPersonalInfo(const std::string& visibility, bool im_via_e
 		mOriginalHideOnlineStatus = true;
 	}
 
-	childEnable("include_im_in_chat_history");
+	childEnable("include_im_in_chat_console");
 	childEnable("show_timestamps_check");
 	childEnable("friends_online_notify_checkbox");
 

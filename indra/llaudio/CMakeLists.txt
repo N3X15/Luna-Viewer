@@ -31,7 +31,6 @@ set(llaudio_SOURCE_FILES
     audioengine.cpp
     listener.cpp
     llaudiodecodemgr.cpp
-    vorbisdecode.cpp
     vorbisencode.cpp
     )
 
@@ -41,7 +40,6 @@ set(llaudio_HEADER_FILES
     audioengine.h
     listener.h
     llaudiodecodemgr.h
-    vorbisdecode.h
     vorbisencode.h
     windgen.h
     )

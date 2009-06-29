@@ -157,13 +157,18 @@ void chat_avatar_status(std::string name, LLUUID key, ERadarAlertType type, bool
 }
 
 LLAvatarListEntry::LLAvatarListEntry(const LLUUID& id, const std::string &name, const LLVector3d &position, BOOL isLinden) :
-		mID(id), mName(name), mPosition(position), mDrawPosition(position), mMarked(FALSE), mFocused(FALSE), mIsLinden(isLinden), mActivityType(ACTIVITY_NEW), mAccountTitle(""),
+		mID(id), mName(name), mPosition(position), mDrawPosition(), mMarked(FALSE), mFocused(FALSE), mIsLinden(isLinden), mActivityType(ACTIVITY_NEW), mAccountTitle(""),
 			mUpdateTimer(), mActivityTimer(), mFrame(gFrameCount), mInSimFrame(U32_MAX), mInDrawFrame(U32_MAX), mInChatFrame(U32_MAX)
 {
 }
 
 void LLAvatarListEntry::setPosition(LLVector3d position, bool this_sim, bool drawn, bool chatrange)
 {
+	if ( mActivityType == ACTIVITY_DEAD )
+	{
+		setActivity(ACTIVITY_NEW);
+	}
+
 	if ( drawn )
 	{
 		if ( mDrawPosition != position && !mDrawPosition.isExactlyZero() )
@@ -500,164 +505,138 @@ void LLFloaterAvatarList::updateAvatarList()
 
 	LLVector3d mypos = gAgent.getPositionGlobal();
 
-	{//iterate minimap so if they are within draw the more precise value ends up used
-		// Draw avatars
-		//const LLVector3d& my_origin_global = gAgent.getRegion()->getOriginGlobal();
-		LLVector3d pos_global;
-		for (LLWorld::region_list_t::iterator iter = LLWorld::getInstance()->mActiveRegionList.begin();
-			 iter != LLWorld::getInstance()->mActiveRegionList.end(); ++iter)
+	{
+		std::vector<LLUUID> avatar_ids;
+		std::vector<LLUUID> sorted_avatar_ids;
+		std::vector<LLVector3d> positions;
+
+		LLWorld::instance().getAvatars(&avatar_ids, &positions, mypos, F32_MAX);
+
+		sorted_avatar_ids = avatar_ids;
+		std::sort(sorted_avatar_ids.begin(), sorted_avatar_ids.end());
+
+		for(std::vector<LLCharacter*>::const_iterator iter = LLCharacter::sInstances.begin(); iter != LLCharacter::sInstances.end(); ++iter)
 		{
-			LLViewerRegion* regionp = *iter;
-			const LLVector3d& origin_global = regionp->getOriginGlobal();
+			LLUUID avid = (*iter)->getID();
 
-			S32 count = regionp->mMapAvatars.count();
-			S32 i;
-			LLVector3 pos_local;
-			U32 compact_local;
-			U8 bits;
-			for (i = 0; i < count; i++)
+			if(!std::binary_search(sorted_avatar_ids.begin(), sorted_avatar_ids.end(), avid))
 			{
-				compact_local = regionp->mMapAvatars.get(i);
+				avatar_ids.push_back(avid);
+			}
+		}
 
-				bits = compact_local & 0xFF;
-				pos_local.mV[VZ] = F32(bits) * 4.f;
-				compact_local >>= 8;
+		size_t i;
+		size_t count = avatar_ids.size();
 
-				bits = compact_local & 0xFF;
-				pos_local.mV[VY] = (F32)bits;
-				compact_local >>= 8;
+		for(i = 0; i < count; ++i)
+		{
+			std::string name;
+			std::string first;
+			std::string last;
+			const LLUUID &avid = avatar_ids[i];
 
-				bits = compact_local & 0xFF;
-				pos_local.mV[VX] = (F32)bits;
+			LLVector3d position;
+			LLViewerObject *obj = gObjectList.findObject(avid);
 
-				pos_global.setVec( pos_local );
-				pos_global += origin_global;
+			if(obj)
+			{
+				LLVOAvatar* avatarp = dynamic_cast<LLVOAvatar*>(obj);
 
-				if( i < regionp->mMapAvatarIDs.count())
+				if (avatarp == NULL)
 				{
-					std::string name;
-					std::string first;
-					std::string last;
-					LLUUID avid = regionp->mMapAvatarIDs.get(i);
-					gCacheName->getName(avid, first, last);
-					name=  first+" "+last;
-					LLVector3d position = pos_global;
-					if (name.empty() || (name.compare(" ") == 0) || first == gCacheName->getDefaultName())
-					{
-						//llinfos << "Name empty for avatar " << avid << llendl;
-						continue;
-					}
-					if( pos_global.mdV[VZ] == 0.0)
-					{
-						//bad hax :<
-						//uhh... >.>  i am going to play with this at the display part... yeah
-					}
+					continue;
+				}
 
-					if (avid.isNull())
-					{
-						//llinfos << "Key empty for avatar " << name << llendl;
-						continue;
-					}
+				// Skip if avatar is dead(what's that?)
+				// or if the avatar is ourselves.
+				if (avatarp->isDead() || avatarp->isSelf())
+				{
+					continue;
+				}
 
-					if ( mAvatars.count( avid ) > 0 )
+				// Get avatar data
+				position = gAgent.getPosGlobalFromAgent(avatarp->getCharacterPosition());
+				name = avatarp->getFullname();
+
+				// Apparently, sometimes the name comes out empty, with a " " name. This is because
+				// getFullname concatenates first and last name with a " " in the middle.
+				// This code will avoid adding a nameless entry to the list until it acquires a name.
+
+				//duped for lower section
+				if (name.empty() || (name.compare(" ") == 0))// || (name.compare(gCacheName->getDefaultName()) == 0))
+				{
+					if(gCacheName->getName(avid, first, last))
 					{
-						// Avatar already in list, update position
-						mAvatars[avid].setPosition(position, (regionp == gAgent.getRegion()), false, (position - mypos).magVec() < 20.0);
+						name = first + " " + last;
 					}
 					else
 					{
-						// Avatar not there yet, add it
-						BOOL isLinden = last == "Linden";
-
-						LLAvatarListEntry entry(avid, name, position, isLinden);
-						mAvatars[avid] = entry;
-
-						//sendAvatarPropertiesRequest(avid);
-						//llinfos << "avatar list refresh: adding " << name << llendl;
-
+						continue;
 					}
+				}
 
-					//if(mAreaAlertList.count( avid ) > 0 )
-					//{
-						
-						//if(mAreaAlertList[avid].area < 1)
-						//{
-						//	mAreaAlertList[avid].area = 1;
-					//		LLChat chat;
-					//		chat.mSourceType = CHAT_SOURCE_SYSTEM;
-					//		chat.mText = 
-						//}
-						//
-					//}
-					
+				if (avid.isNull())
+				{
+					//llinfos << "Key empty for avatar " << name << llendl;
+					continue;
+				}
+
+				if ( mAvatars.count( avid ) > 0 )
+				{
+					// Avatar already in list, update position
+					mAvatars[avid].setPosition(position, (avatarp->getRegion() == gAgent.getRegion()), true, (position - mypos).magVec() < 20.0);
+				}
+				else
+				{
+					// Avatar not there yet, add it
+					BOOL isLinden = ( strcmp(avatarp->getNVPair("LastName")->getString(), "Linden") == 0 || last == "Linden" );
+
+					LLAvatarListEntry entry(avid, name, position, isLinden);
+					mAvatars[avid] = entry;
+
+					//sendAvatarPropertiesRequest(avid);
+					//llinfos << "avatar list refresh: adding " << name << llendl;
+
+				}
+			}
+			else
+			{
+				if( i < positions.size())
+				{
+					position = positions[i];
+				}
+				else
+				{
+					continue;
+				}
+
+				if(gCacheName->getName(avid, first, last))
+				{
+					name = first + " " + last;
+				}
+				else
+				{
+					//name = gCacheName->getDefaultName();
+					continue; //prevent (Loading...)
+				}
+
+				if ( mAvatars.count( avid ) > 0 )
+				{
+					// Avatar already in list, update position
+					mAvatars[avid].setPosition(position, gAgent.getRegion()->pointInRegionGlobal(position), false, (position - mypos).magVec() < 20.0);
+				}
+				else
+				{
+					// Avatar not there yet, add it
+					BOOL isLinden = last == "Linden";
+
+					LLAvatarListEntry entry(avid, name, position, isLinden);
+					mAvatars[avid] = entry;
 				}
 			}
 		}
 	}
-	/*
-	 * Iterate over all the avatars known at the time
-	 * NOTE: Is this the right way to do that? It does appear that LLVOAvatar::isInstances contains
-	 * the list of avatars known to the client. This seems to do the task of tracking avatars without
-	 * any additional requests.
-	 *
-	 * BUG: It looks like avatars sometimes get stuck in this list, and keep perpetually
-	 * moving in the same direction. My current guess is that somewhere else the client
-	 * doesn't notice an avatar disappeared, and keeps updating its position. This should
-	 * be solved at the source of the problem.
-	 */
-	for (std::vector<LLCharacter*>::iterator iter = LLCharacter::sInstances.begin();
-		iter != LLCharacter::sInstances.end(); ++iter)
-	{
-		LLVOAvatar* avatarp = (LLVOAvatar*) *iter;
-
-		// Skip if avatar is dead(what's that?)
-		// or if the avatar is ourselves.
-		if (avatarp->isDead() || avatarp->isSelf())
-		{
-			continue;
-		}
-
-		// Get avatar data
-		LLVector3d position = gAgent.getPosGlobalFromAgent(avatarp->getCharacterPosition());
-		LLUUID avid = avatarp->getID();
-		std::string name = avatarp->getFullname();
-
-		// Apparently, sometimes the name comes out empty, with a " " name. This is because
-		// getFullname concatenates first and last name with a " " in the middle.
-		// This code will avoid adding a nameless entry to the list until it acquires a name.
-
-		//duped for lower section
-		if (name.empty() || (name.compare(" ") == 0))// || (name.compare(gCacheName->getDefaultName()) == 0))
-		{
-			//llinfos << "Name empty for avatar " << avid << llendl;
-			continue;
-		}
-
-		if (avid.isNull())
-		{
-			//llinfos << "Key empty for avatar " << name << llendl;
-			continue;
-		}
-
-		if ( mAvatars.count( avid ) > 0 )
-		{
-			// Avatar already in list, update position
-			mAvatars[avid].setPosition(position, (avatarp->getRegion() == gAgent.getRegion()), true, (position - mypos).magVec() < 20.0);
-		}
-		else
-		{
-			// Avatar not there yet, add it
-			BOOL isLinden = ( strcmp(avatarp->getNVPair("LastName")->getString(), "Linden") == 0 );
-
-			LLAvatarListEntry entry(avid, name, position, isLinden);
-			mAvatars[avid] = entry;
-
-			//sendAvatarPropertiesRequest(avid);
-			//llinfos << "avatar list refresh: adding " << name << llendl;
-
-		}
-	}
-
+	
 //	llinfos << "avatar list refresh: done" << llendl;
 
 	expireAvatarList();
@@ -703,7 +682,6 @@ void LLFloaterAvatarList::expireAvatarList()
  * Only does anything if the avatar list is visible.
  * @author Dale Glass
  */
-void resolve_client(LLColor4& avatar_name_color, std::string& client, LLVOAvatar* avatar);
 void LLFloaterAvatarList::refreshAvatarList() 
 {
 
@@ -976,14 +954,23 @@ void LLFloaterAvatarList::refreshAvatarList()
 		LLVOAvatar *av = (LLVOAvatar*)gObjectList.findObject(av_id);
 		if(av)
 		{
-			resolve_client(avatar_name_color, client, av);
-			if(client == "")client = "?";
+			LLVOAvatar::resolveClient(avatar_name_color, client, av);
+			if(client == "")
+			{
+				avatar_name_color = gColors.getColor( "ScrollUnselectedColor" );
+				client = "?";
+			}
 			element["columns"][LIST_CLIENT]["value"] = client.c_str();
 			//element["columns"][LIST_CLIENT]["color"] = avatar_name_color.getValue();
-		}else
+		}
+		else
 		{
 			element["columns"][LIST_CLIENT]["value"] = "Out Of Range";
+			avatar_name_color = gColors.getColor( "ScrollUnselectedColor" );
 		}
+
+		avatar_name_color = avatar_name_color * 0.5 + gColors.getColor( "ScrollUnselectedColor" ) * 0.5;
+
 		element["columns"][LIST_CLIENT]["color"] = avatar_name_color.getValue();
 		
 
@@ -1216,6 +1203,10 @@ void LLFloaterAvatarList::processSoundTrigger(LLMessageSystem* msg,void**)
 	msg->getUUIDFast(_PREHASH_SoundData, _PREHASH_OwnerID, owner_id);
 	if(owner_id == gAgent.getID() && sound_id == LLUUID("76c78607-93f9-f55a-5238-e19b1a181389"))
 	{
+		//lgg we need to auto turn on settings for ppl now that we know they has the thingy
+		gSavedSettings.setBOOL("EmeraldRadarChatKeys",true);
+		gSavedSettings.setBOOL("EmeraldRadarChatAlerts",true);
+		gSavedSettings.setBOOL("EmeraldAvatarListKeepOpen",true);
 		LLFloaterAvatarList* self = getInstance();
 		if(self) self->clearAnnouncements();
 	}
@@ -1687,9 +1678,30 @@ std::string LLFloaterAvatarList::getSelectedNames(const std::string& separator)
 	return ret;
 }
 
+std::string LLFloaterAvatarList::getSelectedName()
+{
+	LLUUID id = getSelectedID();
+	LLAvatarListEntry *ent = getAvatarEntry(id);
+	if(ent)
+	{
+		return ent->getName();
+	}
+	return "";
+}
+
+LLUUID LLFloaterAvatarList::getSelectedID()
+{
+	LLScrollListItem *item = mAvatarList->getFirstSelected();
+	if(item) return item->getUUID();
+	return LLUUID::null;
+}
+
 //static 
-void LLFloaterAvatarList::callbackFreeze(S32 option, void *userdata) { 
-	LLFloaterAvatarList *avlist = (LLFloaterAvatarList*)userdata;
+void LLFloaterAvatarList::callbackFreeze(const LLSD& notification, const LLSD& response)
+{
+	S32 option = LLNotification::getSelectedOption(notification, response);
+
+	LLFloaterAvatarList *avlist = LLFloaterAvatarList::sInstance;
 
 	if ( option == 0 )
 	{
@@ -1702,8 +1714,11 @@ void LLFloaterAvatarList::callbackFreeze(S32 option, void *userdata) {
 }
 
 //static 
-void LLFloaterAvatarList::callbackEject(S32 option, void *userdata) {
-	LLFloaterAvatarList *avlist = (LLFloaterAvatarList*)userdata;
+void LLFloaterAvatarList::callbackEject(const LLSD& notification, const LLSD& response)
+{
+	S32 option = LLNotification::getSelectedOption(notification, response);
+
+	LLFloaterAvatarList *avlist = LLFloaterAvatarList::sInstance;
  
 	if ( option == 0 )
 	{
@@ -1715,32 +1730,16 @@ void LLFloaterAvatarList::callbackEject(S32 option, void *userdata) {
 	}
 }
 
-/*
 //static 
-void LLFloaterAvatarList::callbackMute(S32 option, void *userdata) {
-	LLFloaterAvatarList *avlist = (LLFloaterAvatarList*)userdata;
+void LLFloaterAvatarList::callbackEjectFromEstate(const LLSD& notification, const LLSD& response)
+{
+	S32 option = LLNotification::getSelectedOption(notification, response);
 
-	if ( option == 0 )
-	{
-		avlist->doCommand(cmd_mute);
-	} 
-	else if ( option == 1 )
-	{
-		avlist->doCommand(cmd_unmute);
-	}
-}*/
-
-//static 
-void LLFloaterAvatarList::callbackEjectFromEstate(S32 option, void *userdata) {
-	LLFloaterAvatarList *avlist = (LLFloaterAvatarList*)userdata;
+	LLFloaterAvatarList *avlist = LLFloaterAvatarList::sInstance;
 
 	if ( option == 0 )
 	{
 		avlist->doCommand(cmd_estate_eject);
-	} 
-	else if ( option == 1 )
-	{
-		avlist->doCommand(cmd_estate_ban);
 	}
 }
 
@@ -1753,17 +1752,20 @@ void LLFloaterAvatarList::callbackIdle(void *userdata) {
 
 void LLFloaterAvatarList::onClickFreeze(void *userdata)
 {
-	LLStringUtilBase<char>::format_map_t args;
-	args["[NAMES]"] = ((LLFloaterAvatarList*)userdata)->getSelectedNames();
-	gViewerWindow->alertXml("FreezeAvatar", args, callbackFreeze, userdata);
+	LLSD args;
+	LLSD payload;
+	args["AVATAR_NAME"] = ((LLFloaterAvatarList*)userdata)->getSelectedNames();
+
+	LLNotifications::instance().add("FreezeAvatarFullname", args, payload, callbackFreeze);
 }
 
 //static
 void LLFloaterAvatarList::onClickEject(void *userdata)
 {
-	LLStringUtilBase<char>::format_map_t args;
-	args["[NAMES]"] = ((LLFloaterAvatarList*)userdata)->getSelectedNames();
-	gViewerWindow->alertXml("EjectAvatar", args, callbackEject, userdata);
+	LLSD args;
+	LLSD payload;
+	args["AVATAR_NAME"] = ((LLFloaterAvatarList*)userdata)->getSelectedNames();
+	LLNotifications::instance().add("EjectAvatarFullname", args, payload, callbackEject);
 }
 
 //static
@@ -1837,12 +1839,11 @@ void LLFloaterAvatarList::onClickUnmute(void *userdata)
 //static
 void LLFloaterAvatarList::onClickEjectFromEstate(void *userdata)
 {
-	LLStringUtilBase<char>::format_map_t args;
-	args["[NAMES]"] = ((LLFloaterAvatarList*)userdata)->getSelectedNames();
-	gViewerWindow->alertXml("EjectAvatarEstate", args, callbackEjectFromEstate, userdata);
+	LLSD args;
+	LLSD payload;
+	args["EVIL_USER"] = ((LLFloaterAvatarList*)userdata)->getSelectedNames();
+	LLNotifications::instance().add("EstateKickUser", args, payload, callbackEjectFromEstate);
 }
-
-
 
 //static
 void LLFloaterAvatarList::onClickAR(void *userdata)

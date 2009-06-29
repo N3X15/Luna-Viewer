@@ -17,7 +17,8 @@
  * There are special exceptions to the terms and conditions of the GPL as
  * it is applied to this Source Code. View the full text of the exception
  * in the file doc/FLOSS-exception.txt in this software distribution, or
- * online at http://secondlifegrid.net/programs/open_source/licensing/flossexception
+ * online at
+ * http://secondlifegrid.net/programs/open_source/licensing/flossexception
  * 
  * By copying, modifying or distributing this software, you acknowledge
  * that you have read and understood your obligations described above,
@@ -93,6 +94,8 @@ public:
 	static void startChat(const char* line);
 	static void stopChat();
 
+	static void toggleChanSelect(void* user_data);//lgg
+
 protected:
 	void sendChat(EChatType type);
 	void updateChat();
@@ -104,6 +107,8 @@ protected:
 
 	// Which non-zero channel did we last chat on?
 	S32				mLastSpecialChatChannel;
+
+	BOOL			mChanSelectorExpanded;
 
 	BOOL			mIsBuilt;
 	LLComboBox*		mGestureCombo;

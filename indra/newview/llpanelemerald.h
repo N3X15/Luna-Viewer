@@ -58,6 +58,7 @@ private:
 	static void onClickVoiceRevertProd(void* data);
 	static void onClickVoiceRevertDebug(void* data);
 	static void onCommitApplyControl(LLUICtrl* caller, void* user_data);
+	static void onCommitSendAppearance(LLUICtrl* ctrl, void* userdata);
 	//static void onCommitVoiceDebugServerName(LLUICtrl* caller, void* user_data);
 	//static void onCommitAvatarEffectsChange(LLUICtrl* caller, void* user_data);
 	//static void onCommitAutoResponse(LLUICtrl* caller, void* user_data);

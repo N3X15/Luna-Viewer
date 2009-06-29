@@ -18,7 +18,8 @@
  * There are special exceptions to the terms and conditions of the GPL as
  * it is applied to this Source Code. View the full text of the exception
  * in the file doc/FLOSS-exception.txt in this software distribution, or
- * online at http://secondlifegrid.net/programs/open_source/licensing/flossexception
+ * online at
+ * http://secondlifegrid.net/programs/open_source/licensing/flossexception
  * 
  * By copying, modifying or distributing this software, you acknowledge
  * that you have read and understood your obligations described above,
@@ -51,20 +52,11 @@
 	#include <windows.h>
 #endif
 
-// Work around stupid Microsoft STL warning
-#ifdef LL_WINDOWS
-#pragma warning (disable : 4702) // warning C4702: unreachable code
-#endif
-
 #include <algorithm>
 #include <deque>
 #include <functional>
 #include <map>
 #include <set>
-
-#ifdef LL_WINDOWS
-#pragma warning (3 : 4702) // we like level 3, not 4
-#endif
 
 // Library headers from llcommon project:
 #include "bitpack.h"

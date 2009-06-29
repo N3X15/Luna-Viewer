@@ -32,6 +32,9 @@
 #include "llviewerprecompiledheaders.h"
 
 #include "chatbar_as_cmdline.h"
+
+#include "llcalc.h"
+
 #include "llchatbar.h"
 #include "llagent.h"
 #include "stdtypes.h"
@@ -50,8 +53,6 @@
 #include <iosfwd>
 
 #include <float.h>
-
-#include "jc_ascii_encode_decode.h"
 
 #include "llchat.h"
 
@@ -162,16 +163,34 @@ bool cmd_line_chat(std::string revised_text, EChatType type)
 					agent_z = 0;
 				}
 				url = llformat("secondlife:///app/teleport/%s/%d/%d/%d",region_name.c_str(),agent_x,agent_y,agent_z);
-				LLURLDispatcher::dispatch(url, false);
+				LLURLDispatcher::dispatch(url, NULL, false);
 				return false;
-			}else if(command == "ascii85")
+			}else if(command == gSavedSettings.getString("EmeraldCmdLineCalc"))//Cryogenic Blitz
 			{
+				bool success;
+				F32 result = 0.f;
+				std::string expr = revised_text.substr(command.length()+1);
+				LLStringUtil::toUpper(expr);
+				success = LLCalc::getInstance()->evalString(expr, result);
+
 				LLChat chat;
-				//char* text = new char[revised_text.length()+1];
-				//strcpy(text, revised_text.c_str());
-				chat.mText = JCStringUnsignedChar::encode(revised_text.c_str(), revised_text.length()+1);
+
+				if (!success)
+				{
+					chat.mText =  "Calculation Failed";
+				}
+				else
+				{
+					// Replace the expression with the result
+					std::ostringstream result_str;
+					result_str << expr;
+					result_str << " = ";
+					result_str << result;
+					chat.mText = result_str.str();
+				}
 				chat.mSourceType = CHAT_SOURCE_SYSTEM;
 				LLFloaterChat::addChat(chat);
+				return false;
 			}
 		}
 	}

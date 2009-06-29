@@ -18,7 +18,8 @@
  * There are special exceptions to the terms and conditions of the GPL as
  * it is applied to this Source Code. View the full text of the exception
  * in the file doc/FLOSS-exception.txt in this software distribution, or
- * online at http://secondlifegrid.net/programs/open_source/licensing/flossexception
+ * online at
+ * http://secondlifegrid.net/programs/open_source/licensing/flossexception
  * 
  * By copying, modifying or distributing this software, you acknowledge
  * that you have read and understood your obligations described above,
@@ -42,8 +43,7 @@ typedef enum e_chat_source_type
 {
 	CHAT_SOURCE_SYSTEM = 0,
 	CHAT_SOURCE_AGENT = 1,
-	CHAT_SOURCE_OBJECT = 2,
-	CHAT_SOURCE_LUA = 3
+	CHAT_SOURCE_OBJECT = 2
 } EChatSourceType;
 
 typedef enum e_chat_type
@@ -55,8 +55,7 @@ typedef enum e_chat_type
 	CHAT_TYPE_STOP = 5,
 	CHAT_TYPE_DEBUG_MSG = 6,
 	CHAT_TYPE_REGION = 7,
-	CHAT_TYPE_OWNER = 8,
-	CHAT_TYPE_ERROR = 9
+	CHAT_TYPE_OWNER = 8
 } EChatType;
 
 typedef enum e_chat_audible_level

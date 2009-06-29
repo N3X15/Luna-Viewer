@@ -17,7 +17,8 @@
  * There are special exceptions to the terms and conditions of the GPL as
  * it is applied to this Source Code. View the full text of the exception
  * in the file doc/FLOSS-exception.txt in this software distribution, or
- * online at http://secondlifegrid.net/programs/open_source/licensing/flossexception
+ * online at
+ * http://secondlifegrid.net/programs/open_source/licensing/flossexception
  * 
  * By copying, modifying or distributing this software, you acknowledge
  * that you have read and understood your obligations described above,
@@ -79,6 +80,7 @@ LLChatBar *gChatBar = NULL;
 
 // legacy calllback glue
 void toggleChatHistory(void* user_data);
+void toggleChanSelect(void* user_data);
 void send_chat_from_viewer(const std::string& utf8_out_text, EChatType type, S32 channel);
 
 
@@ -103,6 +105,7 @@ LLChatBar::LLChatBar()
 	mGestureLabelTimer(),
 	mLastSpecialChatChannel(0),
 	mIsBuilt(FALSE),
+	mChanSelectorExpanded(FALSE),
 	mGestureCombo(NULL),
 	mObserver(NULL)
 {
@@ -116,6 +119,7 @@ LLChatBar::LLChatBar()
 
 LLChatBar::~LLChatBar()
 {
+	gGestureManager.removeObserver(mObserver);
 	delete mObserver;
 	mObserver = NULL;
 	// LLView destructor cleans up children
@@ -124,6 +128,8 @@ LLChatBar::~LLChatBar()
 BOOL LLChatBar::postBuild()
 {
 	childSetAction("History", toggleChatHistory, this);
+	//lgg
+	childSetAction("Expand",this->toggleChanSelect,this);
 	childSetCommitCallback("Say", onClickSay, this);
 
 	// attempt to bind to an existing combo box named gesture
@@ -538,7 +544,8 @@ void LLChatBar::onInputEditorKeystroke( LLLineEditor* caller, void* userdata )
 		{
 			if (self->mInputEditor)
 			{
-				self->mInputEditor->setText(utf8_out_str);
+				std::string rest_of_match = utf8_out_str.substr(utf8_trigger.size());
+				self->mInputEditor->setText(utf8_trigger + rest_of_match); // keep original capitalization for user-entered part
 				S32 outlength = self->mInputEditor->getLength(); // in characters
 			
 				// Select to end of line, starting from the character
@@ -725,15 +732,57 @@ void toggleChatHistory(void* user_data)
 	LLFloaterChat::toggleInstance(LLSD());
 }
 
+//static
+void LLChatBar::toggleChanSelect(void* user_data)//lgg
+{
+	LLChatBar* self = (LLChatBar*) user_data;
+
+	//Rect code by Cryogenic
+	LLRect chatbar = self->mInputEditor->getRect();
+	LLRect chanselect;
+	LLRect expander;
+	S32 chatdelta;
+	if(self->childGetRect("ChatChannel",chanselect) && self->childGetRect("Expand",expander))
+	{
+
+		if(self->mChanSelectorExpanded)
+		{
+			self->mChanSelectorExpanded=false;
+			chatdelta = chanselect.getWidth();
+			
+			//self->childSetLabelArg("Expand","[NOTHING]",std::string("<"));
+			self->childSetToolTip("Expand",std::string("Show Channel Selector"));
+		}else
+		{
+			self->mChanSelectorExpanded=true;
+			
+			//self->childSetText("Expand",std::string(">"));
+			
+			//self->childSetLabelArg("Expand","[NOTHING]",std::string(">"));
+			self->childSetToolTip("Expand",std::string("Hide Channel Selector"));
+			chatdelta = -chanselect.getWidth();
+		}
+		expander.setCenterAndSize(expander.getCenterX() + chatdelta,expander.getCenterY(),expander.getWidth(),expander.getHeight());
+		chatbar.setCenterAndSize(chatbar.getCenterX() + chatdelta/2,chatbar.getCenterY(),chatbar.getWidth() + chatdelta,chatbar.getHeight());
+		self->childSetVisible("ChatChannel",self->mChanSelectorExpanded);
+		self->mInputEditor->setRect(chatbar);
+		self->childSetRect("Expand",expander);
+	}
+	else
+	{
+		llwarns << "ChatChannel or Expand could not be found in panel_chat_bar.xml" << llendl;
+	}
+}
 
 class LLChatHandler : public LLCommandHandler
 {
 public:
 	// not allowed from outside the app
-	LLChatHandler() : LLCommandHandler("chat", false) { }
+	LLChatHandler() : LLCommandHandler("chat", true) { }
 
     // Your code here
-	bool handle(const LLSD& tokens, const LLSD& queryMap)
+	bool handle(const LLSD& tokens, const LLSD& query_map,
+				LLWebBrowserCtrl* web)
 	{
 		if (tokens.size() < 2) return false;
 		S32 channel = tokens[0].asInteger();

@@ -155,6 +155,5 @@ U32 LLFloaterPerms::getNextOwnerPerms(std::string prefix)
 //static
 void LLFloaterPerms::onClickHelp(void* data)
 {
-	// *FIX: Notifications System not there yet
-	//LLNotifications::instance().add("ClickUploadHelpPermissions");
+	LLNotifications::instance().add("ClickUploadHelpPermissions");
 }

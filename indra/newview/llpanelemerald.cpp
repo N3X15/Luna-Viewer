@@ -51,6 +51,8 @@
 
 #include "lltexteditor.h"
 
+#include "llagent.h"
+
 ////////begin drop utility/////////////
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // Class JCInvDropTarget
@@ -174,6 +176,10 @@ BOOL LLPanelEmerald::postBuild()
 	childSetCommitCallback("EmeraldCmdLineTeleportHome", onCommitApplyControl);
 	childSetCommitCallback("EmeraldCmdLineRezPlatform", onCommitApplyControl);
 	childSetCommitCallback("EmeraldCmdLineMapTo", onCommitApplyControl);
+
+	childSetCommitCallback("X Modifier", onCommitSendAppearance);
+	childSetCommitCallback("Y Modifier", onCommitSendAppearance);
+	childSetCommitCallback("Z Modifier", onCommitSendAppearance);
 
 	LLView *target_view = getChild<LLView>("im_give_drop_target_rect");
 	if(target_view)
@@ -316,6 +322,12 @@ void LLPanelEmerald::onCommitApplyControl(LLUICtrl* caller, void* user_data)
 		LLControlVariable *var = line->findControl(line->getControlName());
 		if(var)var->setValue(line->getValue());
 	}
+}
+
+void LLPanelEmerald::onCommitSendAppearance(LLUICtrl* ctrl, void* userdata)
+{
+	gAgent.sendAgentSetAppearance();
+	//llinfos << llformat("%d,%d,%d",gSavedSettings.getF32("EmeraldAvatarXModifier"),gSavedSettings.getF32("EmeraldAvatarYModifier"),gSavedSettings.getF32("EmeraldAvatarZModifier")) << llendl;
 }
 
 

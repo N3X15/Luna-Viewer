@@ -11,6 +11,7 @@ include(ELFIO)
 include(FMOD)
 include(OPENAL)
 include(FindOpenGL)
+include(LLAddBuildTest)
 include(LLAudio)
 include(LLCharacter)
 include(LLCommon)
@@ -30,6 +31,7 @@ include(LScript)
 include(Linking)
 include(Mozlib)
 include(NDOF)
+include(GooglePerfTools)
 include(TemplateCheck)
 include(UI)
 include(UnixInstall)
@@ -44,6 +46,7 @@ if (WINDOWS)
 endif (WINDOWS)
 
 include_directories(
+    ${DBUSGLIB_INCLUDE_DIRS}
     ${ELFIO_INCLUDE_DIR}
     ${LLAUDIO_INCLUDE_DIRS}
     ${LLCHARACTER_INCLUDE_DIRS}
@@ -66,11 +69,11 @@ include_directories(
 
 set(viewer_SOURCE_FILES
 	chatbar_as_cmdline.cpp
-	jc_ascii_encode_decode.cpp
 	jcfloater_animation_list.cpp
 	jcfloater_areasearch.cpp
 	jcobjectpropertylist.cpp
     llagent.cpp
+    llagentaccess.cpp
     llagentdata.cpp
     llagentlanguage.cpp
     llagentpilot.cpp
@@ -148,7 +151,6 @@ set(viewer_SOURCE_FILES
     llfloaterchat.cpp
     llfloaterchatterbox.cpp
     llfloaterclassified.cpp
-    llfloaterclothing.cpp
     llfloatercolorpicker.cpp
     llfloatercustomize.cpp
     llfloaterdaycycle.cpp
@@ -157,14 +159,18 @@ set(viewer_SOURCE_FILES
     llfloaterenvsettings.cpp
     llfloaterevent.cpp
     llfloaterfriends.cpp
+    llfloaterfonttest.cpp
     llfloatergesture.cpp
     llfloatergodtools.cpp
     llfloatergroupinfo.cpp
     llfloatergroupinvite.cpp
     llfloatergroups.cpp
+    llfloaterhandler.cpp
     llfloaterhardwaresettings.cpp
     llfloaterhtml.cpp
+    llfloaterhtmlcurrency.cpp
     llfloaterhtmlhelp.cpp
+    llfloaterhtmlsimple.cpp
     llfloaterhud.cpp
     llfloaterimagepreview.cpp
     llfloaterinspect.cpp
@@ -178,6 +184,7 @@ set(viewer_SOURCE_FILES
     llfloatermute.cpp
     llfloaternamedesc.cpp
     llfloaternewim.cpp
+    llfloaternotificationsconsole.cpp
     llfloaterobjectiminfo.cpp
     llfloateropenobject.cpp
     llfloaterparcel.cpp
@@ -210,7 +217,6 @@ set(viewer_SOURCE_FILES
     llfollowcam.cpp
     llframestats.cpp
     llframestatview.cpp
-    llgenepool.cpp
     llgesturemgr.cpp
     llgivemoney.cpp
     llglsandbox.cpp
@@ -239,6 +245,7 @@ set(viewer_SOURCE_FILES
     lljoystickbutton.cpp
     lllandmarklist.cpp
     lllogchat.cpp
+    llloginhandler.cpp
     llmanip.cpp
     llmaniprotate.cpp
     llmanipscale.cpp
@@ -316,6 +323,7 @@ set(viewer_SOURCE_FILES
     llpreviewscript.cpp
     llpreviewsound.cpp
     llpreviewtexture.cpp
+    llproductinforequest.cpp
     llprogressview.cpp
     llregionposition.cpp
     llremoteparcelrequest.cpp
@@ -413,6 +421,7 @@ set(viewer_SOURCE_FILES
     llvlcomposition.cpp
     llvlmanager.cpp
     llvoavatar.cpp
+    llvoavatardefines.cpp
     llvocache.cpp
     llvoclouds.cpp
     llvograss.cpp
@@ -479,11 +488,11 @@ set(viewer_HEADER_FILES
     CMakeLists.txt
     ViewerInstall.cmake
     chatbar_as_cmdline.h
-	jc_ascii_encode_decode.h
 	jcfloater_animation_list.h
 	jcfloater_areasearch.h
 	jcobjectpropertylist.h
     llagent.h
+    llagentaccess.h
     llagentdata.h
     llagentlanguage.h
     llagentpilot.h
@@ -563,7 +572,6 @@ set(viewer_HEADER_FILES
     llfloaterchat.h
     llfloaterchatterbox.h
     llfloaterclassified.h
-    llfloaterclothing.h
     llfloatercolorpicker.h
     llfloatercustomize.h
     llfloaterdaycycle.h
@@ -571,15 +579,19 @@ set(viewer_HEADER_FILES
     llfloatereditui.h
     llfloaterenvsettings.h
     llfloaterevent.h
+    llfloaterfonttest.h
     llfloaterfriends.h
     llfloatergesture.h
     llfloatergodtools.h
     llfloatergroupinfo.h
     llfloatergroupinvite.h
     llfloatergroups.h
+    llfloaterhandler.h
     llfloaterhardwaresettings.h
     llfloaterhtml.h
+    llfloaterhtmlcurrency.h
     llfloaterhtmlhelp.h
+    llfloaterhtmlsimple.h
     llfloaterhud.h
     llfloaterimagepreview.h
     llfloaterinspect.h
@@ -593,6 +605,7 @@ set(viewer_HEADER_FILES
     llfloatermute.h
     llfloaternamedesc.h
     llfloaternewim.h
+    llfloaternotificationsconsole.h
     llfloaterobjectiminfo.h
     llfloateropenobject.h
 	llfloaterteleporthistory.h
@@ -625,7 +638,6 @@ set(viewer_HEADER_FILES
     llfollowcam.h
     llframestats.h
     llframestatview.h
-    llgenepool.h
     llgesturemgr.h
     llgivemoney.h
     llgroupmgr.h
@@ -653,6 +665,7 @@ set(viewer_HEADER_FILES
     lllandmarklist.h
     lllightconstants.h
     lllogchat.h
+    llloginhandler.h
     llmanip.h
     llmaniprotate.h
     llmanipscale.h
@@ -731,6 +744,7 @@ set(viewer_HEADER_FILES
     llpreviewscript.h
     llpreviewsound.h
     llpreviewtexture.h
+    llproductinforequest.h
     llprogressview.h
     llregionposition.h
     llremoteparcelrequest.h
@@ -830,6 +844,7 @@ set(viewer_HEADER_FILES
     llvlcomposition.h
     llvlmanager.h
     llvoavatar.h
+    llvoavatardefines.h
     llvocache.h
     llvoclouds.h
     llvograss.h
@@ -996,11 +1011,8 @@ if (WINDOWS)
         res/arrowcop.cur
         res/arrowcopmulti.cur
         res/arrowdrag.cur
-        res/bitmap2.bmp
         res/circleandline.cur
         res/icon1.ico
-        res/install_icon.BMP
-        res/install_icon.ico
         res/llarrow.cur
         res/llarrowdrag.cur
         res/llarrowdragmulti.cur
@@ -1020,9 +1032,8 @@ if (WINDOWS)
         res/lltooltranslate.cur
         res/lltoolzoomin.cur
         res/lltoolzoomout.cur
-        res/ll_icon.BMP
-        res/ll_icon.ico
-        res/loginbackground.bmp
+        res/emerald_icon.BMP
+        res/emerald_icon.ico
         res/resource.h
         res/toolbuy.cur
         res/toolopen.cur
@@ -1032,8 +1043,6 @@ if (WINDOWS)
         res/toolpickobject3.cur
         res/toolpipette.cur
         res/toolsit.cur
-        res/uninstall_icon.BMP
-        res/uninstall_icon.ico
         )
 
     set_source_files_properties(${viewer_RESOURCE_FILES}
@@ -1180,7 +1189,7 @@ if (FMOD)
         PROPERTIES
         BUILD_WITH_INSTALL_RPATH 1
         INSTALL_NAME_DIR "@executable_path/../Resources"
-        LINK_FLAGS "-unexported_symbols_list ../newview/fmod_hidden_symbols.exp"
+        LINK_FLAGS "-unexported_symbols_list ${CMAKE_CURRENT_SOURCE_DIR}/fmod_hidden_symbols.exp"
         )
     endif (DARWIN)
     set(FMODWRAPPER_LIBRARY fmodwrapper)
@@ -1210,17 +1219,17 @@ set(PACKAGE OFF CACHE BOOL
     "Add a package target that builds an installer package.")
 
 if (WINDOWS)
-#    if(MSVC71)
-#        set(release_flags "/MAP:Release/${VIEWER_BINARY_NAME}.map /MAPINFO:LINES")
-#    else(MSVC71)
-#        set(release_flags "/MAP:Release/${VIEWER_BINARY_NAME}.map")
-#    endif(MSVC71)
+    if(MSVC71)
+        set(release_flags "/MAP:Release/${VIEWER_BINARY_NAME}.map /MAPINFO:LINES")
+    else(MSVC71)
+        set(release_flags "/MAP:Release/${VIEWER_BINARY_NAME}.map")
+    endif(MSVC71)
     
     set_target_properties(${VIEWER_BINARY_NAME}
         PROPERTIES
-        LINK_FLAGS "/NODEFAULTLIB:MSVCRT /SUBSYSTEM:WINDOWS,5.00"
-        LINK_FLAGS_DEBUG "/DEBUG /NODEFAULTLIB:LIBCMT /NODEFAULTLIB:MSVCRTD"
-        LINK_FLAGS_RELEASE "/NODEBUG"
+        LINK_FLAGS "/debug /NODEFAULTLIB:LIBCMT /SUBSYSTEM:WINDOWS"
+        LINK_FLAGS_DEBUG "/NODEFAULTLIB:\"LIBCMT;LIBCMTD;MSVCRT\""
+        LINK_FLAGS_RELEASE ${release_flags}
         )
 
     # sets the 'working directory' for debugging from visual studio.
@@ -1306,6 +1315,7 @@ target_link_libraries(${VIEWER_BINARY_NAME}
     ${LSCRIPT_LIBRARIES}
     ${LLMATH_LIBRARIES}
     ${LLCOMMON_LIBRARIES}
+    ${NDOF_LIBRARY}
     ${viewer_LIBRARIES}
     ${BOOST_PROGRAM_OPTIONS_LIBRARY}
     ${BOOST_REGEX_LIBRARY}
@@ -1317,7 +1327,6 @@ target_link_libraries(${VIEWER_BINARY_NAME}
     ${SDL_LIBRARY}
     ${SMARTHEAP_LIBRARY}
     ${UI_LIBRARIES}
-    ${NDOF_LIBRARY}
     ${QUICKTIME_LIBRARY}
     ${WINDOWS_LIBRARIES}
     ${XMLRPCEPI_LIBRARIES}
@@ -1363,7 +1372,7 @@ if (LINUX)
 
   if (NOT INSTALL)
     add_custom_target(package ALL DEPENDS ${product}.tar.bz2)
-    #add_dependencies(package linux-crash-logger-stripped)
+    add_dependencies(package linux-crash-logger-strip-target)
   endif (NOT INSTALL)
 endif (LINUX)
 
@@ -1420,9 +1429,30 @@ if (DARWIN)
         ${CMAKE_CURRENT_SOURCE_DIR}/viewer_manifest.py
       )
 
+
+      add_custom_command(
+        TARGET package POST_BUILD
+        COMMAND ${PYTHON_EXECUTABLE}
+        ARGS
+          ${CMAKE_CURRENT_SOURCE_DIR}/viewer_manifest.py
+          --grid=${GRID}
+          --configuration=${CMAKE_CFG_INTDIR}
+          --channel=${VIEWER_CHANNEL}
+          --login_channel=${VIEWER_LOGIN_CHANNEL}
+          --source=${CMAKE_CURRENT_SOURCE_DIR}
+          --artwork=${ARTWORK_DIR}
+          --build=${CMAKE_CURRENT_BINARY_DIR}
+          --dest=${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/${product}.app
+          --touch=${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/.${product}.touched
+        DEPENDS
+          ${CMAKE_CURRENT_SOURCE_DIR}/viewer_manifest.py
+      )
+
   endif (PACKAGE)
 endif (DARWIN)
 
 if (INSTALL)
   include(${CMAKE_CURRENT_SOURCE_DIR}/ViewerInstall.cmake)
 endif (INSTALL)
+
+ADD_VIEWER_BUILD_TEST(llagentaccess viewer)
