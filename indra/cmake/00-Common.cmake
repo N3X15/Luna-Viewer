@@ -7,20 +7,11 @@ include(Variables)
 
 # Portable compilation flags.
 
-if (EXISTS ${CMAKE_SOURCE_DIR}/llphysics)
-  # The release build should only offer to send crash reports if we're
-  # building from a Linden internal source tree.
-  set(release_crash_reports 1)
-else (EXISTS ${CMAKE_SOURCE_DIR}/llphysics)
-  set(release_crash_reports 0) 
-endif (EXISTS ${CMAKE_SOURCE_DIR}/llphysics)
-
 set(CMAKE_CXX_FLAGS_DEBUG "-D_DEBUG -DLL_DEBUG=1")
 set(CMAKE_CXX_FLAGS_RELEASE
-    "-DLL_RELEASE=1 -DLL_RELEASE_FOR_DOWNLOAD=1 -D_SECURE_SCL=0 -DLL_SEND_CRASH_REPORTS=${release_crash_reports} -DNDEBUG") 
-
+    "-DLL_RELEASE=1 -DLL_RELEASE_FOR_DOWNLOAD=1 -D_SECURE_SCL=0 -DNDEBUG")
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO 
-    "-DLL_RELEASE=1 -D_SECURE_SCL=0 -DLL_SEND_CRASH_REPORTS=0 -DNDEBUG -DLL_RELEASE_WITH_DEBUG_INFO=1")
+    "-DLL_RELEASE=1 -D_SECURE_SCL=0 -DNDEBUG -DLL_RELEASE_WITH_DEBUG_INFO=1")
 
 
 # Don't bother with a MinSizeRel build.
@@ -51,6 +42,7 @@ if (WINDOWS)
       /DLL_WINDOWS=1
       /DUNICODE
       /D_UNICODE 
+      /D_WIN32_WINNT=0x0500
       /GS
       /TP
       /W3
@@ -202,14 +194,6 @@ if (LINUX OR DARWIN)
 
   set(CMAKE_C_FLAGS "${GCC_WARNINGS} ${CMAKE_C_FLAGS}")
   set(CMAKE_CXX_FLAGS "${GCC_CXX_WARNINGS} ${CMAKE_CXX_FLAGS}")
-
-  if (WORD_SIZE EQUAL 32)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m32")
-  elseif (WORD_SIZE EQUAL 64)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m64")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m64")
-  endif (WORD_SIZE EQUAL 32)
 endif (LINUX OR DARWIN)
 
 
