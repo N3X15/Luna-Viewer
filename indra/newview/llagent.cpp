@@ -382,7 +382,6 @@ LLAgent::LLAgent() :
 	mAutoPilotFinishedCallback(NULL),
 	mAutoPilotCallbackData(NULL),
 	
-
 	mEffectColor(0.f, 1.f, 1.f, 1.f),
 	mHaveHomePosition(FALSE),
 	mHomeRegionHandle( 0 ),
@@ -450,7 +449,7 @@ void LLAgent::init()
 	// Run a lua hook
 	std::string lolname;
 	this->getName(lolname);
-	SHLLua::getInstance()->callLuaHook("OnAgentInit",2,lolname.c_str(),(const char *)mGodLevel);
+	SHLLua::getInstance()->callLuaHook("OnAgentInit",2,lolname.c_str(),(const char *)isGodlike());
 }
 
 //-----------------------------------------------------------------------------
