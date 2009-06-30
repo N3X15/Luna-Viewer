@@ -1,10 +1,10 @@
 /** 
- * @file llversionviewer.h
- * @brief
+ * @file llscriptresourcepool.cpp
+ * @brief Collection of limited script resources
  *
- * $LicenseInfo:firstyear=2002&license=viewergpl$
+ * $LicenseInfo:firstyear=2008&license=viewergpl$
  * 
- * Copyright (c) 2002-2009, Linden Research, Inc.
+ * Copyright (c) 2008-2009, Linden Research, Inc.
  * 
  * Second Life Viewer Source Code
  * The source code in this file ("Source Code") is provided by Linden Lab
@@ -30,14 +30,21 @@
  * $/LicenseInfo$
  */
 
-#ifndef LL_LLVERSIONVIEWER_H
-#define LL_LLVERSIONVIEWER_H
+#include "llscriptresourcepool.h"
 
-const S32 LL_VERSION_MAJOR = 1;
-const S32 LL_VERSION_MINOR = 23;
-const S32 LL_VERSION_PATCH = 4;
-const S32 LL_VERSION_BUILD = 184;
+LLScriptResourcePool LLScriptResourcePool::null;
 
-const char * const LL_CHANNEL = "GreenLife Emerald Viewer";
+LLScriptResourcePool::LLScriptResourcePool() 
+{ 
 
-#endif
+}
+
+LLScriptResource& LLScriptResourcePool::getPublicURLResource()
+{
+	return mLSLPublicURLs;
+}
+
+const LLScriptResource& LLScriptResourcePool::getPublicURLResource() const
+{
+	return mLSLPublicURLs;
+}
