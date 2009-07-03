@@ -148,7 +148,8 @@ void LuaAlert(const char* msg)
 {
 	LLStringUtil::format_map_t args;
 	args["[MESSAGE]"]=llformat("%s",msg);
-	LLNotifyBox::showXml("LuaAlert",args);
+	//LLNotifyBox::showXml("LuaAlert",args);
+	LLNotifications::instance().add("LuaAlert",args);
 }
  
 // Retrieve the region handle of this sim
