@@ -5502,25 +5502,25 @@ void process_script_dialog(LLMessageSystem* msg, void**)
 
 	// Patch by Twisted Laws.  Worship him.
 	// twisted ignore dialogs from others when busy
-    // get requestor name
-    std::string fullname = first_name + " " + last_name;
-    // if we are busy
-    if(gAgent.getBusy())
-    {
-        // get our name
-        std::string name_str;
-        gAgent.getName(name_str);
-        // if its not ours
-        if(fullname != name_str)
+        // get requestor name
+        std::string fullname = first_name + " " + last_name;
+        // if we are busy
+        if(gAgent.getBusy())
         {
-            // delete the structure created above
-            delete info;
-            // just return and ignore the msg
-            return;
+            // get our name
+            std::string name_str;
+            gAgent.getName(name_str);
+            // if its not ours
+            if(fullname != name_str)
+            {
+                // delete the structure created above
+//              delete info;
+                // just return and ignore the msg
+                return;
+            }
         }
-    }
 	
-    // unused for now
+        // unused for now
 	LLUUID image_id;
 	msg->getUUID("Data", "ImageID", image_id);
 

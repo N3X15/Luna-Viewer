@@ -45,6 +45,12 @@ class ViewerManifest(LLManifest):
         self.exclude("*.svn*")
         self.path(src="../../scripts/messages/message_template.msg", dst="app_settings/message_template.msg")
         self.path(src="../../etc/message.xml", dst="app_settings/message.xml")
+	self.path(src="lua/lfs.so")
+	if self.prefix(src="lua"):
+            self.path("*.lua")
+            self.path("Hooks")
+            self.path("Macros")
+            self.end_prefix("lua")
 
         if self.prefix(src="app_settings"):
             self.exclude("logcontrol.xml")
@@ -59,7 +65,7 @@ class ViewerManifest(LLManifest):
             # ... and the entire windlight directory
             self.path("windlight")
             self.end_prefix("app_settings")
-
+	
         if self.prefix(src="character"):
             self.path("*.llm")
             self.path("*.xml")
@@ -103,7 +109,7 @@ class ViewerManifest(LLManifest):
         # NOTE: Do not return the normal channel if login_channel
         # is not specified, as some code may branch depending on
         # whether or not this is present
-        return self.args.get('login_channel')
+        return "FlexLife"
 
     def grid(self):
         return self.args['grid']
