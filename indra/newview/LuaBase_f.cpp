@@ -146,8 +146,8 @@ const char* LuaGetCWD()
 // Pop up an alert window.
 void LuaAlert(const char* msg)
 {
-	LLStringUtil::format_map_t args;
-	args["[MESSAGE]"]=llformat("%s",msg);
+	LLSD args;
+	args["MESSAGE"]=llformat("%s",msg);
 	//LLNotifyBox::showXml("LuaAlert",args);
 	LLNotifications::instance().add("LuaAlert",args);
 }

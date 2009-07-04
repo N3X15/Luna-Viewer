@@ -72,13 +72,16 @@ std::string  LuaDumpVisualParamsToLuaCode()
 		s << "wear(\"" << wear->getID().asString() << "\")\n";
 		param_msg.append(s.str());
 	}
-	for( S32 i = 0; i < BAKED_TEXTURE_COUNT; i++ )
+/*
+	for( S32 i = 0; i < BAKED_NUM_INDICES; i++ )
 	{
-		S32 tex_index = LLVOAvatar::sBakedTextureIndices[i];
+		S32 tex_index=LLmBakedTextureData[i].mTextureIndex
+		//S32 tex_index = LLVOAvatar::sBakedTextureIndices[i];
 		std::stringstream s;
 		s << "setTEImage(" << tex_index <<",\""<< av->getTEImage(tex_index)->getID() << "\")\n";
 		param_msg.append(s.str());
 	}
+*/
 	return param_msg;
 }
 
