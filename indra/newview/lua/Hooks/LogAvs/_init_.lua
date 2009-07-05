@@ -2,7 +2,7 @@
 	Echo Avs to Chat
 		Generates log of avatars that have appeared in your viewer.
 	 
-	 Copyright (C) 2008 Patriotic Nigras
+	 Copyright (C) 2008-2009 FlexLife Contributors
 	 
 	 This program is free software; you can redistribute it and/or modify
 	 it under the terms of the GNU General Public License as published by
@@ -26,11 +26,11 @@ gAvatarNames={};
 LogAvs = function (uuid,fullname,title)
 	if(gAvatarNames[uuid]==nil) then
 		gAvatarNames[uuid]=fullname;
-		if(gJLUList[uuid]==nil) then
+--		if(gJLUList[uuid]==nil) then
 			print ("Avatar detected: "..fullname.." (LLUUID: "..uuid..")")
-		else
-			error ("JLU DETECTED: "..fullname.." (LLUUID: "..uuid..")")
-		end
+--		else
+--			error ("JLU DETECTED: "..fullname.." (LLUUID: "..uuid..")")
+--		end
 	end
 end
 

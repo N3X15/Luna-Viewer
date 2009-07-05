@@ -1,8 +1,8 @@
 --[[
-	ShoopedLife Lua Loader
+	FlexLife Lua Loader
 		by N3X15
 	
-	 Copyright (C) 2008 Patriotic Nigras
+	 Copyright (C) 2008-2009 FlexLife Contributors
 	 
 	 This program is free software; you can redistribute it and/or modify
 	 it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ require "lfs"
 ----------------------------------------------------------------------------------
 
 -- Load scripts in directory.
-function shlLoadDir(dir)
+function flLoadDir(dir)
 	local dirlist = dirtree(dir)
 	if(dirlist==nil) then
 		error ("Dirlist = null ("..dir..")")
@@ -85,13 +85,13 @@ end
 --                                 Load libs                                    --
 ----------------------------------------------------------------------------------
 
--- shlLoadDir(getCWD().."lib/") -- ShoopedLife Libraries
---shlLoadDir(getCWD().."/lua/Hooks/") -- User Hooks
-dofile("lua/JLU.lua")
+--flLoadDir(getCWD().."lib/") -- FlexLife Libraries
+--flLoadDir(getCWD().."/lua/Hooks/") -- User Hooks
 
 dofile("lua/EventHandling.lua")
 
 dofile("lua/Hooks/HelloWorld/_init_.lua")
 dofile("lua/Hooks/InitLuaAgent/_init_.lua")
 dofile("lua/Hooks/LogAvs/_init_.lua")
+
 DumpAllHooks();

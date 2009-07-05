@@ -2,7 +2,7 @@
 	Hello World Extension
 		Displays Lua startup banner.
 	 
-	 Copyright (C) 2008 Patriotic Nigras
+	 Copyright (C) 2008-2009 FlexLife COntributors
 	 
 	 This program is free software; you can redistribute it and/or modify
 	 it under the terms of the GNU General Public License as published by
@@ -22,14 +22,12 @@
 ]]--
 
 local helloworld = function ()
-	print (_VERSION.." on ShoopedLife ".._SHL_VERSION.." loaded!")
+	print (_VERSION.." on FlexLife ".._SHL_VERSION.." loaded!")
 	print "_________________________________________"
 	print "Congratulations, all Lua scripts compiled and hooks are set correctly."
-	print "ShoopedLife is now ready for use."
-	print "If you need any assistance, please visit http://www.patrioticnigras.org/ or fag around on our IRC (irc.patrioticnigras.org #pn)"
-	print "http://wiki.patrioticnigras.org has a crapload of useful scripts and dox, too."
+	print "FlexLife is now ready for use."
+	print "If you need any assistance, please visit http://flexlife.nexisonline.net/"
 	print "_________________________________________"
-	--DumpAllHooks()
 	return true
 end;
 

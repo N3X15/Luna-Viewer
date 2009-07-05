@@ -1,8 +1,8 @@
 --[[
-	ShoopedLife Lua Event Handler
+	FlexLife Lua Event Handler
 		by N3X15
 	
-	 Copyright (C) 2008 Patriotic Nigras
+	 Copyright (C) 2008-2009 FlexLife Contributors
 	 
 	 This program is free software; you can redistribute it and/or modify
 	 it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ function SetHook(EventName,Func)
 	table.insert(gEvents[EventName],Func);
 end
 
--- Should only be called from ShoopedLife's C++ code, or from a package that initialized the event called.
+-- Should only be called from FlexLife's C++ code, or from a package that initialized the event called.
 function CallHook(EventName,...)
 	if(gEvents[EventName]==nil) then return end -- No hooks to call, so exit.
 	for _,hookedfunc in pairs(gEvents[EventName]) do hookedfunc(...) end

@@ -1,6 +1,7 @@
 #!/bin/bash
 # Needs to be done, or loading the client WILL fail.
 #
+
 find . -type f -name "*.h" -print | while 
 read filename 
 do ( 
