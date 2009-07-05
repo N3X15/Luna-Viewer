@@ -1,6 +1,6 @@
 /*
 ** Lua binding: LuaBase
-** Generated automatically by tolua++-1.0.92 on Fri Jun 19 21:02:09 2009.
+** Generated automatically by tolua++-1.0.92 on Sun Jul  5 15:48:36 2009.
 */
 
 #ifndef __cplusplus
@@ -8,7 +8,7 @@
 #endif
 #include "string.h"
 
-#include "lua/tolua++.h"
+#include "tolua++.h"
 
 /* Exported function */
 TOLUA_API int  tolua_LuaBase_open (lua_State* tolua_S);
@@ -18,6 +18,9 @@ TOLUA_API int  tolua_LuaBase_open (lua_State* tolua_S);
 #include "llworld.h"
 #include "LuaAgent_f.h"
 #include "llworldmap.h"
+#include "llfloater.h"
+#include "llpanel.h"
+#include "lltexteditor.h"
 
 /* function to register type */
 static void tolua_reg_types (lua_State* tolua_S)
