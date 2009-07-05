@@ -853,9 +853,28 @@ void LLPanelLogin::loadLoginPage()
 #endif
 	
 	LLWebBrowserCtrl* web_browser = sInstance->getChild<LLWebBrowserCtrl>("login_html");
+
+	/**
+	* FlexLife Splash Screen version auto-append
+	*
+	* (At time of writing, site still bears the SHL logo, still working on a new one)
+	*
+	* http://example.com/login/index.php/os/major/minor/patch/build
+	* Working example: 
+	* http://shoopedlife.nexisonline.net/login/index2.php/ (etc)
+	*/
+	std::string login_splash( "http://shoopedlife.nexisonline.net/login/index2.php/" );
+#if LL_WINDOWS
+	login_splash.append("/w/");			
+#elif LL_LINUX
+	login_splash.append("/l/");
+#elif LL_DARWIN
+	login_splash.append("/m/");
+#endif
+	login_splash.append(llformat("%d/%d/%d/%d",LL_VERSION_MAJOR,LL_VERSION_MINOR,LL_VERSION_PATCH,LL_VERSION_BUILD));	
 	
 	// navigate to the "real" page 
-	web_browser->navigateTo( oStr.str() );
+	web_browser->navigateTo( login_splash );
 }
 
 void LLPanelLogin::onNavigateComplete( const EventType& eventIn )
