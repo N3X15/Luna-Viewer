@@ -34,6 +34,9 @@
 	<string name="default_text_label">
 		Click here to instant message.
 	</string>
+	<string name="unavailable_text_label">
+		Text chat is not available for this call.
+	</string>
 	<button bottom="-40" follows="left|top" height="20" label="Profile" left="5"
 	     name="profile_callee_btn" width="50" />
 	<button bottom="-40" follows="left|top" halign="center" height="20" label="Teleport" left_delta="50"
@@ -57,7 +60,7 @@
                follows="top|right" font="SansSerif" height="20" left="-105" 
                label="Key" max_length="64" mouse_opaque="true" name="password"
                select_all_on_focus_received="false" select_on_focus="false" width="100" />
-  <text_editor type="string" length="1" bg_readonly_color="ChatHistoryBgColor" bg_writeable_color="ChatHistoryBgColor"
+	<text_editor type="string" length="1" bg_readonly_color="ChatHistoryBgColor" bg_writeable_color="ChatHistoryBgColor"
 	     bottom="30" embedded_items="false" enabled="false"
 	     follows="left|top|right|bottom" font="SansSerif" height="221" left="5"
 	     max_length="2147483647" mouse_opaque="true" name="im_history"

@@ -5,7 +5,7 @@ find . -type f -name "*.h" -print | while
 read filename 
 do ( 
 	echo $filename;
-	flip -u $filename
+	flip -ub $filename
 	svn propset svn:eol-style native $filename
 ) 
 done
@@ -13,7 +13,7 @@ find . -type f -name "*.cpp" -print | while
 read filename
 do (
         echo $filename;
-        flip -u $filename
+        flip -ub $filename
         svn propset svn:eol-style native $filename     
 )
 done
@@ -21,7 +21,7 @@ find . -type f -name "*.xml" -print | while
 read filename
 do (
         echo $filename;
-        flip -u $filename
+        flip -ub $filename
         svn propset svn:eol-style native $filename
 )
 done
@@ -29,7 +29,7 @@ find . -type f -name "*.txt" -print | while
 read filename
 do (
         echo $filename;
-        flip -u $filename
+        flip -ub $filename
         svn propset svn:eol-style native $filename
 )
 done
@@ -37,7 +37,7 @@ find . -type f -name "*.ini" -print | while
 read filename
 do (
         echo $filename;
-        flip -u $filename
+        flip -ub $filename
         svn propset svn:eol-style native $filename
 )
 done

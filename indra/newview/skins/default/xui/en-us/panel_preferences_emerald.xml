@@ -248,10 +248,6 @@
          name="sit-click-toggle" radio_style="false" width="270" control_name="EmeraldBlockClickSit" />
 	<check_box bottom_delta="-40" enabled="true"
 		 follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
-		 label="Enable transmission of selection beam end position" left_delta="0" mouse_opaque="true"
-		 name="lol-toggle" radio_style="false" width="270" control_name="EmeraldParticleChat" />
-	<check_box bottom_delta="-40" enabled="true"
-		 follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
 		 label="Hear typing sound when people type" left_delta="0" mouse_opaque="true"
 		 name="typing-sound-toggle" radio_style="false" width="270" control_name="PlayTypingSound" />	
     </panel>
@@ -311,6 +307,54 @@ Leave any command blank to deactivate it.
            follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
            label="Use position in this sim as position in new sim" left_delta="200" mouse_opaque="true"
            name="toggle" radio_style="false" width="270" control_name="EmeraldMapToKeepPos" />
+	  <text bottom_delta="-18" follows="left|top" font="SansSerifSmall" height="16" left_delta="-200" name="loltxt" width="512">
+        Command to calculate expressions (usage: cmd expressions) (ex:cmd SIN(2+2))
+      </text>
+      <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom_delta="-18"
+           follows="left|top" font="SansSerifSmall" height="20" left_delta="0"
+           max_length="256" mouse_opaque="true"
+           tool_tip="" name="EmeraldCmdLineCalc" control_name="EmeraldCmdLineCalc" width="200" />
+    </panel>
+    <panel border="true" bottom="-580" follows="left|top|right|bottom" height="525"
+           label="Avatar" left="1" mouse_opaque="true" name="wat!" width="418">
+      <check_box bottom_delta="-40" enabled="true"
+           follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+           label="Enable transmission of selection beam end position" left_delta="15" mouse_opaque="true"
+           name="lol-toggle!" radio_style="false" width="270" control_name="EmeraldParticleChat" />
+      <panel
+             name="scanner_options"
+             left_delta="5"
+             width="150"
+             height="75"
+             bottom_delta="-90"
+             border="true"
+             mouse_opaque="true"
+             bevel_style="in"
+             background_visible="true"
+             background_opaque="true"
+             follows="top|left"
+             bg_opaque_color="0,0,0,0.1"
+             bg_alpha_color="blue"
+             can_resize="false"
+		>
+      </panel>
+      <spinner bottom_delta="50" decimal_digits="5" follows="left|top" height="16"
+			     increment="0.05" label="X Modifier" label_width="65"
+			     left_delta="5" max_val="0.15" min_val="-0.15" mouse_opaque="true"
+			     name="X Modifier" width="128" control_name="EmeraldAvatarXModifier" />
+      <spinner bottom_delta="-20" decimal_digits="5" follows="left|top" height="16"
+			     increment="0.05" label="Y Modifier" label_width="65"
+			     left_delta="0" max_val="0.20" min_val="-0.20" mouse_opaque="true"
+			     name="Y Modifier" width="128" control_name="EmeraldAvatarYModifier" />
+      <spinner bottom_delta="-20" decimal_digits="5" follows="left|top" height="16"
+			     increment="0.1" label="Z Modifier" label_width="65"
+			     left_delta="0" max_val="5.0" min_val="-5.0" mouse_opaque="true"
+			     name="Y Modifier" width="128" control_name="EmeraldAvatarZModifier" />
+      <text bottom_delta="50" follows="left|top" font="SansSerifSmall" height="16" left_delta="150" name="loltxt" width="512">
+        Use this to manipulate, to a degree, your avatar bounding
+box. This can be used to distort orbiters, or to raise 
+you up or down without altering your shape.
+      </text>
     </panel>
   </tab_container>
 </panel>

@@ -41,6 +41,12 @@
 		<radio_item bottom="-65" height="20" left="230" name="white_emerald" width="480">
 			White Emerald
 		</radio_item>
+    <radio_item bottom="-105" height="20" left="230" name="darkgred" width="480">
+      Dark G-Red
+    </radio_item>
+    <radio_item bottom="-145" height="20" left="230" name="darkorange" width="480">
+      Orange Metal
+    </radio_item>
 
 	</radio_group>
 
@@ -55,6 +61,8 @@
 	<button left="130" bottom="-345" width="92" height="40" name="gred_preview" label="LGG" scale_image="true" image_selected="skin_thumbnail_gred.png" image_unselected="skin_thumbnail_gred.png" image_hover_selected="skin_thumbnail_gred.png" image_hover_unselected="skin_thumbnail_gred.png"/>
 	<!--Next Row-->
 	<button left="360" bottom="-65" width="92" height="40" name="saphire_preview" label="CIG" scale_image="true" image_selected="skin_thumbnail_saphire.png" image_unselected="skin_thumbnail_saphire.png" image_hover_selected="skin_thumbnail_saphire.png" image_hover_unselected="skin_thumbnail_saphire.png"/>
-	<button left="360" bottom="-105" width="92" height="40" name="white_emerald_preview" label="CIG" scale_image="true" image_selected="skin_thumbnail_white_emerald.png" image_unselected="skin_thumbnail_white_emerald.png" image_hover_selected="skin_thumbnail_white_emerald.png" image_hover_unselected="skin_thumbnail_white_emerald.png"/>
+	<button left="360" bottom="-105" width="92" height="40" name="white_emerald_preview" label="J R" scale_image="true" image_selected="skin_thumbnail_white_emerald.png" image_unselected="skin_thumbnail_white_emerald.png" image_hover_selected="skin_thumbnail_white_emerald.png" image_hover_unselected="skin_thumbnail_white_emerald.png"/>
+  <button left="360" bottom="-145" width="92" height="40" name="darkgred_preview" label="LGG" scale_image="true" image_selected="skin_thumbnail_darkgred.png" image_hover_selected="skin_thumbnail_darkgred.png" image_unselected="skin_thumbnail_darkgred.png" image_hover_unselected="skin_thumbnail_darkgred.png"/>
+  <button left="360" bottom="-185" width="92" height="40" name="darkorange_preview" label="PNY" scale_image="true" image_selected="skin_thumbnail_darkorange.png" image_unselected="skin_thumbnail_darkorange.png" image_hover_selected="skin_thumbnail_darkorange.png" image_hover_unselected="skin_thumbnail_darkorange.png"/>
 
 </panel>

@@ -109,7 +109,7 @@ class ViewerManifest(LLManifest):
         # NOTE: Do not return the normal channel if login_channel
         # is not specified, as some code may branch depending on
         # whether or not this is present
-        return "FlexLife"
+        return self.args.get('login_channel')
 
     def grid(self):
         return self.args['grid']

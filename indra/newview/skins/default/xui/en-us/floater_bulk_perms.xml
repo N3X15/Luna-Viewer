@@ -93,7 +93,7 @@
   <text bottom_delta="-26" bg_visible="false" border_drop_shadow_visible="false"
        drop_shadow_visible="true" follows="left|top" border_visible="false"
        font="SansSerifSmall" h_pad="0" halign="left" left="170"
-       mouse_opaque="true" name="NextOwnerLabel" v_pad="0" width="88" height="10" >
+       mouse_opaque="true" name="NextOwnerLabel" v_pad="0" width="206" height="10" >
     Next owner can:
   </text>
   <check_box bottom_delta="-30" follows="left|top" width="78" height="16" left="170"
@@ -115,6 +115,10 @@
 	     follows="left|top|right|bottom" mouse_opaque="true"
 	     multi_select="false" name="queue output" />
 
+  <button bottom="10" left="10" width="90" height="20" follows="left|top"
+       label="Help" name="help" enabled="true"
+       mouse_opaque="true" font="SansSerif" scale_image="true" halign="center" />
+
   <button bottom="10" left="265" width="100" height="20" follows="left|top"
        label="Apply" name="apply" enabled="true"
        mouse_opaque="true" font="SansSerif" scale_image="true" halign="center" />
@@ -122,11 +126,11 @@
        label="Close" name="close" enabled="true"
        mouse_opaque="true" font="SansSerif" scale_image="true" halign="center" />
 
-  <string name="nothing_to_modify_text">"Selection contains no editable contents."</string>
-  <string name="status_text">"Setting permissions on [NAME][STATUS]"</string>
-  <string name="status_ok_text">": [OK]"</string>
-  <string name="status_bad_text">": [DENIED]"</string>
-  <string name="start_text">"Starting premission change requests."</string>
-  <string name="done_text">"Finished premission change requests."</string>
+  <string name="nothing_to_modify_text">Selection contains no editable contents.</string>
+  <string name="status_text">Setting permissions on [NAME]</string>
+  
+  
+  <string name="start_text">Starting permission change requests...</string>
+  <string name="done_text">Finished permission change requests.</string>
 
 </floater>

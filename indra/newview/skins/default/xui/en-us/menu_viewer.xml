@@ -7,28 +7,33 @@
 	     opaque="true" tear_off="true" width="243">
 		<tearoff_menu bottom="-10" enabled="true" height="10" label="~~~~~~~~~~~" left="0"
 		     mouse_opaque="true" name="~~~~~~~~~~~" width="243" />
-		<menu label="Upload" name="upload" 
-			create_jump_keys="true" drop_shadow="true" enabled="true" mouse_opaque="false"
-				opaque="true" tear_off="true">
-			<menu_item_call enabled="true" label="Image (L$[COST])..."
-				   mouse_opaque="true" name="Upload Image" shortcut="control|U" >
-				<on_click function="File.UploadImage" userdata="" />
-			</menu_item_call>
-			<menu_item_call label="Sound (L$[COST])..." name="Upload Sound"
-				mouse_opaque="true" enabled="true" >
-				<on_click function="File.UploadSound" userdata="" />
-				<on_enable function="File.EnableUpload" />
-			</menu_item_call>
-			<menu_item_call label="Animation (L$[COST])..." name="Upload Animation"
-				   mouse_opaque="true" enabled="true"  >
-				<on_click function="File.UploadAnim" userdata="" />
-				<on_enable function="File.EnableUpload" />
-			</menu_item_call>
-			<menu_item_call label="Bulk (L$[COST] per file)..." name="Bulk Upload"
-				 mouse_opaque="true" enabled="true" >
-				<on_click function="File.UploadBulk" userdata="" />
-			</menu_item_call>
-		</menu>
+    <menu label="Upload" name="upload" 
+        create_jump_keys="true" drop_shadow="true" enabled="true" mouse_opaque="false"
+		    opaque="true" tear_off="true">
+        <menu_item_call enabled="true" label="Image (L$[COST])..."
+	           mouse_opaque="true" name="Upload Image" shortcut="control|U" >
+          <on_click function="File.UploadImage" userdata="" />
+        </menu_item_call>
+        <menu_item_call label="Sound (L$[COST])..." name="Upload Sound"
+            mouse_opaque="true" enabled="true" >
+            <on_click function="File.UploadSound" userdata="" />
+            <on_enable function="File.EnableUpload" />
+        </menu_item_call>
+        <menu_item_call label="Animation (L$[COST])..." name="Upload Animation"
+	           mouse_opaque="true" enabled="true"  >
+            <on_click function="File.UploadAnim" userdata="" />
+            <on_enable function="File.EnableUpload" />
+        </menu_item_call>
+        <menu_item_call label="Bulk (L$[COST] per file)..." name="Bulk Upload"
+             mouse_opaque="true" enabled="true" >
+            <on_click function="File.UploadBulk" userdata="" />
+        </menu_item_call>
+        <menu_item_separator enabled="true" label="-----------" mouse_opaque="true" name="separator" />
+        <menu_item_call enabled="true" label="Set Default Permissions..." 
+	          mouse_opaque="true" name="perm prefs" >
+            <on_click function="ShowFloater" userdata="perm prefs" />
+        </menu_item_call>
+    </menu>
 		<menu_item_separator bottom="-94" enabled="true" height="8" label="-----------" left="0"
 		     mouse_opaque="true" name="separator" width="243" />
 		<menu_item_call bottom="-113" enabled="true" height="19" label="Close Window" left="0"
@@ -264,19 +269,19 @@
 		</menu_item_check>
 		<menu_item_check bottom="-132" enabled="true" height="19" label="Local Chat" left="0"
 		     mouse_opaque="true" name="Chat History" shortcut="control|H" width="211">
-			<on_click function="ShowFloater" userdata="chat history"/>
-			<on_check function="FloaterVisible" userdata="chat history" />
-		</menu_item_check>
+             <on_click function="ShowFloater" userdata="chat history"/>
+             <on_check function="FloaterVisible" userdata="chat history" />
+        </menu_item_check>
 		<menu_item_check bottom="-151" enabled="true" height="19" label="Communicate" left="0"
 		     mouse_opaque="true" name="Instant Message" shortcut="control|T" width="211">
 			<on_click function="View.Communicate"/>
-			<on_check function="FloaterVisible" userdata="communicate" />
-		</menu_item_check>
+            <on_check function="FloaterVisible" userdata="communicate" />
+        </menu_item_check>
 		<menu_item_check bottom="-170" enabled="true" height="19" label="Inventory" left="0"
 		     mouse_opaque="true" name="Inventory" shortcut="control|I" width="211">
 			<on_click function="ShowFloater" userdata="inventory" />
-			<on_check function="FloaterVisible" userdata="inventory" />
-		</menu_item_check>
+            <on_check function="FloaterVisible" userdata="inventory" />
+        </menu_item_check>
 		<menu_item_check bottom="-189" enabled="true" height="19" label="Active Speakers" left="0"
 		     mouse_opaque="true" name="Active Speakers" width="211">
 			<on_click function="ShowFloater" userdata="active speakers" />
@@ -327,6 +332,11 @@
 		     width="211">
 			<on_click function="ToggleControl" userdata="ShowPropertyLines" />
 			<on_check control="ShowPropertyLines" />
+		</menu_item_check>
+		<menu_item_check bottom="-319" enabled="true" height="19" label="Banlines" left="0"
+		     mouse_opaque="true" name="Banlines" width="211">
+			<on_click function="ToggleControl" userdata="ShowBanLines" />
+			<on_check control="ShowBanLines" />
 		</menu_item_check>
 		<menu_item_check bottom="-338" enabled="true" height="19" label="Land Owners" left="0"
 		     mouse_opaque="true" name="Land Owners" width="211">
@@ -455,7 +465,7 @@
 			<on_click function="World.SetBusy" userdata="" />
 		</menu_item_call>
 		<menu_item_call bottom="-281" enabled="false" height="19" label="Stop Animating My Avatar" left="0"
-		     mouse_opaque="true" name="Stop All Animations" width="250">
+		     mouse_opaque="true" name="Stop Animating My Avatar" width="250">
 			<on_click function="Tools.StopAllAnimations" userdata="" />
 		</menu_item_call>
     <menu_item_check bottom="-281" enabled="false" height="19" label="Animation List" left="0"
@@ -656,18 +666,12 @@
 		<menu_item_call bottom="-346" enabled="false" height="19" label="Buy Object" left="0"
 		     mouse_opaque="true" name="Menu Object Take" visible="false" width="250">
 			<on_click function="Tools.BuyOrTake" userdata="" />
-			<on_enable function="Tools.EnableBuyOrTake" userdata="Buy,Take" />
+			<on_enable function="Tools.EnableBuyOrTake" userdata="Buy,Take" name="EnableBuyOrTake"/>
 		</menu_item_call>
 		<menu_item_call bottom="-365" enabled="false" height="19" label="Take Copy" left="0"
 		     mouse_opaque="true" name="Take Copy" width="250">
 			<on_click function="Tools.TakeCopy" userdata="" />
 			<on_enable function="Tools.EnableTakeCopy" />
-		</menu_item_call>
-		<menu_item_call bottom="-384" enabled="false" height="19"
-		     label="Save Object Back to My Inventory" left="0" mouse_opaque="true"
-		     name="Save Object Back to My Inventory" width="250">
-			<on_click function="Tools.SaveToInventory" userdata="" />
-			<on_enable function="Tools.EnableSaveToInventory" />
 		</menu_item_call>
 		<menu_item_call bottom="-403" enabled="false" height="19"
 		     label="Save Object Back to Object Contents" left="0" mouse_opaque="true"
@@ -685,18 +689,18 @@
 		<menu bottom="-449" color="0 0 0 1" drop_shadow="true" enabled="true" height="52"
 		     hidden="false" label="Recompile Scripts in Selection" left="0" mouse_opaque="false"
 		     name="Recompile Scripts in Selection" opaque="true" tear_off="true" create_jump_keys="true" width="169">
-			<menu_item_call bottom="-29" enabled="true" height="19" 
-					hidden="false" label="Mono" left="0"
-				mouse_opaque="true" name="Mono" width="169">
-				<on_click function="Tools.SelectedScriptAction" userdata="compile mono" />
-				<on_enable function="EditableSelectedMono" />
-			</menu_item_call>
-			<menu_item_call bottom="-48" enabled="true" height="19" 
-					hidden="false" label="LSL" left="0"
-				mouse_opaque="true" name="LSL" width="169">
-				<on_click function="Tools.SelectedScriptAction" userdata="compile lsl" />
-				<on_enable function="EditableSelected" />
-			</menu_item_call>
+		     <menu_item_call bottom="-29" enabled="true" height="19" 
+		             hidden="false" label="Mono" left="0"
+			     mouse_opaque="true" name="Mono" width="169">
+			     <on_click function="Tools.SelectedScriptAction" userdata="compile mono" />
+			     <on_enable function="EditableSelectedMono" />
+		     </menu_item_call>
+		     <menu_item_call bottom="-48" enabled="true" height="19" 
+		             hidden="false" label="LSL" left="0"
+			     mouse_opaque="true" name="LSL" width="169">
+			     <on_click function="Tools.SelectedScriptAction" userdata="compile lsl" />
+			     <on_enable function="EditableSelected" />
+		     </menu_item_call>
 		</menu>
 		<menu_item_call bottom="-468" enabled="false" height="19" label="Reset Scripts in Selection"
 		     left="0" mouse_opaque="true" name="Reset Scripts in Selection" width="250">
