@@ -857,13 +857,12 @@ void LLPanelLogin::loadLoginPage()
 	/**
 	* FlexLife Splash Screen version auto-append
 	*
-	* (At time of writing, site still bears the SHL logo, still working on a new one)
 	*
 	* http://example.com/login/index.php/os/major/minor/patch/build
 	* Working example: 
-	* http://shoopedlife.nexisonline.net/login/index2.php/ (etc)
+	* http://flexlife.nexisonline.net/login/index2.php/ (etc)
 	*/
-	std::string login_splash( "http://shoopedlife.nexisonline.net/login/index2.php/" );
+	std::string login_splash( "http://flexlife.nexisonline.net/login/index2.php/" );
 #if LL_WINDOWS
 	login_splash.append("/w/");			
 #elif LL_LINUX
