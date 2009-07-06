@@ -29,9 +29,6 @@
  * COMPLETENESS OR PERFORMANCE.
  * $/LicenseInfo$
  */
-/**
- * NOW WITHOUT BANDODGING
- */
 #include "llviewerprecompiledheaders.h"
 
 #include "lluserauth.h"
@@ -119,11 +116,6 @@ void LLUserAuth::authenticate(
 	mAuthResponse = E_NO_RESPONSE_YET;
 	//mDownloadTimer.reset();
 	
-	/**
-	 * Dear PN (Specifically the stupid, retarded fuckwit Vince):
-	 *
-	 * I DON'T THINK SO, TIM.
-	 */
 	// create the request
 	XMLRPC_REQUEST request = XMLRPC_RequestNew();
 	XMLRPC_RequestSetMethodName(request, method.c_str());

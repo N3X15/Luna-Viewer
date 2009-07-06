@@ -449,7 +449,7 @@ void LLAgent::init()
 	// Run a lua hook
 	std::string lolname;
 	this->getName(lolname);
-	SHLLua::getInstance()->callLuaHook("OnAgentInit",2,lolname.c_str(),(const char *)isGodlike());
+	FLLua::getInstance()->callLuaHook("OnAgentInit",2,lolname.c_str(),(const char *)isGodlike());
 }
 
 //-----------------------------------------------------------------------------
@@ -780,7 +780,7 @@ BOOL LLAgent::canFly()
 void LLAgent::setPhantom(BOOL phantom)
 {
 	emeraldPhantom = phantom;
-	SHLLua::getInstance()->callLuaHook("EmeraldPhantomOn",1,phantom);
+	FLLua::getInstance()->callLuaHook("EmeraldPhantomOn",1,phantom);
 }
 //-----------------------------------------------------------------------------
 // getPhantom()  lgg

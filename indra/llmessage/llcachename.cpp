@@ -524,7 +524,21 @@ BOOL LLCacheName::getFullName(const LLUUID& id, std::string& fullname)
 	fullname = first_name + " " + last_name;
 	return res;
 }
-
+/*BOOL LLCacheName::getKey(const std::string& first_name,const std::string& last_name,LLUUID& id)//H4CK*
+{
+	BOOL rt = FALSE;
+	for(Cache::iterator itr = impl.mCache.begin();itr != impl.mCache.end();++itr)
+	{
+		LLCacheNameEntry* entry = itr->second;
+		if(entry->mFirstName == first_name && entry->mLastName == last_name)
+		{
+			rt=TRUE;
+			id=itr->first;
+			break;
+		}
+	}
+	return rt;
+}*/
 BOOL LLCacheName::getGroupName(const LLUUID& id, std::string& group)
 {
 	if(id.isNull())

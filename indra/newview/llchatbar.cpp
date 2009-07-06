@@ -395,12 +395,12 @@ void LLChatBar::sendChat( EChatType type )
 			//TODO: chat as commandline?
 			if(mInputEditor->getText()=="/luareload")
 			{
-				SHLLua::init();
+				FLLua::init();
 				childSetValue("Chat Editor", std::string());
 				return;
 			}
-			if(SHLLua::isMacro(mInputEditor->getText()))
-				SHLLua::getInstance()->RunMacro(mInputEditor->getText());
+			if(FLLua::isMacro(mInputEditor->getText()))
+				FLLua::getInstance()->RunMacro(mInputEditor->getText());
 
 			// store sent line in history, duplicates will get filtered
 			if (mInputEditor) mInputEditor->updateHistory();

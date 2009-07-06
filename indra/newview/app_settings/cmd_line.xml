@@ -87,7 +87,7 @@
       <key>count</key>
       <integer>1</integer>
       <key>map-to</key>
-      <string>SkinFolder</string>
+      <string>skinCurrent</string>
     </map>
 
     <key>autologin</key>

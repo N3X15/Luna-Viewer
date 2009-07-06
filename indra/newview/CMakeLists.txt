@@ -68,6 +68,7 @@ include_directories(
     )
 
 set(viewer_SOURCE_FILES
+	importtracker.cpp
 	chatbar_as_cmdline.cpp
 	jcfloater_animation_list.cpp
 	jcfloater_areasearch.cpp
@@ -463,7 +464,7 @@ set(viewer_SOURCE_FILES
     LuaBase_f.cpp
     LuaBuild_f.cpp
     LuaUI_f.cpp
-    SHLLua.cpp
+    FLLua.cpp
     flexconsole.cpp
     )
 
@@ -491,6 +492,7 @@ set(viewer_HEADER_FILES
 	jcfloater_animation_list.h
 	jcfloater_areasearch.h
 	jcobjectpropertylist.h
+	importtracker.h
     llagent.h
     llagentaccess.h
     llagentdata.h
@@ -887,7 +889,7 @@ set(viewer_HEADER_FILES
 #    tslua.h
     VertexCache.h
     VorbisFramework.h
-    SHLLua.h
+    FLLua.h
     LuaBase.h
 	LuaAgent_f.h
 	LuaAvatar_f.h

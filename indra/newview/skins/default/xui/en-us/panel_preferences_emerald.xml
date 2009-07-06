@@ -83,12 +83,12 @@
            follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
            label="Clothing Layer Protection" left_delta="10" mouse_opaque="true"
            name="clothing_protect_toggle" radio_style="false" width="270" control_name="EmeraldClothingLayerProtection" />
-      <panel 
-             name="scanner_options"
-             left_delta="-5"
-             width="250"
-             height="50"
-             bottom_delta="-55"
+      <panel
+             name="antispam_options"
+             left_delta="5"
+             width="175"
+             height="100"
+             bottom_delta="-115"
              border="true"
              mouse_opaque="true"
              bevel_style="in"
@@ -98,7 +98,33 @@
              bg_opaque_color="0,0,0,0.1"
              bg_alpha_color="blue"
              can_resize="false"
-	>
+		>
+		<check_box bottom_delta="-20" enabled="true"
+			   follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+			   label="Dialog Spam Prevention" left_delta="5" mouse_opaque="true"
+			   name="dialog_spam_prevention" radio_style="false" width="270" control_name="EmeraldDialogSpamEnabled" />
+		<check_box bottom_delta="-20" enabled="true"
+			   follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+			   label="CallingCard Spam Prevention" left_delta="0" mouse_opaque="true"
+			   name="card_spam_prevention" radio_style="false" width="270" control_name="EmeraldCardSpamEnabled" />
+		  <spinner decimal_digits="1" follows="left|top" height="18" increment="1" initial_val="0"
+			   label="Count" label_width="50" left_delta="0" bottom_delta="-25" max_val="7" min_val="0"
+			   name="Count"
+			   tool_tip="Controls the number of spam items per time to set off the trigger"
+			   width="110" control_name="EmeraldSpamCount" />
+		  <spinner decimal_digits="1" follows="left|top" height="18" increment="1" initial_val="0"
+			   label="Time" label_width="50" left_delta="0" bottom_delta="-25" max_val="2" min_val="0"
+			   name="Time"
+			   tool_tip="Controls the amount of time you want between count refreshing."
+			   width="110" control_name="EmeraldSpamTime" />
+			<text bottom_delta="50" follows="left|top" font="SansSerifSmall" height="16" left_delta="175" name="loltxt" width="512">
+			To clear the blacklist just turn the protection off then back on.
+			Count and Time are ADVANCED settings.
+			Please use them ONLY if you know what you are doing.
+			Recommended Settings are:
+			Time: 1
+			Count: 4
+			</text>
       </panel>
     </panel>
     <panel border="true" bottom="-580" follows="left|top|right|bottom" height="525"
@@ -322,7 +348,7 @@ Leave any command blank to deactivate it.
            label="Enable transmission of selection beam end position" left_delta="15" mouse_opaque="true"
            name="lol-toggle!" radio_style="false" width="270" control_name="EmeraldParticleChat" />
       <panel
-             name="scanner_options"
+             name="antispam_options"
              left_delta="5"
              width="150"
              height="75"

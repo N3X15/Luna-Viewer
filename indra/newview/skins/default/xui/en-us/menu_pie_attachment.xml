@@ -7,10 +7,17 @@
 		<on_click function="Attachment.Drop" />
 		<on_enable function="Attachment.EnableDrop" />
 	</menu_item_call>
-	<menu_item_call enabled="false" label="Touch" mouse_opaque="true" name="Attachment Object Touch">
-		<on_click function="Object.Touch" />
-		<on_enable function="Object.EnableTouch" userdata="Touch" name="EnableTouch"/>
+	<pie_menu label="More &gt;" name="More &gt;">
+		<menu_item_call enabled="false" hidden="false" label="Export" mouse_opaque="true" name="Export">
+			<on_click function="Object.Export" />
+			<on_visible function="Object.VisibleExport" />
+			<on_enable function="Object.EnableExport" />
 		</menu_item_call>
+		<menu_item_call enabled="false" label="Touch" mouse_opaque="true" name="Attachment Object Touch">
+			<on_click function="Object.Touch" />
+			<on_enable function="Object.EnableTouch" userdata="Touch" name="EnableTouch"/>
+		</menu_item_call>
+	</pie_menu>
 	<menu_item_call enabled="true" label="Stand Up" name="Stand Up">
 		<on_click function="Self.StandUp" userdata="" />
 		<on_enable function="Self.EnableStandUp" />

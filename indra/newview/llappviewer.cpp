@@ -165,8 +165,8 @@
 
 #include "llcommandlineparser.h"
 
-// FlexLife Lua includes (TODO: Rename from legacy code)
-#include "SHLLua.h"
+// FlexLife Lua includes
+#include "FLLua.h"
 
 // *FIX: These extern globals should be cleaned up.
 // The globals either represent state/config/resource-storage of either 
@@ -839,7 +839,7 @@ bool LLAppViewer::init()
 	LLViewerJoystick::getInstance()->init(false);
 
 	// Todo: Use the pieces for our own purposes...
-	SHLLua::init();
+	FLLua::init();
 
 	return true;
 }
@@ -1119,7 +1119,7 @@ bool LLAppViewer::mainLoop()
 
 bool LLAppViewer::cleanup()
 {
-	//SHLLua::cleanupClass();
+	//FLLua::cleanupClass();
 	
 	//----------------------------------------------
 	//this test code will be removed after the test

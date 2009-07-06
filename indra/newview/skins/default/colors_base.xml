@@ -60,8 +60,9 @@
 <TextDefaultColor value="0, 20, 0, 255"/>
 <TextLinkColor value="144, 165, 208, 255"/>
 <TextLinkHoverColor value="255, 255, 255, 255"/>
-  
-<!-- LISTBOXES -->
+
+
+  <!-- LISTBOXES -->
 <ScrollBgReadOnlyColor value="200, 209, 204, 255" />
 <ScrollBgWriteableColor value="200, 209, 204, 255" />
 <ScrollBGStripeColor value="100, 100, 100, 40" />

@@ -45,8 +45,8 @@ class ViewerManifest(LLManifest):
         self.exclude("*.svn*")
         self.path(src="../../scripts/messages/message_template.msg", dst="app_settings/message_template.msg")
         self.path(src="../../etc/message.xml", dst="app_settings/message.xml")
-	self.path(src="lua/lfs.so")
-	if self.prefix(src="lua"):
+		self.path(src="lua/lfs.so",dst="lib/lfs.so")
+		if self.prefix(src="lua"):
             self.path("*.lua")
             self.path("Hooks")
             self.path("Macros")

@@ -2407,6 +2407,11 @@ bool callingcard_offer_callback(const LLSD& notification, const LLSD& response)
 }
 static LLNotificationFunctorRegistration callingcard_offer_cb_reg("OfferCallingCard", callingcard_offer_callback);
 
+//CallingCard Spam Defines
+static LLFrameTimer c_spam;
+std::map< LLUUID , S32 > lastc_agents;
+LLDynamicArray<LLUUID> blacklisted_agents;
+
 void process_offer_callingcard(LLMessageSystem* msg, void**)
 {
 	// someone has offered to form a friendship
@@ -2439,6 +2444,57 @@ void process_offer_callingcard(LLMessageSystem* msg, void**)
 
 	if(!source_name.empty())
 	{
+		// Spam Prevention by Cryogenic
+		if(gSavedSettings.getBOOL("EmeraldCardSpamEnabled"))
+		{
+			if(!c_spam.getStarted())
+			{
+				c_spam.reset();
+			}
+			if(blacklisted_agents.find(source_id) == 0)
+			{
+				return;
+			}
+			std::map< LLUUID , S32 >::iterator itr = lastc_agents.find(source_id);
+			if(itr != lastc_agents.end())
+			{
+				if(c_spam.getElapsedTimeF32() < gSavedSettings.getF32("EmeraldSpamTime"))
+				{
+					if((*itr).second > gSavedSettings.getF32("EmeraldSpamCount"))
+					{
+						blacklisted_agents.put(source_id);
+						LL_INFOS("process_offer_callingcard") << "blocked callingcards from " << source_name << LL_ENDL;
+						args["KEY"] = source_id;
+						LLNotifications::getInstance()->add("BlockedCards",args);
+						return;
+					}
+					else
+					{
+						(*itr).second++;
+					}
+				}
+				else
+				{
+					c_spam.reset();
+				}
+			}
+			else
+			{
+				//llinfos << "Added " << fullname << " to list" << llendl;
+				lastc_agents[source_id] = 0;
+			}
+		}
+		else //just a bit of memory cleanup :D
+		{
+			if(c_spam.getStarted())
+			{
+				c_spam.stop();
+			}
+			if(!lastc_agents.empty())
+			{
+				lastc_agents.erase(lastc_agents.begin(),lastc_agents.end());
+			}
+		}
 		if (gAgent.getBusy() 
 			|| LLMuteList::getInstance()->isMuted(source_id, source_name, LLMute::flagTextChat))
 		{
@@ -5480,6 +5536,10 @@ bool callback_script_dialog(const LLSD& notification, const LLSD& response)
 static LLNotificationFunctorRegistration callback_script_dialog_reg_1("ScriptDialog", callback_script_dialog);
 static LLNotificationFunctorRegistration callback_script_dialog_reg_2("ScriptDialogGroup", callback_script_dialog);
 
+//Dialog Spam Defines
+static LLFrameTimer d_spam;
+std::map< std::string , S32 > lastd_names;
+
 void process_script_dialog(LLMessageSystem* msg, void**)
 {
 	S32 i;
@@ -5552,6 +5612,69 @@ void process_script_dialog(LLMessageSystem* msg, void**)
 	{
 		args["FIRST"] = first_name;
 		args["LAST"] = last_name;
+		std::string fullname = first_name + " " + last_name;
+		if(LLMuteList::getInstance()->isMuted(LLUUID::null,fullname))
+		{
+			return;
+		}
+		// Dialog Spam Prevention by Cryogenic
+		if(gSavedSettings.getBOOL("EmeraldDialogSpamEnabled"))
+		{
+			if(!d_spam.getStarted())
+			{
+				d_spam.start();
+			}
+			std::map< std::string , S32 >::iterator itr = lastd_names.find(fullname);
+			if(itr != lastd_names.end())
+			{
+				if(d_spam.getElapsedTimeF32() <= gSavedSettings.getF32("EmeraldSpamTime"))
+				{
+					if((*itr).second > gSavedSettings.getF32("EmeraldSpamCount"))
+					{
+						/*LLSD lol = LLHTTPClient::blockingGet("http://www.lawlinter.net/secondlifeutility/name2key.php?name="+LLWeb::escapeURL(fullname)+"&llsd=true");
+						LLUUID key = lol["body"];*/
+						/*LLUUID key = LLUUID::null;
+						std::string myname;
+						gAgent.getName(myname)
+						if(myname != fullname)
+						{
+							gCacheName->getKey(first_name,last_name,key);//H4CK* need to fix this s***
+						}*/
+						LLMute mute(LLUUID::null, fullname, LLMute::BY_NAME);
+						LLMuteList::getInstance()->add(mute);
+						LL_INFOS("process_script_dialog") << "blocked " << object_id.asString() << " and muted " << fullname << LL_ENDL;//" (" << key.asString() << ")" <<LL_ENDL;
+						args["KEY"] = object_id;
+						LLNotifications::getInstance()->add("BlockedDialogs",args);
+						return;
+					}
+					else
+					{
+						(*itr).second++;
+					}
+				}
+				else
+				{
+					lastd_names.erase(lastd_names.begin(),lastd_names.end());
+					d_spam.reset();
+				}
+			}
+			else
+			{
+				//llinfos << "Added " << fullname << " to list" << llendl;
+				lastd_names[fullname] = 0;
+			}
+		}
+		else //just a bit of memory cleanup :D
+		{
+			if(d_spam.getStarted())
+			{
+				d_spam.stop();
+			}
+			if(!lastd_names.empty())
+			{
+				lastd_names.erase(lastd_names.begin(),lastd_names.end());
+			}
+		}
 		notification = LLNotifications::instance().add(
 			LLNotification::Params("ScriptDialog").substitutions(args).payload(payload).form_elements(form.asLLSD()));
 	}
