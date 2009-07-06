@@ -22,7 +22,7 @@
 ]]--
 
 local helloworld = function ()
-	print (_VERSION.." on FlexLife ".._SHL_VERSION.." loaded!")
+	print (_VERSION.." on FlexLife ".._SLUA_VERSION.." loaded!")
 	print "_________________________________________"
 	print "Congratulations, all Lua scripts compiled and hooks are set correctly."
 	print "FlexLife is now ready for use."

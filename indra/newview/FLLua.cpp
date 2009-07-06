@@ -58,16 +58,16 @@ extern "C" {
 
 extern LLAgent gAgent;
 
-#define LUA_HOOK_SPAM 1
+//#define LUA_HOOK_SPAM 
 
-FLLua::SHLLua() :
+FLLua::FLLua() :
 	LLThread(std::string("Lua")),
 	L(NULL)
 {
 	run();	
 }
-FLLua* SHLLua::sInstance = NULL;
-FLLua* SHLLua::getInstance()
+FLLua* FLLua::sInstance = NULL;
+FLLua* FLLua::getInstance()
 {
 	return sInstance;
 }
@@ -110,13 +110,13 @@ void FLLua::run()
 
 void SHLHooks_InitTable(lua_State *l, FLLua* lol)
 {
-	FLLua** ud = reinterpret_cast<SHLLua**>(lua_newuserdata(l, sizeof(SHLLua*)));
+	FLLua** ud = reinterpret_cast<FLLua**>(lua_newuserdata(l, sizeof(FLLua*)));
 	
 	*ud = lol;
 
 	Lua_SetClass(l, "Hooks");
 }
-FLLua::~SHLLua()
+FLLua::~FLLua()
 {
 	lua_close(L);
 }

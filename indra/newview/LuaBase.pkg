@@ -28,7 +28,7 @@ $#include "llworld.h"
  
 $pfile "LuaAgent.pkg"	// Lua gAgent bindings, etc.
 //$pfile "LuaBuild.pkg"	// Prim manipulation and shit.
-$pfile "LuaUI.pkg"		// UI Bindings. (Not done yet)
+//$pfile "LuaUI.pkg"		// UI Bindings. (Not done yet)
  
 // $$ SendChat("Message")
 //

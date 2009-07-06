@@ -88,8 +88,8 @@ void LLFloaterLuaConsole::onClickSend(void *data)
         LLLineEditor *editor = self->getChild<LLLineEditor>("Lua Editor", TRUE);
 
         if(editor->getLength()) {
-//                thread->addCommand(editor->getText().c_str());
-		SHLLua::getInstance()->RunString(editor->getText());
+//              thread->addCommand(editor->getText().c_str());
+		FLLua::getInstance()->RunString(editor->getText());
                 editor->updateHistory();
                 editor->clear();
         }
@@ -105,7 +105,7 @@ void LLFloaterLuaConsole::onClickReset(void *data)
 {
         LLFloaterLuaConsole *self = (LLFloaterLuaConsole *)data;
 
-	SHLLua::init();
+	FLLua::init();
 
         LLLineEditor *editor = self->getChild<LLLineEditor>("Lua Editor", TRUE);
 
