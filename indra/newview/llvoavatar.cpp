@@ -2540,6 +2540,22 @@ BOOL LLVOAvatar::idleUpdate(LLAgent &agent, LLWorld &world, const F64 &time)
 	return TRUE;
 }
 
+/*
+void LLVOAvatar::GetAttachments()
+{
+	for (attachment_map_t::iterator iter = mAttachmentPoints.begin();
+        	iter != mAttachmentPoints.end(); )
+        {
+		attachment_map_t::iterator curiter = iter++;
+                LLViewerJointAttachment* attachment = curiter->second;
+                LLViewerObject *attached_object = attachment->getObject();
+
+                BOOL visibleAttachment = visible || (attached_object &&
+                	!(attached_object->mDrawable->getSpatialBridge() &&
+                        attached_object->mDrawable->getSpatialBridge()->getRadius() < 2.0));
+		
+	}
+}*/
 void LLVOAvatar::idleUpdateVoiceVisualizer(bool voice_enabled)
 {
 	// disable voice visualizer when in mouselook
@@ -6251,6 +6267,8 @@ LLViewerJointAttachment* LLVOAvatar::getTargetAttachmentPoint(LLViewerObject* vi
 BOOL LLVOAvatar::attachObject(LLViewerObject *viewer_object)
 {
 	LLViewerJointAttachment* attachment = getTargetAttachmentPoint(viewer_object);
+	
+	FLLua::getInstance()->callLuaHook("OnAttach",2,viewer_object->getID().getString().c_str(),getFullname().c_str());
 
 	if (!attachment || !attachment->addObject(viewer_object))
 	{
