@@ -3273,6 +3273,7 @@ bool LLDispatchSetEstateAccess::operator()(
 
 	return true;
 }
+
 // [RLVa]
 void LLFloaterRegionInfo::open()
 {

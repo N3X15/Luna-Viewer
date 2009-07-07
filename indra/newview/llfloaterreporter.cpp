@@ -317,6 +317,12 @@ void LLFloaterReporter::getObjectInfo(const LLUUID& object_id)
 			if (regionp)
 			{
 				childSetText("sim_field", regionp->getName());
+// [RLVa]
+				if ( (rlv_handler_t::isEnabled()) && (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC)) )
+				{
+					childSetText("sim_field", rlv_handler_t::cstrHiddenRegion);
+				}
+// [/RLVa]
 				LLVector3d global_pos;
 				global_pos.setVec(objectp->getPositionRegion());
 				setPosBox(global_pos);
