@@ -3249,7 +3249,8 @@ void LLAppViewer::idle()
 	    F32 agent_update_time = agent_update_timer.getElapsedTimeF32();
 	    BOOL flags_changed = gAgent.controlFlagsDirty() || (last_control_flags != gAgent.getControlFlags());
     
-	    if (flags_changed || (agent_update_time > (1.0f / (F32) AGENT_UPDATES_PER_SECOND)))
+		//Name Short - Added to adjust agent updates.
+	   if (flags_changed || (agent_update_time > (1.0f / gSavedSettings.getF32("EmeraldAgentUpdatesPerSecond"))))
 	    {
 		    // Send avatar and camera info
 		    last_control_flags = gAgent.getControlFlags();
@@ -4001,4 +4002,17 @@ void LLAppViewer::handleLoginComplete()
 		gDebugInfo["MainloopTimeoutState"] = LLAppViewer::instance()->mMainloopTimeout->getState();
 	}
 	writeDebugInfo();
+
+// [RLVa:KB] - Alternate: Snowglobe-1.0 | Checked: 2009-06-16 (RLVa-0.2.1d) | Modified: RLVa-0.2.1d
+	// TODO-RLVa: find some way to initialize the lookup table when we need them *and* support toggling RLV at runtime
+	gRlvHandler.initLookupTables();
+
+	if (rlv_handler_t::isEnabled())
+	{
+		rlv_handler_t::fetchSharedInventory();
+		#ifdef RLV_EXTENSION_STARTLOCATION
+			rlvUpdateLoginLocationSetting();
+		#endif // RLV_EXTENSION_STARTLOCATION
+	}
+// [/RLVa:KB]
 }

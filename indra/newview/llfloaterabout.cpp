@@ -136,7 +136,15 @@ LLFloaterAbout::LLFloaterAbout()
 
 	// Position
 	LLViewerRegion* region = gAgent.getRegion();
-	if (region)
+// [RLVa] - Version: 1.23.0
+	if ( (rlv_handler_t::isEnabled()) && (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC)) )
+	{
+		support.append(rlv_handler_t::cstrHidden);
+		support.append("\n\n");
+	}
+	else if (region)
+// [/RLVa]
+//	if (region)
 	{
 		LLStyleSP server_link_style(new LLStyle);
 		server_link_style->setVisible(true);

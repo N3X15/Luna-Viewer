@@ -777,7 +777,10 @@ void LLPanelClassified::refresh()
 		mClickThroughText->setVisible(is_self);
 
 		mSetBtn->setVisible(is_self);
-		mSetBtn->setEnabled(is_self);
+		//mSetBtn->setEnabled(is_self);
+// [RLVa] - Added: RLVa-0.x.yc
+		mSetBtn->setEnabled(is_self && (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC)) );
+// [/RLVa]
 
 		mUpdateBtn->setEnabled(is_self && checkDirty());
 		mUpdateBtn->setVisible(is_self);
@@ -978,6 +981,12 @@ void LLPanelClassified::onClickLandmark(void* data)
 // static
 void LLPanelClassified::onClickSet(void* data)
 {
+// [RLVa]
+	if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC))
+	{
+		return;
+	}
+// [/RLVa]
     LLPanelClassified* self = (LLPanelClassified*)data;
 
 	// Save location for later.

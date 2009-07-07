@@ -1937,6 +1937,12 @@ void LLLiveLSLEditor::onRunningCheckboxClicked( LLUICtrl*, void* userdata )
 	LLCheckBoxCtrl* runningCheckbox = self->getChild<LLCheckBoxCtrl>("running");
 	BOOL running =  runningCheckbox->get();
 	//self->mRunningCheckbox->get();
+// [RLV]
+	if ( (rlv_handler_t::isEnabled()) && (!gRlvHandler.isDetachable(object)) )
+	{
+		return;
+	}
+// [/RLV]
 	if( object )
 	{
 		LLMessageSystem* msg = gMessageSystem;
@@ -1962,6 +1968,12 @@ void LLLiveLSLEditor::onReset(void *userdata)
 	LLLiveLSLEditor* self = (LLLiveLSLEditor*) userdata;
 
 	LLViewerObject* object = gObjectList.findObject( self->mObjectID );
+// [RLV]
+	if ( (rlv_handler_t::isEnabled()) && (!gRlvHandler.isDetachable(object)) )
+	{
+		return;
+	}
+// [/RLV]
 	if(object)
 	{
 		LLMessageSystem* msg = gMessageSystem;
@@ -2383,6 +2395,14 @@ void LLLiveLSLEditor::onLoad(void* userdata)
 void LLLiveLSLEditor::onSave(void* userdata, BOOL close_after_save)
 {
 	LLLiveLSLEditor* self = (LLLiveLSLEditor*)userdata;
+
+// [RLV]
+	if ( (rlv_handler_t::isEnabled()) && (!gRlvHandler.isDetachable(gObjectList.findObject(self->mObjectID))) )
+	{
+		return;
+	}
+// [/RLV]
+
 	self->mCloseAfterSave = close_after_save;
 	self->saveIfNeeded();
 }

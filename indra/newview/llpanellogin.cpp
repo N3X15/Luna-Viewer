@@ -78,6 +78,10 @@
 
 #include "llglheaders.h"
 
+// [RLVa] - Version: 1.23.0
+#include "rlvhandler.h"
+// [/RLVa]
+
 #define USE_VIEWER_AUTH 0
 
 const S32 BLACK_BORDER_HEIGHT = 160;
@@ -673,6 +677,16 @@ void LLPanelLogin::refreshLocation( bool force_visible )
 
 	if ( ! force_visible )
 		show_start = gSavedSettings.getBOOL("ShowStartLocation");
+
+// [RLVa]
+	// TODO-RLVa: figure out some way to make this work with RLV_EXPERIMENTAL_ENABLE_STARTLOCATION
+	#ifndef RLV_EXTENSION_STARTLOCATION
+		if (rlv_handler_t::isEnabled())
+		{
+			show_start = FALSE;
+		}
+	#endif // RLV_EXTENSION_STARTLOCATION
+// [/RLVa]
 
 	sInstance->childSetVisible("start_location_combo", show_start);
 	sInstance->childSetVisible("start_location_text", show_start);

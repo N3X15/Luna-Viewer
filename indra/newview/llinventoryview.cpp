@@ -726,7 +726,17 @@ void LLInventoryView::setVisible( BOOL visible )
 // Destroy all but the last floater, which is made invisible.
 void LLInventoryView::onClose(bool app_quitting)
 {
-	S32 count = sActiveViews.count();
+//	S32 count = sActiveViews.count();
+// [RLVa]
+	// See LLInventoryView::closeAll() on why we're doing it this way
+	S32 count = 0;
+	for (S32 idx = 0, cnt = sActiveViews.count(); idx < cnt; idx++)
+	{
+		if (!sActiveViews.get(idx)->isDead())
+			count++;
+	}
+// [/RLVa]
+
 	if (count > 1)
 	{
 		destroy();
@@ -803,6 +813,13 @@ LLInventoryView* LLInventoryView::showAgentInventory(BOOL take_keyboard_focus)
 	{
 		return NULL;
 	}
+
+// [RLVa]
+	if ( (rlv_handler_t::isEnabled()) && (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWINV)) )
+	{
+		return NULL;
+	}
+// [/RLVa]
 
 	LLInventoryView* iv = LLInventoryView::getActiveInventory();
 #if 0 && !LL_RELEASE_FOR_DOWNLOAD

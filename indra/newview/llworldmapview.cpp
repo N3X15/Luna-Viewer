@@ -679,7 +679,14 @@ void LLWorldMapView::draw()
 			//			info->mAgents,
 			//			info->mName.c_str(),
 			//			LLViewerRegion::accessToShortString(info->mAccess).c_str() );
-			if (info->mAccess == SIM_ACCESS_DOWN)
+// [RLVa:KB] - Alternate: Snowglobe-1.0 | Checked: 2009-05-18 (RLVa-0.2.0b)
+			if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC))
+			{
+				mesg = rlv_handler_t::cstrHidden;
+			}
+			else if (info->mAccess == SIM_ACCESS_DOWN)
+// [/RLVa:KB]
+//			if (info->mAccess == SIM_ACCESS_DOWN)
 			{
 				mesg = llformat( "%s (%s)", info->mName.c_str(), sStringsMap["offline"].c_str());
 			}
@@ -1195,7 +1202,10 @@ BOOL LLWorldMapView::handleToolTip( S32 x, S32 y, std::string& msg, LLRect* stic
 
 		std::string message = 
 			llformat("%s (%s)",
-					 info->mName.c_str(),
+					 //info->mName.c_str(),
+// [RLVa:KB] - Alternate: Snowglobe-1.0 | Checked: 2009-05-18 (RLVa-0.2.0b)
+					 (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC)) ? info->mName.c_str() : rlv_handler_t::cstrHidden.c_str(),
+// [/RLVa:KB]
 					 LLViewerRegion::accessToString(info->mAccess).c_str());
 
 		if (info->mAccess != SIM_ACCESS_DOWN)

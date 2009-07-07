@@ -307,6 +307,23 @@ void LLToolBar::refresh()
 	}
 	gSavedSettings.setBOOL("BuildBtnState", build_mode);
 
+// [RLVa] - Version: 1.23.0 | Alternate: Emerald-206
+	// Called per-frame so this really can't be slow
+	if (rlv_handler_t::isEnabled())
+	{
+		// If we're rez-restricted, we can still edit => allow build floater
+		// If we're edit-restricted, we can still rez => allow build floater
+		childSetEnabled("build_btn", !(gRlvHandler.hasBehaviour(RLV_BHVR_REZ) && gRlvHandler.hasBehaviour(RLV_BHVR_EDIT)) );
+
+		childSetEnabled("map_btn", !gRlvHandler.hasBehaviour(RLV_BHVR_SHOWWORLDMAP) );
+		childSetEnabled("radar_btn", !gRlvHandler.hasBehaviour(RLV_BHVR_SHOWMINIMAP) );
+		childSetEnabled("inventory_btn", !gRlvHandler.hasBehaviour(RLV_BHVR_SHOWINV) );
+
+		// Emerald-specific
+		childSetEnabled("avatar_list_btn", !gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES));
+	}
+// [/RLVa]
+
 	if (isInVisibleChain())
 	{
 		updateCommunicateList();
@@ -475,6 +492,14 @@ void LLToolBar::onClickSit(void*)
 	}
 	else
 	{
+// [RLVa]
+		// NOTE-RLVa: dead code?
+		if (gRlvHandler.hasBehaviour(RLV_BHVR_UNSIT))
+		{
+			return;
+		}
+// [/RLVa]
+
 		// stand up
 		gAgent.setFlying(FALSE);
 		gAgent.setControlFlags(AGENT_CONTROL_STAND_UP);

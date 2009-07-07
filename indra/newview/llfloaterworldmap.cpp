@@ -279,6 +279,13 @@ void LLFloaterWorldMap::onClose(bool app_quitting)
 // static
 void LLFloaterWorldMap::show(void*, BOOL center_on_target)
 {
+// [RLVa:KB] - Checked: 2009-06-04 (RLVa-0.2.0i)
+	if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWWORLDMAP))
+	{
+		return;
+	}
+// [/RLVa:KB]
+
 	BOOL was_visible = gFloaterWorldMap->getVisible();
 
 	gFloaterWorldMap->mIsClosing = FALSE;
@@ -650,7 +657,10 @@ void LLFloaterWorldMap::trackLocation(const LLVector3d& pos_global)
 	F32 region_x = (F32)fmod( pos_global.mdV[VX], (F64)REGION_WIDTH_METERS );
 	F32 region_y = (F32)fmod( pos_global.mdV[VY], (F64)REGION_WIDTH_METERS );
 	std::string full_name = llformat("%s (%d, %d, %d)", 
-								  sim_name.c_str(), 
+//								  sim_name.c_str(), 
+// [RLVa] - Alternate: Snowglobe-1.0
+		(!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC)) ? sim_name.c_str() : rlv_handler_t::cstrHiddenRegion.c_str(),
+// [/RLVa]
 								  llround(region_x), 
 								  llround(region_y),
 								  llround((F32)pos_global.mdV[VZ]));
@@ -704,6 +714,14 @@ void LLFloaterWorldMap::updateLocation()
 
 				// Set the current SLURL
 				mSLURL = LLURLDispatcher::buildSLURL(agent_sim_name, agent_x, agent_y, agent_z);
+
+// [RLVa]
+				if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC))
+				{
+					childSetValue("location", rlv_handler_t::cstrHiddenRegion);
+					mSLURL.clear();
+				}
+// [/RLVa]
 			}
 		}
 
@@ -746,6 +764,14 @@ void LLFloaterWorldMap::updateLocation()
 		{	// Empty SLURL will disable the "Copy SLURL to clipboard" button
 			mSLURL = "";
 		}
+
+// [RLVa]
+		if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC))
+		{
+			childSetValue("location", rlv_handler_t::cstrHiddenRegion);
+			mSLURL.clear();
+		}
+// [/RLVa]
 	}
 }
 

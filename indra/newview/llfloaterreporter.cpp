@@ -133,6 +133,23 @@ LLFloaterReporter::LLFloaterReporter(
 
 	childSetText("abuse_location_edit", gAgent.getSLURL() );
 
+// TODO:  Why the hell is this filtered?!
+// [RLVa]
+	if (rlv_handler_t::isEnabled())
+	{
+		// Can't filter these since they get sent as part of the report so just hide them instead
+		if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC))
+		{
+			childSetVisible("abuse_location_edit", false);
+		}
+		if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES))
+		{
+			childSetVisible("owner_name", false);
+			childSetVisible("abuser_name_edit", false);
+		}
+	}
+// [/RLVa]
+
 	LLButton* pick_btn = getChild<LLButton>("pick_btn");
 	if (pick_btn)
 	{

@@ -1524,6 +1524,18 @@ public:
 			{
 				return;
 			}
+// [RLVa]
+			if (gRlvHandler.hasBehaviour(RLV_BHVR_RECVIM))
+			{
+				if (gAgent.isInGroup(session_id))
+				{
+					if (!gRlvHandler.isException(RLV_BHVR_RECVIM, session_id))
+						return;
+				}
+				else if (!gRlvHandler.isException(RLV_BHVR_RECVIM, from_id))
+					message = message.substr(0, message_offset) + rlv_handler_t::cstrBlockedRecvIM;
+			}
+// [/RLVa]
 
 			// standard message, not from system
 			std::string saved;

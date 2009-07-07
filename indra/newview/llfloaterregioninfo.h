@@ -67,6 +67,9 @@ public:
 
 	/*virtual*/ void onOpen();
 	/*virtual*/ BOOL postBuild();
+// [RLVa]
+	/*virtual*/ void open();
+// [/RLVa]
 
 	static void processEstateOwnerRequest(LLMessageSystem* msg, void**);
 

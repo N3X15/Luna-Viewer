@@ -123,3 +123,12 @@ void LLFloaterMap::draw()
 	}
 }
 
+// [RLVa:KB] - Version: 1.23.0 | Checked: 2009-06-04 (RLVa-0.2.0i)
+void LLFloaterMap::open()
+{
+	if (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWMINIMAP))
+	{
+		LLFloater::open();
+	}
+}
+// [/RLVa:KB]

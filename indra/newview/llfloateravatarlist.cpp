@@ -124,7 +124,10 @@ typedef enum e_radar_alert_type
 } ERadarAlertType;
 void chat_avatar_status(std::string name, LLUUID key, ERadarAlertType type, bool entering)
 {
-	if(gSavedSettings.getBOOL("EmeraldRadarChatAlerts"))
+	//if(gSavedSettings.getBOOL("EmeraldRadarChatAlerts"))
+// [RLVa:KB]
+	if ( (gSavedSettings.getBOOL("EmeraldRadarChatAlerts")) && (!gRlvHandler.hasBehaviour(RLV_BHVR_SENDIM)) )
+// [/RLVa:KB]
 	{
 		LLChat chat;
 		switch(type)
@@ -348,6 +351,13 @@ LLFloaterAvatarList::~LLFloaterAvatarList()
 //static
 void LLFloaterAvatarList::toggle(void*)
 {
+// [RLVa:KB] - Alternate: Emerald-206
+	if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES))
+	{
+		return;
+	}
+// [/RLVa:KB]
+
 	if (sInstance)
 	{
 		if(sInstance->getVisible())
@@ -1594,7 +1604,8 @@ static void send_estate_message(
 
 	msg->sendReliable(gAgent.getRegion()->getHost());
 }
-/*
+
+/* Apparently not in use
 static void send_estate_ban(const LLUUID& agent)
 {
 	LLUUID invoice;
@@ -1613,12 +1624,12 @@ static void send_estate_ban(const LLUUID& agent)
 	msg->addString("Method", "estateaccessdelta");
 	msg->addUUID("Invoice", invoice);
 
-	char buf[MAX_STRING];		/ * Flawfinder: ignore* /
+	char buf[MAX_STRING];		// Flawfinder: ignore
 	gAgent.getID().toString(buf);
 	msg->nextBlock("ParamList");
 	msg->addString("Parameter", buf);
 
-	snprintf(buf, MAX_STRING, "%u", flags);			/ * Flawfinder: ignore * /
+	snprintf(buf, MAX_STRING, "%u", flags);			// Flawfinder: ignore
 	msg->nextBlock("ParamList");
 	msg->addString("Parameter", buf);
 
@@ -1637,11 +1648,13 @@ static void cmd_profile(const LLUUID& avatar, const std::string &name)     { LLF
 //static void cmd_mute(const LLUUID&avatar, const std::string &name)         { LLMuteList::getInstance()->add(LLMute(avatar, name, LLMute::AGENT)); }
 //static void cmd_unmute(const LLUUID&avatar, const std::string &name)       { LLMuteList::getInstance()->remove(LLMute(avatar, name, LLMute::AGENT)); }
 static void cmd_estate_eject(const LLUUID &avatar, const std::string &name){ send_estate_message("teleporthomeuser", avatar); }
-/*static void cmd_estate_ban(const LLUUID &avatar, const std::string &name)
+/* Apparently not in use
+static void cmd_estate_ban(const LLUUID &avatar, const std::string &name)
 {
 	send_estate_message("teleporthomeuser", avatar); // Kick first, just to be sure
 	send_estate_ban(avatar);
-}*/
+}
+*/
 
 void LLFloaterAvatarList::doCommand(void (*func)(const LLUUID &avatar, const std::string &name))
 {

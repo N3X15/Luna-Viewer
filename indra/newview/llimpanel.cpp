@@ -2031,6 +2031,35 @@ void LLFloaterIMPanel::sendMsg()
 			std::string utf8_text = wstring_to_utf8str(text);
 			//utf8_text = utf8str_truncate(utf8_text, MAX_MSG_BUF_SIZE - 1);
 			
+// [RLVa] - Alternate: Emerald-206
+			if (gRlvHandler.hasBehaviour(RLV_BHVR_SENDIM))
+			{
+				if ( (IM_NOTHING_SPECIAL != mDialog) && (mSpeakers) && (!gAgent.isInGroup(mSessionUUID)))
+				{ 
+					// Conference chat; allow if all participants are sendim exceptions
+					LLSpeakerMgr::speaker_list_t speakers;
+					mSpeakers->getSpeakerList(&speakers, TRUE);
+
+					LLSpeaker* pSpeaker;
+					for (LLSpeakerMgr::speaker_list_t::const_iterator itSpeaker = speakers.begin(); 
+							itSpeaker != speakers.end(); ++itSpeaker)
+					{
+						pSpeaker = *itSpeaker;
+						if ( (gAgent.getID() != pSpeaker->mID) && (!gRlvHandler.isException(RLV_BHVR_SENDIM, pSpeaker->mID)) )
+						{
+							utf8_text = rlv_handler_t::cstrBlockedSendIM;
+							break;
+						}
+					}
+				}
+				else if ( (IM_NOTHING_SPECIAL == mDialog) && (!gRlvHandler.isException(RLV_BHVR_SENDIM, mOtherParticipantUUID)) )
+				{
+					// One-on-one IM or group chat and the receiving avie (or group) isn't an exception
+					utf8_text = rlv_handler_t::cstrBlockedSendIM;
+				}
+			}
+// [/RLVa]
+
 			if ( mSessionInitialized )
 			{
 				// same code like in llchatbar.cpp

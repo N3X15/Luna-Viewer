@@ -1182,60 +1182,6 @@ anguage Infrstructure (CLI) international standard</string>
           </map>
         </map>
       </map>
-      <key>toluapp</key>
-      <map>
-        <key>copyright</key>
-        <string>whoever fucking wrote it</string>
-        <key>description</key>
-        <string>Lua binding system</string>
-        <key>license</key>
-        <string>gpl</string>
-        <key>packages</key>
-        <map>
-          <key>windows</key>
-          <map>
-            <key>md5sum</key>
-            <string>6c4f8c79a04f22e1728198c2d36d22af</string>
-            <key>url</key>
-            <uri>http://shoopedlife.nexisonline.net/lib-packages/toluapp-w32.tar.bz2</uri>
-          </map>
-        </map>
-      </map>
-	  <key>Lua51</key>
-      <map>
-        <key>copyright</key>
-        <string>WHOEVER FUCKING WROTE IT</string>
-        <key>description</key>
-        <string>Lua Embedded Scripting LanNIGGERNIGGERNIGGER</string>
-        <key>license</key>
-        <string>gpl</string>
-        <key>packages</key>
-        <map>
-          <key>windows</key>
-          <map>
-            <key>i686</key>
-            <map>
-              <key>vs</key>
-              <map>
-				<key>2003</key>
-				<map>
-					<key>md5sum</key>
-					<string>0b0002809b02389c1ce2a50e00f079ac</string>
-					<key>url</key>
-					<uri>http://shoopedlife.nexisonline.net/lib-packages/Lua513-vc71.tar.bz2</uri>
-				</map>
-                <key>2005</key>
-                <map>
-                  <key>md5sum</key>
-                  <string>06ce892aa77953f9266d5d50065bf7bd</string>
-                  <key>url</key>
-                  <uri>http://shoopedlife.nexisonline.net/lib-packages/Lua513-vc80.tar.bz2</uri>
-                </map>
-              </map>
-            </map>
-          </map>
-        </map>
-      </map>
       <key>vivox</key>
       <map>
         <key>copyright</key>

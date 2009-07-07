@@ -82,6 +82,10 @@
 #include "llviewerwindow.h"
 #include "llwearable.h"
 
+// [RLVa]
+#include "llvoavatar.h"
+// [/RLVa]
+
 ///----------------------------------------------------------------------------
 /// Local function declarations, constants, enums, and typedefs
 ///----------------------------------------------------------------------------
@@ -367,8 +371,16 @@ void LLTaskInvFVBridge::previewItem()
 
 BOOL LLTaskInvFVBridge::isItemRenameable() const
 {
-	if(gAgent.isGodlike()) return TRUE;
+// [RLVa]
 	LLViewerObject* object = gObjectList.findObject(mPanel->getTaskUUID());
+	if ( (rlv_handler_t::isEnabled()) && (!gRlvHandler.isDetachable(object)) )
+	{
+		return FALSE;
+	}
+// [/RLVa]
+
+	if(gAgent.isGodlike()) return TRUE;
+//	LLViewerObject* object = gObjectList.findObject(mPanel->getTaskUUID());
 	if(object)
 	{
 		LLInventoryItem* item;
@@ -385,6 +397,12 @@ BOOL LLTaskInvFVBridge::isItemRenameable() const
 BOOL LLTaskInvFVBridge::renameItem(const std::string& new_name)
 {
 	LLViewerObject* object = gObjectList.findObject(mPanel->getTaskUUID());
+// [RLVa]
+	if ( (rlv_handler_t::isEnabled()) && (!gRlvHandler.isDetachable(object)) )
+	{
+		return TRUE; // Fallback code [see LLTaskInvFVBridge::isItemRenameable()]
+	}
+// [/RLVa]
 	if(object)
 	{
 		LLViewerInventoryItem* item = NULL;
@@ -411,12 +429,47 @@ BOOL LLTaskInvFVBridge::isItemMovable()
 	//	return TRUE;
 	//}
 	//return FALSE;
+// [RLVa:KB] - Checked: 2009-06-02 (RLVa-0.2.0g) | Modified: RLVa-0.2.0g
+	if (rlv_handler_t::isEnabled())
+	{
+		LLViewerObject* pObj = gObjectList.findObject(mPanel->getTaskUUID());
+		if (pObj)
+		{
+			if (!gRlvHandler.isDetachable(pObj))
+			{
+				return FALSE;
+			}
+			else if ( (gRlvHandler.hasBehaviour(RLV_BHVR_UNSIT)) || (gRlvHandler.hasBehaviour(RLV_BHVR_SITTP)) )
+			{
+				LLVOAvatar* pAvatar = gAgent.getAvatarObject();
+				if ( (pAvatar) && (pAvatar->mIsSitting) && (pAvatar->getRoot() == pObj->getRootEdit()) )
+					return FALSE;
+			}
+		}
+	}
+// [/RLVa:KB]
 	return TRUE;
 }
 
 BOOL LLTaskInvFVBridge::isItemRemovable()
 {
 	LLViewerObject* object = gObjectList.findObject(mPanel->getTaskUUID());
+// [RLVa:KB] - Checked: 2009-06-02 (RLVa-0.2.0g) | Modified: RLVa-0.2.0g
+	if ( (object) && (rlv_handler_t::isEnabled()) )
+	{
+		if (!gRlvHandler.isDetachable(object))
+		{
+			return FALSE;
+		}
+		else if ( (gRlvHandler.hasBehaviour(RLV_BHVR_UNSIT)) || (gRlvHandler.hasBehaviour(RLV_BHVR_SITTP)) )
+		{
+			LLVOAvatar* pAvatar = gAgent.getAvatarObject();
+			if ( (pAvatar) && (pAvatar->mIsSitting) && (pAvatar->getRoot() == object->getRootEdit()) )
+				return FALSE;
+		}
+	}
+// [/RLVa:KB]
+
 	if(object
 	   && (object->permModify() || object->permYouOwner()))
 	{
@@ -564,6 +617,13 @@ BOOL LLTaskInvFVBridge::startDrag(EDragAndDropType* type, LLUUID* id) const
 				const LLPermissions& perm = inv->getPermissions();
 				bool can_copy = gAgent.allowOperation(PERM_COPY, perm,
 														GP_OBJECT_MANIPULATE);
+// [RLVa]
+				// Kind of redundant due to the note below, but in case that ever gets fixed
+				if ( (rlv_handler_t::isEnabled()) && (!gRlvHandler.isDetachable(object)) )
+				{
+					return FALSE;
+				}
+// [/RLVa]
 				if (object->isAttachment() && !can_copy)
 				{
                     //RN: no copy contents of attachments cannot be dragged out
@@ -686,6 +746,14 @@ void LLTaskInvFVBridge::buildContextMenu(LLMenuGL& menu, U32 flags)
 		{
 			disabled_items.push_back(std::string("Task Open"));
 		}
+// [RLVa]
+		else if ( (rlv_handler_t::isEnabled()) && 
+				  ((LLAssetType::AT_LSL_TEXT == item->getType()) || (LLAssetType::AT_NOTECARD == item->getType())) && 
+				  (!gRlvHandler.isDetachable(gObjectList.findObject(mPanel->getTaskUUID()))) )
+		{
+			disabled_items.push_back(std::string("Task Open"));
+		}
+// [/RLVa]
 	}
 	items.push_back(std::string("Task Properties"));
 	if(isItemRenameable())
@@ -1191,12 +1259,20 @@ LLTaskLSLBridge::LLTaskLSLBridge(
 
 void LLTaskLSLBridge::openItem()
 {
+// [RLVa]
+	LLViewerObject* object = gObjectList.findObject(mPanel->getTaskUUID());
+	if ( (rlv_handler_t::isEnabled()) && (!gRlvHandler.isDetachable(object)) )
+	{
+		return;
+	}
+// [/RLVa]
+
 	llinfos << "LLTaskLSLBridge::openItem() " << mUUID << llendl;
 	if(LLLiveLSLEditor::show(mUUID, mPanel->getTaskUUID()))
 	{
 		return;
 	}
-	LLViewerObject* object = gObjectList.findObject(mPanel->getTaskUUID());
+//	LLViewerObject* object = gObjectList.findObject(mPanel->getTaskUUID());
 	if(!object || object->isInventoryPending())
 	{
 		return;
@@ -1311,6 +1387,12 @@ void LLTaskNotecardBridge::openItem()
 	{
 		return;
 	}
+// [RLVa]
+	if ( (rlv_handler_t::isEnabled()) && ((gRlvHandler.hasBehaviour("viewnote")) || (!gRlvHandler.isDetachable(object))) )
+	{
+		return;
+	}
+// [/RLVa]
 	if(object->permModify() || gAgent.isGodlike())
 	{
 		S32 left, top;

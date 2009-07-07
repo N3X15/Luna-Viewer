@@ -245,6 +245,14 @@ void LLHoverView::updateText()
 			LLNameValue* lastname =  hit_object->getNVPair("LastName");
 			if (firstname && lastname)
 			{
+// [RLVa]
+				if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES))
+				{
+					line = gRlvHandler.getAnonym(line.append(firstname->getString()).append(1, ' ').append(lastname->getString()));
+				}
+				else
+				{
+// [/RLVa]
 				if (title)
 				{
 					line.append(title->getString());
@@ -253,6 +261,9 @@ void LLHoverView::updateText()
 				line.append(firstname->getString());
 				line.append(1, ' ');
 				line.append(lastname->getString());
+// [RLVa]
+				}
+// [/RLVa]
 			}
 			else
 			{
@@ -308,6 +319,13 @@ void LLHoverView::updateText()
 						}
 						else if(gCacheName->getFullName(owner, name))
 						{
+// [RLVa]
+							if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES))
+							{
+								name = gRlvHandler.getAnonym(name);
+							}
+// [/RLVa]
+
 							line.append(name);
 						}
 						else
@@ -469,7 +487,10 @@ void LLHoverView::updateText()
 		line.append(LLTrans::getString("TooltipLand"));
 		if (hover_parcel)
 		{
-			line.append(hover_parcel->getName());
+// [RLVa:KB] - Checked: 2009-05-18 (RLVa-0.2.0b) | Added: RLVa-0.2.0b
+			line.append( (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC)) ? hover_parcel->getName() : rlv_handler_t::cstrHiddenParcel );
+// [/RLVa:KB]
+			//line.append(hover_parcel->getName());
 		}
 		mText.push_back(line);
 
@@ -498,7 +519,10 @@ void LLHoverView::updateText()
 			}
 			else if(gCacheName->getFullName(owner, name))
 			{
-				line.append(name);
+// [RLVa:KB] - Checked: 2009-05-18 (RLVa-0.2.0b) | Added: RLVa-0.2.0b
+				line.append( (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES)) ? name : gRlvHandler.getAnonym(name));
+// [/RLVa:KB]
+				//line.append(name);
 			}
 			else
 			{

@@ -68,6 +68,7 @@ include_directories(
     )
 
 set(viewer_SOURCE_FILES
+	importtracker.cpp
 	chatbar_as_cmdline.cpp
 	jcfloater_animation_list.cpp
 	jcfloater_areasearch.cpp
@@ -465,6 +466,11 @@ set(viewer_SOURCE_FILES
     LuaUI_f.cpp
     FLLua.cpp
     flexconsole.cpp
+    rlvhandler.cpp
+    rlvhelper.cpp
+    rlvmultistringsearch.cpp
+    rlvextensions.cpp
+    rlvfloaterbehaviour.cpp
     )
 
 set(VIEWER_BINARY_NAME "secondlife-bin" CACHE STRING
@@ -491,6 +497,7 @@ set(viewer_HEADER_FILES
 	jcfloater_animation_list.h
 	jcfloater_areasearch.h
 	jcobjectpropertylist.h
+	importtracker.h
     llagent.h
     llagentaccess.h
     llagentdata.h
@@ -896,6 +903,12 @@ set(viewer_HEADER_FILES
 	LuaBuild_f.h
 	LuaUI_f.h
 	flexconsole.h
+    rlvevent.h
+    rlvhandler.h
+    rlvhelper.h
+    rlvmultistringsearch.h
+    rlvextensions.h
+    rlvfloaterbehaviour.h
     )
 
 
@@ -1032,7 +1045,7 @@ if (WINDOWS)
         res/lltooltranslate.cur
         res/lltoolzoomin.cur
         res/lltoolzoomout.cur
-        res/emerald_icon.BMP
+        res/emerald_icon.png
         res/emerald_icon.ico
         res/resource.h
         res/toolbuy.cur

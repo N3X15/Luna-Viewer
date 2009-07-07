@@ -96,6 +96,13 @@ public:
 		}
 		else
 		{
+// [RLVa]
+			if ( (rlv_handler_t::isEnabled()) && (gRlvHandler.hasBehaviour("viewnote")) )
+			{
+				return;
+			}
+// [/RLVa]
+
 			// See if we can bring an existing preview to the front
 			if(!LLPreview::show(item->getUUID(), true))
 			{

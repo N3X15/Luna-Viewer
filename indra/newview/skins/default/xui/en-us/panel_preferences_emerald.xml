@@ -276,6 +276,10 @@
 		 follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
 		 label="Hear typing sound when people type" left_delta="0" mouse_opaque="true"
 		 name="typing-sound-toggle" radio_style="false" width="270" control_name="PlayTypingSound" />	
+      <check_box bottom_delta="-40" enabled="true"
+         follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+         label="Enable Restrained Life [RLV] features (requires restart)" left_delta="0" mouse_opaque="true"
+         name="rlv-toggle" radio_style="false" width="270" control_name="RestrainedLife" />
     </panel>
     <panel border="true" bottom="-580" follows="left|top|right|bottom" height="525"
            label="CmdLine" left="1" mouse_opaque="true" name="CmdLine" width="418">
@@ -343,10 +347,6 @@ Leave any command blank to deactivate it.
     </panel>
     <panel border="true" bottom="-580" follows="left|top|right|bottom" height="525"
            label="Avatar" left="1" mouse_opaque="true" name="wat!" width="418">
-      <check_box bottom_delta="-40" enabled="true"
-           follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
-           label="Enable transmission of selection beam end position" left_delta="15" mouse_opaque="true"
-           name="lol-toggle!" radio_style="false" width="270" control_name="EmeraldParticleChat" />
       <panel
              name="antispam_options"
              left_delta="5"
@@ -381,6 +381,212 @@ Leave any command blank to deactivate it.
 box. This can be used to distort orbiters, or to raise 
 you up or down without altering your shape.
       </text>
+<text font="SansSerifSmall" name="BeamPrefs" follows="left|top" left="7" bottom_delta="-100">
+		Selection beam particle effects
+	</text>
+<view_border bevel_style="none" border_thickness="1" bottom_delta="-5" follows="top|left" height="0" left="5" name="EmDivisor" width="480" />
+<button left="50" bottom_delta="-130" follows="left|top" width="130" height="100" name="EmeraldBeamPrev_rainbow" label="" scale_image="true" image_selected="beam_rainbow.png" image_unselected="beam_rainbow.png" image_hover_selected="beam_rainbow.png" image_hover_unselected="beam_rainbow.png"/>
+<button left="300" bottom_delta="-0" follows="left|top" width="130" height="100" name="EmeraldBeamPrev_Emerald" label="" scale_image="true" image_selected="beam_emerald.png" image_unselected="beam_emerald.png" image_hover_selected="beam_emerald.png" image_hover_unselected="beam_emerald.png"/>
+<view_border bevel_style="none" border_thickness="1" bottom_delta="-10" follows="top|left" height="140" left="245" name="EmDivisor2" width="0" />
+      <check_box bottom_delta="-20" enabled="true"
+           follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+           label="Enable transmission of selection beam end position" left="15" mouse_opaque="true"
+           name="lol-toggle!" radio_style="false" width="270" control_name="EmeraldParticleChat" />
+      <check_box bottom_delta="-20" enabled="true"
+           follows="left|top" font="SansSerifSmall" height="16" initial_value="true"
+           label="Enable selection beam (turning off will hide the beam)" left="15" mouse_opaque="true"
+           name="SLPartBeam" radio_style="false" width="270" control_name="ShowSelectionBeam" />
+      <check_box bottom_delta="155" enabled="true"
+           follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+           label="Enable rainbow effect" left="45" mouse_opaque="true"
+           name="EmBeamRainbow" radio_style="false" width="270" control_name="EmeraldRainbowBeam" />
+      <check_box bottom_delta="-0" enabled="true"
+           follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+           label="Enable Emerald beam shape" left="280" mouse_opaque="true"
+           name="EmBeamEmerald" radio_style="false" width="285" control_name="EmeraldEmeraldBeam" />
     </panel>
+    <panel border="true" bottom="-580" follows="left|top|right|bottom" height="525" label="Build" left="1" mouse_opaque="true" name="Build" width="418">
+
+      <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+             bottom="-25" drop_shadow_visible="true" enabled="true" follows="left|top"
+             font="SansSerifSmall" h_pad="0" halign="left" height="10" left="12"
+             mouse_opaque="false" name="text_box" v_pad="0" width="200">
+        Use the New Objects settings from:
+      </text>
+      <radio_group
+        bottom="-30"
+        draw_border="false"
+        enabled="false"
+        follows="left|top"
+        height="20"
+        left="200"
+        mouse_opaque="true"
+        name="EmeraldBuildPrefs_http"
+        width="160">
+        <radio_item
+          type="string"
+          length="1"
+          bottom="-20"
+          enabled="true"
+          height="16"
+          left="0"
+          mouse_opaque="true"
+          name="local"
+          width="98"
+          tool_tip="Use the local new objects settings from below.">
+          Local
+        </radio_item>
+        <radio_item
+          type="string"
+          length="1"
+          bottom="-20"
+          enabled="true"
+          height="16"
+          left="110"
+          mouse_opaque="true"
+          name="http"
+          width="98"
+          tool_tip="Use the new objects settings from http source.">
+          HTTP
+        </radio_item>
+      </radio_group>
+
+      <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+             bottom_delta="-30" drop_shadow_visible="true" enabled="true" follows="left|top"
+             font="SansSerifSmall" h_pad="0" halign="left" height="10" left="30"
+             mouse_opaque="false" name="text_box" v_pad="0" width="150">
+        Object Size
+      </text>
+      <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+             bottom_delta="0" drop_shadow_visible="true" enabled="true" follows="left|top"
+             font="SansSerifSmall" h_pad="0" halign="left" height="10" left_delta="130"
+             mouse_opaque="false" name="text_box" v_pad="0" width="150">
+        Settings
+      </text>
+      <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+             bottom_delta="0" drop_shadow_visible="true" enabled="true" follows="left|top"
+             font="SansSerifSmall" h_pad="0" halign="left" height="10" left_delta="150"
+             mouse_opaque="false" name="text_box" v_pad="0" width="150">
+        Texture
+      </text>
+
+
+      <view_border bevel_style="none" border_thickness="1" bottom_delta="-78" follows="top|left" height="70" left="5" name="SizeBorder" width="120" />
+      <view_border bevel_style="none" border_thickness="1" bottom_delta="-20" follows="top|left" height="90" left_delta="120" name="SettingsBorder" width="120" />
+      <view_border bevel_style="none" border_thickness="1" bottom_delta="0" follows="top|left" height="90" left_delta="120" name="TextureBorder" width="245" />
+
+
+
+      <spinner bottom="-90" decimal_digits="5" follows="left|top" height="16"
+			     increment="0.05" label="X size" label_width="40"
+			     left="10" max_val="10" min_val="0.01" mouse_opaque="true"
+			     name="X size" width="110" control_name="EmeraldBuildPrefs_Xsize" />
+      <spinner bottom_delta="-20" decimal_digits="5" follows="left|top" height="16"
+               increment="0.05" label="Y size" label_width="40"
+               left_delta="0" max_val="10" min_val="0.01" mouse_opaque="true"
+               name="Y size" width="110" control_name="EmeraldBuildPrefs_Ysize" />
+      <spinner bottom_delta="-20" decimal_digits="5" follows="left|top" height="16"
+               increment="0.05" label="Z size" label_width="40"
+               left_delta="0" max_val="10" min_val="0.01" mouse_opaque="true"
+               name="Y size" width="110" control_name="EmeraldBuildPrefs_Zsize" />
+
+
+
+      <check_box bottom="-90" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
+        label="Phantom" left="140" mouse_opaque="true"
+        name="EmPhantomToggle" radio_style="false" width="100" control_name="EmeraldBuildPrefs_Phantom" />
+
+      <check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
+        label="Physical" left_delta="0" mouse_opaque="true"
+        name="EmPhysicalToggle" radio_style="false" width="100" control_name="EmeraldBuildPrefs_Physical" />
+
+      <check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
+        label="Temporary" left_delta="0" mouse_opaque="true"
+        name="EmTemporaryToggle" radio_style="false" width="100" control_name="EmeraldBuildPrefs_Temporary" />
+
+
+      <combo_box allow_text_entry="false" bottom_delta="-20" left_delta="1" follows="left|top" height="18" left="10" max_chars="20" mouse_opaque="true" name="material" width="87" control_name="EmeraldBuildPrefs_Material">
+        <combo_item name="Stone" value="Stone">Stone</combo_item>
+        <combo_item name="Metal" value="Metal">Metal</combo_item>
+        <combo_item name="Glass" value="Glass">Glass</combo_item>
+        <combo_item name="Wood" value="Wood">Wood</combo_item>
+        <combo_item name="Flesh" value="Flesh">Flesh</combo_item>
+        <combo_item name="Plastic" value="Plastic">Plastic</combo_item>
+        <combo_item name="Rubber" value="Rubber">Rubber</combo_item>
+      </combo_box>
+
+
+
+
+      <texture_picker allow_no_texture="false" bottom="-155" can_apply_immediately="true"
+           default_image_name="Default" follows="left|top" height="80" label="Texture"
+           left="250" mouse_opaque="true" name="texture control" control_name="EmeraldBuildPrefs_Texture"
+           tool_tip="Click to choose a picture" width="64" />
+      <color_swatch border_color="0.45098, 0.517647, 0.607843, 1" bottom_delta="0"
+           can_apply_immediately="true" color="1, 1, 1, 1" follows="left|top"
+           height="80" label="Color" left_delta="75" mouse_opaque="true"
+           name="colorswatch" tool_tip="Click to open Color Picker" width="64" control_name="EmeraldBuildPrefs_Color" />
+
+      <spinner bottom="-90" decimal_digits="0" follows="left|top" height="16"
+               increment="1" label="Alpha" label_width="40"
+               left_delta="70" max_val="100" min_val="0" mouse_opaque="true"
+               name="alpha" width="90" control_name="EmeraldBuildPrefs_Alpha" />
+
+      <spinner bottom_delta="-20" enabled="true" decimal_digits="2" follows="left|top" height="16"
+               increment="0.05" label="Glow" label_width="40"
+               left_delta="0" max_val="1" min_val="0" mouse_opaque="true"
+               name="glow" width="90" control_name="EmeraldBuildPrefs_Glow" />
+
+      <check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
+        label="Full Bright" left_delta="0" mouse_opaque="true"
+        name="EmFBToggle" radio_style="false" width="100" control_name="EmeraldBuildPrefs_FullBright" />
+
+      <combo_box allow_text_entry="false" bottom_delta="-20" follows="left|top" height="18"
+			     left_delta="0" max_chars="20" mouse_opaque="true" name="combobox shininess" tool_tip="Set the amount of shine for the object"
+			     width="90" control_name="EmeraldBuildPrefs_Shiny">
+        <combo_item name="None" value="None">
+          None
+        </combo_item>
+        <combo_item name="Low" value="Low">
+          Low
+        </combo_item>
+        <combo_item name="Medium" value="Medium">
+          Medium
+        </combo_item>
+        <combo_item name="High" value="High">
+          High
+        </combo_item>
+      </combo_box>
+
+
+
+      <check_box bottom_delta="-40" enabled="false"
+           follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+           label="Embed an item into the newly created object" left="20" mouse_opaque="true"
+           name="EmeraldBuildPrefs_EmbedItem" radio_style="false" width="270" />
+      <view_border blevel_style="in" bottom_delta="-20" follows="left|top" height="16" left_delta="0"
+			     mouse_opaque="false" name="im_give_drop_target_rect" width="400" />
+      <text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+			     bottom_delta="0" drop_shadow_visible="true" follows="left|top"
+			     font="SansSerifSmall" h_pad="0" halign="center" height="16" left_delta="0"
+			     mouse_opaque="true" name="Give inventory"
+			     tool_tip="Drop a inventory item here." v_pad="2"
+			     width="400">
+        Drop a inventory item here to have it added to the prim contents.
+      </text>
+      <view_border blevel_style="in" bottom_delta="-18" follows="left|top" height="16" left_delta="0"
+			     mouse_opaque="false" name="im_give_disp_rect" width="400" />
+      <text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+			     bottom_delta="0" drop_shadow_visible="true" follows="left|top"
+			     font="SansSerifSmall" h_pad="0" halign="center" height="16" left_delta="0"
+			     mouse_opaque="true" name="im_give_disp_rect_txt"
+			     tool_tip="" v_pad="2"
+			     width="400">
+        Currently set to: ITEM
+      </text>
+
+
+    </panel>
+
   </tab_container>
 </panel>

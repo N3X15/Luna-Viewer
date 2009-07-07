@@ -356,6 +356,31 @@ void upload_error(const std::string& error_message, const std::string& label, co
 	LLFilePicker::instance().reset();						
 }
 
+extern ImportTracker gImportTracker;
+
+class ImportLinkset : public view_listener_t
+{
+	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+	{
+		const std::string filename = upload_pick((void*)LLFilePicker::FFLOAD_XML);
+	
+		if (filename.empty())
+			return true;
+	
+		llifstream importer(filename);
+		LLSD data;
+		LLSDSerialize::fromXMLDocument(data, importer);
+	
+		if (gImportTracker.getState() != ImportTracker::IDLE)
+			gImportTracker.clear();
+	
+		gImportTracker.import(data);
+		
+		return true;
+	}
+};
+
+
 class LLFileEnableCloseWindow : public view_listener_t
 {
 	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
@@ -1131,6 +1156,7 @@ void init_menu_file()
 	(new LLFileUploadSound())->registerListener(gMenuHolder, "File.UploadSound");
 	(new LLFileUploadAnim())->registerListener(gMenuHolder, "File.UploadAnim");
 	(new LLFileUploadBulk())->registerListener(gMenuHolder, "File.UploadBulk");
+	(new ImportLinkset())->registerListener(gMenuHolder, "File.ImportLinkset");
 	(new LLFileCloseWindow())->registerListener(gMenuHolder, "File.CloseWindow");
 	(new LLFileCloseAllWindows())->registerListener(gMenuHolder, "File.CloseAllWindows");
 	(new LLFileEnableCloseWindow())->registerListener(gMenuHolder, "File.EnableCloseWindow");

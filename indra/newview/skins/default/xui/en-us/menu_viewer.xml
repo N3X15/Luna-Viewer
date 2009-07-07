@@ -791,6 +791,11 @@
 			<on_click function="ToggleControl" userdata="EmeraldRainbowBeam" />
 			<on_check control="EmeraldRainbowBeam" />
 		</menu_item_check>
+		<menu_item_check bottom="-78" enabled="true" height="20" label="Emerald Beam" left="0"
+		     mouse_opaque="true" name="Emerald Beam" width="155">
+			<on_click function="ToggleControl" userdata="EmeraldEmeraldBeam" />
+			<on_check control="EmeraldEmeraldBeam" />
+		</menu_item_check>
 		<menu_item_check bottom="-98" enabled="true" height="20" label="SL Particle Chat" left="0"
 		     mouse_opaque="true" name="SL Particle Chat" width="155">
 			<on_click function="ToggleControl" userdata="EmeraldParticleChat" />

@@ -37,6 +37,8 @@
 #include "llradiogroup.h"
 #include "llbutton.h"
 #include "lluictrlfactory.h"
+#include "llcombobox.h"
+#include "lltexturectrl.h"
 
 // project includes
 #include "llviewercontrol.h"
@@ -164,6 +166,15 @@ BOOL LLPanelEmerald::postBuild()
 	//skin_select->setCommitCallback(onSelectSkin);
 	//skin_select->setCallbackUserData(this);
 	//onCommitApplyControl
+	getChild<LLComboBox>("material")->setSimple(gSavedSettings.getString("EmeraldBuildPrefs_Material"));
+	getChild<LLComboBox>("combobox shininess")->setSimple(gSavedSettings.getString("EmeraldBuildPrefs_Shiny"));
+	
+	getChild<LLComboBox>("material")->setCommitCallback(onComboBoxCommit);
+	getChild<LLComboBox>("combobox shininess")->setCommitCallback(onComboBoxCommit);
+	getChild<LLTextureCtrl>("texture control")->setCommitCallback(onTexturePickerCommit);
+	//childSetCommitCallback("material",onComboBoxCommit);
+	//childSetCommitCallback("combobox shininess",onComboBoxCommit);
+	
 	getChild<LLButton>("revert_production_voice_btn")->setClickedCallback(onClickVoiceRevertProd, this);
 	getChild<LLButton>("revert_debug_voice_btn")->setClickedCallback(onClickVoiceRevertDebug, this);
 
@@ -261,7 +272,7 @@ void LLPanelEmerald::apply()
 	gSavedPerAccountSettings.setBOOL("EmeraldInstantMessageResponseItem", childGetValue("EmeraldInstantMessageResponseItem").asBoolean());
 	gSavedPerAccountSettings.setBOOL("EmeraldInstantMessageAnnounceIncoming", childGetValue("EmeraldInstantMessageAnnounceIncoming").asBoolean());
 	gSavedPerAccountSettings.setBOOL("EmeraldInstantMessageAnnounceStealFocus", childGetValue("EmeraldInstantMessageAnnounceStealFocus").asBoolean());
-
+	
 }
 
 void LLPanelEmerald::cancel()
@@ -276,6 +287,24 @@ void LLPanelEmerald::onClickVoiceRevertProd(void* data)
 	gSavedSettings.setString("vivoxProductionServerName", "bhr.vivox.com");
 	self->getChild<LLLineEditor>("production_voice_field")->setValue("bhr.vivox.com");
 }
+void LLPanelEmerald::onComboBoxCommit(LLUICtrl* ctrl, void* userdata)
+{
+	LLComboBox* box = (LLComboBox*)ctrl;
+	if(box)
+	{
+		gSavedSettings.setString(box->getControlName(),box->getValue().asString());
+	}
+	
+}
+void LLPanelEmerald::onTexturePickerCommit(LLUICtrl* ctrl, void* userdata)
+{
+	LLTextureCtrl*	image_ctrl = (LLTextureCtrl*)ctrl;
+	if(image_ctrl)
+	{
+		gSavedSettings.setString("EmeraldBuildPrefs_Texture", image_ctrl->getImageAssetID().asString());
+	}
+}
+
 
 void LLPanelEmerald::onClickVoiceRevertDebug(void* data)
 {
@@ -283,35 +312,6 @@ void LLPanelEmerald::onClickVoiceRevertDebug(void* data)
 	gSavedSettings.setString("vivoxDebugServerName", "bhd.vivox.com");
 	self->getChild<LLLineEditor>("debug_voice_field")->setValue("bhd.vivox.com");
 }
-/*
-//LGGs avatar effects crap
-void LLPanelEmerald::onCommitAvatarEffectsChange(LLUICtrl* ctrl, void* user_data)
-{
-	//std::string control_name = ctrl->getControlName();
-	BOOL newValue = ctrl->getValue().asBoolean();
-	std::string setting_name =ctrl->getName();
-	gSavedSettings.setBOOL(setting_name, newValue);
-	//if(control_name == "EmeraldAlwaysFly")
-	//{
-	//	gSavedSettings.setBOOL("allow_phantom_toggle", newValue);
-	//}
-	//if (control_name == "EmeraldAllowPhantomToggle")
-	//{
-	//		gSavedSettings.setBOOL("allow_phantom_toggle", FALSE);
-	//}EmeraldAlwaysFly
-}*/ //jcool410 - *burns* see comment in postbuild
-//lgg - Cool, it works magicly instead, even better :) 
-
-//void LLPanelEmerald::onCommitVoiceProductionServerName(LLUICtrl* caller, void* user_data)
-//{
-//	gSavedSettings.setString("vivoxProductionServerName", (std::string)(((LLLineEditor*)caller)->getValue()));
-///	std::string cntrl = ((LLLineEditor*)caller)->getControlName()
-//}
-
-//void LLPanelEmerald::onCommitVoiceDebugServerName(LLUICtrl* caller, void* user_data)
-//{
-//	gSavedSettings.setString("vivoxDebugServerName", (std::string)(((LLLineEditor*)caller)->getValue()));
-//}
 
 //workaround for lineeditor dumbness in regards to control_name
 void LLPanelEmerald::onCommitApplyControl(LLUICtrl* caller, void* user_data)

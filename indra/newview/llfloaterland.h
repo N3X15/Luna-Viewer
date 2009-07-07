@@ -85,6 +85,10 @@ public:
 	virtual void onOpen();
 	virtual BOOL postBuild();
 
+// [RLVa]
+	virtual void open();
+// [/RLVa]
+
 protected:
 
 	// Does its own instance management, so clients not allowed

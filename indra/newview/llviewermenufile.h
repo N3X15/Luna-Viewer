@@ -35,8 +35,11 @@
 
 #include "llassettype.h"
 #include "llinventorytype.h"
+#include "importtracker.h"
 
 class LLTransactionID;
+
+extern ImportTracker gImportTracker;
 
 
 void init_menu_file();

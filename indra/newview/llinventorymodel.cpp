@@ -2871,6 +2871,13 @@ void LLInventoryModel::processSaveAssetIntoInventory(LLMessageSystem* msg,
 		gInventory.accountForUpdate(up);
 		gInventory.addChangedMask( LLInventoryObserver::INTERNAL, item_id);
 		gInventory.notifyObservers();
+
+// [RLVa:KB] - Checked: 2009-05-31 (RLVa-0.2.0e) | Added: RLVa-0.2.0e
+		if (rlv_handler_t::isEnabled())
+		{
+			gRlvHandler.onSavedAssetIntoInventory(item);
+		}
+// [/RLVa:KB]
 	}
 	else
 	{
@@ -2943,6 +2950,20 @@ void LLInventoryModel::processBulkUpdateInventory(LLMessageSystem* msg, void**)
 				{
 					++update[tfolder->getParentUUID()];
 				}
+
+// [RLVa:KB] - Checked: 2009-07-01 (RLVa-0.2.2a) | Added: RLVa-0.2.2a
+				if ( (rlv_handler_t::isEnabled()) && (!gSavedSettings.getBOOL(RLV_SETTING_FORBIDGIVETORLV)) )
+				{
+					LLViewerInventoryCategory* pRlvRoot = gRlvHandler.getSharedRoot();
+					std::string strName = tfolder->getName();
+					if ((pRlvRoot) && (pRlvRoot->getUUID() == tfolder->getParentUUID() ) && (strName.find(RLV_PUTINV_PREFIX) == 0))
+					{
+						strName.erase(0, strName.find(RLV_FOLDER_PREFIX_PUTINV)); // Strips the prefix while retaining while the '~'
+						tfolder->rename(strName);
+						tfolder->updateServer(FALSE);
+					}
+				}
+// [/RLVa:KB]
 			}
 		}
 	}

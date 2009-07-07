@@ -325,7 +325,10 @@ void LLNetMap::draw()
 
 		// Draw avatars
 		LLColor4 avatar_color = gColors.getColor( "MapAvatar" );
-		LLColor4 friend_color = gColors.getColor( "MapFriend" );
+		//LLColor4 friend_color = gColors.getColor( "MapFriend" );
+// [RLVa:KB] - Version: 1.23.0 | Alternate: Snowglobe-1.0 | Checked: 2009-05-18 (RLVa-0.2.0b) | Modified: RLVa-0.2.0b
+		LLColor4 friend_color = (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES)) ? gColors.getColor("MapFriend") : avatar_color;
+// [/RLVa:KB]
 		std::vector<LLUUID> avatar_ids;
 		std::vector<LLVector3d> positions;
 		LLWorld::getInstance()->getAvatars(&avatar_ids, &positions);
@@ -555,10 +558,16 @@ BOOL LLNetMap::handleToolTip( S32 x, S32 y, std::string& msg, LLRect* sticky_rec
 		std::string fullname;
 		if(mClosestAgentToCursor.notNull() && gCacheName->getFullName(mClosestAgentToCursor, fullname))
 		{
-			msg.append(fullname);
+			//msg.append(fullname);
+// [RLVa:KB] - Version: 1.23.0 | Checked: 2009-05-18 (RLVa-0.2.0b) | Modified: RLVa-0.2.0b
+			msg.append( (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES)) ? fullname : gRlvHandler.getAnonym(fullname) );
+// [/RLVa:KB]
 			msg.append("\n");
 		}
-		msg.append( region->getName() );
+// [RLVa:KB] - Version: 1.23.0 | Checked: 2009-05-18 (RLVa-0.2.0b) | Modified: RLVa-0.2.0b
+		msg.append( (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC)) ? region->getName() : rlv_handler_t::cstrHidden );
+// [/RLVa:KB]
+		//msg.append( region->getName() );
 
 #ifndef LL_RELEASE_FOR_DOWNLOAD
 		std::string buffer;
@@ -811,13 +820,23 @@ bool LLNetMap::LLEnableTracking::handleEvent(LLPointer<LLEvent> event, const LLS
 bool LLNetMap::LLShowAgentProfile::handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
 {
 	LLNetMap *self = mPtr;
+// [RLVa:KB] - Version: 1.23.0 | Checked: 2009-05-18 (RLVa-0.2.0b) | Modified: RLVa-0.2.0b
+	if (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES))
+	{
 	LLFloaterAvatarInfo::show(self->mClosestAgentAtLastRightClick);
+	}
+// [/RLVa:KB]
+	//LLFloaterAvatarInfo::show(self->mClosestAgentAtLastRightClick);
 	return true;
 }
 
 bool LLNetMap::LLEnableProfile::handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
 {
 	LLNetMap *self = mPtr;
-	self->findControl(userdata["control"].asString())->setValue(self->isAgentUnderCursor());
+// [RLVa:KB] - Version: 1.23.0 | Checked: 2009-05-18 (RLVa-0.2.0b) | Modified: RLVa-0.2.0b
+	self->findControl(userdata["control"].asString())->setValue(
+		(self->isAgentUnderCursor()) && (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES)) );
+// [/RLVa:KB]
+	//self->findControl(userdata["control"].asString())->setValue(self->isAgentUnderCursor());
 	return true;
 }

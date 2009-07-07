@@ -401,7 +401,10 @@ void LLPanelPick::refresh()
 		mEnabledCheck->setEnabled(godlike);
 
 		mSetBtn->setVisible(godlike);
-		mSetBtn->setEnabled(godlike);
+		//mSetBtn->setEnabled(godlike);
+// [RLVa] - Added: RLVa-0.x.yc
+		mSetBtn->setEnabled(godlike && (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC)) );
+// [/RLVa]
 	}
 	else
 	{
@@ -418,7 +421,10 @@ void LLPanelPick::refresh()
 		mEnabledCheck->setEnabled(FALSE);
 
 		mSetBtn->setVisible(is_self);
-		mSetBtn->setEnabled(is_self);
+		//mSetBtn->setEnabled(is_self);
+// [RLVa] - Added: RLVa-0.x.yc
+		mSetBtn->setEnabled(is_self && (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC)) );
+// [/RLVa]
 	}
 }
 
@@ -456,6 +462,12 @@ void LLPanelPick::onClickLandmark(void* data)
 // static
 void LLPanelPick::onClickSet(void* data)
 {
+// [RLVa]
+	if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC))
+	{
+		return;
+	}
+// [/RLVa]
     LLPanelPick* self = (LLPanelPick*)data;
 
 	// Save location for later.

@@ -208,7 +208,17 @@ void LLFloaterOpenObject::onClickMoveToInventory(void* data)
 void LLFloaterOpenObject::onClickMoveAndWear(void* data)
 {
 	LLFloaterOpenObject* self = (LLFloaterOpenObject*)data;
+// [RLVa]
+	if ( (rlv_handler_t::isEnabled()) && (gRlvHandler.hasLockedAttachment()) )
+	{
+		self->moveToInventory(false);
+	}
+	else
+	{
 	self->moveToInventory(true);
+	}
+// [/RLVa]
+//	self->moveToInventory(true);
 	self->close();
 }
 

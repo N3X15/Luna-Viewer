@@ -719,7 +719,10 @@ void display(BOOL rebuild, F32 zoom_factor, int subfield, BOOL for_snapshot)
 			gSky.updateSky();
 		}
 
-		if(gUseWireframe)
+//		if(gUseWireframe)
+// [RLVa]
+		if ( (gUseWireframe) && ( (!rlv_handler_t::isEnabled()) || (!gRlvHandler.hasLockedAttachment()) ) )
+// [/RLVa]
 		{
 			glClearColor(0.5f, 0.5f, 0.5f, 0.f);
 			glClear(GL_COLOR_BUFFER_BIT);
@@ -878,7 +881,12 @@ void render_hud_attachments()
 	glh::matrix4f current_mod = glh_get_current_modelview();
 
 	// clamp target zoom level to reasonable values
-	gAgent.mHUDTargetZoom = llclamp(gAgent.mHUDTargetZoom, 0.1f, 1.f);
+// [RLVa]
+	// TODO-RLVa: while hasLockedHUD() isn't slow this is called per frame so find a better way
+	gAgent.mHUDTargetZoom = llclamp(gAgent.mHUDTargetZoom, 
+		( (!rlv_handler_t::isEnabled()) || (!gRlvHandler.hasLockedHUD()) ) ? 0.1f : 0.85f, 1.f);
+// [/RLVa]
+	//gAgent.mHUDTargetZoom = llclamp(gAgent.mHUDTargetZoom, 0.1f, 1.f);
 	// smoothly interpolate current zoom level
 	gAgent.mHUDCurZoom = lerp(gAgent.mHUDCurZoom, gAgent.mHUDTargetZoom, LLCriticalDamp::getInterpolant(0.03f));
 

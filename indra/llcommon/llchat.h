@@ -75,6 +75,10 @@ public:
 	:	mText(text),
 		mFromName(),
 		mFromID(),
+// [RLVa]
+		mRlvLocFiltered(FALSE),
+		mRlvNamesFiltered(FALSE),
+// [/RLVa]
 		mSourceType(CHAT_SOURCE_AGENT),
 		mChatType(CHAT_TYPE_NORMAL),
 		mAudible(CHAT_AUDIBLE_FULLY),
@@ -87,6 +91,10 @@ public:
 	std::string		mText;		// UTF-8 line of text
 	std::string		mFromName;	// agent or object name
 	LLUUID			mFromID;	// agent id or object id
+// [RLVa]
+	BOOL			mRlvLocFiltered;
+	BOOL			mRlvNamesFiltered;
+// [/RLVa]
 	EChatSourceType	mSourceType;
 	EChatType		mChatType;
 	EChatAudible	mAudible;

@@ -1978,7 +1978,11 @@ BOOL LLVOVolume::lineSegmentIntersect(const LLVector3& start, const LLVector3& e
 	
 {
 	if (!mbCanSelect ||
-		(gHideSelectedObjects && isSelected()) ||
+//		(gHideSelectedObjects && isSelected()) ||
+// [RLVa]
+		( (gHideSelectedObjects && isSelected()) && 
+		  ((!rlv_handler_t::isEnabled()) || (!isHUDAttachment()) || (gRlvHandler.isDetachable(this))) ) ||
+// [/RLVa]
 			mDrawable->isDead() || 
 			!gPipeline.hasRenderType(mDrawable->getRenderType()))
 	{
@@ -2120,10 +2124,18 @@ void LLVolumeGeometryManager::registerFace(LLSpatialGroup* group, LLFace* facep,
 {
 	LLMemType mt(LLMemType::MTYPE_SPACE_PARTITION);
 
-	if (facep->getViewerObject()->isSelected() && gHideSelectedObjects)
+//	if (facep->getViewerObject()->isSelected() && gHideSelectedObjects)
+//	{
+//		return;
+//	}
+// [RLVa]
+	LLViewerObject* pObj = facep->getViewerObject();
+	if ( (pObj->isSelected() && gHideSelectedObjects) && 
+		 ((!rlv_handler_t::isEnabled()) || (!pObj->isHUDAttachment()) || (gRlvHandler.isDetachable(pObj))) )
 	{
 		return;
 	}
+// [/RVLa]
 
 	//add face to drawmap
 	LLSpatialGroup::drawmap_elem_t& draw_vec = group->mDrawMap[type];	

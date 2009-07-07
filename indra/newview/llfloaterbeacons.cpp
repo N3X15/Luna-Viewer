@@ -38,6 +38,9 @@
 #include "llcheckboxctrl.h"
 #include "pipeline.h"
 
+// [RLVa]
+#include "llagent.h"
+// [/RLVa]
 
 LLFloaterBeacons::LLFloaterBeacons(const LLSD& seed)
 {
@@ -73,6 +76,13 @@ BOOL LLFloaterBeacons::postBuild()
 // Too bad we can't just add control_name="BeaconAlwaysOn" to the XML.
 void LLFloaterBeacons::open()
 {
+// [RLVa]
+	if ( (rlv_handler_t::isEnabled()) && (gRlvHandler.hasBehaviour(RLV_BHVR_EDIT)) )
+	{
+		return;
+	}
+// [/RLVa]
+
 	LLFloater::open();
 	gSavedSettings.setBOOL( "BeaconAlwaysOn", TRUE);
 }

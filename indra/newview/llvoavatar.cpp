@@ -1985,9 +1985,15 @@ void LLVOAvatar::buildCharacter()
 					if (attachment->getGroup() == i)
 					{
 						LLMenuItemCallGL* item;
+// [RLVa]
+						// We need the userdata param to disable options in this pie menu later on (Left Hand / Right Hand option)
 						item = new LLMenuItemCallGL(attachment->getName(), 
 													NULL, 
-													object_selected_and_point_valid);
+													object_selected_and_point_valid, attachment);
+// [/RLVa]
+//						item = new LLMenuItemCallGL(attachment->getName(), 
+//													NULL, 
+//													object_selected_and_point_valid);
 						item->addListener(gMenuHolder->getListenerByName("Object.AttachToAvatar"), "on_click", curiter->first);
 						
 						gAttachPieMenu->append(item);
@@ -2042,9 +2048,15 @@ void LLVOAvatar::buildCharacter()
 			if (attachment->getGroup() == 8)
 			{
 				LLMenuItemCallGL* item;
+// [RLVa]
+				// We need the userdata param to disable options in this pie menu later on
 				item = new LLMenuItemCallGL(attachment->getName(), 
 											NULL, 
-											object_selected_and_point_valid);
+											object_selected_and_point_valid, attachment);
+// [/RLVa]
+//				item = new LLMenuItemCallGL(attachment->getName(), 
+//											NULL, 
+//											object_selected_and_point_valid);
 				item->addListener(gMenuHolder->getListenerByName("Object.AttachToAvatar"), "on_click", curiter->first);
 				gAttachScreenPieMenu->append(item);
 				gDetachScreenPieMenu->append(new LLMenuItemCallGL(attachment->getName(), 
@@ -2122,8 +2134,13 @@ void LLVOAvatar::buildCharacter()
 				LLViewerJointAttachment* attachment = get_if_there(mAttachmentPoints, attach_index, (LLViewerJointAttachment*)NULL);
 				if (attachment)
 				{
+// [RLVa]
+					// We need the userdata param to disable options in this pie menu later on
 					LLMenuItemCallGL* item = new LLMenuItemCallGL(attachment->getName(), 
-																  NULL, object_selected_and_point_valid);
+																  NULL, object_selected_and_point_valid, attachment);
+// [/RLVa]
+//					LLMenuItemCallGL* item = new LLMenuItemCallGL(attachment->getName(), 
+//																  NULL, object_selected_and_point_valid);
 					gAttachBodyPartPieMenus[group]->append(item);
 					item->addListener(gMenuHolder->getListenerByName("Object.AttachToAvatar"), "on_click", attach_index);
 					gDetachBodyPartPieMenus[group]->append(new LLMenuItemCallGL(attachment->getName(), 
@@ -3174,11 +3191,17 @@ void LLVOAvatar::idleUpdateNameTag(const LLVector3& root_pos_last)
 	const F32 time_visible = mTimeVisible.getElapsedTimeF32();
 	const F32 NAME_SHOW_TIME = gSavedSettings.getF32("RenderNameShowTime");	// seconds
 	const F32 FADE_DURATION = gSavedSettings.getF32("RenderNameFadeDuration"); // seconds
+// [RLVa:KB] - Checked: 2009-05-18 (RLVa-0.2.0b) | Added: RLVa-0.2.0b
+	BOOL fRlvShowNames = gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES);
+// [/RLVa:KB]
 	BOOL visible_avatar = isVisible() || mNeedsAnimUpdate;
 	BOOL visible_chat = gSavedSettings.getBOOL("UseChatBubbles") && (mChats.size() || mTyping);
 	BOOL render_name =	visible_chat ||
 						(visible_avatar &&
 						((sRenderName == RENDER_NAME_ALWAYS) ||
+// [RLVa:KB] - Comment out the line above (and uncomment the line below) to hide avie name tags under @shownmames=n
+						//((sRenderName == RENDER_NAME_ALWAYS && !fRlvShowNames) ||
+// [/RLVa:KB]
 						(sRenderName == RENDER_NAME_FADE && time_visible < NAME_SHOW_TIME)));
 	// If it's your own avatar, don't draw in mouselook, and don't
 	// draw if we're specifically hiding our own name.
@@ -3198,7 +3221,18 @@ void LLVOAvatar::idleUpdateNameTag(const LLVector3& root_pos_last)
 			new_name = TRUE;
 		}
 		
-		if (sRenderGroupTitles != mRenderGroupTitles)
+// [RLVa:KB] - Alternate: Emerald-206 | Checked: 2009-05-18 (RLVa-0.2.0b) | Added: RLVa-0.2.0b
+		if (fRlvShowNames)
+		{
+			if (mRenderGroupTitles)
+			{
+				mRenderGroupTitles = FALSE;
+				new_name = TRUE;
+			}
+		}
+		else if (sRenderGroupTitles != mRenderGroupTitles)
+// [/RLVa]
+		//if (sRenderGroupTitles != mRenderGroupTitles)
 		{
 			mRenderGroupTitles = sRenderGroupTitles;
 			new_name = TRUE;
@@ -3306,6 +3340,10 @@ void LLVOAvatar::idleUpdateNameTag(const LLVector3& root_pos_last)
 				|| is_appearance != mNameAppearance || client.length() != 0)
 			{
 				std::string line;
+// [RLVa:KB] - Version: 1.23.0 | Alternate: Emerald-206 | Checked: 2009-05-18 (RLVa-0.2.0b) | Added: RLVa-0.2.0b
+				if (!fRlvShowNames)
+				{
+// [/RLVa:KB]
 				if (!sRenderGroupTitles)
 				{
 					// If all group titles are turned off, stack first name
@@ -3327,6 +3365,13 @@ void LLVOAvatar::idleUpdateNameTag(const LLVector3& root_pos_last)
 
 				line += " ";
 				line += lastname->getString();
+// [RLVa:KB] - Version: 1.23.0 | Alternate: Emerald-206 | Checked: 2009-05-18 (RLVa-0.2.0b) | Added: RLVa-0.2.0b
+				}
+				else
+				{
+					line = gRlvHandler.getAnonym(line.assign(firstname->getString()).append(" ").append(lastname->getString()));
+				}
+// [/RLVa:KB]
 				BOOL need_comma = FALSE;
 
 				if (is_away || is_muted || is_busy || client.length() != 0)
@@ -3533,12 +3578,26 @@ void LLVOAvatar::idleUpdateTractorBeam()
 	}
 
 
+	
+	LLColor4U rgb = LLColor4U(gAgent.getEffectColor());
+	
+	if(gSavedSettings.getBOOL("EmeraldRainbowBeam"))
+	{
 	F32 r, g, b;
 	LLColor4 output;
-	hslToRgb(0.5f+sinf(gFrameTimeSeconds*0.1f), 1.0f, 0.5f, r, g, b);
+		hslToRgb(0.5f+sinf(gFrameTimeSeconds*0.3f), 1.0f, 0.5f, r, g, b);
 	output.set(r, g, b);
-	LLColor4U rgb;
 	rgb.setVecScaleClamp(output);
+	
+	}else if(gSavedSettings.getBOOL("EmeraldEmeraldBeam"))
+	{
+		F32 r, g, b;
+		LLColor4 output;
+		hslToRgb(0.25f+sinf(gFrameTimeSeconds*1.2f)*(0.166f/2.0f), 1.0f, 0.5f, r, g, b);
+		output.set(r, g, b);
+		rgb.setVecScaleClamp(output);
+	}
+	
 	// This is only done for yourself (maybe it should be in the agent?)
 	if (!needsRenderBeam() || !mIsBuilt)
 	{
@@ -3568,7 +3627,7 @@ void LLVOAvatar::idleUpdateTractorBeam()
 	{
 		// VEFFECT: Tractor Beam
 		mBeam = (LLHUDEffectSpiral *)LLHUDManager::getInstance()->createViewerEffect(LLHUDObject::LL_HUD_EFFECT_BEAM);
-		mBeam->setColor(gSavedSettings.getBOOL("EmeraldRainbowBeam")? rgb : LLColor4U(gAgent.getEffectColor()));
+		mBeam->setColor( rgb );
 		mBeam->setSourceObject(this);
 		mBeamTimer.reset();
 		//lgg particle beam speaking
@@ -3656,9 +3715,54 @@ void LLVOAvatar::idleUpdateTractorBeam()
 		}
 		if (mBeamTimer.getElapsedTimeF32() > 0.25f)
 		{
-			mBeam->setColor(gSavedSettings.getBOOL("EmeraldRainbowBeam")? rgb : LLColor4U(gAgent.getEffectColor()));
+			
+			mBeam->setColor(rgb );
 			mBeam->setNeedsSendToSim(TRUE);
 			mBeamTimer.reset();
+			
+			if(gSavedSettings.getBOOL("EmeraldEmeraldBeam"))
+			{
+				LLVector3d picture[]  = {
+				 LLVector3d( (F64) 0.0 , (F64) 1, (F64) 4)
+				,LLVector3d( (F64) 0.0 , (F64)  3, (F64) 4)
+				,LLVector3d( (F64) 0.0 , (F64)  5, (F64) 4)
+				,LLVector3d( (F64) 0.0 , (F64)  6, (F64) 2)
+				,LLVector3d( (F64) 0.0 , (F64)  7, (F64) 0)
+				,LLVector3d( (F64) 0.0 , (F64)  5, (F64) -2)
+				,LLVector3d( (F64) 0.0 , (F64)  3, (F64) -4)
+				,LLVector3d( (F64) 0.0 , (F64)  1, (F64) -6)
+				,LLVector3d( (F64) 0.0 , (F64)  0, (F64) -6.5)
+				,LLVector3d( (F64) 0.0 , (F64)  -1, (F64) -6)
+				,LLVector3d( (F64) 0.0 , (F64)  -3, (F64) -4)
+				,LLVector3d( (F64) 0.0 , (F64)  -5, (F64) -2)
+				,LLVector3d( (F64) 0.0 , (F64)  -7, (F64) 0)
+				,LLVector3d( (F64) 0.0 , (F64)  -6, (F64) 2)
+				,LLVector3d( (F64) 0.0 , (F64)  -5, (F64) 4)
+				,LLVector3d( (F64) 0.0 , (F64)  -3, (F64) 4)
+				,LLVector3d( (F64) 0.0 , (F64)  -1, (F64) 4)
+				};
+				LLQuaternion itsRot = mBeam->getTargetObject()->getRotation();
+
+				mBeams.clear();
+				for(int i = 0; i < (sizeof(picture) / (sizeof(LLVector3d))); i++)
+				{
+					
+					LLVector3d offset = (picture[i]*(1.0f/7.0f)*(.75f+sinf(gFrameTimeSeconds*1.0f)*0.25f));
+					LLVector3 beamLine = LLVector3( mBeam->getPositionGlobal() - gAgent.getPositionGlobal());
+					beamLine.normalize();
+					LLQuaternion change;
+					change.shortestArc(LLVector3::x_axis,beamLine);
+					offset.rotVec(change);
+					mBeams.push_back( (LLHUDEffectSpiral *)LLHUDManager::getInstance()->createViewerEffect(LLHUDObject::LL_HUD_EFFECT_BEAM));
+					mBeams[i]->setPositionGlobal(mBeam->getPositionGlobal() + offset + (LLVector3d(beamLine) * sinf(gFrameTimeSeconds*2.0f) * 0.2f));
+					mBeams[i]->setColor(rgb);
+					mBeams[i]->setTargetObject(mBeam->getTargetObject());
+					mBeams[i]->setSourceObject(mBeam->getSourceObject());
+					mBeams[i]->setNeedsSendToSim(mBeam->getNeedsSendToSim());
+
+				}
+			}
+			
 		}
 	}
 }
@@ -6285,6 +6389,13 @@ BOOL LLVOAvatar::attachObject(LLViewerObject *viewer_object)
 	{
 		updateAttachmentVisibility(gAgent.getCameraMode());
 		
+// [RLVa]
+		if (rlv_handler_t::isEnabled())
+		{
+			gRlvHandler.onAttach(attachment);
+		}
+// [/RLVa]
+		
 		// Then make sure the inventory is in sync with the avatar.
 		gInventory.addChangedMask( LLInventoryObserver::LABEL, attachment->getItemID() );
 		gInventory.notifyObservers();
@@ -6346,6 +6457,14 @@ BOOL LLVOAvatar::detachObject(LLViewerObject *viewer_object)
 		// only one object per attachment point for now
 		if (attachment->getObject() == viewer_object)
 		{
+// [RLVa]
+			// URGENT-RLV: it looks like LLApp::isExiting() isn't always accurate so find something better (if it exists)
+			if ( (rlv_handler_t::isEnabled()) && (!LLApp::isExiting()) && (mIsSelf) )
+			{
+				gRlvHandler.onDetach(attachment);
+			}
+// [/RLVa]
+
 			LLUUID item_id = attachment->getItemID();
 			attachment->removeObject(viewer_object);
 			if (mIsSelf)
@@ -6404,6 +6523,14 @@ void LLVOAvatar::sitOnObject(LLViewerObject *sit_object)
 
 	gPipeline.markMoved(mDrawable, TRUE);
 	mIsSitting = TRUE;
+// [RLVa:KB] - Checked: 2009-06-16 (RLVa-0.2.1d) | Added: RLVa-0.2.1d
+	#ifdef RLV_EXTENSION_STARTLOCATION
+	if (rlv_handler_t::isEnabled())
+	{
+		rlvUpdateLoginLocationSetting();
+	}
+	#endif // RLV_EXTENSION_STARTLOCATION
+// [/RLVa:KB]
 	mRoot.getXform()->setParent(&sit_object->mDrawable->mXform); // LLVOAvatar::sitOnObject
 	mRoot.setPosition(getPosition());
 	mRoot.updateWorldMatrixChildren();
@@ -6423,6 +6550,20 @@ void LLVOAvatar::sitOnObject(LLViewerObject *sit_object)
 		gAgent.stopAutoPilot();
 		gAgent.setupSitCamera();
 		if (gAgent.mForceMouselook) gAgent.changeCameraToMouselook();
+
+		//Name Short - Revoke permissions for the object you've just sat on.
+		U32 state = gSavedSettings.getU32("EmeraldRevokePerms");
+		if(state == 1 || state == 3 && !sit_object->permYouOwner())
+		{
+			gMessageSystem->newMessageFast(_PREHASH_RevokePermissions);
+			gMessageSystem->nextBlockFast(_PREHASH_AgentData);
+			gMessageSystem->addUUIDFast(_PREHASH_AgentID, gAgent.getID());
+			gMessageSystem->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
+			gMessageSystem->nextBlockFast(_PREHASH_Data);
+			gMessageSystem->addUUIDFast(_PREHASH_ObjectID, sit_object->getID());
+			gMessageSystem->addU32Fast(_PREHASH_ObjectPermissions, 0xFFFFFFFF);
+			gAgent.sendReliableMessage();
+		}
 	}
 }
 
@@ -6465,6 +6606,14 @@ void LLVOAvatar::getOffObject()
 	gPipeline.markMoved(mDrawable, TRUE);
 
 	mIsSitting = FALSE;
+// [RLVa:KB] - Checked: 2009-06-16 (RLVa-0.2.1d) | Added: RLVa-0.2.1d
+	#ifdef RLV_EXTENSION_STARTLOCATION
+	if (rlv_handler_t::isEnabled())
+	{
+		rlvUpdateLoginLocationSetting();
+	}
+	#endif // RLV_EXTENSION_STARTLOCATION
+// [/RLVa:KB]
 	mRoot.getXform()->setParent(NULL); // LLVOAvatar::getOffObject
 	mRoot.setPosition(cur_position_world);
 	mRoot.setRotation(cur_rotation_world);
@@ -6488,6 +6637,20 @@ void LLVOAvatar::getOffObject()
 		gAgent.setThirdPersonHeadOffset(LLVector3(0.f, 0.f, 1.f));
 
 		gAgent.setSitCamera(LLUUID::null);
+		
+		//Name Short - Revoke permissions for the object you've just stood up from.
+		U32 state = gSavedSettings.getU32("EmeraldRevokePerms");
+		if(state == 2 || state == 3 && !sit_object->permYouOwner())
+		{
+			gMessageSystem->newMessageFast(_PREHASH_RevokePermissions);
+			gMessageSystem->nextBlockFast(_PREHASH_AgentData);
+			gMessageSystem->addUUIDFast(_PREHASH_AgentID, gAgent.getID());
+			gMessageSystem->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
+			gMessageSystem->nextBlockFast(_PREHASH_Data);
+			gMessageSystem->addUUIDFast(_PREHASH_ObjectID, sit_object->getID());
+			gMessageSystem->addU32Fast(_PREHASH_ObjectPermissions, 0xFFFFFFFF);
+			gAgent.sendReliableMessage();
+		}
 	}
 }
 

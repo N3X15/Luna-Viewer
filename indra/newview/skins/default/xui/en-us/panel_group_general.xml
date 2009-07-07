@@ -34,11 +34,19 @@ Hover your mouse over the options for more help.
 	     mouse_opaque="true" name="founder_name" v_pad="0" width="200">
 		(waiting)
 	</text>
-	<text bottom_delta="-16" font="SansSerifSmall" halign="left" height="16"
+<text font="SansSerifSmall" name="emerald_guuid-pre" follows="left|top" left="7" bottom="-50">
+		Group Key:
+	</text>
+      <name_editor bevel_style="in" border_style="line"
+			     border_thickness="1" bottom="-55" enabled="false" follows="left|top"
+			     font="SansSerifSmall" height="16" is_unicode="false" left_delta="65"
+			     max_length="254" mouse_opaque="false" name="groupkey_"
+			     width="256" />
+	<text bottom_delta="-20" font="SansSerifSmall" halign="left" height="16"
 	     name="group_charter_label" right="410" width="265">
 		Group Charter
 	</text>
-	<texture_picker bottom_delta="-129" follows="left|top" height="144"
+	<texture_picker bottom_delta="-130" follows="left|top" height="144"
 	      label="Group Insignia" left="7"
 	     mouse_opaque="true" name="insignia" tool_tip="Click to choose a picture"
 	     width="128" />
@@ -57,11 +65,7 @@ Hover your mouse over the options for more help.
 	     height="22" label="Detailed View" label_selected="Detailed View"
 	     left_delta="0" mouse_opaque="true" name="info_button" width="128" />
 	<text bottom_delta="-16" font="SansSerif" name="text_owners_and_visible_members">
-		Owners &amp; Visible Members
-	</text>
-	<text bottom_delta="-16" font="SansSerifSmall" left_delta="0"
-	     name="text_owners_are_shown_in_bold">
-		(Owners are shown in bold)
+		Owners &amp; Visible Members (Owners are shown in bold)
 	</text>
 	<name_list allow_calling_card_drop="false" background_visible="true" bottom_delta="-88"
 	     column_padding="0" draw_border="true" draw_heading="true"

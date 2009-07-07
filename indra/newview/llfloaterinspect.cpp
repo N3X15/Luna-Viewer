@@ -43,6 +43,10 @@
 #include "llviewerobject.h"
 #include "lluictrlfactory.h"
 
+// [RLVa]
+#include "llagent.h"
+// [/RLVa]
+
 LLFloaterInspect* LLFloaterInspect::sInstance = NULL;
 
 LLFloaterInspect::LLFloaterInspect(void) :
@@ -146,7 +150,13 @@ void LLFloaterInspect::onClickOwnerProfile(void* ctrl)
 		if(node)
 		{
 			const LLUUID& owner_id = node->mPermissions->getOwner();
+// [RLVa]
+			if ( (!rlv_handler_t::isEnabled()) || (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES)))
+			{
 			LLFloaterAvatarInfo::showFromDirectory(owner_id);
+			}
+// [/RLVa]
+//			LLFloaterAvatarInfo::showFromDirectory(owner_id);
 		}
 	}
 }
@@ -224,6 +234,13 @@ void LLFloaterInspect::refresh()
 		LLStringUtil::copy(time, ctime(&timestamp), MAX_STRING);
 		time[24] = '\0';
 		gCacheName->getFullName(obj->mPermissions->getOwner(), owner_name);
+// [RLVa]
+		if ( (rlv_handler_t::isEnabled()) && (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES)) )
+		{
+			// TODO-RLV: shouldn't filter if this is a group-owned prim (will show "(nobody)", also disable the owner button
+			owner_name = gRlvHandler.getAnonym(owner_name);
+		}
+// [/RLVa]
 		gCacheName->getFullName(obj->mPermissions->getCreator(), creator_name);
 		row["id"] = obj->getObject()->getID();
 		row["columns"][0]["column"] = "object_name";

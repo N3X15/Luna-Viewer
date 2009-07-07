@@ -53,6 +53,9 @@ public:
 	/*virtual*/ void	onOpen();
 	/*virtual*/ void	onClose(bool app_quitting);
 	/*virtual*/ BOOL	canClose();
+// [RLVa:KB] - Version: 1.23.0 | Checked: 2009-06-04 (RLVa-0.2.0i)
+    /*virtual*/ void    open();
+// [/RLVa:KB]
 
 private:
 	LLFloaterMap(const LLSD& key = LLSD());

@@ -572,6 +572,15 @@ void LLStatusBar::refresh()
 		mRegionDetails.mTraffic = 0.0f;
 	}
 
+// [RLVa:KB] - Checked: 2009-05-18 (RLVa-0.2.0b) | Modified: RLVa-0.2.0b
+	if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC))
+	{
+		// TODO-RLVa: find out whether the LCD code is still used because if so then we need to filter that as well
+		location_name = llformat("%s (%s) - %s", 
+			rlv_handler_t::cstrHiddenRegion.c_str(), region->getSimAccessString().c_str(), rlv_handler_t::cstrHidden.c_str());
+	}
+// [/RLVa:KB]
+
 	mTextParcelName->setText(location_name);
 
 
@@ -833,6 +842,12 @@ static void onClickScripts(void*)
 
 static void onClickBuyLand(void*)
 {
+// [RLVa]
+	if ( (rlv_handler_t::isEnabled()) && (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC)) )
+	{
+		return;
+	}
+// [/RLVa]
 	LLViewerParcelMgr::getInstance()->selectParcelAt(gAgent.getPositionGlobal());
 	LLViewerParcelMgr::getInstance()->startBuyLand();
 }

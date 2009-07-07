@@ -204,7 +204,11 @@ void add_timestamped_line(LLViewerTextEditor* edit, LLChat chat, const LLColor4&
 	// If the msg is from an agent (not yourself though),
 	// extract out the sender name and replace it with the hotlinked name.
 	if (chat.mSourceType == CHAT_SOURCE_AGENT &&
-		chat.mFromID != LLUUID::null)
+//		chat.mFromID != LLUUID::null)
+// [RLVa] - Version: 1.23.0
+		chat.mFromID != LLUUID::null &&
+		(!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES)) )
+// [/RLVa]
 	{
 		chat.mURL = llformat("secondlife:///app/agent/%s/about",chat.mFromID.asString().c_str());
 	}
@@ -235,6 +239,29 @@ void log_chat_text(const LLChat& chat)
 // static
 void LLFloaterChat::addChatHistory(const LLChat& chat, bool log_to_file)
 {	
+// [RLVa]
+	if (rlv_handler_t::isEnabled())
+	{
+		// TODO-RLVa: we might cast too broad a net by filtering here, needs testing
+		if ( (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC)) && (!chat.mRlvLocFiltered) && (CHAT_SOURCE_AGENT != chat.mSourceType) )
+		{
+			LLChat& rlvChat = const_cast<LLChat&>(chat);
+			gRlvHandler.filterLocation(rlvChat.mText);
+			rlvChat.mRlvLocFiltered = TRUE;
+		}
+		if ( (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES)) && (!chat.mRlvNamesFiltered) )
+		{
+			LLChat& rlvChat = const_cast<LLChat&>(chat);
+			if (CHAT_SOURCE_AGENT != chat.mSourceType)
+			{
+				// Filter object and system chat (names are filtered elsewhere to save ourselves an gObjectList lookup)
+				gRlvHandler.filterNames(rlvChat.mText);
+			}
+			rlvChat.mRlvNamesFiltered = TRUE;
+		}
+	}
+// [/RLVa]
+
 	if ( gSavedPerAccountSettings.getBOOL("LogChat") && log_to_file) 
 	{
 		log_chat_text(chat);
@@ -367,6 +394,30 @@ void LLFloaterChat::addChat(const LLChat& chat,
 	BOOL invisible_script_debug_chat = 
 			chat.mChatType == CHAT_TYPE_DEBUG_MSG
 			&& !gSavedSettings.getBOOL("ScriptErrorsAsChat");
+
+// [RLVa]
+	if (rlv_handler_t::isEnabled())
+	{
+		// TODO-RLVa: we might cast too broad a net by filtering here, needs testing
+		if ( (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC)) && (!chat.mRlvLocFiltered) && (CHAT_SOURCE_AGENT != chat.mSourceType) )
+		{
+			LLChat& rlvChat = const_cast<LLChat&>(chat);
+			if (!from_instant_message)
+				gRlvHandler.filterLocation(rlvChat.mText);
+			rlvChat.mRlvLocFiltered = TRUE;
+		}
+		if ( (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES)) && (!chat.mRlvNamesFiltered) )
+		{
+			LLChat& rlvChat = const_cast<LLChat&>(chat);
+			if ( (!from_instant_message) && (CHAT_SOURCE_AGENT != chat.mSourceType) )
+			{
+				// Filter object and system chat (names are filtered elsewhere to save ourselves an gObjectList lookup)
+				gRlvHandler.filterNames(rlvChat.mText);
+			}
+			rlvChat.mRlvNamesFiltered = TRUE;
+		}
+	}
+// [/RLVa]
 
 #if LL_LCD_COMPILE
 	// add into LCD displays
@@ -528,7 +579,15 @@ void LLFloaterChat::onClickToggleActiveSpeakers(void* userdata)
 {
 	LLFloaterChat* self = (LLFloaterChat*)userdata;
 
-	self->childSetVisible("active_speakers_panel", !self->childIsVisible("active_speakers_panel"));
+// [RLVa]
+	bool fRlvShowPanel = !self->childIsVisible("active_speakers_panel");
+	if ( (rlv_handler_t::isEnabled()) && (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES)) )
+	{
+		fRlvShowPanel = false;
+	}
+	self->childSetVisible("active_speakers_panel", fRlvShowPanel);
+// [/RLVa]
+//	self->childSetVisible("active_speakers_panel", !self->childIsVisible("active_speakers_panel"));
 }
 
 //static 

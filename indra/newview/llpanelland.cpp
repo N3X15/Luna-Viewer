@@ -231,6 +231,12 @@ void LLPanelLandInfo::refresh()
 //static
 void LLPanelLandInfo::onClickClaim(void*)
 {
+// [RLVa]
+	if ( (rlv_handler_t::isEnabled()) && (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC)) )
+	{
+		return;
+	}
+// [/RLVa]
 	LLViewerParcelMgr::getInstance()->startBuyLand();
 }
 

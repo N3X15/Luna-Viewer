@@ -314,6 +314,15 @@ void LLFloaterWindLight::syncMenu()
 	LLWLParamSet& currentParams = param_mgr->mCurParams;
 	//std::map<std::string, LLVector4> & currentParams = param_mgr->mCurParams.mParamValues;
 
+// [RLVa]
+	// Fixes LL "bug" (preset name isn't kept synchronized)
+	LLComboBox* comboBox = getChild<LLComboBox>("WLPresetsCombo");
+	if (comboBox->getSelectedItemLabel() != currentParams.mName)
+	{
+		comboBox->setSimple(currentParams.mName);
+	}
+// [/RLVa]
+
 	// blue horizon
 	param_mgr->mBlueHorizon = currentParams.getVector(param_mgr->mBlueHorizon.mName, err);
 	childSetValue("WLBlueHorizonR", param_mgr->mBlueHorizon.r / 2.0);

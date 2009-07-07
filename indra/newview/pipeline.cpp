@@ -1963,8 +1963,13 @@ void LLPipeline::stateSort(LLDrawable* drawablep, LLCamera& camera)
 	
 	if (gHideSelectedObjects)
 	{
-		if (drawablep->getVObj().notNull() &&
-			drawablep->getVObj()->isSelected())
+//		if (drawablep->getVObj().notNull() &&
+//			drawablep->getVObj()->isSelected())
+// [RLVa]
+		LLViewerObject* pObj = drawablep->getVObj();
+		if ( (pObj) && (pObj->isSelected()) && 
+			 ((!rlv_handler_t::isEnabled()) || (!pObj->isHUDAttachment()) || (gRlvHandler.isDetachable(pObj))) )
+// [/RVLa]
 		{
 			return;
 		}
