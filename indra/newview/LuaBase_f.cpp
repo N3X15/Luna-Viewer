@@ -54,6 +54,46 @@ void LuaWhisper(const char* msg, const char* channel)
 	LuaSendRawChat(msg,0,false,chan);
 }
 
+void LuaTouch(const char* uuid)
+{
+	LLVOObject* object = gObjectList->findObject(LLUUID(uuid));
+	LLMessageSystem *msg = gMessageSystem;
+
+	msg->newMessageFast(_PREHASH_ObjectGrab);
+	msg->nextBlockFast( _PREHASH_AgentData);
+	msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID());
+	msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
+	msg->nextBlockFast( _PREHASH_ObjectData);
+	msg->addU32Fast(    _PREHASH_LocalID, object->mLocalID);
+	msg->addVector3Fast(_PREHASH_GrabOffset, LLVector3::zero );
+	msg->nextBlock("SurfaceInfo");
+	msg->addVector3("UVCoord", LLVector3(pick.mUVCoords));
+	msg->addVector3("STCoord", LLVector3(pick.mSTCoords));
+	msg->addS32Fast(_PREHASH_FaceIndex, pick.mObjectFace);
+	msg->addVector3("Position", pick.mIntersection);
+	msg->addVector3("Normal", pick.mNormal);
+	msg->addVector3("Binormal", pick.mBinormal);
+	msg->sendMessage( object->getRegion()->getHost());
+
+	// *NOTE: Hope the packets arrive safely and in order or else
+	// there will be some problems.
+	// *TODO: Just fix this bad assumption.
+	msg->newMessageFast(_PREHASH_ObjectDeGrab);
+	msg->nextBlockFast(_PREHASH_AgentData);
+	msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID());
+	msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
+	msg->nextBlockFast(_PREHASH_ObjectData);
+	msg->addU32Fast(_PREHASH_LocalID, object->mLocalID);
+	msg->nextBlock("SurfaceInfo");
+	msg->addVector3("UVCoord", LLVector3(pick.mUVCoords));
+	msg->addVector3("STCoord", LLVector3(pick.mSTCoords));
+	msg->addS32Fast(_PREHASH_FaceIndex, pick.mObjectFace);
+	msg->addVector3("Position", pick.mIntersection);
+	msg->addVector3("Normal", pick.mNormal);
+	msg->addVector3("Binormal", pick.mBinormal);
+	msg->sendMessage(object->getRegion()->getHost());
+}
+
 void LuaSendRawChat(const char* rawmsg, int rawtype, bool animate, S32 channel)
 {
 	EChatType type;

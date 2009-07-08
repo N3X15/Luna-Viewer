@@ -43,6 +43,8 @@ LLViewerRegion* LuaGetCurrentRegion();
 
 void LuaError(const char* rawmsg);
 
+void LuaTouch(const char* uuid);
+
 void LuaSleep(int milliseconds);
 
 // Chat functions

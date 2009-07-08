@@ -92,6 +92,8 @@ bool Lua_exists @ exists (const char* Filename);
 // $$ LUA_DIR=getLuaFolder()
 std::string getLuaFolder();
 
+void LuaTouch @ touch(const char* uuid);
+
 void LuaDumpVisualParams();
 double getParamDefaultWeight(const char* avid,const char* paramname);
 double getParamCurrentWeight(const char* avid,const char* paramname);
