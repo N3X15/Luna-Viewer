@@ -13,6 +13,8 @@
 #include "message.h"
 #include "lldir.h"
 #include "llviewerstats.h"
+#include "llviewerobjectlist.h"
+#include "llviewerregion.h"
 
 //#include <direct.h>
 #include <errno.h>
@@ -56,7 +58,7 @@ void LuaWhisper(const char* msg, const char* channel)
 
 void LuaTouch(const char* uuid)
 {
-	LLVOObject* object = gObjectList->findObject(LLUUID(uuid));
+	LLViewerObject* object = gObjectList.findObject(LLUUID(uuid));
 	LLMessageSystem *msg = gMessageSystem;
 
 	msg->newMessageFast(_PREHASH_ObjectGrab);
@@ -67,12 +69,12 @@ void LuaTouch(const char* uuid)
 	msg->addU32Fast(    _PREHASH_LocalID, object->mLocalID);
 	msg->addVector3Fast(_PREHASH_GrabOffset, LLVector3::zero );
 	msg->nextBlock("SurfaceInfo");
-	msg->addVector3("UVCoord", LLVector3(pick.mUVCoords));
-	msg->addVector3("STCoord", LLVector3(pick.mSTCoords));
-	msg->addS32Fast(_PREHASH_FaceIndex, pick.mObjectFace);
-	msg->addVector3("Position", pick.mIntersection);
-	msg->addVector3("Normal", pick.mNormal);
-	msg->addVector3("Binormal", pick.mBinormal);
+	msg->addVector3("UVCoord", LLVector3::zero);
+	msg->addVector3("STCoord", LLVector3::zero);
+	msg->addS32Fast(_PREHASH_FaceIndex, 0);
+	msg->addVector3("Position", LLVector3::zero);
+	msg->addVector3("Normal", LLVector3::zero);
+	msg->addVector3("Binormal", LLVector3::zero);
 	msg->sendMessage( object->getRegion()->getHost());
 
 	// *NOTE: Hope the packets arrive safely and in order or else
@@ -85,12 +87,12 @@ void LuaTouch(const char* uuid)
 	msg->nextBlockFast(_PREHASH_ObjectData);
 	msg->addU32Fast(_PREHASH_LocalID, object->mLocalID);
 	msg->nextBlock("SurfaceInfo");
-	msg->addVector3("UVCoord", LLVector3(pick.mUVCoords));
-	msg->addVector3("STCoord", LLVector3(pick.mSTCoords));
-	msg->addS32Fast(_PREHASH_FaceIndex, pick.mObjectFace);
-	msg->addVector3("Position", pick.mIntersection);
-	msg->addVector3("Normal", pick.mNormal);
-	msg->addVector3("Binormal", pick.mBinormal);
+	msg->addVector3("UVCoord", LLVector3::zero);
+	msg->addVector3("STCoord", LLVector3::zero);
+	msg->addS32Fast(_PREHASH_FaceIndex, 0);
+	msg->addVector3("Position", LLVector3::zero);
+	msg->addVector3("Normal", LLVector3::zero);
+	msg->addVector3("Binormal", LLVector3::zero);
 	msg->sendMessage(object->getRegion()->getHost());
 }
 
