@@ -30,6 +30,38 @@
  * $/LicenseInfo$
  */
 
+/* Copyright (c) 2009
+ *
+ * Modular Systems Ltd. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or
+ * without modification, are permitted provided that the following
+ * conditions are met:
+ *
+ *   1. Redistributions of source code must retain the above copyright
+ *      notice, this list of conditions and the following disclaimer.
+ *   2. Redistributions in binary form must reproduce the above
+ *      copyright notice, this list of conditions and the following
+ *      disclaimer in the documentation and/or other materials provided
+ *      with the distribution.
+ *   3. Neither the name Modular Systems Ltd nor the names of its contributors
+ *      may be used to endorse or promote products derived from this
+ *      software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY MODULAR SYSTEMS LTD AND CONTRIBUTORS AS IS
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL MODULAR SYSTEMS OR CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+
 #include "llviewerprecompiledheaders.h"
 
 #include "llvoavatar.h"
@@ -3580,16 +3612,57 @@ void LLVOAvatar::idleUpdateTractorBeam()
 		return;
 	}
 
+
+	
+	LLColor4U rgb = LLColor4U(gAgent.getEffectColor());
+	
+	if(gSavedSettings.getBOOL("EmeraldRainbowBeam"))
+	{
+		F32 r, g, b;
+		LLColor4 output;
+		hslToRgb(0.5f+sinf(gFrameTimeSeconds*0.3f), 1.0f, 0.5f, r, g, b);
+		output.set(r, g, b);
+		rgb.setVecScaleClamp(output);
+	
+	}else if(gSavedSettings.getBOOL("EmeraldEmeraldBeam"))
+	{
+		F32 r, g, b;
+		LLColor4 output;
+		hslToRgb(0.25f+sinf(gFrameTimeSeconds*1.2f)*(0.166f/2.0f), 1.0f, 0.5f, r, g, b);
+		output.set(r, g, b);
+		rgb.setVecScaleClamp(output);
+	}
+	
 	// This is only done for yourself (maybe it should be in the agent?)
 	if (!needsRenderBeam() || !mIsBuilt)
 	{
 		mBeam = NULL;
+		if(gSavedSettings.getBOOL("EmeraldParticleChat"))
+		{
+			if(sPartsNow != FALSE)
+			{
+				sPartsNow = FALSE;
+				LLMessageSystem* msg = gMessageSystem;
+				msg->newMessageFast(_PREHASH_ChatFromViewer);
+				msg->nextBlockFast(_PREHASH_AgentData);
+				msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID());
+				msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
+				msg->nextBlockFast(_PREHASH_ChatData);
+				msg->addStringFast(_PREHASH_Message, "stop");
+				msg->addU8Fast(_PREHASH_Type, CHAT_TYPE_WHISPER);
+				msg->addS32("Channel", 9000);
+				
+				gAgent.sendReliableMessage();
+				sBeamLastAt  =  LLVector3d::zero;
+				LLViewerStats::getInstance()->incStat(LLViewerStats::ST_CHAT_COUNT);
+			}
+		}
 	}
 	else if (!mBeam || mBeam->isDead())
 	{
 		// VEFFECT: Tractor Beam
 		mBeam = (LLHUDEffectSpiral *)LLHUDManager::getInstance()->createViewerEffect(LLHUDObject::LL_HUD_EFFECT_BEAM);
-		mBeam->setColor(LLColor4U(gAgent.getEffectColor()));
+		mBeam->setColor( rgb );
 		mBeam->setSourceObject(this);
 		mBeamTimer.reset();
 	}
@@ -3602,6 +3675,49 @@ void LLVOAvatar::idleUpdateTractorBeam()
 		{
 			// get point from pointat effect
 			mBeam->setPositionGlobal(gAgent.mPointAt->getPointAtPosGlobal());
+
+			//lgg crap
+			if(gSavedSettings.getBOOL("EmeraldParticleChat"))
+			{
+				if(sPartsNow != TRUE)
+				{
+					sPartsNow = TRUE;
+					LLMessageSystem* msg = gMessageSystem;
+					msg->newMessageFast(_PREHASH_ChatFromViewer);
+					msg->nextBlockFast(_PREHASH_AgentData);
+					msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID());
+					msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
+					msg->nextBlockFast(_PREHASH_ChatData);
+					msg->addStringFast(_PREHASH_Message, "start");
+					msg->addU8Fast(_PREHASH_Type, CHAT_TYPE_WHISPER);
+					msg->addS32("Channel", 9000);
+					
+					gAgent.sendReliableMessage();
+
+					LLViewerStats::getInstance()->incStat(LLViewerStats::ST_CHAT_COUNT);
+				}
+				//LLVector3d a = sBeamLastAt-gAgent.mPointAt->getPointAtPosGlobal();
+				//if(a.length > 2)
+				if( (sBeamLastAt-gAgent.mPointAt->getPointAtPosGlobal()).length() > .2)
+				//if(sBeamLastAt!=gAgent.mPointAt->getPointAtPosGlobal())
+				{
+					sBeamLastAt = gAgent.mPointAt->getPointAtPosGlobal(); 
+
+					LLMessageSystem* msg = gMessageSystem;
+					msg->newMessageFast(_PREHASH_ChatFromViewer);
+					msg->nextBlockFast(_PREHASH_AgentData);
+					msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID());
+					msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
+					msg->nextBlockFast(_PREHASH_ChatData);
+					msg->addStringFast(_PREHASH_Message, llformat("<%.6f, %.6f, %.6f>",(F32)(sBeamLastAt.mdV[VX]),(F32)(sBeamLastAt.mdV[VY]),(F32)(sBeamLastAt.mdV[VZ])));
+					msg->addU8Fast(_PREHASH_Type, CHAT_TYPE_WHISPER);
+					msg->addS32("Channel", 9000); // *TODO: make configurable
+					
+					gAgent.sendReliableMessage();
+				}
+
+			}
+			
 			mBeam->triggerLocal();
 		}
 		else if (selection->getFirstRootObject() && 
@@ -3634,9 +3750,53 @@ void LLVOAvatar::idleUpdateTractorBeam()
 		}
 		if (mBeamTimer.getElapsedTimeF32() > 0.25f)
 		{
-			mBeam->setColor(LLColor4U(gAgent.getEffectColor()));
+			
+			mBeam->setColor(rgb );
 			mBeam->setNeedsSendToSim(TRUE);
 			mBeamTimer.reset();
+			//LGG Picture Projection
+			if(gSavedSettings.getBOOL("EmeraldEmeraldBeam"))
+			{
+				LLVector3d picture[]  = {
+				 LLVector3d( (F64) 0.0 , (F64) 1, (F64) 4)
+				,LLVector3d( (F64) 0.0 , (F64)  3, (F64) 4)
+				,LLVector3d( (F64) 0.0 , (F64)  5, (F64) 4)
+				,LLVector3d( (F64) 0.0 , (F64)  6, (F64) 2)
+				,LLVector3d( (F64) 0.0 , (F64)  7, (F64) 0)
+				,LLVector3d( (F64) 0.0 , (F64)  5, (F64) -2)
+				,LLVector3d( (F64) 0.0 , (F64)  3, (F64) -4)
+				,LLVector3d( (F64) 0.0 , (F64)  1, (F64) -6)
+				,LLVector3d( (F64) 0.0 , (F64)  0, (F64) -6.5)
+				,LLVector3d( (F64) 0.0 , (F64)  -1, (F64) -6)
+				,LLVector3d( (F64) 0.0 , (F64)  -3, (F64) -4)
+				,LLVector3d( (F64) 0.0 , (F64)  -5, (F64) -2)
+				,LLVector3d( (F64) 0.0 , (F64)  -7, (F64) 0)
+				,LLVector3d( (F64) 0.0 , (F64)  -6, (F64) 2)
+				,LLVector3d( (F64) 0.0 , (F64)  -5, (F64) 4)
+				,LLVector3d( (F64) 0.0 , (F64)  -3, (F64) 4)
+				,LLVector3d( (F64) 0.0 , (F64)  -1, (F64) 4)
+				};
+
+				mBeams.clear();
+				for(int i = 0; i < 17; i++)
+				{
+					
+					LLVector3d offset = (picture[i]*(1.0f/7.0f)*(.75f+sinf(gFrameTimeSeconds*1.0f)*0.25f));
+					LLVector3 beamLine = LLVector3( mBeam->getPositionGlobal() - gAgent.getPositionGlobal());
+					beamLine.normalize();
+					LLQuaternion change;
+					change.shortestArc(LLVector3::x_axis,beamLine);
+					offset.rotVec(change);
+					mBeams.push_back( (LLHUDEffectSpiral *)LLHUDManager::getInstance()->createViewerEffect(LLHUDObject::LL_HUD_EFFECT_BEAM));
+					mBeams[i]->setPositionGlobal(mBeam->getPositionGlobal() + offset + (LLVector3d(beamLine) * sinf(gFrameTimeSeconds*2.0f) * 0.2f));
+					mBeams[i]->setColor(rgb);
+					mBeams[i]->setTargetObject(mBeam->getTargetObject());
+					mBeams[i]->setSourceObject(mBeam->getSourceObject());
+					mBeams[i]->setNeedsSendToSim(mBeam->getNeedsSendToSim());
+
+				}
+			}
+			
 		}
 	}
 }

@@ -339,6 +339,7 @@ class LLSelectMgr : public LLEditMenuHandler, public LLSingleton<LLSelectMgr>
 public:
 	static BOOL					sRectSelectInclusive;	// do we need to surround an object to pick it?
 	static BOOL					sRenderHiddenSelections;	// do we show selection silhouettes that are occluded?
+	static BOOL					sRenderSelectionHighlights;	// want to show outline?
 	static BOOL					sRenderLightRadius;	// do we show the radius of selected lights?
 	static F32					sHighlightThickness;
 	static F32					sHighlightUScale;

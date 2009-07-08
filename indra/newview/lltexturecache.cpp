@@ -1207,14 +1207,14 @@ void LLTextureCache::purgeTextures(bool validate)
 		return;
 	}
 	
-	LL_DEBUGS("TextureCache") << "TEXTURE CACHE: Reading Entries..." << LL_ENDL;
+	LL_DEBUGS("TextureCache") << "TEXTURE CACHE: Reading " << num_entries << " Entries from " << mTexturesDirEntriesFileName << llendl;
 	
 	std::map<LLUUID, S32> entry_idx_map;
 	S64 total_size = 0;
 	for (S32 idx=0; idx<num_entries; idx++)
 	{
 		const LLUUID& id = entries[idx].mID;
- 		LL_DEBUGS("TextureCache") << "Entry: " << id << " Size: " << entries[idx].mSize << " Time: " << entries[idx].mTime << LL_ENDL;
+ 		LL_DEBUGS("TextureCache") << "Entry: " << id << " Size: " << entries[idx].mSize << " Time: " << entries[idx].mTime << llendl;
 		std::map<LLUUID, S32>::iterator iter = entry_idx_map.find(id);
 		if (iter != entry_idx_map.end())
 		{
@@ -1236,7 +1236,7 @@ void LLTextureCache::purgeTextures(bool validate)
 		LL_DEBUGS("TextureCache") << "TEXTURE CACHE: Validating: " << validate_idx << LL_ENDL;
 	}
 	
-	S64 min_cache_size = (sCacheMaxTexturesSize * 9) / 10;
+	S64 min_cache_size = sCacheMaxTexturesSize / 100 * 95;
 	S32 purge_count = 0;
 	S32 next_idx = 0;
 	for (S32 idx=0; idx<num_entries; idx++)

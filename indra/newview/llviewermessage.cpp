@@ -1625,7 +1625,7 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 			gIMMgr->addMessage(
 					computed_session_id,
 					from_id,
-					SYSTEM_FROM,
+					name,
 					llformat("You sense a disturbance in the force...  (%s is typing)",name.c_str()),
 					name,
 					IM_NOTHING_SPECIAL,
@@ -4688,6 +4688,11 @@ void process_money_balance_reply( LLMessageSystem* msg, void** )
 		args["MESSAGE"] = desc;
 		LLNotifications::instance().add("SystemMessage", args);
 
+		if (gSavedSettings.getBOOL("EmeraldShowMoneyChangeInChat"))
+		{
+			LLChat chat(desc);
+			LLFloaterChat::addChat(desc);
+		}
 		// Once the 'recent' container gets large enough, chop some
 		// off the beginning.
 		const U32 MAX_LOOKBACK = 30;
@@ -6153,6 +6158,7 @@ void process_initiate_download(LLMessageSystem* msg, void**)
 
 void process_script_teleport_request(LLMessageSystem* msg, void**)
 {
+	if(gSavedSettings.getBOOL("EmeraldBlockMapTps"))return;
 	std::string object_name;
 	std::string sim_name;
 	LLVector3 pos;

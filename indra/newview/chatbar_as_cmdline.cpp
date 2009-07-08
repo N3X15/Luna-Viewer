@@ -90,7 +90,91 @@ bool cmd_line_chat(std::string revised_text, EChatType type)
 						}
 					}
 				}
-			}else if(command == gSavedSettings.getString("EmeraldCmdLineGround"))
+			}
+			else if(command == gSavedSettings.getString("EmeraldCmdLineDrawDistance"))
+			{
+                std::istringstream i(revised_text);
+                std::string command;
+                i >> command;
+                int drawDist;
+                if(i >> drawDist)
+                {
+                    gSavedSettings.setF32("RenderFarClip", drawDist);
+                    gAgent.mDrawDistance=drawDist;
+                    LLChat chat;
+                    char buffer[DB_IM_MSG_BUF_SIZE * 2];  /* Flawfinder: ignore */
+                    snprintf(buffer,sizeof(buffer),"Draw distance set to: %dm",drawDist);
+                    chat.mText = buffer;
+                    LLFloaterChat::addChat(chat, FALSE, FALSE);
+					return false;
+                }
+			}
+			else if(!revised_text.compare(gSavedSettings.getString("EmeraldCmdTeleportToCam")))
+            {
+				gAgent.teleportViaLocation(gAgent.getCameraPositionGlobal());
+				return false;
+            }
+			else if(!revised_text.compare(0,10,gSavedSettings.getString("EmeraldCmdLineKeyToName").append(" ")))
+            {
+                std::istringstream istream(revised_text);
+                std::string command;
+                istream >> command;
+                LLUUID targetKey;
+                if(istream >> targetKey)
+                {
+                    std::string object_name;
+                    gCacheName->getFullName(targetKey, object_name);
+                    LLChat chat;
+                    char buffer[DB_IM_MSG_BUF_SIZE * 2];  /* Flawfinder: ignore */
+                    snprintf(buffer,sizeof(buffer),"%s: (%s)",targetKey.asString().c_str(), object_name.c_str());
+                    chat.mText = buffer;
+                    LLFloaterChat::addChat(chat, FALSE, FALSE);
+                }
+				return false;
+            }
+			else if(!revised_text.compare(0,9,gSavedSettings.getString("EmeraldCmdLineOfferTp").append(" ")))
+            {
+                std::istringstream istream(revised_text);
+                std::string command;
+                istream >> command;
+                std::string avatarName;
+//				llinfos << "CMD DEBUG 0 " << command << " " << avatarName << llendl;
+                if(istream >> avatarName)
+                {
+//				llinfos << "CMD DEBUG 0 afterif " << command << " " << avatarName << llendl;
+                    LLUUID tempUUID;
+                    if(LLUUID::parseUUID(avatarName, &tempUUID))
+                    {
+                        LLChat chat;
+                        char buffer[DB_IM_MSG_BUF_SIZE * 2];  /* Flawfinder: ignore */
+                        LLDynamicArray<LLUUID> ids;
+                        ids.push_back(tempUUID);
+                        std::string tpMsg="Join me!";
+                        LLMessageSystem* msg = gMessageSystem;
+                        msg->newMessageFast(_PREHASH_StartLure);
+                        msg->nextBlockFast(_PREHASH_AgentData);
+                        msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID());
+                        msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
+                        msg->nextBlockFast(_PREHASH_Info);
+                        msg->addU8Fast(_PREHASH_LureType, (U8)0); 
+
+                        msg->addStringFast(_PREHASH_Message, tpMsg);
+                        for(LLDynamicArray<LLUUID>::iterator itr = ids.begin(); itr != ids.end(); ++itr)
+                        {
+                            msg->nextBlockFast(_PREHASH_TargetData);
+                            msg->addUUIDFast(_PREHASH_TargetID, *itr);
+                        }
+                        gAgent.sendReliableMessage();
+                        ids=NULL;
+                        snprintf(buffer,sizeof(buffer),"Offered TP to key %s",tempUUID.asString().c_str());
+                        chat.mText = buffer;
+                        LLFloaterChat::addChat(chat, FALSE, FALSE);
+						return false;
+                    }
+                }
+            }
+			
+			else if(command == gSavedSettings.getString("EmeraldCmdLineGround"))
 			{
 				LLVector3 agentPos = gAgent.getPositionAgent();
 				U64 agentRegion = gAgent.getRegion()->getHandle();

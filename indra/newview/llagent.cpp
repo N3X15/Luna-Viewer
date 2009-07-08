@@ -6168,7 +6168,10 @@ bool LLAgent::teleportCore(bool is_local)
 		//release geometry from old location
 		gPipeline.resetVertexBuffers();
 	}
-	make_ui_sound("UISndTeleportOut");
+	if(gSavedSettings.getBOOL("EmeraldPlayTpSound"))
+	{
+		make_ui_sound("UISndTeleportOut");
+	}
 	
 	// MBW -- Let the voice client know a teleport has begun so it can leave the existing channel.
 	// This was breaking the case of teleporting within a single sim.  Backing it out for now.

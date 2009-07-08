@@ -12362,6 +12362,50 @@
       <key>Value</key>
       <string>mapto</string>
     </map>
+    <key>EmeraldCmdLineDrawDistance</key>
+    <map>
+      <key>Comment</key>
+      <string>Change draw distance quickly</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>String</string>
+      <key>Value</key>
+      <string>dd</string>
+    </map>
+    <key>EmeraldCmdTeleportToCam</key>
+    <map>
+      <key>Comment</key>
+      <string>Teleport to your camera</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>String</string>
+      <key>Value</key>
+      <string>tp2cam</string>
+    </map>
+    <key>EmeraldCmdLineKeyToName</key>
+    <map>
+      <key>Comment</key>
+      <string>Use a fast key to name querry</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>String</string>
+      <key>Value</key>
+      <string>key2name</string>
+    </map>
+    <key>EmeraldCmdLineOfferTp</key>
+    <map>
+      <key>Comment</key>
+      <string>Offer a teleport to target avatar</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>String</string>
+      <key>Value</key>
+      <string>offertp</string>
+    </map>
     <key>EmeraldMapToKeepPos</key>
     <map>
       <key>Comment</key>
