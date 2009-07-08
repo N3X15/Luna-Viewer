@@ -3064,6 +3064,7 @@ bool LLVOAvatar::loadClientTags()
 
 void LLVOAvatar::resolveClient(LLColor4& avatar_name_color, std::string& client, LLVOAvatar* avatar)
 {
+	LLColor4 colorBackup = avatar_name_color;
 	LLUUID idx = avatar->getTE(0)->getID();
 	if(LLVOAvatar::sClientResolutionList.has("isComplete") && LLVOAvatar::sClientResolutionList.has(idx.asString()))
 	{
@@ -3314,6 +3315,14 @@ void LLVOAvatar::idleUpdateNameTag(const LLVector3& root_pos_last)
 				LLColor4 avatar_name_color = gColors.getColor( "AvatarNameColor" );
 				if(!mIsSelf)
 					resolveClient(avatar_name_color,client, this);
+				if(!gSavedSettings.getBOOL("EmeraldChangeColorOnClient"))
+				{
+					avatar_name_color = gColors.getColor( "AvatarNameColor" );				
+				}
+				if(!gSavedSettings.getBOOL("EmeraldClientTagDisplay"))
+				{
+					client = "Invalid";
+				}
 				//else avatar_name_color = gColors.getColor( "AvatarNameColor" );
 				//avatar_name_color.clamp();
 				avatar_name_color.setAlpha(alpha);

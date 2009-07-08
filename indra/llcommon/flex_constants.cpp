@@ -18,7 +18,7 @@
 *  with this program; if not, write to the Free Software Foundation, Inc.,
 *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 *
-* $Id: shooped_constants.cpp 61 2008-07-29 04:25:25Z nexis $
+* $Id$
 */
 
 #include "shooped_constants.h"

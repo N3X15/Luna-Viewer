@@ -214,16 +214,20 @@ bool cmd_line_chat(std::string revised_text, EChatType type)
 
 				LLVolumeParams	volume_params;
 
-				volume_params.setType( LL_PCODE_PROFILE_CIRCLE, LL_PCODE_PATH_LINE );
-				volume_params.setBeginAndEndS( 0.f, 1.f );
-				volume_params.setBeginAndEndT( 0.f, 1.f );
-				volume_params.setRatio	( 1, 1 );
+                volume_params.setType( LL_PCODE_PROFILE_SQUARE, LL_PCODE_PATH_CIRCLE2 );
+                volume_params.setRatio    ( 2, 2 );
 				volume_params.setShear	( 0, 0 );
+                volume_params.setTaper(2.0f,2.0f);
+                volume_params.setTaperX(0.f);
+                volume_params.setTaperY(0.f);
 
 				LLVolumeMessage::packVolumeParams(&volume_params, msg);
 				LLVector3 rezpos = agentPos - LLVector3(0.0f,0.0f,2.5f);
-				msg->addVector3Fast(_PREHASH_Scale,			LLVector3(10.0f,10.0f,0.5f) );
-				msg->addQuatFast(_PREHASH_Rotation,			LLQuaternion() );
+                LLQuaternion rotation;
+                rotation.setQuat(90.f * DEG_TO_RAD, LLVector3::y_axis);
+
+                msg->addVector3Fast(_PREHASH_Scale,            LLVector3(0.01f,10.0f,10.0f) );
+                msg->addQuatFast(_PREHASH_Rotation,            rotation );
 				msg->addVector3Fast(_PREHASH_RayStart,		rezpos );
 				msg->addVector3Fast(_PREHASH_RayEnd,			rezpos );
 				msg->addU8Fast(_PREHASH_BypassRaycast,		(U8)1 );
@@ -238,16 +242,18 @@ bool cmd_line_chat(std::string revised_text, EChatType type)
 				S32 agent_x = llround( (F32)fmod( agentPos.mdV[VX], (F64)REGION_WIDTH_METERS ) );
 				S32 agent_y = llround( (F32)fmod( agentPos.mdV[VY], (F64)REGION_WIDTH_METERS ) );
 				S32 agent_z = llround( (F32)agentPos.mdV[VZ] );
-				std::string region_name = revised_text.substr(command.length()+1);
+				std::string region_name = LLWeb::escapeURL(revised_text.substr(command.length()+1));
 				std::string url;
+
 				if(!gSavedSettings.getBOOL("EmeraldMapToKeepPos"))
 				{
 					agent_x = 128;
 					agent_y = 128;
 					agent_z = 0;
 				}
+
 				url = llformat("secondlife:///app/teleport/%s/%d/%d/%d",region_name.c_str(),agent_x,agent_y,agent_z);
-				LLURLDispatcher::dispatch(url, NULL, false);
+				LLURLDispatcher::dispatch(url, NULL, true);
 				return false;
 			}else if(command == gSavedSettings.getString("EmeraldCmdLineCalc"))//Cryogenic Blitz
 			{

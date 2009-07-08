@@ -1640,6 +1640,7 @@ static void send_estate_ban(const LLUUID& agent)
 	gAgent.sendReliableMessage();
 }
 */
+
 static void cmd_freeze(const LLUUID& avatar, const std::string &name)      { send_freeze(avatar, true); }
 static void cmd_unfreeze(const LLUUID& avatar, const std::string &name)    { send_freeze(avatar, false); }
 static void cmd_eject(const LLUUID& avatar, const std::string &name)       { send_eject(avatar, false); }

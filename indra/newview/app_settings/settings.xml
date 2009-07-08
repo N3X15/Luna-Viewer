@@ -7576,7 +7576,7 @@
     <key>Type</key>
     <string>S32</string>
     <key>Value</key>
-    <integer>4096</integer>
+    <integer>8192</integer>
   </map>
     <key>RenderMaxVBOSize</key>
     <map>
@@ -12054,6 +12054,17 @@
         <integer>0</integer>
       </array>
     </map>
+    <key>EmeraldDoubleClickZOffset</key>
+    <map>
+      <key>Comment</key>
+      <string>Sets the Z offset for double click teleport.</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>F32</string>
+      <key>Value</key>
+      <real>1.2</real>
+    </map>
     <key>EmeraldLoadURL</key>
     <map>
       <key>Comment</key>
@@ -12520,6 +12531,105 @@
     <map>
       <key>Comment</key>
       <string>Wipes SLim FriendsList [TESTING ONLY!]</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
+    <key>EmeraldPlayTpSound</key>
+    <map>
+      <key>Comment</key>
+      <string>Whether or not to hear the tp sound</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
+    <key>EmeraldRenderHighlightSelections</key>
+    <map>
+      <key>Comment</key>
+      <string>Whether or not to show selection highlight</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
+    <key>EmeraldBlockMapTps</key>
+    <map>
+      <key>Comment</key>
+      <string>Whether or not to block all script map tps</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
+    <key>EmeraldShowMoneyChangeInChat</key>
+    <map>
+      <key>Comment</key>
+      <string>Whether or not to chat out money events</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
+    <key>EmeraldBroadcastEffects</key>
+    <map>
+      <key>Comment</key>
+      <string>Whether or not to broad cast your head and point at movements</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
+    <key>EmeraldChangeColorOnClient</key>
+    <map>
+      <key>Comment</key>
+      <string>Whether or not to change tag color based on client</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
+    <key>EmeraldClientTagDisplay</key>
+    <map>
+      <key>Comment</key>
+      <string>Whether or not to change tag color based on client</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
+    <key>EmeraldShowLookAtNames</key>
+    <map>
+      <key>Comment</key>
+      <string>Whether or not to show names over who looks at you</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
+    <key>PersistShowLookAt</key>
+    <map>
+      <key>Comment</key>
+      <string>Whether or not to show look at info</string>
       <key>Persist</key>
       <integer>1</integer>
       <key>Type</key>

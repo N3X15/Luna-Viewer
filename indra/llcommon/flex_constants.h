@@ -19,7 +19,7 @@ const int SHL_VERSION_MAJOR	= 0;
 const int SHL_VERSION_MINOR = 3;
 const int SHL_VERSION_PATCH = 0;
 const int SHL_VERSION_BUILD = 75; 
-static const char SHL_VERSION_REVISION[] = "$Rev: 75 $";
+static const char SHL_VERSION_REVISION[] = "$Rev$";
 
 /**
 	Faked Client Hash - Needed to bypass client blacklist.

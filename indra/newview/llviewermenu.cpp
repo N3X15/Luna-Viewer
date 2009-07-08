@@ -2506,7 +2506,7 @@ bool handle_go_to()
 	LLFirstUse::useGoTo();
 	}else
 	{
-		LLVector3d got( 0.0f, 0.0f, 1.2f);
+		LLVector3d got( 0.0f, 0.0f, gSavedSettings.getF32("EmeraldDoubleClickZOffset"));
 		got += pos;
 		if(gSavedSettings.getBOOL("EmeraldVelocityDoubleClickTeleport"))got += ((LLVector3d)gAgent.getVelocity() * 0.25);
 		gAgent.teleportViaLocation(got);
