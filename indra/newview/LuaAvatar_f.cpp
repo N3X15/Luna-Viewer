@@ -33,7 +33,7 @@ void LuaDumpVisualParams()
 	for(i = gWearableList.mList.begin();i!=gWearableList.mList.end();++i)
 	{
 		LLWearable *wear=(LLWearable *)i->second;
-		LLFILE *file = LLFile::fopen(gDirUtilp->getExpandedFilename(SHL_PATH_MACROS,"data"+gDirUtilp->getDirDelimiter()+"wearables",wear->getID().asString()).c_str(),"wb");
+		LLFILE *file = LLFile::fopen(gDirUtilp->getExpandedFilename(FL_PATH_MACROS,"data"+gDirUtilp->getDirDelimiter()+"wearables",wear->getID().asString()).c_str(),"wb");
 		if(file && wear->exportFile(file))
 			delete file;
 
@@ -180,7 +180,7 @@ bool LuaSaveWearable(LLWearable *w)
 	w->getID().toString(new_asset_id_string);
 	
 	// Turn ID into useful filename + path
-	snprintf(filename, LL_MAX_PATH, "%s.wbl", gDirUtilp->getExpandedFilename(SHL_PATH_LUA,"data",new_asset_id_string).c_str());
+	snprintf(filename, LL_MAX_PATH, "%s.wbl", gDirUtilp->getExpandedFilename(FL_PATH_LUA,"data",new_asset_id_string).c_str());
 
 	// Open file handle for writing/creation
 	LLFILE* fp = LLFile::fopen(filename, "wb");
@@ -235,7 +235,7 @@ bool LuaSaveWearable(LLWearable *w)
 LLWearable * LuaLoadWearable(const char* uuid)
 {
 	char filename[LL_MAX_PATH];		/* Flawfinder: ignore */
-	snprintf(filename, LL_MAX_PATH, "%s.wbl", gDirUtilp->getExpandedFilename(SHL_PATH_LUA,"data",uuid).c_str());		/* Flawfinder: ignore */
+	snprintf(filename, LL_MAX_PATH, "%s.wbl", gDirUtilp->getExpandedFilename(FL_PATH_LUA,"data",uuid).c_str());		/* Flawfinder: ignore */
 	LLFILE* fp = LLFile::fopen(filename, "r");		/* Flawfinder: ignore */
 	
 	if(!fp)

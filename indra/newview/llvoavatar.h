@@ -607,7 +607,7 @@ private:
 
 protected:
 	LLPointer<LLHUDEffectSpiral> mBeam;
-	std::vector<LLPointer<LLHUDEffectSpiral>> mBeams;      
+	std::vector<LLPointer<LLHUDEffectSpiral> > mBeams;      
 	LLFrameTimer mBeamTimer;
 
 	F32		mAdjustedPixelArea;

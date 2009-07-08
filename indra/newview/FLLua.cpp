@@ -101,10 +101,10 @@ void FLLua::run()
 	version = llformat("_SLUA_CHANNEL=\"%s\"",LL_CHANNEL);
 	luaL_dostring(L, version.c_str());
 
-	RunFile(gDirUtilp->getExpandedFilename(SHL_PATH_LUA,"_init_.lua"));
+	RunFile(gDirUtilp->getExpandedFilename(FL_PATH_LUA,"_init_.lua"));
 
 #if 0
-	RunFile(gDirUtilp->getExpandedFilename(SHL_PATH_MACROS,"unit_tests.lua"));
+	RunFile(gDirUtilp->getExpandedFilename(FL_PATH_MACROS,"unit_tests.lua"));
 #endif
 }
 
@@ -211,7 +211,7 @@ void FLLua::RunMacro(const std::string  what)
 	}
 	std::string  macrofile="";
 	
-	macrofile =  gDirUtilp->getExpandedFilename(SHL_PATH_MACROS,macroname+".lua");
+	macrofile =  gDirUtilp->getExpandedFilename(FL_PATH_MACROS,macroname+".lua");
 
 	if(!gDirUtilp->fileExists(macrofile))
 	{

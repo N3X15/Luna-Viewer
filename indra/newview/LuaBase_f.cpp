@@ -181,7 +181,7 @@ bool Lua_exists(const char* Filename)
 
 std::string getLuaFolder()
 {
-	return gDirUtilp->getExpandedFilename(SHL_PATH_LUA,"");
+	return gDirUtilp->getExpandedFilename(FL_PATH_LUA,"");
 }
 
 
