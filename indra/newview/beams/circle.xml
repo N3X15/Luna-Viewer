@@ -1,0 +1,66 @@
+<llsd>
+	<map>
+		<key>scale</key>
+			<real>1.6</real>
+		<key>data</key>
+			<array>
+				<array>
+					<real>0</real>
+					<real>0</real>
+					<real>4</real>
+				</array>
+				<array>
+					<real>0</real>
+					<real>3.5</real>
+					<real>2</real>
+				</array>
+				<array>
+					<real>0</real>
+					<real>2</real>
+					<real>3.5</real>
+				</array>
+				
+				<array>
+					<real>0</real>
+					<real>0</real>
+					<real>-4</real>
+				</array>
+				<array>
+					<real>0</real>
+					<real>2</real>
+					<real>-3.5</real>
+				</array>
+
+				<array>
+					<real>0</real>
+					<real>3.5</real>
+					<real>-2</real>
+				</array>
+
+				
+				<array>
+					<real>0</real>
+					<real>-3.5</real>
+					<real>2</real>
+				</array>
+				<array>
+					<real>0</real>
+					<real>-2</real>
+					<real>3.5</real>
+				</array>
+				
+				<array>
+					<real>0</real>
+					<real>-2</real>
+					<real>-3.5</real>
+				</array>
+
+				<array>
+					<real>0</real>
+					<real>-3.5</real>
+					<real>-2</real>
+				</array>
+				
+		</array>
+	</map>
+</llsd>

@@ -109,12 +109,12 @@ bool cmd_line_chat(std::string revised_text, EChatType type)
 					return false;
                 }
 			}
-			else if(!revised_text.compare(gSavedSettings.getString("EmeraldCmdTeleportToCam")))
+			else if(command == gSavedSettings.getString("EmeraldCmdTeleportToCam"))
             {
 				gAgent.teleportViaLocation(gAgent.getCameraPositionGlobal());
 				return false;
             }
-			else if(!revised_text.compare(0,10,gSavedSettings.getString("EmeraldCmdLineKeyToName").append(" ")))
+			else if(command == gSavedSettings.getString("EmeraldCmdLineKeyToName"))
             {
                 std::istringstream istream(revised_text);
                 std::string command;
@@ -132,7 +132,7 @@ bool cmd_line_chat(std::string revised_text, EChatType type)
                 }
 				return false;
             }
-			else if(!revised_text.compare(0,9,gSavedSettings.getString("EmeraldCmdLineOfferTp").append(" ")))
+			else if(command == gSavedSettings.getString("EmeraldCmdLineOfferTp"))
             {
                 std::istringstream istream(revised_text);
                 std::string command;

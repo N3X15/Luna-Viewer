@@ -115,6 +115,7 @@
 #include "llvoicevisualizer.h" // Ventrella
 
 #include "llsdserialize.h" // client resolver
+#include "lggBeamMaps.h"
 
 #include "boost/lexical_cast.hpp"
 
@@ -3766,31 +3767,26 @@ void LLVOAvatar::idleUpdateTractorBeam()
 			//LGG Picture Projection
 			if(gSavedSettings.getBOOL("EmeraldEmeraldBeam"))
 			{
-				LLVector3d picture[]  = {
-				 LLVector3d( (F64) 0.0 , (F64) 1, (F64) 4)
-				,LLVector3d( (F64) 0.0 , (F64)  3, (F64) 4)
-				,LLVector3d( (F64) 0.0 , (F64)  5, (F64) 4)
-				,LLVector3d( (F64) 0.0 , (F64)  6, (F64) 2)
-				,LLVector3d( (F64) 0.0 , (F64)  7, (F64) 0)
-				,LLVector3d( (F64) 0.0 , (F64)  5, (F64) -2)
-				,LLVector3d( (F64) 0.0 , (F64)  3, (F64) -4)
-				,LLVector3d( (F64) 0.0 , (F64)  1, (F64) -6)
-				,LLVector3d( (F64) 0.0 , (F64)  0, (F64) -6.5)
-				,LLVector3d( (F64) 0.0 , (F64)  -1, (F64) -6)
-				,LLVector3d( (F64) 0.0 , (F64)  -3, (F64) -4)
-				,LLVector3d( (F64) 0.0 , (F64)  -5, (F64) -2)
-				,LLVector3d( (F64) 0.0 , (F64)  -7, (F64) 0)
-				,LLVector3d( (F64) 0.0 , (F64)  -6, (F64) 2)
-				,LLVector3d( (F64) 0.0 , (F64)  -5, (F64) 4)
-				,LLVector3d( (F64) 0.0 , (F64)  -3, (F64) 4)
-				,LLVector3d( (F64) 0.0 , (F64)  -1, (F64) 4)
-				};
-
+				std::string filename =gDirUtilp->getAppRODataDir() 
+					+gDirUtilp->getDirDelimiter()
+					+"beams" 
+					+gDirUtilp->getDirDelimiter()
+					+gSavedSettings.getString("EmeraldBeamShape");
+	
+				LLSD mydata = lggBeamMaps::getPic(filename);
+				F32 scale = (F32)mydata["scale"].asReal()/10.0f;
+				LLSD myPicture = mydata["data"];		
 				mBeams.clear();
-				for(int i = 0; i < 17; i++)
+				for(int i = 0; i < myPicture.size(); i++)
 				{
 					
-					LLVector3d offset = (picture[i]*(1.0f/7.0f)*(.75f+sinf(gFrameTimeSeconds*1.0f)*0.25f));
+					F32 distanceAdjust = dist_vec(mBeam->getPositionGlobal(),gAgent.getPositionGlobal()) ;
+					F32 pulse = (F32)(.75f+sinf(gFrameTimeSeconds*1.0f)*0.25f);
+					LLVector3d offset = myPicture[i];
+					
+					offset *= pulse * scale * distanceAdjust * gSavedSettings.getF32("EmeraldBeamShapeScale");
+					
+					//llinfos << "size is " << mydata.size() << "dist is " << distanceAdjust << "scale is " << scale << llendl;
 					LLVector3 beamLine = LLVector3( mBeam->getPositionGlobal() - gAgent.getPositionGlobal());
 					beamLine.normalize();
 					LLQuaternion change;

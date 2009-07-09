@@ -31,23 +31,13 @@
 
 #include "llviewerprecompiledheaders.h"
 #include "lggBeamMaps.h"
+#include "llfile.h"
+#include "llsdserialize.h"
+LLSD lggBeamMaps::getPic(std::string filename)
+{
+	llifstream importer(filename);
+	LLSD data;
+	LLSDSerialize::fromXMLDocument(data, importer);
 
-LLVector3d lggBeamMaps::emeraldPic[17]  = {
-				 LLVector3d( (F64) 0.0 , (F64) 1, (F64) 4)
-				,LLVector3d( (F64) 0.0 , (F64)  3, (F64) 4)
-				,LLVector3d( (F64) 0.0 , (F64)  5, (F64) 4)
-				,LLVector3d( (F64) 0.0 , (F64)  6, (F64) 2)
-				,LLVector3d( (F64) 0.0 , (F64)  7, (F64) 0)
-				,LLVector3d( (F64) 0.0 , (F64)  5, (F64) -2)
-				,LLVector3d( (F64) 0.0 , (F64)  3, (F64) -4)
-				,LLVector3d( (F64) 0.0 , (F64)  1, (F64) -6)
-				,LLVector3d( (F64) 0.0 , (F64)  0, (F64) -6.5)
-				,LLVector3d( (F64) 0.0 , (F64)  -1, (F64) -6)
-				,LLVector3d( (F64) 0.0 , (F64)  -3, (F64) -4)
-				,LLVector3d( (F64) 0.0 , (F64)  -5, (F64) -2)
-				,LLVector3d( (F64) 0.0 , (F64)  -7, (F64) 0)
-				,LLVector3d( (F64) 0.0 , (F64)  -6, (F64) 2)
-				,LLVector3d( (F64) 0.0 , (F64)  -5, (F64) 4)
-				,LLVector3d( (F64) 0.0 , (F64)  -3, (F64) 4)
-				,LLVector3d( (F64) 0.0 , (F64)  -1, (F64) 4)
-				};
+	return data;
+}

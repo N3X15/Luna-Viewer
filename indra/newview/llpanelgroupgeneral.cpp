@@ -48,6 +48,7 @@
 #include "lllineeditor.h"
 #include "llnamebox.h"
 #include "llnamelistctrl.h"
+#include "llnameeditor.h"
 #include "llspinctrl.h"
 #include "llstatusbar.h"	// can_afford_transaction()
 #include "lltextbox.h"
@@ -757,6 +758,12 @@ void LLPanelGroupGeneral::update(LLGroupChange gc)
 	if (mGroupName) mGroupName->setText(gdatap->mName);
 	if (mGroupNameEditor) mGroupNameEditor->setVisible(FALSE);
 	if (mFounderName) mFounderName->setNameID(gdatap->mFounderID,FALSE);
+	
+	LLNameEditor* key_edit = getChild<LLNameEditor>("groupkey_");
+	if(key_edit)
+	{
+		key_edit->setText(gdatap->getID().asString());
+	}
 	if (mInsignia)
 	{
 		if (gdatap->mInsigniaID.notNull())

@@ -133,7 +133,6 @@ LLFloaterReporter::LLFloaterReporter(
 
 	childSetText("abuse_location_edit", gAgent.getSLURL() );
 
-// TODO:  Why the hell is this filtered?!
 // [RLVa]
 	if (rlv_handler_t::isEnabled())
 	{

@@ -786,13 +786,25 @@
 		</menu_item_call>
 		<menu_item_separator bottom="-58" enabled="true" height="8" label="-----------" left="0"
 		     mouse_opaque="true" name="separator1" width="155" />
+		<menu_item_check bottom="-58" enabled="true" height="20" label="Double-Click Auto-Pilot" left="0"
+		     mouse_opaque="true" name="Double-Click Auto-Pilot" width="155">
+			<on_click function="ToggleControl" userdata="DoubleClickAutoPilot" />
+			<on_check control="DoubleClickAutoPilot" />
+		</menu_item_check>
+		<menu_item_check bottom="-58" enabled="true" height="20" label="Show LookAt" left="0"
+		     mouse_opaque="true" name="show LookAt" width="155">
+			<on_click function="ToggleControl" userdata="PersistShowLookAt" />
+			<on_check control="PersistShowLookAt" />
+		</menu_item_check>
+		<menu_item_separator bottom="-58" enabled="true" height="8" label="-----------" left="0"
+		     mouse_opaque="true" name="separator1" width="155" />
 		<menu_item_check bottom="-78" enabled="true" height="20" label="Rainbow Beam" left="0"
 		     mouse_opaque="true" name="Rainbow Beam" width="155">
 			<on_click function="ToggleControl" userdata="EmeraldRainbowBeam" />
 			<on_check control="EmeraldRainbowBeam" />
 		</menu_item_check>
 		<menu_item_check bottom="-78" enabled="true" height="20" label="Emerald Beam" left="0"
-		     mouse_opaque="true" name="Emerald Beam" width="155">
+		     mouse_opaque="true" name="Emerald Shaped Beam" width="155">
 			<on_click function="ToggleControl" userdata="EmeraldEmeraldBeam" />
 			<on_check control="EmeraldEmeraldBeam" />
 		</menu_item_check>

@@ -35,5 +35,5 @@
 class lggBeamMaps
 {
 	public:
-		static  LLVector3d emeraldPic[];  
+		static LLSD  getPic(std::string filename);  
 };
