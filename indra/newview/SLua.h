@@ -56,7 +56,7 @@ void LuaPrint(std::string message);
 class SLuaUICtrl : public LLUICtrl
 {
 public:
-	SLuaUICtrl();
+//	SLuaUICtrl();
 	SLuaUICtrl(std::string name);
 	SLuaUICtrl(std::string name, int left, int top, int height, int width);
 	void LuaSetRect(int left, int top, int height, int width);
@@ -85,7 +85,7 @@ public:
 class SLuaPanel : public LLPanel, public SLuaUICtrl
 {
 public:
-	SLuaPanel();
+//	SLuaPanel();
 	SLuaPanel(std::string name);
 	SLuaPanel(std::string name, int left, int top, int height, int width);
 	SLuaPanel(std::string name, int left, int top, int height, int width, bool border);
@@ -94,7 +94,7 @@ public:
 class SLuaButton : public LLButton, public SLuaUICtrl
 {
 public:
-	SLuaButton();
+//	SLuaButton();
 	SLuaButton(std::string name, int left, int top, int height, int width, std::string label);
 	SLuaButton(std::string name, int left, int top, int height, int width, std::string label, std::string lua_func_name);
 	void LuaSetImages(std::string unselected_image, std::string selected_image);
@@ -106,7 +106,7 @@ public:
 class SLuaFloater : public LLFloater, public SLuaPanel
 {
 public:
-	SLuaFloater();
+//	SLuaFloater();
 	SLuaFloater(std::string xml);
 	SLuaFloater(std::string name, std::string title);
 	SLuaFloater(std::string name, std::string title, int left, int top, int height, int width);
@@ -123,7 +123,7 @@ public:
 class SLuaLineEditor : public LLLineEditor, public SLuaUICtrl
 {
 public:
-	SLuaLineEditor();
+//	SLuaLineEditor();
 	SLuaLineEditor(std::string name, int left, int top, int height, int width, std::string default_text = "");
 	void LuaSetText(std::string new_text);
 	std::string LuaGetText();
@@ -133,7 +133,7 @@ public:
 class SLuaTextBox : public LLTextBox, public SLuaUICtrl
 {
 public:
-	SLuaTextBox();
+//	SLuaTextBox();
 	SLuaTextBox(std::string name, int left, int top, int height, int width, std::string default_text);
 	void LuaSetMaxWidth(int max_width);
 	std::string LuaGetText();

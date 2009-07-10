@@ -5,6 +5,16 @@
 #include "llviewercontrol.h"
 #include "llviewerwindow.h"
 #include "lluictrlfactory.h"
+#include "llbutton.h"
+#include "llcheckboxctrl.h"
+#include "llinventoryview.h"
+#include "lllineeditor.h"
+#include "lltexturectrl.h"
+#include "llscrolllistctrl.h"
+#include "llimview.h"
+#include "lltextbox.h"
+#include "lldispatcher.h"
+#include "llviewertexteditor.h"
 
 lua_State* SLua::_LuaState = 0;
 
@@ -71,10 +81,10 @@ void LuaPrint(std::string message)
 	LL_WARNS("LUA") << "LUA: " << message << LL_ENDL;
 }
 
-SLuaFloater::SLuaFloater()
+/*SLuaFloater::SLuaFloater()
 {
 LL_WARNS("LUA") << "Default SLuaFloater constructor, would produce a floater that could not be accessed again." << LL_ENDL;
-}
+}*/
 
 SLuaFloater::SLuaFloater(std::string xml)
 {
@@ -152,9 +162,9 @@ void SLuaFloater::onClickMinimize()
 	if(SLua::callbackFunction(this, temp_name))
 		LL_WARNS("LUA") << "LUA: onClickMinimize function found within lua code. Called it." << LL_ENDL;
 }
-
+/*
 SLuaPanel::SLuaPanel()
-{}
+{}*/
 
 SLuaPanel::SLuaPanel(std::string name)
 {}
@@ -165,8 +175,9 @@ SLuaPanel::SLuaPanel(std::string name, int left, int top, int height, int width)
 SLuaPanel::SLuaPanel(std::string name, int left, int top, int height, int width, bool border)
 {}
 
+/*
 SLuaUICtrl::SLuaUICtrl()
-{}
+{}*/
 
 SLuaUICtrl::SLuaUICtrl(std::string name)
 {}
@@ -182,8 +193,9 @@ void SLuaUICtrl::LuaSetRect(int left, int top, int height, int width)
 	//this->setRect(LLRect(left, top, height, width));
 }
 
+/*
 SLuaButton::SLuaButton()
-{}
+{}*/
 
 SLuaButton::SLuaButton(std::string name, int left, int top, int height, int width, std::string label)
 {}
@@ -213,11 +225,12 @@ void SLuaButton::onHeldDown(void *userdata)
 	}
 }
 
-SLuaLineEditor::SLuaLineEditor()
-{}
+//SLuaLineEditor::SLuaLineEditor()
+//{}
 
 SLuaLineEditor::SLuaLineEditor(std::string name, int left, int top, int height, int width, std::string default_text)
-{}
+{
+}
 
 void SLuaLineEditor::LuaSetText(std::string new_text)
 {

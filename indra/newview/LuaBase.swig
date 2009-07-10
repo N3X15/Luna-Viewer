@@ -26,7 +26,12 @@
 %{
 #include "llviewerprecompiledheaders.h"
 #include "stdtypes.h"
-#include "SLua.h"
+//#include "SLua.h"
+#include "llfloater.h"
+#include "lllineeditor.h"
+#include "llpanel.h"
+#include "llbutton.h"
+#include "lliconctrl.h"
 #include "LuaBase_f.h"
 #include "LuaAvatar_f.h"
 #include "LuaAgent_f.h"
@@ -44,10 +49,15 @@
 %import "../newview/llviewerobject.h"
 %import "../newview/llvovolume.h"
 %import "../newview/llselectmgr.h"
+%rename (Floater) 	LLFloater;
+%rename (Button) 	LLButton;
+%rename (LineEditor) 	LLLineEditor;
+%rename (IconCtrl)	LLIconCtrl;
+%import "../llui/llfloater.h"
+%import "../llui/llpanel.h"
+%import "../llui/llbutton.h"
+%import "../llui/lliconctrl.h"
 
-%rename(Floater) SLuaFloater;
-%rename(Button) SLuaButton;
-%include "SLua.h"
 
 %rename(SendChat)		LuaSendChat(const char *msg, bool IsDebug=false);
 %rename(print)			LuaPrint(const char *msg);
