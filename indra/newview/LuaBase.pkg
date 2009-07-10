@@ -95,6 +95,7 @@ std::string getLuaFolder();
 void LuaTouch @ touch(const char* uuid);
 
 void LuaDumpVisualParams();
+void LuaUpdateAppearance @ saveAppearance();
 double getParamDefaultWeight(const char* avid,const char* paramname);
 double getParamCurrentWeight(const char* avid,const char* paramname);
 double getParamMax(const char* avid,const char* paramname);

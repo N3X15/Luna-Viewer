@@ -266,5 +266,5 @@ void LuaSetTEImage(int index,const char *UUID)
 
 void LuaUpdateAppearance()
 {
-	
+	gAgent->saveAllWearables();
 }

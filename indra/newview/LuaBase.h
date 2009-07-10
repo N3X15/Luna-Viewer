@@ -1,6 +1,6 @@
 /*
 ** Lua binding: LuaBase
-** Generated automatically by tolua++-1.0.92 on Tue Jul  7 22:02:08 2009.
+** Generated automatically by tolua++-1.0.92 on Thu Jul  9 21:14:28 2009.
 */
 
 #ifndef __cplusplus
@@ -713,6 +713,32 @@ static int tolua_LuaBase_LuaDumpVisualParams00(lua_State* tolua_S)
 }
 #endif //#ifndef TOLUA_DISABLE
 
+/* function: LuaUpdateAppearance */
+#ifndef TOLUA_DISABLE_tolua_LuaBase_saveAppearance00
+static int tolua_LuaBase_saveAppearance00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+     !tolua_isnoobj(tolua_S,1,&tolua_err)
+ )
+  goto tolua_lerror;
+ else
+#endif
+ {
+  {
+   LuaUpdateAppearance();
+  }
+ }
+ return 0;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'saveAppearance'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
 /* function: getParamDefaultWeight */
 #ifndef TOLUA_DISABLE_tolua_LuaBase_getParamDefaultWeight00
 static int tolua_LuaBase_getParamDefaultWeight00(lua_State* tolua_S)
@@ -1038,6 +1064,7 @@ TOLUA_API int tolua_LuaBase_open (lua_State* tolua_S)
   tolua_function(tolua_S,"getLuaFolder",tolua_LuaBase_getLuaFolder00);
   tolua_function(tolua_S,"touch",tolua_LuaBase_touch00);
   tolua_function(tolua_S,"LuaDumpVisualParams",tolua_LuaBase_LuaDumpVisualParams00);
+  tolua_function(tolua_S,"saveAppearance",tolua_LuaBase_saveAppearance00);
   tolua_function(tolua_S,"getParamDefaultWeight",tolua_LuaBase_getParamDefaultWeight00);
   tolua_function(tolua_S,"getParamCurrentWeight",tolua_LuaBase_getParamCurrentWeight00);
   tolua_function(tolua_S,"getParamMax",tolua_LuaBase_getParamMax00);
