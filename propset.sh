@@ -9,6 +9,15 @@ do (
 	flip -ub $filename
 	svn propset svn:eol-style native $filename
 	svn propset svn:keywords "Rev Id" $filename
+)
+done
+find . -type f -name "*.swig" -print | while
+read filename
+do (
+        echo $filename;
+        flip -ub $filename
+        svn propset svn:eol-style native $filename
+        svn propset svn:keywords "Rev Id" $filename
 ) 
 done
 find . -type f -name "*.cpp" -print | while
