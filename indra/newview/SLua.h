@@ -16,10 +16,11 @@
 extern "C" {
 #include "lua.h"
 #include "lauxlib.h"
-#include "lstate.h"
+//#include "lstate.h"
 #include "lualib.h"
 }
 #endif
+
 #include "llfloater.h"
 #include "lluictrl.h"
 #include "llagent.h"
@@ -145,4 +146,4 @@ class SLuaUIManager
 public:
 	SLuaFloater* getFloater(std::string name);
 };
-#endif SLUA_H
+#endif //SLUA_H

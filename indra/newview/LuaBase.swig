@@ -26,20 +26,28 @@
 %{
 #include "llviewerprecompiledheaders.h"
 #include "stdtypes.h"
-#include "FLLua.h"
+#include "SLua.h"
+#include "LuaBase_f.h"
+#include "LuaAvatar_f.h"
+#include "LuaAgent_f.h"
+#include "llprimitive.h"
+#include "llviewerobject.h"
+#include "llvovolume.h"
+#include "llagent.h"
+#include "llselectmgr.h"
 %}
 
-%import "llcommon/stdtypes.h"
-%import "llprimitive/llprimitive.h"
-%import "newview/llagent.h"
-%import "newview/llviewerregion.h"
-%import "newview/llviewerobject.h"
-%import "newview/llvovolume.h"
-%import "newview/llselectmgr.h"
+%import "../llcommon/stdtypes.h"
+%import "../llprimitive/llprimitive.h"
+%import "../newview/llagent.h"
+%import "../newview/llviewerregion.h"
+%import "../newview/llviewerobject.h"
+%import "../newview/llvovolume.h"
+%import "../newview/llselectmgr.h"
 
 %rename(Floater) SLuaFloater;
 %rename(Button) SLuaButton;
-%include "newview/SLua.h"
+%include "SLua.h"
 
 %rename(SendChat)		LuaSendChat(const char *msg, bool IsDebug=false);
 %rename(print)			LuaPrint(const char *msg);
@@ -60,12 +68,12 @@
 %rename(RemoveAllWearables)	LuaRemoveAllWearables();
 %rename(setTEImage)		LuaSetTEImage(int index,const char *UUID);
 
-%include "newview/LuaBase_f.h"
+%include "LuaBase_f.h"
 
 %rename(key2name)		LuaFindAvatarName(const char* uuid);
 %rename(name2key)		LuaFindAvatarKey(const char* fullname);
 
-%include "newview/LuaAvatar_f.h"
+%include "LuaAvatar_f.h"
 
 extern bool gAllowWorldMap;
 extern LLAgent *gAgent;

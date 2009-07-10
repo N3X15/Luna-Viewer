@@ -3,7 +3,7 @@
  * @brief FlexLife Viewer Lua Integration Framework
  * @author N3X15
  *
- *  Copyright (C) 2008 Patriotic Nigras
+ *  Copyright (C) 2008-2009 FlexLife Contributors
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -50,13 +50,14 @@ extern "C" {
 #include "llversionviewer.h"
 
 /* tolua++ */
-#include "tolua++.h"
 
 /* Lua classes */
 #include "LuaBase.h"
 #include "LuaBase_f.h"
 
 extern LLAgent gAgent;
+extern int luaopen_SL(lua_State* L); // declare the wrapped module
+
 
 //#define LUA_HOOK_SPAM 
 
@@ -90,7 +91,8 @@ void FLLua::run()
 
 	luaL_openlibs(L);
 
-	tolua_LuaBase_open(L);
+	//tolua_LuaBase_open(L);
+	luaopen_SL(L);
 
 	std::string  version; 
 	// Assign _SLUA_VERSION, which contains the version number of the host viewer.
