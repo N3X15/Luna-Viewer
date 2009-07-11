@@ -31,18 +31,24 @@
 
 using namespace std;
 
+#include "llhudeffecttrail.h"
 #include "llviewerprecompiledheaders.h"
 
 class lggBeamMaps
 {
 	public:
-		lggBeamMaps() { lastFileName = ""; lastData = 0; }
-		~lggBeamMaps() { lastFileName = ""; lastData = 0; }
+		lggBeamMaps() { lastFileName = ""; scale=0.0f; duration=0.25f;}
+		~lggBeamMaps() { lastFileName = ""; scale=0.0f; duration=0.25f;}
 	public:
-		LLSD  getPic(std::string filename); 
+		F32		setUpAndGetDuration();
+		void	fireCurrentBeams(LLPointer<LLHUDEffectSpiral>,LLColor4U rgb);
+		void	forceUpdate();
 	private:
+		LLSD	getPic(std::string filename); 
 		std::string lastFileName;
-		LLSD lastData;
+		F32 duration;
+		F32 scale;
+		std::vector<LLVector3d> dots;     
 };
 
 extern lggBeamMaps gLggBeamMaps;

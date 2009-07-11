@@ -3758,63 +3758,14 @@ void LLVOAvatar::idleUpdateTractorBeam()
 			}
 
 		}
-		/*F32 lggUpdatesPerSecond = gSavedSettings.getF32("EmeraldBeamUpdatesPerSecond");
-		LLSD mydata;
-		F32 scale=0;
-		LLSD myPicture;
-		if(gSavedSettings.getBOOL("EmeraldEmeraldBeam"))
-		{
-				std::string filename =gDirUtilp->getAppRODataDir() 
-					+gDirUtilp->getDirDelimiter()
-					+"beams" 
-					+gDirUtilp->getDirDelimiter()
-					+gSavedSettings.getString("EmeraldBeamShape");
-			
-				mydata = gLggBeamMaps.getPic(filename);
-				scale = (F32)mydata["scale"].asReal()/10.0f;
-				myPicture = mydata["data"];	
-				lggUpdatesPerSecond /= (myPicture.size()*0.1f);
-
-		}
-		F32 durration = (1.0f)/lggUpdatesPerSecond;
-		
-		if (mBeamTimer.getElapsedTimeF32() > durration*0.8f)*/
+		if (mBeamTimer.getElapsedTimeF32() > gLggBeamMaps.setUpAndGetDuration())
 		{
 			
 			mBeam->setColor(rgb );
 			mBeam->setNeedsSendToSim(TRUE);
 			mBeamTimer.reset();
 			//LGG Picture Projection
-			if(gSavedSettings.getBOOL("EmeraldEmeraldBeam"))
-			{
-				/*std::string filename =gDirUtilp->getAppRODataDir() 
-				LLSD myPicture = mydata["data"];	*/	
-				mBeams.clear();
-				for(int i = 0; i < myPicture.size(); i++)
-				{
-					
-					F32 distanceAdjust = dist_vec(mBeam->getPositionGlobal(),gAgent.getPositionGlobal()) ;
-					F32 pulse = (F32)(.75f+sinf(gFrameTimeSeconds*1.0f)*0.25f);
-					LLVector3d offset = myPicture[i];
-					
-					offset *= pulse * scale * distanceAdjust * gSavedSettings.getF32("EmeraldBeamShapeScale");
-					
-					//llinfos << "size is " << mydata.size() << "dist is " << distanceAdjust << "scale is " << scale << llendl;
-					LLVector3 beamLine = LLVector3( mBeam->getPositionGlobal() - gAgent.getPositionGlobal());
-					beamLine.normalize();
-					LLQuaternion change;
-					change.shortestArc(LLVector3::x_axis,beamLine);
-					offset.rotVec(change);
-					mBeams.push_back( (LLHUDEffectSpiral *)LLHUDManager::getInstance()->createViewerEffect(LLHUDObject::LL_HUD_EFFECT_BEAM));
-					mBeams[i]->setPositionGlobal(mBeam->getPositionGlobal() + offset + (LLVector3d(beamLine) * sinf(gFrameTimeSeconds*2.0f) * 0.2f));
-					mBeams[i]->setColor(rgb);
-					mBeams[i]->setTargetObject(mBeam->getTargetObject());
-					mBeams[i]->setSourceObject(mBeam->getSourceObject());
-					mBeams[i]->setNeedsSendToSim(mBeam->getNeedsSendToSim());
-					/*mBeams[i]->setDuration(durration);*/
-
-				}	
-				}
+			gLggBeamMaps.fireCurrentBeams(mBeam,rgb);
 		}
 	}
 }

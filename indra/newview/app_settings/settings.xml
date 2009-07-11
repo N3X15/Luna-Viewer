@@ -12538,17 +12538,6 @@
       <key>Value</key>
       <integer>0</integer>
     </map>
-    <key>EmeraldEmeraldBeam</key>
-    <map>
-      <key>Comment</key>
-      <string>Use color cycling emerald style beam.</string>
-      <key>Persist</key>
-      <integer>1</integer>
-      <key>Type</key>
-      <string>Boolean</string>
-      <key>Value</key>
-      <integer>1</integer>
-    </map>
     <key>EmeraldClickSendTouchPos</key>
     <map>
       <key>Comment</key>
@@ -12637,16 +12626,16 @@
       <key>Value</key>
       <integer>1</integer>
     </map>
-    <key>EmeraldBeamUpdatesPerSecond</key>
+    <key>EmeraldMaxBeamsPerSecond</key>
     <map>
       <key>Comment</key>
-      <string>How many times you want your beam to update per second</string>
+      <string>How many beams you want to send per second(more = more bandwidth)</string>
       <key>Persist</key>
       <integer>1</integer>
       <key>Type</key>
       <string>F32</string>
       <key>Value</key>
-      <real>4.0</real>
+      <real>40.0</real>
     </map>
     <key>EmeraldChangeColorOnClient</key>
     <map>

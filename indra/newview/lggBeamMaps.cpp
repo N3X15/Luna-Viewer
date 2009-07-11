@@ -32,7 +32,11 @@
 #include "llviewerprecompiledheaders.h"
 #include "lggBeamMaps.h"
 #include "llfile.h"
+#include "llagent.h"
 #include "llsdserialize.h"
+#include "llviewercontrol.h"
+#include "llhudeffecttrail.h"
+#include "llhudmanager.h"
 using namespace std;
 
 lggBeamMaps gLggBeamMaps;
@@ -40,22 +44,85 @@ lggBeamMaps gLggBeamMaps;
 LLSD lggBeamMaps::getPic(std::string filename)
 {
 	LLSD data;
-#ifdef TESTINGBEAMS
-	llifstream importer(filename);
-	LLSDSerialize::fromXMLDocument(data, importer);	
-	return data;
-#else
-	if(lastFileName == filename)
-	{
-		return lastData;
-	}
 	llifstream importer(filename);
 	LLSDSerialize::fromXMLDocument(data, importer);
 
-	lastFileName = filename;
-	lastData = data;
 	return data;
-#endif
+	
+}
+void lggBeamMaps::fireCurrentBeams(LLPointer<LLHUDEffectSpiral> mBeam, LLColor4U rgb)
+{
+	if(scale == 0.0f)return;
+	
+	for(int i = 0; i < (int)dots.size(); i++)
+	{
+					
+		F32 distanceAdjust = dist_vec(mBeam->getPositionGlobal(),gAgent.getPositionGlobal()) ;
+		F32 pulse = (F32)(.75f+sinf(gFrameTimeSeconds*1.0f)*0.25f);
+		LLVector3d offset = dots[i];
+		
+		offset *= pulse * scale * distanceAdjust * 0.1;
+		
+		//llinfos << "dist is " << distanceAdjust << "scale is " << scale << llendl;
+		LLVector3 beamLine = LLVector3( mBeam->getPositionGlobal() - gAgent.getPositionGlobal());
+		beamLine.normalize();
+		LLQuaternion change;
+		change.shortestArc(LLVector3::x_axis,beamLine);
+		offset.rotVec(change);
+		LLPointer<LLHUDEffectSpiral> myBeam =  (LLHUDEffectSpiral *)LLHUDManager::getInstance()->createViewerEffect(LLHUDObject::LL_HUD_EFFECT_BEAM);
+		myBeam->setPositionGlobal(mBeam->getPositionGlobal() + offset + (LLVector3d(beamLine) * sinf(gFrameTimeSeconds*2.0f) * 0.2f));
+		myBeam->setColor(rgb);
+		myBeam->setTargetObject(mBeam->getTargetObject());
+		myBeam->setSourceObject(mBeam->getSourceObject());
+		myBeam->setNeedsSendToSim(mBeam->getNeedsSendToSim());
+		myBeam->setDuration(duration* 1.2f);
+	}
+}
+void lggBeamMaps::forceUpdate()
+{
+	dots.clear();
+	scale = 0.0f;
+	lastFileName="";
+}
+F32 lggBeamMaps::setUpAndGetDuration()
+{
+	std::string settingName = gSavedSettings.getString("EmeraldBeamShape");
+	if(settingName != lastFileName)
+	{
+		lastFileName=settingName;
+		if(settingName.find (".xml") > 1 && settingName != "")
+		{
+			std::string filename =gDirUtilp->getAppRODataDir() 
+						+gDirUtilp->getDirDelimiter()
+						+"beams"
+						+gDirUtilp->getDirDelimiter()
+						+settingName;
+			LLSD mydata = getPic(filename);
+			scale = (F32)mydata["scale"].asReal()/10.0f;
+			LLSD myPicture = mydata["data"];	
+			dots.clear();
+			for(int i = 0; i < myPicture.size(); i++)
+			{
+				LLVector3d dot = myPicture[i];
+				
+				dots.push_back(dot*(gSavedSettings.getF32("EmeraldBeamShapeScale")*2.0f));
+			}
+			
+			F32 maxBPerQS = gSavedSettings.getF32("EmeraldMaxBeamsPerSecond") / 4.0f;
+			duration = llceil((F32)(myPicture.size()) / maxBPerQS) * 0.25f;
+			llinfos << "reading it all now size is " << myPicture.size() << " and duration is " << duration << llendl;
+		
+		}else
+		{
+			dots.clear();
+			scale = 0.0f;//used as a flag too
+			duration = 0.25f;
+		}
+		
+	}
+	//llinfos << "sent final dur of " << duration << llendl;
+		
+	return duration;
 	
 }
 
