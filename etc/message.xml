@@ -490,7 +490,7 @@
 					<key>trusted-sender</key>
 					<boolean>true</boolean>
 				</map>
-				
+
         <key>TeleportFailed</key>
         <map>
           <key>flavor</key>

@@ -500,6 +500,11 @@ Recommended Settings are:
 <button left="50" bottom_delta="-130" follows="left|top" width="130" height="100" name="EmeraldBeamPrev_rainbow" label="" scale_image="true" image_selected="beam_rainbow.png" image_unselected="beam_rainbow.png" image_hover_selected="beam_rainbow.png" image_hover_unselected="beam_rainbow.png"/>
 <button left="300" bottom_delta="-0" follows="left|top" width="130" height="100" name="EmeraldBeamPrev_Emerald" label="" scale_image="true" image_selected="beam_emerald.png" image_unselected="beam_emerald.png" image_hover_selected="beam_emerald.png" image_hover_unselected="beam_emerald.png"/>
 <view_border bevel_style="none" border_thickness="1" bottom_delta="-10" follows="top|left" height="140" left="245" name="EmDivisor2" width="0" />
+<slider bottom_delta="-30" left="15" name="EmeraldMaxBeamsPerSecond" control_name="EmeraldMaxBeamsPerSecond"
+	     decimal_digits="0" enabled="true" follows="left|top" height="18"
+	     increment="1" initial_val="4" label="Beam updates/sec:"
+	     label_width="100" max_val="200" min_val="4" mouse_opaque="true"
+	     show_text="true" width="250" auto_resize="false" tool_tip="How many beam updates to send in a second. Default 40"/>
       <check_box bottom_delta="-20" enabled="true"
            follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
            label="Enable transmission of selection beam end position" left="15" mouse_opaque="true"
@@ -508,30 +513,27 @@ Recommended Settings are:
            follows="left|top" font="SansSerifSmall" height="16" initial_value="true"
            label="Enable selection beam (turning off will hide the beam)" left="15" mouse_opaque="true"
            name="SLPartBeam" radio_style="false" width="270" control_name="ShowSelectionBeam" />
-      <check_box bottom_delta="155" enabled="true"
+      <check_box bottom_delta="185" enabled="true"
            follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
            label="Enable rainbow effect" left="45" mouse_opaque="true"
            name="EmBeamRainbow" radio_style="false" width="270" control_name="EmeraldRainbowBeam" />
       <check_box bottom_delta="-0" enabled="true"
            follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
-           label="Enable shaped beam:" left="270" mouse_opaque="true"
+           label="Enable shaped beam:" left="250" mouse_opaque="true"
            name="EmBeamEmerald" radio_style="false" width="285" control_name="EmeraldEmeraldBeam" />
-      <combo_box allow_text_entry="false" bottom_delta="-0" left_delta="140" follows="left|top" height="18" left="10" max_chars="20" mouse_opaque="true" name="EmeraldBeamShape_combo" width="70" control_name="EmeraldBeamShape" tool_tip="Select the shape for the particle beam">
-        <combo_item name="circle.xml" value="circle.xml">Circle</combo_item>
-        <combo_item name="cross.xml" value="cross.xml">Cross</combo_item>
-        <combo_item name="emerald.xml" value="emerald.xml">Emerald</combo_item>
-        <combo_item name="heart.xml" value="heart.xml">Heart</combo_item>
-        <combo_item name="solid.xml" value="solid.xml">Solid</combo_item>
-        <combo_item name="star.xml" value="star.xml">Star</combo_item>
-        <combo_item name="square.xml" value="square.xml">Square</combo_item>
-      </combo_box>
-
+      <combo_box allow_text_entry="false" bottom_delta="-0" left_delta="140" 
+                 follows="left|top" height="18" left="10" max_chars="20"
+                 mouse_opaque="true" name="EmeraldBeamShape_combo" width="100" 
+                 control_name="EmeraldBeamShape" tool_tip="Select the shape for the particle beam" />
 
 <slider bottom_delta="-125" left_delta="-110" name="EmeraldBeamShapeScale" control_name="EmeraldBeamShapeScale"
 	     decimal_digits="1" enabled="true" follows="left|top" height="18"
 	     increment="0.1" initial_val="1" label="Scale:"
-	     label_width="35" max_val="1" min_val="0.1" mouse_opaque="true"
+	     label_width="35" max_val="4" min_val="0.1" mouse_opaque="true"
 	     show_text="true" width="150" auto_resize="false" tool_tip="Change the scale of the shape used for the Emerald Shaped Beam"/>
+
+      <button name="custom_beam_btn" label="Custom" tool_tip="Customize the beam shape" left="435" bottom="-185" width="55" height="20" font="SansSerifSmall" follows="left|top"/>
+
     </panel>
     <panel border="true" bottom="-580" follows="left|top|right|bottom" height="525" label="Build" left="1" mouse_opaque="true" name="Build" width="418">
       <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"

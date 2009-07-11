@@ -80,6 +80,7 @@ set(viewer_SOURCE_FILES
 	jcfloater_animation_list.cpp
 	jcfloater_areasearch.cpp
 	jcobjectpropertylist.cpp
+	lggBeamMapFloater.cpp
 	lggBeamMaps.cpp
     llagent.cpp
     llagentaccess.cpp
@@ -509,6 +510,7 @@ set(viewer_HEADER_FILES
 	jcobjectpropertylist.h
 	importtracker.h
 	lggBeamMaps.h
+	lggBeamMapFloater.h
     llagent.h
     llagentaccess.h
     llagentdata.h

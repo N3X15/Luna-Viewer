@@ -194,7 +194,6 @@
 extern void init_apple_menu(const char* product);
 #endif // LL_DARWIN
 
-
 extern BOOL gRandomizeFramerate;
 extern BOOL gPeriodicSlowFrame;
 extern BOOL gDebugGL;
@@ -649,6 +648,7 @@ bool LLAppViewer::init()
 					ui_audio_callback,
 					&LLUI::sGLScaleFactor);
 	LLWeb::initClass();			  // do this after LLUI
+
 	LLTextEditor::setURLCallbacks(&LLWeb::loadURL,
 				&LLURLDispatcher::dispatchFromTextEditor,
 				&LLURLDispatcher::dispatchFromTextEditor);
@@ -668,7 +668,6 @@ bool LLAppViewer::init()
 
 	// load MIME type -> media impl mappings
 	LLMIMETypes::parseMIMETypes( std::string("mime_types.xml") ); 
-
 
 	// Copy settings to globals. *TODO: Remove or move to appropriage class initializers
 	settings_to_globals();

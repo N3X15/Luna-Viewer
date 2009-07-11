@@ -32,13 +32,16 @@
 #include "llviewerprecompiledheaders.h"
 
 #include "llpanelemerald.h"
-
+#include "lggBeamMapFloater.h"
 // linden library includes
 #include "llradiogroup.h"
 #include "llbutton.h"
 #include "lluictrlfactory.h"
 #include "llcombobox.h"
+#include "llslider.h"
 #include "lltexturectrl.h"
+
+#include "lggBeamMaps.h"
 
 // project includes
 #include "llviewercontrol.h"
@@ -163,12 +166,23 @@ LLPanelEmerald::~LLPanelEmerald()
 
 BOOL LLPanelEmerald::postBuild()
 {
-	//LLRadioGroup* skin_select = getChild<LLRadioGroup>("skin_selection");
-	//skin_select->setCommitCallback(onSelectSkin);
-	//skin_select->setCallbackUserData(this);
-	//onCommitApplyControl
+	LLComboBox* comboBox = getChild<LLComboBox>("EmeraldBeamShape_combo");
+
+	if(comboBox != NULL) 
+	{
+		std::vector<std::string> names = gLggBeamMaps.getFileNames();
+		for(int i=0; i<(int)names.size(); i++) 
+		{
+			comboBox->add(names[i]);
+		}
+		comboBox->setSimple(gSavedSettings.getString("EmeraldBeamShape"));
+		comboBox->setCommitCallback(onComboBoxCommit);
+	}
 	getChild<LLComboBox>("material")->setSimple(gSavedSettings.getString("EmeraldBuildPrefs_Material"));
 	getChild<LLComboBox>("combobox shininess")->setSimple(gSavedSettings.getString("EmeraldBuildPrefs_Shiny"));
+	
+	getChild<LLSlider>("EmeraldBeamShapeScale")->setCommitCallback(beamUpdateCall);
+	getChild<LLSlider>("EmeraldMaxBeamsPerSecond")->setCommitCallback(beamUpdateCall);
 	
 	getChild<LLComboBox>("material")->setCommitCallback(onComboBoxCommit);
 	getChild<LLComboBox>("combobox shininess")->setCommitCallback(onComboBoxCommit);
@@ -176,7 +190,7 @@ BOOL LLPanelEmerald::postBuild()
 	getChild<LLTextureCtrl>("texture control")->setCommitCallback(onTexturePickerCommit);
 	//childSetCommitCallback("material",onComboBoxCommit);
 	//childSetCommitCallback("combobox shininess",onComboBoxCommit);
-	
+	getChild<LLButton>("custom_beam_btn")->setClickedCallback(onCustomBeam, this);
 	getChild<LLButton>("revert_production_voice_btn")->setClickedCallback(onClickVoiceRevertProd, this);
 	getChild<LLButton>("revert_debug_voice_btn")->setClickedCallback(onClickVoiceRevertDebug, this);
 
@@ -281,6 +295,7 @@ void LLPanelEmerald::apply()
 	gSavedPerAccountSettings.setBOOL("EmeraldInstantMessageAnnounceIncoming", childGetValue("EmeraldInstantMessageAnnounceIncoming").asBoolean());
 	gSavedPerAccountSettings.setBOOL("EmeraldInstantMessageAnnounceStealFocus", childGetValue("EmeraldInstantMessageAnnounceStealFocus").asBoolean());
 	
+	gLggBeamMaps.forceUpdate();
 }
 
 void LLPanelEmerald::cancel()
@@ -294,6 +309,16 @@ void LLPanelEmerald::onClickVoiceRevertProd(void* data)
 	LLPanelEmerald* self = (LLPanelEmerald*)data;
 	gSavedSettings.setString("vivoxProductionServerName", "bhr.vivox.com");
 	self->getChild<LLLineEditor>("production_voice_field")->setValue("bhr.vivox.com");
+}
+void LLPanelEmerald::onCustomBeam(void* data)
+{
+	//LLPanelEmerald* self =(LLPanelEmerald*)data;
+	LggBeamMap::show(true);
+
+}
+void LLPanelEmerald::beamUpdateCall(LLUICtrl* crtl, void* userdata)
+{
+	gLggBeamMaps.forceUpdate();
 }
 void LLPanelEmerald::onComboBoxCommit(LLUICtrl* ctrl, void* userdata)
 {
@@ -320,27 +345,7 @@ void LLPanelEmerald::onClickVoiceRevertDebug(void* data)
 	gSavedSettings.setString("vivoxDebugServerName", "bhd.vivox.com");
 	self->getChild<LLLineEditor>("debug_voice_field")->setValue("bhd.vivox.com");
 
-  std::string filename = "example_vecs.xml";
-  LLFilePicker& picker = LLFilePicker::instance();
-  if(!picker.getSaveFile( LLFilePicker::FFSAVE_ALL, filename ) )
-  {
-   // User canceled save.
-   return;
-  }
-  filename = picker.getFirstFile();
-  LLSD llsdtot;
-  LLVector3d test(1.0,2.0,3.0);
-  LLVector3d testa(1.0,2.0,3.0);
-  LLVector3d testb(2.0,5.3333,3.0);
-  LLVector3d testc(1.5,2.0,3.568);
-  llsdtot[0] = test.getValue();
-  llsdtot[1] = testa.getValue();
-  llsdtot[2] = testb.getValue();
-  llsdtot[3] = testc.getValue();
-  llofstream export_file;
-  export_file.open(filename);
-  LLSDSerialize::toPrettyXML(llsdtot, export_file);
-  export_file.close();
+ 
  
 }
 

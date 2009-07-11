@@ -399,7 +399,7 @@ void LLChatBar::sendChat( EChatType type )
 			if(mInputEditor->getText()=="/luareload")
 			{
 				FLLua::init();
-				childSetValue("Chat Editor", std::string());
+				childSetValue("Chat Editor", LLStringUtil::null);
 				return;
 			}
 			if(FLLua::isMacro(mInputEditor->getText()))

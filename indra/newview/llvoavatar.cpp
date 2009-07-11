@@ -66,9 +66,6 @@
 
 #include "llvoavatar.h"
 
-#include <stdio.h>
-#include <ctype.h>
-
 #include "audioengine.h"
 #include "noise.h"
 
@@ -3631,16 +3628,10 @@ void LLVOAvatar::idleUpdateTractorBeam()
 		F32 r, g, b;
 		LLColor4 output;
 		hslToRgb(0.5f+sinf(gFrameTimeSeconds*0.3f), 1.0f, 0.5f, r, g, b);
+		//hslToRgb(0.25f+sinf(gFrameTimeSeconds*1.2f)*(0.166f/2.0f), 1.0f, 0.5f, r, g, b);
 		output.set(r, g, b);
 		rgb.setVecScaleClamp(output);
 	
-	}else if(gSavedSettings.getBOOL("EmeraldEmeraldBeam"))
-	{
-		F32 r, g, b;
-		LLColor4 output;
-		hslToRgb(0.25f+sinf(gFrameTimeSeconds*1.2f)*(0.166f/2.0f), 1.0f, 0.5f, r, g, b);
-		output.set(r, g, b);
-		rgb.setVecScaleClamp(output);
 	}
 	
 	// This is only done for yourself (maybe it should be in the agent?)
@@ -3765,7 +3756,7 @@ void LLVOAvatar::idleUpdateTractorBeam()
 			mBeam->setNeedsSendToSim(TRUE);
 			mBeamTimer.reset();
 			//LGG Picture Projection
-			gLggBeamMaps.fireCurrentBeams(mBeam,rgb);
+			gLggBeamMaps.fireCurrentBeams(mBeam);
 		}
 	}
 }

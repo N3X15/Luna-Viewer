@@ -274,23 +274,21 @@ LLUUID cmdline_partial_name2key(std::string partial_name)
 			if(entry)
 			{
 				av_name = entry->getName();
-				LLStringUtil::toLower(av_name);
-				if(strstr(av_name.c_str(), partial_name.c_str()))
-				{
-					return *i;
-				}
 			}
 		}
-		LLViewerObject *obj = gObjectList.findObject(*i);
-		if(obj)
+		if (av_name.empty() && !gCacheName->getFullName(*i, av_name))
 		{
+			LLViewerObject *obj = gObjectList.findObject(*i);
+			if(obj)
+			{
 				LLVOAvatar* avatarp = dynamic_cast<LLVOAvatar*>(obj);
 				av_name = avatarp->getFullname();
+			}
+		}
 				LLStringUtil::toLower(av_name);
 				if(strstr(av_name.c_str(), partial_name.c_str()))
 				{
 					return *i;
-				}
 		}
 	}
 	return LLUUID::null;

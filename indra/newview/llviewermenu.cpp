@@ -186,7 +186,6 @@
 #include "lluploaddialog.h"
 #include "lluserauth.h"
 #include "lluuid.h"
-#include "llnotify.h"
 #include "llvelocitybar.h"
 #include "llviewercamera.h"
 #include "llviewergenericmessage.h"
@@ -216,7 +215,6 @@
 #include "llwlparammanager.h"
 #include "llwaterparammanager.h"
 #include "llfloaternotificationsconsole.h"
-#include "LuaBase_f.h"			// For gAllowWorldMap
 
 #include "lltexlayer.h"
 #include "llfloateravatarlist.h"
@@ -8513,6 +8511,8 @@ void initialize_menus()
 	addMenu(new LLToolsEnableBuyOrTake(), "Tools.EnableBuyOrTake");
 	addMenu(new LLToolsEnableTakeCopy(), "Tools.EnableTakeCopy");
 	addMenu(new LLToolsEnableSaveToObjectInventory(), "Tools.SaveToObjectInventory");
+
+	//addMenu(new LuaReset(),"Tools.ResetLua");
 
 	/*addMenu(new LLToolsVisibleBuyObject(), "Tools.VisibleBuyObject");
 	addMenu(new LLToolsVisibleTakeObject(), "Tools.VisibleTakeObject");*/
