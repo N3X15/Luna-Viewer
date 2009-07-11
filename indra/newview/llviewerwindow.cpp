@@ -5234,8 +5234,7 @@ void LLPickInfo::fetchResults()
 	{
 		icon_dist = (LLViewerCamera::getInstance()->getOrigin()-intersection).magVec();
 	}
-	//Emerald: ~Zwag
-	LLViewerObject* hit_object = gViewerWindow->cursorIntersect(mMousePt.mX, mMousePt.mY, FLT_MAX - 1,
+	LLViewerObject* hit_object = gViewerWindow->cursorIntersect(mMousePt.mX, mMousePt.mY, 512.f,
 									NULL, -1, mPickTransparent, &face_hit,
 									&intersection, &uv, &normal, &binormal);
 	

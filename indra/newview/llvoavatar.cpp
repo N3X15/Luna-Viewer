@@ -3779,7 +3779,6 @@ void LLVOAvatar::idleUpdateTractorBeam()
 		F32 durration = (1.0f)/lggUpdatesPerSecond;
 		
 		if (mBeamTimer.getElapsedTimeF32() > durration*0.8f)*/
-		if (mBeamTimer.getElapsedTimeF32() > 0.25f)
 		{
 			
 			mBeam->setColor(rgb );
@@ -3789,7 +3788,7 @@ void LLVOAvatar::idleUpdateTractorBeam()
 			if(gSavedSettings.getBOOL("EmeraldEmeraldBeam"))
 			{
 				/*std::string filename =gDirUtilp->getAppRODataDir() 
-				LLSD myPicture = mydata["data"];		
+				LLSD myPicture = mydata["data"];	*/	
 				mBeams.clear();
 				for(int i = 0; i < myPicture.size(); i++)
 				{
@@ -3812,9 +3811,9 @@ void LLVOAvatar::idleUpdateTractorBeam()
 					mBeams[i]->setTargetObject(mBeam->getTargetObject());
 					mBeams[i]->setSourceObject(mBeam->getSourceObject());
 					mBeams[i]->setNeedsSendToSim(mBeam->getNeedsSendToSim());
-					//mBeams[i]->setDuration(durration);
+					/*mBeams[i]->setDuration(durration);*/
 
-				}*/
+				}	
 				}
 		}
 	}
