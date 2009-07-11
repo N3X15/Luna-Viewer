@@ -45,7 +45,7 @@ void LuaError(const char* rawmsg);
 
 void LuaTouch(const char* uuid);
 
-void LuaSleep(int milliseconds);
+/*void LuaSleep(int milliseconds);*/
 
 // Chat functions
 void LuaSay(const char* rawmsg,const char* channel="0");

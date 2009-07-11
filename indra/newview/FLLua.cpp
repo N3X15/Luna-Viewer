@@ -56,8 +56,10 @@ extern "C" {
 #include "LuaBase_f.h"
 
 extern LLAgent gAgent;
-extern int luaopen_SL(lua_State* L); // declare the wrapped module
 
+extern "C" {
+extern int luaopen_SL(lua_State* L); // declare the wrapped module
+}
 
 //#define LUA_HOOK_SPAM 
 

@@ -11,6 +11,7 @@ include(ELFIO)
 include(FMOD)
 include(OPENAL)
 include(FindOpenGL)
+include(FindSWIG)
 include(LLAddBuildTest)
 include(LLAudio)
 include(LLCharacter)
@@ -40,6 +41,12 @@ include(Emerald)
 include(LUA)
 include(ViewerMiscLibs)
 include(toluapp)
+
+#FIND_PACKAGE(SWIG REQUIRED)
+
+#SET_SOURCE_FILES_PROPERTIES(LuaBase.swig PROPERTIES CPLUSPLUS ON)
+#SET_SOURCE_FILES_PROPERTIES(LuaBase.swig PROPERTIES SWIG_FLAGS "-includeall")
+#SWIG_ADD_MODULE(LuaBase lua LuaBase.swig LuaBase.cpp)
 
 if (WINDOWS)
     include(CopyWinLibs)
@@ -1158,6 +1165,8 @@ set(viewer_APPSETTINGS_FILES
     )
 
 source_group("App Settings" FILES ${viewer_APPSETTINGS_FILES})
+
+
 
 set_source_files_properties(${viewer_APPSETTINGS_FILES}
                             PROPERTIES HEADER_FILE_ONLY TRUE)

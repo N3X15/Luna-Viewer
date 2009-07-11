@@ -2,8 +2,8 @@
 #include "llwearable.h"
 
 void LuaDumpVisualParams();
-std::string  LuaDumpVisualParamsToLuaCode();
-std::string  LuaDumpTargetVisParamsToLuaCode();
+std::string LuaDumpVisualParamsToLuaCode();
+//std::string LuaDumpTargetVisParamsToLuaCode();
 double getParamDefaultWeight(const char* avid,const char* paramname);
 double getParamCurrentWeight(const char* avid,const char* paramname);
 double getParamMax(const char* avid,const char* paramname);
