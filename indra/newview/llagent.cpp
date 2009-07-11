@@ -1929,21 +1929,21 @@ void LLAgent::cameraZoomIn(const F32 fraction)
 	{
 		new_distance = max_distance;
 
-		/*
+		
 		// Unless camera is unlocked
-		if (!LLViewerCamera::sDisableCameraConstraints)
-		{
-			return;
-		}
-		*/
-	/*
-	}
+		//if (!LLViewerCamera::sDisableCameraConstraints)
+		//{
+		//	return;
+		//}
+		
 
-	if( cameraCustomizeAvatar() )
-	{
-		new_distance = llclamp( new_distance, APPEARANCE_MIN_ZOOM, APPEARANCE_MAX_ZOOM );
-	}
-	*/
+//	}
+//
+//	if( cameraCustomizeAvatar() )
+//	{
+//		new_distance = llclamp( new_distance, APPEARANCE_MIN_ZOOM, APPEARANCE_MAX_ZOOM );
+//	}
+*/	
 
 	mCameraFocusOffsetTarget = new_distance * camera_offset_unit;
 }
