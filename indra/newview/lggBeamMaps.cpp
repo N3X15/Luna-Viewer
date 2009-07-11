@@ -33,11 +33,29 @@
 #include "lggBeamMaps.h"
 #include "llfile.h"
 #include "llsdserialize.h"
+using namespace std;
+
+lggBeamMaps gLggBeamMaps;
+
 LLSD lggBeamMaps::getPic(std::string filename)
 {
-	llifstream importer(filename);
 	LLSD data;
+#ifdef TESTINGBEAMS
+	llifstream importer(filename);
+	LLSDSerialize::fromXMLDocument(data, importer);	
+	return data;
+#else
+	if(lastFileName == filename)
+	{
+		return lastData;
+	}
+	llifstream importer(filename);
 	LLSDSerialize::fromXMLDocument(data, importer);
 
+	lastFileName = filename;
+	lastData = data;
 	return data;
+#endif
+	
 }
+

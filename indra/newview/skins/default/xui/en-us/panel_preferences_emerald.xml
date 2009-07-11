@@ -183,7 +183,7 @@ Recommended Settings are:
            label="Broadcast camera focus point and pointer target" left_delta="0" mouse_opaque="true" name="EmBroadcastPointers-toggle" control_name="EmeraldBroadcastPointers" radio_style="false" width="270" />
     </panel>
     <panel border="true" bottom="-580" follows="left|top|right|bottom" height="525"
-		     label="IM/Autoresponse" left="1" mouse_opaque="true" name="Misc" width="418">
+		     label="IM" left="1" mouse_opaque="true" name="Misc" width="418">
       <check_box bottom_delta="-40" enabled="true"
            follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
            label="Announce incoming instant messages" left_delta="10" mouse_opaque="true"
@@ -449,7 +449,7 @@ Recommended Settings are:
            tool_tip="" name="EmeraldCmdLineKeyToName" control_name="EmeraldCmdLineKeyToName" width="200" />
       <text bottom_delta="-18" follows="left|top" font="SansSerifSmall" height="16" left_delta="0" name="loltxt" width="512">
         Offer a teleport to your location
-(usage: cmd name) (ex:cmd First Last)
+(usage: cmd key) (ex:cmd avatar-key)
       </text>
       <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom_delta="-30"
            follows="left|top" font="SansSerifSmall" height="20" left_delta="0"
@@ -567,10 +567,10 @@ Recommended Settings are:
              mouse_opaque="false" name="text_box" v_pad="0" width="150">
         Texture
       </text>
-      <view_border bevel_style="none" border_thickness="1" bottom_delta="-78" follows="top|left" height="70" left="5" name="SizeBorder" width="120" />
-      <view_border bevel_style="none" border_thickness="1" bottom_delta="-20" follows="top|left" height="90" left_delta="120" name="SettingsBorder" width="120" />
+      <view_border bevel_style="none" border_thickness="1" bottom_delta="-98" follows="top|left" height="90" left="5" name="SizeBorder" width="120" />
+      <view_border bevel_style="none" border_thickness="1" bottom_delta="-0" follows="top|left" height="90" left_delta="120" name="SettingsBorder" width="120" />
       <view_border bevel_style="none" border_thickness="1" bottom_delta="0" follows="top|left" height="90" left_delta="120" name="TextureBorder" width="245" />
-      <spinner bottom="-90" decimal_digits="5" follows="left|top" height="16"
+      <spinner bottom="-100" decimal_digits="5" follows="left|top" height="16"
 			     increment="0.05" label="X size" label_width="40"
 			     left="10" max_val="10" min_val="0.01" mouse_opaque="true"
 			     name="X size" width="110" control_name="EmeraldBuildPrefs_Xsize" />
@@ -581,7 +581,7 @@ Recommended Settings are:
       <spinner bottom_delta="-20" decimal_digits="5" follows="left|top" height="16"
                increment="0.05" label="Z size" label_width="40"
                left_delta="0" max_val="10" min_val="0.01" mouse_opaque="true"
-               name="Y size" width="110" control_name="EmeraldBuildPrefs_Zsize" />
+               name="Z size" width="110" control_name="EmeraldBuildPrefs_Zsize" />
       <check_box bottom="-90" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
         label="Phantom" left="140" mouse_opaque="true"
         name="EmPhantomToggle" radio_style="false" width="100" control_name="EmeraldBuildPrefs_Phantom" />
@@ -635,7 +635,7 @@ Recommended Settings are:
           High
         </combo_item>
       </combo_box>
-      <check_box bottom_delta="-40" enabled="false"
+      <check_box bottom_delta="-30" enabled="false"
            follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
            label="Embed an item into the newly created object" left="20" mouse_opaque="true"
            name="EmeraldBuildPrefs_EmbedItem" radio_style="false" width="270" />
@@ -659,10 +659,38 @@ Recommended Settings are:
 			     width="400">
         Currently set to: ITEM
       </text>
-      <check_box bottom_delta="-40" enabled="true"
+      <view_border bevel_style="none" border_thickness="1" bottom_delta="-110" follows="top|left" height="85" left="5" name="PivotBorder" width="130" />
+      <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+             bottom_delta="90" drop_shadow_visible="true" enabled="true" follows="left|top"
+             font="SansSerifSmall" h_pad="0" halign="left" height="10" left_delta="30"
+             mouse_opaque="false" name="text_box" v_pad="0" width="150">
+        Pivot Point
+      </text>
+      <spinner bottom_delta="-25" decimal_digits="5" follows="left|top" height="16"
+			     increment="0.05" label="X pos" label_width="40"
+			     left="10" mouse_opaque="true" max_val="256" min_val="-256"
+			     name="X pos" width="120" control_name="EmeraldBuildPrefs_PivotX" />
+      <spinner bottom_delta="-20" decimal_digits="5" follows="left|top" height="16"
+               increment="0.05" label="Y pos" label_width="40"
+               left_delta="0" mouse_opaque="true" max_val="256" min_val="-256"
+               name="Y pos" width="120" control_name="EmeraldBuildPrefs_PivotY" />
+      <spinner bottom_delta="-20" decimal_digits="5" follows="left|top" height="16"
+               increment="0.05" label="Z pos" label_width="40"
+               left_delta="0" mouse_opaque="true" max_val="256" min_val="-256"
+               name="Z pos" width="120" control_name="EmeraldBuildPrefs_PivotZ" />
+      <check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
+        label="Values are percent" left_delta="-5" mouse_opaque="true"
+	tool_tip="Default settings are Percentages and every axis set at 50"
+        name="EmPivotPercToggle" radio_style="false" width="100" control_name="EmeraldBuildPrefs_PivotIsPercent" />
+      <check_box bottom_delta="60" enabled="true"
            follows="left|top" font="SansSerifSmall" height="16" initial_value="true"
-           label="Enable the highlighting of selected prims" left="10" mouse_opaque="true"
+           label="Enable the highlighting of selected prims (Restart Required)" left_delta="140" mouse_opaque="true"
            name="EmBuildPrefsRenderHighlight_toggle" control_name="EmeraldRenderHighlightSelections" radio_style="false" width="270" />
+      <check_box bottom_delta="-20" enabled="true"
+           follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+           label="Show axis arrow on root prim position" left_delta="0" mouse_opaque="true"
+	tool_tip="Default behaviour is to show the axis on the center of mass of a linkset. If enabled, the axis will be shown on the root prim of the linkset instead."
+           name="EmBuildPrefsActualRoot_toggle" control_name="EmeraldBuildPrefs_ActualRoot" radio_style="false" width="270" />
     </panel>
   </tab_container>
 </panel>

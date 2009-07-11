@@ -29,11 +29,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+using namespace std;
 
 #include "llviewerprecompiledheaders.h"
 
 class lggBeamMaps
 {
 	public:
-		static LLSD  getPic(std::string filename);  
+		lggBeamMaps() { lastFileName = ""; lastData = 0; }
+		~lggBeamMaps() { lastFileName = ""; lastData = 0; }
+	public:
+		LLSD  getPic(std::string filename); 
+	private:
+		std::string lastFileName;
+		LLSD lastData;
 };
+
+extern lggBeamMaps gLggBeamMaps;

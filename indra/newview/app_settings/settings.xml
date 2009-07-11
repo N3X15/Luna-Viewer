@@ -12054,6 +12054,17 @@
         <integer>0</integer>
       </array>
     </map>
+    <key>EmeraldBroadcastPointers</key>
+    <map>
+      <key>Comment</key>
+      <string>Disable to prevent broadcasting your Lookat and Pointat target (Enabled by default)</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
     <key>EmeraldDoubleClickZOffset</key>
     <map>
       <key>Comment</key>
@@ -12316,7 +12327,7 @@
       <key>Type</key>
       <string>String</string>
       <key>Value</key>
-      <string>gth</string>
+      <string>/gth</string>
     </map>
     <key>EmeraldCmdLinePos</key>
     <map>
@@ -12327,7 +12338,7 @@
       <key>Type</key>
       <string>String</string>
       <key>Value</key>
-      <string>gtp</string>
+      <string>/gtp</string>
     </map>
     <key>EmeraldCmdLineGround</key>
     <map>
@@ -12338,7 +12349,7 @@
       <key>Type</key>
       <string>String</string>
       <key>Value</key>
-      <string>flr</string>
+      <string>/flr</string>
     </map>
     <key>EmeraldCmdLineTeleportHome</key>
     <map>
@@ -12349,7 +12360,7 @@
       <key>Type</key>
       <string>String</string>
       <key>Value</key>
-      <string>tph</string>
+      <string>/tph</string>
     </map>
     <key>EmeraldCmdLineRezPlatform</key>
     <map>
@@ -12360,7 +12371,7 @@
       <key>Type</key>
       <string>String</string>
       <key>Value</key>
-      <string>rezplat</string>
+      <string>/rezplat</string>
     </map>
     <key>EmeraldCmdLineMapTo</key>
     <map>
@@ -12371,7 +12382,7 @@
       <key>Type</key>
       <string>String</string>
       <key>Value</key>
-      <string>mapto</string>
+      <string>/mapto</string>
     </map>
     <key>EmeraldCmdLineDrawDistance</key>
     <map>
@@ -12382,7 +12393,7 @@
       <key>Type</key>
       <string>String</string>
       <key>Value</key>
-      <string>dd</string>
+      <string>/dd</string>
     </map>
     <key>EmeraldCmdTeleportToCam</key>
     <map>
@@ -12393,7 +12404,7 @@
       <key>Type</key>
       <string>String</string>
       <key>Value</key>
-      <string>tp2cam</string>
+      <string>/tp2cam</string>
     </map>
     <key>EmeraldCmdLineKeyToName</key>
     <map>
@@ -12404,7 +12415,7 @@
       <key>Type</key>
       <string>String</string>
       <key>Value</key>
-      <string>key2name</string>
+      <string>/key2name</string>
     </map>
     <key>EmeraldCmdLineOfferTp</key>
     <map>
@@ -12415,7 +12426,7 @@
       <key>Type</key>
       <string>String</string>
       <key>Value</key>
-      <string>offertp</string>
+      <string>/offertp</string>
     </map>
     <key>EmeraldMapToKeepPos</key>
     <map>
@@ -12437,7 +12448,18 @@
       <key>Type</key>
       <string>String</string>
       <key>Value</key>
-      <string>calcexpr</string>
+      <string>/calc</string>
+    </map>
+    <key>EmeraldCmdLineTP2</key>
+    <map>
+      <key>Comment</key>
+      <string>Teleport to a person by name, partials work.</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>String</string>
+      <key>Value</key>
+      <string>/tp2</string>
     </map>
     <key>EmeraldDoubleClickWearInventoryObjects</key>
     <map>
@@ -12482,6 +12504,28 @@
       <string>Boolean</string>
       <key>Value</key>
       <integer>0</integer>
+    </map>
+    <key>EmeraldBeamShape</key>
+    <map>
+      <key>Comment</key>
+      <string>Beam file for the shape of your beam</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>String</string>
+      <key>Value</key>
+      <string>emerald.xml</string>
+    </map>
+    <key>EmeraldBeamShapeScale</key>
+    <map>
+      <key>Comment</key>
+      <string>How Big You Want to let the beam be</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>F32</string>
+      <key>Value</key>
+      <real>1.0</real>
     </map>
     <key>EmeraldRainbowBeam</key>
     <map>
@@ -12592,6 +12636,17 @@
       <string>Boolean</string>
       <key>Value</key>
       <integer>1</integer>
+    </map>
+    <key>EmeraldBeamUpdatesPerSecond</key>
+    <map>
+      <key>Comment</key>
+      <string>How many times you want your beam to update per second</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>F32</string>
+      <key>Value</key>
+      <real>4.0</real>
     </map>
     <key>EmeraldChangeColorOnClient</key>
     <map>
@@ -12887,7 +12942,7 @@
       <key>Type</key>
       <string>String</string>
       <key>Value</key>
-      <string>c05b278c-c8e3-821b-c326-420822fba9da</string>
+      <string>89556747-24cb-43ed-920b-47caed15465f</string>
     </map>
     <key>EmeraldBuildPrefs_Alpha</key>
     <map>
@@ -12933,9 +12988,71 @@
       <key>Value</key>
       <string>None</string>
     </map>
-    
-    
-
-
+    <key>EmeraldBuildPrefs_PivotX</key>
+    <map>
+      <key>Comment</key>
+      <string>Pivot point on the X axis</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>F32</string>
+      <key>Value</key>
+      <real>50</real>
+    </map>
+    <key>EmeraldBuildPrefs_PivotY</key>
+    <map>
+      <key>Comment</key>
+      <string>Pivot point on the Y axis</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>F32</string>
+      <key>Value</key>
+      <real>50</real>
+    </map>
+    <key>EmeraldBuildPrefs_PivotZ</key>
+    <map>
+      <key>Comment</key>
+      <string>Pivot point on the Z axis</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>F32</string>
+      <key>Value</key>
+      <real>50</real>
+    </map>
+    <key>EmeraldBuildPrefs_PivotIsPercent</key>
+    <map>
+      <key>Comment</key>
+      <string>Consider the Pivot points values as a percentage</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
+    <key>EmeraldBuildPrefs_ActualRoot</key>
+    <map>
+      <key>Comment</key>
+      <string>Show the axis on the actual root of a linkset instead of mass center</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
+    <key>EmeraldIgnoreSimulatorCameraConstraints</key>
+    <map>
+      <key>Comment</key>
+      <string>Ignores the 'push' the simulator applies to your camera to keep it out of objects.(Requires restart to work correctly)</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
   </map>
 </llsd>

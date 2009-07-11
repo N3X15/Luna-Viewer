@@ -807,6 +807,11 @@ void upload_new_resource(const std::string& src_filename, std::string name,
 		asset_type = LLAssetType::AT_SOUND;
 		filename = src_filename;
 	}
+	else if (exten == "j2k")
+	{
+		asset_type = LLAssetType::AT_TEXTURE;
+		filename = src_filename;
+	}
 	else
 	{
 		// Unknown extension

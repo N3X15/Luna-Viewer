@@ -351,11 +351,45 @@ LLVector3 LLManip::getSavedPivotPoint() const
 
 LLVector3 LLManip::getPivotPoint()
 {
-	if (mObjectSelection->getFirstObject() && mObjectSelection->getObjectCount() == 1 && mObjectSelection->getSelectType() != SELECT_TYPE_HUD)
+	LLVector3 pos;
+	LLVector3 scale;
+	LLQuaternion rot;// = mObjectSelection->getFirstObject()->getRotation();
+	if (mObjectSelection->getFirstRootObject(TRUE) && (mObjectSelection->getObjectCount() == 1 || gSavedSettings.getBOOL("EmeraldBuildPrefs_ActualRoot")) && mObjectSelection->getSelectType() != SELECT_TYPE_HUD)
 	{
-		return mObjectSelection->getFirstObject()->getPivotPositionAgent();
+		pos = mObjectSelection->getFirstRootObject(TRUE)->getPivotPositionAgent();
+		scale = mObjectSelection->getFirstRootObject(TRUE)->getScale();
+		rot = mObjectSelection->getFirstRootObject(TRUE)->getRotation();
+	}else
+	{
+		pos = LLSelectMgr::getInstance()->getBBoxOfSelection().getCenterAgent();
+		scale = LLSelectMgr::getInstance()->getBBoxOfSelection().getExtentLocal();
+		rot = LLSelectMgr::getInstance()->getBBoxOfSelection().getRotation();
 	}
-	return LLSelectMgr::getInstance()->getBBoxOfSelection().getCenterAgent();
+	if(gSavedSettings.getBOOL("EmeraldBuildPrefs_PivotIsPercent"))
+	{
+		//pos[VX] = pos[VX] + (scale[VX]*(gSavedSettings.getF32("EmeraldBuildPrefs_PivotX")*0.01));
+		//pos[VY] = pos[VY] + (scale[VY]*(gSavedSettings.getF32("EmeraldBuildPrefs_PivotY")*0.01));
+		//pos[VZ] = pos[VZ] + (scale[VZ]*(gSavedSettings.getF32("EmeraldBuildPrefs_PivotZ")*0.01));
+		LLVector3 add(
+			(-scale[VX]*0.5) + (scale[VX]*(gSavedSettings.getF32("EmeraldBuildPrefs_PivotX")*0.01)),
+			(-scale[VY]*0.5) + (scale[VY]*(gSavedSettings.getF32("EmeraldBuildPrefs_PivotY")*0.01)),
+			(-scale[VZ]*0.5) + (scale[VZ]*(gSavedSettings.getF32("EmeraldBuildPrefs_PivotZ")*0.01)));
+		add = add * rot;
+		pos = pos + add;
+	}else
+	{
+		//pos[VX] = pos[VX] + gSavedSettings.getF32("EmeraldBuildPrefs_PivotX");
+		//pos[VY] = pos[VY] + gSavedSettings.getF32("EmeraldBuildPrefs_PivotY");
+		//pos[VZ] = pos[VZ] + gSavedSettings.getF32("EmeraldBuildPrefs_PivotZ");
+		LLVector3 add(
+			gSavedSettings.getF32("EmeraldBuildPrefs_PivotX"),
+			gSavedSettings.getF32("EmeraldBuildPrefs_PivotY"),
+			gSavedSettings.getF32("EmeraldBuildPrefs_PivotZ"));
+		add = add * rot;
+		pos = pos + add;
+	}
+	//pos = pos * rot;
+	return pos;
 }
 
 

@@ -599,7 +599,7 @@ void LLFloaterAvatarList::updateAvatarList()
 				else
 				{
 					// Avatar not there yet, add it
-					BOOL isLinden = ( strcmp(avatarp->getNVPair("LastName")->getString(), "Linden") == 0 || last == "Linden" );
+					BOOL isLinden = ( strcmp(last.c_str(), "Linden") == 0 || last == "Linden" );
 
 					LLAvatarListEntry entry(avid, name, position, isLinden);
 					mAvatars[avid] = entry;

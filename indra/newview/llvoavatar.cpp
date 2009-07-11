@@ -3322,7 +3322,7 @@ void LLVOAvatar::idleUpdateNameTag(const LLVector3& root_pos_last)
 				}
 				if(!gSavedSettings.getBOOL("EmeraldClientTagDisplay"))
 				{
-					client = "Invalid";
+					client = "";
 				}
 				//else avatar_name_color = gColors.getColor( "AvatarNameColor" );
 				//avatar_name_color.clamp();
@@ -3758,6 +3758,27 @@ void LLVOAvatar::idleUpdateTractorBeam()
 			}
 
 		}
+		/*F32 lggUpdatesPerSecond = gSavedSettings.getF32("EmeraldBeamUpdatesPerSecond");
+		LLSD mydata;
+		F32 scale=0;
+		LLSD myPicture;
+		if(gSavedSettings.getBOOL("EmeraldEmeraldBeam"))
+		{
+				std::string filename =gDirUtilp->getAppRODataDir() 
+					+gDirUtilp->getDirDelimiter()
+					+"beams" 
+					+gDirUtilp->getDirDelimiter()
+					+gSavedSettings.getString("EmeraldBeamShape");
+			
+				mydata = gLggBeamMaps.getPic(filename);
+				scale = (F32)mydata["scale"].asReal()/10.0f;
+				myPicture = mydata["data"];	
+				lggUpdatesPerSecond /= (myPicture.size()*0.1f);
+
+		}
+		F32 durration = (1.0f)/lggUpdatesPerSecond;
+		
+		if (mBeamTimer.getElapsedTimeF32() > durration*0.8f)*/
 		if (mBeamTimer.getElapsedTimeF32() > 0.25f)
 		{
 			
@@ -3767,14 +3788,7 @@ void LLVOAvatar::idleUpdateTractorBeam()
 			//LGG Picture Projection
 			if(gSavedSettings.getBOOL("EmeraldEmeraldBeam"))
 			{
-				std::string filename =gDirUtilp->getAppRODataDir() 
-					+gDirUtilp->getDirDelimiter()
-					+"beams" 
-					+gDirUtilp->getDirDelimiter()
-					+gSavedSettings.getString("EmeraldBeamShape");
-	
-				LLSD mydata = lggBeamMaps::getPic(filename);
-				F32 scale = (F32)mydata["scale"].asReal()/10.0f;
+				/*std::string filename =gDirUtilp->getAppRODataDir() 
 				LLSD myPicture = mydata["data"];		
 				mBeams.clear();
 				for(int i = 0; i < myPicture.size(); i++)
@@ -3798,10 +3812,10 @@ void LLVOAvatar::idleUpdateTractorBeam()
 					mBeams[i]->setTargetObject(mBeam->getTargetObject());
 					mBeams[i]->setSourceObject(mBeam->getSourceObject());
 					mBeams[i]->setNeedsSendToSim(mBeam->getNeedsSendToSim());
+					//mBeams[i]->setDuration(durration);
 
+				}*/
 				}
-			}
-			
 		}
 	}
 }
