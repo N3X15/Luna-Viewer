@@ -49,7 +49,7 @@ class lggBeamMaps
 		F32		setUpAndGetDuration();
 		void	fireCurrentBeams(LLPointer<LLHUDEffectSpiral>);
 		void	forceUpdate();
-		std::vector<std::string> lggBeamMaps::getFileNames();
+		std::vector<std::string> getFileNames();
 	private:
 		LLSD	getPic(std::string filename); 
 		std::string lastFileName;
