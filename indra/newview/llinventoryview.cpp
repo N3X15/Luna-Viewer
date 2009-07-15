@@ -45,6 +45,7 @@
 #include "llradiogroup.h"
 #include "llspinctrl.h"
 #include "lltextbox.h"
+#include "llcombobox.h"
 #include "llui.h"
 
 #include "llfirstuse.h"
@@ -560,6 +561,13 @@ void LLInventoryView::init(LLInventoryModel* inventory)
 		mSearchEditor->setSearchCallback(onSearchEdit, this);
 	}
 
+	mQuickFilterCombo = getChild<LLComboBox>("Quick Filter");
+
+	if (mQuickFilterCombo)
+	{
+		mQuickFilterCombo->setCommitCallback(onQuickFilterCommit);
+	}
+
 	sActiveViews.put(this);
 
 	gInventory.addObserver(this);
@@ -639,6 +647,12 @@ void LLInventoryView::draw()
 	{
 		mSearchEditor->setText(mActivePanel->getFilterSubString());
 	}
+
+	if (mActivePanel && mQuickFilterCombo)
+	{
+		refreshQuickFilter( mQuickFilterCombo );
+	}
+
 	LLFloater::draw();
 }
 
@@ -1017,6 +1031,236 @@ void LLInventoryView::onSearchEdit(const std::string& search_string, void* user_
 
 	// set new filter string
 	self->mActivePanel->setFilterSubString(uppercase_search_string);
+}
+
+//static
+void LLInventoryView::onQuickFilterCommit(LLUICtrl* ctrl, void* user_data)
+{
+
+	LLComboBox* quickfilter = (LLComboBox*)ctrl;
+
+
+	LLInventoryView* view = (LLInventoryView*)(quickfilter->getParent());
+	if (!view->mActivePanel)
+	{
+		return;
+	}
+
+
+	std::string item_type = quickfilter->getSimple();
+	U32 filter_type;
+
+	if (view->getString("filter_type_animation") == item_type)
+	{
+		filter_type = 0x1 << LLInventoryType::IT_ANIMATION;
+	}
+
+	else if (view->getString("filter_type_callingcard") == item_type)
+	{
+		filter_type = 0x1 << LLInventoryType::IT_CALLINGCARD;
+	}
+
+	else if (view->getString("filter_type_wearable") == item_type)
+	{
+		filter_type = 0x1 << LLInventoryType::IT_WEARABLE;
+	}
+
+	else if (view->getString("filter_type_gesture") == item_type)
+	{
+		filter_type = 0x1 << LLInventoryType::IT_GESTURE;
+	}
+
+	else if (view->getString("filter_type_landmark") == item_type)
+	{
+		filter_type = 0x1 << LLInventoryType::IT_LANDMARK;
+	}
+
+	else if (view->getString("filter_type_notecard") == item_type)
+	{
+		filter_type = 0x1 << LLInventoryType::IT_NOTECARD;
+	}
+
+	else if (view->getString("filter_type_object") == item_type)
+	{
+		filter_type = 0x1 << LLInventoryType::IT_OBJECT;
+	}
+
+	else if (view->getString("filter_type_script") == item_type)
+	{
+		filter_type = 0x1 << LLInventoryType::IT_LSL;
+	}
+
+	else if (view->getString("filter_type_sound") == item_type)
+	{
+		filter_type = 0x1 << LLInventoryType::IT_SOUND;
+	}
+
+	else if (view->getString("filter_type_texture") == item_type)
+	{
+		filter_type = 0x1 << LLInventoryType::IT_TEXTURE;
+	}
+
+	else if (view->getString("filter_type_snapshot") == item_type)
+	{
+		filter_type = 0x1 << LLInventoryType::IT_SNAPSHOT;
+	}
+
+	else if (view->getString("filter_type_custom") == item_type)
+	{
+		// When they select custom, show the floater then return
+		if( !(view->filtersVisible(view)) )
+		{
+			view->toggleFindOptions();
+		}
+		return;
+	}
+
+	else if (view->getString("filter_type_all") == item_type)
+	{
+		// Show all types
+		filter_type = 0xffffffff;
+	}
+
+	else
+	{
+		llwarns << "Ignoring unknown filter: " << item_type << llendl;
+		return;
+	}
+
+	view->mActivePanel->setFilterTypes( filter_type );
+
+
+	// Force the filters window to update itself, if it's open.
+	LLInventoryViewFinder* finder = view->getFinder();
+	if( finder )
+	{
+		finder->updateElementsFromFilter();
+	}
+
+	// llinfos << "Quick Filter: " << item_type << llendl;
+
+}
+
+
+
+//static
+void LLInventoryView::refreshQuickFilter(LLUICtrl* ctrl)
+{
+
+	LLInventoryView* view = (LLInventoryView*)(ctrl->getParent());
+	if (!view->mActivePanel)
+	{
+		return;
+	}
+
+	LLComboBox* quickfilter = view->getChild<LLComboBox>("Quick Filter");
+	if (!quickfilter)
+	{
+		return;
+	}
+
+
+	U32 filter_type = view->mActivePanel->getFilterTypes();
+
+
+  // Mask to extract only the bit fields we care about.
+  // *TODO: There's probably a cleaner way to construct this mask.
+  U32 filter_mask = 0;
+  filter_mask |= (0x1 << LLInventoryType::IT_ANIMATION);
+  filter_mask |= (0x1 << LLInventoryType::IT_CALLINGCARD);
+  filter_mask |= (0x1 << LLInventoryType::IT_WEARABLE);
+  filter_mask |= (0x1 << LLInventoryType::IT_GESTURE);
+  filter_mask |= (0x1 << LLInventoryType::IT_LANDMARK);
+  filter_mask |= (0x1 << LLInventoryType::IT_NOTECARD);
+  filter_mask |= (0x1 << LLInventoryType::IT_OBJECT);
+  filter_mask |= (0x1 << LLInventoryType::IT_LSL);
+  filter_mask |= (0x1 << LLInventoryType::IT_SOUND);
+  filter_mask |= (0x1 << LLInventoryType::IT_TEXTURE);
+  filter_mask |= (0x1 << LLInventoryType::IT_SNAPSHOT);
+
+
+  filter_type &= filter_mask;
+
+
+  //llinfos << "filter_type: " << filter_type << llendl;
+
+	std::string selection;
+
+
+	if (filter_type == filter_mask)
+	{
+		selection = view->getString("filter_type_all");
+	}
+
+	else if (filter_type == (0x1 << LLInventoryType::IT_ANIMATION))
+	{
+		selection = view->getString("filter_type_animation");
+	}
+
+	else if (filter_type == (0x1 << LLInventoryType::IT_CALLINGCARD))
+	{
+		selection = view->getString("filter_type_callingcard");
+	}
+
+	else if (filter_type == (0x1 << LLInventoryType::IT_WEARABLE))
+	{
+		selection = view->getString("filter_type_wearable");
+	}
+
+	else if (filter_type == (0x1 << LLInventoryType::IT_GESTURE))
+	{
+		selection = view->getString("filter_type_gesture");
+	}
+
+	else if (filter_type == (0x1 << LLInventoryType::IT_LANDMARK))
+	{
+		selection = view->getString("filter_type_landmark");
+	}
+
+	else if (filter_type == (0x1 << LLInventoryType::IT_NOTECARD))
+	{
+		selection = view->getString("filter_type_notecard");
+	}
+
+	else if (filter_type == (0x1 << LLInventoryType::IT_OBJECT))
+	{
+		selection = view->getString("filter_type_object");
+	}
+
+	else if (filter_type == (0x1 << LLInventoryType::IT_LSL))
+	{
+		selection = view->getString("filter_type_script");
+	}
+
+	else if (filter_type == (0x1 << LLInventoryType::IT_SOUND))
+	{
+		selection = view->getString("filter_type_sound");
+	}
+
+	else if (filter_type == (0x1 << LLInventoryType::IT_TEXTURE))
+	{
+		selection = view->getString("filter_type_texture");
+	}
+
+	else if (filter_type == (0x1 << LLInventoryType::IT_SNAPSHOT))
+	{
+		selection = view->getString("filter_type_snapshot");
+	}
+
+	else
+	{
+		selection = view->getString("filter_type_custom");
+	}
+
+
+	// Select the chosen item by label text
+	BOOL result = quickfilter->setSimple( (selection) );
+
+  if( !result )
+  {
+    llinfos << "The item didn't exist: " << selection << llendl;
+  }
+
 }
 
 

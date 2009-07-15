@@ -3008,12 +3008,13 @@ void process_teleport_start(LLMessageSystem *msg, void**)
 
 	// Freeze the UI and show progress bar
 	// Note: could add data here to differentiate between normal teleport and death.
-
 	if( gAgent.getTeleportState() == LLAgent::TELEPORT_NONE )
 	{
 		gTeleportDisplay = TRUE;
 		gAgent.setTeleportState( LLAgent::TELEPORT_START );
-		make_ui_sound("UISndTeleportOut");
+		if(gSavedSettings.getBOOL("EmeraldPlayTpSound")) {
+			make_ui_sound("UISndTeleportOut");
+		}
 		
 		// Don't call LLFirstUse::useTeleport here because this could be
 		// due to being killed, which would send you home, not to a Telehub

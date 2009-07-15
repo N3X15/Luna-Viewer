@@ -94,6 +94,8 @@ BOOL LLPanelPermissions::postBuild()
 
 	this->childSetAction("button deed",LLPanelPermissions::onClickDeedToGroup,this);
 
+	this->childSetAction("button cpy_key",LLPanelPermissions::onClickCopyObjKey,this);
+
 	this->childSetCommitCallback("checkbox allow everyone move",LLPanelPermissions::onCommitEveryoneMove,this);
 
 	this->childSetCommitCallback("checkbox allow everyone copy",LLPanelPermissions::onCommitEveryoneCopy,this);
@@ -953,6 +955,18 @@ bool callback_deed_to_group(const LLSD& notification, const LLSD& response)
 void LLPanelPermissions::onClickDeedToGroup(void* data)
 {
 	LLNotifications::instance().add( "DeedObjectToGroup", LLSD(), LLSD(), callback_deed_to_group);
+}
+
+void LLPanelPermissions::onClickCopyObjKey(void* data)
+{
+	//NAMESHORT - Was requested on the forums, was going to integrate a textbox with the ID, but due to lack of room on the floater,
+	//We now have a copy button :>
+	LLViewerObject* object = LLSelectMgr::getInstance()->getSelection()->getFirstRootObject();
+	if(!object) return;
+
+	char buffer[UUID_STR_LENGTH];		/*Flawfinder: ignore*/
+	object->getID().toString(buffer);
+	gViewerWindow->mWindow->copyTextToClipboard(utf8str_to_wstring(buffer));
 }
 
 ///----------------------------------------------------------------------------

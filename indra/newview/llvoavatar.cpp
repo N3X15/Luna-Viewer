@@ -3623,7 +3623,8 @@ void LLVOAvatar::idleUpdateTractorBeam()
 	
 	LLColor4U rgb = LLColor4U(gAgent.getEffectColor());
 	
-	if(gSavedSettings.getBOOL("EmeraldRainbowBeam"))
+	BOOL colorShifting = gSavedSettings.getBOOL("EmeraldRainbowBeam");
+	if(colorShifting)
 	{
 		F32 r, g, b;
 		LLColor4 output;
@@ -3756,7 +3757,9 @@ void LLVOAvatar::idleUpdateTractorBeam()
 			mBeam->setNeedsSendToSim(TRUE);
 			mBeamTimer.reset();
 			//LGG Picture Projection
-			gLggBeamMaps.fireCurrentBeams(mBeam);
+			LLColor4U shift = LLColor4U::black;
+			if(colorShifting) shift = rgb;
+			gLggBeamMaps.fireCurrentBeams(mBeam,shift );
 		}
 	}
 }

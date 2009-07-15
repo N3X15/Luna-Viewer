@@ -138,9 +138,10 @@ protected:
 public:
 	LLColor4		mBackgroundColor;
 
-	static LLUIImagePtr	sAvatarYouSmallImage;
 	static LLUIImagePtr	sAvatarSmallImage;
-	static LLUIImagePtr	sAvatarLargeImage;
+	static LLUIImagePtr	sAvatarYouImage;
+	static LLUIImagePtr	sAvatarYouLargeImage;
+	static LLUIImagePtr	sAvatarLevelImage;
 	static LLUIImagePtr	sAvatarAboveImage;
 	static LLUIImagePtr	sAvatarBelowImage;
 	static LLUIImagePtr	sTelehubImage;

@@ -787,6 +787,7 @@ void LLFloaterAvatarList::refreshAvatarList()
 
 		element["columns"][LIST_AVATAR_ICON]["column"] = "avatar_icon";
 		element["columns"][LIST_AVATAR_ICON]["type"] = "text";
+		element["columns"][LIST_AVATAR_NAME]["color"] = gColors.getColor("DefaultListText").getValue();
 		if ( ent->isMarked() )
 		{
 			element["columns"][LIST_AVATAR_ICON]["type"] = "icon";
@@ -930,7 +931,7 @@ void LLFloaterAvatarList::refreshAvatarList()
 				break;
 			case ACTIVITY_PARTICLES:
 				// TODO: Replace with something better
-				icon = /*gViewerArt.getString(*/"account_id_blue.tga"/*)*/;
+				icon = /*gViewerArt.getString(*/"account_id_orange.tga"/*)*/;
 				break;
 			case ACTIVITY_NEW:
 				icon = /*gViewerArt.getString(*/"avatar_new.tga"/*)*/;
@@ -1308,7 +1309,7 @@ LLColor4 LLFloaterAvatarList::getAvatarColor(LLAvatarListEntry *ent, F32 distanc
 	switch(type)
 	{
 		case CT_NONE:
-			return LLColor4::black;
+			return gColors.getColor("DefaultListText").getValue();
 			break;
 		case CT_DISTANCE:
 			if ( distance <= 10.0f )

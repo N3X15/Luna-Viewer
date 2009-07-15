@@ -42,6 +42,8 @@ endif (EXISTS ${CMAKE_SOURCE_DIR}/Server.cmake)
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
   set(WINDOWS ON BOOL FORCE)
+  set(COMPILE_OTR ON BOOL FORCE)
+  set(USE_OTR 0)
   set(ARCH i686)
   set(LL_ARCH ${ARCH}_win32)
   set(LL_ARCH_DIR ${ARCH}-win32)
@@ -49,6 +51,8 @@ endif (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
   set(LINUX ON BOOl FORCE)
+  set(COMPILE_OTR 0)
+  set(USE_OTR 0)
   execute_process(COMMAND uname -m COMMAND sed s/i.86/i686/
                   OUTPUT_VARIABLE ARCH OUTPUT_STRIP_TRAILING_WHITESPACE)
   set(LL_ARCH ${ARCH}_linux)
@@ -57,6 +61,8 @@ endif (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
   set(DARWIN 1)
+  set(COMPILE_OTR 0)
+  set(USE_OTR 0)
   # set this dynamically from the build system now -
   # NOTE: wont have a distributable build unless you add this on the configure line with:
   # -DCMAKE_OSX_ARCHITECTURES:STRING='i386;ppc'

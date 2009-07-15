@@ -465,6 +465,7 @@ void LLFloaterAvatarPicker::processAvatarPickerReply(LLMessageSystem* msg, void*
 		LLSD element;
 		element["id"] = avatar_id; // value
 		element["columns"][0]["value"] = avatar_name;
+		element["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
 		search_results->addElement(element);
 	}
 

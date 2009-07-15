@@ -374,7 +374,7 @@ LLVOSky::LLVOSky(const LLUUID &id, const LLPCode pcode, LLViewerRegion *regionp)
 	mFogRatio = 1.2f;
 
 	mSun.setIntensity(SUN_INTENSITY);
-	mMoon.setIntensity(0.1f * SUN_INTENSITY);
+	mMoon.setIntensity(0.3f * SUN_INTENSITY);
 
 	mSunTexturep = gImageList.getImage(gSunTextureID, TRUE, TRUE);
 	mSunTexturep->setAddressMode(LLTexUnit::TAM_CLAMP);

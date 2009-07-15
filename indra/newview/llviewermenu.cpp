@@ -377,7 +377,6 @@ void run_vectorize_perf_test(void *)
 {
 	gSavedSettings.setBOOL("VectorizePerfTest", TRUE);
 }
-
 // Debug UI
 void handle_web_search_demo(void*);
 void handle_web_browser_test(void*);
@@ -764,6 +763,7 @@ void init_client_menu(LLMenuGL* menu)
 										(void*)gDebugView->mMemoryView,
 										  '0', MASK_CONTROL|MASK_SHIFT ) );
 #endif
+		
 		sub->appendSeparator();
 		
 		// Debugging view for unified notifications
@@ -996,7 +996,7 @@ void init_client_menu(LLMenuGL* menu)
 										&menu_check_control,
 										(void*)"SaveMinidump"));
 
-	menu->append(new LLMenuItemCallGL("Debug Settings...", LLFloaterSettingsDebug::show, NULL, NULL));
+	menu->append(new LLMenuItemCallGL("Debug Settings...", LLFloaterSettingsDebug::show, NULL, NULL, 'S', MASK_ALT | MASK_CONTROL));
 	menu->append(new LLMenuItemCheckGL("View Admin Options", &handle_admin_override_toggle, NULL, &check_admin_override, NULL, 'V', MASK_CONTROL | MASK_ALT));
 
 	menu->append(new LLMenuItemCallGL("Request Admin Status", 
@@ -1038,6 +1038,7 @@ void init_debug_world_menu(LLMenuGL* menu)
 
 void handle_export_menus_to_xml(void*)
 {
+
 	LLFilePicker& picker = LLFilePicker::instance();
 	if(!picker.getSaveFile(LLFilePicker::FFSAVE_XML))
 	{
@@ -1271,7 +1272,7 @@ void init_debug_rendering_menu(LLMenuGL* menu)
 	sub_menu->append(new LLMenuItemCheckGL("Sculpt",	&LLPipeline::toggleRenderDebug, NULL,
 													&LLPipeline::toggleRenderDebugControl,
 													(void*)LLPipeline::RENDER_DEBUG_SCULPTED));
-
+		
 	sub_menu->append(new LLMenuItemCallGL("Vectorize Perf Test", &run_vectorize_perf_test));
 
 	sub_menu = new LLMenuGL("Render Tests");
@@ -1872,7 +1873,7 @@ class LLViewCommunicate : public view_listener_t
 {
 	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
 	{
-        if (LLFloaterChatterBox::getInstance()->getFloaterCount() == 0)
+		if (LLFloaterChatterBox::getInstance()->getFloaterCount() == 0)
 		{
 			LLFloaterMyFriends::toggleInstance();
 		}
@@ -1880,7 +1881,6 @@ class LLViewCommunicate : public view_listener_t
 		{
 			LLFloaterChatterBox::toggleInstance();
 		}
-		
 		return true;
 	}
 };
@@ -2469,41 +2469,49 @@ bool handle_go_to()
 	LLVector3d pos = LLToolPie::getInstance()->getPick().mPosGlobal;
 	if(!gSavedSettings.getBOOL("EmeraldDoubleClickTeleport"))
 	{
-// [RLVa] - Alternate: Emerald-206
-	// TODO-RLVa: need to decide whether or not "double click teleport" should be tied tp @tploc=n or to @sittp=n
-	if ( (rlv_handler_t::isEnabled()) && (gRlvHandler.hasLockedAttachment()) )
-	{
-		return true;
-	}
-// [/RLVa]
- 
-	// JAMESDEBUG try simulator autopilot
-	std::vector<std::string> strings;
-	std::string val;
-	val = llformat("%g", pos.mdV[VX]);
-	strings.push_back(val);
-	val = llformat("%g", pos.mdV[VY]);
-	strings.push_back(val);
-	val = llformat("%g", pos.mdV[VZ]);
-	strings.push_back(val);
-	send_generic_message("autopilot", strings);
+		// [RLVa] - Alternate: Emerald-206
+		// TODO-RLVa: need to decide whether or not "double click teleport" should be tied tp @tploc=n or to @sittp=n
+		if ( (rlv_handler_t::isEnabled()) && (gRlvHandler.hasLockedAttachment()) )
+		{
+			return true;
+		}
+		// [/RLVa]
+	 
+		// JAMESDEBUG try simulator autopilot
+		std::vector<std::string> strings;
+		std::string val;
+		val = llformat("%g", pos.mdV[VX]);
+		strings.push_back(val);
+		val = llformat("%g", pos.mdV[VY]);
+		strings.push_back(val);
+		val = llformat("%g", pos.mdV[VZ]);
+		strings.push_back(val);
+		send_generic_message("autopilot", strings);
 
-	LLViewerParcelMgr::getInstance()->deselectLand();
+		LLViewerParcelMgr::getInstance()->deselectLand();
 
-	if (gAgent.getAvatarObject() && !gSavedSettings.getBOOL("AutoPilotLocksCamera"))
-	{
-		gAgent.setFocusGlobal(gAgent.getFocusTargetGlobal(), gAgent.getAvatarObject()->getID());
-	}
-	else 
-	{
-		// Snap camera back to behind avatar
-		gAgent.setFocusOnAvatar(TRUE, ANIMATE);
-	}
+		if (gAgent.getAvatarObject() && !gSavedSettings.getBOOL("AutoPilotLocksCamera"))
+		{
+			gAgent.setFocusGlobal(gAgent.getFocusTargetGlobal(), gAgent.getAvatarObject()->getID());
+		}
+		else 
+		{
+			// Snap camera back to behind avatar
+			gAgent.setFocusOnAvatar(TRUE, ANIMATE);
+		}
 
-	// Could be first use
-	LLFirstUse::useGoTo();
-	}else
+		// Could be first use
+		LLFirstUse::useGoTo();
+	}
+	else
 	{
+		if(gSavedSettings.getBOOL("EmeraldDoubleClickTeleportAvCalc"))
+		{
+			//Chalice - Add half the av height.
+			LLVOAvatar* avatarp = gAgent.getAvatarObject();
+			LLVector3 autoOffSet = avatarp->getScale();
+			pos.mdV[2]=pos.mdV[2] + (autoOffSet.mV[2] / 2.0);
+		}
 		LLVector3d got( 0.0f, 0.0f, gSavedSettings.getF32("EmeraldDoubleClickZOffset"));
 		got += pos;
 		if(gSavedSettings.getBOOL("EmeraldVelocityDoubleClickTeleport"))got += ((LLVector3d)gAgent.getVelocity() * 0.25);
@@ -2722,7 +2730,7 @@ class LLAvatarEject : public view_listener_t
     				LLSD args;
     				args["AVATAR_NAME"] = fullname;
     				LLNotifications::instance().add("EjectAvatarFullname",
-						args,
+    							args,
     							payload,
     							callback_eject);
 				}
@@ -2742,7 +2750,7 @@ class LLAvatarEject : public view_listener_t
     				LLSD args;
     				args["AVATAR_NAME"] = fullname;
     				LLNotifications::instance().add("EjectAvatarFullnameNoBan",
-						args,
+    							args,
     							payload,
     							callback_eject);
 				}
@@ -3124,12 +3132,12 @@ void set_god_level(U8 god_level)
 	// inventory in items may change in god mode
 	gObjectList.dirtyAllObjectInventory();
 
-    if(gViewerWindow)
-    {
-        gViewerWindow->setMenuBackgroundColor(god_level > GOD_NOT,
+        if(gViewerWindow)
+        {
+            gViewerWindow->setMenuBackgroundColor(god_level > GOD_NOT,
             LLViewerLogin::getInstance()->isInProductionGrid());
-    }
-
+        }
+    
         LLSD args;
 	if(god_level > GOD_NOT)
 	{
@@ -3570,10 +3578,10 @@ class LLViewResetView : public view_listener_t
 // Note: extra parameters allow this function to be called from dialog.
 void reset_view_final( BOOL proceed, void* ) 
 {
-	if( !proceed )
-	{
-		return;
-	}
+    if( !proceed )
+    {
+        return;
+    }
 
     gAgent.changeCameraToDefault();
     
@@ -3589,7 +3597,7 @@ void reset_view_final( BOOL proceed, void* )
     }
     if(gSavedSettings.getBOOL("EmeraldResetCamOnEscape"))
     {
-	gAgent.resetView(TRUE, TRUE);
+        gAgent.resetView(TRUE,TRUE);
     }
     else
     {
@@ -4086,7 +4094,7 @@ class LLObjectReturn : public view_listener_t
 // [RLVa:KB] - Version: 1.23.0 | Checked: 2009-06-02 (RLVa-0.2.0g)
 		if ( (rlv_handler_t::isEnabled()) && (!rlvCanDeleteOrReturn()) ) return true;
 // [/RLVa:KB]
-		
+
 		mObjectSelection = LLSelectMgr::getInstance()->getEditSelection();
 
 		LLNotifications::instance().add("ReturnToOwner", LLSD(), LLSD(), boost::bind(&LLObjectReturn::onReturnToOwner, this, _1, _2));
@@ -4188,7 +4196,7 @@ void handle_take()
 		return;
 	}
 // [/RLVa:KB]
-	
+
 	BOOL you_own_everything = TRUE;
 	BOOL locked_but_takeable_object = FALSE;
 	LLUUID category_id;
@@ -4279,10 +4287,9 @@ void handle_take()
 		{
 			params.name("ConfirmObjectTakeLockNoOwn");
 		}
-
+	
 		LLNotifications::instance().add(params);
 	}
-
 	else
 	{
 		LLNotifications::instance().forceResponse(params, 0);
@@ -5935,9 +5942,9 @@ class LLPromptShowURL : public view_listener_t
     			LLSD payload;
     			payload["url"] = url;
     			LLNotifications::instance().add(alert, LLSD(), payload, callback_show_url);
-		}
-		else
-		{
+			}
+			else
+			{
 		        LLWeb::loadURL(url);
 			}
 		}
@@ -6746,14 +6753,14 @@ void handle_compile_queue(std::string to_lang)
 {
 	LLFloaterCompileQueue* queue;
 	if (to_lang == "mono")
-		{
-			queue = LLFloaterCompileQueue::create(TRUE);
-		}
+	{
+		queue = LLFloaterCompileQueue::create(TRUE);
+	}
 	else
-		{
-			queue = LLFloaterCompileQueue::create(FALSE);
-		}
-		queue_actions(queue, "CannotRecompileSelectObjectsNoScripts", "CannotRecompileSelectObjectsNoPermission");
+	{
+		queue = LLFloaterCompileQueue::create(FALSE);
+	}
+	queue_actions(queue, "CannotRecompileSelectObjectsNoScripts", "CannotRecompileSelectObjectsNoPermission");
 }
 
 void handle_reset_selection(void)
@@ -8111,6 +8118,30 @@ class LLEmeraldCheckPhantom: public view_listener_t
 	}
 };
 
+class LLEmeraldToggleDoubleClickTeleport: public view_listener_t
+{
+	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+	{
+			gSavedSettings.setBOOL("EmeraldDoubleClickTeleport",!gSavedSettings.getBOOL("EmeraldDoubleClickTeleport"));
+			BOOL tp = gSavedSettings.getBOOL("EmeraldDoubleClickTeleport");
+			LLChat chat;
+			chat.mSourceType = CHAT_SOURCE_SYSTEM;
+			chat.mText = llformat("%s%s","Doubleclick Teleporting ",(tp ? "On" : "Off"));
+			LLFloaterChat::addChat(chat);
+		return true;
+	}
+
+};
+
+class LLEmeraldCheckDoubleClickTeleport: public view_listener_t
+{
+	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+	{
+		gMenuHolder->findControl(userdata["control"].asString())->setValue(gSavedSettings.getBOOL("EmeraldDoubleClickTeleport"));
+		return true;
+	}
+};
+
 class LLEmeraldToggleSit: public view_listener_t
 {
 	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
@@ -8321,6 +8352,26 @@ class LLWorldWaterSettings : public view_listener_t
 	}
 };
 
+/// Sky Menu callbacks added by Kirstenlee ^^
+class LLWorldSkySettings : public view_listener_t
+{	
+	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+	{
+		// if not there or is hidden, show it
+		if(	!LLFloaterWindLight::isOpen() || 
+			!LLFloaterWindLight::instance()->getVisible()) {
+			LLFloaterWindLight::show();
+				
+		// otherwise, close it button acts like a toggle
+		} 
+		else 
+		{
+			LLFloaterWindLight::instance()->close();
+		}
+		return true;
+	}
+};
+
 /// Post-Process callbacks
 class LLWorldPostProcess : public view_listener_t
 {
@@ -8439,7 +8490,7 @@ void initialize_menus()
 	addMenu(new LLZoomer(1/1.2f), "View.ZoomIn");
 	addMenu(new LLZoomer(DEFAULT_FIELD_OF_VIEW, false), "View.ZoomDefault");
 	addMenu(new LLViewFullscreen(), "View.Fullscreen");
-	addMenu(new LLViewDefaultUISize(), "View.DefaultUISize");  
+	addMenu(new LLViewDefaultUISize(), "View.DefaultUISize");
 
 	addMenu(new LLViewEnableMouselook(), "View.EnableMouselook");
 	addMenu(new LLViewEnableJoystickFlycam(), "View.EnableJoystickFlycam");
@@ -8452,10 +8503,12 @@ void initialize_menus()
 	addMenu(new LLViewCheckRenderType(), "View.CheckRenderType");
 	addMenu(new LLViewCheckHUDAttachments(), "View.CheckHUDAttachments");
 
-	//Emerald menu, another shaky lgg mod
+	//Emerlad menu, another shakey lgg mod
 	addMenu(new LLEmeraldTogglePhantom(), "Emerald.TogglePhantom");
 	addMenu(new LLEmeraldCheckPhantom(), "Emerald.CheckPhantom");
 	addMenu(new LLEmeraldToggleSit(), "Emerald.ToggleSit");
+	addMenu(new LLEmeraldToggleDoubleClickTeleport(), "Emerald.ToggleDoubleClickTeleport");
+	addMenu(new LLEmeraldCheckDoubleClickTeleport(), "Emerald.CheckDoubleClickTeleport");
 	addMenu(new LLEmeraldToggleRadar(), "Emerald.ToggleAvatarList");
 	//addMenu(new LLEmeraldCheckRadar(), "Emerald.CheckAvatarList");
 	addMenu(new LLEmeraldDisable(), "Emerald.Disable");
@@ -8483,6 +8536,7 @@ void initialize_menus()
 	(new LLWorldWaterSettings())->registerListener(gMenuHolder, "World.WaterSettings");
 	(new LLWorldPostProcess())->registerListener(gMenuHolder, "World.PostProcess");
 	(new LLWorldDayCycle())->registerListener(gMenuHolder, "World.DayCycle");
+	(new LLWorldSkySettings())->registerListener(gMenuHolder, "World.SkySettings");  // KL
 
 	// Tools menu
 	addMenu(new LLToolsSelectTool(), "Tools.SelectTool");
@@ -8512,8 +8566,6 @@ void initialize_menus()
 	addMenu(new LLToolsEnableTakeCopy(), "Tools.EnableTakeCopy");
 	addMenu(new LLToolsEnableSaveToObjectInventory(), "Tools.SaveToObjectInventory");
 
-	//addMenu(new LuaReset(),"Tools.ResetLua");
-
 	/*addMenu(new LLToolsVisibleBuyObject(), "Tools.VisibleBuyObject");
 	addMenu(new LLToolsVisibleTakeObject(), "Tools.VisibleTakeObject");*/
 
@@ -8527,7 +8579,7 @@ void initialize_menus()
 	addMenu(new LLSelfEnableStandUp(), "Self.EnableStandUp");
 	addMenu(new LLSelfEnableRemoveAllAttachments(), "Self.EnableRemoveAllAttachments");
 
-	 // Avatar pie menu
+	 // Avatar pie menu	
 	addMenu(new LLObjectVisibleExport(), "Object.VisibleExport");
 	addMenu(new LLObjectEnableExport(), "Object.EnableExport");
 	addMenu(new LLObjectMute(), "Avatar.Mute");

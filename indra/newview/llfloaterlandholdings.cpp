@@ -116,12 +116,14 @@ BOOL LLFloaterLandHoldings::postBuild()
 		element["id"] = id;
 		element["columns"][0]["column"] = "group";
 		element["columns"][0]["value"] = gAgent.mGroups.get(i).mName;
+		element["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
 		element["columns"][0]["font"] = "SANSSERIF";
 
 		LLUIString areastr = getString("area_string");
 		areastr.setArg("[AREA]", llformat("%d", gAgent.mGroups.get(i).mContribution));
 		element["columns"][1]["column"] = "area";
 		element["columns"][1]["value"] = areastr;
+		element["columns"][1]["color"] = gColors.getColor("DefaultListText").getValue();
 		element["columns"][1]["font"] = "SANSSERIF";
 
 		list->addElement(element, ADD_SORTED);
@@ -248,21 +250,23 @@ void LLFloaterLandHoldings::processPlacesReply(LLMessageSystem* msg, void**)
 		element["columns"][0]["column"] = "name";
 		element["columns"][0]["value"] = name;
 		element["columns"][0]["font"] = "SANSSERIF";
-		
+		element["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
 		element["columns"][1]["column"] = "location";
 		element["columns"][1]["value"] = location;
 		element["columns"][1]["font"] = "SANSSERIF";
-		
+		element["columns"][1]["color"] = gColors.getColor("DefaultListText").getValue();
 		element["columns"][2]["column"] = "area";
 		element["columns"][2]["value"] = area;
 		element["columns"][2]["font"] = "SANSSERIF";
 		
 		element["columns"][3]["column"] = "type";
+		element["columns"][3]["color"] = gColors.getColor("DefaultListText").getValue();
 		element["columns"][3]["value"] = land_type;
 		element["columns"][3]["font"] = "SANSSERIF";
 		
 		// hidden is always last column
 		element["columns"][4]["column"] = "hidden";
+		//element["columns"][4]["color"] = gColors.getColor("DefaultListText").getValue();
 		element["columns"][4]["value"] = hidden;
 
 		list->addElement(element);

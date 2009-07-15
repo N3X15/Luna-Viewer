@@ -422,6 +422,16 @@ BOOL LLFilePicker::getSaveFile(ESaveFilter filter, const std::string& filename)
 			L"XML File (*.xml)\0*.xml\0" \
 			L"\0";
 		break;
+	case FFSAVE_BEAM:
+		if (filename.empty())
+		{
+			wcsncpy( mFilesW,L"untitled.xml", FILENAME_BUFFER_SIZE);	/*Flawfinder: ignore*/
+		}
+		mOFN.lpstrDefExt = L"xml";
+		mOFN.lpstrFilter =
+			L"XML File (*.xml)\0*.xml\0" \
+			L"\0";
+		break; 
 	case FFSAVE_COLLADA:
 		if (filename.empty())
 		{
@@ -995,6 +1005,12 @@ GtkWindow* LLFilePicker::buildFilePicker(bool is_save, bool is_folder, std::stri
 			gtk_file_chooser_set_current_folder
 				(GTK_FILE_CHOOSER(win),
 				 this_path->second.c_str());
+		}
+		else if (getenv("HOME"))
+		{
+			gtk_file_chooser_set_current_folder
+				(GTK_FILE_CHOOSER(win),
+				 getenv("HOME"));
 		}
 
 #  if LL_X11

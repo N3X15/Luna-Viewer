@@ -177,6 +177,13 @@ bool cmd_line_chat(std::string revised_text, EChatType type)
 				LLVector3 agentPos = gAgent.getPositionAgent();
 				U64 agentRegion = gAgent.getRegion()->getHandle();
 				LLVector3 targetPos(agentPos.mV[0],agentPos.mV[1],LLWorld::getInstance()->resolveLandHeightAgent(agentPos));
+				if(gSavedSettings.getBOOL("EmeraldDoubleClickTeleportAvCalc"))
+				{
+					//Chalice - Hax. We want to add half the av height.
+					LLVOAvatar* avatarp = gAgent.getAvatarObject();
+					LLVector3 autoOffSet = avatarp->getScale();
+					targetPos.mV[2]=targetPos.mV[2] + (autoOffSet.mV[2] / 2.0);
+				}
 				gAgent.teleportRequest(agentRegion,targetPos);
 				return false;
 			}else if(command == gSavedSettings.getString("EmeraldCmdLineHeight"))
@@ -221,31 +228,41 @@ bool cmd_line_chat(std::string revised_text, EChatType type)
 			{
 				bool success;
 				F32 result = 0.f;
-				std::string expr = revised_text.substr(command.length()+1);
-				LLStringUtil::toUpper(expr);
-				success = LLCalc::getInstance()->evalString(expr, result);
-
-				std::string out;
-
-				if (!success)
+				if(revised_text.length() > command.length() + 1)
 				{
-					out =  "Calculation Failed";
+
+					std::string expr = revised_text.substr(command.length()+1);
+					LLStringUtil::toUpper(expr);
+					success = LLCalc::getInstance()->evalString(expr, result);
+
+					std::string out;
+	
+					if (!success)
+					{
+						out =  "Calculation Failed";
+					}
+					else
+					{
+						// Replace the expression with the result
+						std::ostringstream result_str;
+						result_str << expr;
+						result_str << " = ";
+						result_str << result;
+						out = result_str.str();
+					}
+					cmdline_printchat(out);
+					return false;
 				}
-				else
-				{
-					// Replace the expression with the result
-					std::ostringstream result_str;
-					result_str << expr;
-					result_str << " = ";
-					result_str << result;
-					out = result_str.str();
-				}
-				cmdline_printchat(out);
-				return false;
 			}else if(command == gSavedSettings.getString("EmeraldCmdLineTP2"))
 			{
 				std::string name = revised_text.substr(command.length()+1);
 				cmdline_tp2name(name);
+				return false;
+			}
+			else if(command == gSavedSettings.getString("FlexCmdLineLua"))
+			{
+				std::string derp = revised_text.substr(command.length()+1);
+				FLLua::RunString(derp);
 				return false;
 			}
 		}

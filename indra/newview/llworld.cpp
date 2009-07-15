@@ -39,6 +39,7 @@
 #include "llstl.h"
 
 #include "llagent.h"
+#include "llfloateravatarlist.h"
 #include "llviewercontrol.h"
 #include "lldrawpool.h"
 #include "llglheaders.h"
@@ -369,7 +370,14 @@ LLVector3d	LLWorld::clipToVisibleRegions(const LLVector3d &start_pos, const LLVe
 
 	// clamp to < 256 to stay in sim
 	LLVector3d final_region_pos = LLVector3d(region_coord) - (delta_pos * clip_factor);
-	final_region_pos.clamp(0.0, 255.999);
+	// clamp x, y to [0,256[ and z to [0,REGION_HEIGHT_METERS] (the clamp function cannot be used here)
+	if (final_region_pos.mdV[VX] < 0) final_region_pos.mdV[VX] = 0.0;
+	if (final_region_pos.mdV[VY] < 0) final_region_pos.mdV[VY] = 0.0;
+	if (final_region_pos.mdV[VZ] < 0) final_region_pos.mdV[VZ] = 0.0;
+	if (final_region_pos.mdV[VX] > 255.999) final_region_pos.mdV[VX] = 255.999; 
+	if (final_region_pos.mdV[VY] > 255.999) final_region_pos.mdV[VY] = 255.999;
+	if (final_region_pos.mdV[VZ] > REGION_HEIGHT_METERS) final_region_pos.mdV[VZ] = REGION_HEIGHT_METERS;
+	//final_region_pos.clamp(0.0, 255.999);
 	return regionp->getPosGlobalFromRegion(LLVector3(final_region_pos));
 }
 
@@ -1221,7 +1229,24 @@ void LLWorld::getAvatars(std::vector<LLUUID>* avatar_ids, std::vector<LLVector3d
 			{
 				if(positions != NULL)
 				{
+					if ( LLFloaterAvatarList::getInstance() )
+					{
+						LLAvatarListEntry *ent = LLFloaterAvatarList::getInstance()->getAvatarEntry(regionp->mMapAvatarIDs.get(i));
+						if ( NULL != ent )
+						{
+							//position = LLFloaterAvatarList::AvatarPosition(mClosestAgentToCursor);
+							//position = ent->getPosition();
+							positions->push_back(ent->getPosition());
+						}
+						else
+						{
+							positions->push_back(pos_global);
+						}
+					}
+					else
+					{
 					positions->push_back(pos_global);
+					}
 				}
 				if(avatar_ids != NULL)
 				{

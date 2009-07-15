@@ -18,7 +18,16 @@
            follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
            label="Velocity Interpolate Double-click Teleports" left_delta="-150" mouse_opaque="true"
            name="login_screen_toggle" radio_style="false" width="270" control_name="EmeraldVelocityDoubleClickTeleport" />
-      <check_box bottom_delta="-40" enabled="true"
+      <check_box bottom_delta="-20" enabled="true"
+           follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+           label="Rotate Camera behind avatar after Double-click Teleports" left_delta="0" mouse_opaque="true"
+           name="move_camaftertp_toggle" radio_style="false" width="270" control_name="EmeraldRotateCamAfterLocalTP" />
+      <spinner decimal_digits="1" follows="left|top" height="18" increment="0.1" initial_val="0"
+           label="Double-click Teleport Z Offset" label_width="160" left_delta="0" bottom_delta="-25" max_val="9001" min_val="0"
+           name="Double-click Teleport Z Offset"
+           tool_tip="Controls the Z Offset for Double-click Teleports"
+           width="210" control_name="EmeraldDoubleClickZOffset" />
+      <check_box bottom_delta="-30" enabled="true"
            follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
            label="Play Teleport sound effect" left_delta="-50" mouse_opaque="true"
            name="TPSound-toggle" radio_style="false" width="270" control_name="EmeraldPlayTpSound" />
@@ -137,7 +146,7 @@
            name="Time"
            tool_tip="Controls the amount of time you want between count refreshing."
            width="110" control_name="EmeraldSpamTime" />
-<view_border bevel_style="none" border_thickness="1" bottom_delta="0" follows="top|left" height="80" left="175" name="EmDivisor" width="0" />
+        <view_border bevel_style="none" border_thickness="1" bottom_delta="0" follows="top|left" height="80" left="175" name="EmDivisor" width="0" />
         <text bottom_delta="65" follows="left|top" font="SansSerifSmall" height="16" left_delta="5" name="loltxt" width="512">
           To clear the blacklist, turn the protection off then back on.
 Count and Time are ADVANCED settings.
@@ -146,33 +155,33 @@ Recommended Settings are:
           Time: 1
           Count: 4
         </text>
-	</panel>
+      </panel>
       <panel name="revokeperm_panel" left_delta="0" width="175" height="100" bottom_delta="-115" border="true" mouse_opaque="true"
 	bevel_style="in" background_visible="true" background_opaque="true" follows="top|left" bg_opaque_color="0,0,0,0.1"
 	bg_alpha_color="blue" can_resize="false" >
-      <text bottom_delta="-20" follows="left|top" font="SansSerifSmall" height="16" left_delta="35" name="revperm_text" width="512">
-	Revoke Permissions
-	</text>
-      <radio_group bottom="-100" draw_border="false" enabled="true" follows="left|top" height="80" left="2" mouse_opaque="true"
-	name="EmRevPerm-toggle" control_name="EmeraldRevokePerms" width="160">
-	<radio_item type="string" length="1" bottom_delta="-10" enabled="true" height="16" left_delta="0" mouse_opaque="true" name="0" width="98"
-          tool_tip="Follow the default behaviour.">
-          Disabled (Original behaviour)
-        </radio_item>
-	<radio_item type="string" length="1" bottom_delta="-10" enabled="true" height="16" left_delta="0" mouse_opaque="true" name="1" width="98"
-          tool_tip="Will revoke permissions when you sit on an object.">
-          Revoke on SIT
-        </radio_item>
-	<radio_item type="string" length="1" bottom_delta="-10" enabled="true" height="16" left_delta="0" mouse_opaque="true" name="2" width="98"
-          tool_tip="Will revoke permissions when you stand from an object.">
-          Revoke on STAND
-        </radio_item>
-	<radio_item type="string" length="1" bottom_delta="-10" enabled="true" height="16" left_delta="0" mouse_opaque="true" name="3" width="98"
-          tool_tip="Will revoke permissions when you either stand or sit on an object.">
-          Revoke on SIT and STAND
-        </radio_item>
-      </radio_group>
-</panel>
+        <text bottom_delta="-20" follows="left|top" font="SansSerifSmall" height="16" left_delta="35" name="revperm_text" width="512">
+          Revoke Permissions
+        </text>
+        <radio_group bottom="-100" draw_border="false" enabled="true" follows="left|top" height="80" left="2" mouse_opaque="true"
+    name="EmRevPerm-toggle" control_name="EmeraldRevokePerms" width="160">
+          <radio_item type="string" length="1" bottom_delta="-10" enabled="true" height="16" left_delta="0" mouse_opaque="true" name="0" width="98"
+                  tool_tip="Follow the default behaviour.">
+            Disabled (Original behaviour)
+          </radio_item>
+          <radio_item type="string" length="1" bottom_delta="-10" enabled="true" height="16" left_delta="0" mouse_opaque="true" name="1" width="98"
+                  tool_tip="Will revoke permissions when you sit on an object.">
+            Revoke on SIT
+          </radio_item>
+          <radio_item type="string" length="1" bottom_delta="-10" enabled="true" height="16" left_delta="0" mouse_opaque="true" name="2" width="98"
+                  tool_tip="Will revoke permissions when you stand from an object.">
+            Revoke on STAND
+          </radio_item>
+          <radio_item type="string" length="1" bottom_delta="-10" enabled="true" height="16" left_delta="0" mouse_opaque="true" name="3" width="98"
+                  tool_tip="Will revoke permissions when you either stand or sit on an object.">
+            Revoke on SIT and STAND
+          </radio_item>
+        </radio_group>
+      </panel>
       <check_box bottom_delta="80" enabled="true" follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
            label="Show Load URL dialogs" left_delta="180" mouse_opaque="true" name="EmLoadURL-toggle" control_name="EmeraldLoadURL" radio_style="false" width="270" />
       <check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
@@ -356,7 +365,7 @@ Recommended Settings are:
            label="CmdLine" left="1" mouse_opaque="true" name="CmdLine" width="418">
       <text bottom_delta="-20" follows="left|top" font="SansSerifSmall" height="16" left_delta="5" name="loltxt" width="512">
         ("cmd" in the usage and examples refers to the text in the textbox)
-        Leave any command blank to deactivate it.
+Leave any command blank to deactivate it.
       </text>
       <check_box bottom_delta="-40" enabled="true"
            follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
@@ -414,15 +423,15 @@ Recommended Settings are:
            follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
            label="Use same position between sims" left_delta="0" mouse_opaque="true"
            name="toggle" radio_style="false" width="270" control_name="EmeraldMapToKeepPos" />
-<view_border bevel_style="none" border_thickness="1" bottom_delta="0" follows="top|left" height="310" left="230" name="EmDivisor" width="0" />
-	<text bottom_delta="290" follows="left|top" font="SansSerifSmall" height="16" left_delta="10" name="loltxt" width="512">
+      <view_border bevel_style="none" border_thickness="1" bottom_delta="0" follows="top|left" height="310" left="230" name="EmDivisor" width="0" />
+      <text bottom_delta="290" follows="left|top" font="SansSerifSmall" height="16" left_delta="10" name="loltxt" width="512">
         Calculate expressions
 (usage: cmd expressions) (ex:cmd SIN(2+2))
       </text>
-     <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom_delta="-30"
-           follows="left|top" font="SansSerifSmall" height="20" left_delta="0"
-           max_length="256" mouse_opaque="true"
-           tool_tip="" name="EmeraldCmdLineCalc" control_name="EmeraldCmdLineCalc" width="200" />
+      <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom_delta="-30"
+            follows="left|top" font="SansSerifSmall" height="20" left_delta="0"
+            max_length="256" mouse_opaque="true"
+            tool_tip="" name="EmeraldCmdLineCalc" control_name="EmeraldCmdLineCalc" width="200" />
       <text bottom_delta="-18" follows="left|top" font="SansSerifSmall" height="16" left_delta="0" name="loltxt" width="512">
         Change Draw Distance
 (usage: cmd meters) (ex:cmd 256)
@@ -455,7 +464,14 @@ Recommended Settings are:
            follows="left|top" font="SansSerifSmall" height="20" left_delta="0"
            max_length="256" mouse_opaque="true"
            tool_tip="" name="EmeraldCmdLineOfferTp" control_name="EmeraldCmdLineOfferTp" width="200" />
-
+      <text bottom_delta="-18" follows="left|top" font="SansSerifSmall" height="16" left_delta="0" name="loltxt" width="512">
+        Teleport to an avatar
+(usage: cmd name) (ex:cmd First Last)
+      </text>
+      <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom_delta="-30"
+           follows="left|top" font="SansSerifSmall" height="20" left_delta="0"
+           max_length="256" mouse_opaque="true"
+           tool_tip="The syntax of this command allows partial names and is not case sensitive. Better results if used while the Radar is open." name="EmeraldCmdLineTP2" control_name="EmeraldCmdLineTP2" width="200" />
     </panel>
     <panel border="true" bottom="-580" follows="left|top|right|bottom" height="525"
            label="Avatar" left="1" mouse_opaque="true" name="wat!" width="418">
@@ -490,21 +506,21 @@ Recommended Settings are:
 			     name="Y Modifier" width="128" control_name="EmeraldAvatarZModifier" />
       <text bottom_delta="50" follows="left|top" font="SansSerifSmall" height="16" left_delta="150" name="loltxt" width="512">
         Use this to manipulate, to a degree, your avatar bounding
-        box. This can be used to distort orbiters, or to raise
-        you up or down without altering your shape.
+box. This can be used to distort orbiters, or to raise
+you up or down without altering your shape.
       </text>
-<text font="SansSerifSmall" name="BeamPrefs" follows="left|top" left="7" bottom_delta="-100">
-		Selection beam particle effects
-	</text>
-<view_border bevel_style="none" border_thickness="1" bottom_delta="-5" follows="top|left" height="0" left="5" name="EmDivisor" width="480" />
-<button left="50" bottom_delta="-130" follows="left|top" width="130" height="100" name="EmeraldBeamPrev_rainbow" label="" scale_image="true" image_selected="beam_rainbow.png" image_unselected="beam_rainbow.png" image_hover_selected="beam_rainbow.png" image_hover_unselected="beam_rainbow.png"/>
-<button left="300" bottom_delta="-0" follows="left|top" width="130" height="100" name="EmeraldBeamPrev_Emerald" label="" scale_image="true" image_selected="beam_emerald.png" image_unselected="beam_emerald.png" image_hover_selected="beam_emerald.png" image_hover_unselected="beam_emerald.png"/>
-<view_border bevel_style="none" border_thickness="1" bottom_delta="-10" follows="top|left" height="140" left="245" name="EmDivisor2" width="0" />
-<slider bottom_delta="-30" left="15" name="EmeraldMaxBeamsPerSecond" control_name="EmeraldMaxBeamsPerSecond"
-	     decimal_digits="0" enabled="true" follows="left|top" height="18"
-	     increment="1" initial_val="4" label="Beam updates/sec:"
-	     label_width="100" max_val="200" min_val="4" mouse_opaque="true"
-	     show_text="true" width="250" auto_resize="false" tool_tip="How many beam updates to send in a second. Default 40"/>
+      <text font="SansSerifSmall" name="BeamPrefs" follows="left|top" left="7" bottom_delta="-100">
+        Selection beam particle effects
+      </text>
+      <view_border bevel_style="none" border_thickness="1" bottom_delta="-5" follows="top|left" height="0" left="5" name="EmDivisor" width="480" />
+      <button left="50" bottom_delta="-130" follows="left|top" width="130" height="100" name="EmeraldBeamPrev_rainbow" label="" scale_image="true" image_selected="beam_rainbow.png" image_unselected="beam_rainbow.png" image_hover_selected="beam_rainbow.png" image_hover_unselected="beam_rainbow.png"/>
+      <button left="285" bottom_delta="-0" follows="left|top" width="130" height="100" name="EmeraldBeamPrev_Emerald" label="" scale_image="true" image_selected="beam_emerald.png" image_unselected="beam_emerald.png" image_hover_selected="beam_emerald.png" image_hover_unselected="beam_emerald.png"/>
+      <view_border bevel_style="none" border_thickness="1" bottom_delta="-10" follows="top|left" height="140" left="245" name="EmDivisor2" width="0" />
+      <slider bottom_delta="-30" left="15" name="EmeraldMaxBeamsPerSecond" control_name="EmeraldMaxBeamsPerSecond"
+             decimal_digits="0" enabled="true" follows="left|top" height="18"
+             increment="1" initial_val="4" label="Beam updates/sec:"
+             label_width="100" max_val="200" min_val="4" mouse_opaque="true"
+             show_text="true" width="250" auto_resize="false" tool_tip="How many beam updates to send in a second. Default 40"/>
       <check_box bottom_delta="-20" enabled="true"
            follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
            label="Enable transmission of selection beam end position" left="15" mouse_opaque="true"
@@ -517,23 +533,18 @@ Recommended Settings are:
            follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
            label="Enable rainbow effect" left="45" mouse_opaque="true"
            name="EmBeamRainbow" radio_style="false" width="270" control_name="EmeraldRainbowBeam" />
-      <check_box bottom_delta="-0" enabled="true"
-           follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
-           label="Enable shaped beam:" left="250" mouse_opaque="true"
-           name="EmBeamEmerald" radio_style="false" width="285" control_name="EmeraldEmeraldBeam" />
-      <combo_box allow_text_entry="false" bottom_delta="-0" left_delta="140" 
+      <combo_box allow_text_entry="false" bottom_delta="-0" left_delta="210"
                  follows="left|top" height="18" left="10" max_chars="20"
-                 mouse_opaque="true" name="EmeraldBeamShape_combo" width="100" 
+                 mouse_opaque="true" name="EmeraldBeamShape_combo" width="170"
                  control_name="EmeraldBeamShape" tool_tip="Select the shape for the particle beam" />
-
-<slider bottom_delta="-125" left_delta="-110" name="EmeraldBeamShapeScale" control_name="EmeraldBeamShapeScale"
-	     decimal_digits="1" enabled="true" follows="left|top" height="18"
-	     increment="0.1" initial_val="1" label="Scale:"
-	     label_width="35" max_val="4" min_val="0.1" mouse_opaque="true"
-	     show_text="true" width="150" auto_resize="false" tool_tip="Change the scale of the shape used for the Emerald Shaped Beam"/>
-
-      <button name="custom_beam_btn" label="Custom" tool_tip="Customize the beam shape" left="435" bottom="-185" width="55" height="20" font="SansSerifSmall" follows="left|top"/>
-
+      <slider bottom_delta="-125" left_delta="30" name="EmeraldBeamShapeScale" control_name="EmeraldBeamShapeScale"
+     decimal_digits="1" enabled="true" follows="left|top" height="18"
+     increment="0.1" initial_val="1" label="Scale:"
+     label_width="35" max_val="4" min_val="0.1" mouse_opaque="true"
+     show_text="true" width="150" auto_resize="false" tool_tip="Change the scale of the shape used for the Emerald Shaped Beam"/>
+      <button name="delete_beam" label="Delete" halign="center" tool_tip="Remove this beam" left="435" bottom="-160" width="55" height="20" font="SansSerifSmall" follows="left|top"/>
+      <button name="custom_beam_btn" label="Create New" tool_tip="Customize the beam shape" left_delta="-15" bottom_delta="-25" width="75" height="20" font="SansSerifSmall" follows="left|top"/>
+      <button name="refresh_beams" label="Refresh List" tool_tip="Refresh the beam list" left_delta="0" bottom_delta="-25" width="75" height="20" font="SansSerifSmall" follows="left|top"/>
     </panel>
     <panel border="true" bottom="-580" follows="left|top|right|bottom" height="525" label="Build" left="1" mouse_opaque="true" name="Build" width="418">
       <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"

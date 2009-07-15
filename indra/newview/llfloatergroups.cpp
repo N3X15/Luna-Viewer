@@ -40,6 +40,7 @@
 #include "llviewerprecompiledheaders.h"
 
 #include "llfloatergroups.h"
+#include "llfloatergroupinvite.h"
 
 #include "message.h"
 #include "roles_constants.h"
@@ -225,6 +226,8 @@ BOOL LLPanelGroups::postBuild()
 
 	childSetAction("Search...", onBtnSearch, this);
 
+	childSetAction("Invite...", onBtnInvite, this);
+
 	setDefaultBtn("IM");
 
 	childSetDoubleClickCallback("group list", onBtnIM);
@@ -272,6 +275,15 @@ void LLPanelGroups::enableButtons()
 	{
 		childDisable("Create");
 	}
+	if (group_id.notNull() && gAgent.hasPowerInGroup(group_id, GP_MEMBER_INVITE))
+	{
+		LLPanelGroups::childEnable("Invite...");
+	}
+	else
+	{
+		LLPanelGroups::childDisable("Invite...");
+	}
+
 }
 
 
@@ -279,6 +291,12 @@ void LLPanelGroups::onBtnCreate(void* userdata)
 {
 	LLPanelGroups* self = (LLPanelGroups*)userdata;
 	if(self) self->create();
+}
+
+void LLPanelGroups::onBtnInvite(void* userdata)
+{
+	LLPanelGroups* self = (LLPanelGroups*)userdata;
+	if(self) self->invite();
 }
 
 void LLPanelGroups::onBtnActivate(void* userdata)
@@ -403,6 +421,22 @@ void LLPanelGroups::search()
 	LLFloaterDirectory::showGroups();
 }
 
+void LLPanelGroups::invite()
+{
+	LLCtrlListInterface *group_list = childGetListInterface("group list");
+	LLUUID group_id;
+
+	//if (group_list && (group_id = group_list->getCurrentID()).notNull())
+	
+	if (group_list)
+	{
+		group_id = group_list->getCurrentID();
+	}
+
+		LLFloaterGroupInvite::showForGroup(group_id);
+}
+
+
 // static
 bool LLPanelGroups::callbackLeaveGroup(const LLSD& notification, const LLSD& response)
 {
@@ -444,12 +478,18 @@ void init_group_list(LLScrollListCtrl* ctrl, const LLUUID& highlight_id, U64 pow
 		if ((powers_mask == GP_ALL_POWERS) || ((group_datap->mPowers & powers_mask) != 0))
 		{
 			std::string style = "NORMAL";
+			LLSD element;
 			if(highlight_id == id)
 			{
 				style = "BOLD";
+				element["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
+			}
+			else
+			{
+				element["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
 			}
 
-			LLSD element;
+
 			element["id"] = id;
 			element["columns"][0]["column"] = "name";
 			element["columns"][0]["value"] = group_datap->mName;
@@ -463,11 +503,17 @@ void init_group_list(LLScrollListCtrl* ctrl, const LLUUID& highlight_id, U64 pow
 	// add "none" to list at top
 	{
 		std::string style = "NORMAL";
+		LLSD element;
 		if (highlight_id.isNull())
 		{
 			style = "BOLD";
+			element["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
 		}
-		LLSD element;
+		else
+		{
+			element["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
+		}
+
 		element["id"] = LLUUID::null;
 		element["columns"][0]["column"] = "name";
 		element["columns"][0]["value"] = "none"; // *TODO: Translate

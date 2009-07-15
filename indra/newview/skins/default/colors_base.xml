@@ -138,6 +138,8 @@
 <!-- MAP -->
 <MapAvatar value="0, 255, 0, 255" />
 <MapFriend value="255, 255, 0, 255" />
+<MapLinden value="0, 0, 255, 255" />
+<MapMuted value="83, 83, 83, 255" />
 
 <!-- MINI-MAP -->
 <NetMapBackgroundColor value="0, 0, 0, 77" />
@@ -183,6 +185,8 @@
 <ConsoleBackground value="0, 0, 0, 255" />
 <FolderViewLoadingMessageTextColor value="240, 165, 90, 255"/>     <!-- "loading..." in the inv -->
 <InventoryBackgroundColor value="62, 62, 62, 80"/>
+<DefaultListText value="0, 0, 0, 255"/> <!-- We are replacing all the hardcoded black text with this color so we can make skins with white text on dark background -->
+<ComboBoxBg value="255, 255, 255, 255"/>
 
 <!-- Alert box colors -->
 <AlertBoxColor value="62, 62, 62, 255" />               <!-- Warnings floaters, like when returning objects -->

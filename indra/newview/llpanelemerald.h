@@ -58,6 +58,8 @@ private:
 	static void onClickVoiceRevertProd(void* data);
 	static void onCustomBeam(void* data);
 	static void onClickVoiceRevertDebug(void* data);
+	static void onRefresh(void* data);
+	static void onBeamDelete(void* data);
 	static void onCommitApplyControl(LLUICtrl* caller, void* user_data);
 	static void onCommitSendAppearance(LLUICtrl* ctrl, void* userdata);	
 	static void onTexturePickerCommit(LLUICtrl* ctrl, void* userdata);

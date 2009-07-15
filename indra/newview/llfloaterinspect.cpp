@@ -153,7 +153,7 @@ void LLFloaterInspect::onClickOwnerProfile(void* ctrl)
 // [RLVa]
 			if ( (!rlv_handler_t::isEnabled()) || (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES)))
 			{
-			LLFloaterAvatarInfo::showFromDirectory(owner_id);
+				LLFloaterAvatarInfo::showFromDirectory(owner_id);
 			}
 // [/RLVa]
 //			LLFloaterAvatarInfo::showFromDirectory(owner_id);
@@ -245,6 +245,7 @@ void LLFloaterInspect::refresh()
 		row["id"] = obj->getObject()->getID();
 		row["columns"][0]["column"] = "object_name";
 		row["columns"][0]["type"] = "text";
+		row["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
 		// make sure we're either at the top of the link chain
 		// or top of the editable chain, for attachments
 		if(!(obj->getObject()->isRoot() || obj->getObject()->isRootEdit()))
@@ -257,12 +258,15 @@ void LLFloaterInspect::refresh()
 		}
 		row["columns"][1]["column"] = "owner_name";
 		row["columns"][1]["type"] = "text";
+		row["columns"][1]["color"] = gColors.getColor("DefaultListText").getValue();
 		row["columns"][1]["value"] = owner_name;
 		row["columns"][2]["column"] = "creator_name";
 		row["columns"][2]["type"] = "text";
+		row["columns"][2]["color"] = gColors.getColor("DefaultListText").getValue();
 		row["columns"][2]["value"] = creator_name;
 		row["columns"][3]["column"] = "creation_date";
 		row["columns"][3]["type"] = "text";
+		row["columns"][3]["color"] = gColors.getColor("DefaultListText").getValue();
 		row["columns"][3]["value"] = time;
 		mObjectList->addElement(row, ADD_TOP);
 	}

@@ -52,6 +52,17 @@ if (WINDOWS)
       /Oy-
       )
      
+  if (COMPILE_OTR)
+    add_definitions(
+        /DCOMPILE_OTR=1
+        )
+  endif (COMPILE_OTR)
+  if (USE_OTR)
+    add_definitions(
+        /DUSE_OTR=1
+        )
+  endif (USE_OTR)
+     
   if(MSVC80 OR MSVC90)
     set(CMAKE_CXX_FLAGS_RELEASE
       "${CMAKE_CXX_FLAGS_RELEASE} -D_SECURE_STL=0 -D_HAS_ITERATOR_DEBUGGING=0"
@@ -131,6 +142,17 @@ if (LINUX)
       -g
       -pthread
       )
+  if (COMPILE_OTR)
+    add_definitions(
+        -DCOMPILE_OTR=1
+        )
+  endif (COMPILE_OTR)
+  if (USE_OTR)
+    add_definitions(
+        -DUSE_OTR=1
+        )
+  endif (USE_OTR)
+     
 
   if (SERVER)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ftemplate-depth-60")
@@ -172,6 +194,17 @@ endif (LINUX)
 
 if (DARWIN)
   add_definitions(-DLL_DARWIN=1)
+
+  if (COMPILE_OTR)
+    add_definitions(
+        -DCOMPILE_OTR=1
+        )
+  endif (COMPILE_OTR)
+  if (USE_OTR)
+    add_definitions(
+        -DUSE_OTR=1
+        )
+  endif (USE_OTR)
   set(CMAKE_CXX_LINK_FLAGS "-Wl,-headerpad_max_install_names,-search_paths_first")
   set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_CXX_LINK_FLAGS}")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mlong-branch")

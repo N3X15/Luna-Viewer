@@ -41,6 +41,8 @@
 #include "llfocusmgr.h"
 #include "llrender.h"
 
+#include "llfloateravatarlist.h"
+
 #include "llagent.h"
 #include "llcallingcard.h"
 #include "llcolorscheme.h"
@@ -70,14 +72,16 @@
 
 #include "llmutelist.h"
 
-const F32 MAP_SCALE_MIN = 64;
+const F32 MAP_SCALE_MIN = 32;
 const F32 MAP_SCALE_MID = 172;
-const F32 MAP_SCALE_MAX = 512;
+const F32 MAP_SCALE_MAX = 4096;
 const F32 MAP_SCALE_INCREMENT = 16;
-const F32 MAP_MIN_PICK_DIST = 4;
+const F32 MAP_MIN_PICK_DIST = 8;
 const F32 MAP_MINOR_DIR_THRESHOLD = 0.08f;
 
 const S32 TRACKING_RADIUS = 3;
+const S32 MIN_DOT_RADIUS = 4;
+const F32 DOT_SCALE = 0.75;
 
 LLNetMap::LLNetMap(const std::string& name) :
 	LLPanel(name),
@@ -92,6 +96,12 @@ LLNetMap::LLNetMap(const std::string& name) :
 {
 	mScale = gSavedSettings.getF32("MiniMapScale");
 	mPixelsPerMeter = mScale / LLWorld::getInstance()->getRegionWidthInMeters();
+
+	mDotRadius = llround(DOT_SCALE * mPixelsPerMeter);
+	if (mDotRadius < MIN_DOT_RADIUS)
+	{
+		mDotRadius = MIN_DOT_RADIUS;
+	}
 
 	mObjectImageCenterGlobal = gAgent.getCameraPositionGlobal();
 	
@@ -141,6 +151,12 @@ void LLNetMap::setScale( F32 scale )
 	}
 
 	mPixelsPerMeter = mScale / LLWorld::getInstance()->getRegionWidthInMeters();
+
+	mDotRadius = llround(DOT_SCALE * mPixelsPerMeter);
+	if (mDotRadius < MIN_DOT_RADIUS)
+	{
+		mDotRadius = MIN_DOT_RADIUS;
+	}
 
 	mUpdateNow = TRUE;
 }
@@ -324,54 +340,44 @@ void LLNetMap::draw()
 		F32 closest_dist = F32_MAX;
 
 		// Draw avatars
+//		LLColor4 mapcolor = gAvatarMapColor;
 		LLColor4 avatar_color = gColors.getColor( "MapAvatar" );
+
+		LLColor4 standard_color = gColors.getColor( "MapAvatar" );
 		//LLColor4 friend_color = gColors.getColor( "MapFriend" );
 // [RLVa:KB] - Version: 1.23.0 | Alternate: Snowglobe-1.0 | Checked: 2009-05-18 (RLVa-0.2.0b) | Modified: RLVa-0.2.0b
 		LLColor4 friend_color = (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES)) ? gColors.getColor("MapFriend") : avatar_color;
 // [/RLVa:KB]
+		LLColor4 linden_color = gColors.getColor( "MapLinden" );
+		LLColor4 muted_color = gColors.getColor( "MapMuted" );
+
 		std::vector<LLUUID> avatar_ids;
 		std::vector<LLVector3d> positions;
 		LLWorld::getInstance()->getAvatars(&avatar_ids, &positions);
 		for(U32 i=0; i<avatar_ids.size(); i++)
 		{
+			avatar_color = standard_color;
 			// TODO: it'd be very cool to draw these in sorted order from lowest Z to highest.
 			// just be careful to sort the avatar IDs along with the positions. -MG
 			pos_map = globalPosToView(positions[i], rotate_map);
 
-				//Jcool410 -- show lindens on minimap with blue dots
-				LLColor4 mapcolor = avatar_color;
 				
-				{
-					bool _friend = false;
-					bool _linden = false;
-					bool _muted = false;
-					if(is_agent_friend(avatar_ids[i]))
-					{
-						_friend = true;//mapcolor = gFriendMapColor;
-					}
-					std::string first, last;
-					gCacheName->getName(avatar_ids[i], first, last);
-					if(last == "Linden")_linden = true;//mapcolor = LLColor4::blue;
-					if(LLMuteList::getInstance()->isMuted(avatar_ids[i]))_muted = true;
+			std::string first, last;
+			gCacheName->getName(avatar_ids[i], first, last);
 
-					//case not included for linden & muted because you cannot normally mute lindens
-					//and even if you could it would be pretty stupid of you.
-					if(_friend && _linden)mapcolor = LLColor4::purple;
-					else if(_friend && _muted)mapcolor = (friend_color + LLColor4::grey) * 0.5;
-					else if(_friend)mapcolor = friend_color;
-					else if(_linden)mapcolor = LLColor4::blue;
-					else if(_muted)mapcolor = LLColor4::grey;
-				}
-				LLWorldMapView::drawAvatar(
-					pos_map.mV[VX], pos_map.mV[VY], 
-					mapcolor, 
-					pos_map.mV[VZ]);
+			if(LLMuteList::getInstance()->isMuted(avatar_ids[i])) avatar_color = muted_color;
+			if(is_agent_friend(avatar_ids[i])) avatar_color = friend_color;
+			if((last == "Linden") || (last == "Tester")) avatar_color = linden_color;
+
+			LLWorldMapView::drawAvatar(
+				pos_map.mV[VX], pos_map.mV[VY], avatar_color, pos_map.mV[VZ],mDotRadius);
 
 			F32	dist_to_cursor = dist_vec(LLVector2(pos_map.mV[VX], pos_map.mV[VY]), LLVector2(local_mouse_x,local_mouse_y));
 			if(dist_to_cursor < MAP_MIN_PICK_DIST && dist_to_cursor < closest_dist)
 			{
 				closest_dist = dist_to_cursor;
 				mClosestAgentToCursor = avatar_ids[i];
+				mClosestAgentPosition = positions[i];
 			}
 		}
 
@@ -397,10 +403,13 @@ void LLNetMap::draw()
 		// Draw dot for self avatar position
 		pos_global = gAgent.getPositionGlobal();
 		pos_map = globalPosToView(pos_global, rotate_map);
-		LLUIImagePtr you = LLWorldMapView::sAvatarYouSmallImage;
+		LLUIImagePtr you = LLWorldMapView::sAvatarYouLargeImage;
+		S32 dot_width = mDotRadius * 2;
 		you->draw(
-			llround(pos_map.mV[VX]) - you->getWidth()/2, 
-			llround(pos_map.mV[VY]) - you->getHeight()/2);
+			llround(pos_map.mV[VX]) - mDotRadius,
+			llround(pos_map.mV[VY]) - mDotRadius,
+			dot_width,
+			dot_width);
 
 		// Draw frustum
 		F32 meters_to_pixels = mScale/ LLWorld::getInstance()->getRegionWidthInMeters();
@@ -562,7 +571,27 @@ BOOL LLNetMap::handleToolTip( S32 x, S32 y, std::string& msg, LLRect* sticky_rec
 // [RLVa:KB] - Version: 1.23.0 | Checked: 2009-05-18 (RLVa-0.2.0b) | Modified: RLVa-0.2.0b
 			msg.append( (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES)) ? fullname : gRlvHandler.getAnonym(fullname) );
 // [/RLVa:KB]
-			msg.append("\n");
+
+			LLVector3d mypos = gAgent.getPositionGlobal();
+			LLVector3d position = mClosestAgentPosition;
+
+			if ( LLFloaterAvatarList::getInstance() )
+			{
+				LLAvatarListEntry *ent = LLFloaterAvatarList::getInstance()->getAvatarEntry(mClosestAgentToCursor);
+				if ( NULL != ent )
+				{
+					//position = LLFloaterAvatarList::AvatarPosition(mClosestAgentToCursor);
+					position = ent->getPosition();
+				}
+			}
+
+			LLVector3d delta = position - mypos;
+			F32 distance = (F32)delta.magVec();
+
+
+			//llinfos << distance << " - " << position << llendl;
+
+			msg.append( llformat("\n(Distance: %.02fm)\n\n",distance) );
 		}
 // [RLVa:KB] - Version: 1.23.0 | Checked: 2009-05-18 (RLVa-0.2.0b) | Modified: RLVa-0.2.0b
 		msg.append( (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC)) ? region->getName() : rlv_handler_t::cstrHidden );

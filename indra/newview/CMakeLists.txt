@@ -50,6 +50,9 @@ include(toluapp)
 
 if (WINDOWS)
     include(CopyWinLibs)
+    include(libgcrypt)
+	include(libgpg-error)
+	include(libotr)
 endif (WINDOWS)
 
 include_directories(
@@ -73,6 +76,17 @@ include_directories(
     ${LSCRIPT_INCLUDE_DIRS}/lscript_compile
     ${EMERALD_INCLUDE_DIRS}
     )
+
+if (WINDOWS)
+	include_directories(
+		../gpg.vs/inc.vs
+		../gpg.vs/libgpg-error-1.1.vs/custom
+		../gpg.vs/libgcrypt-1.2.2.vs/custom
+		../libgpg-error/libgpg-error-1.0/src
+		../libgcrypt/libgcrypt-1.2.2/src
+		../libotr/libotr-3.2.0/src
+		)
+endif (WINDOWS)
 
 set(viewer_SOURCE_FILES
 	importtracker.cpp
@@ -466,14 +480,14 @@ set(viewer_SOURCE_FILES
     llxmlrpctransaction.cpp
     noise.cpp
     pipeline.cpp
-#    tsstuff.cpp
-#    tslua.cpp
+#   tsstuff.cpp
+#   tslua.cpp
     LuaAgent_f.cpp
     LuaAvatar_f.cpp
     LuaBase_f.cpp
     LuaBuild_f.cpp
     LuaUI_f.cpp
-#    SLua.cpp
+#   SLua.cpp
     LuaBase.cpp
     FLLua.cpp
     flexconsole.cpp
@@ -908,7 +922,7 @@ set(viewer_HEADER_FILES
     VertexCache.h
     VorbisFramework.h
     FLLua.h
-#    SLua.h
+#   SLua.h
     LuaBase.h
 	LuaAgent_f.h
 	LuaAvatar_f.h
@@ -1327,6 +1341,48 @@ if (WINDOWS)
     endif (PACKAGE)
 endif (WINDOWS)
 
+if (WINDOWS)
+	target_link_libraries(${VIEWER_BINARY_NAME}
+		${LIBGPG-ERROR_LIBRARIES}
+		${LIBGCRYPT_LIBRARIES}
+		${LIBOTR_LIBRARIES}
+		${LLAUDIO_LIBRARIES}
+		${LLCHARACTER_LIBRARIES}
+		${LLIMAGE_LIBRARIES}
+		${LLIMAGEJ2COJ_LIBRARIES}
+		${LLINVENTORY_LIBRARIES}
+		${LLMEDIA_LIBRARIES}
+		${LLMESSAGE_LIBRARIES}
+		${LLPRIMITIVE_LIBRARIES}
+		${LLRENDER_LIBRARIES}
+		${FREETYPE_LIBRARIES}
+		${LLUI_LIBRARIES}
+		${LLVFS_LIBRARIES}
+		${LLWINDOW_LIBRARIES}
+		${LLXML_LIBRARIES}
+		${LSCRIPT_LIBRARIES}
+		${LLMATH_LIBRARIES}
+		${LLCOMMON_LIBRARIES}
+		${NDOF_LIBRARY}
+		${viewer_LIBRARIES}
+		${BOOST_PROGRAM_OPTIONS_LIBRARY}
+		${BOOST_REGEX_LIBRARY}
+		${DBUSGLIB_LIBRARIES}
+		${OPENGL_LIBRARIES}
+		${FMODWRAPPER_LIBRARY}
+		${OPENGL_LIBRARIES}
+		${MOZLIB_LIBRARIES}
+		${SDL_LIBRARY}
+		${SMARTHEAP_LIBRARY}
+		${UI_LIBRARIES}
+		${QUICKTIME_LIBRARY}
+		${WINDOWS_LIBRARIES}
+		${XMLRPCEPI_LIBRARIES}
+		${ELFIO_LIBRARIES}
+		${EMERALD_LIBRARIES}
+		${LUA_LIBRARY}
+		)
+else (WINDOWS)
 target_link_libraries(${VIEWER_BINARY_NAME}
     ${LLAUDIO_LIBRARIES}
     ${LLCHARACTER_LIBRARIES}
@@ -1362,9 +1418,9 @@ target_link_libraries(${VIEWER_BINARY_NAME}
     ${XMLRPCEPI_LIBRARIES}
     ${ELFIO_LIBRARIES}
     ${EMERALD_LIBRARIES}
-    ${TOLUA_LIBRARIES}
     ${LUA_LIBRARY}
     )
+endif (WINDOWS)
 
 build_version(viewer)
 
@@ -1380,7 +1436,7 @@ if (LINUX)
       DEPENDS ${VIEWER_BINARY_NAME}
       )
 
-  set(product FlexLife-${ARCH}-${viewer_VERSION})
+  set(product FlexLife-${ARCH}-${viewer_VERSION}-SWIG)
 
   add_custom_command(
       OUTPUT ${product}.tar.bz2

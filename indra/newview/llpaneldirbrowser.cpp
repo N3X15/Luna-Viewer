@@ -552,12 +552,14 @@ void LLPanelDirBrowser::processDirPeopleReply(LLMessageSystem *msg, void**)
 		// so just use the 'offline' icon as the generic 'person' icon
 		row["columns"][0]["column"] = "icon";
 		row["columns"][0]["type"] = "icon";
+		row["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
 		row["columns"][0]["value"] = "icon_avatar_offline.tga";
 
 		content["type"] = AVATAR_CODE;
 
 		std::string fullname = first_name + " " + last_name;
 		row["columns"][1]["column"] = "name";
+		row["columns"][1]["color"] = gColors.getColor("DefaultListText").getValue();
 		row["columns"][1]["value"] = fullname;
 		row["columns"][1]["font"] = "SANSSERIF";
 
@@ -771,24 +773,29 @@ void LLPanelDirBrowser::processDirEventsReply(LLMessageSystem* msg, void**)
 		{
 			row["columns"][0]["column"] = "icon";
 			row["columns"][0]["type"] = "icon";
+			row["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
 			row["columns"][0]["value"] = "icon_event_mature.tga";
 		}
 		else
 		{
 			row["columns"][0]["column"] = "icon";
 			row["columns"][0]["type"] = "icon";
+			row["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
 			row["columns"][0]["value"] = "icon_event.tga";
 		}
 
 		row["columns"][1]["column"] = "name";
+		row["columns"][1]["color"] = gColors.getColor("DefaultListText").getValue();
 		row["columns"][1]["value"] = name;
 		row["columns"][1]["font"] = "SANSSERIF";
 
 		row["columns"][2]["column"] = "date";
+		row["columns"][2]["color"] = gColors.getColor("DefaultListText").getValue();
 		row["columns"][2]["value"] = date;
 		row["columns"][2]["font"] = "SANSSERIFSMALL";
 
 		row["columns"][3]["column"] = "time";
+		row["columns"][3]["color"] = gColors.getColor("DefaultListText").getValue();
 		row["columns"][3]["value"] = llformat("%u", unix_time);
 		row["columns"][3]["font"] = "SANSSERIFSMALL";
 
@@ -865,17 +872,21 @@ void LLPanelDirBrowser::processDirGroupsReply(LLMessageSystem* msg, void**)
 		LLUUID image_id;
 		row["columns"][0]["column"] = "icon";
 		row["columns"][0]["type"] = "icon";
+		row["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
 		row["columns"][0]["value"] = "icon_group.tga";
 
 		row["columns"][1]["column"] = "name";
+		row["columns"][1]["color"] = gColors.getColor("DefaultListText").getValue();
 		row["columns"][1]["value"] = group_name;
 		row["columns"][1]["font"] = "SANSSERIF";
 
 		row["columns"][2]["column"] = "members";
+		row["columns"][2]["color"] = gColors.getColor("DefaultListText").getValue();
 		row["columns"][2]["value"] = members;
 		row["columns"][2]["font"] = "SANSSERIFSMALL";
 
 		row["columns"][3]["column"] = "score";
+		row["columns"][3]["color"] = gColors.getColor("DefaultListText").getValue();
 		row["columns"][3]["value"] = search_order;
 
 		list->addElement(row);
@@ -1063,11 +1074,13 @@ void LLPanelDirBrowser::processDirLandReply(LLMessageSystem *msg, void**)
 		}
 		row["columns"][3]["column"] = "price";
 		row["columns"][3]["value"] = buffer;
+		row["columns"][3]["color"] = gColors.getColor("DefaultListText").getValue();
 		row["columns"][3]["font"] = "SANSSERIFSMALL";
 
 		buffer = llformat("%d", actual_area);
 		row["columns"][4]["column"] = "area";
 		row["columns"][4]["value"] = buffer;
+		row["columns"][4]["color"] = gColors.getColor("DefaultListText").getValue();
 		row["columns"][4]["font"] = "SANSSERIFSMALL";
 
 		if (!auction)
@@ -1084,6 +1097,7 @@ void LLPanelDirBrowser::processDirLandReply(LLMessageSystem *msg, void**)
 			// Prices are usually L$1 - L$10 / meter
 			buffer = llformat("%.1f", price_per_meter);
 			row["columns"][5]["column"] = "per_meter";
+			row["columns"][5]["color"] = gColors.getColor("DefaultListText").getValue();
 			row["columns"][5]["value"] = buffer;
 			row["columns"][5]["font"] = "SANSSERIFSMALL";
 		}
@@ -1091,11 +1105,13 @@ void LLPanelDirBrowser::processDirLandReply(LLMessageSystem *msg, void**)
 		{
 			// Auctions start at L$1 per meter
 			row["columns"][5]["column"] = "per_meter";
+			row["columns"][5]["color"] = gColors.getColor("DefaultListText").getValue();
 			row["columns"][5]["value"] = "1.0";
 			row["columns"][5]["font"] = "SANSSERIFSMALL";
 		}
 
 		row["columns"][6]["column"] = "landtype";
+		row["columns"][6]["color"] = gColors.getColor("DefaultListText").getValue();
 		row["columns"][6]["value"] = land_type;
 		row["columns"][6]["font"] = "SANSSERIFSMALL";
 
@@ -1124,13 +1140,16 @@ void LLPanelDirBrowser::addClassified(LLCtrlListInterface *list, const LLUUID& p
 
 	row["columns"][0]["column"] = "icon";
 	row["columns"][0]["type"] = "icon";
+	row["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
 	row["columns"][0]["value"] = "icon_top_pick.tga";
 
 	row["columns"][1]["column"] = "name";
 	row["columns"][1]["value"] = name;
+	row["columns"][1]["color"] = gColors.getColor("DefaultListText").getValue();
 	row["columns"][1]["font"] = "SANSSERIF";
 
 	row["columns"][2]["column"] = "price";
+	row["columns"][2]["color"] = gColors.getColor("DefaultListText").getValue();
 	row["columns"][2]["value"] = price_for_listing;
 	row["columns"][2]["font"] = "SANSSERIFSMALL";
 
@@ -1148,6 +1167,7 @@ LLSD LLPanelDirBrowser::createLandSale(const LLUUID& parcel_id, BOOL is_auction,
 	{
 		row["columns"][0]["column"] = "icon";
 		row["columns"][0]["type"] = "icon";
+		row["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
 		row["columns"][0]["value"] = "icon_auction.tga";
 
 		*type = AUCTION_CODE;
@@ -1156,6 +1176,7 @@ LLSD LLPanelDirBrowser::createLandSale(const LLUUID& parcel_id, BOOL is_auction,
 	{
 		row["columns"][0]["column"] = "icon";
 		row["columns"][0]["type"] = "icon";
+		row["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
 		row["columns"][0]["value"] = "icon_for_sale.tga";
 
 		*type = FOR_SALE_CODE;
@@ -1164,6 +1185,7 @@ LLSD LLPanelDirBrowser::createLandSale(const LLUUID& parcel_id, BOOL is_auction,
 	{
 		row["columns"][0]["column"] = "icon";
 		row["columns"][0]["type"] = "icon";
+		row["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
 		row["columns"][0]["value"] = "icon_place.tga";
 
 		*type = PLACE_CODE;
@@ -1171,6 +1193,7 @@ LLSD LLPanelDirBrowser::createLandSale(const LLUUID& parcel_id, BOOL is_auction,
 
 	row["columns"][2]["column"] = "name";
 	row["columns"][2]["value"] = name;
+	row["columns"][2]["color"] = gColors.getColor("DefaultListText").getValue();
 	row["columns"][2]["font"] = "SANSSERIF";
 
 	return row;

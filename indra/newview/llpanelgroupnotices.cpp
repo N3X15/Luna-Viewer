@@ -475,6 +475,7 @@ void LLPanelGroupNotices::processNotices(LLMessageSystem* msg)
 		row["id"] = id;
 		
 		row["columns"][0]["column"] = "icon";
+		row["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
 		if (has_attachment)
 		{
 			std::string icon_name = get_item_icon_name(
@@ -485,17 +486,21 @@ void LLPanelGroupNotices::processNotices(LLMessageSystem* msg)
 		}
 
 		row["columns"][1]["column"] = "subject";
+		row["columns"][1]["color"] = gColors.getColor("DefaultListText").getValue();
 		row["columns"][1]["value"] = subj;
 
 		row["columns"][2]["column"] = "from";
+		row["columns"][2]["color"] = gColors.getColor("DefaultListText").getValue();
 		row["columns"][2]["value"] = name;
 
 		std::string buffer = build_notice_date(t);
 		row["columns"][3]["column"] = "date";
+		row["columns"][3]["color"] = gColors.getColor("DefaultListText").getValue();
 		row["columns"][3]["value"] = buffer;
 
 		buffer = llformat( "%u", timestamp);
 		row["columns"][4]["column"] = "sort";
+		row["columns"][4]["color"] = gColors.getColor("DefaultListText").getValue();
 		row["columns"][4]["value"] = buffer;
 
 		mNoticesList->addElement(row, ADD_BOTTOM);

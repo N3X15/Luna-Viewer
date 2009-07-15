@@ -50,27 +50,40 @@ LLSD lggBeamMaps::getPic(std::string filename)
 	return data;
 	
 }
-void lggBeamMaps::fireCurrentBeams(LLPointer<LLHUDEffectSpiral> mBeam)
+void lggBeamMaps::fireCurrentBeams(LLPointer<LLHUDEffectSpiral> mBeam, LLColor4U rgb)
 {
 	if(scale == 0.0f)return;
 	
 	for(int i = 0; i < (int)dots.size(); i++)
 	{
-					
+		LLColor4U myColor = rgb;
+		if(rgb == LLColor4U::black)
+			myColor = dots[i].c;
 		F32 distanceAdjust = dist_vec(mBeam->getPositionGlobal(),gAgent.getPositionGlobal()) ;
 		F32 pulse = (F32)(.75f+sinf(gFrameTimeSeconds*1.0f)*0.25f);
 		LLVector3d offset = dots[i].p;
+		offset.mdV[VY] *= -1;
 		offset *= pulse * scale * distanceAdjust * 0.1;
 		
 		//llinfos << "dist is " << distanceAdjust << "scale is " << scale << llendl;
 		LLVector3 beamLine = LLVector3( mBeam->getPositionGlobal() - gAgent.getPositionGlobal());
+		LLVector3 beamLineFlat = beamLine;
+		beamLineFlat.mV[VZ]= 0.0f;
+
+		LLVector3 newDirFlat = LLVector3::x_axis;
 		beamLine.normalize();
+		beamLineFlat.normalize();
 		LLQuaternion change;
-		change.shortestArc(LLVector3::x_axis,beamLine);
+		change.shortestArc(newDirFlat,beamLineFlat);
 		offset.rotVec(change);
+		newDirFlat.rotVec(change);
+		change.shortestArc(newDirFlat,beamLine);
+		offset.rotVec(change);
+
 		LLPointer<LLHUDEffectSpiral> myBeam =  (LLHUDEffectSpiral *)LLHUDManager::getInstance()->createViewerEffect(LLHUDObject::LL_HUD_EFFECT_BEAM);
 		myBeam->setPositionGlobal(mBeam->getPositionGlobal() + offset + (LLVector3d(beamLine) * sinf(gFrameTimeSeconds*2.0f) * 0.2f));
-		myBeam->setColor(LLColor4U(dots[i].c.getValue()));
+		
+		myBeam->setColor(myColor);
 		myBeam->setTargetObject(mBeam->getTargetObject());
 		myBeam->setSourceObject(mBeam->getSourceObject());
 		myBeam->setNeedsSendToSim(mBeam->getNeedsSendToSim());
@@ -89,7 +102,7 @@ F32 lggBeamMaps::setUpAndGetDuration()
 	if(settingName != lastFileName)
 	{
 		lastFileName=settingName;
-		if(settingName.find (".xml") > 1 && settingName != "")
+		if( settingName != "===OFF===" && settingName != "")
 		{
 			std::string filename =gDirUtilp->getAppRODataDir() 
 						+gDirUtilp->getDirDelimiter()
@@ -106,7 +119,9 @@ F32 lggBeamMaps::setUpAndGetDuration()
 				lggBeamData dot;
 				dot.p = beamData["offset"];
 				dot.p *= (gSavedSettings.getF32("EmeraldBeamShapeScale")*2.0f);
-				dot.c = beamData["color"];
+				LLColor4 color = beamData["color"];
+				
+				dot.c = LLColor4U(color);
 				
 				dots.push_back(dot);
 			}

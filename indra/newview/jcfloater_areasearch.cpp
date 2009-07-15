@@ -269,16 +269,20 @@ void JCFloaterAreaSearch::results()
 								element["id"] = object_id;
 								element["columns"][LIST_OBJECT_NAME]["column"] = "Name";
 								element["columns"][LIST_OBJECT_NAME]["type"] = "text";
+								element["columns"][LIST_OBJECT_NAME]["color"] = gColors.getColor("DefaultListText").getValue();
 								element["columns"][LIST_OBJECT_NAME]["value"] = details->name;//item->getName();//ai->second//"avatar_icon";
 								element["columns"][LIST_OBJECT_DESC]["column"] = "Description";
 								element["columns"][LIST_OBJECT_DESC]["type"] = "text";
 								element["columns"][LIST_OBJECT_DESC]["value"] = details->desc;//ai->second;
+								element["columns"][LIST_OBJECT_DESC]["color"] = gColors.getColor("DefaultListText").getValue();
 								element["columns"][LIST_OBJECT_OWNER]["column"] = "Owner";
 								element["columns"][LIST_OBJECT_OWNER]["type"] = "text";
 								element["columns"][LIST_OBJECT_OWNER]["value"] = onU;//aifirst;
+								element["columns"][LIST_OBJECT_OWNER]["color"] = gColors.getColor("DefaultListText").getValue();
 								element["columns"][LIST_OBJECT_GROUP]["column"] = "Group";
 								element["columns"][LIST_OBJECT_GROUP]["type"] = "text";
 								element["columns"][LIST_OBJECT_GROUP]["value"] = cnU;//ai->second;
+								element["columns"][LIST_OBJECT_GROUP]["color"] = gColors.getColor("DefaultListText").getValue();
 								sInstance->mResultList->addElement(element, ADD_BOTTOM);
 							}
 						}

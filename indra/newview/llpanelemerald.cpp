@@ -166,33 +166,28 @@ LLPanelEmerald::~LLPanelEmerald()
 
 BOOL LLPanelEmerald::postBuild()
 {
-	LLComboBox* comboBox = getChild<LLComboBox>("EmeraldBeamShape_combo");
-
-	if(comboBox != NULL) 
-	{
-		std::vector<std::string> names = gLggBeamMaps.getFileNames();
-		for(int i=0; i<(int)names.size(); i++) 
-		{
-			comboBox->add(names[i]);
-		}
-		comboBox->setSimple(gSavedSettings.getString("EmeraldBeamShape"));
-		comboBox->setCommitCallback(onComboBoxCommit);
-	}
+	refresh();
 	getChild<LLComboBox>("material")->setSimple(gSavedSettings.getString("EmeraldBuildPrefs_Material"));
 	getChild<LLComboBox>("combobox shininess")->setSimple(gSavedSettings.getString("EmeraldBuildPrefs_Shiny"));
 	
 	getChild<LLSlider>("EmeraldBeamShapeScale")->setCommitCallback(beamUpdateCall);
 	getChild<LLSlider>("EmeraldMaxBeamsPerSecond")->setCommitCallback(beamUpdateCall);
-	
+
 	getChild<LLComboBox>("material")->setCommitCallback(onComboBoxCommit);
 	getChild<LLComboBox>("combobox shininess")->setCommitCallback(onComboBoxCommit);
+	getChild<LLComboBox>("EmeraldBeamShape_combo")->setCommitCallback(onComboBoxCommit);
 	getChild<LLTextureCtrl>("texture control")->setDefaultImageAssetID(LLUUID("89556747-24cb-43ed-920b-47caed15465f"));
 	getChild<LLTextureCtrl>("texture control")->setCommitCallback(onTexturePickerCommit);
+
+		
 	//childSetCommitCallback("material",onComboBoxCommit);
 	//childSetCommitCallback("combobox shininess",onComboBoxCommit);
 	getChild<LLButton>("custom_beam_btn")->setClickedCallback(onCustomBeam, this);
+	getChild<LLButton>("refresh_beams")->setClickedCallback(onRefresh,this);
+	getChild<LLButton>("delete_beam")->setClickedCallback(onBeamDelete,this);
 	getChild<LLButton>("revert_production_voice_btn")->setClickedCallback(onClickVoiceRevertProd, this);
 	getChild<LLButton>("revert_debug_voice_btn")->setClickedCallback(onClickVoiceRevertDebug, this);
+	
 
 	childSetCommitCallback("production_voice_field", onCommitApplyControl);//onCommitVoiceProductionServerName);
 	childSetCommitCallback("debug_voice_field", onCommitApplyControl);//onCommitVoiceDebugServerName);
@@ -202,7 +197,7 @@ BOOL LLPanelEmerald::postBuild()
 	childSetCommitCallback("EmeraldCmdLineHeight", onCommitApplyControl);
 	childSetCommitCallback("EmeraldCmdLineTeleportHome", onCommitApplyControl);
 	childSetCommitCallback("EmeraldCmdLineRezPlatform", onCommitApplyControl);
-	childSetCommitCallback("EmeraldCmdLineMapTo", onCommitApplyControl);
+	childSetCommitCallback("EmeraldCmdLineMapTo", onCommitApplyControl);	
 	childSetCommitCallback("EmeraldCmdLineCalc", onCommitApplyControl);
 
 	childSetCommitCallback("EmeraldCmdLineDrawDistance", onCommitApplyControl);
@@ -264,6 +259,19 @@ BOOL LLPanelEmerald::postBuild()
 
 void LLPanelEmerald::refresh()
 {
+	LLComboBox* comboBox = getChild<LLComboBox>("EmeraldBeamShape_combo");
+
+	if(comboBox != NULL) 
+	{
+		comboBox->removeall();
+		comboBox->add("===OFF===");
+		std::vector<std::string> names = gLggBeamMaps.getFileNames();
+		for(int i=0; i<(int)names.size(); i++) 
+		{
+			comboBox->add(names[i]);
+		}
+		comboBox->setSimple(gSavedSettings.getString("EmeraldBeamShape"));
+	}
 	//mSkin = gSavedSettings.getString("SkinCurrent");
 	//getChild<LLRadioGroup>("skin_selection")->setValue(mSkin);
 }
@@ -300,10 +308,7 @@ void LLPanelEmerald::apply()
 
 void LLPanelEmerald::cancel()
 {
-	// reverts any changes to current skin
-	//gSavedSettings.setString("SkinCurrent", mSkin);
 }
-//static 
 void LLPanelEmerald::onClickVoiceRevertProd(void* data)
 {
 	LLPanelEmerald* self = (LLPanelEmerald*)data;
@@ -338,7 +343,13 @@ void LLPanelEmerald::onTexturePickerCommit(LLUICtrl* ctrl, void* userdata)
 	}
 }
 
-
+void LLPanelEmerald::onRefresh(void* data)
+{
+	LLPanelEmerald* self = (LLPanelEmerald*)data;
+	self->refresh();
+	
+	
+}
 void LLPanelEmerald::onClickVoiceRevertDebug(void* data)
 {
 	LLPanelEmerald* self = (LLPanelEmerald*)data;
@@ -347,6 +358,27 @@ void LLPanelEmerald::onClickVoiceRevertDebug(void* data)
 
  
  
+}
+void LLPanelEmerald::onBeamDelete(void* data)
+{
+	LLPanelEmerald* self = (LLPanelEmerald*)data;
+	
+	LLComboBox* comboBox = self->getChild<LLComboBox>("EmeraldBeamShape_combo");
+
+	if(comboBox != NULL) 
+	{
+		std::string filename = gDirUtilp->getAppRODataDir() 
+						+gDirUtilp->getDirDelimiter()
+						+"beams"
+						+gDirUtilp->getDirDelimiter()
+						+comboBox->getValue().asString()+".xml";
+		if(gDirUtilp->fileExists(filename))
+		{
+			LLFile::remove(filename);
+			gSavedSettings.setString("EmeraldBeamShape","===OFF===");
+		}
+	}
+	self->refresh();
 }
 
 //workaround for lineeditor dumbness in regards to control_name

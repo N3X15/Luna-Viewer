@@ -895,6 +895,7 @@ LLTextureCache::LLTextureCache(bool threaded)
 
 LLTextureCache::~LLTextureCache()
 {
+	purgeTextureFilesTimeSliced(TRUE); // VWR-3878 - NB - force-flush all pending file deletes
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1208,14 +1209,14 @@ void LLTextureCache::purgeTextures(bool validate)
 	}
 	
 	LL_DEBUGS("TextureCache") << "TEXTURE CACHE: Reading " << num_entries << " Entries from " << mTexturesDirEntriesFileName << llendl;
-	
+ 	
 	std::map<LLUUID, S32> entry_idx_map;
 	S64 total_size = 0;
 	for (S32 idx=0; idx<num_entries; idx++)
 	{
 		const LLUUID& id = entries[idx].mID;
  		LL_DEBUGS("TextureCache") << "Entry: " << id << " Size: " << entries[idx].mSize << " Time: " << entries[idx].mTime << llendl;
-		std::map<LLUUID, S32>::iterator iter = entry_idx_map.find(id);
+ 		std::map<LLUUID, S32>::iterator iter = entry_idx_map.find(id);
 		if (iter != entry_idx_map.end())
 		{
 			// Newer entry replacing older entry
@@ -1237,7 +1238,7 @@ void LLTextureCache::purgeTextures(bool validate)
 	}
 	
 	S64 min_cache_size = sCacheMaxTexturesSize / 100 * 95;
-	S32 purge_count = 0;
+ 	S32 purge_count = 0;
 	S32 next_idx = 0;
 	for (S32 idx=0; idx<num_entries; idx++)
 	{
@@ -1270,8 +1271,7 @@ void LLTextureCache::purgeTextures(bool validate)
 		if (purge_entry)
 		{
 			purge_count++;
-	 		LL_DEBUGS("TextureCache") << "PURGING: " << filename << LL_ENDL;
-			LLAPRFile::remove(filename, getLocalAPRFilePool());
+	 		mFilesToDelete.push_back(filename);
 			total_size -= entries[idx].mSize;
 			entries[idx].mSize = 0;
 		}
@@ -1286,7 +1286,11 @@ void LLTextureCache::purgeTextures(bool validate)
 	}
 	num_entries = next_idx;
 
-	LL_DEBUGS("TextureCache") << "TEXTURE CACHE: Writing Entries: " << num_entries << LL_ENDL;
+	mTimeLastFileDelete.reset();
+
+	LL_DEBUGS("TextureCache") << "Writing Entries: " << num_entries 
+			<< " (" << num_entries*sizeof(Entry)/1024 << "KB)" 
+			<< llendl;
 	
 	LLAPRFile::remove(mTexturesDirEntriesFileName, getLocalAPRFilePool());
 	LLAPRFile::writeEx(mTexturesDirEntriesFileName, 
@@ -1310,9 +1314,53 @@ void LLTextureCache::purgeTextures(bool validate)
 	LL_INFOS("TextureCache") << "TEXTURE CACHE:"
 			<< " PURGED: " << purge_count
 			<< " ENTRIES: " << num_entries
-			<< " CACHE SIZE: " << total_size / 1024*1024 << " MB"
+			<< " CACHE SIZE: " << total_size / 1024 / 1024 << " MB"
 			<< llendl;
 }
+
+void LLTextureCache::purgeTextureFilesTimeSliced(BOOL force_all)
+{
+	LLMutexLock lock(&mHeaderMutex);
+
+	F32 delay_between_passes = 1.0f; // seconds
+	F32 max_time_per_pass = 0.1f; // seconds
+
+	if (!force_all && mTimeLastFileDelete.getElapsedTimeF32() <= delay_between_passes) 
+	{
+		return;
+	}
+
+	LLTimer timer;
+	S32 howmany = 0;
+
+	if (!mFilesToDelete.empty())
+	{
+		LL_INFOS("TEXTURE CACHE") << "purging time sliced with " << mFilesToDelete.size() << " files scheduled for deletion" << llendl;
+
+		for (LLTextureCache::filename_list_t::iterator iter = mFilesToDelete.begin(); iter!=mFilesToDelete.end(); ) 
+		{	
+			LLTextureCache::filename_list_t::iterator iter2 = iter++;
+			LLAPRFile::remove(*iter2, getLocalAPRFilePool());
+			mFilesToDelete.erase(iter2);
+			howmany++;
+
+			if (!force_all && timer.getElapsedTimeF32() > max_time_per_pass) 
+			{
+				break;
+			}
+		}
+	}
+
+	if (!mFilesToDelete.empty())
+	{
+		LL_INFOS("TEXTURE CACHE") << "purging time sliced with " << howmany << " files deleted (" 
+				<< mFilesToDelete.size() << " files left for next pass)" 
+				<< llendl;
+	}
+
+	mTimeLastFileDelete.reset();
+}
+
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -1487,19 +1535,16 @@ LLTextureCache::handle_t LLTextureCache::writeToCache(const LLUUID& id, U32 prio
 		purgeTextures(false);
 		mDoPurge = FALSE;
 	}
-	if (datasize >= TEXTURE_CACHE_ENTRY_SIZE)
-	{
-		LLMutexLock lock(&mWorkersMutex);
-		llassert_always(imagesize > 0);
-		LLTextureCacheWorker* worker = new LLTextureCacheRemoteWorker(this, priority, id,
+	purgeTextureFilesTimeSliced();	// VWR-3878 - NB - purge textures from cache in a non-hiccup-way
+
+	LLMutexLock lock(&mWorkersMutex);
+	llassert_always(imagesize > 0);
+	LLTextureCacheWorker* worker = new LLTextureCacheRemoteWorker(this, priority, id,
 																data, datasize, 0,
 																imagesize, responder);
-		handle_t handle = worker->write();
-		mWriters[handle] = worker;
-		return handle;
-	}
-	delete responder;
-	return LLWorkerThread::nullHandle();
+	handle_t handle = worker->write();
+	mWriters[handle] = worker;
+	return handle;
 }
 
 bool LLTextureCache::writeComplete(handle_t handle, bool abort)

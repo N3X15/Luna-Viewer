@@ -1560,6 +1560,7 @@ void LLPanelAvatar::resetGroupList()
 				row["id"] = id ;
 				row["columns"][0]["value"] = group_string;
 				row["columns"][0]["font"] = "SANSSERIF_SMALL";
+				row["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
 				row["columns"][0]["width"] = 0;
 				group_list->addElement(row);
 			}
@@ -2022,6 +2023,7 @@ void LLPanelAvatar::processAvatarGroupsReply(LLMessageSystem *msg, void**)
 				row["id"] = group_id;
 				row["columns"][0]["value"] = group_string;
 				row["columns"][0]["font"] = "SANSSERIF_SMALL";
+				row["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
 				if (group_list)
 				{
 					group_list->addElement(row);

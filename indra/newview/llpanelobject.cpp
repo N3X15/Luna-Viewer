@@ -108,6 +108,12 @@ enum {
 	MI_PATH_TEST_PROFILE_TRI,
 	MI_PATH_TEST_PROFILE_CIRCLE,
 	MI_PATH_TEST_PROFILE_CIRCLE_HALF,
+	//<-- Working33 by Gregory Maurer
+	MI_PATH_33_PROFILE_CIRCLE,
+	MI_PATH_33_PROFILE_SQUARE,
+	MI_PATH_33_PROFILE_TRIANGLE,
+	MI_PATH_33_PROFILE_HALFCIRCLE,
+	//Working33 -->
 	MI_NONE,
 	MI_VOLUME_COUNT
 };
@@ -318,6 +324,11 @@ BOOL	LLPanelObject::postBuild()
 	mCtrlSculptInvert = getChild<LLCheckBoxCtrl>("sculpt invert control");
 	childSetCommitCallback("sculpt invert control", onCommitSculptType, this);
 	
+	mLabelSculptUUID = getChild<LLTextBox>("label_sculpt_uuid");
+	LineEditorSculptUUID = getChild<LLLineEditor>("Sculpt UUID");
+	childSetCommitCallback("Sculpt UUID", onCommitSculptUUID, this);
+
+	
 	// Start with everyone disabled
 	clearCtrls();
 
@@ -494,13 +505,19 @@ void LLPanelObject::getState( )
 	mCtrlRotZ->setEnabled( enable_rotate );
 
 	BOOL owners_identical;
+	BOOL creators_identical;
 	LLUUID owner_id;
+	LLUUID creator_id;
 	std::string owner_name;
+	std::string creator_name;
+
 	owners_identical = LLSelectMgr::getInstance()->selectGetOwner(owner_id, owner_name);
+	creators_identical = LLSelectMgr::getInstance()->selectGetCreator(creator_id, creator_name);
 
 	// BUG? Check for all objects being editable?
 	S32 roots_selected = LLSelectMgr::getInstance()->getSelection()->getRootObjectCount();
 	BOOL editable = root_objectp->permModify();
+	BOOL showuuid = ( editable && (gAgent.getID() == creator_id) );
 
 	// Select Single Message
 	childSetVisible("select_single", FALSE);
@@ -749,6 +766,24 @@ void LLPanelObject::getState( )
 		{
 			selected_item = MI_PATH_LINE_PROFILE_CIRCLE_HALF;
 		}
+		//<-- Working33 by Gregory Maurer
+		else if ( path == LL_PCODE_PATH_CIRCLE_33 && profile == LL_PCODE_PROFILE_CIRCLE )
+		{
+			selected_item = MI_PATH_33_PROFILE_CIRCLE;
+		}
+		else if ( path == LL_PCODE_PATH_CIRCLE_33 && profile == LL_PCODE_PROFILE_SQUARE )
+		{
+			selected_item = MI_PATH_33_PROFILE_SQUARE;
+		}
+		else if ( path == LL_PCODE_PATH_CIRCLE_33 && profile == LL_PCODE_PROFILE_ISOTRI )
+		{
+			selected_item = MI_PATH_33_PROFILE_TRIANGLE;
+		}
+		else if ( path == LL_PCODE_PATH_CIRCLE_33 && profile == LL_PCODE_PROFILE_CIRCLE_HALF )
+		{
+			selected_item = MI_PATH_33_PROFILE_HALFCIRCLE;
+		}
+		//Working33 -->
 		else
 		{
 			llinfos << "Unknown path " << (S32) path << " profile " << (S32) profile << " in getState" << llendl;
@@ -1216,6 +1251,9 @@ void LLPanelObject::getState( )
 	mCtrlSculptMirror->setVisible(sculpt_texture_visible);
 	mCtrlSculptInvert->setVisible(sculpt_texture_visible);
 
+	mLabelSculptUUID->setVisible(sculpt_texture_visible);
+	LineEditorSculptUUID->setVisible(sculpt_texture_visible);
+
 
 	// sculpt texture
 
@@ -1239,7 +1277,23 @@ void LLPanelObject::getState( )
 				mTextureCtrl->setTentative(FALSE);
 				mTextureCtrl->setEnabled(editable);
 				if (editable)
+				{
 					mTextureCtrl->setImageAssetID(sculpt_params->getSculptTexture());
+					if( showuuid )
+					{
+						std::string SculptUUID_string;
+						SculptUUID_string = llformat( sculpt_params->getSculptTexture().asString().c_str());
+						LineEditorSculptUUID->setText(SculptUUID_string);
+						LineEditorSculptUUID->setEnabled(editable);
+					}
+					else
+					{
+						std::string SculptUUID_string;
+						SculptUUID_string = llformat( LLUUID::null.asString().c_str());
+						LineEditorSculptUUID->setText(SculptUUID_string);
+						LineEditorSculptUUID->setEnabled(FALSE);
+					}
+				}
 				else
 					mTextureCtrl->setImageAssetID(LLUUID::null);
 			}
@@ -1270,6 +1324,11 @@ void LLPanelObject::getState( )
 			if (mLabelSculptType)
 			{
 				mLabelSculptType->setEnabled(TRUE);
+			}
+
+			if (mLabelSculptUUID)
+			{
+				mLabelSculptUUID->setEnabled(TRUE);
 			}
 		}
 	}
@@ -1560,6 +1619,28 @@ void LLPanelObject::getVolumeParams(LLVolumeParams& volume_params)
 		profile = LL_PCODE_PROFILE_CIRCLE;
 		path = LL_PCODE_PATH_CIRCLE;
 		break;
+		
+//<-- Working33 by Gregory Maurer
+	case MI_PATH_33_PROFILE_CIRCLE:
+		profile = LL_PCODE_PROFILE_CIRCLE;
+		path = LL_PCODE_PATH_CIRCLE_33;
+		break;
+
+	case MI_PATH_33_PROFILE_SQUARE:
+		profile = LL_PCODE_PROFILE_SQUARE;
+		path = LL_PCODE_PATH_CIRCLE_33;
+		break;
+
+	case MI_PATH_33_PROFILE_TRIANGLE:
+		profile = LL_PCODE_PROFILE_ISOTRI;
+		path = LL_PCODE_PATH_CIRCLE_33;
+		break;
+
+	case MI_PATH_33_PROFILE_HALFCIRCLE:
+		profile = LL_PCODE_PROFILE_CIRCLE_HALF;
+		path = LL_PCODE_PATH_CIRCLE_33;
+		break;
+//Working33 -->
 		
 	default:
 		llwarns << "Unknown base type " << selected_type 
@@ -2224,6 +2305,25 @@ void LLPanelObject::onCommitSculpt( LLUICtrl* ctrl, void* userdata )
 	LLPanelObject* self = (LLPanelObject*) userdata;
 
 	self->sendSculpt();
+}
+
+
+void LLPanelObject::onCommitSculptUUID(LLUICtrl*, void* userdata)
+{
+	LLPanelObject* self = (LLPanelObject*) userdata;
+
+    LLTextureCtrl* mTextureCtrl = self->getChild<LLTextureCtrl>("sculpt texture control");
+	LLLineEditor*	le = self->getChild<LLLineEditor>("Sculpt UUID");
+	if(le)
+	{
+		LLUUID asset = LLUUID(le->getText());
+		mTextureCtrl->setImageAssetID(asset);
+		self->mSculptTextureRevert = asset;
+
+		LLSculptParams sculpt_params;
+		sculpt_params.setSculptTexture(asset);
+		self->mObject->setParameterEntry(LLNetworkData::PARAMS_SCULPT, sculpt_params, TRUE);
+	}
 }
 
 // static

@@ -748,7 +748,7 @@ void LLFloaterWorldMap::updateLocation()
 		}
 
 		childSetValue("location", sim_name);
-		
+
 		F32 region_x = (F32)fmod( pos_global.mdV[VX], (F64)REGION_WIDTH_METERS );
 		F32 region_y = (F32)fmod( pos_global.mdV[VY], (F64)REGION_WIDTH_METERS );
 		childSetValue("spin x", LLSD(region_x) );
@@ -1611,6 +1611,7 @@ void LLFloaterWorldMap::updateSims(bool found_null_sim)
 			LLSD value;
 			value["id"] = sim_name;
 			value["columns"][0]["column"] = "sim_name";
+			value["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
 			value["columns"][0]["value"] = sim_name;
 			list->addElement(value);
 			num_results++;

@@ -850,15 +850,18 @@ void LLPanelGroupGeneral::updateMembers()
 
 		row["columns"][0]["column"] = "name";
 		row["columns"][0]["font-style"] = style;
+		row["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
 		// value is filled in by name list control
 
 		row["columns"][1]["column"] = "title";
 		row["columns"][1]["value"] = member->getTitle();
 		row["columns"][1]["font-style"] = style;
+		row["columns"][1]["color"] = gColors.getColor("DefaultListText").getValue();
 		
 		row["columns"][2]["column"] = "online";
 		row["columns"][2]["value"] = member->getOnlineStatus();
 		row["columns"][2]["font-style"] = style;
+		row["columns"][2]["color"] = gColors.getColor("DefaultListText").getValue();
 
 		sSDTime += sd_timer.getElapsedTimeF32();
 

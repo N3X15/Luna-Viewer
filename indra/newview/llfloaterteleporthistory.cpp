@@ -126,10 +126,13 @@ void LLFloaterTeleportHistory::addEntry(std::string regionName, S16 x, S16 y, S1
 		LLSD value;
 		value["id"] = id;
 		value["columns"][0]["column"] = "region";
+		value["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
 		value["columns"][0]["value"] = regionName;
 		value["columns"][1]["column"] = "position";
+		value["columns"][1]["color"] = gColors.getColor("DefaultListText").getValue();
 		value["columns"][1]["value"] = position;
 		value["columns"][2]["column"] = "visited";
+		value["columns"][2]["color"] = gColors.getColor("DefaultListText").getValue();
 		value["columns"][2]["value"] = timeString;
 
 		// these columns are hidden and serve as data storage for simstring and SLURL
@@ -216,7 +219,7 @@ void LLFloaterTeleportHistory::onTeleport(void* data)
 
 	// build secondlife::/app link from simstring for instant teleport to destination
 	std::string slapp="secondlife:///app/teleport/" + self->mPlacesList->getFirstSelected()->getColumn(4)->getValue().asString();
-	LLURLDispatcher::dispatch(slapp, NULL, false);
+	LLURLDispatcher::dispatch(slapp, NULL, true);
 }
 
 // static

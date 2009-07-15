@@ -516,7 +516,6 @@ BOOL LLCacheName::getName(const LLUUID& id, std::string& first, std::string& las
 	}
 
 }
-
 BOOL LLCacheName::getFullName(const LLUUID& id, std::string& fullname)
 {
 	std::string first_name, last_name;

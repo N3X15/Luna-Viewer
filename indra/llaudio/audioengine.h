@@ -314,6 +314,7 @@ public:
 	bool setupChannel();
 	bool play(const LLUUID &audio_id);	// Start the audio source playing
 
+	const LLUUID &getOwnerID()		{ return mOwnerID; }
 	bool hasPendingPreloads() const;	// Has preloads that haven't been done yet
 
 	friend class LLAudioEngine;

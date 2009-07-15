@@ -122,6 +122,7 @@ private:
 	void readHeaderCache();
 	void purgeAllTextures(bool purge_directories);
 	void purgeTextures(bool validate);
+	void purgeTextureFilesTimeSliced(BOOL force_all = FALSE);	// VWR-3878 - NB
 	S32 getHeaderCacheEntry(const LLUUID& id, bool touch, S32* imagesize = NULL);
 	bool removeHeaderCacheEntry(const LLUUID& id);
 	void lockHeaders() { mHeaderMutex.lock(); }
@@ -142,6 +143,10 @@ private:
 
 	typedef std::vector<std::pair<LLPointer<Responder>, bool> > responder_list_t;
 	responder_list_t mCompletedList;
+
+	typedef std::list<std::string> filename_list_t;
+	filename_list_t	mFilesToDelete;
+	LLTimer mTimeLastFileDelete;
 	
 	BOOL mReadOnly;
 	
