@@ -417,6 +417,8 @@ class DarwinManifest(ViewerManifest):
             self.path("../../libraries/universal-darwin/lib_release/libopenal.dylib", "MacOS/libopenal.dylib");
             self.path("../../libraries/universal-darwin/lib_release/libalut.dylib", "MacOS/libalut.dylib");
 
+	    # Lua lib
+	    self.path("../../libraries/universal-darwin/lib_release/liblua5.1.dylib", "MacOS/liblua5.1.dylib");
 
             # replace the default theme with our custom theme (so scrollbars work).
             if self.prefix(src="mozilla-theme", dst="MacOS/chrome"):

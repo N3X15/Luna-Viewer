@@ -74,7 +74,8 @@ LLComboBox::LLComboBox(	const std::string& name, const LLRect &rect, const std::
 	mListPosition(BELOW),
 	mPrearrangeCallback( NULL ),
 	mTextEntryCallback( NULL ),
-	mLabel(label)
+	mLabel(label),
+	mListColor( LLUI::sColorsGroup->getColor( "ComboBoxBg" ))
 {
 	// Always use text box 
 	// Text label button
@@ -99,7 +100,8 @@ LLComboBox::LLComboBox(	const std::string& name, const LLRect &rect, const std::
 	mList = new LLScrollListCtrl(std::string("ComboBox"), LLRect(), 
 								 &LLComboBox::onItemSelected, this, FALSE);
 	mList->setVisible(FALSE);
-	mList->setBgWriteableColor( LLColor4(1,1,1,1) );
+	
+	mList->setBgWriteableColor(mListColor); //LLColor4(0.3f,0.3f,0.3f,1) );
 	mList->setCommitOnKeyboardMovement(FALSE);
 	addChild(mList);
 

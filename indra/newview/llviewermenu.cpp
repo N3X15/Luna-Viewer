@@ -996,7 +996,7 @@ void init_client_menu(LLMenuGL* menu)
 										&menu_check_control,
 										(void*)"SaveMinidump"));
 
-	menu->append(new LLMenuItemCallGL("Debug Settings...", LLFloaterSettingsDebug::show, NULL, NULL, 'S', MASK_ALT | MASK_CONTROL));
+	menu->append(new LLMenuItemCallGL("Debug Settings...", LLFloaterSettingsDebug::show, NULL, NULL, 'S', MASK_ALT | MASK_CONTROL | MASK_SHIFT));
 	menu->append(new LLMenuItemCheckGL("View Admin Options", &handle_admin_override_toggle, NULL, &check_admin_override, NULL, 'V', MASK_CONTROL | MASK_ALT));
 
 	menu->append(new LLMenuItemCallGL("Request Admin Status", 

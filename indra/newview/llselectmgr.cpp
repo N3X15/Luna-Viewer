@@ -107,7 +107,6 @@ BOOL gHideSelectedObjects = FALSE;
 BOOL gAllowSelectAvatar = FALSE;
 
 BOOL LLSelectMgr::sRectSelectInclusive = TRUE;
-BOOL LLSelectMgr::sRenderSelectionHighlights = TRUE;
 BOOL LLSelectMgr::sRenderHiddenSelections = TRUE;
 BOOL LLSelectMgr::sRenderLightRadius = FALSE;
 F32	LLSelectMgr::sHighlightThickness = 0.f;
@@ -4548,11 +4547,26 @@ void LLSelectMgr::processForceObjectSelect(LLMessageSystem* msg, void**)
 	LLSelectMgr::getInstance()->highlightObjectAndFamily(objects);
 }
 
+void LLSelectMgr::enableSilhouette(BOOL enable)
+{
+	if(gSavedSettings.getBOOL("EmeraldRenderHighlightSelections"))
+	{
+		mRenderSilhouettes = enable;
+	}
+	else
+	{
+		mRenderSilhouettes = false;
+	}
+}
 
 extern LLGLdouble	gGLModelView[16];
 
 void LLSelectMgr::updateSilhouettes()
 {
+	//LOOOOOTS of CPU time saved by this.
+	if(!mRenderSilhouettes)
+		return;
+
 	S32 num_sils_genned = 0;
 
 	LLVector3d	cameraPos = gAgent.getCameraPositionGlobal();
@@ -4825,7 +4839,7 @@ void LLSelectMgr::updateSilhouettes()
 
 void LLSelectMgr::renderSilhouettes(BOOL for_hud)
 {
-	if (!mRenderSilhouettes || !LLSelectMgr::sRenderSelectionHighlights)
+	if (!mRenderSilhouettes)
 	{
 		return;
 	}

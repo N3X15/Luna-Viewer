@@ -1304,57 +1304,39 @@ void LLFloaterAvatarList::onClickMark(void *userdata)
 
 LLColor4 LLFloaterAvatarList::getAvatarColor(LLAvatarListEntry *ent, F32 distance, e_coloring_type type)
 {
- 	F32 r = 0.0f, g = 0.0f, b = 0.0f, a = 1.0f;
+// 	F32 r = 0.0f, g = 0.0f, b = 0.0f, a = 0.5f;
+	LLColor4 av_color = gColors.getColor("DefaultListText").getValue();
 
 	switch(type)
 	{
 		case CT_NONE:
-			return gColors.getColor("DefaultListText").getValue();
+			av_color = gColors.getColor("DefaultListText").getValue();
 			break;
 		case CT_DISTANCE:
-			if ( distance <= 10.0f )
+			if ( distance <= 20.0f )
 			{
-				// whisper range
-				g = 0.7f - ( distance / 20.0f );
-			}
-			else if ( distance > 10.0f && distance <= 20.0f )
-			{
-				// talk range
-				g = 0.7f - ( (distance - 10.0f) / 20.0f );
-				b = g;
+				av_color = gColors.getColor("AvatarListTextDistNormalRange");
 			}
 			else if ( distance > 20.0f && distance <= 96.0f )
 			{
-				// shout range
-				r = 0.7f - ( (distance - 20.0f) / 192.0f );
-				b = r;
+				av_color = gColors.getColor("AvatarListTextDistShoutRange");
 			}
 			else
 			{
-				// unreachable by chat
-				r = 1.0;
+				av_color = gColors.getColor("AvatarListTextDistOver");
 			}
 			break;
 		case CT_AGE:
 			if ( ent->mAvatarInfo.getStatus() == DATA_RETRIEVED )
 			{
 				S32 age = ent->mAvatarInfo.getValue().getAge();
-				if ( age < 14 )
+				if ( age <= 7 )
 				{
-					r = 0.7f - ( age / 28 );
-				}
-				else if ( age > 14 && age <= 30 )
-				{
-					r = 0.7f - ( (age-14) / 32 );
-					g = r;
-				}
-				else if ( age > 30 && age < 90 )
-				{
-					g = 0.7f - ( (age-30) / 120 );
+					av_color = gColors.getColor("AvatarListTextAgeYoung");
 				}
 				else
 				{
-					b = 1.0f;
+					av_color = gColors.getColor("AvatarListTextAgeNormal");
 				}
 			}
 			break;
@@ -1363,8 +1345,7 @@ LLColor4 LLFloaterAvatarList::getAvatarColor(LLAvatarListEntry *ent, F32 distanc
 		case CT_PAYMENT:
 			break;
 	}
-
-	return LLColor4(r,g,b,a);
+	return av_color;
 }
 
 void LLFloaterAvatarList::onDoubleClick(void *userdata)

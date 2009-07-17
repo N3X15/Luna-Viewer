@@ -208,6 +208,7 @@ BOOL LLPanelEmerald::postBuild()
 	childSetCommitCallback("X Modifier", onCommitSendAppearance);
 	childSetCommitCallback("Y Modifier", onCommitSendAppearance);
 	childSetCommitCallback("Z Modifier", onCommitSendAppearance);
+	childSetValue("EmeraldDoubleClickTeleportMode", gSavedSettings.getBOOL("EmeraldDoubleClickTeleportMode"));
 
 	LLView *target_view = getChild<LLView>("im_give_drop_target_rect");
 	if(target_view)
@@ -293,6 +294,7 @@ void LLPanelEmerald::apply()
 	gSavedPerAccountSettings.setString("EmeraldInstantMessageResponse", std::string(wstring_to_utf8str(im_response)));
 
 	//gSavedPerAccountSettings.setString(
+	gSavedPerAccountSettings.setBOOL("EmeraldInstantMessageResponseMuted", childGetValue("EmeraldInstantMessageResponseMuted").asBoolean());
 	gSavedPerAccountSettings.setBOOL("EmeraldInstantMessageResponseFriends", childGetValue("EmeraldInstantMessageResponseFriends").asBoolean());
 	gSavedPerAccountSettings.setBOOL("EmeraldInstantMessageResponseMuted", childGetValue("EmeraldInstantMessageResponseMuted").asBoolean());
 	gSavedPerAccountSettings.setBOOL("EmeraldInstantMessageResponseAnyone", childGetValue("EmeraldInstantMessageResponseAnyone").asBoolean());
@@ -302,6 +304,7 @@ void LLPanelEmerald::apply()
 	gSavedPerAccountSettings.setBOOL("EmeraldInstantMessageResponseItem", childGetValue("EmeraldInstantMessageResponseItem").asBoolean());
 	gSavedPerAccountSettings.setBOOL("EmeraldInstantMessageAnnounceIncoming", childGetValue("EmeraldInstantMessageAnnounceIncoming").asBoolean());
 	gSavedPerAccountSettings.setBOOL("EmeraldInstantMessageAnnounceStealFocus", childGetValue("EmeraldInstantMessageAnnounceStealFocus").asBoolean());
+	gSavedSettings.setBOOL("EmeraldDoubleClickTeleportMode", childGetValue("EmeraldDoubleClickTeleportMode").asBoolean());
 	
 	gLggBeamMaps.forceUpdate();
 }

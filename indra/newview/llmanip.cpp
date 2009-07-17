@@ -69,7 +69,11 @@ S32		LLManip::sMaxTimesShowHelpText = 5;
 F32		LLManip::sGridMaxSubdivisionLevel = 32.f;
 F32		LLManip::sGridMinSubdivisionLevel = 1.f;
 LLVector2 LLManip::sTickLabelSpacing(60.f, 25.f);
-
+bool	LLManip::sActualRoot = false;// going to set these up in the main entry
+bool	LLManip::sPivotPerc  = false;
+F32		LLManip::sPivotX	 = 0.f;
+F32		LLManip::sPivotY	 = 0.f;
+F32		LLManip::sPivotZ	 = 0.f;
 
 //static
 void LLManip::rebuild(LLViewerObject* vobj)
@@ -100,8 +104,48 @@ LLManip::LLManip( const std::string& name, LLToolComposite* composite )
 	mHighlightedPart(LL_NO_PART),
 	mManipPart(LL_NO_PART)
 {
-}
+	initPivot();
 
+	gSavedSettings.getControl("EmeraldBuildPrefs_ActualRoot")->getSignal()->connect(&updateActualRoot);
+	gSavedSettings.getControl("EmeraldBuildPrefs_PivotIsPercent")->getSignal()->connect(&updatePivotIsPercent);
+	gSavedSettings.getControl("EmeraldBuildPrefs_PivotX")->getSignal()->connect(&updatePivotX);
+	gSavedSettings.getControl("EmeraldBuildPrefs_PivotY")->getSignal()->connect(&updatePivotY);
+	gSavedSettings.getControl("EmeraldBuildPrefs_PivotZ")->getSignal()->connect(&updatePivotZ);
+}
+//static
+void LLManip::initPivot()
+{
+	sActualRoot = (bool)gSavedSettings.getBOOL("EmeraldBuildPrefs_ActualRoot");
+	sPivotPerc  = (bool)gSavedSettings.getBOOL("EmeraldBuildPrefs_PivotIsPercent");
+	sPivotX		= gSavedSettings.getF32("EmeraldBuildPrefs_PivotX");
+	sPivotY		= gSavedSettings.getF32("EmeraldBuildPrefs_PivotY");
+	sPivotZ		= gSavedSettings.getF32("EmeraldBuildPrefs_PivotZ");
+}
+//static
+void LLManip::updateActualRoot(const LLSD &data)
+{
+	sActualRoot = (bool)data.asBoolean();
+}
+//static
+void LLManip::updatePivotIsPercent(const LLSD &data)
+{
+	sPivotPerc = (bool)data.asBoolean();
+}
+//static
+void LLManip::updatePivotX(const LLSD &data)
+{
+	sPivotX = (F32)data.asReal();
+}
+//static
+void LLManip::updatePivotY(const LLSD &data)
+{
+	sPivotY = (F32)data.asReal();
+}
+//static
+void LLManip::updatePivotZ(const LLSD &data)
+{
+	sPivotZ = (F32)data.asReal();
+}
 void LLManip::getManipNormal(LLViewerObject* object, EManipPart manip, LLVector3 &normal)
 {
 	LLVector3 grid_origin;
@@ -354,7 +398,7 @@ LLVector3 LLManip::getPivotPoint()
 	LLVector3 pos;
 	LLVector3 scale;
 	LLQuaternion rot;// = mObjectSelection->getFirstObject()->getRotation();
-	if (mObjectSelection->getFirstRootObject(TRUE) && (mObjectSelection->getObjectCount() == 1 || gSavedSettings.getBOOL("EmeraldBuildPrefs_ActualRoot")) && mObjectSelection->getSelectType() != SELECT_TYPE_HUD)
+	if (mObjectSelection->getFirstRootObject(TRUE) && (mObjectSelection->getObjectCount() == 1 || sActualRoot) && mObjectSelection->getSelectType() != SELECT_TYPE_HUD)
 	{
 		pos = mObjectSelection->getFirstRootObject(TRUE)->getPivotPositionAgent();
 		scale = mObjectSelection->getFirstRootObject(TRUE)->getScale();
@@ -365,15 +409,13 @@ LLVector3 LLManip::getPivotPoint()
 		scale = LLSelectMgr::getInstance()->getBBoxOfSelection().getExtentLocal();
 		rot = LLSelectMgr::getInstance()->getBBoxOfSelection().getRotation();
 	}
-	if(gSavedSettings.getBOOL("EmeraldBuildPrefs_PivotIsPercent"))
+	if(sPivotPerc)
 	{
-		//pos[VX] = pos[VX] + (scale[VX]*(gSavedSettings.getF32("EmeraldBuildPrefs_PivotX")*0.01));
-		//pos[VY] = pos[VY] + (scale[VY]*(gSavedSettings.getF32("EmeraldBuildPrefs_PivotY")*0.01));
-		//pos[VZ] = pos[VZ] + (scale[VZ]*(gSavedSettings.getF32("EmeraldBuildPrefs_PivotZ")*0.01));
+		
 		LLVector3 add(
-			(-scale[VX]*0.5) + (scale[VX]*(gSavedSettings.getF32("EmeraldBuildPrefs_PivotX")*0.01)),
-			(-scale[VY]*0.5) + (scale[VY]*(gSavedSettings.getF32("EmeraldBuildPrefs_PivotY")*0.01)),
-			(-scale[VZ]*0.5) + (scale[VZ]*(gSavedSettings.getF32("EmeraldBuildPrefs_PivotZ")*0.01)));
+			(-scale[VX]*0.5) + (scale[VX]*(sPivotX*0.01)),
+			(-scale[VY]*0.5) + (scale[VY]*(sPivotY*0.01)),
+			(-scale[VZ]*0.5) + (scale[VZ]*(sPivotZ*0.01)));
 		add = add * rot;
 		pos = pos + add;
 	}else
@@ -382,9 +424,9 @@ LLVector3 LLManip::getPivotPoint()
 		//pos[VY] = pos[VY] + gSavedSettings.getF32("EmeraldBuildPrefs_PivotY");
 		//pos[VZ] = pos[VZ] + gSavedSettings.getF32("EmeraldBuildPrefs_PivotZ");
 		LLVector3 add(
-			gSavedSettings.getF32("EmeraldBuildPrefs_PivotX"),
-			gSavedSettings.getF32("EmeraldBuildPrefs_PivotY"),
-			gSavedSettings.getF32("EmeraldBuildPrefs_PivotZ"));
+			sPivotX,
+			sPivotY,
+			sPivotZ);
 		add = add * rot;
 		pos = pos + add;
 	}

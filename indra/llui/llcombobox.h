@@ -190,6 +190,7 @@ protected:
 	EPreferredPosition	mListPosition;
 	LLPointer<LLUIImage>	mArrowImage;
 	std::string			mLabel;
+	LLColor4			mListColor;
 
 private:
 	S32					mButtonPadding;

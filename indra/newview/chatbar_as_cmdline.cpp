@@ -255,9 +255,11 @@ bool cmd_line_chat(std::string revised_text, EChatType type)
 				}
 			}else if(command == gSavedSettings.getString("EmeraldCmdLineTP2"))
 			{
-				std::string name = revised_text.substr(command.length()+1);
-				cmdline_tp2name(name);
-				return false;
+				if (revised_text.length() > command.length() + 1) //Typing this command with no argument was causing a crash. -Madgeek
+				{
+					std::string name = revised_text.substr(command.length()+1);
+					cmdline_tp2name(name);
+				}
 			}
 			else if(command == gSavedSettings.getString("FlexCmdLineLua"))
 			{
@@ -359,7 +361,7 @@ void cmdline_rezplat()
 
     LLVolumeParams    volume_params;
 
-    volume_params.setType( LL_PCODE_PROFILE_SQUARE, LL_PCODE_PATH_CIRCLE2 );
+    volume_params.setType( LL_PCODE_PROFILE_SQUARE, LL_PCODE_PATH_CIRCLE_33 );
     volume_params.setRatio    ( 2, 2 );
     volume_params.setShear    ( 0, 0 );
     volume_params.setTaper(2.0f,2.0f);
@@ -371,7 +373,11 @@ void cmdline_rezplat()
     LLQuaternion rotation;
     rotation.setQuat(90.f * DEG_TO_RAD, LLVector3::y_axis);
 
-    msg->addVector3Fast(_PREHASH_Scale,            LLVector3(0.01f,10.0f,10.0f) );
+	F32 realsize = gSavedSettings.getF32("EmeraldPlatformSize") / 3.0f;
+	if (realsize < 0.01f) realsize = 0.01f;
+	else if (realsize > 10.0f) realsize = 10.0f;
+
+    msg->addVector3Fast(_PREHASH_Scale,            LLVector3(0.01f,realsize,realsize) );
     msg->addQuatFast(_PREHASH_Rotation,            rotation );
     msg->addVector3Fast(_PREHASH_RayStart,        rezpos );
     msg->addVector3Fast(_PREHASH_RayEnd,            rezpos );
