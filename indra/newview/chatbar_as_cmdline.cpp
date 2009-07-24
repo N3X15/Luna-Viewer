@@ -260,11 +260,6 @@ bool cmd_line_chat(std::string revised_text, EChatType type)
 					std::string name = revised_text.substr(command.length()+1);
 					cmdline_tp2name(name);
 				}
-			}
-			else if(command == gSavedSettings.getString("FlexCmdLineLua"))
-			{
-				std::string derp = revised_text.substr(command.length()+1);
-				FLLua::RunString(derp);
 				return false;
 			}
 		}

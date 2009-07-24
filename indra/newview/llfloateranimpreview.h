@@ -111,7 +111,7 @@ private:
 	void setAnimCallbacks() ;
 	
 protected:
-	void			draw();
+	//void			draw();
 	void			resetMotion();
 
 	LLPreviewAnimation* mAnimPreview;

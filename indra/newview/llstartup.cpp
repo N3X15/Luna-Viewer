@@ -2558,6 +2558,7 @@ bool idle_startup()
 		set_startup_status(1.0, "", "");
 
 		LLFirstUse::ClientTags();
+		LLFirstUse::EmeraldOTR();
 
 		// Let the map know about the inventory.
 		if(gFloaterWorldMap)

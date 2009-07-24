@@ -5,7 +5,7 @@
   <tab_container label="o.o" bottom="0" height="408" left="0" mouse_opaque="false" name="tab"
 	     tab_min_width="50" tab_position="top" width="500" bg_opaque_color="0,0,0,0.0">
     <panel border="true" bottom="-408" follows="left|top|right|bottom" height="408"
-		     label="Teleport/Login" left="1" mouse_opaque="true" name="Teleport/Login" width="517">
+		     label="TP/Login" left="1" mouse_opaque="true" name="Teleport/Login" width="517">
       <check_box bottom_delta="-30" enabled="true"
            follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
            label="Double-click Teleport" left_delta="10" mouse_opaque="true"
@@ -22,11 +22,30 @@
            follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
            label="Rotate Camera behind avatar after Double-click Teleports" left_delta="0" mouse_opaque="true"
            name="move_camaftertp_toggle" radio_style="false" width="270" control_name="EmeraldRotateCamAfterLocalTP" />
+      <check_box bottom_delta="-20" enabled="true"
+           follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+           label="Always fly after teleports" left_delta="0" mouse_opaque="true"
+           name="flyaftertp_toggle" radio_style="false" width="270" control_name="EmeraldFlyAfterTeleport" />
       <spinner decimal_digits="1" follows="left|top" height="18" increment="0.1" initial_val="0"
            label="Double-click Teleport Z Offset" label_width="160" left_delta="0" bottom_delta="-25" max_val="9001" min_val="0"
            name="Double-click Teleport Z Offset"
            tool_tip="Controls the Z Offset for Double-click Teleports"
            width="210" control_name="EmeraldDoubleClickZOffset" />
+      <check_box bottom_delta="-20" enabled="true"
+           follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+           label="Additionally offset up by half the avatar height" left_delta="0" mouse_opaque="true"
+           name="avcalc_toggle" radio_style="false" width="270" control_name="EmeraldDoubleClickTeleportAvCalc" />
+      <radio_group bottom="-180" draw_border="false" follows="top|left" height="40"
+         name="EmeraldDoubleClickTeleportMode" width="270">
+        <radio_item bottom="-20" height="20" left="0" name="0" width="270"
+          tool_tip="This makes the avatar rotation stay the same between doubleclick teleports.">
+          Keep avatar rotation the same when doubleclick teleporting
+        </radio_item>
+        <radio_item bottom="-40" height="20" left="0" name="1" width="270"
+          tool_tip="This makes the avatar use the camera's left/right rotation on doubleclick teleport.">
+          Rotate avatar according to camera left/right rotation on doubleclick teleport
+        </radio_item>
+      </radio_group>
       <check_box bottom_delta="-30" enabled="true"
            follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
            label="Play Teleport sound effect" left_delta="-50" mouse_opaque="true"
@@ -55,8 +74,8 @@
            follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
            label="Disable Logout Progress Screen" left_delta="0" mouse_opaque="true"
            name="logout_screen_toggle" radio_style="false" width="270" control_name="EmeraldDisableLogoutScreens" />
-      <spinner decimal_digits="1" follows="left|top" height="18" increment="1" initial_val="0"
-           label="Login Precaching Delay" label_width="125" left_delta="0" bottom_delta="-25" max_val="9001" min_val="0"
+      <spinner decimal_digits="1" follows="left|top" height="18" increment="1" initial_val="0.1"
+           label="Login Precaching Delay" label_width="125" left_delta="0" bottom_delta="-25" max_val="9001" min_val="0.1"
            name="Login Precaching Delay"
            tool_tip="Controls the time on login it waits to let you in"
            width="175" control_name="PrecachingDelay" />
@@ -192,10 +211,33 @@ Recommended Settings are:
            label="Broadcast camera focus point and pointer target" left_delta="0" mouse_opaque="true" name="EmBroadcastPointers-toggle" control_name="EmeraldBroadcastPointers" radio_style="false" width="270" />
     </panel>
     <panel border="true" bottom="-580" follows="left|top|right|bottom" height="525"
-		     label="IM" left="1" mouse_opaque="true" name="Misc" width="418">
-      <check_box bottom_delta="-40" enabled="true"
+	   label="IM" left="1" mouse_opaque="true" name="Misc" width="418">
+      <!--[$PLOTR$]-->
+      <radio_group bottom="-85" draw_border="false" enabled="true" follows="left|top" height="80" left="300" mouse_opaque="true"
+		   name="EmeraldUseOTR" width="160">
+        <radio_item type="string" length="1" bottom_delta="-10" enabled="true" height="16" left_delta="0" mouse_opaque="true" name="0" width="98"
+                    tool_tip="Require use of OTR in IMs">
+          Require use of OTR in IMs
+        </radio_item>
+        <radio_item type="string" length="1" bottom_delta="-10" enabled="true" height="16" left_delta="0" mouse_opaque="true" name="1" width="98"
+                    tool_tip="Request OTR if available.">
+          Request OTR if available
+        </radio_item>
+        <radio_item type="string" length="1" bottom_delta="-10" enabled="true" height="16" left_delta="0" mouse_opaque="true" name="2" width="98"
+                    tool_tip="Accept OTR requests.">
+          Accept OTR requests
+        </radio_item>
+        <radio_item type="string" length="1" bottom_delta="-10" enabled="true" height="16" left_delta="0" mouse_opaque="true" name="3" width="98"
+                    tool_tip="Decline use of OTR.">
+          Decline use of OTR
+        </radio_item>
+      </radio_group>
+      <button bottom_delta="-20" follows="left|top" font="SansSerifSmall" height="20" left="300" name="otr_help_btn" width="98" label="What is OTR?"/>
+      <!--[/$PLOTR$]-->
+      <view_border bevel_style="none" border_thickness="1" bottom_delta="4" follows="top|left" height="100" left_delta="-30" name="OTRBorder" width="0" />
+      <check_box bottom="-25" enabled="true"
            follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
-           label="Announce incoming instant messages" left_delta="10" mouse_opaque="true"
+           label="Announce incoming instant messages" left="10" mouse_opaque="true"
            name="EmeraldInstantMessageAnnounceIncoming" radio_style="false" width="270" />
       <check_box bottom_delta="-20" enabled="true"
            follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
@@ -228,10 +270,10 @@ Recommended Settings are:
       <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
            bottom_delta="-10" drop_shadow_visible="true" enabled="true" follows="left|top"
            font="SansSerifSmall" h_pad="0" halign="left" height="10" left_delta="-50"
-           mouse_opaque="false" name="text_box3" v_pad="0" width="256">
-        Instant Message Response:
+           mouse_opaque="false" name="text_box3" v_pad="0" width="420">
+        Response Text: (Use #f for recipient's first name, #l for last name, #t for timestamp):
       </text>
-      <text_editor type="string" length="1" bottom_delta="-80" embedded_items="false" enabled="true" follows="left|top"
+      <text_editor type="string" length="1" bottom_delta="-85" embedded_items="false" enabled="true" follows="left|top"
            font="SansSerifSmall" height="75" left_delta="0" max_length="225"
            mouse_opaque="true" name="im_response" width="330" word_wrap="true" />
       <check_box bottom_delta="-20" enabled="true"
@@ -411,7 +453,26 @@ Leave any command blank to deactivate it.
            follows="left|top" font="SansSerifSmall" height="20" left_delta="0"
            max_length="256" mouse_opaque="true"
            tool_tip="" name="EmeraldCmdLineRezPlatform" control_name="EmeraldCmdLineRezPlatform" width="200" />
-      <text bottom_delta="-18" follows="left|top" font="SansSerifSmall" height="16" left_delta="0" name="loltxt" width="512">
+      <slider bottom_delta="-20"
+          left="15"
+          name="EmeraldPlatformSize"
+          control_name="EmeraldPlatformSize"
+          decimal_digits="1"
+          enabled="true"
+          follows="left|top"
+          height="18"
+          increment="0.5"
+          initial_val="5"
+          label="Width"
+          label_width="30"
+          max_val="30"
+          min_val="5"
+          mouse_opaque="true"
+          show_text="true"
+          width="200"
+          auto_resize="false"
+          tool_tip="How big do you want the platform to appear to be?" />
+      <text bottom_delta="-15" follows="left|top" font="SansSerifSmall" height="16" left_delta="0" name="loltxt" width="512">
         Teleport to a region by name
 (usage: cmd simname) (ex: cmd Ahern)
       </text>
@@ -697,7 +758,7 @@ you up or down without altering your shape.
         name="EmPivotPercToggle" radio_style="false" width="100" control_name="EmeraldBuildPrefs_PivotIsPercent" />
       <check_box bottom_delta="60" enabled="true"
            follows="left|top" font="SansSerifSmall" height="16" initial_value="true"
-           label="Enable the highlighting of selected prims (Restart Required)" left_delta="140" mouse_opaque="true"
+           label="Enable the highlighting of selected prims" left_delta="140" mouse_opaque="true"
            name="EmBuildPrefsRenderHighlight_toggle" control_name="EmeraldRenderHighlightSelections" radio_style="false" width="270" />
       <check_box bottom_delta="-20" enabled="true"
            follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
@@ -705,5 +766,6 @@ you up or down without altering your shape.
 	tool_tip="Default behaviour is to show the axis on the center of mass of a linkset. If enabled, the axis will be shown on the root prim of the linkset instead."
            name="EmBuildPrefsActualRoot_toggle" control_name="EmeraldBuildPrefs_ActualRoot" radio_style="false" width="270" />
     </panel>
+
   </tab_container>
 </panel>

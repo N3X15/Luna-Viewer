@@ -2348,14 +2348,14 @@ Please choose the male or female avatar. You can change your mind later.
   <notification
    icon="alertmodal.tga"
    name="GrantedModifyRights"
-   type="alertmodal">
+   type="notifytip">
 You have been granted the privilege to modify [FIRST_NAME] [LAST_NAME]&apos;s objects.
   </notification>
 
   <notification
    icon="alertmodal.tga"
    name="RevokedModifyRights"
-   type="alertmodal">
+   type="notifytip">
 Your privilege to modify [FIRST_NAME] [LAST_NAME]&apos;s objects has been revoked
   </notification>
 
@@ -5788,6 +5788,10 @@ An object named [OBJECTFROMNAME] owned by (an unknown user) has given you a [OBJ
        index="1"
        name="Decline"
        text="Decline"/>
+      <button
+       index="2"
+       name="Ignore"
+       text="Ignore"/>
     </form>
   </notification>
 
@@ -5807,6 +5811,10 @@ An object named [OBJECTFROMNAME] owned by (an unknown user) has given you a [OBJ
        index="1"
        name="Decline"
        text="Decline"/>
+      <button
+       index="2"
+       name="Ignore"
+       text="Ignore"/>
     </form>
   </notification>
 
@@ -5846,6 +5854,10 @@ This will add a bookmark in your inventory so you can quickly IM this resident.
        index="1"
        name="Decline"
        text="Decline"/>
+      <button
+       index="2"
+       name="Ignore"
+       text="Ignore"/>
     </form>
   </notification>
 
@@ -6396,6 +6408,25 @@ The URL you clicked cannot be opened from this web browser.
    type="notify">
     Would you like to have the client tag database automatically updated from modularsystems.sl?
     This ensures that you have the latest information available regarding other clients.
+    <form name="form">
+      <button
+       index="0"
+       name="Yes"
+       text="Yes"/>
+      <button
+       index="1"
+       name="No"
+       text="No"/>
+    </form>
+  </notification>
+  
+  <notification
+   icon="notify.tga"
+   name="QueryEmeraldOTR"
+   type="alertmodal">
+    OTR is a way to encrypt your Instant Messages, which secures your privacy by making it impossible for anyone other than your intended target to read your Instant Messages.
+    This prevents third parties from reading your messages, and such a level of privacy removes Linden Labs ability to verify and respond to reports concerning activity inside private messages.
+    Do you want this feature to be automatically activated when available?
     <form name="form">
       <button
        index="0"

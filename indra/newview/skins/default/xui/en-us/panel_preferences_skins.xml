@@ -45,10 +45,16 @@
       Dark G-Red
     </radio_item>
     <radio_item bottom="-145" height="20" left="230" name="darkorange" width="480">
-      Orange Metal
+      Metal Orange
     </radio_item>
     <radio_item bottom="-185" height="20" left="230" name="gemini" width="480">
       Gemini
+    </radio_item>
+	<radio_item bottom="-225" height="20" left="230" name="Pony-Purple" width="480">
+      Metal Purple
+    </radio_item>
+	<radio_item bottom="-265" height="20" left="230" name="Pony-Aquablue" width="480">
+      Metal Aqua
     </radio_item>
 
 	</radio_group>
@@ -68,5 +74,8 @@
   <button left="360" bottom="-145" width="92" height="40" name="darkgred_preview" label="LGG" scale_image="true" image_selected="skin_thumbnail_darkgred.png" image_hover_selected="skin_thumbnail_darkgred.png" image_unselected="skin_thumbnail_darkgred.png" image_hover_unselected="skin_thumbnail_darkgred.png"/>
   <button left="360" bottom="-185" width="92" height="40" name="darkorange_preview" label="PNY" scale_image="true" image_selected="skin_thumbnail_darkorange.png" image_unselected="skin_thumbnail_darkorange.png" image_hover_selected="skin_thumbnail_darkorange.png" image_hover_unselected="skin_thumbnail_darkorange.png"/>
   <button left="360" bottom="-225" width="92" height="40" name="gemini_preview" label="GEM" scale_image="true" image_selected="skin_thumbnail_dark.png" image_unselected="skin_thumbnail_dark.png" image_hover_selected="skin_thumbnail_dark.png" image_hover_unselected="skin_thumbnail_dark.png"/>
-
+  
+  <button left="360" bottom="-265" width="92" height="40" name="Pony-Purple_preview" label="PNY" scale_image="true" image_selected="skin_thumbnail_Pony-Purple.png" image_unselected="skin_thumbnail_Pony-Purple.png" image_hover_selected="skin_thumbnail_Pony-Purple.png" image_hover_unselected="skin_thumbnail_Pony-Purple.png"/>
+  
+<button left="360" bottom="-305" width="92" height="40" name="Pony-Aquablue_preview" label="PNY" scale_image="true" image_selected="skin_thumbnail_Pony-Aquablue.png" image_unselected="skin_thumbnail_Pony-Aquablue.png" image_hover_selected="skin_thumbnail_Pony-Aquablue.png" image_hover_unselected="skin_thumbnail_Pony-Aquablue.png"/>
 </panel>

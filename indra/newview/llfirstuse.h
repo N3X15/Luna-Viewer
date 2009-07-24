@@ -107,7 +107,9 @@ public:
 	static void useSculptedPrim();
 	static void useMedia();
 	static void callbackClientTags(const LLSD& notification, const LLSD& response);
+	static void callbackEmeraldOTR(const LLSD& notification, const LLSD& response);
 	static void ClientTags();
+	static void EmeraldOTR();
 	
 protected:
 	static std::set<std::string> sConfigVariables;

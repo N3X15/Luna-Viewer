@@ -301,12 +301,34 @@ void LLFirstUse::callbackClientTags(const LLSD& notification, const LLSD& respon
 		gSavedSettings.setBOOL("EmeraldDownloadClientTags",FALSE);
 	}
 }
+void LLFirstUse::callbackEmeraldOTR(const LLSD &notification, const LLSD &response)
+{
+	gSavedSettings.setWarning("EmeraldOTR", FALSE);
+
+	S32 option = LLNotification::getSelectedOption(notification, response);
+	
+	if ( option == 0 )
+	{
+		gSavedSettings.setU32("EmeraldUseOTR",(U32)1);
+	}
+	else if ( option == 1 )
+	{
+		gSavedSettings.setU32("EmeraldUseOTR",(U32)2);
+	}
+}
 // static
 void LLFirstUse::ClientTags()
 {
 	if (gSavedSettings.getWarning("ClientTags"))
 	{
 		LLNotifications::instance().add("QueryClientTags", LLSD(), LLSD(), callbackClientTags);
+	}
+}
+void LLFirstUse::EmeraldOTR()
+{
+	if(gSavedSettings.getWarning("EmeraldOTR"))
+	{
+		LLNotifications::instance().add("QueryEmeraldOTR", LLSD(),LLSD(), callbackEmeraldOTR);
 	}
 }
 

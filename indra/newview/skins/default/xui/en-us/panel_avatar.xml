@@ -191,14 +191,17 @@
 			     mouse_opaque="true" name="Add Friend..." width="130" />
 			<button bottom_delta="-70" font="SansSerif" halign="center" height="20" label="Pay..."
 			     label_selected="Pay..." left="24" mouse_opaque="true" name="Pay..."
-			     width="100" />
+			     width="70" />
 			<button bottom_delta="0" font="SansSerif" halign="center" height="20"
 			     label="Instant Message..." label_selected="Instant Message..."
-			     left_delta="102" mouse_opaque="true" name="Instant Message..."
+			     left_delta="71" mouse_opaque="true" name="Instant Message..."
 			     tool_tip="Instant Message (IM)" width="140" />
 			<button bottom_delta="0" font="SansSerif" halign="center" height="20" label="Mute"
-			     label_selected="Mute" left_delta="142" mouse_opaque="true" name="Mute"
-			     width="130" />
+			     label_selected="Mute" left_delta="141" mouse_opaque="true" name="Mute"
+			     width="60" />
+			<button bottom_delta="0" font="SansSerif" halign="center" height="20" label="Invite to Group"
+			     label_selected="Invite to Group" left_delta="61" mouse_opaque="true"
+			     name="EmeraldGroupInvite_Button" width="100" />
 		</panel>
 		<panel border="true" bottom="-482" follows="left|top|right|bottom" height="466"
 		       label="Web" left="1" mouse_opaque="true" name="WebProfile" width="418">

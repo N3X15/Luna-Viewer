@@ -347,7 +347,7 @@
         Thrax Linden
       </text>
       <button bottom="-66" follows="top|right" font="SansSerifSmall" halign="center"
-			     height="20" label="Profile..." label_selected="Profile..." left_delta="94"
+			     height="16" label="Profile..." label_selected="Profile..." left_delta="94"
 			     mouse_opaque="true" name="button creator profile" scale_image="TRUE"
 			     width="78" />
       <text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
@@ -974,17 +974,6 @@
           Cylinder
         </combo_item>
       </combo_box>
-      <text align="left" bg_visible="false" border_drop_shadow_visible="false"
-			     border_visible="false" bottom_delta="-20" drop_shadow_visible="true"
-			     follows="left|top" font="SansSerifSmall" h_pad="0" height="10" left="121"
-			     mouse_opaque="true" name="label_sculpt_uuid" v_pad="0" visible="false"
-			     width="121">
-        Sculptmap UUID
-      </text>
-      <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom-delta="-24"
-			     follows="left|top" font="SansSerifSmall" height="16" left="121"
-			     max_length="127" mouse_opaque="true" name="Sculpt UUID"
-			     select_all_on_focus_received="true" width="141" />
     </panel>
 
     <!-- Features sub-tab -->
@@ -1099,12 +1088,8 @@
       <check_box bottom_delta="-23" follows="left|top" font="SansSerifSmall" height="16"
 			     initial_value="false" label="Full Bright" left="180" mouse_opaque="true"
 			     name="checkbox fullbright" width="81" />
-      <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom-delta="-24"
-			     follows="left|top" font="SansSerifSmall" height="16" left="10"
-			     max_length="127" mouse_opaque="true" name="Texture_UUID"
-			     select_all_on_focus_received="true" width="152" />     
       <text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
-			     bottom="-121" drop_shadow_visible="true" follows="left|top"
+			     bottom="-104" drop_shadow_visible="true" follows="left|top"
 			     font="SansSerifSmall" h_pad="0" halign="left" height="10" left="10"
 			     mouse_opaque="true" name="tex gen" v_pad="0" width="90">
         Mapping
@@ -1120,7 +1105,7 @@
         </combo_item>
       </combo_box>
       <text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
-			     bottom="-121" drop_shadow_visible="true" follows="left|top"
+			     bottom="-104" drop_shadow_visible="true" follows="left|top"
 			     font="SansSerifSmall" h_pad="0" halign="left" height="10" left="100"
 			     mouse_opaque="true" name="label shininess" v_pad="0" width="70">
         Shininess
@@ -1142,7 +1127,7 @@
         </combo_item>
       </combo_box>
       <text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
-			     bottom="-121" drop_shadow_visible="true" follows="left|top"
+			     bottom="-104" drop_shadow_visible="true" follows="left|top"
 			     font="SansSerifSmall" h_pad="0" halign="left" height="10" left="180"
 			     mouse_opaque="true" name="label bumpiness" v_pad="0" width="80">
         Bumpiness

@@ -57,6 +57,9 @@ if (COMPILE_OTR)
 	include(libgpg-error)
 	include(libotr)
 endif (COMPILE_OTR)
+if (DARWIN)
+    include(libotrb)
+endif (DARWIN)
 
 include_directories(
     ${DBUSGLIB_INCLUDE_DIRS}
@@ -80,7 +83,7 @@ include_directories(
     ${EMERALD_INCLUDE_DIRS}
     )
 
-if (COMPILE_OTR)
+if (COMPILE_OTR OR DARWIN)
 if (WINDOWS)
 	include_directories(
 		../gpg.vs/inc.vs
@@ -93,7 +96,7 @@ if (WINDOWS)
 		../libgcrypt/libgcrypt-1.2.2/src
 		../libotr/libotr-3.2.0/src
 		)
-endif (COMPILE_OTR)
+endif (COMPILE_OTR OR DARWIN)
 
 set(viewer_SOURCE_FILES
 	importtracker.cpp
@@ -508,10 +511,10 @@ set(viewer_SOURCE_FILES
 set(VIEWER_BINARY_NAME "secondlife-bin" CACHE STRING
     "The name of the viewer executable to create.")
 
-if (COMPILE_OTR)
+if (COMPILE_OTR OR DARWIN)
    LIST(APPEND viewer_SOURCE_FILES otr_wrapper.cpp)
    LIST(APPEND viewer_SOURCE_FILES otr_floater_smp.cpp)
-endif (COMPILE_OTR)
+endif (COMPILE_OTR OR DARWIN)
 
 if (LINUX)
   # We can't set these flags for Darwin, because they get passed to
@@ -952,10 +955,10 @@ set(viewer_HEADER_FILES
     rlvfloaterbehaviour.h
     )
 
-if (COMPILE_OTR)
+if (COMPILE_OTR OR DARWIN)
     LIST(APPEND viewer_HEADER_FILES otr_wrapper.h)
     LIST(APPEND viewer_HEADER_FILES otr_floater_smp.h)
-endif (COMPILE_OTR)
+endif (COMPILE_OTR OR DARWIN)
 
 source_group("CMake Rules" FILES ViewerInstall.cmake)
 
@@ -1410,6 +1413,7 @@ target_link_libraries(${VIEWER_BINARY_NAME}
     ${ELFIO_LIBRARIES}
     ${EMERALD_LIBRARIES}
     ${LUA_LIBRARY}
+		${OTR_LIBRARY}
     )
 endif (WINDOWS)
 

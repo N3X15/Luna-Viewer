@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <floater can_close="true" can_drag_on_left="false" can_minimize="false"
-     can_resize="false" height="556" min_height="556" min_width="300"
+     can_resize="false" height="320" min_height="556" min_width="300"
      name="Animation Preview" title="" width="300">
 	<pad height="12" />
 	<text follows="top|left" height="15" left="10" name="name_label">
@@ -202,4 +202,9 @@ Maximum animation length is [MAX_LENGTH] seconds.
 
 [STATUS]
 	</string>
+
+	<check_box bottom_delta="20" follows="left|top" height="18" label="Stop all animations" left="10" name="EmeraldAnimPreview_StopAnim" tool_tip="Stop animations already affecting the avatar." />
+	<text bottom_delta="25" follows="top|left" left="50" name="AnimPrevLocation">The animation will be previewed inworld.</text>
+
+
 </floater>

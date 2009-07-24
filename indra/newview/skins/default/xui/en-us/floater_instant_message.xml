@@ -37,6 +37,41 @@
 	<string name="unavailable_text_label">
 		Text chat is not available for this call.
 	</string>
+	<!--[$PLOTR$]-->
+	<string name="otr_empty_string"></string>
+	<string name="otr_generic_name">Your buddy</string>
+	<string name="otr_err_send_in_finished">[NAME] has ended the private converstation, so your message was not sent.  You should restart the private conversation, or end the private conversation.</string>
+	<string name="otr_err_failed_sending">Unable to encrypt your message for some reason; it has not been sent.</string>
+	<string name="otr_err_failed_starting">Unable to start private conversation.</string>
+	<string name="otr_err_offline">[NAME] appears offline, will not try to start a private conversation.</string>
+	<string name="otr_prog_I_start">Attempting to start a private conversation with [NAME].</string>
+	<string name="otr_prog_I_stop_unverified">You have ended the unverified conversation with [NAME].</string>
+	<string name="otr_prog_I_stop_private"   >You have ended the private conversation with [NAME].</string>
+	<string name="otr_prog_I_stop"           >You have ended the OTR conversation with [NAME].</string>
+	<string name="otr_prog_they_start">[NAME] is attempting to start a private conversation.</string>
+	<string name="otr_prog_they_stop_unverified">[NAME] has ended the unverified conversation.</string>
+	<string name="otr_prog_they_stop_private"   >[NAME] has ended the private conversation.</string>
+	<string name="otr_prog_they_stop"           >[NAME] has ended the OTR conversation.</string>
+	<string name="otr_log_authenticated"   >[NAME] is now authenticated.</string>
+	<string name="otr_log_start_private"   >Private conversation with [NAME] started.</string>
+	<string name="otr_log_start_unverified">Unverified conversation started.  [NAME] has not been authenticated, you should "authenticate buddy," see http://www.cypherpunks.ca/otr/help/3.2.0/authenticate.php</string>
+	<string name="otr_log_gone_insecure">Private conversation ended.</string>
+	<string name="otr_log_still_private"   >Private conversation with [NAME] resumed.</string>
+	<string name="otr_log_still_unverified">Unverified conversation resumed.  [NAME] has not been authenticated, you should "authenticate buddy," see http://www.cypherpunks.ca/otr/help/3.2.0/authenticate.php</string>
+	<string name="otr_not_private">OTR: Not Private</string>
+	<string name="otr_unverified" >OTR: Unverified</string>
+	<string name="otr_private"    >OTR: Private</string>
+	<string name="otr_finished"   >OTR: Finished</string>
+	<string name="otr_start"  >Start private conversation</string>
+	<string name="otr_refresh">Refresh private conversation</string>
+	<string name="otr_restart">Restart private conversation</string>
+	<string name="otr_stop"   >End private conversation</string>
+	<string name="otr_auth"   >Authenticate buddy</string>
+	<string name="otr_help"   >What is OTR?</string>
+	<string name="otr_levels" >What is this?</string>
+	<combo_box bottom="-20" follows="top|left" left="180" height="20" width="120"
+		   label="OTR: Not Private" name="otr_combo"/>
+	<!--[/$PLOTR$]-->
 	<button bottom="-40" follows="left|top" height="20" label="Profile" left="5"
 	     name="profile_callee_btn" width="50" />
 	<button bottom="-40" follows="left|top" halign="center" height="20" label="Teleport" left_delta="50"
