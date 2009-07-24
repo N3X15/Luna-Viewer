@@ -245,25 +245,25 @@ void LLHoverView::updateText()
 			LLNameValue* lastname =  hit_object->getNVPair("LastName");
 			if (firstname && lastname)
 			{
-// [RLVa]
+// [RLVa:KB] - Checked: 2009-07-08 (RLVa-1.0.0e)
 				if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES))
 				{
 					line = gRlvHandler.getAnonym(line.append(firstname->getString()).append(1, ' ').append(lastname->getString()));
 				}
 				else
 				{
-// [/RLVa]
-				if (title)
-				{
-					line.append(title->getString());
+// [/RLVa:KB]
+					if (title)
+					{
+						line.append(title->getString());
+						line.append(1, ' ');
+					}
+					line.append(firstname->getString());
 					line.append(1, ' ');
+					line.append(lastname->getString());
+// [RLVa:KB] - Checked: 2009-07-08 (RLVa-1.0.0e)
 				}
-				line.append(firstname->getString());
-				line.append(1, ' ');
-				line.append(lastname->getString());
-// [RLVa]
-				}
-// [/RLVa]
+// [/RLVa:KB]
 			}
 			else
 			{
@@ -319,12 +319,12 @@ void LLHoverView::updateText()
 						}
 						else if(gCacheName->getFullName(owner, name))
 						{
-// [RLVa]
+// [RLVa:KB] - Checked: 2009-07-08 (RLVa-1.0.0e)
 							if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES))
 							{
 								name = gRlvHandler.getAnonym(name);
 							}
-// [/RLVa]
+// [/RLVa:KB]
 
 							line.append(name);
 						}
@@ -487,7 +487,7 @@ void LLHoverView::updateText()
 		line.append(LLTrans::getString("TooltipLand"));
 		if (hover_parcel)
 		{
-// [RLVa:KB] - Checked: 2009-05-18 (RLVa-0.2.0b) | Added: RLVa-0.2.0b
+// [RLVa:KB] - Checked: 2009-07-04 (RLVa-1.0.0a) | Added: RLVa-0.2.0b
 			line.append( (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC)) ? hover_parcel->getName() : rlv_handler_t::cstrHiddenParcel );
 // [/RLVa:KB]
 			//line.append(hover_parcel->getName());
@@ -519,7 +519,7 @@ void LLHoverView::updateText()
 			}
 			else if(gCacheName->getFullName(owner, name))
 			{
-// [RLVa:KB] - Checked: 2009-05-18 (RLVa-0.2.0b) | Added: RLVa-0.2.0b
+// [RLVa:KB] - Checked: 2009-07-08 (RLVa-1.0.0e) | Added: RLVa-0.2.0b
 				line.append( (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES)) ? name : gRlvHandler.getAnonym(name));
 // [/RLVa:KB]
 				//line.append(name);

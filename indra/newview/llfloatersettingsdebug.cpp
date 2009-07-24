@@ -40,10 +40,10 @@
 #include "llcolorswatch.h"
 #include "llviewercontrol.h"
 
-// [RLVa]
+// [RLVa:KB] - Checked: 2009-07-08 (RLVa-1.0.0g)
 #include "rlvhandler.h"
 #include "rlvextensions.h"
-// [/RLVa]
+// [/RLVa:KB]
 
 LLFloaterSettingsDebug* LLFloaterSettingsDebug::sInstance = NULL;
 
@@ -250,7 +250,7 @@ void LLFloaterSettingsDebug::updateControl(LLControlVariable* controlp)
 
 	if (controlp)
 	{
-// [RLVa:KB] - Checked: 2009-06-16 (RLVa-0.2.1d) | Modified: RLVa-0.2.1d
+// [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g) | Modified: RLVa-0.2.1d
 		if (rlv_handler_t::isEnabled())
 		{
 			// Don't allow changing DBG_WRITE debug settings under @setdebug=n
@@ -260,8 +260,8 @@ void LLFloaterSettingsDebug::updateControl(LLControlVariable* controlp)
 			fEnable &= !((gRlvHandler.hasBehaviour(RLV_BHVR_SETENV)) && 
 				(("VertexShaderEnable" == controlp->getName()) || ("WindLightUseAtmosShaders" == controlp->getName())));
 			#ifdef RLV_EXTENSION_STARTLOCATION
-				// Don't allow toggling RestrainedLifeShowStartLocation
-				fEnable &= !(RLV_SETTING_LOGINLOCATION == controlp->getName());
+				// Don't allow toggling RestrainedLifeLoginLastLocation
+				fEnable &= !(RLV_SETTING_LOGINLASTLOCATION == controlp->getName());
 			#endif // RLV_EXTENSION_STARTLOCATION
 
 			// NOTE: this runs per-frame so there's no need to explictly handle onCommitSettings() or onClickDefault()

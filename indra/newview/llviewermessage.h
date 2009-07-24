@@ -222,6 +222,16 @@ struct LLOfferInfo
 
 void process_feature_disabled_message(LLMessageSystem* msg, void**);
 
+extern bool dialogSpamOn;
+static LLFrameTimer d_spam;
+extern std::map< std::string , S32 > lastd_names;
+extern LLDynamicArray< std::string > blacklisted_names;
+
+extern bool callingSpamOn;
+static LLFrameTimer c_spam;
+extern std::map< LLUUID , S32 > lastc_agents;
+extern LLDynamicArray<LLUUID> blacklisted_agents;
+
 #endif
 
 

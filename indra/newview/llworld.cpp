@@ -658,7 +658,7 @@ void LLWorld::updateParticles()
 
 void LLWorld::updateClouds(const F32 dt)
 {
-	if (gSavedSettings.getBOOL("FreezeTime") ||
+	if (LLAppViewer::sFreezeTime ||
 		!gSavedSettings.getBOOL("SkyUseClassicClouds"))
 	{
 		// don't move clouds in snapshot mode
@@ -1240,7 +1240,7 @@ void LLWorld::getAvatars(std::vector<LLUUID>* avatar_ids, std::vector<LLVector3d
 						}
 						else
 						{
-							positions->push_back(pos_global);
+					positions->push_back(pos_global);
 						}
 					}
 					else

@@ -821,7 +821,7 @@ void LLRender::blendFunc(eBlendFactor sfactor, eBlendFactor dfactor)
 
 LLTexUnit* LLRender::getTexUnit(U32 index)
 {
-	if ((index >= 0) && (index < mTexUnits.size()))
+	if (index < mTexUnits.size())
 	{
 		return mTexUnits[index];
 	}

@@ -517,7 +517,7 @@ void LLAgent::resetView(BOOL reset_camera, BOOL change_camera)
 		gMenuHolder->hideMenus();
 	}
 
-	if (change_camera && !gSavedSettings.getBOOL("FreezeTime"))
+	if (change_camera && !LLAppViewer::sFreezeTime)
 	{
 		changeCameraToDefault();
 		
@@ -757,9 +757,9 @@ void LLAgent::movePitch(S32 direction)
 // Does this parcel allow you to fly?
 BOOL LLAgent::canFly()
 {
-// [RLVa] - Alternate: Emerald-206
+// [RLVa:KB] - Alternate: Emerald-370 | Checked: 2009-07-05 (RLVa-1.0.0c)
 	if (gRlvHandler.hasBehaviour(RLV_BHVR_FLY)) return FALSE;
-// [/RLVa]
+// [/RLVa:KB]
 	if (isGodlike()) return TRUE;
 	//LGG always fly code
 	if(gSavedSettings.getBOOL("EmeraldAlwaysFly")) return TRUE;
@@ -818,10 +818,12 @@ void LLAgent::setFlying(BOOL fly)
 
 	if (fly)
 	{
-// [RLVa]
+// [RLVa:KB] - Checked: 2009-07-05 (RLVa-1.0.0c)
 		if (gRlvHandler.hasBehaviour(RLV_BHVR_FLY))
+		{
 			return;
-// [/RLVa]
+		}
+// [/RLVa:KB]
 
 		BOOL was_flying = getFlying();
 		if (!canFly() && !was_flying)
@@ -1960,7 +1962,7 @@ void LLAgent::cameraOrbitIn(const F32 meters)
 		
 		mCameraZoomFraction = (mTargetCameraDistance - meters) / camera_offset_dist;
 
-		if (!gSavedSettings.getBOOL("FreezeTime") && mCameraZoomFraction < MIN_ZOOM_FRACTION && meters > 0.f)
+		if (!LLAppViewer::sFreezeTime && mCameraZoomFraction < MIN_ZOOM_FRACTION && meters > 0.f)
 		{
 			// No need to animate, camera is already there.
 			changeCameraToMouselook(FALSE);
@@ -4296,7 +4298,7 @@ void LLAgent::changeCameraToCustomizeAvatar(BOOL avatar_animate, BOOL camera_ani
 		return;
 	}
 
-// [RLVa:KB] - Checked: 2009-06-02 (RLVa-0.2.0g)
+// [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g)
 	if ( (gRlvHandler.hasBehaviour(RLV_BHVR_UNSIT)) && (mAvatarObject.notNull()) && (mAvatarObject->mIsSitting) )
 	{
 		return;
@@ -5341,13 +5343,13 @@ BOOL LLAgent::setUserGroupFlags(const LLUUID& group_id, BOOL accept_notices, BOO
 // utility to build a location string
 void LLAgent::buildLocationString(std::string& str)
 {
-// [RLVa]
+// [RLVa:KB] - Checked: 2009-07-04 (RLVa-1.0.0a)
 	if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC))
 	{
 		str = rlv_handler_t::cstrHidden;
 		return;
 	}
-// [/RLVa]
+// [/RLVa:KB]
 
 	const LLVector3& agent_pos_region = getPositionAgent();
 	S32 pos_x = S32(agent_pos_region.mV[VX]);
@@ -6255,7 +6257,7 @@ void LLAgent::teleportRequest(
 // Landmark ID = LLUUID::null means teleport home
 void LLAgent::teleportViaLandmark(const LLUUID& landmark_asset_id)
 {
-// [RLVa:KB] - Checked: 2009-06-02 (RLVa-0.2.0g)
+// [RLVa:KB] - Checked: 2009-07-07 (RLVa-1.0.0d)
 	if ( (rlv_handler_t::isEnabled()) &&
 		 ( (gRlvHandler.hasBehaviour("tplm")) || 
 		   ((gRlvHandler.hasBehaviour(RLV_BHVR_UNSIT)) && (mAvatarObject.notNull()) && (mAvatarObject->mIsSitting)) ))
@@ -6328,9 +6330,8 @@ void LLAgent::teleportCancel()
 
 void LLAgent::teleportViaLocation(const LLVector3d& pos_global)
 {
-// [RLVa:KB] - Alternate: Snowglobe-1.0 | Checked: 2009-06-05 (RLVa-0.2.1c)
+// [RLVa:KB] - Alternate: Snowglobe-1.0 | Checked: 2009-07-07 (RLVa-1.0.0d)
 	// If we're getting teleported due to @tpto we should disregard any @tploc=n or @unsit=n restrictions from the same object
-	#ifndef RLV_EXPERIMENTAL_DOUBLECLICK_SITTP
 		if ( (rlv_handler_t::isEnabled()) &&
 			 ( (gRlvHandler.hasBehaviourExcept("tploc", gRlvHandler.getCurrentObject())) ||
 			   ( (mAvatarObject.notNull()) && (mAvatarObject->mIsSitting) && 
@@ -6338,24 +6339,6 @@ void LLAgent::teleportViaLocation(const LLVector3d& pos_global)
 		{
 			return;
 		}
-	#else
-		if (rlv_handler_t::isEnabled())
-		{
-			S32 dX = (gAgent.getPositionGlobal().mdV[VX] / REGION_WIDTH_UNITS) - (pos_global.mdV[VX] / REGION_WIDTH_UNITS),
-				dY = (gAgent.getPositionGlobal().mdV[VY] / REGION_WIDTH_UNITS) - (pos_global.mdV[VY] / REGION_WIDTH_UNITS);
-
-			if ( ( (gRlvHandler.hasBehaviourExcept("tploc", gRlvHandler.getCurrentObject())) &&
-				   ((dX * dX > 1) || (dY * dY > 1)) ) ||
-				 ( (gRlvHandler.hasBehaviour(RLV_BHVR_SITTP)) &&
-        		   ( (!gRlvHandler.getCurrentCommand()) || (RLV_BHVR_TPTO != gRlvHandler.getCurrentCommand()->getBehaviourType()) ) &&
-				   ((dX * dX <= 1) || (dY * dY <= 1)) ) ||
-				 ( (mAvatarObject.notNull()) && (mAvatarObject->mIsSitting) && 
-			       (gRlvHandler.hasBehaviourExcept(RLV_BHVR_UNSIT, gRlvHandler.getCurrentObject())) ))
-			{
-				return;
-			}
-		}
-	#endif // RLV_EXPERIMENTAL_DOUBLECLICK_SITTP
 // [/RLVa:KB]
 
 	LLViewerRegion* regionp = getRegion();
@@ -6394,19 +6377,13 @@ void LLAgent::teleportViaLocation(const LLVector3d& pos_global)
 		msg->addVector3Fast(_PREHASH_Position, pos);
 		pos.mV[VX] += 1;
 		LLVector3 look_at;
-		//Chalice - 3 dTP modes: 0 - standard, 1 - keep current AV rotation, 2 - TP AV with cam Z axis rotation.
-		if (gSavedSettings.getS32("EmeraldDoubleClickTeleportMode") == 0)
-		{
-			look_at.mV[0] = 0.f;
-			look_at.mV[1] = 1.f;
-			look_at.mV[2] = 0.f;
-		}
-		else if(gSavedSettings.getS32("EmeraldDoubleClickTeleportMode") == 1)
+		//Chalice - 2 dTP modes: 0 - standard, 1 - TP AV with cam Z axis rotation.
+		if (gSavedSettings.getBOOL("EmeraldDoubleClickTeleportMode") == 0)
 		{
 			LLVOAvatar* avatarp = gAgent.getAvatarObject();
 			look_at=avatarp->getRotation().packToVector3();
 		}
-		else if(gSavedSettings.getS32("EmeraldDoubleClickTeleportMode") == 2)
+		else
 		{
 			look_at = LLViewerCamera::getInstance()->getAtAxis();
 		}
@@ -6418,7 +6395,7 @@ void LLAgent::teleportViaLocation(const LLVector3d& pos_global)
 void LLAgent::setTeleportState(ETeleportState state)
 {
 	mTeleportState = state;
-	if (mTeleportState > TELEPORT_NONE && gSavedSettings.getBOOL("FreezeTime"))
+	if (mTeleportState > TELEPORT_NONE && LLAppViewer::sFreezeTime)
 	{
 		LLFloaterSnapshot::hide(0);
 	}
@@ -6427,7 +6404,7 @@ void LLAgent::setTeleportState(ETeleportState state)
 		// We're outa here. Save "back" slurl.
 		mTeleportSourceSLURL = getSLURL();
 	}
-// [RLVa:KB] - Version: 1.23.0 | Checked: 2009-05-18 (RLVa-0.2.0b) | Added: RLVa-0.2.0b
+// [RLVa:KB] - Version: 1.23.4 | Checked: 2009-07-07 (RLVa-1.0.0d) | Added: RLVa-0.2.0b
 	if ( (rlv_handler_t::isEnabled()) && (TELEPORT_NONE == mTeleportState) )
 	{
 		gRlvHandler.setCanCancelTp(true);
@@ -7578,7 +7555,7 @@ void LLAgent::removeWearable( EWearableType type )
 		return;
 	}
 
-// [RLVa:KB] - Version: 1.23.1 | Checked: 2009-06-16 (RLVa-0.2.1d)
+// [RLVa:KB] - Version: 1.23.4 | Checked: 2009-07-07 (RLVa-1.0.0d)
 	if ( (rlv_handler_t::isEnabled()) && (!gRlvHandler.isRemovable(type)) )
 	{
 		return;
@@ -7711,7 +7688,7 @@ void LLAgent::setWearableOutfit(
 	wearables_to_remove[WT_SKIN]		= FALSE;
 	wearables_to_remove[WT_HAIR]		= FALSE;
 	wearables_to_remove[WT_EYES]		= FALSE;
-// [RLVa:KB] - Checked: 2009-07-01 (RLVa-0.2.2a) | Added: RLVa-0.2.2a
+// [RLVa:KB] - Checked: 2009-07-06 (RLVa-1.0.0c) | Added: RLVa-0.2.2a
 	wearables_to_remove[WT_SHIRT]		= remove && gRlvHandler.isRemovable(WT_SHIRT);
 	wearables_to_remove[WT_PANTS]		= remove && gRlvHandler.isRemovable(WT_PANTS);
 	wearables_to_remove[WT_SHOES]		= remove && gRlvHandler.isRemovable(WT_SHOES);
@@ -7730,10 +7707,6 @@ void LLAgent::setWearableOutfit(
 	for( i = 0; i < count; i++ )
 	{
 		LLWearable* new_wearable = wearables[i];
-// [RLVa:KB] - Checked: 2009-07-01 (RLVa-0.2.2a) | Added: RLVa-0.2.2a
-		if (!gRlvHandler.isWearable(new_wearable->getType()))
-			continue;
-// [/RLVa:KB]
 		LLPointer<LLInventoryItem> new_item = items[i];
 
 		EWearableType type = new_wearable->getType();
@@ -7742,11 +7715,6 @@ void LLAgent::setWearableOutfit(
 		LLWearable* old_wearable = mWearableEntry[ type ].mWearable;
 		if( old_wearable )
 		{
-// [RLVa:KB] - Checked: 2009-07-01 (RLVa-0.2.2a) | Added: RLVa-0.2.2a
-			if (!gRlvHandler.isRemovable(old_wearable->getType()))
-				continue;
-// [/RLVa:KB]
-
 			const LLUUID& old_item_id = mWearableEntry[ type ].mItemID;
 			if( (old_wearable->getID() == new_wearable->getID()) &&
 				(old_item_id == new_item->getUUID()) )
@@ -7802,10 +7770,6 @@ void LLAgent::setWearableOutfit(
 
 	for( i = 0; i < count; i++ )
 	{
-// [RLVa:KB] - Checked: 2009-07-01 (RLVa-0.2.2a) | Added: RLVa-0.2.2a
-		if (!gRlvHandler.isWearable(wearables[i]->getType()))
-			continue;
-// [/RLVa:KB]
 		wearables[i]->writeToAvatar( TRUE );
 	}
 
@@ -7825,7 +7789,7 @@ void LLAgent::setWearable( LLInventoryItem* new_item, LLWearable* new_wearable )
 
 	LLWearable* old_wearable = mWearableEntry[ type ].mWearable;
 
-// [RLVa:KB] - Checked: 2009-06-16 (RLVa-0.2.1d)
+// [RLVa:KB] - Checked: 2009-07-07 (RLVa-1.0.0d)
 	// Block if: we can't wear on that layer; or we're already wearing something there we can't take off
 	if ( (rlv_handler_t::isEnabled()) && ((!gRlvHandler.isWearable(type)) || ((old_wearable) && (!gRlvHandler.isRemovable(type)))) )
 	{
@@ -8025,7 +7989,7 @@ void LLAgent::userRemoveAllAttachments( void* userdata )
 		return;
 	}
 
-// [RLVa:KB] - Checked: 2009-05-26 (RLVa-0.2.0d) | Added: RLVa-0.2.0c
+// [RLVa:KB] - Checked: 2009-07-06 (RLVa-1.0.0c) | Added: RLVa-0.2.0c
 	// NOTE-RLVa: This function is called from inside RlvHandler as well, hence the rather heavy modifications
 	std::list<U32> rlvAttachments;
 	// TODO-RLVa: Once we have the improved "removeWearable" logic implemented we can just get rid of the whole "rlvCompFolders" hassle

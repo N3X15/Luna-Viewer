@@ -222,7 +222,7 @@ public:
 	static void toggleVisibility();
 	static void toggleVisibility(void*) { toggleVisibility(); }
 
-// [RLVa]
+// [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g)
 	static void closeAll() 
 	{
 		// If there are mulitple inventory floaters open then clicking the "Inventory" button will close
@@ -248,7 +248,7 @@ public:
 			pView->setSoundFlags(flagsSound);		// One view won't be destroy()'ed so it needs its sound flags restored
 		}
 	}
-// [/RLVa]
+// [/RLVa:KB]
 
 	// Final cleanup, destroy all open inventory views.
 	static void cleanup();

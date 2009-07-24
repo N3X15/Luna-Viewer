@@ -803,6 +803,7 @@ void LLPanelGroupSubTab::buildActionCategory(LLScrollListCtrl* ctrl,
 			row["columns"][column_index]["column"] = "action";
 			row["columns"][column_index]["value"] = (*ra_it)->mDescription;
 			row["columns"][column_index]["font"] = "SANSSERIFSMALL";
+			row["columns"][column_index]["color"] = gColors.getColor("DefaultListText").getValue();
 
 			LLScrollListItem* item = ctrl->addElement(row, ADD_BOTTOM, (*ra_it));
 

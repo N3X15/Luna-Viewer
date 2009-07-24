@@ -36,6 +36,8 @@
 #include "llviewernetwork.h"
 #include "llviewercontrol.h"
 
+LLSD LLViewerLogin::sCmdLineURIs;
+
 struct LLGridData
 {
 	const char* mLabel;
@@ -253,10 +255,7 @@ std::string LLViewerLogin::getKnownGridLabel(EGridInfo grid_index) const
 void LLViewerLogin::getLoginURIs(std::vector<std::string>& uris) const
 {
 	// return the login uri set on the command line.
-	LLControlVariable* c = gSavedSettings.getControl("CmdLineLoginURI");
-	if(c)
-	{
-		LLSD v = c->getValue();
+		LLSD v = sCmdLineURIs;
 		if(v.isArray())
 		{
 			for(LLSD::array_const_iterator itr = v.beginArray();
@@ -277,7 +276,6 @@ void LLViewerLogin::getLoginURIs(std::vector<std::string>& uris) const
 				uris.push_back(uri);
 			}
 		}
-	}
 
 	// If there was no command line uri...
 	if(uris.empty())

@@ -372,10 +372,24 @@ class ImportLinkset : public view_listener_t
 		LLSDSerialize::fromXMLDocument(data, importer);
 	
 		if (gImportTracker.getState() != ImportTracker::IDLE)
+		{
 			gImportTracker.clear();
-	
-		gImportTracker.import(data);
-		
+			gImportTracker.cleargroups();
+		}
+		LLSD data2=data;
+		LLSD header=data2["Header"];
+		if(header.isDefined())
+		{
+			if(header["Version"].asInteger() == 2)
+			{
+				LLSD obj_llsd=data["Objects"];
+				gImportTracker.prepare(obj_llsd);
+			}
+			else
+				gImportTracker.import(data);
+		}
+		else
+			gImportTracker.import(data);
 		return true;
 	}
 };

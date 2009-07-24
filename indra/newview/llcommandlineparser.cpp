@@ -88,11 +88,13 @@ namespace
 class LLCLPError : public std::logic_error {
 public:
     LLCLPError(const std::string& what) : std::logic_error(what) {}
+	~LLCLPError() throw(){}
 };
 
 class LLCLPLastOption : public std::logic_error {
 public:
     LLCLPLastOption(const std::string& what) : std::logic_error(what) {}
+	~LLCLPLastOption() throw(){}
 };
 
 class LLCLPValue : public po::value_semantic_codecvt_helper<char> 

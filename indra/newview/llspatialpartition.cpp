@@ -387,6 +387,7 @@ public:
 
 	LLOctreeStateCheck(): mInheritedMask(0) { }
 
+	using LLTreeTraveler<LLDrawable>::traverse;
 	virtual void traverse(const LLSpatialGroup::OctreeNode* node)
 	{
 		LLSpatialGroup* group = (LLSpatialGroup*) node->getListener(0);
@@ -405,6 +406,7 @@ public:
 		mInheritedMask = temp;
 	}
 
+	using LLTreeTraveler<LLDrawable>::visit;
 	virtual void visit(const LLOctreeNode<LLDrawable>* state)
 	{
 		LLSpatialGroup* group = (LLSpatialGroup*) state->getListener(0);
@@ -819,6 +821,7 @@ class LLSpatialSetState : public LLSpatialGroup::OctreeTraveler
 public:
 	U32 mState;
 	LLSpatialSetState(U32 state) : mState(state) { }
+	using LLTreeTraveler<LLDrawable>::visit;
 	virtual void visit(const LLSpatialGroup::OctreeNode* branch) { ((LLSpatialGroup*) branch->getListener(0))->setState(mState); }	
 };
 
@@ -878,6 +881,7 @@ class LLSpatialClearState : public LLSpatialGroup::OctreeTraveler
 public:
 	U32 mState;
 	LLSpatialClearState(U32 state) : mState(state) { }
+	using LLTreeTraveler<LLDrawable>::visit;
 	virtual void visit(const LLSpatialGroup::OctreeNode* branch) { ((LLSpatialGroup*) branch->getListener(0))->clearState(mState); }
 };
 
@@ -1463,6 +1467,7 @@ class LLSpatialShift : public LLSpatialGroup::OctreeTraveler
 {
 public:
 	LLSpatialShift(LLVector3 offset) : mOffset(offset) { }
+	using LLTreeTraveler<LLDrawable>::visit;
 	virtual void visit(const LLSpatialGroup::OctreeNode* branch) 
 	{ 
 		((LLSpatialGroup*) branch->getListener(0))->shift(mOffset); 
@@ -1579,6 +1584,7 @@ public:
 		gPipeline.markNotCulled(group, *mCamera);
 	}
 	
+	using LLTreeTraveler<LLDrawable>::visit;
 	virtual void visit(const LLSpatialGroup::OctreeNode* branch) 
 	{	
 		LLSpatialGroup* group = (LLSpatialGroup*) branch->getListener(0);
@@ -1813,6 +1819,7 @@ void drawBoxOutline(const LLVector3& pos, const LLVector3& size)
 class LLOctreeDirty : public LLOctreeTraveler<LLDrawable>
 {
 public:
+	using LLTreeTraveler<LLDrawable>::visit;
 	virtual void visit(const LLOctreeNode<LLDrawable>* state)
 	{
 		LLSpatialGroup* group = (LLSpatialGroup*) state->getListener(0);
@@ -2549,6 +2556,7 @@ public:
 	LLCamera* mCamera;
 	LLOctreeRenderNonOccluded(LLCamera* camera): mCamera(camera) {}
 	
+	using LLTreeTraveler<LLDrawable>::traverse;
 	virtual void traverse(const LLSpatialGroup::OctreeNode* node)
 	{
 		LLSpatialGroup* group = (LLSpatialGroup*) node->getListener(0);
@@ -2587,6 +2595,7 @@ public:
 		}
 	}
 
+	using LLTreeTraveler<LLDrawable>::visit;
 	virtual void visit(const LLSpatialGroup::OctreeNode* branch)
 	{
 		LLSpatialGroup* group = (LLSpatialGroup*) branch->getListener(0);
@@ -2667,6 +2676,7 @@ public:
 	LLCamera* mCamera;
 	LLOctreePushBBoxVerts(LLCamera* camera): mCamera(camera) {}
 	
+	using LLTreeTraveler<LLDrawable>::traverse;
 	virtual void traverse(const LLSpatialGroup::OctreeNode* node)
 	{
 		LLSpatialGroup* group = (LLSpatialGroup*) node->getListener(0);
@@ -2681,7 +2691,7 @@ public:
 			}
 		}
 	}
-
+	using LLTreeTraveler<LLDrawable>::visit;
 	virtual void visit(const LLSpatialGroup::OctreeNode* branch)
 	{
 		LLSpatialGroup* group = (LLSpatialGroup*) branch->getListener(0);
@@ -2790,7 +2800,7 @@ public:
 		  mPickTransparent(pick_transparent)
 	{
 	}
-	
+	using LLTreeTraveler<LLDrawable>::visit;
 	virtual void visit(const LLSpatialGroup::OctreeNode* branch) 
 	{	
 		for (LLSpatialGroup::OctreeNode::const_element_iter i = branch->getData().begin(); i != branch->getData().end(); ++i)

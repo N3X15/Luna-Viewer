@@ -41,6 +41,10 @@
 #include "llvoiceclient.h"
 #include "llstyle.h"
 
+#if COMPILE_OTR          // [$PLOTR$]
+#   include "otr_wrapper.h"
+#endif // COMPILE_OTR    // [/$PLOTR$]
+
 class LLLineEditor;
 class LLViewerTextEditor;
 class LLInventoryItem;
@@ -173,6 +177,18 @@ private:
 	BOOL		mReceivedCall;
 };
 
+#if COMPILE_OTR       // [$PLOTR$]
+extern void otr_authenticate_key(LLUUID session_id, const char *trust);
+extern void otr_log_message_getstring_name(LLUUID session_id, const char *message_name);
+extern void otr_log_message_getstring(LLUUID session_id, const char *message_name);
+extern void otr_log_message(LLUUID session_id, const char *message);
+extern void show_otr_status(LLUUID session_id);
+extern void deliver_message(const std::string& utf8_text,
+                            const LLUUID& im_session_id,
+                            const LLUUID& other_participant_id,
+                            EInstantMessage dialog);
+#endif // COMPILE_OTR // [/$PLOTR$]
+
 class LLFloaterIMPanel : public LLFloater
 {
 public:
@@ -302,6 +318,24 @@ private:
 
 	std::string encrypt(const std::string &msg);
 	
+#if COMPILE_OTR       // [$PLOTR$]
+public:
+    static void onClickOtr(LLUICtrl* source, void* userdata);
+    void doOtrMenu();
+    void showOtrStatus();
+    void otrLogMessage(std::string message);
+    void otrLogMessageGetstring(const char *message_name);
+    void otrLogMessageGetstringName(const char *message_name);
+    bool otherIsOtrAuthenticated();
+    void otrAuthenticateKey(const char *trust);
+    void doOtrStart();
+private:
+    void doOtrStop();
+    void doOtrAuth();
+    OtrlMessageState mOtrLastStatus;
+    ConnContext *getOtrContext(int add_if_not = 0, int *context_added = NULL);
+#endif // COMPILE_OTR // [/$PLOTR$]
+    
 private:
 	LLLineEditor* mInputEditor;
 	LLViewerTextEditor* mHistoryEditor;

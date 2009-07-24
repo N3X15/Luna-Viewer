@@ -84,7 +84,6 @@ public:
 	static BOOL     onDropSculpt(          LLUICtrl* ctrl, LLInventoryItem* item, void* ud);
 	static void     onCommitSculptType(    LLUICtrl *ctrl, void* userdata);
 		
-	static void     onCommitSculptUUID(    LLUICtrl* ctrl, void* userdata);
 	
 protected:
 	void			getState();
@@ -175,9 +174,6 @@ protected:
 	LLCheckBoxCtrl  *mCtrlSculptMirror;
 	LLCheckBoxCtrl  *mCtrlSculptInvert;
 	
-	LLTextBox       *mLabelSculptUUID;
-	LLLineEditor	*LineEditorSculptUUID;
-
 	LLVector3		mCurEulerDegrees;		// to avoid sending rotation when not changed
 	BOOL			mIsPhysical;			// to avoid sending "physical" when not changed
 	BOOL			mIsTemporary;			// to avoid sending "temporary" when not changed

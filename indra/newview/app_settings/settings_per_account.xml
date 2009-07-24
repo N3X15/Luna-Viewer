@@ -1,9 +1,9 @@
 <llsd>
     <map>
-      <key>RestrainedLifeLoginStartLocation</key>
+      <key>RLVaLoginLastLocation</key>
       <map>
         <key>Comment</key>
-        <string>Determines whether the starting location menu will be visible on the login screen (set by the viewer)</string>
+        <string>Determines whether the next login will be forced to the last logoff location (set by the viewer)</string>
         <key>Persist</key>
         <integer>1</integer>
         <key>Type</key>

@@ -44,7 +44,6 @@
 #include "llfontgl.h"
 
 // project includes
-#include "llagent.h"
 #include "llbutton.h"
 #include "llcheckboxctrl.h"
 #include "llcolorswatch.h"
@@ -63,7 +62,6 @@
 #include "llviewermedia.h"
 #include "llviewerobject.h"
 #include "llviewerstats.h"
-#include "llviewerwindow.h"
 #include "lluictrlfactory.h"
 
 //
@@ -86,8 +84,6 @@ BOOL	LLPanelFace::postBuild()
 
 	LLTextBox*      mLabelGlow;
 	LLSpinCtrl*     mCtrlGlow;
-
-	LLLineEditor*	LineEditorTextureUUID;
 
 	setMouseOpaque(FALSE);
 	mTextureCtrl = getChild<LLTextureCtrl>("texture control");
@@ -173,10 +169,6 @@ BOOL	LLPanelFace::postBuild()
 		mCtrlGlow->setCommitCallback(LLPanelFace::onCommitGlow);
 		mCtrlGlow->setCallbackUserData(this);
 	}
-	
-	LineEditorTextureUUID = getChild<LLLineEditor>("Texture_UUID");
-	childSetCommitCallback("Texture_UUID", &LLPanelFace::onCommitTextureUUID,this);
-
 	
 	childSetCommitCallback("combobox shininess",&LLPanelFace::onCommitShiny,this);
 	childSetCommitCallback("combobox bumpiness",&LLPanelFace::onCommitBump,this);
@@ -392,16 +384,11 @@ void LLPanelFace::getState()
 {
 	LLViewerObject* objectp = LLSelectMgr::getInstance()->getSelection()->getFirstObject();
 	LLCalc* calcp = LLCalc::getInstance();
-	if( objectp && objectp->getPCode() == LL_PCODE_VOLUME &&  objectp->permModify() )
+	if( objectp
+		&& objectp->getPCode() == LL_PCODE_VOLUME
+		&& objectp->permModify())
 	{
-		BOOL creators_identical;
-		LLUUID creator_id;
-		std::string creator_name;
-
-		creators_identical = LLSelectMgr::getInstance()->selectGetCreator(creator_id, creator_name);
-
 		BOOL editable = objectp->permModify();
-		BOOL showuuid = ( editable && (gAgent.getID() == creator_id) );
 
 		// only turn on auto-adjust button if there is a media renderer and the media is loaded
 		childSetEnabled("textbox autofix",FALSE);
@@ -469,24 +456,6 @@ void LLPanelFace::getState()
 						texture_ctrl->setImageAssetID( id );
 					}
 				}
-			}
-
-			//LineEditorTextureUUID = getChild<LLLineEditor>("Texture_UUID");
-			LLLineEditor*	LineEditorTextureUUID = getChild<LLLineEditor>("Texture_UUID");
-			
-			if(showuuid)
-			{
-				std::string TextureUUID_string;
-				TextureUUID_string = llformat( id.asString().c_str());
-				LineEditorTextureUUID->setText(TextureUUID_string);
-				LineEditorTextureUUID->setEnabled(editable);
-			}
-			else
-			{
-				std::string TextureUUID_string;
-				TextureUUID_string = llformat( LLUUID::null.asString().c_str());
-				LineEditorTextureUUID->setText(TextureUUID_string);
-				LineEditorTextureUUID->setEnabled(FALSE);
 			}
 		}
 		
@@ -922,21 +891,6 @@ void LLPanelFace::onCommitGlow(LLUICtrl* ctrl, void* userdata)
 {
 	LLPanelFace* self = (LLPanelFace*) userdata;
 	self->sendGlow();
-}
-
-
-
-// static
-void LLPanelFace::onCommitTextureUUID(LLUICtrl* ctrl, void* userdata)
-{
-	LLPanelFace* self = (LLPanelFace*) userdata;
-	LLLineEditor*	le = self->getChild<LLLineEditor>("Texture_UUID");
-	if(le)
-	{
-		LLUUID asset = LLUUID(le->getText());
-		LLSelectMgr::getInstance()->selectionSetImage(asset);
-	}
-
 }
 
 // static

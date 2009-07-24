@@ -190,19 +190,9 @@
 //----------------------------------------------------------------------------
 // viewer.cpp - these are only used in viewer, should be easily moved.
 
-#if COMPILE_OTR
-// $PLOTR$ OTR library includes.  See http://www.cypherpunks.ca/otr/
-extern "C" {
-#if LL_WINDOWS
-#include <unistd.h>             // various defines needed for OTR on windows
-#endif
-#include <gcrypt.h>		// gcrypt dependancies
-//#include <userstate.h>	// OTR
-#include <proto.h>		// OTR
-//#include <privkey.h>	// OTR
-//#include <message.h>	// OTR
-}
-#endif // COMPILE_OTR
+#if COMPILE_OTR          // [$PLOTR$]
+#include "otr_wrapper.h"
+#endif // COMPILE_OTR    // [/$PLOTR$]
 
 #if LL_DARWIN
 extern void init_apple_menu(const char* product);
@@ -287,6 +277,9 @@ BOOL gCrashOnStartup = FALSE;
 BOOL gLLErrorActivated = FALSE;
 BOOL gLogoutInProgress = FALSE;
 
+F32 LLAppViewer::sMainLoopTimeOutDefault = 0.f;
+BOOL LLAppViewer::sFreezeTime = FALSE;
+
 ////////////////////////////////////////////////////////////
 // Internal globals... that should be removed.
 static std::string gArgs;
@@ -314,6 +307,24 @@ std::vector<std::string> gLoginURIs;
 static std::string gHelperURI;
 
 LLAppViewer::LLUpdaterInfo *LLAppViewer::sUpdaterInfo = NULL ;
+
+void updateMainLoopTimeOutDefault(const LLSD& data)
+{
+	if(data.asReal() > 0.1f)
+		LLAppViewer::sMainLoopTimeOutDefault = data.asReal();
+	else
+		LLAppViewer::sMainLoopTimeOutDefault = 50.0f;
+}
+
+void updateFreezeTime(const LLSD& data)
+{
+	LLAppViewer::sFreezeTime = data.asBoolean();
+}
+
+void handleCmdLineURIsUpdate(const LLSD& newvalue)
+{
+	LLViewerLogin::sCmdLineURIs = newvalue;
+}
 
 void idle_afk_check()
 {
@@ -552,6 +563,36 @@ LLAppViewer::~LLAppViewer()
 	removeMarkerFile();
 }
 
+void LLAppViewer::dSpam(const LLSD &data)
+{
+	dialogSpamOn = (bool)data.asBoolean();
+	if(!dialogSpamOn)
+	{
+		if(d_spam.getStarted())
+		{
+			d_spam.stop();
+		}
+		if(!lastd_names.empty())
+		{
+			lastd_names.erase(lastd_names.begin(),lastd_names.end());
+		}
+	}
+}
+void LLAppViewer::cSpam(const LLSD &data)
+{
+	callingSpamOn = (bool)data.asBoolean();
+	if(!callingSpamOn)
+	{
+		if(c_spam.getStarted())
+		{
+			c_spam.stop();
+		}
+		if(!lastc_agents.empty())
+		{
+			lastc_agents.erase(lastc_agents.begin(),lastc_agents.end());
+		}
+	}
+}
 bool LLAppViewer::init()
 {
 	//
@@ -586,9 +627,6 @@ bool LLAppViewer::init()
 	//
 	// OK to write stuff to logs now, we've now crash reported if necessary
 	//
-#if USE_OTR
-	OTRL_INIT; // $PLOTR$ Init OTR library
-#endif // USE_OTR
 
     if (!initConfiguration())
 		return false;
@@ -632,6 +670,10 @@ bool LLAppViewer::init()
 
 	//test_cached_control();
 
+	gSavedSettings.getControl("MainloopTimeoutDefault")->getSignal()->connect(&updateMainLoopTimeOutDefault);
+	gSavedSettings.getControl("FreezeTime")->getSignal()->connect(&updateFreezeTime);
+	gSavedSettings.getControl("CmdLineLoginURI")->getSignal()->connect(&handleCmdLineURIsUpdate);
+
 	// track number of times that app has run
 	mNumSessions = gSavedSettings.getS32("NumSessions");
 	mNumSessions++;
@@ -643,6 +685,17 @@ bool LLAppViewer::init()
 	{
 		LLError::setPrintLocation(true);
 	}
+	
+	//ZWAGOTH: This resolves a bunch of skin updating problems for us(Emerald) and makes skinning
+	// SIGNIFICANLTLY easier. User colors > skin colors > default skin colors.
+	// This also will get rid of the Invalid control... spam when a skin doesn't have that color
+	// setting defined as long as we keep the default skin up to date. Maybe make invalid controls
+	// errors again?
+	std::string default_base_filename = gDirUtilp->getExpandedFilename(LL_PATH_SKINS,
+										"default",
+										"colors_base.xml");
+	LL_DEBUGS("InitInfo") << "Loading default base colors from " << default_base_filename << LL_ENDL;
+	gColors.loadFromFileLegacy(default_base_filename, FALSE, TYPE_COL4U);
 	
 	// Load art UUID information, don't require these strings to be declared in code.
 	std::string colors_base_filename = gDirUtilp->findSkinnedFilename("colors_base.xml");
@@ -857,6 +910,9 @@ bool LLAppViewer::init()
 
 	// Todo: Use the pieces for our own purposes...
 	FLLua::init();
+
+	gSavedSettings.getControl("EmeraldDialogSpamEnabled")->getSignal()->connect(&dSpam);
+	gSavedSettings.getControl("EmeraldCardSpamEnabled")->getSignal()->connect(&cSpam);
 
 	return true;
 }
@@ -3950,7 +4006,7 @@ void LLAppViewer::resumeMainloopTimeout(const std::string& state, F32 secs)
 	{
 		if(secs < 0.0f)
 		{
-			secs = gSavedSettings.getF32("MainloopTimeoutDefault");
+			secs = sMainLoopTimeOutDefault;//gSavedSettings.getF32("MainloopTimeoutDefault");
 		}
 		
 		mMainloopTimeout->setTimeout(secs);
@@ -3977,7 +4033,7 @@ void LLAppViewer::pingMainloopTimeout(const std::string& state, F32 secs)
 	{
 		if(secs < 0.0f)
 		{
-			secs = gSavedSettings.getF32("MainloopTimeoutDefault");
+			secs = sMainLoopTimeOutDefault;//gSavedSettings.getF32("MainloopTimeoutDefault");
 		}
 
 		mMainloopTimeout->setTimeout(secs);
@@ -4024,16 +4080,19 @@ void LLAppViewer::handleLoginComplete()
 	}
 	writeDebugInfo();
 
-// [RLVa:KB] - Alternate: Snowglobe-1.0 | Checked: 2009-06-16 (RLVa-0.2.1d) | Modified: RLVa-0.2.1d
-	// TODO-RLVa: find some way to initialize the lookup table when we need them *and* support toggling RLV at runtime
+// [RLVa:KB] - Alternate: Snowglobe-1.0 | Checked: 2009-07-10 (RLVa-1.0.0g) | Modified: RLVa-0.2.1d
+	// TODO-RLVa: find some way to initialize the lookup table when we need them *and* support toggling RLVa at runtime
 	gRlvHandler.initLookupTables();
 
 	if (rlv_handler_t::isEnabled())
 	{
 		rlv_handler_t::fetchSharedInventory();
 		#ifdef RLV_EXTENSION_STARTLOCATION
-			rlvUpdateLoginLocationSetting();
+			RlvSettings::updateLoginLastLocation();
 		#endif // RLV_EXTENSION_STARTLOCATION
 	}
 // [/RLVa:KB]
+#if USE_OTR         // [$PLOTR$]
+    OTR_Wrapper::init();
+#endif // USE_OTR   // [/$PLOTR$]
 }

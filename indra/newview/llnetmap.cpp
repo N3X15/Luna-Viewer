@@ -113,9 +113,9 @@ LLNetMap::LLNetMap(const std::string& name) :
 	(new LLEnableProfile())->registerListener(this, "MiniMap.EnableProfile");
 
 	LLUICtrlFactory::getInstance()->buildPanel(this, "panel_mini_map.xml");
-	
+
 	updateMinorDirections();
-	
+
 	LLMenuGL* menu = LLUICtrlFactory::getInstance()->buildMenu("menu_mini_map.xml", this);
 	if (!menu)
 	{
@@ -146,7 +146,7 @@ void LLNetMap::setScale( F32 scale )
 		F32 region_widths = diameter / mScale;
 		F32 meters = region_widths * LLWorld::getInstance()->getRegionWidthInMeters();
 		F32 num_pixels = (F32)mObjectImagep->getWidth();
-		mObjectMapTPM = num_pixels/meters;
+		mObjectMapTPM = num_pixels / meters;
 		mObjectMapPixels = diameter;
 	}
 
@@ -178,7 +178,7 @@ void LLNetMap::draw()
 	{
 		createObjectImage();
 	}
-	
+
 	mCurPanX = lerp(mCurPanX, mTargetPanX, LLCriticalDamp::getInterpolant(0.1f));
 	mCurPanY = lerp(mCurPanY, mTargetPanY, LLCriticalDamp::getInterpolant(0.1f));
 
@@ -187,7 +187,7 @@ void LLNetMap::draw()
 	// Prepare a scissor region
 	{
 		LLGLEnable scissor(GL_SCISSOR_TEST);
-		
+
 		{
 			gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
 			LLLocalClipRect clip(getLocalRect());
@@ -198,7 +198,7 @@ void LLNetMap::draw()
 			if(isBackgroundVisible())
 			{
 				gGL.color4fv(isBackgroundOpaque() ? getBackgroundColor().mV : getTransparentColor().mV);
-			gl_rect_2d(0, getRect().getHeight(), getRect().getWidth(), 0);
+				gl_rect_2d(0, getRect().getHeight(), getRect().getWidth(), 0);
 			}
 		}
 
@@ -344,10 +344,7 @@ void LLNetMap::draw()
 		LLColor4 avatar_color = gColors.getColor( "MapAvatar" );
 
 		LLColor4 standard_color = gColors.getColor( "MapAvatar" );
-		//LLColor4 friend_color = gColors.getColor( "MapFriend" );
-// [RLVa:KB] - Version: 1.23.0 | Alternate: Snowglobe-1.0 | Checked: 2009-05-18 (RLVa-0.2.0b) | Modified: RLVa-0.2.0b
-		LLColor4 friend_color = (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES)) ? gColors.getColor("MapFriend") : avatar_color;
-// [/RLVa:KB]
+		LLColor4 friend_color = gColors.getColor( "MapFriend" );
 		LLColor4 linden_color = gColors.getColor( "MapLinden" );
 		LLColor4 muted_color = gColors.getColor( "MapMuted" );
 
@@ -362,15 +359,22 @@ void LLNetMap::draw()
 			pos_map = globalPosToView(positions[i], rotate_map);
 
 				
-			std::string first, last;
-			gCacheName->getName(avatar_ids[i], first, last);
+					std::string first, last;
+					gCacheName->getName(avatar_ids[i], first, last);
 
 			if(LLMuteList::getInstance()->isMuted(avatar_ids[i])) avatar_color = muted_color;
 			if(is_agent_friend(avatar_ids[i])) avatar_color = friend_color;
 			if((last == "Linden") || (last == "Tester")) avatar_color = linden_color;
 
+// [RLVa:KB] - Alternate: Emerald-370 | Checked: 2009-07-21 (RLVa-1.0.0) | Added: RLVa-1.0.0
+			// Emerald-specific: shouldn't be able to tell anything "personal" about anyone from the minimap under @shownames=n
 			LLWorldMapView::drawAvatar(
-				pos_map.mV[VX], pos_map.mV[VY], avatar_color, pos_map.mV[VZ],mDotRadius);
+				pos_map.mV[VX], pos_map.mV[VY], 
+				(!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES)) ? avatar_color : standard_color, 
+				pos_map.mV[VZ],mDotRadius);
+// [/RLVa:KB]
+//			LLWorldMapView::drawAvatar(
+//				pos_map.mV[VX], pos_map.mV[VY], avatar_color, pos_map.mV[VZ],mDotRadius);
 
 			F32	dist_to_cursor = dist_vec(LLVector2(pos_map.mV[VX], pos_map.mV[VY]), LLVector2(local_mouse_x,local_mouse_y));
 			if(dist_to_cursor < MAP_MIN_PICK_DIST && dist_to_cursor < closest_dist)
@@ -567,8 +571,8 @@ BOOL LLNetMap::handleToolTip( S32 x, S32 y, std::string& msg, LLRect* sticky_rec
 		std::string fullname;
 		if(mClosestAgentToCursor.notNull() && gCacheName->getFullName(mClosestAgentToCursor, fullname))
 		{
-			//msg.append(fullname);
-// [RLVa:KB] - Version: 1.23.0 | Checked: 2009-05-18 (RLVa-0.2.0b) | Modified: RLVa-0.2.0b
+//			msg.append(fullname);
+// [RLVa:KB] - Version: 1.23.4 | Alternate: Emerald-370 | Checked: 2009-07-08 (RLVa-1.0.0e) | Modified: RLVa-0.2.0b
 			msg.append( (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES)) ? fullname : gRlvHandler.getAnonym(fullname) );
 // [/RLVa:KB]
 
@@ -593,10 +597,10 @@ BOOL LLNetMap::handleToolTip( S32 x, S32 y, std::string& msg, LLRect* sticky_rec
 
 			msg.append( llformat("\n(Distance: %.02fm)\n\n",distance) );
 		}
-// [RLVa:KB] - Version: 1.23.0 | Checked: 2009-05-18 (RLVa-0.2.0b) | Modified: RLVa-0.2.0b
+// [RLVa:KB] - Version: 1.23.4 | Alternate: Emerald-370 | Checked: 2009-07-04 (RLVa-1.0.0a) | Modified: RLVa-0.2.0b
 		msg.append( (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC)) ? region->getName() : rlv_handler_t::cstrHidden );
 // [/RLVa:KB]
-		//msg.append( region->getName() );
+//		msg.append( region->getName() );
 
 #ifndef LL_RELEASE_FOR_DOWNLOAD
 		std::string buffer;
@@ -616,7 +620,7 @@ BOOL LLNetMap::handleToolTip( S32 x, S32 y, std::string& msg, LLRect* sticky_rec
 			&(sticky_rect_screen->mLeft), &(sticky_rect_screen->mBottom) );
 		sticky_rect_screen->mRight = sticky_rect_screen->mLeft + 2 * SLOP;
 		sticky_rect_screen->mTop = sticky_rect_screen->mBottom + 2 * SLOP;
-	handled = TRUE;
+		handled = TRUE;
 	}
 	if(!handled)
 	{
@@ -849,10 +853,10 @@ bool LLNetMap::LLEnableTracking::handleEvent(LLPointer<LLEvent> event, const LLS
 bool LLNetMap::LLShowAgentProfile::handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
 {
 	LLNetMap *self = mPtr;
-// [RLVa:KB] - Version: 1.23.0 | Checked: 2009-05-18 (RLVa-0.2.0b) | Modified: RLVa-0.2.0b
+// [RLVa:KB] - Version: 1.23.4 | Checked: 2009-07-08 (RLVa-1.0.0e) | Modified: RLVa-0.2.0b
 	if (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES))
 	{
-	LLFloaterAvatarInfo::show(self->mClosestAgentAtLastRightClick);
+		LLFloaterAvatarInfo::show(self->mClosestAgentAtLastRightClick);
 	}
 // [/RLVa:KB]
 	//LLFloaterAvatarInfo::show(self->mClosestAgentAtLastRightClick);
@@ -862,7 +866,7 @@ bool LLNetMap::LLShowAgentProfile::handleEvent(LLPointer<LLEvent> event, const L
 bool LLNetMap::LLEnableProfile::handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
 {
 	LLNetMap *self = mPtr;
-// [RLVa:KB] - Version: 1.23.0 | Checked: 2009-05-18 (RLVa-0.2.0b) | Modified: RLVa-0.2.0b
+// [RLVa:KB] - Version: 1.23.4 | Checked: 2009-07-08 (RLVa-1.0.0e) | Modified: RLVa-0.2.0b
 	self->findControl(userdata["control"].asString())->setValue(
 		(self->isAgentUnderCursor()) && (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES)) );
 // [/RLVa:KB]

@@ -254,6 +254,12 @@ BOOL	LLPipeline::sRenderAttachedLights = TRUE;
 BOOL	LLPipeline::sRenderAttachedParticles = TRUE;
 BOOL	LLPipeline::sRenderDeferred = FALSE;
 S32		LLPipeline::sVisibleLightCount = 0;
+BOOL	LLPipeline::sRenderDelayCreation = FALSE;
+BOOL	LLPipeline::sRenderAnimateRes = FALSE;
+BOOL	LLPipeline::sRenderUnloadedAvatar = FALSE;
+U32		LLPipeline::sRenderMaxNodeSize = 8192;
+U32		LLPipeline::sRenderMaxVBOSize = 512;
+BOOL	LLPipeline::sShowParcelOwners = FALSE;
 
 static LLCullResult* sCull = NULL;
 
@@ -325,6 +331,12 @@ void LLPipeline::init()
 	sRenderBump = gSavedSettings.getBOOL("RenderObjectBump");
 	sRenderAttachedLights = gSavedSettings.getBOOL("RenderAttachedLights");
 	sRenderAttachedParticles = gSavedSettings.getBOOL("RenderAttachedParticles");
+	sRenderAnimateRes = gSavedSettings.getBOOL("RenderAnimateRes");
+	sRenderDelayCreation = gSavedSettings.getBOOL("RenderDelayCreation");
+	sRenderUnloadedAvatar = gSavedSettings.getBOOL("RenderUnloadedAvatar");
+	sRenderMaxNodeSize = (U32)gSavedSettings.getS32("RenderMaxNodeSize");
+	sRenderMaxVBOSize = (U32)gSavedSettings.getS32("RenderMaxVBOSize");
+	sShowParcelOwners = gSavedSettings.getBOOL("ShowParcelOwners");
 
 	mInitialized = TRUE;
 	
@@ -754,6 +766,7 @@ public:
 
 	LLOctreeDirtyTexture(const std::set<LLViewerImage*>& textures) : mTextures(textures) { }
 
+	using LLTreeTraveler<LLDrawable>::visit;
 	virtual void visit(const LLOctreeNode<LLDrawable>* node)
 	{
 		LLSpatialGroup* group = (LLSpatialGroup*) node->getListener(0);
@@ -1017,7 +1030,7 @@ U32 LLPipeline::addObject(LLViewerObject *vobj)
 		return 0;
 	}
 
-	if (gSavedSettings.getBOOL("RenderDelayCreation"))
+	if (sRenderDelayCreation)
 	{
 		mCreateQ.push_back(vobj);
 	}
@@ -1080,7 +1093,7 @@ void LLPipeline::createObject(LLViewerObject* vobj)
 
 	markRebuild(drawablep, LLDrawable::REBUILD_ALL, TRUE);
 
-	if (drawablep->getVOVolume() && gSavedSettings.getBOOL("RenderAnimateRes"))
+	if (drawablep->getVOVolume() && sRenderAnimateRes)
 	{
 		// fun animated res
 		drawablep->updateXform(TRUE);
@@ -1119,7 +1132,7 @@ void LLPipeline::resetFrameStats()
 //external functions for asynchronous updating
 void LLPipeline::updateMoveDampedAsync(LLDrawable* drawablep)
 {
-	if (gSavedSettings.getBOOL("FreezeTime"))
+	if (LLAppViewer::sFreezeTime)
 	{
 		return;
 	}
@@ -1149,7 +1162,7 @@ void LLPipeline::updateMoveDampedAsync(LLDrawable* drawablep)
 
 void LLPipeline::updateMoveNormalAsync(LLDrawable* drawablep)
 {
-	if (gSavedSettings.getBOOL("FreezeTime"))
+	if (LLAppViewer::sFreezeTime)
 	{
 		return;
 	}
@@ -1202,7 +1215,7 @@ void LLPipeline::updateMove()
 	LLFastTimer t(LLFastTimer::FTM_UPDATE_MOVE);
 	LLMemType mt(LLMemType::MTYPE_PIPELINE);
 
-	if (gSavedSettings.getBOOL("FreezeTime"))
+	if (LLAppViewer::sFreezeTime)
 	{
 		return;
 	}
@@ -1967,11 +1980,11 @@ void LLPipeline::stateSort(LLDrawable* drawablep, LLCamera& camera)
 	{
 //		if (drawablep->getVObj().notNull() &&
 //			drawablep->getVObj()->isSelected())
-// [RLVa]
+// [RLVa:KB] - Checked: 2009-07-06 (RLVa-1.0.0c)
 		LLViewerObject* pObj = drawablep->getVObj();
 		if ( (pObj) && (pObj->isSelected()) && 
 			 ((!rlv_handler_t::isEnabled()) || (!pObj->isHUDAttachment()) || (gRlvHandler.isDetachable(pObj))) )
-// [/RVLa]
+// [/RVLa:KB]
 		{
 			return;
 		}
@@ -4875,6 +4888,9 @@ void LLPipeline::resetVertexBuffers(LLDrawable* drawable)
 void LLPipeline::resetVertexBuffers()
 {
 	sRenderBump = gSavedSettings.getBOOL("RenderObjectBump");
+	//Zwag: Have to typecast these because LL can't figure out that size can't possibly be negative and valid...
+	sRenderMaxNodeSize = (U32)gSavedSettings.getS32("RenderMaxNodeSize");
+	sRenderMaxVBOSize = (U32)gSavedSettings.getS32("RenderMaxVBOSize");
 
 	for (LLWorld::region_list_t::const_iterator iter = LLWorld::getInstance()->getRegionList().begin(); 
 			iter != LLWorld::getInstance()->getRegionList().end(); ++iter)

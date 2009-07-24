@@ -306,6 +306,25 @@ void LLFloaterBulkPermission::handleInventory(LLViewerObject* viewer_obj, Invent
 					perm.setMaskNext(LLFloaterPerms::getNextOwnerPerms("BulkChange"));
 					perm.setMaskEveryone(LLFloaterPerms::getEveryonePerms("BulkChange"));
 					perm.setMaskGroup(LLFloaterPerms::getGroupPerms("BulkChange"));
+					U32 flags = new_item->getFlags();
+					// If this is an object set flags so that the next owner
+					// all and group permissions are applied when the object is rezzed
+					if (item->getType() == LLAssetType::AT_OBJECT)
+					{
+						if (LLFloaterPerms::getNextOwnerPerms("BulkChange") != new_item->getPermissions().getMaskNextOwner())
+						{
+							flags |= LLInventoryItem::II_FLAGS_OBJECT_SLAM_PERM;
+						}
+						if (LLFloaterPerms::getEveryonePerms("BulkChange") != new_item->getPermissions().getMaskEveryone())
+						{
+							flags |= LLInventoryItem::II_FLAGS_OBJECT_PERM_OVERWRITE_EVERYONE;
+						}
+						if (LLFloaterPerms::getGroupPerms("BulkChange") != new_item->getPermissions().getMaskGroup())
+						{
+							flags |= LLInventoryItem::II_FLAGS_OBJECT_PERM_OVERWRITE_GROUP;
+						}
+					}
+					new_item->setFlags(flags);
 					new_item->setPermissions(perm); // here's the beef
 					updateInventory(object,new_item,TASK_INVENTORY_ITEM_KEY,FALSE);
 					//status_text.setArg("[STATUS]", getString("status_ok_text"));

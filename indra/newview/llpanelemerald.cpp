@@ -37,6 +37,7 @@
 #include "llradiogroup.h"
 #include "llbutton.h"
 #include "lluictrlfactory.h"
+
 #include "llcombobox.h"
 #include "llslider.h"
 #include "lltexturectrl.h"
@@ -58,6 +59,10 @@
 #include "lltexteditor.h"
 
 #include "llagent.h"
+
+#include "lldirpicker.h"
+
+#include "llweb.h" // [$PLOTR$/]
 
 ////////begin drop utility/////////////
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -209,6 +214,9 @@ BOOL LLPanelEmerald::postBuild()
 	childSetCommitCallback("Y Modifier", onCommitSendAppearance);
 	childSetCommitCallback("Z Modifier", onCommitSendAppearance);
 	childSetValue("EmeraldDoubleClickTeleportMode", gSavedSettings.getBOOL("EmeraldDoubleClickTeleportMode"));
+	childSetValue("EmeraldUseOTR", LLSD((S32)gSavedSettings.getU32("EmeraldUseOTR"))); // [$PLOTR$]
+	getChild<LLButton>("otr_help_btn")->setClickedCallback(onClickOtrHelp, this);      // [/$PLOTR$]
+
 
 	LLView *target_view = getChild<LLView>("im_give_drop_target_rect");
 	if(target_view)
@@ -253,6 +261,9 @@ BOOL LLPanelEmerald::postBuild()
 	childSetValue("EmeraldInstantMessageResponseItem", gSavedPerAccountSettings.getBOOL("EmeraldInstantMessageResponseItem"));
 	childSetValue("EmeraldInstantMessageAnnounceIncoming", gSavedPerAccountSettings.getBOOL("EmeraldInstantMessageAnnounceIncoming"));
 	childSetValue("EmeraldInstantMessageAnnounceStealFocus", gSavedPerAccountSettings.getBOOL("EmeraldInstantMessageAnnounceStealFocus"));
+
+	childSetAction("set_mirror", onClickSetMirror, this);
+	childSetCommitCallback("mirror_location", onCommitApplyControl);
 
 	refresh();
 	return TRUE;
@@ -305,7 +316,7 @@ void LLPanelEmerald::apply()
 	gSavedPerAccountSettings.setBOOL("EmeraldInstantMessageAnnounceIncoming", childGetValue("EmeraldInstantMessageAnnounceIncoming").asBoolean());
 	gSavedPerAccountSettings.setBOOL("EmeraldInstantMessageAnnounceStealFocus", childGetValue("EmeraldInstantMessageAnnounceStealFocus").asBoolean());
 	gSavedSettings.setBOOL("EmeraldDoubleClickTeleportMode", childGetValue("EmeraldDoubleClickTeleportMode").asBoolean());
-	
+	gSavedSettings.setU32("EmeraldUseOTR", (U32)childGetValue("EmeraldUseOTR").asReal());
 	gLggBeamMaps.forceUpdate();
 }
 
@@ -346,6 +357,11 @@ void LLPanelEmerald::onTexturePickerCommit(LLUICtrl* ctrl, void* userdata)
 	}
 }
 
+void LLPanelEmerald::onClickOtrHelp(void* data)           // [$PLOTR$]
+{
+    LLWeb::loadURL("http://www.cypherpunks.ca/otr/");
+}                                                         // [/$PLOTR$]
+
 void LLPanelEmerald::onRefresh(void* data)
 {
 	LLPanelEmerald* self = (LLPanelEmerald*)data;
@@ -370,14 +386,18 @@ void LLPanelEmerald::onBeamDelete(void* data)
 
 	if(comboBox != NULL) 
 	{
-		std::string filename = gDirUtilp->getAppRODataDir() 
-						+gDirUtilp->getDirDelimiter()
-						+"beams"
-						+gDirUtilp->getDirDelimiter()
-						+comboBox->getValue().asString()+".xml";
-		if(gDirUtilp->fileExists(filename))
+		std::string filename = comboBox->getValue().asString()+".xml";
+		std::string path_name1(gDirUtilp->getExpandedFilename( LL_PATH_APP_SETTINGS , "beams", filename));
+		std::string path_name2(gDirUtilp->getExpandedFilename( LL_PATH_USER_SETTINGS , "beams", filename));
+		
+		if(gDirUtilp->fileExists(path_name1))
 		{
-			LLFile::remove(filename);
+			LLFile::remove(path_name1);
+			gSavedSettings.setString("EmeraldBeamShape","===OFF===");
+		}
+		if(gDirUtilp->fileExists(path_name2))
+		{
+			LLFile::remove(path_name2);
 			gSavedSettings.setString("EmeraldBeamShape","===OFF===");
 		}
 	}
@@ -399,6 +419,33 @@ void LLPanelEmerald::onCommitSendAppearance(LLUICtrl* ctrl, void* userdata)
 {
 	gAgent.sendAgentSetAppearance();
 	//llinfos << llformat("%d,%d,%d",gSavedSettings.getF32("EmeraldAvatarXModifier"),gSavedSettings.getF32("EmeraldAvatarYModifier"),gSavedSettings.getF32("EmeraldAvatarZModifier")) << llendl;
+}
+
+void LLPanelEmerald::onClickSetMirror(void* user_data)
+{
+	LLPanelEmerald* self = (LLPanelEmerald*)user_data;
+
+	std::string cur_name(gSavedSettings.getString("EmeraldInvMirrorLocation"));
+	std::string proposed_name(cur_name);
+	
+	LLDirPicker& picker = LLDirPicker::instance();
+	if (! picker.getDir(&proposed_name ) )
+	{
+		return; //Canceled!
+	}
+
+	std::string dir_name = picker.getDirName();
+	if (!dir_name.empty() && dir_name != cur_name)
+	{
+		self->childSetText("mirror_location", dir_name);
+		//LLNotifications::instance().add("CacheWillBeMoved");
+		gSavedSettings.setString("EmeraldInvMirrorLocation", dir_name);
+	}
+	else
+	{
+		std::string cache_location = gDirUtilp->getCacheDir();
+		self->childSetText("mirror_location", cache_location);
+	}
 }
 
 

@@ -3274,7 +3274,7 @@ bool LLDispatchSetEstateAccess::operator()(
 	return true;
 }
 
-// [RLVa]
+// [RLVa:KB] - Checked: 2009-07-04 (RLVa-1.0.0a)
 void LLFloaterRegionInfo::open()
 {
 	// We'll allow access to the estate tools for estate managers (and for the sim owner)
@@ -3291,4 +3291,4 @@ void LLFloaterRegionInfo::open()
 
 	LLFloater::open();
 }
-// [/RLVa]
+// [/RLVa:KB]

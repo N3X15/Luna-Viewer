@@ -55,7 +55,7 @@
 #include "lloverlaybar.h" // for gOverlayBar
 #include "lluictrlfactory.h"
 
-// [RLVa:KB] - Version: 1.23.0
+// [RLVa:KB] - Version: 1.23.4 | Checked: 2009-07-10 (RLVa-1.0.0e) | Added: RLVa-0.2.0b
 #include "rlvhandler.h"
 // [/RLVa:KB]
 
@@ -273,7 +273,7 @@ LLNotifyBox::LLNotifyBox(LLNotificationPtr notification,
 		// TODO: Make a separate archive for these.
 		LLChat chat(mMessage);
 		chat.mSourceType = CHAT_SOURCE_SYSTEM;
-// [RLVa:KB] - Checked: 2009-05-18 (RLVa-0.2.0b) | Added: RLVa-0.2.0b
+// [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0e) | Added: RLVa-0.2.0b
 		if (rlv_handler_t::isEnabled())
 		{
 			// Notices should already have their contents filtered where necessary

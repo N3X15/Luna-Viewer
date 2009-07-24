@@ -52,6 +52,7 @@
 
 #include "llfloaterfriends.h"
 #include "llfloatergroupinfo.h"
+#include "llfloatergroups.h"
 #include "llfloaterworldmap.h"
 #include "llfloatermute.h"
 #include "llfloateravatarinfo.h"
@@ -80,11 +81,13 @@
 #include "llinventorymodel.h"
 #include "roles_constants.h"
 #include "lluictrlfactory.h"
+#include "llviewermenu.h"
 
 // Statics
 std::list<LLPanelAvatar*> LLPanelAvatar::sAllPanels;
 BOOL LLPanelAvatar::sAllowFirstLife = FALSE;
 
+extern void callback_invite_to_group(LLUUID group_id, void *user_data);
 extern void handle_lure(const LLUUID& invitee);
 extern void handle_pay_by_id(const LLUUID& payee);
 
@@ -434,6 +437,7 @@ BOOL LLPanelAvatarSecondLife::postBuild(void)
 
 	childSetAction("Find on Map", LLPanelAvatar::onClickTrack, getPanelAvatar());
 	childSetAction("Instant Message...", LLPanelAvatar::onClickIM, getPanelAvatar());
+	childSetAction("EmeraldGroupInvite_Button", LLPanelAvatar::onClickGroupInvite, getPanelAvatar());
 	
 	childSetAction("Add Friend...", LLPanelAvatar::onClickAddFriend, getPanelAvatar());
 	childSetAction("Pay...", LLPanelAvatar::onClickPay, getPanelAvatar());
@@ -805,9 +809,9 @@ void LLPanelAvatarClassified::refresh()
 	S32 tab_count = tabs ? tabs->getTabCount() : 0;
 
 	bool allow_new = tab_count < MAX_CLASSIFIEDS;
-// [RLVa]
+// [RLVa:KB] - Checked: 2009-07-04 (RLVa-1.0.0a)
 	allow_new &= !gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC);
-// [/RLVa]
+// [/RLVa:KB]
 	bool allow_delete = (tab_count > 0);
 	bool show_help = (tab_count == 0);
 
@@ -943,12 +947,12 @@ void LLPanelAvatarClassified::processAvatarClassifiedReply(LLMessageSystem* msg,
 // static
 void LLPanelAvatarClassified::onClickNew(void* data)
 {
-// [RLVa] - Version: 1.23.0
+// [RLVa:KB] - Version: 1.23.4 | Checked: 2009-07-04 (RLVa-1.0.0a)
 	if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC))
 	{
 		return;
 	}
-// [/RLVa]
+// [/RLVa:KB]
 	LLPanelAvatarClassified* self = (LLPanelAvatarClassified*)data;
 
 	LLNotifications::instance().add("AddClassified", LLSD(), LLSD(), boost::bind(&LLPanelAvatarClassified::callbackNew, self, _1, _2));
@@ -1044,9 +1048,9 @@ void LLPanelAvatarPicks::refresh()
 	BOOL self = (gAgent.getID() == getPanelAvatar()->getAvatarID());
 	LLTabContainer*	tabs = getChild<LLTabContainer>("picks tab");
 	S32 tab_count = tabs ? tabs->getTabCount() : 0;
-// [RLVa] - Added: RLVa-0.x.yc
+// [RLVa:KB] - Checked: 2009-07-04 (RLVa-1.0.0a)
 	childSetEnabled("New...", self && tab_count < MAX_AVATAR_PICKS && (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC)) );
-// [/RLVa]
+// [/RLVa:KB]
 	//childSetEnabled("New...",    self && tab_count < MAX_AVATAR_PICKS);
 	childSetEnabled("Delete...", self && tab_count > 0);
 	childSetVisible("New...",    self && getPanelAvatar()->isEditable());
@@ -1125,12 +1129,12 @@ void LLPanelAvatarPicks::processAvatarPicksReply(LLMessageSystem* msg, void**)
 // static
 void LLPanelAvatarPicks::onClickNew(void* data)
 {
-// [RLVa]
+// [RLVa:KB] - Checked: 2009-07-04 (RLVa-1.0.0a)
 	if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC))
 	{
 		return;
 	}
-// [/RLVa]
+// [/RLVa:KB]
 	LLPanelAvatarPicks* self = (LLPanelAvatarPicks*)data;
 	LLPanelPick* panel_pick = new LLPanelPick(FALSE);
 	LLTabContainer* tabs =  self->getChild<LLTabContainer>("picks tab");
@@ -1453,6 +1457,8 @@ void LLPanelAvatar::setAvatarID(const LLUUID &avatar_id, const std::string &name
 			}
 			childSetVisible("Instant Message...",FALSE);
 			childSetEnabled("Instant Message...",FALSE);
+			childSetVisible("EmeraldGroupInvite_Button",FALSE);
+			childSetEnabled("EmeraldGroupInvite_Button",FALSE);
 			childSetVisible("Mute",FALSE);
 			childSetEnabled("Mute",FALSE);
 			childSetVisible("Offer Teleport...",FALSE);
@@ -1476,6 +1482,8 @@ void LLPanelAvatar::setAvatarID(const LLUUID &avatar_id, const std::string &name
 
 			childSetVisible("Instant Message...",TRUE);
 			childSetEnabled("Instant Message...",FALSE);
+			childSetVisible("EmeraldGroupInvite_Button",TRUE);
+			childSetEnabled("EmeraldGroupInvite_Button",FALSE);
 			childSetVisible("Mute",TRUE);
 			childSetEnabled("Mute",FALSE);
 
@@ -1582,6 +1590,22 @@ void LLPanelAvatar::onClickIM(void* userdata)
 	LLNameEditor* nameedit = self->mPanelSecondLife->getChild<LLNameEditor>("name");
 	if (nameedit) name = nameedit->getText();
 	gIMMgr->addSession(name, IM_NOTHING_SPECIAL, self->mAvatarID);
+}
+
+void LLPanelAvatar::onClickGroupInvite(void* userdata)
+{
+	LLPanelAvatar* self = (LLPanelAvatar*) userdata;
+	if (self->getAvatarID().notNull())
+	{
+		LLFloaterGroupPicker* widget;
+		widget = LLFloaterGroupPicker::showInstance(LLSD(gAgent.getID()));
+		if (widget)
+		{
+			widget->center();
+			widget->setPowersMask(GP_MEMBER_INVITE);
+			widget->setSelectCallback(callback_invite_to_group, (void *)&(self->getAvatarID()));
+		}
+	}
 }
 
 
@@ -1801,6 +1825,7 @@ void LLPanelAvatar::processAvatarPropertiesReply(LLMessageSystem *msg, void**)
 			continue;
 		}
 		self->childSetEnabled("Instant Message...",TRUE);
+		self->childSetEnabled("EmeraldGroupInvite_Button",TRUE);
 		self->childSetEnabled("Pay...",TRUE);
 		self->childSetEnabled("Mute",TRUE);
 

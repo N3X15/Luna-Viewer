@@ -136,14 +136,14 @@ LLFloaterAbout::LLFloaterAbout()
 
 	// Position
 	LLViewerRegion* region = gAgent.getRegion();
-// [RLVa] - Version: 1.23.0
-	if ( (rlv_handler_t::isEnabled()) && (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC)) )
+// [RLVa:KB] - Version: 1.23.4 | Checked: 2009-07-04 (RLVa-1.0.0a)
+	if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC))
 	{
 		support.append(rlv_handler_t::cstrHidden);
 		support.append("\n\n");
 	}
 	else if (region)
-// [/RLVa]
+// [/RLVa:KB]
 //	if (region)
 	{
 		LLStyleSP server_link_style(new LLStyle);

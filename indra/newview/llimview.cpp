@@ -1524,7 +1524,8 @@ public:
 			{
 				return;
 			}
-// [RLVa]
+// [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g)
+			// TODO-RLVa: duplicate from process_improved_im()?
 			if (gRlvHandler.hasBehaviour(RLV_BHVR_RECVIM))
 			{
 				if (gAgent.isInGroup(session_id))
@@ -1535,7 +1536,7 @@ public:
 				else if (!gRlvHandler.isException(RLV_BHVR_RECVIM, from_id))
 					message = message.substr(0, message_offset) + rlv_handler_t::cstrBlockedRecvIM;
 			}
-// [/RLVa]
+// [/RLVa:KB]
 
 			// standard message, not from system
 			std::string saved;

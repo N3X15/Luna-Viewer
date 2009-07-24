@@ -51,9 +51,9 @@
 #include "llvoavatar.h"
 #include "llworld.h"
 
-// [RLVa]
+// [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g)
 #include "llfloatertools.h"
-// [/RLVa]
+// [/RLVa:KB]
 
 // Globals
 extern BOOL gAllowSelectAvatar;
@@ -88,7 +88,7 @@ LLObjectSelectionHandle LLToolSelect::handleObjectSelection(const LLPickInfo& pi
 		object = object->getRootEdit();
 	}
 
-// [RLVa:KB] - Checked: 2009-06-01 (RLVa-0.2.0f) | Modified: RLVa-0.2.0f
+// [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g) | Modified: RLVa-0.2.0f
 	if (rlv_handler_t::isEnabled())
 	{
 		if (gRlvHandler.hasBehaviour(RLV_BHVR_EDIT))
@@ -114,7 +114,8 @@ LLObjectSelectionHandle LLToolSelect::handleObjectSelection(const LLPickInfo& pi
 			 (dist_vec_squared(gAgent.getPositionAgent(), object->getPositionRegion()) > 1.5f * 1.5f) )
 		{
 			// NOTE-RLVa: see behaviour notes for a rather lengthy explanation of why we're doing things this way
-			if (dist_vec_squared(gAgent.getPositionAgent(), object->getPositionRegion() + pick.mObjectOffset) > 1.5f * 1.5f)
+			//if (dist_vec_squared(gAgent.getPositionAgent(), object->getPositionRegion() + pick.mObjectOffset) > 1.5f * 1.5f)
+			if (dist_vec_squared(gAgent.getPositionAgent(), pick.mIntersection) > 1.5f * 1.5f)
 			{
 				if ( (gFloaterTools->getVisible()) && (pick.mKeyMask != MASK_SHIFT) && (pick.mKeyMask != MASK_CONTROL) )
 					LLSelectMgr::getInstance()->deselectAll();

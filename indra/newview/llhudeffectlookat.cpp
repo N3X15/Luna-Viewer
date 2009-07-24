@@ -545,6 +545,14 @@ void LLHUDEffectLookAt::render()
 			LLColor4 Color = LLColor4( (*mAttentions)[mTargetType].mColor, 1.0f ); 
 			std::string text = ((LLVOAvatar*)(LLViewerObject*)mSourceObject)->getFullname();
 			
+// [RLVa:KB] - Alternate: Emerald-370
+			// Show anonyms in place of actual names when @shownames=n restricted
+			if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES))
+			{
+				text = gRlvHandler.getAnonym(text);
+			}
+// [/RLVa:KB]
+
 			// render shadow first
 //			gViewerWindow->setupViewport(1, -1);
 //			hud_render_utf8text(text, render_pos, *fontp, LLFontGL::NORMAL, -0.5f * fontp->getWidthF32(text), 3.f, LLColor4( 0.f, 0.f, 0.f, 0.5f ), FALSE );

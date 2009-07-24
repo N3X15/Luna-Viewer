@@ -99,6 +99,7 @@ public:
 	std::string getHelperURI() const;
 
 	bool isInProductionGrid();
+	static LLSD		sCmdLineURIs;
 
 private:
 	EGridInfo mGridChoice;

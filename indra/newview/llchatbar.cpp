@@ -82,7 +82,7 @@ LLChatBar *gChatBar = NULL;
 void toggleChatHistory(void* user_data);
 void toggleChanSelect(void* user_data);
 //void send_chat_from_viewer(const std::string& utf8_out_text, EChatType type, S32 channel);
-// [RLVa:KB] - Alternate: Emerald-206
+// [RLVa:KB] - Alternate: Emerald-370 | Checked: 2009-07-07 (RLVa-1.0.0d) | Modified: RLVa-0.2.2a
 void send_chat_from_viewer(std::string utf8_out_text, EChatType type, S32 channel);
 // [/RLVa:KB]
 
@@ -214,6 +214,24 @@ BOOL LLChatBar::handleKeyHere( KEY key, MASK mask )
 			// say
 			sendChat( CHAT_TYPE_NORMAL );
 			handled = TRUE;
+		}
+		else if (mask == (MASK_ALT | MASK_SHIFT | MASK_CONTROL))
+		{
+			//Insert new line symbol after the current cursor pos, then increment the curser by 1.
+			if (mInputEditor)
+			{
+				std::string msg = mInputEditor->getText();
+				if (mInputEditor->getCursor() > 0)
+				{
+					if (msg[mInputEditor->getCursor() - 1] != '\n')
+					{
+						//For some reason you have to use a newline character, the ¶ wont show up in chat.
+						msg = msg.insert(mInputEditor->getCursor(), "\n");
+						mInputEditor->setText(msg);
+						mInputEditor->setCursor(mInputEditor->getCursor() + 1);
+					}
+				}
+			}
 		}
 	}
 	// only do this in main chatbar

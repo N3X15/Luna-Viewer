@@ -1162,6 +1162,7 @@ public:
 	
 	LLOctreeMarkNotCulled(LLCamera* camera_in) : mCamera(camera_in) { }
 	
+	using LLTreeTraveler<LLDrawable>::traverse;
 	virtual void traverse(const LLOctreeNode<LLDrawable>* node)
 	{
 		LLSpatialGroup* group = (LLSpatialGroup*) node->getListener(0);
@@ -1169,6 +1170,7 @@ public:
 		LLOctreeTraveler<LLDrawable>::traverse(node);
 	}
 	
+	using LLTreeTraveler<LLDrawable>::visit;
 	void visit(const LLOctreeNode<LLDrawable>* branch)
 	{
 		gPipeline.markNotCulled((LLSpatialGroup*) branch->getListener(0), *mCamera);

@@ -70,6 +70,7 @@
 #include "llvosurfacepatch.h"
 #include "llvowlsky.h"
 #include "llrender.h"
+#include "llviewerparceloverlay.h"
 
 #ifdef TOGGLE_HACKED_GODLIKE_VIEWER
 BOOL 				gHackGodmode = FALSE;
@@ -108,6 +109,18 @@ static bool handleRenderFarClipChanged(const LLSD& newvalue)
 static bool handleTerrainDetailChanged(const LLSD& newvalue)
 {
 	LLDrawPoolTerrain::sDetailMode = newvalue.asInteger();
+	return true;
+}
+
+static bool handleShowParcelOwnersChanged(const LLSD& newvalue)
+{
+	LLPipeline::sShowParcelOwners = newvalue.asBoolean();
+	return true;
+}
+
+static bool handleShowPropertyLinesChanged(const LLSD& newvalue)
+{
+	LLViewerParcelOverlay::sShowPropertyLines = newvalue.asBoolean();
 	return true;
 }
 
@@ -371,6 +384,24 @@ static bool handleRenderUseImpostorsChanged(const LLSD& newvalue)
 	return true;
 }
 
+static bool handleRenderAnimateResChanged(const LLSD& newvalue)
+{
+	LLPipeline::sRenderAnimateRes = newvalue.asBoolean();
+	return true;
+}
+
+static bool handleRenderDelayCreationChanged(const LLSD& newvalue)
+{
+	LLPipeline::sRenderDelayCreation = newvalue.asBoolean();
+	return true;
+}
+
+static bool handleRenderUnloadedAvatarChanged(const LLSD& newvalue)
+{
+	LLPipeline::sRenderUnloadedAvatar = newvalue.asBoolean();
+	return true;
+}
+
 static bool handleRenderDebugGLChanged(const LLSD& newvalue)
 {
 	gDebugGL = newvalue.asBoolean();
@@ -456,6 +487,9 @@ void settings_setup_listeners()
 	gSavedSettings.getControl("RenderTreeLODFactor")->getSignal()->connect(boost::bind(&handleTreeLODChanged, _1));
 	gSavedSettings.getControl("RenderFlexTimeFactor")->getSignal()->connect(boost::bind(&handleFlexLODChanged, _1));
 	gSavedSettings.getControl("ThrottleBandwidthKBPS")->getSignal()->connect(boost::bind(&handleBandwidthChanged, _1));
+	gSavedSettings.getControl("RenderAnimateRes")->getSignal()->connect(boost::bind(&handleRenderAnimateResChanged, _1));
+	gSavedSettings.getControl("RenderDelayCreation")->getSignal()->connect(boost::bind(&handleRenderDelayCreationChanged, _1));
+	gSavedSettings.getControl("RenderUnloadedAvatar")->getSignal()->connect(boost::bind(&handleRenderUnloadedAvatarChanged, _1));
 	gSavedSettings.getControl("RenderGamma")->getSignal()->connect(boost::bind(&handleGammaChanged, _1));
 	gSavedSettings.getControl("RenderFogRatio")->getSignal()->connect(boost::bind(&handleFogRatioChanged, _1));
 	gSavedSettings.getControl("RenderMaxPartCount")->getSignal()->connect(boost::bind(&handleMaxPartCountChanged, _1));
@@ -493,6 +527,8 @@ void settings_setup_listeners()
 	gSavedSettings.getControl("MuteMedia")->getSignal()->connect(boost::bind(&handleAudioVolumeChanged, _1));
 	gSavedSettings.getControl("MuteVoice")->getSignal()->connect(boost::bind(&handleAudioVolumeChanged, _1));
 	gSavedSettings.getControl("MuteAmbient")->getSignal()->connect(boost::bind(&handleAudioVolumeChanged, _1));
+	gSavedSettings.getControl("ShowPropertyLines")->getSignal()->connect(boost::bind(&handleShowPropertyLinesChanged, _1));
+	gSavedSettings.getControl("ShowParcelOwners")->getSignal()->connect(boost::bind(&handleShowParcelOwnersChanged, _1));
 	gSavedSettings.getControl("MuteUI")->getSignal()->connect(boost::bind(&handleAudioVolumeChanged, _1));
 	gSavedSettings.getControl("RenderVBOEnable")->getSignal()->connect(boost::bind(&handleRenderUseVBOChanged, _1));
 	gSavedSettings.getControl("WLSkyDetail")->getSignal()->connect(boost::bind(&handleWLSkyDetailChanged, _1));

@@ -2872,7 +2872,7 @@ void LLInventoryModel::processSaveAssetIntoInventory(LLMessageSystem* msg,
 		gInventory.addChangedMask( LLInventoryObserver::INTERNAL, item_id);
 		gInventory.notifyObservers();
 
-// [RLVa:KB] - Checked: 2009-05-31 (RLVa-0.2.0e) | Added: RLVa-0.2.0e
+// [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g) | Added: RLVa-0.2.0e
 		if (rlv_handler_t::isEnabled())
 		{
 			gRlvHandler.onSavedAssetIntoInventory(item);
@@ -2951,8 +2951,8 @@ void LLInventoryModel::processBulkUpdateInventory(LLMessageSystem* msg, void**)
 					++update[tfolder->getParentUUID()];
 				}
 
-// [RLVa:KB] - Checked: 2009-07-01 (RLVa-0.2.2a) | Added: RLVa-0.2.2a
-				if ( (rlv_handler_t::isEnabled()) && (!gSavedSettings.getBOOL(RLV_SETTING_FORBIDGIVETORLV)) )
+// [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g) | Added: RLVa-0.2.2a
+				if ( (rlv_handler_t::isEnabled()) && (!RlvSettings::getForbidGiveToRLV()) )
 				{
 					LLViewerInventoryCategory* pRlvRoot = gRlvHandler.getSharedRoot();
 					std::string strName = tfolder->getName();

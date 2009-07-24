@@ -572,8 +572,8 @@ void LLStatusBar::refresh()
 		mRegionDetails.mTraffic = 0.0f;
 	}
 
-// [RLVa:KB] - Checked: 2009-05-18 (RLVa-0.2.0b) | Modified: RLVa-0.2.0b
-	if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC))
+// [RLVa:KB] - Checked: 2009-07-04 (RLVa-1.0.0a) | Modified: RLVa-1.0.0a
+	if ( (region) && (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC)) )	// region == NULL if we loose our connection to the grid
 	{
 		// TODO-RLVa: find out whether the LCD code is still used because if so then we need to filter that as well
 		location_name = llformat("%s (%s) - %s", 
@@ -842,12 +842,12 @@ static void onClickScripts(void*)
 
 static void onClickBuyLand(void*)
 {
-// [RLVa]
+// [RLVa:KB] - Checked: 2009-07-04 (RLVa-1.0.0a)
 	if ( (rlv_handler_t::isEnabled()) && (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC)) )
 	{
 		return;
 	}
-// [/RLVa]
+// [/RLVa:KB]
 	LLViewerParcelMgr::getInstance()->selectParcelAt(gAgent.getPositionGlobal());
 	LLViewerParcelMgr::getInstance()->startBuyLand();
 }

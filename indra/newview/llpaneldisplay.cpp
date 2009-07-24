@@ -378,7 +378,7 @@ void LLPanelDisplay::refresh()
 	mCustomSettings = gSavedSettings.getBOOL("RenderCustomSettings");
 
 	// shader settings
-	mBumpShiny = gSavedSettings.getBOOL("RenderObjectBump");
+	mBumpShiny = LLPipeline::sRenderBump;
 	mShaderEnable = gSavedSettings.getBOOL("VertexShaderEnable");
 	mWindLight = gSavedSettings.getBOOL("WindLightUseAtmosShaders");
 	mReflections = gSavedSettings.getBOOL("RenderWaterReflections");
@@ -477,7 +477,7 @@ void LLPanelDisplay::refreshEnabledState()
 
 	// Vertex Shaders
 //	mCtrlShaderEnable->setEnabled(LLFeatureManager::getInstance()->isFeatureAvailable("VertexShaderEnable"));
-// [RLVa:KB] - Checked: 2009-05-17 (RLVa-0.2.0a) | Modified: RLVa-0.2.0a
+// [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g) | Modified: RLVa-0.2.0a
 	// "Basic Shaders" can't be disabled - but can be enabled - under @setenv=n
 	bool fCtrlShaderEnable = LLFeatureManager::getInstance()->isFeatureAvailable("VertexShaderEnable");
 	mCtrlShaderEnable->setEnabled(fCtrlShaderEnable && (!gRlvHandler.hasBehaviour(RLV_BHVR_SETENV) || !mShaderEnable));
@@ -497,7 +497,7 @@ void LLPanelDisplay::refreshEnabledState()
 	// *HACK just checks to see if we can use shaders... 
 	// maybe some cards that use shaders, but don't support windlight
 //	mCtrlWindLight->setEnabled(mCtrlShaderEnable->getEnabled() && shaders);
-// [RLVa:KB] - Checked: 2009-05-17 (RLVa-0.2.0a) | Modified: RLVa-0.2.0a
+// [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g) | Modified: RLVa-0.2.0a
 	// "Atmospheric Shaders" can't be disabled - but can be enabled - under @setenv=n
 	bool fCtrlWindLightEnable = fCtrlShaderEnable && shaders;
 	mCtrlWindLight->setEnabled(fCtrlWindLightEnable && (!gRlvHandler.hasBehaviour(RLV_BHVR_SETENV) || !mWindLight));

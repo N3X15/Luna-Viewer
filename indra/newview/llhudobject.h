@@ -76,6 +76,8 @@ public:
 	static void renderAll();
 	static void renderAllForSelect();
 
+	static void markViewerEffectsDead();
+
 	static void cleanupHUDObjects();
 
 	enum

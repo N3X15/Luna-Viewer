@@ -185,7 +185,7 @@ void LLDrawPoolBump::prerender()
 // static
 S32 LLDrawPoolBump::numBumpPasses()
 {
-	if (gSavedSettings.getBOOL("RenderObjectBump"))
+	if (LLPipeline::sRenderBump)
 	{
 		if (mVertexShaderLevel > 1)
 		{

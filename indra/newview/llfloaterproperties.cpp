@@ -355,15 +355,17 @@ void LLFloaterProperties::refreshFromItem(LLInventoryItem* item)
 		else
 		{
 			gCacheName->getFullName(perm.getOwner(), name);
-// [RLVa]
-			if ( (rlv_handler_t::isEnabled()) && (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES)) )
+// [RLVa:KB] - Checked: 2009-07-08 (RLVa-1.0.0e)
+			if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES))
 			{
-				// TODO-RLV: disable the owner button
 				name = gRlvHandler.getAnonym(name);
 			}
-// [/RLVa]
+// [/RLVa:KB]
 		}
-		childSetEnabled("BtnOwner",TRUE);
+		//childSetEnabled("BtnOwner",TRUE);
+// [RLVa:KB] - Checked: 2009-07-08 (RLVa-1.0.0e) | Added: RLVa-1.0.0e
+		childSetEnabled("BtnOwner", !gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES));
+// [/RLVa:KB]
 		childSetEnabled("LabelOwnerTitle",TRUE);
 		childSetEnabled("LabelOwnerName",TRUE);
 		childSetText("LabelOwnerName",name);
@@ -610,11 +612,10 @@ void LLFloaterProperties::onClickOwner(void* data)
 	}
 	else
 	{
-// [RLVa]
-		if ( (!item->getPermissions().getOwner().isNull()) && 
-		     ((!rlv_handler_t::isEnabled()) || (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES))) )
-// [/RLVa]
 //		if(!item->getPermissions().getOwner().isNull())
+// [RLVa:KB] - Checked: 2009-07-08 (RLVa-1.0.0e)
+		if ( (!item->getPermissions().getOwner().isNull()) && (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES)) )
+// [/RLVa:KB]
 		{
 			LLFloaterAvatarInfo::showFromObject(item->getPermissions().getOwner());
 		}

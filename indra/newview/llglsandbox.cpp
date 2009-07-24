@@ -173,12 +173,12 @@ extern BOOL gDebugSelect;
 // Returns true if you got at least one object
 void LLToolSelectRect::handleRectangleSelection(S32 x, S32 y, MASK mask)
 {
-// [RLVa]
-	if ( (rlv_handler_t::isEnabled()) && (gRlvHandler.hasBehaviour(RLV_BHVR_EDIT)) )
+// [RLVa:KB] - Checked: 2009-07-04 (RLVa-1.0.0b)
+	if (gRlvHandler.hasBehaviour(RLV_BHVR_EDIT))
 	{
 		return;
 	}
-// [/RLVa]
+// [/RLVa:KB]
 
 	LLVector3 av_pos = gAgent.getPositionAgent();
 	F32 select_dist_squared = gSavedSettings.getF32("MaxSelectDistance");
@@ -244,7 +244,7 @@ void LLToolSelectRect::handleRectangleSelection(S32 x, S32 y, MASK mask)
 		LLViewerCamera::getInstance()->setFar(new_far);
 		LLViewerCamera::getInstance()->setNear(new_near);
 	}
-// [RLVa:KB] - Checked: 2009-06-01 (RLV-0.2.0f)
+// [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g)
 	if (gRlvHandler.hasBehaviour(RLV_BHVR_FARTOUCH))
 	{
 		// We'll allow drag selection under fartouch, but only within the fartouch range

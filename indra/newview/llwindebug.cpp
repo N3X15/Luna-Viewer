@@ -127,7 +127,7 @@ typedef struct STACK
 {
 	STACK *	Ebp;
 	PBYTE	Ret_Addr;
-	DWORD	Param[0];
+	DWORD	Param[1];
 } STACK, * PSTACK;
 
 BOOL WINAPI Get_Module_By_Ret_Addr(PBYTE Ret_Addr, LPWSTR Module_Name, PBYTE & Module_Addr);
@@ -155,7 +155,7 @@ void printError( CHAR* msg )
                           ( ( *p == '.' ) || ( *p < 33 ) ) );
 
   // Display the message
-  printf( "\n  WARNING: %s failed with error %d (%s)", msg, eNum, sysMsg );
+  printf( "\n  WARNING: %s failed with error %d (%s)", msg, eNum, (char*)&sysMsg );
 }
 
 BOOL GetProcessThreadIDs(DWORD process_id, std::vector<DWORD>& thread_ids) 

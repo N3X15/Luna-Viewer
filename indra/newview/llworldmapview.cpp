@@ -682,7 +682,7 @@ void LLWorldMapView::draw()
 			//			info->mAgents,
 			//			info->mName.c_str(),
 			//			LLViewerRegion::accessToShortString(info->mAccess).c_str() );
-// [RLVa:KB] - Alternate: Snowglobe-1.0 | Checked: 2009-05-18 (RLVa-0.2.0b)
+// [RLVa:KB] - Alternate: Snowglobe-1.0 | Checked: 2009-07-04 (RLVa-1.0.0a)
 			if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC))
 			{
 				mesg = rlv_handler_t::cstrHidden;
@@ -1145,7 +1145,10 @@ void LLWorldMapView::drawTracking(const LLVector3d& pos_global, const LLColor4& 
 	text_x = llclamp(text_x, half_text_width + TEXT_PADDING, getRect().getWidth() - half_text_width - TEXT_PADDING);
 	text_y = llclamp(text_y + vert_offset, TEXT_PADDING + vert_offset, getRect().getHeight() - llround(font->getLineHeight()) - TEXT_PADDING - vert_offset);
 
-	if (label != "")
+	//if (label != "")
+// [RLVa:KB] - Checked: 2009-07-04 (RLVa-1.0.0a) | Added: RLVa-1.0.0a
+	if ( (label != "") && (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC)) )
+// [/RLVa:KB]
 	{
 		font->renderUTF8(
 			label, 0,
@@ -1206,7 +1209,7 @@ BOOL LLWorldMapView::handleToolTip( S32 x, S32 y, std::string& msg, LLRect* stic
 		std::string message = 
 			llformat("%s (%s)",
 					 //info->mName.c_str(),
-// [RLVa:KB] - Alternate: Snowglobe-1.0 | Checked: 2009-05-18 (RLVa-0.2.0b)
+// [RLVa:KB] - Alternate: Snowglobe-1.0 | Checked: 2009-07-04 (RLVa-1.0.0a)
 					 (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC)) ? info->mName.c_str() : rlv_handler_t::cstrHidden.c_str(),
 // [/RLVa:KB]
 					 LLViewerRegion::accessToString(info->mAccess).c_str());
@@ -1312,7 +1315,7 @@ void LLWorldMapView::drawAvatar(F32 x_pixels,
 	{ 
 		dot_image = sAvatarAboveImage;
 	}
-	S32 dot_width = dot_radius * 2;
+	S32 dot_width = (S32)(dot_radius * 2);
 	dot_image->draw(
 		llround(x_pixels - dot_radius),
 		llround(y_pixels - dot_radius),

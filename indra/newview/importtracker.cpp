@@ -10,18 +10,39 @@
 #include "llprimitive.h"
 #include "llviewerregion.h"
 #include "llvolumemessage.h"
-
+#include "llchat.h"
 #include "importtracker.h"
 
 ImportTracker gImportTracker;
 
 extern LLAgent gAgent;
 
-void ImportTracker::import(LLSD& file_data)
+void ImportTracker::prepare(LLSD& file_data)
 {
-	linkset = file_data;
-	state = REZZING;
-	llinfos << "IMPORTED, REZZING.." << llendl;
+	linksetgroups=file_data;
+	llinfos << "LOADED LINKSETS, PREPARING.." << llendl;
+	groupcounter=0;
+	LLSD ls_llsd;
+	ls_llsd=linksetgroups[groupcounter]["Object"];
+	linksetoffset=linksetgroups[groupcounter]["ObjectPos"];
+	initialPos=gAgent.getCameraPositionAgent();
+	import(ls_llsd);
+}
+
+void ImportTracker::import(LLSD& ls_data)
+{
+	if(!(linkset.size()))
+		if(!(linksetgroups.size()))
+			initialPos=gAgent.getCameraPositionAgent();
+	linkset = ls_data;
+	updated=0;
+	LLSD rot = linkset[0]["rotation"];
+	rootrot.mQ[VX] = (F32)(rot[0].asReal());
+	rootrot.mQ[VY] = (F32)(rot[1].asReal());
+	rootrot.mQ[VZ] = (F32)(rot[2].asReal());
+	rootrot.mQ[VW] = (F32)(rot[3].asReal());
+	state = BUILDING;
+	llinfos << "IMPORTED, BUILDING.." << llendl;
 	plywood_above_head();
 }
 
@@ -37,6 +58,31 @@ void ImportTracker::clear()
 	localids.clear();
 	linkset.clear();
 	state = IDLE;
+}
+void ImportTracker::cleargroups()
+{
+	linksetgroups.clear();
+	groupcounter=0;
+	linksetoffset=LLVector3(0.0f,0.0f,0.0f);
+	initialPos=LLVector3(0.0f,0.0f,0.0f);
+	state = IDLE;
+}
+
+void ImportTracker::cleanUp()
+{
+	clear();
+	if(linksetgroups.size())
+	{
+		if(groupcounter < (linksetgroups.size() - 1))
+		{
+			++groupcounter;
+			LLSD ls_llsd;
+			ls_llsd=linksetgroups[groupcounter]["Object"];
+			linksetoffset=linksetgroups[groupcounter]["ObjectPos"];
+			import(ls_llsd);
+		}
+	}
+	else cleargroups();
 }
 
 void ImportTracker::get_update(S32 newid, BOOL justCreated, BOOL createSelected)
@@ -101,63 +147,63 @@ void ImportTracker::get_update(S32 newid, BOOL justCreated, BOOL createSelected)
 				llinfos << "LGG SENDING CUBE TEXTURE.." << llendl;
 			}
 		break;
-		case REZZING:
+		case BUILDING:
 			if (justCreated && (int)localids.size() < linkset.size())
 			{
 				localids.push_back(newid);
 				localids.sort();
 				localids.unique();
-				
+
+				linkset[localids.size() -1]["LocalID"] = newid;
+				LLSD prim = linkset[localids.size() -1];
+
+				//MAKERIGHT
+				if (!(prim).has("Updated"))
+				{
+					++updated;
+					send_shape(prim);
+					send_image(prim);
+					send_extras(prim);
+					send_vectors(prim,updated);
+					(prim)["Updated"] = true;
+				}
 				if ((int)localids.size() < linkset.size())
-					//plywood_above_head();
+				{
+					plywood_above_head();
 					return;
+				}
 				else
 				{
-					for (int i = 0; i < linkset.size(); i++)
+					if (updated >= linkset.size())
 					{
-						linkset[i]["LocalID"] = localids.front();
-						localids.pop_front();
+						updated=0;
+						llinfos << "FINISHED BUILDING, LINKING.." << llendl;
+						state = LINKING;
+						link();
 					}
-					
-					llinfos << "FINISHED REZZING, UPDATING.." << llendl;
-					state = COPYING;
-					update_next();
 				}
 			}
-		break;
-		case COPYING:
-			for (LLSD::array_iterator prim = linkset.beginArray(); prim != linkset.endArray(); ++prim)
-			{
-				if ((*prim)["LocalID"].asInteger() == newid)
-					(*prim)["Received"] = true;
-			}
-			update_next();
 		break;
 		case LINKING:
 			link();
 		break;
-		case POSITIONING:
-			if (newid == linkset[0]["LocalID"].asInteger())
-			{
-				position(linkset[0]);
-				llinfos << "POSITIONED, IMPORT COMPLETED" << llendl;
-				clear();
-			}
-		break;
 	}
 }
 
-void ImportTracker::send_vectors(LLSD& prim)
+void ImportTracker::send_vectors(LLSD& prim,int counter)
 {
-	LLVector3 position = prim["position"] + root;
-	
+	LLVector3 position = ((LLVector3)prim["position"] * rootrot) + root;
 	LLSD rot = prim["rotation"];
 	LLQuaternion rotq;
 	rotq.mQ[VX] = (F32)(rot[0].asReal());
 	rotq.mQ[VY] = (F32)(rot[1].asReal());
 	rotq.mQ[VZ] = (F32)(rot[2].asReal());
 	rotq.mQ[VW] = (F32)(rot[3].asReal());
-	LLVector3 rotation = rotq.packToVector3();
+	LLVector3 rotation;
+	if(counter == 1)
+		rotation = rotq.packToVector3();
+	else
+		rotation = (rotq * rootrot).packToVector3();
 	LLVector3 scale = prim["scale"];
 	U8 data[256];
 	
@@ -233,7 +279,7 @@ void ImportTracker::send_image(LLSD& prim)
 	
 	msg->sendReliable(gAgent.getRegion()->getHost());
 }
-
+void send_chat_from_viewer(std::string utf8_out_text, EChatType type, S32 channel);
 void ImportTracker::send_extras(LLSD& prim)
 {	
 	LLMessageSystem* msg = gMessageSystem;
@@ -288,6 +334,11 @@ void ImportTracker::send_extras(LLSD& prim)
 			msg->addBinaryDataFast(_PREHASH_ParamData, tmp, datasize);
 		}
 	}
+
+	if (prim.has("chat"))
+	{
+		send_chat_from_viewer(prim["chat"].asString(), CHAT_TYPE_SHOUT, 0);
+	}
 	
 	if (prim.has("sculpt"))
 	{
@@ -315,49 +366,57 @@ void ImportTracker::send_extras(LLSD& prim)
 	msg->sendReliable(gAgent.getRegion()->getHost());
 }
 
-void ImportTracker::update_next()
-{
-	int received = 0;
-	
-	for (LLSD::array_iterator prim = linkset.beginArray(); prim != linkset.endArray(); ++prim)
-	{
-		if (!(*prim).has("Updated"))
-		{
-			send_shape(*prim);
-			send_image(*prim);
-			send_extras(*prim);
-			send_vectors(*prim);
-			(*prim)["Updated"] = true;
-			return;
-		}
-		else if ((*prim).has("Received"))
-			++received;
-	}
-	
-	if (received == linkset.size())
-	{
-		llinfos << "FINISHED UPDATING, LINKING.." << llendl;
-		state = LINKING;
-		link();
-	}
-}
-
 void ImportTracker::link()
 {	
-	LLMessageSystem* msg = gMessageSystem;
-	msg->newMessageFast(_PREHASH_ObjectLink);
-	msg->nextBlockFast(_PREHASH_AgentData);
-	msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID() );
-	msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
-	
-	for (LLSD::array_iterator prim = linkset.beginArray(); prim != linkset.endArray(); ++prim)
+	if(linkset.size() == 256)
 	{
-		msg->nextBlockFast(_PREHASH_ObjectData);
-		msg->addU32Fast(_PREHASH_ObjectLocalID, (*prim)["LocalID"].asInteger());		
+		LLMessageSystem* msg = gMessageSystem;
+		msg->newMessageFast(_PREHASH_ObjectLink);
+		msg->nextBlockFast(_PREHASH_AgentData);
+		msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID() );
+		msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
+		
+		LLSD::array_iterator prim = linkset.beginArray();
+		++prim;
+		for (; prim != linkset.endArray(); ++prim)
+		{
+			msg->nextBlockFast(_PREHASH_ObjectData);
+			msg->addU32Fast(_PREHASH_ObjectLocalID, (*prim)["LocalID"].asInteger());		
+		}
+		
+		msg->sendReliable(gAgent.getRegion()->getHost());
+
+		LLMessageSystem* msg2 = gMessageSystem;
+		msg2->newMessageFast(_PREHASH_ObjectLink);
+		msg2->nextBlockFast(_PREHASH_AgentData);
+		msg2->addUUIDFast(_PREHASH_AgentID, gAgent.getID() );
+		msg2->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
+		
+		LLSD prim2 = linkset[0];
+		msg2->nextBlockFast(_PREHASH_ObjectData);
+		msg2->addU32Fast(_PREHASH_ObjectLocalID, (prim2)["LocalID"].asInteger());		
+		prim2 = linkset[1];
+		msg2->nextBlockFast(_PREHASH_ObjectData);
+		msg2->addU32Fast(_PREHASH_ObjectLocalID, (prim2)["LocalID"].asInteger());		
+
+		msg2->sendReliable(gAgent.getRegion()->getHost());
 	}
-	
-	msg->sendReliable(gAgent.getRegion()->getHost());
-	
+	else
+	{
+		LLMessageSystem* msg = gMessageSystem;
+		msg->newMessageFast(_PREHASH_ObjectLink);
+		msg->nextBlockFast(_PREHASH_AgentData);
+		msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID() );
+		msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
+		
+		for (LLSD::array_iterator prim = linkset.beginArray(); prim != linkset.endArray(); ++prim)
+		{
+			msg->nextBlockFast(_PREHASH_ObjectData);
+			msg->addU32Fast(_PREHASH_ObjectLocalID, (*prim)["LocalID"].asInteger());		
+		}
+		msg->sendReliable(gAgent.getRegion()->getHost());
+	}
+
 	llinfos << "FINISHED IMPORT" << llendl;
 	
 	if (linkset[0].has("Attachment"))
@@ -367,7 +426,7 @@ void ImportTracker::link()
 		wear(linkset[0]);
 	}
 	else
-		clear();
+		cleanUp();
 }
 
 void ImportTracker::wear(LLSD &prim)
@@ -384,10 +443,7 @@ void ImportTracker::wear(LLSD &prim)
 	msg->addQuatFast(_PREHASH_Rotation, LLQuaternion(0.0f, 0.0f, 0.0f, 1.0f));
 	
 	msg->sendReliable(gAgent.getRegion()->getHost());
-}
 
-void ImportTracker::position(LLSD &prim)
-{
 	LLVector3 position = prim["attachpos"];
 	
 	LLSD rot = prim["attachrot"];
@@ -399,31 +455,31 @@ void ImportTracker::position(LLSD &prim)
 	LLVector3 rotation = rotq.packToVector3();
 	U8 data[256];
 	
-	LLMessageSystem* msg = gMessageSystem;
-	msg->newMessageFast(_PREHASH_MultipleObjectUpdate);
-	msg->nextBlockFast(_PREHASH_AgentData);
-	msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID());
-	msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
+	LLMessageSystem* msg2 = gMessageSystem;
+	msg2->newMessageFast(_PREHASH_MultipleObjectUpdate);
+	msg2->nextBlockFast(_PREHASH_AgentData);
+	msg2->addUUIDFast(_PREHASH_AgentID, gAgent.getID());
+	msg2->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
 	
-	msg->nextBlockFast(_PREHASH_ObjectData);
-	msg->addU32Fast(_PREHASH_ObjectLocalID, prim["LocalID"].asInteger());
-	msg->addU8Fast(_PREHASH_Type, U8(0x01 | 0x08));
+	msg2->nextBlockFast(_PREHASH_ObjectData);
+	msg2->addU32Fast(_PREHASH_ObjectLocalID, prim["LocalID"].asInteger());
+	msg2->addU8Fast(_PREHASH_Type, U8(0x01 | 0x08));
 	htonmemcpy(&data[0], &(position.mV), MVT_LLVector3, 12);
-	msg->addBinaryDataFast(_PREHASH_Data, data, 12);
+	msg2->addBinaryDataFast(_PREHASH_Data, data, 12);
 	
-	msg->nextBlockFast(_PREHASH_ObjectData);
-	msg->addU32Fast(_PREHASH_ObjectLocalID, prim["LocalID"].asInteger());
-	msg->addU8Fast(_PREHASH_Type, U8(0x02 | 0x08));
+	msg2->nextBlockFast(_PREHASH_ObjectData);
+	msg2->addU32Fast(_PREHASH_ObjectLocalID, prim["LocalID"].asInteger());
+	msg2->addU8Fast(_PREHASH_Type, U8(0x02 | 0x08));
 	htonmemcpy(&data[0], &(rotation.mV), MVT_LLQuaternion, 12); 
-	msg->addBinaryDataFast(_PREHASH_Data, data, 12);
+	msg2->addBinaryDataFast(_PREHASH_Data, data, 12);
 	
-	msg->sendReliable(gAgent.getRegion()->getHost());
+	msg2->sendReliable(gAgent.getRegion()->getHost());
+	llinfos << "POSITIONED, IMPORT COMPLETED" << llendl;
+	cleanUp();
 }
 
 void ImportTracker::plywood_above_head()
 {
-	for (int i = 0; i < linkset.size(); i++)
-	{
 		LLMessageSystem* msg = gMessageSystem;
 		msg->newMessageFast(_PREHASH_ObjectAdd);
 		msg->nextBlockFast(_PREHASH_AgentData);
@@ -441,13 +497,13 @@ void ImportTracker::plywood_above_head()
 		volume_params.setShear(0, 0);
 		LLVolumeMessage::packVolumeParams(&volume_params, msg);
 		msg->addU8Fast(_PREHASH_PCode, 9);
-		msg->addVector3Fast(_PREHASH_Scale, LLVector3(0.5f, 0.5f, 0.5f));
+		msg->addVector3Fast(_PREHASH_Scale, LLVector3(0.52345f, 0.52346f, 0.52347f));
 		LLQuaternion rot;
 		msg->addQuatFast(_PREHASH_Rotation, rot);
 		LLViewerRegion *region = gAgent.getRegion();
 		
 		if (!localids.size())
-			root = region->getPosRegionFromGlobal(gAgent.getPositionGlobal()) + LLVector3(0.0f, 0.0f, .0f);
+			root = (initialPos + linksetoffset);
 		
 		msg->addVector3Fast(_PREHASH_RayStart, root);
 		msg->addVector3Fast(_PREHASH_RayEnd, root);
@@ -456,6 +512,5 @@ void ImportTracker::plywood_above_head()
 		msg->addU8Fast(_PREHASH_State, (U8)0);
 		msg->addUUIDFast(_PREHASH_RayTargetID, LLUUID::null);
 		msg->sendReliable(region->getHost());
-	}
 }
 

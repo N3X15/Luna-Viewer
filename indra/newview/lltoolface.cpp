@@ -100,7 +100,7 @@ void LLToolFace::pickCallback(const LLPickInfo& pick_info)
 			return;
 		}
 
-// [RLVa:KB] - Checked: 2009-06-01 (RLVa-0.2.0f) | Modified: RLVa-0.2.0f
+// [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g) | Modified: RLVa-0.2.0f
 		if ( (rlv_handler_t::isEnabled()) &&
 			 ( (gRlvHandler.hasBehaviour(RLV_BHVR_EDIT)) || 
 			   ( (gRlvHandler.hasBehaviour(RLV_BHVR_FARTOUCH)) && ((!hit_obj->isAttachment()) || (!hit_obj->permYouOwner())) && 

@@ -198,6 +198,10 @@
 #include "lldxhardware.h"
 #endif
 
+#if COMPILE_OTR          // [$PLOTR$]
+#include "otr_wrapper.h"
+#endif // COMPILE_OTR    // [/$PLOTR$]
+
 //
 // exported globals
 //
@@ -324,7 +328,6 @@ bool idle_startup()
 {
 	LLMemType mt1(LLMemType::MTYPE_STARTUP);
 	
-	const F32 PRECACHING_DELAY = gSavedSettings.getF32("PrecachingDelay")+0.01;
 	const F32 TIMEOUT_SECONDS = 5.f;
 	const S32 MAX_TIMEOUT_COUNT = 3;
 	static LLTimer timeout;
@@ -392,8 +395,8 @@ bool idle_startup()
 		// Initialize stuff that doesn't need data from simulators
 		//
 
-// [RLVa:KB] - Version: 1.23.0 | Checked: 2009-06-16 (RLVa-0.2.1d) | Modified: RLVa-0.2.1d
-		if (gSavedSettings.getBOOL(RLV_SETTING_MAIN))
+// [RLVa:KB] - Version: 1.23.4 | Checked: 2009-07-10 (RLVa-1.0.0g) | Modified: RLVa-0.2.1d
+		if ( (gSavedSettings.controlExists(RLV_SETTING_MAIN)) && (gSavedSettings.getBOOL(RLV_SETTING_MAIN)) )
 			rlv_handler_t::setEnabled(TRUE);
 // [/RLVa:KB]
 
@@ -940,6 +943,10 @@ bool idle_startup()
 		std::string user_windlight_days_path_name(gDirUtilp->getExpandedFilename( LL_PATH_USER_SETTINGS , "windlight/days", ""));
 		LLFile::mkdir(user_windlight_days_path_name.c_str());
 
+		//guna make a beams directior here too /lgg		
+		std::string lgg_beams_path_name(gDirUtilp->getExpandedFilename( LL_PATH_USER_SETTINGS , "beams", ""));
+		LLFile::mkdir(lgg_beams_path_name.c_str());		
+
 
 		if (show_connect_box)
 		{
@@ -973,11 +980,11 @@ bool idle_startup()
 		// their last location, or some URL "-url //sim/x/y[/z]"
 		// All accounts have both a home and a last location, and we don't support
 		// more locations than that.  Choose the appropriate one.  JC
-// [RLVa:KB] - Checked: 2009-06-16 (RLVa-0.2.1d) | Modified: RLVa-0.2.1d
+// [RLVa:KB] - Checked: 2009-07-08 (RLVa-1.0.0e) | Modified: RLVa-0.2.1d
 		#ifndef RLV_EXTENSION_STARTLOCATION
 		if (rlv_handler_t::isEnabled())
 		#else
-		if ( (rlv_handler_t::isEnabled()) && (rlvGetLoginLocationSetting()) )
+		if ( (rlv_handler_t::isEnabled()) && (RlvSettings::getLoginLastLocation()) )
 		#endif // RLV_EXTENSION_STARTLOCATION
 		{
 			// Force login at the last location
@@ -2289,6 +2296,14 @@ bool idle_startup()
 			// JC: Initializing audio requests many sounds for download.
 			init_audio();
 
+			// Zwag: Moving shader init here. LL picked a dumb spot.
+			// should fix all the shader loading problems.
+			if (!LLViewerShaderMgr::sInitialized)
+			{
+				LLViewerShaderMgr::sInitialized = TRUE;
+				LLViewerShaderMgr::instance()->setShaders();
+			}
+
 			// JC: Initialize "active" gestures.  This may also trigger
 			// many gesture downloads, if this is the user's first
 			// time on this machine or -purge has been run.
@@ -2428,7 +2443,7 @@ bool idle_startup()
 
 	if (STATE_PRECACHE == LLStartUp::getStartupState())
 	{
-		F32 timeout_frac = timeout.getElapsedTimeF32()/PRECACHING_DELAY;
+		F32 timeout_frac = timeout.getElapsedTimeF32()/(gSavedSettings.getF32("PrecachingDelay")+0.1f);
 
 		// We now have an inventory skeleton, so if this is a user's first
 		// login, we can start setting up their clothing and avatar 
@@ -2472,11 +2487,6 @@ bool idle_startup()
 				LLTrans::getString("LoginPrecaching"),
 					gAgent.mMOTD);
 			display_startup();
-			if (!LLViewerShaderMgr::sInitialized)
-			{
-				LLViewerShaderMgr::sInitialized = TRUE;
-				LLViewerShaderMgr::instance()->setShaders();
-			}
 		}
 
 		return TRUE;
@@ -2574,6 +2584,9 @@ bool idle_startup()
 			gAgent.requestEnterGodMode();
 		}
 		gInventory.startBackgroundFetch();
+#if USE_OTR         // [$PLOTR$]
+        OTR_Wrapper::init();
+#endif // USE_OTR   // [/$PLOTR$]
 		
 		// Start automatic replay if the flag is set.
 		if (gSavedSettings.getBOOL("StatsAutoRun"))

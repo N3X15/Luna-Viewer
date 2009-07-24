@@ -68,9 +68,9 @@
 #include "lltoolcomp.h"
 #include "llpanelinventory.h"
 
-// [RLVa]
+// [RLVa:KB] - Checked: 2009-07-06 (RLVa-1.0.0c)
 #include "llvoavatar.h"
-// [/RLVa]
+// [/RLVa:KB]
 
 //
 // Imported globals
@@ -123,7 +123,7 @@ void LLPanelContents::getState(LLViewerObject *objectp )
 					       && ( objectp->permYouOwner() || ( !group_id.isNull() && gAgent.isInGroup(group_id) )));  // solves SL-23488
 	BOOL all_volume = LLSelectMgr::getInstance()->selectionAllPCode( LL_PCODE_VOLUME );
 
-// [RLVa:KB] - Version: 1.23.0 | Checked: 2009-06-02 (RLVa-0.2.0g) | Modified: RLVa-0.2.0g
+// [RLVa:KB] - Version: 1.23.4 | Checked: 2009-07-06 (RLVa-1.0.0c) | Modified: RLVa-0.2.0g
 	if ( (rlv_handler_t::isEnabled()) && (editable) )
 	{
 		// Don't allow creation of new scripts if it's undetachable
@@ -136,7 +136,7 @@ void LLPanelContents::getState(LLViewerObject *objectp )
 			// Only check the first (non-)root object because nothing else would result in enabling the button (see below)
 			LLViewerObject* pObj = LLSelectMgr::getInstance()->getSelection()->getFirstRootObject(TRUE);
 
-			editable = (pObj) && (pAvatar) && ((!pAvatar->mIsSitting) || (pAvatar->getParent() != pObj->getRootEdit()));
+			editable = (pObj) && (pAvatar) && ((!pAvatar->mIsSitting) || (pAvatar->getRoot() != pObj->getRootEdit()));
 		}
 	}
 // [/RLVa:KB]
@@ -175,7 +175,7 @@ void LLPanelContents::onClickNewScript(void *userdata)
 	LLViewerObject* object = LLSelectMgr::getInstance()->getSelection()->getFirstRootObject(children_ok);
 	if(object)
 	{
-// [RLVa:KB] - Checked: 2009-06-02 (RLVa-0.2.0g)
+// [RLVa:KB] - Checked: 2009-07-06 (RLVa-1.0.0c)
 		if (rlv_handler_t::isEnabled())	// Fallback code [see LLPanelContents::getState()]
 		{
 			if (!gRlvHandler.isDetachable(object))

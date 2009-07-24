@@ -3445,7 +3445,7 @@ void LLSelectMgr::deselectAllIfTooFar()
 	LLVector3d selectionCenter = getSelectionCenterGlobal();
 
 //	if (gSavedSettings.getBOOL("LimitSelectDistance")
-// [RLVa:KB] - Checked: 2009-06-01 (RLVa-0.2.0f) | Modified: RLVa-0.2.0f
+// [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g) | Modified: RLVa-0.2.0f
 	BOOL fRlvFartouch = gRlvHandler.hasBehaviour(RLV_BHVR_FARTOUCH) && gFloaterTools->getVisible();
 	if ( (gSavedSettings.getBOOL("LimitSelectDistance") || (fRlvFartouch) )
 // [/RLVa:KB]
@@ -3454,7 +3454,7 @@ void LLSelectMgr::deselectAllIfTooFar()
 		&& !selectionCenter.isExactlyZero())
 	{
 //		F32 deselect_dist = gSavedSettings.getF32("MaxSelectDistance");
-// [RLVa:KB] - Checked: 2009-06-01 (RLVa-0.2.0f) | Modified: RLVa-0.2.0f
+// [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g) | Modified: RLVa-0.2.0f
 		F32 deselect_dist = (!fRlvFartouch) ? gSavedSettings.getF32("MaxSelectDistance") : 1.5f;
 // [/RLVa:KB]
 		F32 deselect_dist_sq = deselect_dist * deselect_dist;

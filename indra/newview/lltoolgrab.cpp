@@ -187,7 +187,7 @@ BOOL LLToolGrab::handleObjectHit(const LLPickInfo& info)
 	}
 
 	//if (objectp->isAvatar())
-// [RLVa:KB] - Checked: 2009-06-01 (RLVa-0.2.0f) | Modified: RLVa-0.2.0f
+// [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g) | Modified: RLVa-0.2.0f
 	if ( (objectp->isAvatar()) ||
 		 ( (gRlvHandler.hasBehaviour(RLV_BHVR_FARTOUCH)) && ((!objectp->isAttachment()) || (!objectp->permYouOwner())) &&
 		   (dist_vec_squared(gAgent.getPositionAgent(), mGrabPick.mIntersection) > 1.5f * 1.5f) ) )
@@ -426,7 +426,7 @@ BOOL LLToolGrab::handleHover(S32 x, S32 y, MASK mask)
 		return TRUE;
 	}
 
-// [RLVa:KB] - Checked: 2009-06-01 (RLVa-0.2.0f) | Added: RLVa-0.2.0f
+// [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g) | Added: RLVa-0.2.0f
 	// Don't allow dragging beyond 1.5m under @fartouch=n
 	LLViewerObject* pObj;
 	if ( (gRlvHandler.hasBehaviour(RLV_BHVR_FARTOUCH)) && (GRAB_INACTIVE != mMode) && (hasMouseCapture()) &&

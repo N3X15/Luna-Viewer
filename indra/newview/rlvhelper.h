@@ -11,33 +11,52 @@
 #include "rlvmultistringsearch.h"
 
 // ============================================================================
+// Extensions
+//
+
+// Comment out if you don't want the Advanced / RLVa menu (may prevent enabling some extensions or experimental features - see below)
+#define RLV_ADVANCED_MENU
+// Comment out if you provide your own way to enable/disable RLVa
+#define RLV_ADVANCED_TOGGLE_RLVA
+
+// Provides access to "advanced" feature through the RLVa debug menu
+#define RLV_EXTENSION_ENABLE_WEAR			// "Enable Wear"
+#define RLV_EXTENSION_HIDELOCKED			// "Hide locked layers", "Hide locked attachments" and "Hide locked inventory"
+#define RLV_EXTENSION_FLOATER_RESTRICTIONS	// Enables the Advanced / RLVa / Restrictions... floater
+
+// Extensions
+#define RLV_EXTENSION_CMD_GETSETDEBUG_EX	// Extends the debug variables accessible through @getdebug_xxx/@setdebug_xxx
+#define RLV_EXTENSION_CMD_FINDFOLDERS		// @findfolders:<option>=<channel> - @findfolder with multiple results
+#define RLV_EXTENSION_FLAG_NOSTRIP			// Layers and attachments marked as "nostrip" are exempt from @detach/@remoutfit
+#define RLV_EXTENSION_STARTLOCATION			// Reenables "Start Location" at login if not @tploc=n or @unsit=n restricted at last logoff
+#define RLV_EXPERIMENTAL					// Enables/disables experimental features en masse
+
+// Experimental features
+#ifdef RLV_EXPERIMENTAL
+	// Stable (will mature to RLV_EXTENSION_XXX in next release if no bugs are found)
+	#define RLV_EXPERIMENTAL_FARTOUCH_FEEDBACK		// Enables "cleaner" UI responses when fartouch blocks something
+
+	// Under testing (stable, but requires further testing - safe for public release but may be quirky)
+
+	// Under development (don't include in public release)
+	#if LL_RELEASE_WITH_DEBUG_INFO || LL_DEBUG
+	#endif // LL_RELEASE_WITH_DEBUG_INFO || LL_DEBUG
+#endif // RLV_EXPERIMENTAL
+
+// ============================================================================
 // Defines
 //
 
-#define RLV_ROOT_FOLDER				"#RLV"
-#define RLV_CMD_PREFIX				'@'
-#define RLV_PUTINV_PREFIX			"#RLV/~"
-
-#define RLV_FOLDER_FLAG_NOSTRIP		"nostrip"
-#define RLV_FOLDER_PREFIX_HIDDEN	'.'
-#define RLV_FOLDER_PREFIX_PUTINV    '~'
-
-#define RLV_SETTING_MAIN			"RestrainedLife"
-#define RLV_SETTING_DEBUG			"RestrainedLifeDebug"
-#define RLV_SETTING_FORBIDGIVETORLV "RestrainedLifeForbidGiveToRLV"
-#define RLV_SETTING_NOSETENV		"RestrainedLifeNoSetEnv"
-#define RLV_SETTING_LOGINLOCATION	"RestrainedLifeLoginStartLocation"		// NOTE: per-account setting!
-
 // Version of the specifcation we support
 const S32 RLV_VERSION_MAJOR = 1;
-const S32 RLV_VERSION_MINOR = 18;
+const S32 RLV_VERSION_MINOR = 19;
 const S32 RLV_VERSION_PATCH = 0;
 
 // Implementation version
-const S32 RLVa_VERSION_MAJOR = 0;
-const S32 RLVa_VERSION_MINOR = 2;
-const S32 RLVa_VERSION_PATCH = 2;
-const S32 RLVa_VERSION_BUILD = 0;
+const S32 RLVa_VERSION_MAJOR = 1;
+const S32 RLVa_VERSION_MINOR = 0;
+const S32 RLVa_VERSION_PATCH = 0;
+const S32 RLVa_VERSION_BUILD = 7;
 
 // The official viewer version we're patching against
 #define RLV_MAKE_TARGET(x, y, z)	((x << 16) | (y << 8) | z)
@@ -53,6 +72,8 @@ const S32 RLVa_VERSION_BUILD = 0;
 	#define RLV_DEBUG
 	// Make sure we halt execution on errors
 	#define RLV_ERRS  LL_ERRS("RLV")
+	// Uncomment to enable the Advanced / RLVa / Unit Tests menu (non-public)
+	//#define RLV_DEBUG_TESTS
 #else
 	// Uncomment if you want extended debugging information on release builds
 	//#define RLV_DEBUG
@@ -60,41 +81,14 @@ const S32 RLVa_VERSION_BUILD = 0;
 	#define RLV_ERRS  LL_WARNS("RLV")
 #endif // LL_RELEASE_WITH_DEBUG_INFO || LL_DEBUG
 
-// Uncomment to use the pimpl (non-public)
-//#define RLV_USE_PIMPL
+#define RLV_ROOT_FOLDER					"#RLV"
+#define RLV_CMD_PREFIX					'@'
+#define RLV_PUTINV_PREFIX				"#RLV/~"
+#define RLV_SETROT_OFFSET				F_PI_BY_TWO		// @setrot is off by 90° with the rest of SL
 
-// Comment out if you don't want the Advanced / RLVa menu (may prevent enabling some extensions or experimental features - see below)
-#define RLV_ADVANCED_MENU
-
-// Uncomment to enable the Advanced / RLVa / Unit Tests menu (non-public)
-//#define RLV_DEBUG_TESTS
-
-// Provides access to "advanced" feature through the RLVa debug menu
-#define RLV_EXTENSION_ENABLE_WEAR			// "Enable Wear"
-#define RLV_EXTENSION_HIDELOCKED			// "Hide locked layers", "Hide locked attachments" and "Hide locked inventory"
-
-// Extensions
-#define RLV_EXTENSION_CMD_GETSETDEBUG_EX	// Extends the debug variables accessible through @getdebug_xxx/@setdebug_xxx
-#define RLV_EXTENSION_CMD_FINDFOLDERS		// @findfolders:<option>=<channel> - @findfolder with multiple results
-#define RLV_EXTENSION_FLAG_NOSTRIP			// Layers and attachments marked as "nostrip" are exempt from @detach/@remoutfit
-#define RLV_EXTENSION_STARTLOCATION			// Reenables "Start Location" at login if not @tploc=n or @unsit=n restricted at last logoff
-//#define RLV_EXPERIMENTAL					// Enables/disables experimental features en masse
-#define RLV_EXPERIMENTAL_119				// Enables the 1.19 RLV specification commands (experimental pending an actual 1.19 release)
-
-// Experimental features
-#ifdef RLV_EXPERIMENTAL
-	// Stable (will mature to RLV_EXTENSION_XXX in next release if no bugs are found)
-	#define RLV_EXPERIMENTAL_DOUBLECLICK_SITTP		// Ties "double click" teleporting to @sittp=n rather than @tploc=n
-	#define RLV_EXPERIMENTAL_FLOATER_RESTRICTIONS	// Enables the Advanced / RLVa / Restrictions... floater
-
-	// Under testing (stable, but requires further testing - safe for public release but may be quirky)
-	#define RLV_EXPERIMENTAL_FARTOUCH_FEEDBACK		// Enables "cleaner" UI responses when fartouch blocks something
-
-	// Under development (don't include in public release)
-	#if LL_RELEASE_WITH_DEBUG_INFO || LL_DEBUG
-		#define RLV_EXPERIMENTAL_CMD_TAKESNAPSHOT	// @takesnapshot[:<option>]=force - intended primarily for "vanilla" use
-	#endif // LL_RELEASE_WITH_DEBUG_INFO || LL_DEBUG
-#endif // RLV_EXPERIMENTAL
+#define RLV_FOLDER_FLAG_NOSTRIP			"nostrip"
+#define RLV_FOLDER_PREFIX_HIDDEN		'.'
+#define RLV_FOLDER_PREFIX_PUTINV    	'~'
 
 // ============================================================================
 // Enumeration declarations
@@ -103,64 +97,65 @@ const S32 RLVa_VERSION_BUILD = 0;
 // NOTE: * any changes to this enumeration should be reflected in initLookupTable()
 //       * only uncomment the ones we actually use in a switch() to keep the size of the lookup table down
 enum ERlvBehaviour {
-	RLV_BHVR_VERSION = 0,		// "version"
-	RLV_BHVR_DETACH,			// "detach"
-//	RLV_BHVR_SENDCHAT,			// "sendchat"
-//	RLV_BHVR_EMOTE,				// "emote"
-//	RLV_BHVR_CHATSHOUT,			// "chatshout"
-//	RLV_BHVR_CHATNORMAL,		// "chatnormal"
-//	RLV_BHVR_CHATWHISPER,		// "chatwhisper"
-	RLV_BHVR_REDIRCHAT,			// "redirchat"
-	RLV_BHVR_REDIREMOTE,		// "rediremote"
-	RLV_BHVR_SENDIM,			// "sendim"
-	RLV_BHVR_RECVCHAT,			// "recvchat"
-	RLV_BHVR_RECVEMOTE,			// "recvemote"
-	RLV_BHVR_RECVIM,			// "recvim"
-//	RLV_BHVR_TPLM,				// "tplm"
-	RLV_BHVR_TPLOC,				// "tploc"
-	RLV_BHVR_TPLURE,			// "tplure"
-	RLV_BHVR_SITTP,				// "sittp"
-//	RLV_BHVR_CLEAR,				// "clear"
-	RLV_BHVR_EDIT,				// "edit"
-	RLV_BHVR_REZ,				// "rez"
-	RLV_BHVR_ADDOUTFIT,			// "addoutfit"
-	RLV_BHVR_REMOUTFIT,			// "remoutfit"
-	RLV_BHVR_GETOUTFIT,			// "getoutfit"
-	RLV_BHVR_GETATTACH,			// "getattach"
-	RLV_BHVR_SHOWINV,			// "showinv"
-//	RLV_BHVR_VIEWNOTE,			// "viewnote"
-	RLV_BHVR_UNSIT,				// "unsit"
-	RLV_BHVR_SIT,				// "sit"
-//	RLV_BHVR_SENDCHANNEL,		// "sendchannel"
-	RLV_BHVR_GETSTATUS,			// "getstatus"
-	RLV_BHVR_GETSTATUSALL,		// "getstatusall"
-	RLV_BHVR_GETINV,			// "getinv"
-	RLV_BHVR_GETINVWORN,		// "getinvworn"
-	RLV_BHVR_FINDFOLDER,		// "findfolder"
-	RLV_BHVR_FINDFOLDERS,		// "findfolders"
-	RLV_BHVR_ATTACH,			// "attach"
-	RLV_BHVR_ATTACHALL,			// "attachall"
-	RLV_BHVR_DETACHALL,			// "detachall"
-	RLV_BHVR_GETPATH,			// "getpath"
-	RLV_BHVR_ATTACHTHIS,		// "attachthis"
-	RLV_BHVR_ATTACHALLTHIS,		// "attachallthis"
-	RLV_BHVR_DETACHTHIS,		// "detachthis"
-	RLV_BHVR_DETACHALLTHIS,		// "detachallthis"
-	RLV_BHVR_FARTOUCH,			// "fartouch"
-	RLV_BHVR_SHOWWORLDMAP,		// "showworldmap"
-	RLV_BHVR_SHOWMINIMAP,		// "showminimap"
-	RLV_BHVR_SHOWLOC,			// "showloc"
-	RLV_BHVR_TPTO,				// "tpto"
-	RLV_BHVR_ACCEPTTP,			// "accepttp"
-	RLV_BHVR_SHOWNAMES,			// "shownames"
-	RLV_BHVR_FLY,				// "fly"
-	RLV_BHVR_GETSITID,			// "getsitid"
-	RLV_BHVR_SETDEBUG,			// "setdebug"
-	RLV_BHVR_SETENV,			// "setenv"
-	RLV_BHVR_DETACHME,			// "detachme"
-	RLV_BHVR_SHOWHOVERTEXTALL,	// "showhovertextall"
-	RLV_BHVR_SHOWHOVERTEXT,		// "showhovertext"
-	RLV_BHVR_SHOWHOVERTEXTHUD,	// "showhovertexthud"
+	RLV_BHVR_VERSION = 0,			// "version"
+	RLV_BHVR_DETACH,				// "detach"
+//	RLV_BHVR_SENDCHAT,				// "sendchat"
+//	RLV_BHVR_EMOTE,					// "emote"
+//	RLV_BHVR_CHATSHOUT,				// "chatshout"
+//	RLV_BHVR_CHATNORMAL,			// "chatnormal"
+//	RLV_BHVR_CHATWHISPER,			// "chatwhisper"
+	RLV_BHVR_REDIRCHAT,				// "redirchat"
+	RLV_BHVR_REDIREMOTE,			// "rediremote"
+	RLV_BHVR_SENDIM,				// "sendim"
+	RLV_BHVR_RECVCHAT,				// "recvchat"
+	RLV_BHVR_RECVEMOTE,				// "recvemote"
+	RLV_BHVR_RECVIM,				// "recvim"
+//	RLV_BHVR_TPLM,					// "tplm"
+	RLV_BHVR_TPLOC,					// "tploc"
+	RLV_BHVR_TPLURE,				// "tplure"
+	RLV_BHVR_SITTP,					// "sittp"
+//	RLV_BHVR_CLEAR,					// "clear"
+	RLV_BHVR_EDIT,					// "edit"
+	RLV_BHVR_REZ,					// "rez"
+	RLV_BHVR_ADDOUTFIT,				// "addoutfit"
+	RLV_BHVR_REMOUTFIT,				// "remoutfit"
+	RLV_BHVR_GETOUTFIT,				// "getoutfit"
+	RLV_BHVR_GETATTACH,				// "getattach"
+	RLV_BHVR_SHOWINV,				// "showinv"
+//	RLV_BHVR_VIEWNOTE,				// "viewnote"
+	RLV_BHVR_UNSIT,					// "unsit"
+	RLV_BHVR_SIT,					// "sit"
+//	RLV_BHVR_SENDCHANNEL,			// "sendchannel"
+	RLV_BHVR_GETSTATUS,				// "getstatus"
+	RLV_BHVR_GETSTATUSALL,			// "getstatusall"
+	RLV_BHVR_GETINV,				// "getinv"
+	RLV_BHVR_GETINVWORN,			// "getinvworn"
+	RLV_BHVR_FINDFOLDER,			// "findfolder"
+	RLV_BHVR_FINDFOLDERS,			// "findfolders"
+	RLV_BHVR_ATTACH,				// "attach"
+	RLV_BHVR_ATTACHALL,				// "attachall"
+	RLV_BHVR_DETACHALL,				// "detachall"
+	RLV_BHVR_GETPATH,				// "getpath"
+	RLV_BHVR_ATTACHTHIS,			// "attachthis"
+	RLV_BHVR_ATTACHALLTHIS,			// "attachallthis"
+	RLV_BHVR_DETACHTHIS,			// "detachthis"
+	RLV_BHVR_DETACHALLTHIS,			// "detachallthis"
+	RLV_BHVR_FARTOUCH,				// "fartouch"
+	RLV_BHVR_SHOWWORLDMAP,			// "showworldmap"
+	RLV_BHVR_SHOWMINIMAP,			// "showminimap"
+	RLV_BHVR_SHOWLOC,				// "showloc"
+	RLV_BHVR_TPTO,					// "tpto"
+	RLV_BHVR_ACCEPTTP,				// "accepttp"
+	RLV_BHVR_SHOWNAMES,				// "shownames"
+	RLV_BHVR_FLY,					// "fly"
+	RLV_BHVR_GETSITID,				// "getsitid"
+	RLV_BHVR_SETDEBUG,				// "setdebug"
+	RLV_BHVR_SETENV,				// "setenv"
+	RLV_BHVR_DETACHME,				// "detachme"
+	RLV_BHVR_SHOWHOVERTEXTALL,		// "showhovertextall"
+	RLV_BHVR_SHOWHOVERTEXTWORLD,	// "showhovertextworld"
+	RLV_BHVR_SHOWHOVERTEXTHUD,		// "showhovertexthud"
+	RLV_BHVR_SHOWHOVERTEXT,			// "showhovertext"
 
 	RLV_BHVR_COUNT,
 	RLV_BHVR_UNKNOWN
@@ -409,6 +404,50 @@ private:
 
 // ============================================================================
 /*
+ * RlvSettings
+ * ===========
+ *
+ */
+
+#define RLV_SETTING_MAIN				"RestrainedLife"
+#define RLV_SETTING_DEBUG				"RestrainedLifeDebug"
+#define RLV_SETTING_NOSETENV			"RestrainedLifeNoSetEnv"
+#define RLV_SETTING_FORBIDGIVETORLV		"RestrainedLifeForbidGiveToRLV"
+
+#define RLV_SETTING_ENABLEWEAR			"RLVaEnableWear"
+#define RLV_SETTING_HIDELOCKEDLAYER		"RLVaHideLockedLayers"
+#define RLV_SETTING_HIDELOCKEDATTACH	"RLVaHideLockedAttachments"
+#define RLV_SETTING_HIDELOCKEDINVENTORY	"RLVaHideLockedInventory"
+#define RLV_SETTING_LOGINLASTLOCATION	"RLVaLoginLastLocation"
+
+inline BOOL rlvGetSettingBOOL(const std::string& strSetting, BOOL fDefault)
+{
+	return (gSavedSettings.controlExists(strSetting)) ? gSavedSettings.getBOOL(strSetting) : fDefault;
+}
+inline BOOL rlvGetPerUserSettingsBOOL(const std::string& strSetting, BOOL fDefault)
+{
+	return (gSavedPerAccountSettings.controlExists(strSetting)) ? gSavedPerAccountSettings.getBOOL(strSetting) : fDefault;
+}
+
+class RlvSettings
+{
+public:
+	static BOOL getDebug()					{ return rlvGetSettingBOOL(RLV_SETTING_DEBUG, FALSE); }
+	static BOOL getForbidGiveToRLV()		{ return rlvGetSettingBOOL(RLV_SETTING_FORBIDGIVETORLV, TRUE); }
+
+	static BOOL getEnableWear()				{ return rlvGetSettingBOOL(RLV_SETTING_ENABLEWEAR, FALSE); }
+	static BOOL getHideLockedLayers()		{ return rlvGetSettingBOOL(RLV_SETTING_HIDELOCKEDLAYER, FALSE); }		
+	static BOOL getHideLockedAttach()		{ return rlvGetSettingBOOL(RLV_SETTING_HIDELOCKEDATTACH, FALSE); }
+	static BOOL getHideLockedInventory()	{ return rlvGetSettingBOOL(RLV_SETTING_HIDELOCKEDINVENTORY, FALSE); }
+
+	#ifdef RLV_EXTENSION_STARTLOCATION
+		static BOOL getLoginLastLocation()	{ return rlvGetPerUserSettingsBOOL(RLV_SETTING_LOGINLASTLOCATION, TRUE); }
+		static void updateLoginLastLocation();
+	#endif // RLV_EXTENSION_STARTLOCATION
+};
+
+// ============================================================================
+/*
  * Various helper classes/timers/functors/functions
  *
  */
@@ -441,27 +480,18 @@ struct RlvSelectIsSittingOn : public LLSelectedNodeFunctor
 
 void rlvStringReplace(std::string& strText, std::string strFrom, const std::string& strTo);
 bool rlvCanDeleteOrReturn();
+BOOL rlvAttachToEnabler(void* pParam);
 
 inline bool rlvIsEmote(const std::string& strUTF8Text)
 {
 	return (strUTF8Text.length() > 4) && ( (strUTF8Text.compare(0, 4, "/me ") == 0) || (strUTF8Text.compare(0, 4, "/me'") == 0) );
 }
 
-#ifdef RLV_EXTENSION_STARTLOCATION
-	// TODO-RLVa: Clean this up a bit once we get it all working properly
-	inline BOOL rlvGetLoginLocationSetting()
-	{
-		return (gSavedPerAccountSettings.controlExists(RLV_SETTING_LOGINLOCATION)) 
-					? gSavedPerAccountSettings.getBOOL(RLV_SETTING_LOGINLOCATION) : FALSE;
-	}
-	void rlvUpdateLoginLocationSetting();
-#endif // RLV_EXTENSION_STARTLOCATION
-
-#ifdef RLV_DEBUG
+#ifdef RLV_ADVANCED_TOGGLE_RLVA
 	// "Advanced / RLVa / Enable RLV" menu option
 	void rlvDbgToggleEnabled(void*);
 	BOOL rlvDbgGetEnabled(void*);
-#endif // RLV_DEBUG
+#endif // RLV_ADVANCED_TOGGLE_RLVA
 
 // ============================================================================
 // RlvCommand inlined member functions

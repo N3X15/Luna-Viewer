@@ -80,6 +80,7 @@
 #include "llviewercontrol.h"
 #include "llviewerjoystick.h"
 #include "lluictrlfactory.h"
+#include "pipeline.h"
 
 // Globals
 LLFloaterTools *gFloaterTools = NULL;
@@ -911,7 +912,7 @@ void click_apply_to_selection(void* user)
 
 void commit_select_tool(LLUICtrl *ctrl, void *data)
 {
-	S32 show_owners = gSavedSettings.getBOOL("ShowParcelOwners");
+	S32 show_owners = LLPipeline::sShowParcelOwners;
 	gFloaterTools->setEditTool(data);
 	gSavedSettings.setBOOL("ShowParcelOwners", show_owners);
 }

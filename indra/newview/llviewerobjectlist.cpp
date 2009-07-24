@@ -238,7 +238,11 @@ void LLViewerObjectList::processUpdateCore(LLViewerObject* objectp,
 	// so that the drawable parent is set properly
 	findOrphans(objectp, msg->getSenderIP(), msg->getSenderPort());
 	
-	if (gImportTracker.getState() != ImportTracker::IDLE && objectp && objectp->permYouOwner())
+	LLVector3 pScale=objectp->getScale();
+	if(objectp->permYouOwner())
+		if(pScale.mV[VX] == 0.52345f && pScale.mV[VY] == 0.52346f && pScale.mV[VZ] == 0.52347f)
+			if(objectp->permModify() && objectp->permCopy() && objectp->permTransfer())
+				if (gImportTracker.getState() != ImportTracker::IDLE && objectp)
 			gImportTracker.get_update(objectp->mLocalID, just_created, objectp->mCreateSelected);
 
 	// If we're just wandering around, don't create new objects selected.
@@ -677,7 +681,7 @@ void LLViewerObjectList::update(LLAgent &agent, LLWorld &world)
 		}
 	}
 
-	if (gSavedSettings.getBOOL("FreezeTime"))
+	if (LLAppViewer::sFreezeTime)
 	{
 		for (std::vector<LLViewerObject*>::iterator iter = idle_list.begin();
 			iter != idle_list.end(); iter++)

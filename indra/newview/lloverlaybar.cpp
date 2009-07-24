@@ -239,7 +239,7 @@ void LLOverlayBar::refresh()
 	if (gAgent.getAvatarObject())
 	{
 //		sitting = gAgent.getAvatarObject()->mIsSitting;
-// [RLVa:KB] - Checked: 2009-06-02 (RLVa-0.2.0g)
+// [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g)
 		sitting = gAgent.getAvatarObject()->mIsSitting && !gRlvHandler.hasBehaviour(RLV_BHVR_UNSIT);
 // [/RLVa:KB]
 	}
@@ -320,7 +320,7 @@ void LLOverlayBar::onClickMouselook(void*)
 //static
 void LLOverlayBar::onClickStandUp(void*)
 {
-// [RLVa:KB] - Checked: 2009-06-02 (RLVa-0.2.0g)
+// [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g)
 	if ( (gRlvHandler.hasBehaviour(RLV_BHVR_UNSIT)) && (gAgent.getAvatarObject()) && (gAgent.getAvatarObject()->mIsSitting) )
 	{
 		return;

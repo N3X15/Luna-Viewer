@@ -87,8 +87,6 @@ protected:
 	static void		onCommitFullbright(		LLUICtrl* ctrl, void* userdata);
 	static void     onCommitGlow(           LLUICtrl* ctrl, void *userdata);
 
-	static void     onCommitTextureUUID(    LLUICtrl* ctrl, void *userdata);
-
 	static void		onClickApply(void*);
 	static void		onClickAutoFix(void*);
 	static F32      valueGlow(LLViewerObject* object, S32 face);

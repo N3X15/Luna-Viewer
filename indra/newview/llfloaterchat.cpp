@@ -205,10 +205,10 @@ void add_timestamped_line(LLViewerTextEditor* edit, LLChat chat, const LLColor4&
 	// extract out the sender name and replace it with the hotlinked name.
 	if (chat.mSourceType == CHAT_SOURCE_AGENT &&
 //		chat.mFromID != LLUUID::null)
-// [RLVa] - Version: 1.23.0
-		chat.mFromID != LLUUID::null &&
+// [RLVa:KB] - Version: 1.23.4 | Checked: 2009-07-08 (RLVa-1.0.0e)
+		chat.mFromID != LLUUID::null && 
 		(!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES)) )
-// [/RLVa]
+// [/RLVa:KB]
 	{
 		chat.mURL = llformat("secondlife:///app/agent/%s/about",chat.mFromID.asString().c_str());
 	}
@@ -239,7 +239,7 @@ void log_chat_text(const LLChat& chat)
 // static
 void LLFloaterChat::addChatHistory(const LLChat& chat, bool log_to_file)
 {	
-// [RLVa]
+// [RLVa:KB] - Checked: 2009-07-08 (RLVa-1.0.0e)
 	if (rlv_handler_t::isEnabled())
 	{
 		// TODO-RLVa: we might cast too broad a net by filtering here, needs testing
@@ -251,6 +251,7 @@ void LLFloaterChat::addChatHistory(const LLChat& chat, bool log_to_file)
 		}
 		if ( (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES)) && (!chat.mRlvNamesFiltered) )
 		{
+			// NOTE: this will also filter inventory accepted/declined text in the chat history
 			LLChat& rlvChat = const_cast<LLChat&>(chat);
 			if (CHAT_SOURCE_AGENT != chat.mSourceType)
 			{
@@ -260,7 +261,7 @@ void LLFloaterChat::addChatHistory(const LLChat& chat, bool log_to_file)
 			rlvChat.mRlvNamesFiltered = TRUE;
 		}
 	}
-// [/RLVa]
+// [/RLVa:KB]
 
 	if ( gSavedPerAccountSettings.getBOOL("LogChat") && log_to_file) 
 	{
@@ -395,7 +396,7 @@ void LLFloaterChat::addChat(const LLChat& chat,
 			chat.mChatType == CHAT_TYPE_DEBUG_MSG
 			&& !gSavedSettings.getBOOL("ScriptErrorsAsChat");
 
-// [RLVa]
+// [RLVa:KB] - Checked: 2009-07-08 (RLVa-1.0.0e)
 	if (rlv_handler_t::isEnabled())
 	{
 		// TODO-RLVa: we might cast too broad a net by filtering here, needs testing
@@ -417,7 +418,7 @@ void LLFloaterChat::addChat(const LLChat& chat,
 			rlvChat.mRlvNamesFiltered = TRUE;
 		}
 	}
-// [/RLVa]
+// [/RLVa:KB]
 
 #if LL_LCD_COMPILE
 	// add into LCD displays
@@ -514,15 +515,6 @@ LLColor4 get_text_color(const LLChat& chat)
 				text_color = gSavedSettings.getColor4("ObjectChatColor");
 			}
 			break;
-		case CHAT_SOURCE_LUA:
-			if(chat.mChatType==CHAT_TYPE_ERROR)
-			{
-				text_color = gSavedSettings.getColor4("ScriptErrorColor");
-			}else
-			{
-				text_color = gSavedSettings.getColor4("ObjectChatColor");
-			}
-			break;
 		default:
 			text_color.setToWhite();
 		}
@@ -588,15 +580,11 @@ void LLFloaterChat::onClickToggleActiveSpeakers(void* userdata)
 {
 	LLFloaterChat* self = (LLFloaterChat*)userdata;
 
-// [RLVa]
-	bool fRlvShowPanel = !self->childIsVisible("active_speakers_panel");
-	if ( (rlv_handler_t::isEnabled()) && (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES)) )
-	{
-		fRlvShowPanel = false;
-	}
-	self->childSetVisible("active_speakers_panel", fRlvShowPanel);
-// [/RLVa]
-//	self->childSetVisible("active_speakers_panel", !self->childIsVisible("active_speakers_panel"));
+// [RLVa:KB] - Checked: 2009-07-08 (RLVa-1.0.0e)
+	self->childSetVisible("active_speakers_panel", 
+		(!self->childIsVisible("active_speakers_panel")) && (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES)) );
+// [/RLVa:KB]
+	//self->childSetVisible("active_speakers_panel", !self->childIsVisible("active_speakers_panel"));
 }
 
 //static 

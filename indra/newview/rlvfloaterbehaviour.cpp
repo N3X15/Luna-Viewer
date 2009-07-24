@@ -1,6 +1,7 @@
 #include "llviewerprecompiledheaders.h"
 
 #include "llagent.h"
+#include "llcachename.h"
 #include "llscrolllistctrl.h"
 #include "lluictrlfactory.h"
 #include "llviewerinventory.h"
@@ -60,7 +61,15 @@ void RlvFloaterBehaviour::refreshAll()
 			{
 				std::string strLookup;
 				if ( (gCacheName->getFullName(uuid, strLookup)) || (gCacheName->getGroupName(uuid, strLookup)) )
-					strBhvr.assign(itCmd->getBehaviour()).append(":").append(strLookup);
+				{
+					if (strLookup.find("???") == std::string::npos)
+						strBhvr.assign(itCmd->getBehaviour()).append(":").append(strLookup);
+				}
+				else if (m_PendingLookup.end() == std::find(m_PendingLookup.begin(), m_PendingLookup.end(), uuid))
+				{
+					gCacheName->get(uuid, FALSE, onAvatarNameLookup, this);
+					m_PendingLookup.push_back(uuid);
+				}
 			}
 
 			LLSD element;
@@ -104,6 +113,12 @@ void RlvFloaterBehaviour::onClose(bool fQuitting)
 	LLFloater::setVisible(FALSE);
 
 	gRlvHandler.removeBehaviourObserver(this);
+
+	for (std::list<LLUUID>::const_iterator itLookup = m_PendingLookup.begin(); itLookup != m_PendingLookup.end(); ++itLookup)
+	{
+		gCacheName->cancelCallback(*itLookup, onAvatarNameLookup, this);
+	}
+	m_PendingLookup.clear();
 }
 
 BOOL RlvFloaterBehaviour::postBuild()
@@ -119,6 +134,19 @@ BOOL RlvFloaterBehaviour::postBuild()
 void RlvFloaterBehaviour::changed()
 {
 	refreshAll();
+}
+
+// ============================================================================
+
+void RlvFloaterBehaviour::onAvatarNameLookup(const LLUUID& uuid, const std::string& strFirst, const std::string& strLast, BOOL fGroup, void* pParam)
+{
+	RlvFloaterBehaviour* pSelf = (RlvFloaterBehaviour*)pParam;
+
+	std::list<LLUUID>::iterator itLookup = std::find(pSelf->m_PendingLookup.begin(), pSelf->m_PendingLookup.end(), uuid);
+	if (itLookup != pSelf->m_PendingLookup.end())
+		pSelf->m_PendingLookup.erase(itLookup);
+
+	pSelf->refreshAll();
 }
 
 // ============================================================================

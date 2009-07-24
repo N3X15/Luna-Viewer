@@ -832,12 +832,12 @@ void LLPanelLandGeneral::setGroup(const LLUUID& group_id)
 // static
 void LLPanelLandGeneral::onClickBuyLand(void* data)
 {
-// [RLVa]
+// [RLVa:KB] - Checked: 2009-07-04 (RLVa-1.0.0a)
 	if ( (rlv_handler_t::isEnabled()) && (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC)) )
 	{
 		return;
 	}
-// [/RLVa]
+// [/RLVa:KB]
 	BOOL* for_group = (BOOL*)data;
 	LLViewerParcelMgr::getInstance()->startBuyLand(*for_group);
 }
@@ -2897,7 +2897,7 @@ void LLPanelLandCovenant::updateEstateOwnerName(const std::string& name)
 	}
 }
 
-// [RLVa]
+// [RLVa:KB] - Checked: 2009-07-04 (RLVa-1.0.0a)
 void LLFloaterLand::open()
 {
 	// We'll allow "About Land" as long as you have the ability to return prims (through ownership or through group powers)
@@ -2933,4 +2933,4 @@ void LLFloaterLand::open()
 
 	LLFloater::open();
 }
-// [/RLVa]
+// [/RLVa:KB]

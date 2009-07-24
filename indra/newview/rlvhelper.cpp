@@ -1,6 +1,7 @@
 #include "llviewerprecompiledheaders.h"
 #include "llagent.h"
 #include "llviewerobject.h"
+#include "llviewerwindow.h"
 #include "llvoavatar.h"
 #include "llwlparammanager.h"
 
@@ -133,7 +134,7 @@ void RlvCommand::initLookupTable()
 				"getstatus", "getstatusall", "getinv", "getinvworn", "findfolder", "findfolders", "attach", "attachall", "detachall",
 				"getpath", "attachthis", "attachallthis", "detachthis", "detachallthis", "fartouch", "showworldmap", "showminimap",
 				"showloc", "tpto", "accepttp", "shownames", "fly", "getsitid", "setdebug", "setenv", "detachme", 
-				"showhovertextall", "showhovertext", "showhovertexthud"
+				"showhovertextall", "showhovertextworld", "showhovertexthud", "showhovertext"
 			};
 
 		for (int idxBvhr = 0; idxBvhr < RLV_BHVR_COUNT; idxBvhr++)
@@ -372,13 +373,13 @@ bool RlvWearableItemCollector::operator()(LLInventoryCategory* pFolder, LLInvent
 	return (pFolder) ? onCollectFolder(pFolder) : ( (pItem) ? onCollectItem(pItem) : false );
 }
 
-// Checked: 2009-05-31 (RLVa-0.2.0f) | Modified: RLVa-0.2.0f
+// Checked: 2009-07-06 (RLVa-1.0.0c) | Modified: RLVa-0.2.0f
 bool RlvSelectHasLockedAttach::apply(LLSelectNode* pNode)
 {
 	return (pNode->getObject()) ? !gRlvHandler.isDetachable(pNode->getObject()) : false;
 }
 
-// Checked: 2009-05-31 (RLVa-0.2.0f) | Modified: RLVa-0.2.0f
+// Checked: 2009-07-05 (RLVa-1.0.0b) | Modified: RLVa-0.2.0f
 bool RlvSelectIsOwnedByOrGroupOwned::apply(LLSelectNode* pNode)
 {
 	return (pNode->mPermissions->isGroupOwned()) || (pNode->mPermissions->getOwner() == m_idAgent);
@@ -390,6 +391,7 @@ bool RlvSelectIsSittingOn::apply(LLSelectNode* pNode)
 	return (pNode->getObject()) && (pNode->getObject()->getRootEdit() == m_pObject);
 }
 
+// Checked: 2009-07-04 (RLVa-1.0.0a)
 void rlvStringReplace(std::string& strText, std::string strFrom, const std::string& strTo)
 {
 	if (strFrom.empty())
@@ -402,16 +404,16 @@ void rlvStringReplace(std::string& strText, std::string strFrom, const std::stri
 	LLStringUtil::toLower(strTemp);
 	LLStringUtil::toLower(strFrom);
 
-	int idxCur, idxStart = 0, idxOffset = 0;
-	while ( (idxCur = strTemp.find(strFrom, idxStart)) != -1)
+	std::string::size_type idxCur, idxStart = 0, idxOffset = 0;
+	while ( (idxCur = strTemp.find(strFrom, idxStart)) != std::string::npos)
 	{
-		strText.replace(idxCur + idxOffset,lenFrom, strTo);
+		strText.replace(idxCur + idxOffset, lenFrom, strTo);
 		idxStart = idxCur + lenFrom;
 		idxOffset += lenTo - lenFrom;
 	}
 }
 
-// Checked: 2009-06-02 (RLVa-0.2.0g) | Modified: RLVa-0.2.0g
+// Checked: 2009-07-05 (RLVa-1.0.0b) | Modified: RLVa-0.2.0g
 bool rlvCanDeleteOrReturn()
 {
 	bool fIsAllowed = true;
@@ -435,6 +437,14 @@ bool rlvCanDeleteOrReturn()
 	}
 
 	return fIsAllowed;
+}
+
+// Checked: 2009-07-05 (RLVa-1.0.0c)
+BOOL rlvAttachToEnabler(void* pParam)
+{
+	// Enables/disables an option on the "Attach to (HUD)" submenu depending on whether it is (un)detachable
+	LLViewerJointAttachment* pAttachment = (LLViewerJointAttachment*)pParam;
+	return (!pAttachment) || (gRlvHandler.isDetachable(pAttachment->getObject()));
 }
 
 BOOL RlvGCTimer::tick()
@@ -478,17 +488,17 @@ RlvWLSnapshot* RlvWLSnapshot::takeSnapshot()
 // =========================================================================
 
 #ifdef RLV_EXTENSION_STARTLOCATION
-	// Checked: 2009-06-16 (RLVa-0.2.1d) | Modified: RLVa-0.2.1d
-	void rlvUpdateLoginLocationSetting()
+	// Checked: 2009-07-08 (RLVa-1.0.0e) | Modified: RLVa-0.2.1d
+	void RlvSettings::updateLoginLastLocation()
 	{
-		if (gSavedPerAccountSettings.controlExists(RLV_SETTING_LOGINLOCATION))
+		if (gSavedPerAccountSettings.controlExists(RLV_SETTING_LOGINLASTLOCATION))
 		{
 			BOOL fValue = (gRlvHandler.hasBehaviour(RLV_BHVR_TPLOC)) || 
 						  ( (gRlvHandler.hasBehaviour(RLV_BHVR_UNSIT)) && 
 						    (gAgent.getAvatarObject()) && (!gAgent.getAvatarObject()->mIsSitting) );
-			if (gSavedPerAccountSettings.getBOOL(RLV_SETTING_LOGINLOCATION) != fValue)
+			if (gSavedPerAccountSettings.getBOOL(RLV_SETTING_LOGINLASTLOCATION) != fValue)
 			{
-				gSavedPerAccountSettings.setBOOL(RLV_SETTING_LOGINLOCATION, fValue);
+				gSavedPerAccountSettings.setBOOL(RLV_SETTING_LOGINLASTLOCATION, fValue);
 				gSavedPerAccountSettings.saveToFile(gSavedSettings.getString("PerAccountSettingsFile"), TRUE);
 			}
 		}
@@ -497,15 +507,29 @@ RlvWLSnapshot* RlvWLSnapshot::takeSnapshot()
 
 // =========================================================================
 
-#ifdef RLV_DEBUG
+#ifdef RLV_ADVANCED_TOGGLE_RLVA
+	// Checked: 2009-07-12 (RLVa-1.0.0h) | Modified: RLVa-1.0.0h
 	void rlvDbgToggleEnabled(void*)
 	{
-		rlv_handler_t::setEnabled(!rlv_handler_t::isEnabled());
+		gSavedSettings.setBOOL(RLV_SETTING_MAIN, !rlv_handler_t::isEnabled());
+
+		#if RLV_TARGET < RLV_MAKE_TARGET(1, 23, 0)			// Version: 1.22.11
+			LLStringUtil::format_map_t args;
+			args["[MESSAGE]"] = llformat("Restrained Life Support will be %s after you restart", 
+				(rlv_handler_t::isEnabled()) ? "disabled" : "enabled" );
+			gViewerWindow->alertXml("GenericAlert", args);
+		#else												// Version: 1.23.4
+			LLSD args;
+			args["MESSAGE"] = llformat("Restrained Life Support will be %s after you restart", 
+				(rlv_handler_t::isEnabled()) ? "disabled" : "enabled" );
+			LLNotifications::instance().add("GenericAlert", args);
+		#endif
 	}
+	// Checked: 2009-07-08 (RLVa-1.0.0e)
 	BOOL rlvDbgGetEnabled(void*)
 	{
 		return rlv_handler_t::isEnabled();
 	}
-#endif // RLV_DEBUG
+#endif // RLV_ADVANCED_TOGGLE_RLVA
 
 // =========================================================================

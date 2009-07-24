@@ -50,10 +50,13 @@ include(toluapp)
 
 if (WINDOWS)
     include(CopyWinLibs)
+endif (WINDOWS)
+
+if (COMPILE_OTR)
     include(libgcrypt)
 	include(libgpg-error)
 	include(libotr)
-endif (WINDOWS)
+endif (COMPILE_OTR)
 
 include_directories(
     ${DBUSGLIB_INCLUDE_DIRS}
@@ -77,16 +80,20 @@ include_directories(
     ${EMERALD_INCLUDE_DIRS}
     )
 
+if (COMPILE_OTR)
 if (WINDOWS)
 	include_directories(
 		../gpg.vs/inc.vs
 		../gpg.vs/libgpg-error-1.1.vs/custom
 		../gpg.vs/libgcrypt-1.2.2.vs/custom
+        )
+    endif (WINDOWS)
+    include_directories(
 		../libgpg-error/libgpg-error-1.0/src
 		../libgcrypt/libgcrypt-1.2.2/src
 		../libotr/libotr-3.2.0/src
 		)
-endif (WINDOWS)
+endif (COMPILE_OTR)
 
 set(viewer_SOURCE_FILES
 	importtracker.cpp
@@ -500,6 +507,11 @@ set(viewer_SOURCE_FILES
 
 set(VIEWER_BINARY_NAME "secondlife-bin" CACHE STRING
     "The name of the viewer executable to create.")
+
+if (COMPILE_OTR)
+   LIST(APPEND viewer_SOURCE_FILES otr_wrapper.cpp)
+   LIST(APPEND viewer_SOURCE_FILES otr_floater_smp.cpp)
+endif (COMPILE_OTR)
 
 if (LINUX)
   # We can't set these flags for Darwin, because they get passed to
@@ -940,32 +952,11 @@ set(viewer_HEADER_FILES
     rlvfloaterbehaviour.h
     )
 
+if (COMPILE_OTR)
+    LIST(APPEND viewer_HEADER_FILES otr_wrapper.h)
+    LIST(APPEND viewer_HEADER_FILES otr_floater_smp.h)
+endif (COMPILE_OTR)
 
-set(LUA_FILES
-	lua/EventHandling.lua
-	lua/Hooks/HelloWorld/_init_.lua
-	lua/Hooks/HTMLChatlog/_init_.lua
-	lua/Hooks/InitLuaAgent/_init_.lua
-	lua/Hooks/LogAvs/_init_.lua
-	lua/ltn12.lua
-	lua/Macros/appearance_ogre.lua
-	lua/Macros/dumpvisparams.lua
-	lua/Macros/obfuscatelsl.lua
-	lua/Macros/saveappearance.lua
-	lua/Macros/testmacro.lua
-	lua/Macros/unit_tests.lua
-	lua/mime.lua
-	lua/socket/ftp.lua
-	lua/socket/http.lua
-	lua/socket/smtp.lua
-	lua/socket/tp.lua
-	lua/socket/url.lua
-	lua/socket.lua
-	lua/VisualParamList.lua
-	lua/_init_.lua
-	)
-set_source_files_properties(${LUA_FILES} PROPERTIES HEADER_FILE_ONLY TRUE)
-source_group("Lua Files" FILES ${LUA_FILES})
 source_group("CMake Rules" FILES ViewerInstall.cmake)
 
 if (DARWIN)

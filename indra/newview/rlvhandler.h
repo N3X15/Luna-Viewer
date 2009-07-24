@@ -81,6 +81,9 @@ public:
 	bool setDetachable(S32 idxAttachPt, const LLUUID& idRlvObj, bool fDetachable);
 	bool setDetachable(LLViewerObject* pObj, const LLUUID& idRlvObj, bool fDetachable);
 
+	// Adds or removes an exception for the specified restriction
+	void addException(ERlvBehaviour eBehaviour, const LLUUID& uuid);
+	void removeException(ERlvBehaviour eBehaviour, const LLUUID& uuid);
 	// Returns TRUE is the specified UUID is exempt from a restriction (tplure/sendim/recvim/etc)
 	bool isException(ERlvBehaviour eBehaviour, const LLUUID& uuid) const;
 	bool isException(const std::string& strBehaviour, const LLUUID& uuid) const;
@@ -123,13 +126,13 @@ public:
 	void setCanCancelTp(bool fAllow)	{ m_fCanCancelTp = fAllow; }		// @accepttp and @tpto
 
 	// Command specific helper functions
-	void               filterChat(std::string& strUTF8Text) const;					// @sendchat, @recvchat and @redirchat
-	void               filterLocation(std::string& strUTF8Text) const;				// @showloc
-	void               filterNames(std::string& strUTF8Text) const;					// @shownames
-	const std::string& getAnonym(const std::string& strName) const;					// @shownames
-	std::string        getVersionString() const;									// @version
-	BOOL               isAgentNearby(const LLUUID& uuid) const;						// @shownames
-	bool               redirectChatOrEmote(const std::string& strUTF8Test) const;	// @redirchat and @rediremote
+	void               filterChat(std::string& strUTF8Text, bool fFilterEmote) const;	// @sendchat, @recvchat and @redirchat
+	void               filterLocation(std::string& strUTF8Text) const;					// @showloc
+	void               filterNames(std::string& strUTF8Text) const;						// @shownames
+	const std::string& getAnonym(const std::string& strName) const;						// @shownames
+	std::string        getVersionString() const;										// @version
+	BOOL               isAgentNearby(const LLUUID& uuid) const;							// @shownames
+	bool               redirectChatOrEmote(const std::string& strUTF8Test) const;		// @redirchat and @rediremote
 
 	// Externally invoked event handlers
 	void onAttach(LLViewerJointAttachment* pAttachPt);						// LLVOAvatar::attachObject()
@@ -209,10 +212,6 @@ protected:
 	 */
 public:
 	static BOOL fNoSetEnv;
-	static BOOL fDbgEnableWear;
-	static BOOL fHideLockedLayers;
-	static BOOL fHideLockedAttach;
-	static BOOL fHideLockedInventory;
 
 	static const std::string cstrSharedRoot;		// Name of the shared root folder
 	static const std::string cstrBlockedRecvIM;		// Stand-in text for incoming IM when recvim restricted
@@ -230,7 +229,6 @@ protected:
 	S16                  m_LayersAdd[WT_COUNT];		// Array of locked layers (reference counted)
 	S16                  m_LayersRem[WT_COUNT];		// Array of locked layers (reference counted)
 	S16                  m_Behaviours[RLV_BHVR_COUNT];
-	std::map<S32, S16>   m_AttachShowHoverText;
 
 	rlv_retained_list_t  m_Retained;
 	rlv_reattach_map_t   m_AttachPending;
@@ -271,28 +269,28 @@ public:
 	#endif // RLV_DEBUG_TESTS
 };
 
-#ifndef RLV_USE_PIMPL
-	typedef RlvHandler rlv_handler_t;
-	extern rlv_handler_t gRlvHandler;
-#endif // RLV_USE_PIMPL
+typedef RlvHandler rlv_handler_t;
+extern rlv_handler_t gRlvHandler;
 
 // ============================================================================
 // Inlined member functions
 //
 
-// Checked: 2009-07-01 (RLVa-0.2.2a) | Added: RLVa-0.2.2a
+// Checked: 2009-07-09 (RLVa-1.0.0f)
+inline void RlvHandler::addException(ERlvBehaviour eBehaviour, const LLUUID& uuid)
+{
+	if (!uuid.isNull())
+		m_Exceptions.insert(std::pair<LLUUID, ERlvBehaviour>(uuid, eBehaviour));
+}
+
+// Checked: 2009-07-09 (RLVa-1.0.0f) | Modified: RLVa-1.0.0f
 inline bool RlvHandler::canShowHoverText(LLViewerObject *pObj) const
 {
-	#ifdef RLV_EXPERIMENTAL_119
-		return !( ( (hasBehaviour(RLV_BHVR_SHOWHOVERTEXTALL)) && (LL_PCODE_VOLUME == pObj->getPCode()) ) || 
-				  ( (hasBehaviour(RLV_BHVR_SHOWHOVERTEXTHUD)) && (pObj->isHUDAttachment()) ) ||
-				  ( (hasBehaviour(RLV_BHVR_SHOWHOVERTEXT)) &&
-					( ( (pObj->isAttachment()) && (pObj->permYouOwner()) && 
-						(m_AttachShowHoverText.find(ATTACHMENT_ID_FROM_STATE(pObj->getState())) != m_AttachShowHoverText.end()) ) ||
-					  (isException(RLV_BHVR_SHOWHOVERTEXT, pObj->getID())) ) ) );
-	#else
-		return true;
-	#endif // RLV_EXPERIMENTAL_119
+	return ( (!pObj) || (LL_PCODE_VOLUME != pObj->getPCode()) ||
+		    !( (hasBehaviour(RLV_BHVR_SHOWHOVERTEXTALL)) ||
+			   ( (hasBehaviour(RLV_BHVR_SHOWHOVERTEXTWORLD)) && (!pObj->isHUDAttachment()) ) ||
+			   ( (hasBehaviour(RLV_BHVR_SHOWHOVERTEXTHUD)) && (pObj->isHUDAttachment()) ) ||
+			   (isException(RLV_BHVR_SHOWHOVERTEXT, pObj->getID())) ) );
 }
 
 // Checked: 2009-05-23 (RLVa-0.2.0d) | Modified: RLVa-0.2.0d
@@ -319,9 +317,9 @@ inline std::string RlvHandler::getSharedPath(const LLUUID& idFolder) const
 // Checked: 2009-06-07 (RLVa-0.2.1c)
 inline std::string RlvHandler::getVersionString()  const
 {
-	return llformat("RestrainedLife viewer v%d.%d.%d (%s %d.%d.%d - RLVa %d.%d.%d)",
+	return llformat("RestrainedLife viewer v%d.%d.%d (%s %d.%d.%d.%d - RLVa %d.%d.%d)",
 		RLV_VERSION_MAJOR, RLV_VERSION_MINOR, RLV_VERSION_PATCH,
-		LLAppViewer::instance()->getSecondLifeTitle().c_str(), LL_VERSION_MAJOR, LL_VERSION_MINOR, LL_VERSION_PATCH,
+		LLAppViewer::instance()->getSecondLifeTitle().c_str(), LL_VERSION_MAJOR, LL_VERSION_MINOR, LL_VERSION_PATCH, LL_VERSION_BUILD,
 		RLVa_VERSION_MAJOR, RLVa_VERSION_MINOR, RLVa_VERSION_PATCH);
 }
 
@@ -408,6 +406,23 @@ inline bool RlvHandler::isRemovableExcept(EWearableType type, const LLUUID& idOb
 		return true;
 	}
 #endif // RLV_EXTENSION_FLAG_NOSTRIP
+
+// Checked: 2009-07-09 (RLVa-1.0.0f)
+inline void RlvHandler::removeException(ERlvBehaviour eBehaviour, const LLUUID &uuid)
+{
+	if (!uuid.isNull())
+	{
+		for (rlv_exception_map_t::iterator itException = m_Exceptions.lower_bound(uuid), 
+				endException = m_Exceptions.upper_bound(uuid); itException != endException; ++itException)
+		{
+			if (itException->second == eBehaviour)
+			{
+				m_Exceptions.erase(itException);
+				break;
+			}
+		}
+	}
+}
 
 // Checked:
 inline void RlvHandler::retainCommand(const LLUUID& uuid, const std::string& strCmd)

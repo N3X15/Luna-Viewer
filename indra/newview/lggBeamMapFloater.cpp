@@ -232,20 +232,14 @@ void lggBeamMapFloater::onClickSave(void* data)
 	
 	LLFilePicker& picker = LLFilePicker::instance();
 	
-	std::string filename=	gDirUtilp->getAppRODataDir() 
-						+gDirUtilp->getDirDelimiter()
-						+"beams"
-						+gDirUtilp->getDirDelimiter()
-						+"myNewBeam.xml";
+	std::string path_name2(gDirUtilp->getExpandedFilename( LL_PATH_USER_SETTINGS , "beams", ""));
+				
+	std::string filename=path_name2 + "myNewBeam.xml";
 	if(!picker.getSaveFile( LLFilePicker::FFSAVE_BEAM, filename ) )
 	{return;
 	}	
 	
-	filename = gDirUtilp->getAppRODataDir() 
-						+gDirUtilp->getDirDelimiter()
-						+"beams"
-						+gDirUtilp->getDirDelimiter()
-						+gDirUtilp->getBaseFileName(picker.getFirstFile());
+	filename = path_name2 +gDirUtilp->getBaseFileName(picker.getFirstFile());
 
 	
 	LLSD main;

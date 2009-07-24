@@ -1979,10 +1979,10 @@ BOOL LLVOVolume::lineSegmentIntersect(const LLVector3& start, const LLVector3& e
 {
 	if (!mbCanSelect ||
 //		(gHideSelectedObjects && isSelected()) ||
-// [RLVa]
+// [RLVa:KB] - Checked: 2009-07-06 (RLVa-1.0.0c)
 		( (gHideSelectedObjects && isSelected()) && 
 		  ((!rlv_handler_t::isEnabled()) || (!isHUDAttachment()) || (gRlvHandler.isDetachable(this))) ) ||
-// [/RLVa]
+// [/RLVa:KB]
 			mDrawable->isDead() || 
 			!gPipeline.hasRenderType(mDrawable->getRenderType()))
 	{
@@ -2128,14 +2128,14 @@ void LLVolumeGeometryManager::registerFace(LLSpatialGroup* group, LLFace* facep,
 //	{
 //		return;
 //	}
-// [RLVa]
+// [RLVa:KB] - Checked: 2009-07-06 (RLVa-1.0.0c)
 	LLViewerObject* pObj = facep->getViewerObject();
 	if ( (pObj->isSelected() && gHideSelectedObjects) && 
 		 ((!rlv_handler_t::isEnabled()) || (!pObj->isHUDAttachment()) || (gRlvHandler.isDetachable(pObj))) )
 	{
 		return;
 	}
-// [/RVLa]
+// [/RVLa:KB]
 
 	//add face to drawmap
 	LLSpatialGroup::drawmap_elem_t& draw_vec = group->mDrawMap[type];	
@@ -2272,8 +2272,8 @@ void LLVolumeGeometryManager::rebuildGeom(LLSpatialGroup* group)
 	std::vector<LLFace*> alpha_faces;
 	U32 useage = group->mSpatialPartition->mBufferUsage;
 
-	U32 max_vertices = (gSavedSettings.getS32("RenderMaxVBOSize")*1024)/LLVertexBuffer::calcStride(group->mSpatialPartition->mVertexDataMask);
-	U32 max_total = (gSavedSettings.getS32("RenderMaxNodeSize")*1024)/LLVertexBuffer::calcStride(group->mSpatialPartition->mVertexDataMask);
+	U32 max_vertices = (LLPipeline::sRenderMaxVBOSize*1024)/LLVertexBuffer::calcStride(group->mSpatialPartition->mVertexDataMask);
+	U32 max_total = (LLPipeline::sRenderMaxNodeSize*1024)/LLVertexBuffer::calcStride(group->mSpatialPartition->mVertexDataMask);
 	max_vertices = llmin(max_vertices, (U32) 65535);
 
 	U32 cur_total = 0;

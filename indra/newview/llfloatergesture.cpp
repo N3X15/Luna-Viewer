@@ -253,6 +253,7 @@ void LLFloaterGesture::buildGestureList()
 			element["columns"][0]["column"] = "trigger";
 			element["columns"][0]["value"] = gesture->mTrigger;
 			element["columns"][0]["font"] = "SANSSERIF";
+			element["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
 			element["columns"][0]["font-style"] = font_style;
 
 			std::string key_string = LLKeyboard::stringFromKey(gesture->mKey);
@@ -280,12 +281,14 @@ void LLFloaterGesture::buildGestureList()
 			element["columns"][1]["column"] = "shortcut";
 			element["columns"][1]["value"] = buffer;
 			element["columns"][1]["font"] = "SANSSERIF";
+			element["columns"][1]["color"] = gColors.getColor("DefaultListText").getValue();
 			element["columns"][1]["font-style"] = font_style;
 
 			// hidden column for sorting
 			element["columns"][2]["column"] = "key";
 			element["columns"][2]["value"] = key_string;
 			element["columns"][2]["font"] = "SANSSERIF";
+			element["columns"][2]["color"] = gColors.getColor("DefaultListText").getValue();
 			element["columns"][2]["font-style"] = font_style;
 
 			// Only add "playing" if we've got the name, less confusing. JC
@@ -296,6 +299,7 @@ void LLFloaterGesture::buildGestureList()
 			element["columns"][3]["column"] = "name";
 			element["columns"][3]["value"] = item_name;
 			element["columns"][3]["font"] = "SANSSERIF";
+			element["columns"][3]["color"] = gColors.getColor("DefaultListText").getValue();
 			element["columns"][3]["font-style"] = font_style;
 		}
 		else
@@ -303,18 +307,22 @@ void LLFloaterGesture::buildGestureList()
 			element["columns"][0]["column"] = "trigger";
 			element["columns"][0]["value"] = "";
 			element["columns"][0]["font"] = "SANSSERIF";
+			element["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
 			element["columns"][0]["font-style"] = font_style;
 			element["columns"][0]["column"] = "trigger";
 			element["columns"][0]["value"] = "---";
 			element["columns"][0]["font"] = "SANSSERIF";
+			element["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
 			element["columns"][0]["font-style"] = font_style;
 			element["columns"][2]["column"] = "key";
 			element["columns"][2]["value"] = "~~~";
 			element["columns"][2]["font"] = "SANSSERIF";
+			element["columns"][2]["color"] = gColors.getColor("DefaultListText").getValue();
 			element["columns"][2]["font-style"] = font_style;
 			element["columns"][3]["column"] = "name";
 			element["columns"][3]["value"] = item_name;
 			element["columns"][3]["font"] = "SANSSERIF";
+			element["columns"][3]["color"] = gColors.getColor("DefaultListText").getValue();
 			element["columns"][3]["font-style"] = font_style;
 		}
 		list->addElement(element, ADD_BOTTOM);

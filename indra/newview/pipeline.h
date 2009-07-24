@@ -417,6 +417,12 @@ public:
 	static BOOL				sRenderAttachedParticles;
 	static BOOL				sRenderDeferred;
 	static S32				sVisibleLightCount;
+	static BOOL				sRenderDelayCreation;
+	static BOOL				sRenderAnimateRes;
+	static BOOL				sRenderUnloadedAvatar;
+	static U32				sRenderMaxNodeSize;
+	static U32				sRenderMaxVBOSize;
+	static BOOL				sShowParcelOwners;
 
 	//screen texture
 	LLRenderTarget			mScreen;
