@@ -215,10 +215,7 @@ void LLPrimitive::init_primitive(LLPCode p_code)
 	LLMemType m1(LLMemType::MTYPE_PRIMITIVE);
 	if (mNumTEs)
 	{
-		if (mTextureList)
-		{
 			delete [] mTextureList;
-		}
 		mTextureList = new LLTextureEntry[mNumTEs];
 	}
 
