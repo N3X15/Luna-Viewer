@@ -2459,6 +2459,59 @@ void LLFloaterIMPanel::sendMsg(bool ooc)
 			}
 			// Truncate and convert to UTF8 for transport
 			std::string utf8_text = wstring_to_utf8str(text);
+			if (gSavedSettings.getBOOL("EmeraldAutoCloseOOC"))
+			{
+				if(utf8_text.length() > 2)
+				{
+					// Chalice - OOC autoclosing patch based on code by Henri Beauchamp
+					int needsClosingType=0;
+					if (utf8_text.find("((") == 0 && utf8_text.find("))") == -1)
+						needsClosingType=1;
+					else if(utf8_text.find("[[") == 0 && utf8_text.find("]]") == -1)
+						needsClosingType=2;
+					if(needsClosingType==1)
+					{
+						if(utf8_text.at(utf8_text.length() - 1) == ')')
+							utf8_text+=" ";
+						utf8_text+="))";
+					}
+					else if(needsClosingType==2)
+					{
+						if(utf8_text.at(utf8_text.length() - 1) == ']')
+							utf8_text+=" ";
+						utf8_text+="]]";
+					}
+					needsClosingType=0;
+					if (utf8_text.find("((") == -1 && utf8_text.find("))") == (utf8_text.length() - 2))
+						needsClosingType=1;
+					else if (utf8_text.find("[[") == -1 && utf8_text.find("]]") == (utf8_text.length() - 2))
+						needsClosingType=2;
+					if(needsClosingType==1)
+					{
+						if(utf8_text.at(0) == '(')
+							utf8_text.insert(0," ");
+						utf8_text.insert(0,"((");
+					}
+					else if(needsClosingType==2)
+					{
+						if(utf8_text.at(0) == '[')
+							utf8_text.insert(0," ");
+						utf8_text.insert(0,"[[");
+					}
+				}
+			}
+			// Convert MU*s style poses into IRC emotes here.
+			if (gSavedSettings.getBOOL("EmeraldAllowMUpose") && utf8_text.find(":") == 0 && utf8_text.length() > 3)
+			{
+				if (utf8_text.find(":'") == 0)
+				{
+					utf8_text.replace(0, 1, "/me");
+ 				}
+				else if (isalpha(utf8_text.at(1)))	// Do not prevent smileys and such.
+				{
+					utf8_text.replace(0, 1, "/me ");
+				}
+			}
 			//utf8_text = utf8str_truncate(utf8_text, MAX_MSG_BUF_SIZE - 1);
 
 // [RLVa:KB] - Alternate: Emerald-370 | Checked: 2009-07-10 (RLVa-1.0.0g) | Modified: RLVa-1.0.0g

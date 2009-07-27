@@ -473,6 +473,14 @@ void LLChatBar::sendChat( EChatType type )
 						needsClosingType=2;
 					if(needsClosingType==1)
 					{
+						// Chalice - OOC autoclosing patch based on code by Henri Beauchamp
+						int needsClosingType=0;
+						if (utf8text.find("((") == 0 && utf8text.find("))") == -1)
+							needsClosingType=1;
+						else if(utf8text.find("[[") == 0 && utf8text.find("]]") == -1)
+							needsClosingType=2;
+						if(needsClosingType==1)
+						{
 						if(utf8text.at(utf8text.length() - 1) == ')')
 							utf8text+=" ";
 						utf8text+="))";
@@ -499,6 +507,7 @@ void LLChatBar::sendChat( EChatType type )
 						if(utf8text.at(0) == '[')
 							utf8text.insert(0," ");
 						utf8text.insert(0,"[[");
+						}
 					}
 				}
 				// Convert MU*s style poses into IRC emotes here.
