@@ -463,6 +463,56 @@ void LLChatBar::sendChat( EChatType type )
 			std::string utf8_revised_text;
 			if (0 == channel)
 			{
+				if (gSavedSettings.getBOOL("EmeraldAutoCloseOOC"))
+				{
+					// Chalice - OOC autoclosing patch based on code by Henri Beauchamp
+					int needsClosingType=0;
+					if (utf8text.find("((") == 0 && utf8text.find("))") == -1)
+						needsClosingType=1;
+					else if(utf8text.find("[[") == 0 && utf8text.find("]]") == -1)
+						needsClosingType=2;
+					if(needsClosingType==1)
+					{
+						if(utf8text.at(utf8text.length() - 1) == ')')
+							utf8text+=" ";
+						utf8text+="))";
+					}
+					else if(needsClosingType==2)
+					{
+						if(utf8text.at(utf8text.length() - 1) == ']')
+							utf8text+=" ";
+						utf8text+="]]";
+					}
+					needsClosingType=0;
+					if (utf8text.find("((") == -1 && utf8text.find("))") == (utf8text.length() - 2))
+						needsClosingType=1;
+					else if (utf8text.find("[[") == -1 && utf8text.find("]]") == (utf8text.length() - 2))
+						needsClosingType=2;
+					if(needsClosingType==1)
+					{
+						if(utf8text.at(0) == '(')
+							utf8text.insert(0," ");
+						utf8text.insert(0,"((");
+					}
+					else if(needsClosingType==2)
+					{
+						if(utf8text.at(0) == '[')
+							utf8text.insert(0," ");
+						utf8text.insert(0,"[[");
+					}
+				}
+				// Convert MU*s style poses into IRC emotes here.
+				if (gSavedSettings.getBOOL("EmeraldAllowMUpose") && utf8text.find(":") == 0 && utf8text.length() > 3)
+				{
+					if (utf8text.find(":'") == 0)
+					{
+						utf8text.replace(0, 1, "/me");
+	 				}
+					else if (isalpha(utf8text.at(1)))	// Do not prevent smileys and such.
+					{
+						utf8text.replace(0, 1, "/me ");
+					}
+				}
 				// discard returned "found" boolean
 				gGestureManager.triggerAndReviseString(utf8text, &utf8_revised_text);
 			}

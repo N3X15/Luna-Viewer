@@ -148,6 +148,7 @@ void ImportTracker::get_update(S32 newid, BOOL justCreated, BOOL createSelected)
 			}
 		break;
 		case BUILDING:
+			
 			if (justCreated && (int)localids.size() < linkset.size())
 			{
 				localids.push_back(newid);
@@ -164,6 +165,7 @@ void ImportTracker::get_update(S32 newid, BOOL justCreated, BOOL createSelected)
 					send_shape(prim);
 					send_image(prim);
 					send_extras(prim);
+					send_namedesc(prim);
 					send_vectors(prim,updated);
 					(prim)["Updated"] = true;
 				}
@@ -364,6 +366,39 @@ void ImportTracker::send_extras(LLSD& prim)
 	}
 	
 	msg->sendReliable(gAgent.getRegion()->getHost());
+}
+
+void ImportTracker::send_namedesc(LLSD& prim)
+{
+	if(prim.has("name"))
+	{
+		LLMessageSystem* msg = gMessageSystem;
+		msg->newMessageFast(_PREHASH_ObjectName);
+		msg->nextBlockFast(_PREHASH_AgentData);
+		msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID() );
+		msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
+		
+		msg->nextBlockFast(_PREHASH_ObjectData);
+		msg->addU32Fast(_PREHASH_LocalID, prim["LocalID"].asInteger());
+		msg->addStringFast(_PREHASH_Name, prim["name"]);
+		
+		msg->sendReliable(gAgent.getRegion()->getHost());
+	}
+	
+	if(prim.has("description"))
+	{
+		LLMessageSystem* msg = gMessageSystem;
+		msg->newMessageFast(_PREHASH_ObjectDescription);
+		msg->nextBlockFast(_PREHASH_AgentData);
+		msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID() );
+		msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
+		
+		msg->nextBlockFast(_PREHASH_ObjectData);
+		msg->addU32Fast(_PREHASH_LocalID, prim["LocalID"].asInteger());
+		msg->addStringFast(_PREHASH_Description, prim["description"]);
+		
+		msg->sendReliable(gAgent.getRegion()->getHost());
+	}
 }
 
 void ImportTracker::link()

@@ -36,6 +36,7 @@ class ImportTracker
 		void send_shape(LLSD &prim);
 		void send_image(LLSD &prim);
 		void send_extras(LLSD &prim);
+		void send_namedesc(LLSD &prim);
 		void link();
 		void wear(LLSD &prim);
 		void position(LLSD &prim);

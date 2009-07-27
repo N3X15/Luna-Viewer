@@ -440,7 +440,6 @@ BOOL LLFont::addGlyphFromFont(const LLFont *fontp, const llwchar wch, const U32 
 			break;
 		}
 
-		if (tmp_graydata)
 			delete[] tmp_graydata;
 	} else {
 		// we don't know how to handle this pixel format from FreeType;

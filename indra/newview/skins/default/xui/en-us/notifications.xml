@@ -1,4 +1,4 @@
-<?xml version="1.0" ?><notifications>
+﻿<?xml version="1.0" ?><notifications>
 
   <global name="skipnexttime">
 
@@ -6487,5 +6487,94 @@ Yes
 No
   </global>
   
+  <notification
+   icon="alertmodal.tga"
+   label="Emerald Help"
+   name="EmeraldHelp_TeleportLogin"
+   type="alertmodal">
+Help text will go here, please update notifications.xml
+the related entries are at the bottom of the file.
+
+TeleportLogin
+
+  </notification>
+  <notification
+   icon="alertmodal.tga"
+   label="Emerald Help"
+   name="EmeraldHelp_Voice"
+   type="alertmodal">
+Help text will go here, please update notifications.xml
+the related entries are at the bottom of the file.
+
+Voice
+
+  </notification>
+  <notification
+   icon="alertmodal.tga"
+   label="Emerald Help"
+   name="EmeraldHelp_Shields"
+   type="alertmodal">
+Help text will go here, please update notifications.xml
+the related entries are at the bottom of the file.
+
+Shields
+
+  </notification>
+  <notification
+   icon="alertmodal.tga"
+   label="Emerald Help"
+   name="EmeraldHelp_IM"
+   type="alertmodal">
+Help text will go here, please update notifications.xml
+the related entries are at the bottom of the file.
+
+IM
+
+  </notification>
+  <notification
+   icon="alertmodal.tga"
+   label="Emerald Help"
+   name="EmeraldHelp_Misc"
+   type="alertmodal">
+Help text will go here, please update notifications.xml
+the related entries are at the bottom of the file.
+
+Misc
+
+  </notification>
+  <notification
+   icon="alertmodal.tga"
+   label="Emerald Help"
+   name="EmeraldHelp_CmdLine"
+   type="alertmodal">
+Help text will go here, please update notifications.xml
+the related entries are at the bottom of the file.
+
+CmdLine
+
+  </notification>
+  <notification
+   icon="alertmodal.tga"
+   label="Emerald Help"
+   name="EmeraldHelp_Avatar"
+   type="alertmodal">
+Help text will go here, please update notifications.xml
+the related entries are at the bottom of the file.
+
+Avatar
+
+  </notification>
+  <notification
+   icon="alertmodal.tga"
+   label="Emerald Help"
+   name="EmeraldHelp_Build"
+   type="alertmodal">
+Help text will go here, please update notifications.xml
+the related entries are at the bottom of the file.
+
+Build
+
+  </notification>
+
 </notifications>
 

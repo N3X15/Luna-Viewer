@@ -3251,6 +3251,17 @@
       <key>Value</key>
       <real>10.0</real>
     </map>
+    <key>EmeraldAllowMUpose</key>
+    <map>
+      <key>Comment</key>
+      <string>Allow MU* pose style in chat and IM (with ':' as a synonymous to '/me ')</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
     <key>EmeraldAllowPhantomToggle</key>
     <map>
       <key>Comment</key>
@@ -3277,6 +3288,17 @@
     <map>
       <key>Comment</key>
       <string>Do you want to always be able to fly, even in fly restricted zones?</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
+    <key>EmeraldAutoCloseOOC</key>
+    <map>
+      <key>Comment</key>
+      <string>Auto-close OOC chat (i.e. add \"))\" if not found and \"((\" was used)</string>
       <key>Persist</key>
       <integer>1</integer>
       <key>Type</key>

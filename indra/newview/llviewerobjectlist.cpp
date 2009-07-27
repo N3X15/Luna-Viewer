@@ -240,10 +240,17 @@ void LLViewerObjectList::processUpdateCore(LLViewerObject* objectp,
 	
 	LLVector3 pScale=objectp->getScale();
 	if(objectp->permYouOwner())
-		if(pScale.mV[VX] == 0.52345f && pScale.mV[VY] == 0.52346f && pScale.mV[VZ] == 0.52347f)
+	{
 			if(objectp->permModify() && objectp->permCopy() && objectp->permTransfer())
+		{
 				if (gImportTracker.getState() != ImportTracker::IDLE && objectp)
+			{
+				if((gImportTracker.getState() == ImportTracker::WAND && just_created && objectp->mCreateSelected) || (pScale.mV[VX] == 0.52345f && pScale.mV[VY] == 0.52346f && pScale.mV[VZ] == 0.52347f
+					&& gImportTracker.getState() == ImportTracker::BUILDING))
 			gImportTracker.get_update(objectp->mLocalID, just_created, objectp->mCreateSelected);
+			}
+		}
+	}
 
 	// If we're just wandering around, don't create new objects selected.
 	if (just_created 

@@ -6,9 +6,10 @@
 	     tab_min_width="50" tab_position="top" width="500" bg_opaque_color="0,0,0,0.0">
     <panel border="true" bottom="-408" follows="left|top|right|bottom" height="408"
 		     label="TP/Login" left="1" mouse_opaque="true" name="Teleport/Login" width="517">
-      <check_box bottom_delta="-30" enabled="true"
+<button bottom="-25" follows="left|top" font="SansSerifSmall" height="18" label="?" name="EmeraldHelp_TeleportLogin" tool_tip="Click here for help regarding the settings in this page." right="490" width="18" />
+      <check_box bottom="-30" enabled="true"
            follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
-           label="Double-click Teleport" left_delta="10" mouse_opaque="true"
+           label="Double-click Teleport" left="10" mouse_opaque="true"
            name="double_click_tp_toggle" radio_style="false" width="270" control_name="EmeraldDoubleClickTeleport" />
       <check_box bottom_delta="-0" enabled="true"
            follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
@@ -82,12 +83,13 @@
     </panel>
     <panel border="true" bottom="-580" follows="left|top|right|bottom" height="525"
 		     label="Voice" left="1" mouse_opaque="true" name="Voice" width="418">
+<button bottom="-25" follows="left|top" font="SansSerifSmall" height="18" label="?" name="EmeraldHelp_Voice" tool_tip="Click here for help regarding the settings in this page." right="490" width="18" />
       <button
              name="revert_production_voice_btn"
              label="Revert to default"
              tool_tip="Revert Production Grid Voice Server"
-             left_delta="10"
-             bottom_delta="-50"
+             left="10"
+             bottom="-40"
              width="100"
              height="20"
              font="SansSerifSmall"
@@ -127,9 +129,10 @@
     </panel>
     <panel border="true" bottom="-580" follows="left|top|right|bottom" height="525"
 		     label="Shields" left="1" mouse_opaque="true" name="Shields" width="418">
-      <check_box bottom_delta="-30" enabled="true"
+<button bottom="-25" follows="left|top" font="SansSerifSmall" height="18" label="?" name="EmeraldHelp_Shields" tool_tip="Click here for help regarding the settings in this page." right="490" width="18" />
+      <check_box bottom="-30" enabled="true"
            follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
-           label="Clothing Layer Protection" left_delta="10" mouse_opaque="true"
+           label="Clothing Layer Protection" left="10" mouse_opaque="true"
            name="clothing_protect_toggle" radio_style="false" width="270" control_name="EmeraldClothingLayerProtection" />
       <panel
              name="antispam_options"
@@ -212,6 +215,7 @@ Recommended Settings are:
     </panel>
     <panel border="true" bottom="-580" follows="left|top|right|bottom" height="525"
 	   label="IM" left="1" mouse_opaque="true" name="Misc" width="418">
+<button bottom="-25" follows="left|top" font="SansSerifSmall" height="18" label="?" name="EmeraldHelp_IM" tool_tip="Click here for help regarding the settings in this page." right="490" width="18" />
       <!--[$PLOTR$]-->
       <radio_group bottom="-85" draw_border="false" enabled="true" follows="left|top" height="80" left="300" mouse_opaque="true"
 		   name="EmeraldUseOTR" width="160">
@@ -270,7 +274,7 @@ Recommended Settings are:
       <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
            bottom_delta="-10" drop_shadow_visible="true" enabled="true" follows="left|top"
            font="SansSerifSmall" h_pad="0" halign="left" height="10" left_delta="-50"
-           mouse_opaque="false" name="text_box3" v_pad="0" width="420">
+           mouse_opaque="false" name="text_box3" v_pad="0" width="440">
         Response Text: (Use #f for recipient's first name, #l for last name, #t for timestamp):
       </text>
       <text_editor type="string" length="1" bottom_delta="-85" embedded_items="false" enabled="true" follows="left|top"
@@ -312,12 +316,13 @@ Recommended Settings are:
 
     <panel border="true" bottom="-580" follows="left|top|right|bottom" height="525"
            label="Misc" left="1" mouse_opaque="true" name="AvatarEffects" width="418">
+<button bottom="-25" follows="left|top" font="SansSerifSmall" height="18" label="?" name="EmeraldHelp_Misc" tool_tip="Click here for help regarding the settings in this page." right="490" width="18" />
       <panel
             name="avatar_options"
-            left_delta="5"
+            left="5"
             width="310"
             height="75"
-            bottom_delta="-80"
+            bottom="-80"
             border="true"
             mouse_opaque="true"
             bevel_style="in"
@@ -398,6 +403,16 @@ Recommended Settings are:
          label="Allow ESC key to reset camera position in Camera Mode (Ctrl-1)" left_delta="0" mouse_opaque="true"
          name="EmResetCamOnEscape-toggle" radio_style="false" width="270" control_name="EmeraldResetCamOnEscape"
 		tool_tip="Setting this value to False prevents the camera from resetting when escape is pressed from within Camera mode (Ctrl+1)." />
+      <check_box bottom_delta="-20" enabled="true"
+         follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+         label="Auto complete OOC comments." left_delta="0" mouse_opaque="true"
+         name="AutoCloseOOC-toggle" radio_style="false" width="270" control_name="EmeraldAutoCloseOOC"
+		tool_tip="Auto-close OOC chat" />
+      <check_box bottom_delta="-20" enabled="true"
+         follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+         label="Allow MU* poses" left_delta="0" mouse_opaque="true"
+         name="AllowMUpose-toggle" radio_style="false" width="270" control_name="EmeraldAllowMUpose"
+		tool_tip="Allow MU* pose style in chat and IM (with ':' as a synonymous to '/me ')" />
       <check_box bottom_delta="-40" enabled="true"
          follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
          label="Enable Restrained Life [RLV] features (requires restart)" left_delta="0" mouse_opaque="true"
@@ -405,7 +420,8 @@ Recommended Settings are:
     </panel>
     <panel border="true" bottom="-580" follows="left|top|right|bottom" height="525"
            label="CmdLine" left="1" mouse_opaque="true" name="CmdLine" width="418">
-      <text bottom_delta="-20" follows="left|top" font="SansSerifSmall" height="16" left_delta="5" name="loltxt" width="512">
+<button bottom="-25" follows="left|top" font="SansSerifSmall" height="18" label="?" name="EmeraldHelp_CmdLine" tool_tip="Click here for help regarding the settings in this page." right="490" width="18" />
+      <text bottom="-20" follows="left|top" font="SansSerifSmall" height="16" left="5" name="loltxt" width="512">
         ("cmd" in the usage and examples refers to the text in the textbox)
 Leave any command blank to deactivate it.
       </text>
@@ -536,12 +552,13 @@ Leave any command blank to deactivate it.
     </panel>
     <panel border="true" bottom="-580" follows="left|top|right|bottom" height="525"
            label="Avatar" left="1" mouse_opaque="true" name="wat!" width="418">
+<button bottom="-25" follows="left|top" font="SansSerifSmall" height="18" label="?" name="EmeraldHelp_Avatar" tool_tip="Click here for help regarding the settings in this page." right="490" width="18" />
       <panel
              name="antispam_options"
-             left_delta="5"
+             left="5"
              width="150"
              height="75"
-             bottom_delta="-90"
+             bottom="-90"
              border="true"
              mouse_opaque="true"
              bevel_style="in"
@@ -608,6 +625,7 @@ you up or down without altering your shape.
       <button name="refresh_beams" label="Refresh List" tool_tip="Refresh the beam list" left_delta="0" bottom_delta="-25" width="75" height="20" font="SansSerifSmall" follows="left|top"/>
     </panel>
     <panel border="true" bottom="-580" follows="left|top|right|bottom" height="525" label="Build" left="1" mouse_opaque="true" name="Build" width="418">
+<button bottom="-25" follows="left|top" font="SansSerifSmall" height="18" label="?" name="EmeraldHelp_Build" tool_tip="Click here for help regarding the settings in this page." right="490" width="18" />
       <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
              bottom="-25" drop_shadow_visible="true" enabled="true" follows="left|top"
              font="SansSerifSmall" h_pad="0" halign="left" height="10" left="12"
