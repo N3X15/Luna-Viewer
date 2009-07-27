@@ -641,6 +641,8 @@ void LLFloaterWorldMap::trackLocation(const LLVector3d& pos_global)
 		setDefaultBtn("");
 		return;
 	}
+	//Zwagoth: No... don't show the blue circle of death.
+	/*
 	if (sim_info->mAccess == SIM_ACCESS_DOWN)
 	{
 		// Down sim. Show the blue circle of death!
@@ -651,6 +653,7 @@ void LLFloaterWorldMap::trackLocation(const LLVector3d& pos_global)
 		setDefaultBtn("");
 		return;
 	}
+	*/
 
 	std::string sim_name;
 	LLWorldMap::getInstance()->simNameFromPosGlobal( pos_global, sim_name );

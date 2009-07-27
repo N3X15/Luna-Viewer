@@ -295,7 +295,7 @@ private:
 	void init(const std::string& session_label);
 
 	// Called by UI methods.
-	void sendMsg();
+	void sendMsg(bool ooc);
 
 	// for adding agents via the UI. Return TRUE if possible, do it if 
 	BOOL dropCallingCard(LLInventoryItem* item, BOOL drop);

@@ -176,6 +176,8 @@ void TSStuff::idle(void *data)
 TSLuaThread::TSLuaThread() : LLThread(std::string("LuaThread"))
 {
 	mSyncAction = NULL;
+	mExecuting = false;
+	mAborted = false;
 }
 
 TSLuaThread::~TSLuaThread()

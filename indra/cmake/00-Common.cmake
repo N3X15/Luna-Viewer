@@ -142,16 +142,17 @@ if (LINUX)
       -g
       -pthread
       )
-  if (COMPILE_OTR)
+  #if (COMPILE_OTR)
     add_definitions(
         -DCOMPILE_OTR=1
-        )
-  endif (COMPILE_OTR)
-  if (USE_OTR)
-    add_definitions(
         -DUSE_OTR=1
         )
-  endif (USE_OTR)
+  #endif (COMPILE_OTR)
+  #if (USE_OTR)
+  #  add_definitions(
+  #      -DUSE_OTR=1
+  #      )
+  #endif (USE_OTR)
      
 
   if (SERVER)
@@ -179,6 +180,7 @@ if (LINUX)
   if (VIEWER)
     add_definitions(-DAPPID=secondlife)
     add_definitions(-fvisibility=hidden)
+    add_definitions(-msse2)
     # don't catch SIGCHLD in our base application class for the viewer - some of our 3rd party libs may need their *own* SIGCHLD handler to work.  Sigh!  The viewer doesn't need to catch SIGCHLD anyway.
     add_definitions(-DLL_IGNORE_SIGCHLD)
     if (NOT STANDALONE)

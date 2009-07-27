@@ -49,7 +49,6 @@
 #include "llviewerwindow.h"
 #include "llsdserialize.h"
 
-
 #include "lltabcontainer.h"
 
 #include "llinventorymodel.h"
@@ -169,6 +168,17 @@ LLPanelEmerald::~LLPanelEmerald()
 	mObjectDropTarget = NULL;
 }
 
+void LLPanelEmerald::initHelpBtn(const std::string& name, const std::string& xml_alert)
+{
+	childSetAction(name, onClickHelp, new std::string(xml_alert));
+}
+
+void LLPanelEmerald::onClickHelp(void* data)
+{
+	std::string* xml_alert = (std::string*)data;
+	LLNotifications::instance().add(*xml_alert);
+}
+
 BOOL LLPanelEmerald::postBuild()
 {
 	refresh();
@@ -217,6 +227,14 @@ BOOL LLPanelEmerald::postBuild()
 	childSetValue("EmeraldUseOTR", LLSD((S32)gSavedSettings.getU32("EmeraldUseOTR"))); // [$PLOTR$]
 	getChild<LLButton>("otr_help_btn")->setClickedCallback(onClickOtrHelp, this);      // [/$PLOTR$]
 
+	initHelpBtn("EmeraldHelp_TeleportLogin",	"EmeraldHelp_TeleportLogin");
+	initHelpBtn("EmeraldHelp_Voice",			"EmeraldHelp_Voice");
+	initHelpBtn("EmeraldHelp_Shields",			"EmeraldHelp_Shields");
+	initHelpBtn("EmeraldHelp_IM",				"EmeraldHelp_IM");
+	initHelpBtn("EmeraldHelp_Misc",				"EmeraldHelp_Misc");
+	initHelpBtn("EmeraldHelp_CmdLine",			"EmeraldHelp_CmdLine");
+	initHelpBtn("EmeraldHelp_Avatar",			"EmeraldHelp_Avatar");
+	initHelpBtn("EmeraldHelp_Build",			"EmeraldHelp_Build");
 
 	LLView *target_view = getChild<LLView>("im_give_drop_target_rect");
 	if(target_view)

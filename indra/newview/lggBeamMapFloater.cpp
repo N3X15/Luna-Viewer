@@ -153,6 +153,7 @@ BOOL lggBeamMapFloater::postBuild(void)
 	childSetAction("beamshape_clear",onClickClear,this);
 	childSetAction("beamshape_load",onClickLoad,this);
 	getChild<LLColorSwatchCtrl>("back_color_swatch")->setCommitCallback(onBackgroundChange);
+	getChild<LLColorSwatchCtrl>("beam_color_swatch")->setColor(LLColor4::red1);
 	
 	
 	return true;

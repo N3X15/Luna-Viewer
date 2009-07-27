@@ -8066,6 +8066,7 @@ class LLViewCheckBeaconEnabled : public view_listener_t
 		bool new_value = false;
 		if (beacon == "scriptsbeacon")
 		{
+			new_value = gSavedSettings.getBOOL( "scriptsbeacon");
 			LLPipeline::setRenderScriptedBeacons(new_value);
 		}
 		else if (beacon == "physicalbeacon")
@@ -8338,15 +8339,40 @@ class LLEmeraldToggleSit: public view_listener_t
 
 		if(gSavedSettings.getBOOL("EmeraldAllowSitToggle"))
 		{
-			gAgent.setControlFlags(AGENT_CONTROL_SIT_ON_GROUND);
 			LLChat chat;
 			chat.mSourceType = CHAT_SOURCE_SYSTEM;
+			if(!gAgent.getAvatarObject()->mIsSitting)
+			{
+				gAgent.setControlFlags(AGENT_CONTROL_SIT_ON_GROUND);
 			chat.mText = "Forcing Ground Sit";
+			}
+			else
+			{
+				gAgent.setControlFlags(!AGENT_CONTROL_SIT_ON_GROUND);
+				gAgent.setControlFlags(AGENT_CONTROL_STAND_UP);
+				chat.mText = "Standing up";
+			}
 			LLFloaterChat::addChat(chat);
 		}
 		return true;
 	}
 
+};
+
+class LLEmeraldCheckSit : public view_listener_t
+{
+    bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+    {
+		if(gAgent.getAvatarObject()->mIsSitting)
+		{
+			gMenuHolder->findControl(userdata["control"].asString())->setValue(true);
+		}
+		else
+		{
+			gMenuHolder->findControl(userdata["control"].asString())->setValue(false);
+		}
+		return true;
+	}
 };
 class LLEmeraldToggleRadar: public view_listener_t
 {

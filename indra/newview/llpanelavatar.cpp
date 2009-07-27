@@ -1907,6 +1907,21 @@ void LLPanelAvatar::processAvatarPropertiesReply(LLMessageSystem *msg, void**)
 		}
 		
 		self->mPanelSecondLife->childSetValue("acct", caption_text);
+		//Chalice - Show avatar age in days.
+		int year, month, day;
+		sscanf(born_on.c_str(),"%d/%d/%d",&month,&day,&year);
+		time_t now = time(NULL);
+		struct tm * timeinfo;
+		timeinfo=localtime(&now);
+		timeinfo->tm_mon = --month;
+		timeinfo->tm_year = year - 1900;
+		timeinfo->tm_mday = day;
+		time_t birth = mktime(timeinfo);
+		stringstream NumberString;
+		NumberString << (difftime(now,birth) / (60*60*24));
+		born_on += " (";
+		born_on += NumberString.str();
+		born_on += ")";
 		self->mPanelSecondLife->childSetValue("born", born_on);
 
 		EOnlineStatus online_status = (online) ? ONLINE_STATUS_YES : ONLINE_STATUS_NO;

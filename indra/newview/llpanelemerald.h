@@ -76,6 +76,11 @@ private:
 	static LLPanelEmerald* sInstance;
 	static JCInvDropTarget* mObjectDropTarget;
 	static void IMAutoResponseItemDrop(LLViewerInventoryItem* item);
+
+protected:
+	void initHelpBtn(const std::string& name, const std::string& xml_alert);
+	static void onClickHelp(void* data);
+
 };
 
 #endif // LL_LLPanelEmerald_H

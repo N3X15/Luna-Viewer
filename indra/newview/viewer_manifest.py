@@ -427,8 +427,12 @@ class DarwinManifest(ViewerManifest):
 	    # Lua lib
 	    self.path("../../libraries/universal-darwin/lib_release/liblua5.1.dylib", "MacOS/liblua5.1.dylib");
 
-	    # otr lib
+	    # otr lib and deps
 	    self.path("../../libraries/universal-darwin/lib_release/libotr.dylib", "MacOS/libotr.dylib");
+	    self.path("../../libraries/universal-darwin/lib_release/libintl.8.dylib", "MacOS/libintl.8.dylib");
+	    self.path("../../libraries/universal-darwin/lib_release/libgcrypt.11.dylib", "MacOS/libgcrypt.11.dylib");
+	    self.path("../../libraries/universal-darwin/lib_release/libgpg-error.0.dylib", "MacOS/libgpg-error.0.dylib");
+	    self.path("../../libraries/universal-darwin/lib_release/libiconv.2.dylib", "MacOS/libiconv.2.dylib");
 
             # replace the default theme with our custom theme (so scrollbars work).
             if self.prefix(src="mozilla-theme", dst="MacOS/chrome"):
@@ -698,6 +702,8 @@ class Linux_i686Manifest(LinuxManifest):
             self.path("libalut.so")
             self.path("libopenal.so", "libopenal.so.1")
             self.path("liblua5.1.so")
+            self.path("libotr.so.2.2.0")
+            self.path("libotr.so.2")
             self.end_prefix("lib")
 
             # Vivox runtimes

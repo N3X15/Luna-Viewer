@@ -42,7 +42,7 @@ void ImportTracker::import(LLSD& ls_data)
 	rootrot.mQ[VZ] = (F32)(rot[2].asReal());
 	rootrot.mQ[VW] = (F32)(rot[3].asReal());
 	state = BUILDING;
-	llinfos << "IMPORTED, BUILDING.." << llendl;
+	//llinfos << "IMPORTED, BUILDING.." << llendl;
 	plywood_above_head();
 }
 
@@ -50,7 +50,7 @@ void ImportTracker::expectRez()
 {
 	numberExpected++;
 	state = WAND;
-	llinfos << "EXPECTING CUBE..." << llendl;
+	//llinfos << "EXPECTING CUBE..." << llendl;
 }
 
 void ImportTracker::clear()
@@ -144,7 +144,7 @@ void ImportTracker::get_update(S32 newid, BOOL justCreated, BOOL createSelected)
 				msg->addBOOL("CastsShadows", true );
 				msg->sendReliable(gAgent.getRegion()->getHost());				
 
-				llinfos << "LGG SENDING CUBE TEXTURE.." << llendl;
+				//llinfos << "LGG SENDING CUBE TEXTURE.." << llendl;
 			}
 		break;
 		case BUILDING:
