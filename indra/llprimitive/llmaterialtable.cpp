@@ -93,9 +93,9 @@ F32 const LLMaterialTable::DEFAULT_RESTITUTION = 0.4f;
 
 LLMaterialTable::LLMaterialTable()
 {
-	*mRollingSoundMatrix=LLUUID();
-	*mSlidingSoundMatrix=LLUUID();
-	*mCollisionSoundMatrix=LLUUID();
+	mRollingSoundMatrix=NULL;
+	mSlidingSoundMatrix=NULL;
+	mCollisionSoundMatrix=NULL;
 }
 
 LLMaterialTable::LLMaterialTable(U8 isBasic)

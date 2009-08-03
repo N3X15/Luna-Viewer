@@ -36,7 +36,7 @@
 #include "llassettype.h"
 #include "llinventorytype.h"
 #include "importtracker.h"
-
+ 
 class LLTransactionID;
 
 extern ImportTracker gImportTracker;
@@ -72,5 +72,7 @@ void upload_new_resource(const LLTransactionID &tid,
 			 LLAssetStorage::LLStoreAssetCallback callback,
 			 S32 expected_upload_cost,
 			 void *userdata);
+
+const std::string upload_pick(void* data);
 
 #endif

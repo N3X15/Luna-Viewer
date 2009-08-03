@@ -14,7 +14,7 @@
    License for more details.
  
    You should have received a copy of the GNU Lesser General Public
-   License along with Libgcrypt; if not, write to the Free Software
+   License along with the viewer; if not, write to the Free Software
    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
    02111-1307, USA.  */
 
@@ -40,7 +40,8 @@ OTR_Wrapper::~OTR_Wrapper()
     }
 }
 
-#if 1 // $TODO$ use some debug compile flag?
+#define otrwui_tracing 1 // $TODO$ use some debug compile flag?
+#if otrwui_tracing
 static void otrwui_trace(const char *msg)
 {
     llinfos << "$PLOTR$TRACE$" << msg << llendl;
@@ -135,7 +136,6 @@ static int otrwui_is_logged_in(
     void *opdata, const char *accountname,
     const char *protocol, const char *recipient)
 {
-    otrwui_trace("otrwui_is_logged_in()");
     /* Report whether you think the given user is online.  Return 1 if
      * you think he is, 0 if you think he isn't, -1 if you're not sure.
      *
@@ -149,6 +149,17 @@ static int otrwui_is_logged_in(
     if (!info)                  result = -1;
     else if (!info->isOnline()) result = 0;
     else                        result = 1;
+#if otrwui_tracing
+    std::string msg = "otrwui_is_logged_in()";
+    switch(result)
+    {
+    case -1: msg += " -1 unknown"; break;
+    case  0: msg += " 0 no, logged out"; break;
+    case  1: msg += " 1 yes, logged in"; break;
+    default: msg += " ? imposible result"; break;
+    }
+    otrwui_trace(msg.c_str());
+#endif
     return result;
 }
 
@@ -168,7 +179,7 @@ static void otrwui_inject_message(
     {
         LLUUID sessionUUID = *((LLUUID*)opdata);
         LLUUID otherUUID(recipient);
-        deliver_message(message, sessionUUID, otherUUID, IM_NOTHING_SPECIAL);
+        deliver_otr_message(message, sessionUUID, otherUUID, IM_NOTHING_SPECIAL);
     }
 }
 
@@ -180,23 +191,6 @@ static void otrwui_notify(
 {
     /* Display a notification message for a particular accountname /
      * protocol / username conversation. */
-	 //accountname is a uuid.  protocol is "SecondLife". recipient is their uuid.
-	/*LLUUID rec = LLUUID(std::string(username));
-	std::string my_name;
-	gAgent.buildFullname(my_name);
-	pack_instant_message(
-		gMessageSystem,
-		gAgent.getID(),
-		FALSE,
-		gAgent.getSessionID(),
-		rec,
-		my_name,
-		std::string(title)+"\n"+std::string(secondary),
-		IM_OFFLINE,
-		IM_NOTHING_SPECIAL,
-		LLIMMgr::computeSessionID(IM_NOTHING_SPECIAL,rec));*/
-
-
     std::string trace = "otrwui_notify: \n";
     trace += "title(";     trace += title;     trace += ")\n";
     trace += "primary(";   trace += primary;   trace += ")\n";
@@ -376,8 +370,62 @@ static void otrwui_account_name_free(
     free((void *)account_name);
 }
 
+// static
+void OTR_Wrapper::stopAll()
+{
+    otrwui_trace("OTR_Wrapper::stopAll()");
+    if (!gOTR) return;
+    if (gOTR->userstate)
+    {
+        for (ConnContext *context = gOTR->userstate->context_root; context; context = context->next)
+        {
+            if (context && (OTRL_MSGSTATE_ENCRYPTED == context->msgstate))
+            {
+                LLUUID their_uuid = LLUUID(context->username);
+                LLUUID session_uuid = LLIMMgr::computeSessionID(IM_NOTHING_SPECIAL, their_uuid);
+                LLFloaterIMPanel* pan = gIMMgr->findFloaterBySession(session_uuid);
+                if (pan)
+                {
+                    llinfos << "$PLOTR$ found IM pannel, pan->doOtrStop()" << llendl;
+                    pan->doOtrStop();
+                }
+                else
+                {
+                    char my_uuid[UUID_STR_SIZE];
+                    gAgent.getID().toString(&(my_uuid[0]));
+                    llinfos << "$PLOTR$ didn't find IM panel, going lower level"
+                            << " c->accountname:" << context->accountname // this avatar, aka me
+                            << " c->protocol:"    << context->protocol    // secondlife, IRC, yahoo...
+                            << " c->username:"    << context->username    // other participant
+                            << " session_uuid:"   << session_uuid
+                            << llendl;
+                    otrl_message_disconnect(
+                        gOTR->get_userstate(), 
+                        gOTR->get_uistate(), 
+                        &session_uuid,
+                        context->accountname,
+                        context->protocol,
+                        context->username);
+                }
+            }
+        }
+    }
+}
+
+// static
+void OTR_Wrapper::logout()
+{
+    otrwui_trace("OTR_Wrapper::logout()");
+    if (!gOTR) return;
+    OTR_Wrapper::stopAll();
+    delete gOTR;
+    gOTR = NULL;
+}
+
+// static
 void OTR_Wrapper::init()
 {
+    otrwui_trace("OTR_Wrapper::init()");
     if (! gOTR)
     {
         gOTR = new OTR_Wrapper;

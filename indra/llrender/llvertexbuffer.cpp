@@ -340,7 +340,8 @@ LLVertexBuffer::LLVertexBuffer(U32 typemask, S32 usage) :
 	mFilthy(FALSE),
 	mEmpty(TRUE),
 	mResized(FALSE),
-	mDynamicSize(FALSE)
+	mDynamicSize(FALSE),
+	mImmediateMap(false)
 {
 	LLMemType mt(LLMemType::MTYPE_VERTEX_DATA);
 	if (!sEnableVBOs)
@@ -1032,7 +1033,7 @@ void LLVertexBuffer::setBuffer(U32 data_mask)
 			}
 		}
 
-		if (mResized)
+		if (mResized || mImmediateMap)
 		{
 			if (gDebugGL)
 			{

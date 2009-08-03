@@ -16,7 +16,13 @@ class ImportTracker
 	public:
 		enum ImportState { IDLE, WAND, BUILDING, LINKING, POSITIONING };			
 		
-		ImportTracker() { state = IDLE; }
+		ImportTracker()
+		: numberExpected(0),
+		state(IDLE),
+		last(0),
+		groupcounter(0),
+		updated(0)
+		{ }
 		ImportTracker(LLSD &data) { state = IDLE; linkset = data; numberExpected=0;}
 		~ImportTracker() { localids.clear(); linkset.clear(); }
 	

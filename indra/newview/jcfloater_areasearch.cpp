@@ -60,7 +60,9 @@ std::string JCFloaterAreaSearch::searched_group;
 bool JCFloaterAreaSearch::payable_object;
 bool JCFloaterAreaSearch::buyable_object;
 
-JCFloaterAreaSearch::JCFloaterAreaSearch() :  LLFloater()
+JCFloaterAreaSearch::JCFloaterAreaSearch() :  
+LLFloater(),
+mResultList(0)
 {
 	llassert_always(sInstance == NULL);
 	sInstance = this;

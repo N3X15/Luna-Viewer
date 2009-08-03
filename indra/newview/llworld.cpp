@@ -39,7 +39,7 @@
 #include "llstl.h"
 
 #include "llagent.h"
-#include "llfloateravatarlist.h"
+//#include "llfloateravatarlist.h"
 #include "llviewercontrol.h"
 #include "lldrawpool.h"
 #include "llglheaders.h"
@@ -1229,6 +1229,7 @@ void LLWorld::getAvatars(std::vector<LLUUID>* avatar_ids, std::vector<LLVector3d
 			{
 				if(positions != NULL)
 				{
+/*
 					if ( LLFloaterAvatarList::getInstance() )
 					{
 						LLAvatarListEntry *ent = LLFloaterAvatarList::getInstance()->getAvatarEntry(regionp->mMapAvatarIDs.get(i));
@@ -1240,13 +1241,16 @@ void LLWorld::getAvatars(std::vector<LLUUID>* avatar_ids, std::vector<LLVector3d
 						}
 						else
 						{
+*/
 					positions->push_back(pos_global);
+/*
 						}
 					}
 					else
 					{
 					positions->push_back(pos_global);
 					}
+*/
 				}
 				if(avatar_ids != NULL)
 				{

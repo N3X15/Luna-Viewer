@@ -38,7 +38,8 @@
 class LLWebBrowserCtrlEvent
 {
 	public:
-		LLWebBrowserCtrlEvent()
+		LLWebBrowserCtrlEvent() :
+		  mIntVal(0)
 		{
 		};
 

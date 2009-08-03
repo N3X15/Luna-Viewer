@@ -42,9 +42,11 @@
 	<string name="otr_gen_key_please_wait">OTR is generating keys.  This will happen once for each of your avatars and should take less than 45 seconds.</string>
 	<string name="otr_generic_name">Your buddy</string>
 	<string name="otr_err_send_in_finished">[NAME] has ended the private converstation, so your message was not sent.  You should restart the private conversation, or end the private conversation.</string>
+	<string name="otr_err_deacivated">OTR has been deactivated by preferences (edit > preferences > Emerald tab > IM tab)</string>
 	<string name="otr_err_failed_sending">Unable to encrypt your message for some reason; it has not been sent.</string>
 	<string name="otr_err_failed_starting">Unable to start private conversation.</string>
-	<string name="otr_err_offline">[NAME] appears offline, will not try to start a private conversation.</string>
+	<string name="otr_err_offline_start">[NAME] appears offline; OTR will not try to start a private conversation.</string>
+	<string name="otr_err_offline_send">[NAME] appears offline; You may "End private conversation" and send your message un-encrypted.</string>
 	<string name="otr_prog_I_start">Attempting to start a private conversation with [NAME].</string>
 	<string name="otr_prog_I_stop_unverified">You have ended the unverified conversation with [NAME].</string>
 	<string name="otr_prog_I_stop_private"   >You have ended the private conversation with [NAME].</string>

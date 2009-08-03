@@ -63,7 +63,7 @@
 #include "llfloaterchat.h"
 
 void cmdline_printchat(std::string message);
-void cmdline_rezplat();
+void cmdline_rezplat(bool use_saved_value = true, F32 visual_radius = 30.0);
 void cmdline_tp2name(std::string target);
 
 LLUUID cmdline_partial_name2key(std::string name);
@@ -203,26 +203,31 @@ bool cmd_line_chat(std::string revised_text, EChatType type)
 				return false;
             }else if(command == gSavedSettings.getString("EmeraldCmdLineRezPlatform"))
             {
-				cmdline_rezplat();
+				F32 width;
+				if (i >> width) cmdline_rezplat(false, width);
+				else cmdline_rezplat();
 				return false;
 			}else if(command == gSavedSettings.getString("EmeraldCmdLineMapTo"))
 			{
-				LLVector3d agentPos = gAgent.getPositionGlobal();
-				S32 agent_x = llround( (F32)fmod( agentPos.mdV[VX], (F64)REGION_WIDTH_METERS ) );
-				S32 agent_y = llround( (F32)fmod( agentPos.mdV[VY], (F64)REGION_WIDTH_METERS ) );
-				S32 agent_z = llround( (F32)agentPos.mdV[VZ] );
-				std::string region_name = LLWeb::escapeURL(revised_text.substr(command.length()+1));
-				std::string url;
-
-				if(!gSavedSettings.getBOOL("EmeraldMapToKeepPos"))
+				if (revised_text.length() > command.length() + 1) //Typing this command with no argument was causing a crash. -Madgeek
 				{
-					agent_x = 128;
-					agent_y = 128;
-					agent_z = 0;
-				}
+					LLVector3d agentPos = gAgent.getPositionGlobal();
+					S32 agent_x = llround( (F32)fmod( agentPos.mdV[VX], (F64)REGION_WIDTH_METERS ) );
+					S32 agent_y = llround( (F32)fmod( agentPos.mdV[VY], (F64)REGION_WIDTH_METERS ) );
+					S32 agent_z = llround( (F32)agentPos.mdV[VZ] );
+					std::string region_name = LLWeb::escapeURL(revised_text.substr(command.length()+1));
+					std::string url;
 
-				url = llformat("secondlife:///app/teleport/%s/%d/%d/%d",region_name.c_str(),agent_x,agent_y,agent_z);
-				LLURLDispatcher::dispatch(url, NULL, true);
+					if(!gSavedSettings.getBOOL("EmeraldMapToKeepPos"))
+					{
+						agent_x = 128;
+						agent_y = 128;
+						agent_z = 0;
+					}
+
+					url = llformat("secondlife:///app/teleport/%s/%d/%d/%d",region_name.c_str(),agent_x,agent_y,agent_z);
+					LLURLDispatcher::dispatch(url, NULL, true);
+				}
 				return false;
 			}else if(command == gSavedSettings.getString("EmeraldCmdLineCalc"))//Cryogenic Blitz
 			{
@@ -236,7 +241,7 @@ bool cmd_line_chat(std::string revised_text, EChatType type)
 					success = LLCalc::getInstance()->evalString(expr, result);
 
 					std::string out;
-	
+
 					if (!success)
 					{
 						out =  "Calculation Failed";
@@ -299,10 +304,10 @@ LLUUID cmdline_partial_name2key(std::string partial_name)
 				av_name = avatarp->getFullname();
 			}
 		}
-				LLStringUtil::toLower(av_name);
-				if(strstr(av_name.c_str(), partial_name.c_str()))
-				{
-					return *i;
+		LLStringUtil::toLower(av_name);
+		if(strstr(av_name.c_str(), partial_name.c_str()))
+		{
+			return *i;
 		}
 	}
 	return LLUUID::null;
@@ -338,7 +343,7 @@ void cmdline_tp2name(std::string target)
 	}
 }
 
-void cmdline_rezplat()
+void cmdline_rezplat(bool use_saved_value, F32 visual_radius) //cmdline_rezplat() will still work... just will use the saved value
 {
     LLVector3 agentPos = gAgent.getPositionAgent()+(gAgent.getVelocity()*(F32)0.333);
     LLMessageSystem* msg = gMessageSystem;
@@ -356,7 +361,7 @@ void cmdline_rezplat()
 
     LLVolumeParams    volume_params;
 
-    volume_params.setType( LL_PCODE_PROFILE_SQUARE, LL_PCODE_PATH_CIRCLE_33 );
+    volume_params.setType( LL_PCODE_PROFILE_CIRCLE, LL_PCODE_PATH_CIRCLE_33 );
     volume_params.setRatio    ( 2, 2 );
     volume_params.setShear    ( 0, 0 );
     volume_params.setTaper(2.0f,2.0f);
@@ -368,7 +373,8 @@ void cmdline_rezplat()
     LLQuaternion rotation;
     rotation.setQuat(90.f * DEG_TO_RAD, LLVector3::y_axis);
 
-	F32 realsize = gSavedSettings.getF32("EmeraldPlatformSize") / 3.0f;
+	if (use_saved_value) visual_radius = gSavedSettings.getF32("EmeraldPlatformSize");
+	F32 realsize = visual_radius / 3.0f;
 	if (realsize < 0.01f) realsize = 0.01f;
 	else if (realsize > 10.0f) realsize = 10.0f;
 

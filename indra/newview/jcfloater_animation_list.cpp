@@ -60,7 +60,8 @@
 //std::map<LLUUID, AObjectData>	JCFloaterAnimList::mObjectOwners;
 
 JCFloaterAnimList::JCFloaterAnimList(const LLSD& seed) : 
-	LLFloater(std::string("animation list"))
+	LLFloater(std::string("animation list")),
+	mAnimList(0)
 {
 	BOOL no_open = FALSE;
 	LLUICtrlFactory::getInstance()->buildFloater(this, "floater_animation_list.xml",&getFactoryMap(),no_open);

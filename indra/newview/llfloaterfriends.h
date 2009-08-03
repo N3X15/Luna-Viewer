@@ -129,7 +129,11 @@ private:
 	static void onClickProfile(void* user_data);
 	static void onClickAddFriend(void* user_data);
 	static void onClickRemove(void* user_data);
-
+	static void onClickExport(void* user_data);
+	static void onClickImport(void* user_data);
+public:
+	static void FriendImportState(LLUUID id, bool accepted);
+private:
 	static void onClickOfferTeleport(void* user_data);
 	static void onClickPay(void* user_data);
 
@@ -147,6 +151,8 @@ private:
 	BOOL mShowMaxSelectWarning;
 	BOOL mAllowRightsChange;
 	S32 mNumRightsChanged;
+
+	static bool merging;
 };
 
 

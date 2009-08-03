@@ -346,7 +346,8 @@ LLScriptEdCore::LLScriptEdCore(
 			tooltips.push_back(ll_safe_string(gScriptLibrary.mFunctions[i]->mDesc));
 		}
 	}
-	LLColor3 color(0.5f, 0.0f, 0.15f);
+	//LLColor3 color(0.5f, 0.0f, 0.15f);
+	LLColor3 color(gSavedSettings.getColor3("ColorllFunction"));
 		
 	mEditor->loadKeywords(gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS,"keywords.ini"), funcs, tooltips, color);
 

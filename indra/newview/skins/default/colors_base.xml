@@ -186,6 +186,7 @@
 <FolderViewLoadingMessageTextColor value="240, 165, 90, 255"/>     <!-- "loading..." in the inv -->
 <InventoryBackgroundColor value="62, 62, 62, 80"/>
 <DefaultListText value="0, 0, 0, 255"/> <!-- We are replacing all the hardcoded black text with this color so we can make skins with white text on dark background -->
+<DefaultListIcon value="255, 255, 255, 255"/>
 <ComboBoxBg value="255, 255, 255, 255"/>
 <AvatarListTextDistNormalRange value="0, 0, 0, 255"/>
 <AvatarListTextDistShoutRange value="0, 0, 0, 128"/>

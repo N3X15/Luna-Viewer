@@ -11,6 +11,20 @@
       <string>String</string>
       <key>Value</key>
       <string>/lua</string>
+    <key>ColorllFunction</key>
+    <map>
+      <key>Comment</key>
+      <string>Color for llFunction builtins in the script editor.</string>
+      <key>Persist</key>
+      <integer>0</integer>
+      <key>Type</key>
+      <string>Color3</string>
+      <key>Value</key>
+      <array>
+        <real>0.5</real>
+        <real>0.0</real>
+        <real>0.15</real>
+      </array>
     </map>
     <key>RestrainedLife</key>
     <map>
@@ -4604,9 +4618,26 @@
       </array>
     </map>
     <key>OtrFloaterSmpRect</key>
+    <key>OtrFloaterSmpDialogRect</key>
     <map>
       <key>Comment</key>
       <string>Rectangle for OTR's Authorize Buddy Dialog</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Rect</string>
+      <key>Value</key>
+      <array>
+        <integer>0</integer>
+        <integer>440</integer>
+        <integer>470</integer>
+        <integer>0</integer>
+      </array>
+    </map>
+    <key>OtrFloaterSmpProgRect</key>
+    <map>
+      <key>Comment</key>
+      <string>Rectangle for OTR's Authorize Buddy Progress bar Dialog</string>
       <key>Persist</key>
       <integer>1</integer>
       <key>Type</key>
@@ -5525,6 +5556,182 @@
       <key>Value</key>
       <integer>0</integer>
     </map>
+	<key>JoystickStreamAxisDeadZone0</key>
+	<map>
+	  <key>Comment</key>
+	  <string>Joystick stream axis 0 dead zone.</string>
+	  <key>Persist</key>
+	  <integer>1</integer>
+	  <key>Type</key>
+	  <string>F32</string>
+	  <key>Value</key>
+	  <real>0.1</real>
+	</map>
+	<key>JoystickStreamAxisDeadZone1</key>
+	<map>
+	  <key>Comment</key>
+	  <string>Joystick stream axis 1 dead zone.</string>
+	  <key>Persist</key>
+	  <integer>1</integer>
+	  <key>Type</key>
+	  <string>F32</string>
+	  <key>Value</key>
+	  <real>0.1</real>
+	</map>
+	<key>JoystickStreamAxisDeadZone2</key>
+	<map>
+	  <key>Comment</key>
+	  <string>Joystick stream axis 2 dead zone.</string>
+	  <key>Persist</key>
+	  <integer>1</integer>
+	  <key>Type</key>
+	  <string>F32</string>
+	  <key>Value</key>
+	  <real>0.1</real>
+	</map>
+	<key>JoystickStreamAxisDeadZone3</key>
+	<map>
+	  <key>Comment</key>
+	  <string>Joystick stream axis 3 dead zone.</string>
+	  <key>Persist</key>
+	  <integer>1</integer>
+	  <key>Type</key>
+	  <string>F32</string>
+	  <key>Value</key>
+	  <real>0.1</real>
+	</map>
+	<key>JoystickStreamAxisDeadZone4</key>
+	<map>
+	  <key>Comment</key>
+	  <string>Joystick stream axis 4 dead zone.</string>
+	  <key>Persist</key>
+	  <integer>1</integer>
+	  <key>Type</key>
+	  <string>F32</string>
+	  <key>Value</key>
+	  <real>0.1</real>
+	</map>
+	<key>JoystickStreamAxisDeadZone5</key>
+	<map>
+	  <key>Comment</key>
+	  <string>Joystick stream axis 5 dead zone.</string>
+	  <key>Persist</key>
+	  <integer>1</integer>
+	  <key>Type</key>
+	  <string>F32</string>
+	  <key>Value</key>
+	  <real>0.1</real>
+	</map>
+	<key>JoystickStreamAxisScale0</key>
+	<map>
+	  <key>Comment</key>
+	  <string>Joystick stream axis 0 scaler.</string>
+	  <key>Persist</key>
+	  <integer>1</integer>
+	  <key>Type</key>
+	  <string>F32</string>
+	  <key>Value</key>
+	  <real>1.0</real>
+	</map>
+	<key>JoystickStreamAxisScale1</key>
+	<map>
+	  <key>Comment</key>
+	  <string>Joystick stream axis 1 scaler.</string>
+	  <key>Persist</key>
+	  <integer>1</integer>
+	  <key>Type</key>
+	  <string>F32</string>
+	  <key>Value</key>
+	  <real>1.0</real>
+	</map>
+	<key>JoystickStreamAxisScale2</key>
+	<map>
+	  <key>Comment</key>
+	  <string>Joystick stream axis 2 scaler.</string>
+	  <key>Persist</key>
+	  <integer>1</integer>
+	  <key>Type</key>
+	  <string>F32</string>
+	  <key>Value</key>
+	  <real>1.0</real>
+	</map>
+	<key>JoystickStreamAxisScale3</key>
+	<map>
+	  <key>Comment</key>
+	  <string>Joystick stream axis 3 scaler.</string>
+	  <key>Persist</key>
+	  <integer>1</integer>
+	  <key>Type</key>
+	  <string>F32</string>
+	  <key>Value</key>
+	  <real>1.0</real>
+	</map>
+	<key>JoystickStreamAxisScale4</key>
+	<map>
+	  <key>Comment</key>
+	  <string>Joystick stream axis 4 scaler.</string>
+	  <key>Persist</key>
+	  <integer>1</integer>
+	  <key>Type</key>
+	  <string>F32</string>
+	  <key>Value</key>
+	  <real>1.0</real>
+	</map>
+	<key>JoystickStreamAxisScale5</key>
+	<map>
+	  <key>Comment</key>
+	  <string>Joystick stream axis 5 scaler.</string>
+	  <key>Persist</key>
+	  <integer>1</integer>
+	  <key>Type</key>
+	  <string>F32</string>
+	  <key>Value</key>
+	  <real>1.0</real>
+	</map>
+	<key>JoystickStreamFeathering</key>
+	<map>
+	  <key>Comment</key>
+	  <string>Stream feathering (less is softer)</string>
+	  <key>Persist</key>
+	  <integer>1</integer>
+	  <key>Type</key>
+	  <string>F32</string>
+	  <key>Value</key>
+	  <real>16.0</real>
+	</map>
+	<key>JoystickStreamEnabled</key>
+	<map>
+	  <key>Comment</key>
+	  <string>Enable SpaceNavigator datastream</string>
+	  <key>Persist</key>
+	  <integer>1</integer>
+	  <key>Type</key>
+	  <string>Boolean</string>
+	  <key>Value</key>
+	  <real>0</real>
+	</map>
+	<key>JoystickStreamRefresh</key>
+	<map>
+	  <key>Comment</key>
+	  <string>SpaceNavigator datasream update frequency in hertz</string>
+	  <key>Persist</key>
+	  <integer>1</integer>
+	  <key>Type</key>
+	  <string>F32</string>
+	  <key>Value</key>
+	  <real>10.0</real>
+	</map>
+	<key>JoystickStreamChannel</key>
+	<map>
+	  <key>Comment</key>
+	  <string>SpaceNavigator datasream chat channel</string>
+	  <key>Persist</key>
+	  <integer>1</integer>
+	  <key>Type</key>
+	  <string>S32</string>
+	  <key>Value</key>
+	  <real>13900</real>
+	</map>
     <key>FlyingAtExit</key>
     <map>
       <key>Comment</key>

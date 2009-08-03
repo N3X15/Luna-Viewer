@@ -230,7 +230,7 @@ void LLFloaterBuyContents::inventoryChanged(LLViewerObject* obj,
 								 item_is_multi);
 		row["columns"][0]["column"] = "icon";
 		row["columns"][0]["type"] = "icon";
-		row["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
+		row["columns"][0]["color"] = gColors.getColor("DefaultListIcon").getValue();
 		row["columns"][0]["value"] = icon_name;
 		
 		// Append the permissions that you will acquire (not the current

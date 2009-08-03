@@ -145,6 +145,7 @@ void LLFace::init(LLDrawable* drawablep, LLViewerObject* objp)
 	mLastMoveTime = 0.f;
 	mVSize = 0.f;
 	mPixelArea = 16.f;
+	mXform		= NULL;
 	mState      = GLOBAL;
 	mDrawPoolp  = NULL;
 	mPoolType = 0;

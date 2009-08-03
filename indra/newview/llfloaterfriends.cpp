@@ -60,6 +60,14 @@
 #include "lltextbox.h"
 #include "llvoiceclient.h"
 
+
+#include "llsdserialize.h"
+#include "llfilepicker.h"
+
+#include "llviewermenufile.h"
+#include "llviewermenu.h"
+#include "llviewernetwork.h"
+
 //Maximum number of people you can select to do an operation on at once.
 #define MAX_FRIEND_SELECT 20
 #define DEFAULT_PERIOD 5.0
@@ -202,6 +210,8 @@ BOOL LLPanelFriends::postBuild()
 	childSetAction("pay_btn", onClickPay, this);
 	childSetAction("add_btn", onClickAddFriend, this);
 	childSetAction("remove_btn", onClickRemove, this);
+	childSetAction("export_btn", onClickExport, this);
+	childSetAction("import_btn", onClickImport, this);
 
 	setDefaultBtn("im_btn");
 
@@ -239,6 +249,7 @@ BOOL LLPanelFriends::addFriend(const LLUUID& agent_id)
 	LLSD& online_status_column = element["columns"][LIST_ONLINE_STATUS];
 	online_status_column["column"] = "icon_online_status";
 	online_status_column["type"] = "icon";
+	online_status_column["color"] = gColors.getColor("DefaultListIcon").getValue();
 	
 	if (isOnline)
 	{
@@ -735,6 +746,187 @@ void LLPanelFriends::onClickRemove(void* user_data)
 			args,
 			payload,
 			&handleRemove);
+	}
+}
+
+void LLPanelFriends::onClickExport(void* user_data)
+{
+	LLPanelFriends* panelp = (LLPanelFriends*)user_data;
+	std::string agn;
+	gAgent.getName(agn);
+	std::string filename = agn+".friendlist";
+	LLFilePicker& picker = LLFilePicker::instance();
+	if(!picker.getSaveFile( LLFilePicker::FFSAVE_ALL, filename ) )
+	{
+		// User canceled save.
+		return;
+	}
+	filename = picker.getFirstFile();
+	std::vector<LLScrollListItem*> selected = panelp->mFriendsList->getAllData();//->getAllSelected();
+
+	LLSD llsd;
+	//U32 count = 0;
+	//std::string friendlist;
+	for(std::vector<LLScrollListItem*>::iterator itr = selected.begin(); itr != selected.end(); ++itr)
+	{
+		LLSD fraind;
+		std::string friend_name = (*itr)->getColumn(LIST_FRIEND_NAME)->getValue().asString();
+		std::string friend_uuid = (*itr)->getUUID().asString();
+		bool show_online_status = (*itr)->getColumn(LIST_VISIBLE_ONLINE)->getValue().asBoolean();
+		bool show_map_location = (*itr)->getColumn(LIST_VISIBLE_MAP)->getValue().asBoolean();
+		bool allow_modify_objects = (*itr)->getColumn(LIST_EDIT_MINE)->getValue().asBoolean();
+		fraind["name"] = friend_name;
+		fraind["see_online"] = show_online_status;
+		fraind["can_map"] = show_map_location;
+		fraind["can_mod"] = allow_modify_objects;
+		//friendlist += friend_name+"|"+friend_uuid+"|"+show_online_status+"|"+show_map_location+"|"+allow_modify_objects+"\n";
+		llsd[friend_uuid] = fraind;
+		//count += 1;
+	}
+
+	std::vector<std::string> uris;
+	LLViewerLogin::getInstance()->getLoginURIs(uris);
+	//LLStringUtil::toLower(uris[0]);
+	llsd["GRID"] = uris[0];
+
+
+	llofstream export_file;
+	export_file.open(filename);
+	LLSDSerialize::toPrettyXML(llsd, export_file);
+	export_file.close();
+}
+
+bool LLPanelFriends::merging;
+
+void LLPanelFriends::onClickImport(void* user_data)
+//THIS CODE IS DESIGNED SO THAT EXP/IMP BETWEEN GRIDS WILL FAIL
+//because assuming someone having the same name on another grid is the same person is generally a bad idea
+//i might add the option to query the user as to intelligently detecting matching names on a alternative grid
+// jcool410
+{
+	//LLPanelFriends* panelp = (LLPanelFriends*)user_data;
+	//is_agent_friend(
+
+	const std::string filename = upload_pick((void*)LLFilePicker::FFLOAD_ALL);
+		
+	if (filename.empty())
+		return;
+
+	llifstream importer(filename);
+	LLSD data;
+	LLSDSerialize::fromXMLDocument(data, importer);
+	if(data.has("GRID"))
+	{
+		std::vector<std::string> uris;
+		LLViewerLogin::getInstance()->getLoginURIs(uris);
+		std::string grid = uris[0];
+		if(grid != data["GRID"])return;
+		data.erase("GRID");
+	}
+
+#if LL_WINDOWS
+	std::string file = filename.substr(filename.find_last_of("\\")+1);
+#else
+	std::string file = filename.substr(filename.find_last_of("/")+1);
+#endif
+
+	std::string importstate = gDirUtilp->getExpandedFilename(LL_PATH_PER_SL_ACCOUNT, "friendimportstate.dat");
+	
+	llifstream stateload(importstate);
+	LLSD importstatellsd;
+	LLSDSerialize::fromXMLDocument(importstatellsd, stateload);
+
+
+	//LLMessageSystem* msg = gMessageSystem;
+	LLSD newdata;
+
+	LLSD::map_const_iterator iter;
+	for(iter = data.beginMap(); iter != data.endMap(); ++iter)
+	{//first= var second = val
+		LLSD content = iter->second;
+		if(!content.has("name"))continue;
+		if(!content.has("see_online"))continue;
+		if(!content.has("can_map"))continue;
+		if(!content.has("can_mod"))continue;
+
+		LLUUID agent_id = LLUUID(iter->first);
+		if(merging && importstatellsd.has(agent_id.asString()))continue;//dont need to request what weve already requested from another list import and have not got a reply yet
+
+		std::string agent_name = content["name"];
+		if(!is_agent_friend(agent_id))//dont need to request what we have
+		{
+			if(merging)importstatellsd[agent_id.asString()] = content;//MERGEEEE
+			requestFriendship(agent_id, agent_name, "Imported from "+file);
+			newdata[iter->first] = iter->second;
+		}else 
+		{
+			//data.erase(iter->first);
+			//--iter;//god help us all
+		}
+	}
+	data = newdata;
+	newdata = LLSD();
+
+	if(!merging)
+	{
+		merging = true;//this hack is to support importing multiple account lists without spamming users but considering LLs fail in forcing silent declines
+		importstatellsd = data;
+	}
+
+	llofstream export_file;
+	export_file.open(importstate);
+	LLSDSerialize::toPrettyXML(importstatellsd, export_file);
+	export_file.close();
+}
+
+void LLPanelFriends::FriendImportState(LLUUID id, bool accepted)
+{
+	std::string importstate = gDirUtilp->getExpandedFilename(LL_PATH_PER_SL_ACCOUNT, "friendimportstate.dat");
+	if(LLFile::isfile(importstate))
+	{
+		llifstream importer(importstate);
+		LLSD data;
+		LLSDSerialize::fromXMLDocument(data, importer);
+
+		if(!data.has(id.asString()))return;
+
+		LLSD user = data[id.asString()];
+		if(accepted)
+		{
+			BOOL can_map = user["can_map"].asBoolean();
+			BOOL can_mod = user["can_mod"].asBoolean();
+			BOOL see_online = user["see_online"].asBoolean();
+			S32 rights = 0;
+			if(can_map)rights |= LLRelationship::GRANT_MAP_LOCATION;
+			if(can_mod)rights |= LLRelationship::GRANT_MODIFY_OBJECTS;
+			if(see_online)rights |= LLRelationship::GRANT_ONLINE_STATUS;
+			if(is_agent_friend(id))//is this legit shit yo
+			{
+				const LLRelationship* friend_status = LLAvatarTracker::instance().getBuddyInfo(id);
+				if(friend_status)
+				{
+					S32 tr = friend_status->getRightsGrantedTo();
+					if(tr != rights)
+					{
+						LLMessageSystem* msg = gMessageSystem;
+						msg->newMessageFast(_PREHASH_GrantUserRights);
+						msg->nextBlockFast(_PREHASH_AgentData);
+						msg->addUUID(_PREHASH_AgentID, gAgent.getID());
+						msg->addUUID(_PREHASH_SessionID, gAgent.getSessionID());
+						msg->nextBlockFast(_PREHASH_Rights);
+						msg->addUUID(_PREHASH_AgentRelated, id);
+						msg->addS32(_PREHASH_RelatedRights, rights);
+						gAgent.sendReliableMessage();
+					}
+				}
+			}
+		}
+		data.erase(id.asString());//if they declined then we need to forget about it, if they accepted it is done
+
+		llofstream export_file;
+		export_file.open(importstate);
+		LLSDSerialize::toPrettyXML(data, export_file);
+		export_file.close();
 	}
 }
 

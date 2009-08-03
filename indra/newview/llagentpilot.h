@@ -83,7 +83,7 @@ private:
 	BOOL	mPlaying;
 	S32		mCurrentAction;
 
-	class Action
+	struct Action
 	{
 	public:
 

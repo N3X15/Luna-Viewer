@@ -69,15 +69,21 @@ private:
 	bool mAvatarEnabled;
 	bool mBuildEnabled;
 	bool mFlycamEnabled;
+	bool mJoystickStreamEnabled;
 	F32 mAvatarAxisScale[6];
 	F32 mBuildAxisScale[6];
 	F32 mFlycamAxisScale[7];
+	F32 mJoystickStreamAxisScale[6];
 	F32 mAvatarAxisDeadZone[6];
 	F32 mBuildAxisDeadZone[6];
 	F32 mFlycamAxisDeadZone[7];
+	F32 mJoystickStreamAxisDeadZone[6];
 	F32 mAvatarFeathering;
 	F32 mBuildFeathering;
 	F32 mFlycamFeathering;
+	F32 mJoystickStreamFeathering;
+	F32 mJoystickStreamRefresh;
+	S32 mJoystickStreamChannel;
 
 	// Controls that can disable the flycam
 	LLCheckBoxCtrl	*mCheckJoystickEnabled;

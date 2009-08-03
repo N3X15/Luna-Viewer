@@ -102,6 +102,7 @@ LLViewerParcelOverlay::LLViewerParcelOverlay(LLViewerRegion* region, F32 region_
 
 	// Make sure the texture matches the ownership information.
 	updateOverlayTexture();
+	sShowPropertyLines = gSavedSettings.getBOOL("ShowPropertyLines");
 	mPropertyColorAvail = gColors.getColor4U("PropertyColorAvail");
 	mPropertyColorOther = gColors.getColor4U("PropertyColorOther");
 	mPropertyColorGroup = gColors.getColor4U("PropertyColorGroup");

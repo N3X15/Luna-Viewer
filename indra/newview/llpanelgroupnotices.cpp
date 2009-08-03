@@ -475,7 +475,7 @@ void LLPanelGroupNotices::processNotices(LLMessageSystem* msg)
 		row["id"] = id;
 		
 		row["columns"][0]["column"] = "icon";
-		row["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
+		row["columns"][0]["color"] = gColors.getColor("DefaultListIcon").getValue();
 		if (has_attachment)
 		{
 			std::string icon_name = get_item_icon_name(

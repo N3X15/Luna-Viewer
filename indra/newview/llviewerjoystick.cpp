@@ -29,6 +29,8 @@
  * COMPLETENESS OR PERFORMANCE.
  * $/LicenseInfo$
  */
+#include <iostream>
+#include <iomanip> // for setprecision
 
 #include "llviewerprecompiledheaders.h"
 
@@ -44,6 +46,8 @@
 #include "llviewermenu.h"
 #include "llagent.h"
 #include "llfocusmgr.h"
+#include "llchat.h"
+#include "llviewerstats.h"
 
 
 // ----------------------------------------------------------------------------
@@ -64,6 +68,8 @@ const F32 MIN_AFK_TIME = 2.f;
 
 F32  LLViewerJoystick::sLastDelta[] = {0,0,0,0,0,0,0};
 F32  LLViewerJoystick::sDelta[] = {0,0,0,0,0,0,0};
+F32  LLViewerJoystick::sStreamLastDelta[] = {0,0,0,0,0,0};
+F32  LLViewerJoystick::sStreamDelta[] = {0,0,0,0,0,0};
 
 // These constants specify the maximum absolute value coming in from the device.
 // HACK ALERT! the value of MAX_JOYSTICK_INPUT_VALUE is not arbitrary as it 
@@ -152,11 +158,12 @@ LLViewerJoystick::LLViewerJoystick()
 	mResetFlag(false),
 	mCameraUpdated(true),
 	mOverrideCamera(false),
-	mJoystickRun(0)
+	mJoystickRun(0),
+	mSendStream(false)
 {
 	for (int i = 0; i < 6; i++)
 	{
-		mAxes[i] = sDelta[i] = sLastDelta[i] = 0.0f;
+		mAxes[i] = sDelta[i] = sLastDelta[i] = sStreamDelta[i] = sStreamLastDelta[i] = 0.0f;
 	}
 	
 	memset(mBtn, 0, sizeof(mBtn));
@@ -429,8 +436,8 @@ void LLViewerJoystick::resetDeltas(S32 axis[])
 {
 	for (U32 i = 0; i < 6; i++)
 	{
-		sLastDelta[i] = -mAxes[axis[i]];
-		sDelta[i] = 0.f;
+		sLastDelta[i] = sStreamLastDelta[i] = -mAxes[axis[i]];
+		sDelta[i] = sStreamDelta[i] = 0.f;
 	}
 
 	sLastDelta[6] = sDelta[6] = 0.f;
@@ -564,6 +571,7 @@ void LLViewerJoystick::moveObjects(bool reset)
 // -----------------------------------------------------------------------------
 void LLViewerJoystick::moveAvatar(bool reset)
 {
+	streamData(reset); //Streaming is done in tandem with moveAvatar; resetting is, too. -tG
 	if (!gFocusMgr.getAppHasFocus() || mDriverState != JDS_INITIALIZED
 		|| !gSavedSettings.getBOOL("JoystickEnabled") || !gSavedSettings.getBOOL("JoystickAvatarEnabled"))
 	{
@@ -939,6 +947,124 @@ void LLViewerJoystick::moveFlycam(bool reset)
 }
 
 // -----------------------------------------------------------------------------
+void LLViewerJoystick::streamData(bool reset) //tG
+{
+	if (!gFocusMgr.getAppHasFocus() || mDriverState != JDS_INITIALIZED
+		|| !gSavedSettings.getBOOL("JoystickEnabled") || !gSavedSettings.getBOOL("JoystickStreamEnabled"))
+	{
+		return;
+	}
+	S32 axis[] = 
+	{
+		gSavedSettings.getS32("JoystickAxis0"),
+		gSavedSettings.getS32("JoystickAxis1"),
+		gSavedSettings.getS32("JoystickAxis2"),
+		gSavedSettings.getS32("JoystickAxis3"),
+		gSavedSettings.getS32("JoystickAxis4"),
+		gSavedSettings.getS32("JoystickAxis5"),
+	};
+
+	if (reset || mResetFlag)
+	{
+		resetDeltas(axis);
+		return;
+	}
+
+	F32 axis_scale[] =
+	{
+		gSavedSettings.getF32("JoystickStreamAxisScale0"),
+		gSavedSettings.getF32("JoystickStreamAxisScale1"),
+		gSavedSettings.getF32("JoystickStreamAxisScale2"),
+		gSavedSettings.getF32("JoystickStreamAxisScale3"),
+		gSavedSettings.getF32("JoystickStreamAxisScale4"),
+		gSavedSettings.getF32("JoystickStreamAxisScale5"),
+	};
+
+	F32 dead_zone[] =
+	{
+		gSavedSettings.getF32("JoystickStreamAxisDeadZone0"),
+		gSavedSettings.getF32("JoystickStreamAxisDeadZone1"),
+		gSavedSettings.getF32("JoystickStreamAxisDeadZone2"),
+		gSavedSettings.getF32("JoystickStreamAxisDeadZone3"),
+		gSavedSettings.getF32("JoystickStreamAxisDeadZone4"),
+		gSavedSettings.getF32("JoystickStreamAxisDeadZone5"),
+	};
+
+	F32 time = gFrameIntervalSeconds;
+
+	// avoid making ridiculously big movements if there's a big drop in fps
+	// should this stay for chat-streaming? -tG
+	if (time > .2f)
+	{
+		time = .2f;
+	}
+
+	F32 cur_delta[6];
+	F32 feather = gSavedSettings.getF32("JoystickStreamFeathering");
+	bool absolute = gSavedSettings.getBOOL("Cursor3D");
+	bool is_zero = true;
+	static bool was_zero = false;
+
+	for (U32 i = 0; i < 6; i++)
+	{
+		cur_delta[i] = -getJoystickAxis(axis[i]);
+
+
+		F32 tmp = cur_delta[i];
+		if (absolute)
+		{
+			cur_delta[i] = cur_delta[i] - sStreamLastDelta[i];
+		}
+		sStreamLastDelta[i] = tmp;
+
+		if (cur_delta[i] > 0)
+		{
+			cur_delta[i] = llmax(cur_delta[i]-dead_zone[i], 0.f);
+		}
+		else
+		{
+			cur_delta[i] = llmin(cur_delta[i]+dead_zone[i], 0.f);
+		}
+
+		cur_delta[i] *= axis_scale[i];
+		
+		if (!absolute)
+		{
+			cur_delta[i] *= time;
+		}
+
+		sStreamDelta[i] = sStreamDelta[i] + (cur_delta[i]-sStreamDelta[i])*time*feather;
+
+		is_zero = is_zero && (abs((int)sStreamDelta[i]) < 0.001f); //Check (almost) zero value after feathering
+	}
+	//Note: this only streams the processed axis values (i.e. not position/quat rotation)
+	if(!mSendStream)return; //Only send if prompted (i.e. on a timer)
+	if(!is_zero || !was_zero)
+	{
+		//Send all six joystick axes' values
+		std::stringstream message;
+		message << "AXES" << std::setiosflags(std::ios::fixed) << std::setprecision(3);
+		for(U32 i = 0; i < 6; i++)
+		{
+			message << "::" << (is_zero?0.f:sStreamDelta[i]);
+		}
+		LLMessageSystem* msg = gMessageSystem;
+		msg->newMessageFast(_PREHASH_ChatFromViewer);
+		msg->nextBlockFast(_PREHASH_AgentData);
+		msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID());
+		msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
+		msg->nextBlockFast(_PREHASH_ChatData);
+		msg->addStringFast(_PREHASH_Message, message.str().c_str());
+		msg->addU8Fast(_PREHASH_Type, CHAT_TYPE_SHOUT);
+		msg->addS32("Channel", gSavedSettings.getS32("JoystickStreamChannel"));
+		
+		gAgent.sendReliableMessage();
+		LLViewerStats::getInstance()->incStat(LLViewerStats::ST_CHAT_COUNT);
+		mSendStream = false;
+	}
+	was_zero = is_zero;
+}
+// -----------------------------------------------------------------------------
 bool LLViewerJoystick::toggleFlycam()
 {
 	if (!gSavedSettings.getBOOL("JoystickEnabled") || !gSavedSettings.getBOOL("JoystickFlycamEnabled"))
@@ -1086,6 +1212,12 @@ void LLViewerJoystick::setSNDefaults()
 	gSavedSettings.setF32("FlycamAxisScale5", .15f * platformScale);
 	gSavedSettings.setF32("FlycamAxisScale3", 0.f * platformScale);
 	gSavedSettings.setF32("FlycamAxisScale6", 0.f * platformScale);
+	gSavedSettings.setF32("JoystickStreamAxisScale1", 1.f * platformScale);
+	gSavedSettings.setF32("JoystickStreamAxisScale2", 1.f * platformScale);
+	gSavedSettings.setF32("JoystickStreamAxisScale0", 1.f * platformScale);
+	gSavedSettings.setF32("JoystickStreamAxisScale4", 1.f * platformScale);
+	gSavedSettings.setF32("JoystickStreamAxisScale5", 1.f * platformScale);
+	gSavedSettings.setF32("JoystickStreamAxisScale3", 1.f * platformScale);
 	
 	gSavedSettings.setF32("AvatarAxisDeadZone0", .1f);
 	gSavedSettings.setF32("AvatarAxisDeadZone1", .1f);
@@ -1106,8 +1238,19 @@ void LLViewerJoystick::setSNDefaults()
 	gSavedSettings.setF32("FlycamAxisDeadZone4", .01f);
 	gSavedSettings.setF32("FlycamAxisDeadZone5", .01f);
 	gSavedSettings.setF32("FlycamAxisDeadZone6", 1.f);
+	gSavedSettings.setF32("JoystickStreamAxisDeadZone0", .01f);
+	gSavedSettings.setF32("JoystickStreamAxisDeadZone1", .01f);
+	gSavedSettings.setF32("JoystickStreamAxisDeadZone2", .01f);
+	gSavedSettings.setF32("JoystickStreamAxisDeadZone3", .01f);
+	gSavedSettings.setF32("JoystickStreamAxisDeadZone4", .01f);
+	gSavedSettings.setF32("JoystickStreamAxisDeadZone5", .01f);
 	
 	gSavedSettings.setF32("AvatarFeathering", 6.f);
 	gSavedSettings.setF32("BuildFeathering", 12.f);
 	gSavedSettings.setF32("FlycamFeathering", 5.f);
+	gSavedSettings.setF32("JoystickStreamFeathering", 5.f);
+
+	gSavedSettings.setBOOL("JoystickStreamEnabled", FALSE);
+	gSavedSettings.setF32("JoystickStreamRefresh", 10.f);
+	gSavedSettings.setS32("JoystickStreamChannel", 13900);
 }

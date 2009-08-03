@@ -552,7 +552,7 @@ void LLPanelDirBrowser::processDirPeopleReply(LLMessageSystem *msg, void**)
 		// so just use the 'offline' icon as the generic 'person' icon
 		row["columns"][0]["column"] = "icon";
 		row["columns"][0]["type"] = "icon";
-		row["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
+		row["columns"][0]["color"] = gColors.getColor("DefaultListIcon").getValue();
 		row["columns"][0]["value"] = "icon_avatar_offline.tga";
 
 		content["type"] = AVATAR_CODE;
@@ -768,19 +768,20 @@ void LLPanelDirBrowser::processDirEventsReply(LLMessageSystem* msg, void**)
 			row["columns"][0]["column"] = "icon";
 			row["columns"][0]["type"] = "icon";
 			row["columns"][0]["value"] = "icon_event_adult.tga";
+			row["columns"][0]["color"] = gColors.getColor("DefaultListIcon").getValue();
 		}
 		else if (event_flags == EVENT_FLAG_MATURE)
 		{
 			row["columns"][0]["column"] = "icon";
 			row["columns"][0]["type"] = "icon";
-			row["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
+			row["columns"][0]["color"] = gColors.getColor("DefaultListIcon").getValue();
 			row["columns"][0]["value"] = "icon_event_mature.tga";
 		}
 		else
 		{
 			row["columns"][0]["column"] = "icon";
 			row["columns"][0]["type"] = "icon";
-			row["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
+			row["columns"][0]["color"] = gColors.getColor("DefaultListIcon").getValue();
 			row["columns"][0]["value"] = "icon_event.tga";
 		}
 
@@ -872,7 +873,7 @@ void LLPanelDirBrowser::processDirGroupsReply(LLMessageSystem* msg, void**)
 		LLUUID image_id;
 		row["columns"][0]["column"] = "icon";
 		row["columns"][0]["type"] = "icon";
-		row["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
+		row["columns"][0]["color"] = gColors.getColor("DefaultListIcon").getValue();
 		row["columns"][0]["value"] = "icon_group.tga";
 
 		row["columns"][1]["column"] = "name";
@@ -1140,7 +1141,7 @@ void LLPanelDirBrowser::addClassified(LLCtrlListInterface *list, const LLUUID& p
 
 	row["columns"][0]["column"] = "icon";
 	row["columns"][0]["type"] = "icon";
-	row["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
+	row["columns"][0]["color"] = gColors.getColor("DefaultListIcon").getValue();
 	row["columns"][0]["value"] = "icon_top_pick.tga";
 
 	row["columns"][1]["column"] = "name";
@@ -1167,7 +1168,7 @@ LLSD LLPanelDirBrowser::createLandSale(const LLUUID& parcel_id, BOOL is_auction,
 	{
 		row["columns"][0]["column"] = "icon";
 		row["columns"][0]["type"] = "icon";
-		row["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
+		row["columns"][0]["color"] = gColors.getColor("DefaultListIcon").getValue();
 		row["columns"][0]["value"] = "icon_auction.tga";
 
 		*type = AUCTION_CODE;
@@ -1176,7 +1177,7 @@ LLSD LLPanelDirBrowser::createLandSale(const LLUUID& parcel_id, BOOL is_auction,
 	{
 		row["columns"][0]["column"] = "icon";
 		row["columns"][0]["type"] = "icon";
-		row["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
+		row["columns"][0]["color"] = gColors.getColor("DefaultListIcon").getValue();
 		row["columns"][0]["value"] = "icon_for_sale.tga";
 
 		*type = FOR_SALE_CODE;
@@ -1185,7 +1186,7 @@ LLSD LLPanelDirBrowser::createLandSale(const LLUUID& parcel_id, BOOL is_auction,
 	{
 		row["columns"][0]["column"] = "icon";
 		row["columns"][0]["type"] = "icon";
-		row["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
+		row["columns"][0]["color"] = gColors.getColor("DefaultListIcon").getValue();
 		row["columns"][0]["value"] = "icon_place.tga";
 
 		*type = PLACE_CODE;

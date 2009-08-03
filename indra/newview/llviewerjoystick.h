@@ -61,6 +61,7 @@ public:
 	void moveObjects(bool reset = false);
 	void moveAvatar(bool reset = false);
 	void moveFlycam(bool reset = false);
+	void streamData(bool reset = false);
 	F32 getJoystickAxis(U32 axis) const;
 	U32 getJoystickButton(U32 button) const;
 	bool isJoystickInitialized() const {return (mDriverState==JDS_INITIALIZED);}
@@ -73,6 +74,7 @@ public:
 	bool toggleFlycam();
 	void setSNDefaults();
 	std::string getDescription();
+	void cansend() { mSendStream = true; }
 	
 protected:
 	void updateEnabled(bool autoenable);
@@ -99,9 +101,12 @@ private:
 	bool					mCameraUpdated;
 	bool 					mOverrideCamera;
 	U32						mJoystickRun;
+	bool					mSendStream;
 	
 	static F32				sLastDelta[7];
 	static F32				sDelta[7];
+	static F32				sStreamLastDelta[6];
+	static F32				sStreamDelta[6];
 };
 
 #endif

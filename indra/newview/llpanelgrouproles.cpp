@@ -709,7 +709,7 @@ void LLPanelGroupSubTab::buildActionCategory(LLScrollListCtrl* ctrl,
 		LLSD row;
 
 		row["columns"][0]["column"] = "icon";
-		row["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
+		row["columns"][0]["color"] = gColors.getColor("DefaultListIcon").getValue();
 		icon_map_t::iterator iter = icons.find("folder");
 		if (iter != icons.end())
 		{
@@ -761,7 +761,7 @@ void LLPanelGroupSubTab::buildActionCategory(LLScrollListCtrl* ctrl,
 
 			S32 column_index = 0;
 			row["columns"][column_index]["column"] = "icon";
-			row["columns"][column_index]["color"] = gColors.getColor("DefaultListText").getValue();
+			row["columns"][column_index]["color"] = gColors.getColor("DefaultListIcon").getValue();
 			++column_index;
 
 			
@@ -783,6 +783,7 @@ void LLPanelGroupSubTab::buildActionCategory(LLScrollListCtrl* ctrl,
 						row["columns"][column_index]["column"] = "checkbox";
 						row["columns"][column_index]["type"] = "icon";
 						row["columns"][column_index]["value"] = (*iter).second;
+						row["columns"][column_index]["color"] = gColors.getColor("DefaultListIcon").getValue();
 						++column_index;
 					}
 				}
@@ -793,6 +794,7 @@ void LLPanelGroupSubTab::buildActionCategory(LLScrollListCtrl* ctrl,
 					{
 						row["columns"][column_index]["column"] = "checkbox";
 						row["columns"][column_index]["type"] = "icon";
+						row["columns"][column_index]["color"] = gColors.getColor("DefaultListIcon").getValue();
 						row["columns"][column_index]["value"] = (*iter).second;
 						++column_index;
 					}
@@ -1086,7 +1088,7 @@ void LLPanelGroupMembersSubTab::handleMemberSelect()
 
 				row["columns"][0]["column"] = "checkbox";
 				row["columns"][0]["type"] = "checkbox";
-				row["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
+				//row["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
 
 				row["columns"][1]["column"] = "role";
 				row["columns"][1]["color"] = gColors.getColor("DefaultListText").getValue();

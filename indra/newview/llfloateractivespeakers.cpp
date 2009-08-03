@@ -354,6 +354,7 @@ void LLPanelActiveSpeakers::addSpeaker(const LLUUID& speaker_id)
 		columns[0]["column"] = "icon_speaking_status";
 		columns[0]["type"] = "icon";
 		columns[0]["value"] = "icn_active-speakers-dot-lvl0.tga";
+		columns[0]["color"] = gColors.getColor("DefaultListIcon").getValue();
 
 		std::string speaker_name;
 		if (speakerp->mDisplayName.empty())

@@ -2413,7 +2413,8 @@ LLSD export_object(LLSelectNode* node, std::string filename)
 			prim_llsd["position"] = object->getPosition().getValue();
 			prim_llsd["rotation"] = ll_sd_from_quaternion(object->getRotation());
 		}
-	
+		prim_llsd["name"] = node->mName;
+		prim_llsd["description"] = node->mDescription;
 		// Transforms
 		prim_llsd["scale"] = object->getScale().getValue();
 		// Flags

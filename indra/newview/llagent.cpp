@@ -384,6 +384,7 @@ LLAgent::LLAgent() :
 	mAutoPilotCallbackData(NULL),
 	
 	mEffectColor(0.f, 1.f, 1.f, 1.f),
+
 	mHaveHomePosition(FALSE),
 	mHomeRegionHandle( 0 ),
 	mNearChatRadius(CHAT_NORMAL_RADIUS / 2.f),
@@ -392,12 +393,13 @@ LLAgent::LLAgent() :
 	mCurrentFidget(0),
 	mFirstLogin(FALSE),
 	mGenderChosen(FALSE),
+
 	mAgentWearablesUpdateSerialNum(0),
 	mWearablesLoaded(FALSE),
 	mTextureCacheQueryID(0),
-	mAppearanceSerialNum(0)
+	mAppearanceSerialNum(0),
+	mFriendObserver(0)
 {
-
 	U32 i;
 	for (i = 0; i < TOTAL_CONTROLS; i++)
 	{
@@ -1898,15 +1900,16 @@ void LLAgent::cameraZoomIn(const F32 fraction)
 
 	LLVector3d	camera_offset(mCameraFocusOffsetTarget);
 	LLVector3d	camera_offset_unit(mCameraFocusOffsetTarget);
-	//F32 min_zoom = LAND_MIN_ZOOM;
+	F32 min_zoom = 0.f;//LAND_MIN_ZOOM;
 	F32 current_distance = (F32)camera_offset_unit.normalize();
 	F32 new_distance = current_distance * fraction;
 
-	/*
-	Emerald:
-	So many darned limits!
-	~Zwag
+	
+	//Emerald:
+	//So many darned limits!
+	//~Zwag
 	// Don't move through focus point
+
 	if (mFocusObject)
 	{
 		LLVector3 camera_offset_dir((F32)camera_offset_unit.mdV[VX], (F32)camera_offset_unit.mdV[VY], (F32)camera_offset_unit.mdV[VZ]);
@@ -1921,7 +1924,7 @@ void LLAgent::cameraZoomIn(const F32 fraction)
 		}
 	}
 
-	new_distance = llmax(new_distance, min_zoom); */
+	new_distance = llmax(new_distance, min_zoom);
 
 	// Don't zoom too far back
 	const F32 DIST_FUDGE = 16.f; // meters

@@ -715,39 +715,16 @@ BOOL LLToolPie::handleDoubleClick(S32 x, S32 y, MASK mask)
 		else if (mPick.mObjectID.notNull()
 				 && !mPick.mPosGlobal.isExactlyZero())
 		{
-			// Hit an object
-			// HACK: Call the last hit position the point we hit on the object
-			//gLastHitPosGlobal += gLastHitObjectOffset;
+			//Zwagoth: No more teleport to HUD attachments. >:o
+			if(mPick.getObject().notNull() && mPick.getObject()->isHUDAttachment())
+				return FALSE;
+
 			handle_go_to();
 			return TRUE;
 		}
 	}
 
 	return FALSE;
-
-	/* JC - don't do go-there, because then double-clicking on physical
-	objects gets you into trouble.
-
-	// If double-click on object or land, go there.
-	LLViewerObject *object = gViewerWindow->getLastPick().getObject();
-	if (object)
-	{
-		if (object->isAvatar())
-		{
-			LLFloaterAvatarInfo::showFromAvatar(object->getID());
-		}
-		else
-		{
-			handle_go_to(NULL);
-		}
-	}
-	else if (!gLastHitPosGlobal.isExactlyZero())
-	{
-		handle_go_to(NULL);
-	}
-
-	return TRUE;
-	*/
 }
 
 

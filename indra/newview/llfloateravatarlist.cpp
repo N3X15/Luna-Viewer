@@ -796,6 +796,7 @@ void LLFloaterAvatarList::refreshAvatarList()
 		{
 			element["columns"][LIST_AVATAR_ICON]["type"] = "icon";
 			element["columns"][LIST_AVATAR_ICON]["value"] = /*gViewerArt.getString(*/"flag_blue.tga"/*)*/;
+			element["columns"][LIST_AVATAR_ICON]["color"] = gColors.getColor("DefaultListIcon").getValue();
 		}
 
 
@@ -908,7 +909,7 @@ void LLFloaterAvatarList::refreshAvatarList()
 		//if ( PAYMENT_NONE != avinfo.Payment && DATA_UNKNOWN != avinfo_status )
 		if ( !icon.empty() )
 		{
-			element["columns"][LIST_PAYMENT].erase("color");
+			element["columns"][LIST_PAYMENT]["color"] = gColors.getColor("DefaultListIcon").getValue();
 			element["columns"][LIST_PAYMENT]["type"] = "icon";
 			element["columns"][LIST_PAYMENT]["value"] =  icon;
 			//llinfos << "Payment icon: " << payment_icon << llendl;
@@ -956,6 +957,7 @@ void LLFloaterAvatarList::refreshAvatarList()
 		{	
 			element["columns"][LIST_ACTIVITY]["type"] = "icon";
 			element["columns"][LIST_ACTIVITY]["value"] = icon;
+			element["columns"][LIST_ACTIVITY]["color"] = gColors.getColor("DefaultListIcon").getValue();
 			//llinfos << "Activity icon: " << activity_icon << llendl;
 		}
 

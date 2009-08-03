@@ -431,7 +431,6 @@ void LLChatBar::sendChat( EChatType type )
 		LLWString text = mInputEditor->getConvertedText();
 		if (!text.empty())
 		{
-			//TODO: chat as commandline?
 			if(mInputEditor->getText()=="/luareload")
 			{
 				FLLua::init();

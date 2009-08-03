@@ -462,8 +462,8 @@ Leave any command blank to deactivate it.
            max_length="256" mouse_opaque="true"
            tool_tip="" name="EmeraldCmdLineTeleportHome" control_name="EmeraldCmdLineTeleportHome" width="200" />
       <text bottom_delta="-18" follows="left|top" font="SansSerifSmall" height="16" left_delta="0" name="loltxt" width="512">
-        Rez a platform
-(usage: cmd) (ex: cmd)
+        Rez a platform (diam. optional, 0-30m)
+(usage: cmd diameter) (ex: cmd 25)
       </text>
       <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom_delta="-30"
            follows="left|top" font="SansSerifSmall" height="20" left_delta="0"

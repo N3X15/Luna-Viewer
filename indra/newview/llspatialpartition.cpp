@@ -1276,7 +1276,18 @@ void LLSpatialGroup::checkOcclusion()
 			GLuint res = 1;
 			if (!isState(DISCARD_QUERY) && mOcclusionQuery)
 			{
-				glGetQueryObjectuivARB(mOcclusionQuery, GL_QUERY_RESULT_ARB, &res);	
+				//Zwagoth: No more hanging if its not ready.
+				glGetQueryObjectuivARB(mOcclusionQuery, GL_QUERY_RESULT_AVAILABLE_ARB, &res);
+				if(res)
+				{
+					glGetQueryObjectuivARB(mOcclusionQuery, GL_QUERY_RESULT_ARB, &res);
+					clearState(QUERY_PENDING | DISCARD_QUERY);
+				}
+				else
+				{
+					//Zwagoth: Don't change occlusion if it isn't ready.
+					return;
+				}
 			}
 
 			if (res > 0)
@@ -1291,8 +1302,6 @@ void LLSpatialGroup::checkOcclusion()
 				setState(LLSpatialGroup::OCCLUDED, LLSpatialGroup::STATE_MODE_DIFF);
 				assert_states_valid(this);
 			}
-
-			clearState(QUERY_PENDING | DISCARD_QUERY);
 		}
 		else if (mSpatialPartition->isOcclusionEnabled() && isState(LLSpatialGroup::OCCLUDED))
 		{	//check occlusion has been issued for occluded node that has not had a query issued
@@ -1328,16 +1337,20 @@ void LLSpatialGroup::doOcclusion(LLCamera* camera)
 				{
 					buildOcclusion();
 				}
-
-				glBeginQueryARB(GL_SAMPLES_PASSED_ARB, mOcclusionQuery);					
-				glVertexPointer(3, GL_FLOAT, 0, mOcclusionVerts);
-				glDrawRangeElements(GL_TRIANGLE_FAN, 0, 7, 8,
+				
+				//Zwagoth: Don't stack queries if we already have one but are waiting.
+				if(!isState(QUERY_PENDING))
+				{
+					glBeginQueryARB(GL_SAMPLES_PASSED_ARB, mOcclusionQuery);					
+					glVertexPointer(3, GL_FLOAT, 0, mOcclusionVerts);
+					glDrawRangeElements(GL_TRIANGLE_FAN, 0, 7, 8,
 							GL_UNSIGNED_BYTE, get_box_fan_indices(camera, mBounds[0]));
-				glEndQueryARB(GL_SAMPLES_PASSED_ARB);
-			}
+					glEndQueryARB(GL_SAMPLES_PASSED_ARB);
 
-			setState(LLSpatialGroup::QUERY_PENDING);
-			clearState(LLSpatialGroup::DISCARD_QUERY);
+					setState(LLSpatialGroup::QUERY_PENDING);
+					clearState(LLSpatialGroup::DISCARD_QUERY);
+				}
+			}
 		}
 	}
 }
