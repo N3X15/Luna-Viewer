@@ -603,6 +603,7 @@ class LinuxManifest(ViewerManifest):
         super(LinuxManifest, self).construct()
         self.path("licenses-linux.txt","licenses.txt")
         self.path("res/ll_icon.png","secondlife_icon.png")
+	
         if self.prefix("linux_tools", dst=""):
             self.path("client-readme.txt","README-linux.txt")
             self.path("client-readme-voice.txt","README-linux-voice.txt")
@@ -685,6 +686,10 @@ class Linux_i686Manifest(LinuxManifest):
         #self.path("secondlife-i686.supp")
 
         self.path("app_settings/mozilla-runtime-linux-i686")
+	if self.prefix("/usr/lib",dst="lib"):
+            self.path("libotr.so.2.2.0")
+            self.path("libotr.so.2")
+            self.end_prefix("lib")
 
         if self.prefix("../../libraries/i686-linux/lib_release_client", dst="lib"):
 #            self.path("libkdu_v42R.so", "libkdu.so")
@@ -702,18 +707,18 @@ class Linux_i686Manifest(LinuxManifest):
             self.path("libalut.so")
             self.path("libopenal.so", "libopenal.so.1")
             self.path("liblua5.1.so")
-            self.path("libotr.so.2.2.0")
-            self.path("libotr.so.2")
+#            self.path("libotr.so.2.2.0")
+#            self.path("libotr.so.2")
             self.end_prefix("lib")
 
             # Vivox runtimes
-#            if self.prefix(src="vivox-runtime/i686-linux", dst="bin"):
-#                    self.path("SLVoice")
-#                    self.end_prefix()
-#            if self.prefix(src="vivox-runtime/i686-linux", dst="lib"):
-#                    self.path("libortp.so")
-#                    self.path("libvivoxsdk.so")
-#                    self.end_prefix("lib")
+            if self.prefix(src="vivox-runtime/i686-linux", dst="bin"):
+                    self.path("SLVoice")
+                    self.end_prefix()
+            if self.prefix(src="vivox-runtime/i686-linux", dst="lib"):
+                    self.path("libortp.so")
+                    self.path("libvivoxsdk.so")
+                    self.end_prefix("lib")
 
 class Linux_x86_64Manifest(LinuxManifest):
     def construct(self):
