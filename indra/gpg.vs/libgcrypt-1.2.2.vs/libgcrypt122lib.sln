@@ -1,0 +1,21 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libgcrypt122lib", "libgcrypt122lib.vcproj", "{EA46C88E-B365-44BA-89E6-1F199E12F576}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{EA46C88E-B365-44BA-89E6-1F199E12F576}.Debug.ActiveCfg = Debug|Win32
+		{EA46C88E-B365-44BA-89E6-1F199E12F576}.Debug.Build.0 = Debug|Win32
+		{EA46C88E-B365-44BA-89E6-1F199E12F576}.Release.ActiveCfg = Release|Win32
+		{EA46C88E-B365-44BA-89E6-1F199E12F576}.Release.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal
