@@ -2733,6 +2733,7 @@ Versuchen Sie es in einigen Minuten erneut.
 		<form name="form">
 			<button name="Accept" text="Akzeptieren"/>
 			<button name="Decline" text="Ablehnen"/>
+      <button name="Ignore" text="Ignorieren"/>
 		</form>
 	</notification>
 	<notification name="FriendshipAccepted">
@@ -2747,6 +2748,7 @@ Dies erstellt ein Lesezeichen in Ihrem Inventar, damit Sie diesen Einwohner jede
 		<form name="form">
 			<button name="Accept" text="Akzeptieren"/>
 			<button name="Decline" text="Ablehnen"/>
+      <button name="Ignore" text="Ignorieren"/>
 		</form>
 	</notification>
 	<notification name="RegionRestartMinutes">
@@ -2985,6 +2987,32 @@ Klicken Sie auf „Akzeptieren“, um dem Chat beizutreten, oder auf „Ablehnen
 	<notification name="UnableToOpenCommandURL">
 		Die URL, die Sie angeklickt haben, kann in diesem Web Browser nicht geöffnet werden.
 	</notification>
+<notification name="QueryClientTags">
+    Soll die client tag Datenbank automatisch von modularsystems.sl aktuallisiert werden?
+    Damit wird sicher gestellt das sie immer die neuesten Informationen über andere Clients haben.
+    <form name="form">
+      <button name="Yes" text="Ja"/>
+      <button name="No" text="Nein"/>
+    </form>
+  </notification>
+  
+  <notification name="QueryEmeraldOTR">
+    OTR kann ihre Instant Messages verschlüsseln, damit kann ihre Privatssphäre geschützt werden da niemand ausser dem Empfänger ihre Instant Message lesen kann.
+    Da verhindert wird das dritte ihre Nachrichten mitlesen können kann auch Linden Labs diese Nachrichten lesen und damit nicht bestätigen wenn nötig (z.b. Abuse Report).
+    Soll OTR automatisch benutzt werden wenn möglich?
+    <form name="form">
+      <button name="Yes" text="Ja"/>
+      <button name="No" text="Nein"/>
+    </form>
+  </notification>
+  
+  <notification name="BlockedDialogs">
+	Blockierte Dialoge von [FIRST] [LAST]'s Objekt ([KEY])
+  </notification>
+  
+  <notification name="BlockedCards">
+	Blockierte Visitinkarten von [FIRST] [LAST]
+  </notification>
 	<global name="UnsupportedCPU">
 		- Ihre CPU-Geschwindigkeit entspricht nicht den Mindestanforderungen.
 	</global>
@@ -3011,4 +3039,62 @@ Sollte das Problem fortbestehen, finden Sie weitere Hilfestellung unter: http://
 	<global name="PermNo">
 		Nein
 	</global>
+	
+  <notification label="Emerald Help"
+   name="EmeraldHelp_TeleportLogin">
+   Help text will go here, please update notifications.xml
+   the related entries are at the bottom of the file.
+
+   TeleportLogin
+
+  </notification>
+  <notification label="Emerald Help" name="EmeraldHelp_Voice">
+  Help text will go here, please update notifications.xml
+  the related entries are at the bottom of the file.
+
+  Voice
+
+  </notification>
+  <notification label="Emerald Help" name="EmeraldHelp_Shields">
+  Help text will go here, please update notifications.xml
+  the related entries are at the bottom of the file.
+
+  Shields
+
+  </notification>
+  <notification label="Emerald Help" name="EmeraldHelp_IM">
+  Help text will go here, please update notifications.xml
+  the related entries are at the bottom of the file.
+
+  IM
+
+  </notification>
+  <notification label="Emerald Help" name="EmeraldHelp_Misc">
+  Help text will go here, please update notifications.xml
+  the related entries are at the bottom of the file.
+
+  Misc
+
+  </notification>
+  <notification label="Emerald Help" name="EmeraldHelp_CmdLine">
+  Help text will go here, please update notifications.xml
+  the related entries are at the bottom of the file.
+
+  CmdLine
+
+  </notification>
+  <notification label="Emerald Help" name="EmeraldHelp_Avatar">
+  Help text will go here, please update notifications.xml
+  the related entries are at the bottom of the file.
+
+  Avatar
+
+  </notification>
+  <notification label="Emerald Help" name="EmeraldHelp_Build">
+  Help text will go here, please update notifications.xml
+  the related entries are at the bottom of the file.
+
+  Build
+
+  </notification>
 </notifications>

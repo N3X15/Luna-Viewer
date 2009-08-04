@@ -10,6 +10,7 @@
 			<menu_item_separator label="-----------" name="separator"/>
 			<menu_item_call label="Standard-Berechtigungen einstellen..." name="perm prefs"/>
 		</menu>
+		<menu_item_call label="Importiere Linkset" name="Import Linkset"/>
 		<menu_item_separator label="-----------" name="separator"/>
 		<menu_item_call label="Fenster schließen" name="Close Window"/>
 		<menu_item_call label="Alle Fenster schließen" name="Close All Windows"/>
@@ -75,6 +76,7 @@
 		<menu_item_check label="Inventar" name="Inventory"/>
 		<menu_item_check label="Aktive Sprecher" name="Active Speakers"/>
 		<menu_item_check label="Stummschalten-Liste" name="Mute List"/>
+    <menu_item_check label="Teleport Verlauf" name="Teleport History"/>
 		<menu_item_separator label="-----------" name="separator2"/>
 		<menu_item_check label="Kamerasteuerung" name="Camera Controls"/>
 		<menu_item_check label="Bewegungssteuerung" name="Movement Controls"/>
@@ -93,8 +95,26 @@
 			<menu_item_check label="Tipps zu allen Objekten" name="Tips On All Objects"/>
 		</menu>
 		<menu_item_check label="Durchsichtig hervorheben" name="Highlight Transparent"/>
-		<menu_item_check label="Beacons" name="beacons"/>
-		<menu_item_check label="Partikel ausblenden" name="Hide Particles"/>
+		<menu_item_check label="Beacons Always On" name="Beacons immer an"/>
+		<menu label="Beacons" name="Beacons">
+			<menu_item_check label="Nur Objekte mit Touch Script" name="Scripted Objects With Touch Only"/>
+			<menu_item_check label="Objekte mit Script" name="Scripted Objects"/>
+			<menu_item_check label="physikalische Objekte" name="Physical Objects"/>
+			<menu_item_check label="Sound Quellen" name="Sound Sources"/>
+			<menu_item_check label="Particle Sources" name="Particle Sources"/>
+			<menu_item_separator label="-----------" name="separator"/>
+			<menu_item_check label="Render Highlights" name="Render Highlights"/>
+			<menu_item_check label="Render Beacons" name="Render Beacons"/>
+			<menu_item_separator label="-----------" name="separator2"/>
+			<menu_item_check label="Partikel ausblenden" name="Hide Particles"/>
+			<menu_item_separator label="-----------" name="separator3"/>
+			<menu label="Beacon Breite" name="Beacon Width">
+				<menu_item_call label="1" name="Beacon Width 1"/>
+				<menu_item_call label="4" name="Beacon Width 4"/>
+				<menu_item_call label="16" name="Beacon Width 16"/>
+				<menu_item_call label="32" name="Beacon Width 32"/>
+			</menu>
+		</menu>
 		<menu_item_check label="HUD-Anhänge anzeigen" name="Show HUD Attachments"/>
 		<menu_item_separator label="-----------" name="separator5"/>
 		<menu_item_call label="Hinein zoomen" name="Zoom In"/>
@@ -117,6 +137,7 @@
 		<menu_item_call label="Als abwesend anzeigen" name="Set Away"/>
 		<menu_item_call label="Als beschäftigt anzeigen" name="Set Busy"/>
 		<menu_item_call label="Avatar nicht mehr animieren" name="Stop Animating My Avatar"/>
+    <menu_item_check label="Animation Liste" name="Animation List"/>
 		<menu_item_call label="Tasten freigeben" name="Release Keys"/>
 		<menu_item_separator label="-----------" name="separator4"/>
 		<menu_item_call label="Kontostatistik..." name="Account History...">
@@ -140,6 +161,9 @@
 			<menu_item_call label="Auf Regionsstandard zurücksetzen" name="Revert to Region Default"/>
 			<menu_item_separator label="-----------" name="separator"/>
 			<menu_item_call label="Umwelt-Editor" name="Environment Editor"/>
+      <menu_item_call label="Himmel-Editor" name="Sky Settings"/>
+			<menu_item_call label="Wasser-Editor" name="Water Settings"/>
+      <menu_item_call label="Tagesrhytmus" name="Day Cycle"/>
 		</menu>
 	</menu>
 	<menu label="Werkzeug" name="Tools">
@@ -154,6 +178,7 @@
 		<menu_item_check label="Nur meine Objekte auswählen" name="Select Only My Objects"/>
 		<menu_item_check label="Nur bewegliche Objekte auswählen" name="Select Only Movable Objects"/>
 		<menu_item_check label="Nach Umgebung auswählen" name="Select By Surrounding"/>
+    <menu_item_check label="Zeige Auswahl Aussenlinien" name="Show Selection Outlines"/>
 		<menu_item_check label="Ausgeblendete Auswahl anzeigen" name="Show Hidden Selection"/>
 		<menu_item_check label="Lichtradius für Auswahl anzeigen" name="Show Light Radius for Selection"/>
 		<menu_item_check label="Auswahlstrahl anzeigen" name="Show Selection Beam"/>
@@ -198,22 +223,27 @@
 		<menu_item_call label="Rempler, Stöße und Schläge..." name="Bumps, Pushes &amp;amp; Hits..."/>
 		<menu_item_call label="Lag-Anzeige" name="Lag Meter"/>
 		<menu_item_separator label="-----------" name="separator7"/>
-		<menu label="Fehlermeldungen" name="Bug Reporting">
-			<menu_item_call label="Allgemeiner Probleme-Tracker..." name="Public Issue Tracker..."/>
-			<menu_item_call label="Hilfe zum Allgemeinen Probleme-Tracker..." name="Publc Issue Tracker Help...">
-				<on_click name="PublicIssueTrackerHelp_url" userdata="WebLaunchPublicIssueHelp,http://wiki.secondlife.com/wiki/Issue_tracker/de" />
-			</menu_item_call>
-			<menu_item_separator label="-----------" name="separator7"/>
-			<menu_item_call label="Fehlermeldungs-1x1..." name="Bug Reporing 101...">
-				<on_click name="BugReporting101_url" userdata="WebLaunchBugReport101,http://wiki.secondlife.com/wiki/Bug_Reporting_101/de"/>
-			</menu_item_call>
-			<menu_item_call label="Sicherheitsfragen..." name="Security Issues...">
-				<on_click name="SecurityIssues_url" userdata="WebLaunchSecurityIssues,http://wiki.secondlife.com/wiki/Security_issues/de"/>
-			</menu_item_call>
-			<menu_item_call label="QA-Wiki..." name="QA Wiki..."/>
-			<menu_item_separator label="-----------" name="separator9"/>
-			<menu_item_call label="Fehler melden..." name="Report Bug..."/>
-		</menu>
 		<menu_item_call label="Über Second Life..." name="About Second Life..."/>
+	</menu>
+	<menu label="Emerald" name="Emerald">
+		<tearoff_menu label="~~~~~~~~~~~" name="~~~~~~~~~~~" />
+		<menu_item_check label="Phantom" name="Phantom"/>
+		<menu_item_call label="Auf Boden sitzen" name="Ground Sit"/>
+		<menu_item_separator label="-----------" name="separator1"/>
+		<menu_item_check label="Doppelklick Auto-Pilot" name="Double-Click Auto-Pilot"/>
+		<menu_item_check label="Doppelklick Teleport" name="DoubleClick Teleports"/>
+		<menu_item_check label="Zeige Blickziel" name="show LookAt" width="155"/>
+    <menu_item_check label="Lösche Effekte" name="cleareffects"/>
+		<menu_item_separator label="-----------" name="separator1"/>
+		<menu_item_check label="Rainbow Beam" name="Rainbow Beam"/>
+		<menu_item_check label="SL Particle Chat" name="SL Particle Chat"/>
+		<menu_item_check label="Radar Chat" name="Radar Chat"/>
+		<menu_item_check label="Advanced anzeigen" name="Show Advanced"/>
+		<menu_item_separator label="-----------" name="separator2"/>
+    <menu_item_check label="Animations Liste" name="Animation List"/>
+		<menu_item_check label="Objekt Suche" name="Area Search"/>
+		<menu_item_check label="Avatar Liste" name="Avatar List"/>
+		<menu_item_check label="Teleport Verlauf" name="Teleport History"/>
+		<menu_item_check label="Lua Konsole" name="Lua Console"/>
 	</menu>
 </menu_bar>

@@ -26,6 +26,8 @@
 	<color_swatch label="Eigentümer" name="owner" width="58"/>
 	<color_swatch label="Blase" left_delta="62" name="background"/>
 	<color_swatch label="URLs" name="links"/>
+  <text name="EmeraldEncrypted">Encrypted</text>
+	<color_swatch label="" name="encrypted"/>	
 	<text length="1" name="text_box3" type="string">
 		Chat-Konsole:
 	</text>

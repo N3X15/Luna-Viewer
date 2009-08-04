@@ -71,6 +71,8 @@ Objekte, die Sie gerade tragen.
 	<text type="string" length="1" name="Items to include in outfit:">
 		Objekte für Outfit:
 	</text>
+  <button label="Alle auswählen" name="Check All"/>
+  <button label="Alle abwählen" name="Uncheck All"/>
 	<text type="string" length="1" name="Body Parts:">
 		Körperteile:
 	</text>

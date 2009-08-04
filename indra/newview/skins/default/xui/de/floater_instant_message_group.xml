@@ -5,6 +5,7 @@
 			<button label="Gruppeninfo" name="group_info_btn" width="85"/>
 			<button label="Gespräch beitreten" left_delta="90" name="start_call_btn" width="145"/>
 			<button halign="center" label="Anruf beenden" name="end_call_btn" width="145"/>
+			<line_editor label="Passwort" name="password"/>
 			<button label="&lt; &lt;" label_selected="&gt; &gt;" name="toggle_active_speakers_btn" tool_tip="Klicken Sie hier um eine Liste der aktiven Teilnehmer dieser IM-Sitzung anzuzeigen."/>
 			<line_editor label="Für Instant Message hier klicken" name="chat_editor"/>
 			<button label="Senden" name="send_btn"/>

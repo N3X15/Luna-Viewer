@@ -101,6 +101,13 @@
 				Thrax Linden
 			</text>
 			<button label="Profil..." label_selected="Profil..." name="button owner profile"/>
+      <text name="LastOwner:">
+        Vorbesitzer:
+      </text>
+      <text name="Last Owner Name">
+        Thrax Linden
+      </text>
+			<button label="Profil..." label_selected="Profil..." name="button last owner profile" />
 			<text name="Group:">
 				Gruppe:
 			</text>
@@ -172,6 +179,7 @@
 					Parzellenmedien öffnen
 				</combo_item>
 			</combo_box>
+    <button label="UUID kopieren" label_selected="UUID kopieren" name="button cpy_key" tool_tip="Kopiert die UUID in die Zwischenablage."/>
 			<text name="B:">
 				B:
 			</text>
@@ -304,6 +312,50 @@
 				<combo_item name="Sculpted">
 					Geformt
 				</combo_item>
+        <combo_item name="PathLineProfileHalfCircle">
+          Linie->Halb-Kreis
+        </combo_item>
+        <combo_item name="PathCircleProfileHalfCircle">
+          Kreis->Halb-Kreis
+        </combo_item>
+        <combo_item name="PathCircle2ProfileSquare">
+          Kreis->Quadrat
+        </combo_item>
+        <combo_item name="PathCircle2ProfileTriangle">
+          Kreis2->Dreieck
+        </combo_item>
+        <combo_item name="PathCircle2ProfileCircle">
+          Kreis2->Kreis
+        </combo_item>
+        <combo_item name="PathCircle2ProfileHalfCircle">
+          Kreis2->Halb-Kreis
+        </combo_item>
+        <combo_item name="PathTestProfileSquare">
+          Test->Quadrat
+        </combo_item>
+        <combo_item name="PathTestProfileTriangle">
+          Test->Dreieck
+        </combo_item>
+        <combo_item name="PathTestProfileCircle">
+          Test->Kreis
+        </combo_item>
+        <combo_item name="PathTestProfileHalfCircle">
+          Test->Halb-Kreis
+        </combo_item>
+		<!-- Working33 by Gregory Maurer -->
+		<combo_item name="Path33Profile0">
+			33->Kreis
+		</combo_item>
+		<combo_item name="Path33Profile1">
+			33->Quadrat
+		</combo_item>
+		<combo_item name="Path33Profile2">
+			33->Dreieck
+		</combo_item>
+		<combo_item name="Path33Profile5">
+			33->Halb-Kreis
+		</combo_item>
+		<!-- End Working33 by Gregory Maurer -->
 			</combo_box>
 			<text left="115" name="text cut" width="146">
 				Pfadschnitt Beginn und Ende
@@ -380,7 +432,7 @@
 Primitiv" name="sculpt texture control" tool_tip="Klicken Sie hier, um ein Bild auszuwählen"/>
 			<check_box bottom_delta="-34" label="Spiegeln" name="sculpt mirror control" tool_tip="Geformtes Primitiv entlang der X-Achse spiegeln."/>
 			<check_box label="Wenden" name="sculpt invert control" tool_tip="Dreht die Normalen des geformten Primitivs von innen nach außen."/>
-			<text name="label sculpt type">
+			<text name="label_sculpt_type">
 				Naht
 			</text>
 			<combo_box name="sculpt type control">

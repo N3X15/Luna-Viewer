@@ -21,6 +21,9 @@ Bewegen Sie die Maus über die Optionen, um weitere Informationen anzuzeigen.
 	<text left_delta="79" name="founder_name">
 		(wartet)
 	</text>
+  <text name="emerald_guuid-pre">
+		Gruppe UUID:
+	</text>
 	<text name="group_charter_label">
 		Gruppencharta
 	</text>

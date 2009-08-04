@@ -162,4 +162,6 @@ Maximal erlaubt sind [MAX_LENGTH] Sekunden.
 
 [STATUS]
 	</string>
+	<check_box label="Alle Animationen stoppen" left="10" name="EmeraldAnimPreview_StopAnim" tool_tip="Stoppt alle Animationen." />
+	<text name="AnimPrevLocation">Die Vorschau wird inworld angezeigt.</text>
 </floater>

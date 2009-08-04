@@ -1,9 +1,42 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <floater name="Inventory" title="Inventar">
 	<search_editor label="Suchanfrage hier eintippen" name="inventory search editor" />
+<text name="group_titles_textbox">Quick Filter:</text>
+  <!-- Inventory Type Filter Labels -->
+  <string name="filter_type_all">Alle Arten</string>
+  <string name="filter_type_animation">Animationen</string>
+  <string name="filter_type_callingcard">Visitenkarten</string>
+  <string name="filter_type_wearable">Kleidung / Körperteil</string>
+  <string name="filter_type_gesture">Gesturen</string>
+  <string name="filter_type_landmark">Landmark</string>
+  <string name="filter_type_notecard">Notecard</string>
+  <string name="filter_type_object">Objekte</string>
+  <string name="filter_type_script">Scripte</string>
+  <string name="filter_type_sound">Sound</string>
+  <string name="filter_type_texture">Texturen</string>
+  <string name="filter_type_snapshot">Snapshots</string>
+  <string name="filter_type_custom">Custom...</string>
+  <combo_box name="Quick Filter" label="Quick Filter" follows="left|top" height="20" left="80" width="150" bottom_delta="0">
+    <combo_item name="filter_type_all">Alle Arten</combo_item>
+    <separator />
+    <combo_item name="filter_type_animation">Animationen</combo_item>
+    <combo_item name="filter_type_callingcard">Visitenkarten</combo_item>
+    <combo_item name="filter_type_wearable">Kleidung / Körperteil</combo_item>
+    <combo_item name="filter_type_gesture">Gesturen</combo_item>
+    <combo_item name="filter_type_landmark">Landmark</combo_item>
+    <combo_item name="filter_type_notecard">Notecard</combo_item>
+    <combo_item name="filter_type_object">Objekte</combo_item>
+    <combo_item name="filter_type_script">Scripte</combo_item>
+    <combo_item name="filter_type_sound">Sound</combo_item>
+    <combo_item name="filter_type_texture">Texturen</combo_item>
+    <combo_item name="filter_type_snapshot">Snapshots</combo_item>
+    <separator />
+    <combo_item name="filter_type_custom">Custom...</combo_item>
+  </combo_box>
 	<tab_container name="inventory filter tabs">
 		<inventory_panel label="Alle Objekte" name="All Items" />
 		<inventory_panel label="Letzte Objekte" name="Recent Items" />
+    <inventory_panel label="Angezogen" name="Worn Items"/>
 	</tab_container>
 	<menu_bar name="Inventory Menu">
 		<menu label="Datei" name="File">

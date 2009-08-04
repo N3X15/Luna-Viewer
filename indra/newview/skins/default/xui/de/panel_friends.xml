@@ -38,4 +38,6 @@
 	     tool_tip="Diese Person von Ihrer Freundesliste entfernen" />
 	<button label="Hinzufügen" name="add_btn"
 	     tool_tip="Bieten Sie einem Einwohner die Freundschaft an" />
+  <button label="Import" name="import_btn" tool_tip="Importiert Freunde von Festplatte"/>
+  <button label="Export" name="export_btn" tool_tip="Export Freunde auf die Festplatte"/>
 </panel>
