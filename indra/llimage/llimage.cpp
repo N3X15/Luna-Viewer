@@ -55,13 +55,9 @@ std::string LLImage::sLastErrorMessage;
 LLMutex* LLImage::sMutex = NULL;
 
 //static
-void LLImage::initClass(LLWorkerThread* workerthread)
+void LLImage::initClass()
 {
 	sMutex = new LLMutex(NULL);
-	if (workerthread)
-	{
-		LLImageWorker::initImageWorker(workerthread);
-	}
 	LLImageJ2C::openDSO();
 }
 
@@ -69,7 +65,6 @@ void LLImage::initClass(LLWorkerThread* workerthread)
 void LLImage::cleanupClass()
 {
 	LLImageJ2C::closeDSO();
-	LLImageWorker::cleanupImageWorker();
 	delete sMutex;
 	sMutex = NULL;
 }
@@ -1514,7 +1509,7 @@ BOOL LLImageFormatted::load(const std::string &filename)
 
 	S32 file_size = 0;
 	LLAPRFile infile ;
-	infile.open(filename, LL_APR_RB, NULL, &file_size);
+	infile.open(filename, LL_APR_RB, LLAPRFile::global, &file_size);
 	apr_file_t* apr_file = infile.getFileHandle();
 	if (!apr_file)
 	{
@@ -1550,7 +1545,7 @@ BOOL LLImageFormatted::save(const std::string &filename)
 	resetLastError();
 
 	LLAPRFile outfile ;
-	outfile.open(filename, LL_APR_WB);
+	outfile.open(filename, LL_APR_WB, LLAPRFile::global);
 	if (!outfile.getFileHandle())
 	{
 		setLastError("Unable to open file for writing", filename);
