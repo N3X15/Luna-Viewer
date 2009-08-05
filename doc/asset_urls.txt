@@ -1,8 +1,5 @@
-# For building instructions:
-# https://wiki.secondlife.com/wiki/Get_source_and_compile
-
-SLASSET_MD5=http://secondlife.com/developers/opensource/downloads/2009/06/md5sums-viewer-1.23.4-r124025.txt
-SLASSET_ART=http://secondlife.com/developers/opensource/downloads/2009/06/slviewer-artwork-viewer-1.23.4-r124025.zip
-SLASSET_LIBS_DARWIN=http://secondlife.com/developers/opensource/downloads/2009/06/slviewer-darwin-libs-viewer-1.23.4-r124025.tar.gz
-SLASSET_LIBS_WIN32=http://secondlife.com/developers/opensource/downloads/2009/06/slviewer-win32-libs-viewer-1.23.4-r124025.zip
-SLASSET_LIBS_LINUXI386=http://secondlife.com/developers/opensource/downloads/2009/06/slviewer-linux-libs-viewer-1.23.4-r124025.tar.gz
+SLASSET_LIBS_WIN32=http://automated-builds-secondlife-com.s3.amazonaws.com/oss-viewer/slviewer-win32-libs-oss-viewer-1.23.4.126183.zip
+SLASSET_LIBS_DARWIN=http://automated-builds-secondlife-com.s3.amazonaws.com/oss-viewer/slviewer-darwin-libs-oss-viewer-1.23.4.126183.tar.gz
+SLASSET_ART=http://automated-builds-secondlife-com.s3.amazonaws.com/oss-viewer/slviewer-artwork-oss-viewer-1.23.4.126183.zip
+SLASSET_LIBS_LINUXI386=http://automated-builds-secondlife-com.s3.amazonaws.com/oss-viewer/slviewer-linux-libs-oss-viewer-1.23.4.126183.tar.gz
+SLASSET_MD5=http://automated-builds-secondlife-com.s3.amazonaws.com/oss-viewer/md5sums-oss-viewer-1.23.4.126183.txt

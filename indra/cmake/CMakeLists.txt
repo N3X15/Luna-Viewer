@@ -20,6 +20,7 @@ set(cmake_SOURCE_FILES
     CSharpMacros.cmake
     DBusGlib.cmake
     DirectX.cmake
+    DownloadPrebuilt.cmake.in
     ELFIO.cmake
     EXPAT.cmake
     FindAPR.cmake
@@ -30,6 +31,7 @@ set(cmake_SOURCE_FILES
     FindMono.cmake
     FindMT.cmake
     FindMySQL.cmake
+    FindNDOF.cmake
     FindOpenJPEG.cmake
     FindXmlRpcEpi.cmake
     FMOD.cmake
@@ -77,6 +79,7 @@ set(cmake_SOURCE_FILES
     UI.cmake
     UnixInstall.cmake
     Variables.cmake
+    Versions.cmake
     XmlRpcEpi.cmake
     ZLIB.cmake
     )

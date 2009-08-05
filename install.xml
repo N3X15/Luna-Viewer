@@ -146,9 +146,9 @@
           <key>windows</key>
           <map>
             <key>md5sum</key>
-            <string>6a53b02a07527de680f1336e20f74f08</string>
+            <string>70b51d0cc93c305026e4e2778cde6d19</string>
             <key>url</key>
-            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/ares-1.4.0-windows-20080723.tar.bz2</uri>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/ares-1.6.0-windows-20090722.tar.bz2</uri>
           </map>
         </map>
       </map>
@@ -195,9 +195,9 @@
           <key>windows</key>
           <map>
             <key>md5sum</key>
-            <string>286cca0d0fc3fb301b158672fb6465f6</string>
+            <string>d2b2ad9b46b9981c2a6be7c912bd17b4</string>
             <key>url</key>
-            <uri>http://www.lawlinter.net/data/boost-1.36.0-windows-20090626.tar.bz2</uri>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/boost-1.34.1-windows-20080723.tar.bz2</uri>
           </map>
         </map>
       </map>
@@ -235,9 +235,9 @@
           <key>windows</key>
           <map>
             <key>md5sum</key>
-            <string>d391c33898a5dbc7e7537bf0d9cda36e</string>
+            <string>f6cb20db3ace7f6f25053b7a97b797f4</string>
             <key>url</key>
-            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/curl-7.18.1-windows-20080723.tar.bz2</uri>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/curl-7.19.6-windows-20090722.tar.bz2</uri>
           </map>
         </map>
       </map>
@@ -731,6 +731,33 @@ anguage Infrstructure (CLI) international standard</string>
           </map>
         </map>
       </map>
+      <key>libopenmetaverse</key>
+      <map>
+        <key>packages</key>
+        <map>
+          <key>darwin</key>
+          <map>
+            <key>md5sum</key>
+            <string>2e5fb311d9de8714f352cf9448fa4e04</string>
+            <key>url</key>
+            <uri>scp:install-packages.lindenlab.com:/local/www/install-packages/doc/libopenmetaverse-0.6.1.1-darwin-20090429.tar.bz2</uri>
+          </map>
+          <key>linux</key>
+          <map>
+            <key>md5sum</key>
+            <string>2e5fb311d9de8714f352cf9448fa4e04</string>
+            <key>url</key>
+            <uri>scp:install-packages.lindenlab.com:/local/www/install-packages/doc/libopenmetaverse-0.6.1.1-linux64-20090429.tar.bz2</uri>
+          </map>
+          <key>windows</key>
+          <map>
+            <key>md5sum</key>
+            <string>2e5fb311d9de8714f352cf9448fa4e04</string>
+            <key>url</key>
+            <uri>scp:install-packages.lindenlab.com:/local/www/install-packages/doc/libopenmetaverse-0.6.1.1-windows-20090429.tar.bz2</uri>
+          </map>
+        </map>
+      </map>
       <key>libpng</key>
       <map>
         <key>copyright</key>
@@ -784,9 +811,9 @@ anguage Infrstructure (CLI) international standard</string>
           <key>linux</key>
           <map>
             <key>md5sum</key>
-            <string>b5cc6062bd2f7421f606f7e1a5228829</string>
+            <string>91b194aed4b38bc23493b198009a8c6a</string>
             <key>url</key>
-            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/libuuid-linux-20080812.tar.bz2</uri>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/libuuid-linux-20090417.tar.bz2</uri>
           </map>
         </map>
       </map>
@@ -893,6 +920,13 @@ anguage Infrstructure (CLI) international standard</string>
             <string>df27f2db244ea2762759a06cd75ada4e</string>
             <key>url</key>
             <uri>scp:install-packages.lindenlab.com:/local/www/install-packages/doc/mysql-darwin-20080812.tar.bz2</uri>
+          </map>
+          <key>linux</key>
+          <map>
+            <key>md5sum</key>
+            <string>cc86b4cc858655e23704d1168325d7b9</string>
+            <key>url</key>
+            <uri>scp:install-packages.lindenlab.com:/local/www/install-packages/doc/mysqlclient-linux-20090320.tar.bz2</uri>
           </map>
           <key>windows</key>
           <map>
@@ -1025,9 +1059,9 @@ anguage Infrstructure (CLI) international standard</string>
           <key>darwin</key>
           <map>
             <key>md5sum</key>
-            <string>f30b851e089108978c8218295a405159</string>
+            <string>a0757244e3e6688fde2ffeea35cc1f96</string>
             <key>url</key>
-            <uri>http://thomas.shikami.mooo.com/install_pkgs/openal-darwin-20090418.tar.bz2</uri>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/openal-darwin-20080924.tar.bz2</uri>
           </map>
           <key>linux</key>
           <map>
@@ -1046,9 +1080,9 @@ anguage Infrstructure (CLI) international standard</string>
           <key>windows</key>
           <map>
             <key>md5sum</key>
-            <string>862c0ac57efd92c285e35f96f1c80875</string>
+            <string>a0757244e3e6688fde2ffeea35cc1f96</string>
             <key>url</key>
-            <uri>http://www.lawlinter.net/data/openal-windows-20090423.tar.bz2</uri>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/openal-windows-20080924.tar.bz2</uri>
           </map>
         </map>
       </map>
@@ -1273,9 +1307,9 @@ anguage Infrstructure (CLI) international standard</string>
           <key>linux</key>
           <map>
             <key>md5sum</key>
-            <string>806637b1834825ab8888d5e487085df8</string>
+            <string>1804b54034ef7f82832506a44acb06b8</string>
             <key>url</key>
-            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/zlib-1.1.4-linux-20080818.tar.bz2</uri>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/zlib-1.2.3-linux-20090603.tar.bz2</uri>
           </map>
           <key>linux64</key>
           <map>
