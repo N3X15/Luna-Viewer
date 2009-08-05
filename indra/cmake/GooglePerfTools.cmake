@@ -4,9 +4,7 @@ include(Prebuilt)
 if (STANDALONE)
   include(FindGooglePerfTools)
 else (STANDALONE)
-  if (LINUX)
-    use_prebuilt_binary(google)
-  endif (LINUX)
+  use_prebuilt_binary(google)
   if (WINDOWS)
     set(TCMALLOC_LIBRARIES 
         debug libtcmalloc_minimal-debug

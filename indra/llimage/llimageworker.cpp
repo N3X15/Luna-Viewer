@@ -37,138 +37,152 @@
 
 //----------------------------------------------------------------------------
 
-// MAIN THREAD
-LLImageDecodeThread::LLImageDecodeThread(bool threaded)
-	: LLQueuedThread("imagedecode", threaded)
+//static
+LLWorkerThread* LLImageWorker::sWorkerThread = NULL;
+S32 LLImageWorker::sCount = 0;
+
+//static
+void LLImageWorker::initImageWorker(LLWorkerThread* workerthread)
 {
-	mCreationMutex = new LLMutex(getAPRPool());
+	sWorkerThread = workerthread;
 }
 
-// MAIN THREAD
-// virtual
-S32 LLImageDecodeThread::update(U32 max_time_ms)
-{
-	LLMutexLock lock(mCreationMutex);
-	for (creation_list_t::iterator iter = mCreationList.begin();
-		 iter != mCreationList.end(); ++iter)
-	{
-		creation_info& info = *iter;
-		ImageRequest* req = new ImageRequest(info.handle, info.image,
-											 info.priority, info.discard, info.needs_aux,
-											 info.responder);
-		addRequest(req);
-	}
-	mCreationList.clear();
-	S32 res = LLQueuedThread::update(max_time_ms);
-	return res;
-}
-
-LLImageDecodeThread::handle_t LLImageDecodeThread::decodeImage(LLImageFormatted* image, 
-	U32 priority, S32 discard, BOOL needs_aux, Responder* responder)
-{
-	LLMutexLock lock(mCreationMutex);
-	handle_t handle = generateHandle();
-	mCreationList.push_back(creation_info(handle, image, priority, discard, needs_aux, responder));
-	return handle;
-}
-
-// Used by unit test only
-// Returns the size of the mutex guarded list as an indication of sanity
-S32 LLImageDecodeThread::tut_size()
-{
-	LLMutexLock lock(mCreationMutex);
-	S32 res = mCreationList.size();
-	return res;
-}
-
-LLImageDecodeThread::Responder::~Responder()
+//static
+void LLImageWorker::cleanupImageWorker()
 {
 }
 
 //----------------------------------------------------------------------------
 
-LLImageDecodeThread::ImageRequest::ImageRequest(handle_t handle, LLImageFormatted* image, 
-												U32 priority, S32 discard, BOOL needs_aux,
-												LLImageDecodeThread::Responder* responder)
-	: LLQueuedThread::QueuedRequest(handle, priority, FLAG_AUTO_COMPLETE),
+LLImageWorker::LLImageWorker(LLImageFormatted* image, U32 priority,
+							 S32 discard,
+							 LLPointer<LLResponder> responder)
+	: LLWorkerClass(sWorkerThread, "Image"),
 	  mFormattedImage(image),
+	  mDecodedType(-1),
 	  mDiscardLevel(discard),
-	  mNeedsAux(needs_aux),
-	  mDecodedRaw(FALSE),
-	  mDecodedAux(FALSE),
+	  mPriority(priority),
 	  mResponder(responder)
 {
+	++sCount;
 }
 
-LLImageDecodeThread::ImageRequest::~ImageRequest()
+LLImageWorker::~LLImageWorker()
 {
-	mDecodedImageRaw = NULL;
-	mDecodedImageAux = NULL;
+	mDecodedImage = NULL;
 	mFormattedImage = NULL;
+	--sCount;
+}
+
+//----------------------------------------------------------------------------
+
+//virtual, main thread
+void LLImageWorker::startWork(S32 param)
+{
+	llassert_always(mDecodedImage.isNull());
+	mDecodedType = -1;
+}
+
+bool LLImageWorker::doWork(S32 param)
+{
+	bool decoded = false;
+	if(mDecodedImage.isNull())
+	{
+		if (!mFormattedImage->updateData())
+		{
+			mDecodedType = -2; // failed
+			return true;
+		}
+		if (mDiscardLevel >= 0)
+		{
+			mFormattedImage->setDiscardLevel(mDiscardLevel);
+		}
+		if (!(mFormattedImage->getWidth() * mFormattedImage->getHeight() * mFormattedImage->getComponents()))
+		{
+			decoded = true; // failed
+		}
+		else
+		{
+			mDecodedImage = new LLImageRaw(); // allow possibly smaller size set during decoding
+		}
+	}
+	if (!decoded)
+	{
+		if (param == 0)
+		{
+			// Decode primary channels
+			decoded = mFormattedImage->decode(mDecodedImage, .1f); // 1ms
+		}
+		else
+		{
+			// Decode aux channel
+			decoded = mFormattedImage->decodeChannels(mDecodedImage, .1f, param, param); // 1ms
+		}
+	}
+	if (decoded)
+	{
+		// Call the callback immediately; endWork doesn't get called until ckeckWork
+		if (mResponder.notNull())
+		{
+			bool success = (!wasAborted() && mDecodedImage.notNull() && mDecodedImage->getDataSize() != 0);
+			mResponder->completed(success);
+		}
+	}
+	return decoded;
+}
+
+void LLImageWorker::endWork(S32 param, bool aborted)
+{
+	if (mDecodedType != -2)
+	{
+		mDecodedType = aborted ? -2 : param;
+	}
 }
 
 //----------------------------------------------------------------------------
 
 
-// Returns true when done, whether or not decode was successful.
-bool LLImageDecodeThread::ImageRequest::processRequest()
+BOOL LLImageWorker::requestDecodedAuxData(LLPointer<LLImageRaw>& raw, S32 channel, S32 discard)
 {
-	const F32 decode_time_slice = .1f;
-	bool done = true;
-	if (!mDecodedRaw && mFormattedImage.notNull())
+	// For most codecs, only mDiscardLevel data is available.
+	//  (see LLImageDXT for exception)
+	if (discard >= 0 && discard != mFormattedImage->getDiscardLevel())
 	{
-		// Decode primary channels
-		if (mDecodedImageRaw.isNull())
-		{
-			// parse formatted header
-			if (!mFormattedImage->updateData())
-			{
-				return true; // done (failed)
-			}
-			if (!(mFormattedImage->getWidth() * mFormattedImage->getHeight() * mFormattedImage->getComponents()))
-			{
-				return true; // done (failed)
-			}
-			if (mDiscardLevel >= 0)
-			{
-				mFormattedImage->setDiscardLevel(mDiscardLevel);
-			}
-			mDecodedImageRaw = new LLImageRaw(mFormattedImage->getWidth(),
-											  mFormattedImage->getHeight(),
-											  mFormattedImage->getComponents());
-		}
-		done = mFormattedImage->decode(mDecodedImageRaw, decode_time_slice); // 1ms
-		mDecodedRaw = done;
+		llerrs << "Request for invalid discard level" << llendl;
 	}
-	if (done && mNeedsAux && !mDecodedAux && mFormattedImage.notNull())
+	checkWork();
+	if (mDecodedType == -2)
 	{
-		// Decode aux channel
-		if (!mDecodedImageAux)
-		{
-			mDecodedImageAux = new LLImageRaw(mFormattedImage->getWidth(),
-											  mFormattedImage->getHeight(),
-											  1);
-		}
-		done = mFormattedImage->decodeChannels(mDecodedImageAux, decode_time_slice, 4, 4); // 1ms
-		mDecodedAux = done;
+		return TRUE; // aborted, done
 	}
-
-	return done;
+	if (mDecodedType != channel)
+	{
+		if (!haveWork())
+		{
+			addWork(channel, mPriority);
+		}
+		return FALSE;
+	}
+	else
+	{
+		llassert_always(!haveWork());
+		llassert_always(mDecodedType == channel);
+		raw = mDecodedImage; // smart pointer acquires ownership of data
+		mDecodedImage = NULL;
+		return TRUE;
+	}
 }
 
-void LLImageDecodeThread::ImageRequest::finishRequest(bool completed)
+BOOL LLImageWorker::requestDecodedData(LLPointer<LLImageRaw>& raw, S32 discard)
 {
-	if (mResponder.notNull())
+	if (mFormattedImage->getCodec() == IMG_CODEC_DXT)
 	{
-		bool success = completed && mDecodedRaw && (!mNeedsAux || mDecodedAux);
-		mResponder->completed(success, mDecodedImageRaw, mDecodedImageAux);
+		// special case
+		LLImageDXT* imagedxt = (LLImageDXT*)((LLImageFormatted*)mFormattedImage);
+		return imagedxt->getMipData(raw, discard);
 	}
-	// Will automatically be deleted
-}
-
-// Used by unit test only
-// Checks that a responder exists for this instance so that something can happen when completion is reached
-bool LLImageDecodeThread::ImageRequest::tut_isOK()
-{
-	return mResponder.notNull();
+	else
+	{
+		return requestDecodedAuxData(raw, 0, discard);
+	}
 }

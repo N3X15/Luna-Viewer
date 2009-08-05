@@ -99,6 +99,7 @@ void info_callback(const char* msg, void*)
 
 LLImageJ2COJ::LLImageJ2COJ() : LLImageJ2CImpl()
 {
+	mRawImagep=NULL;
 }
 
 
