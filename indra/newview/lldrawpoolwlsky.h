@@ -89,7 +89,7 @@ private:
 	void SetupCumulusMediocrisClouds();
 
 private:
-	static Atmosphere * atm = 0;	// The Atmosphere object is the main interface to SilverLining.
+	static SilverLining::Atmosphere * atm = 0;	// The Atmosphere object is the main interface to SilverLining.
 };
 
 #endif // LL_DRAWPOOLWLSKY_H
