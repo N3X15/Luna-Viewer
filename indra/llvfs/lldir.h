@@ -61,6 +61,7 @@ typedef enum ELLPath
 	FL_PATH_HOOKS = 17,
 	FL_PATH_LUA=18,
 	FL_PATH_MACROS=19,
+	FL_PATH_SKY=20,
 	LL_PATH_LAST
 } ELLPath;
 

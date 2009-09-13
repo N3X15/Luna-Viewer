@@ -76,11 +76,17 @@ public:
 	static void cleanupGL();
 	static void restoreGL();
 private:
-	void renderDome(F32 camHeightLocal, LLGLSLShader * shader) const;
-	void renderSkyHaze(F32 camHeightLocal) const;
-	void renderStars(void) const;
-	void renderSkyClouds(F32 camHeightLocal) const;
-	void renderHeavenlyBodies();
+	void renderFog();
+	void renderStars();
+	void renderLighting();
+
+	void DoAtmo();
+
+	void SetupCirrusClouds();
+	void SetupCumulusCongestusClouds();
+	void SetupStratusClouds();
+	void SetupCumulonimbusClouds();
+	void SetupCumulusMediocrisClouds();
 
 private:
 	static LLPointer<LLImageGL> sCloudNoiseTexture;

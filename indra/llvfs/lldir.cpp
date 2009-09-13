@@ -332,6 +332,13 @@ std::string LLDir::getExpandedFilename(ELLPath location, const std::string& subd
 		prefix += mDirDelimiter;
 		prefix += "Hooks";
 		break;
+	case FL_PATH_SKY:
+		prefix = getAppRODataDir();
+		prefix += mDirDelimiter;
+		prefix += "app_settings";
+		prefix += mDirDelimiter;
+		prefix += "SilverLining";
+		break;
 
 	case LL_PATH_APP_SETTINGS:
 		prefix = getAppRODataDir();
