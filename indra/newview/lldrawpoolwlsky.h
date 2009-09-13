@@ -89,8 +89,7 @@ private:
 	void SetupCumulusMediocrisClouds();
 
 private:
-	static LLPointer<LLImageGL> sCloudNoiseTexture;
-	static LLPointer<LLImageRaw> sCloudNoiseRawImage;
+	static Atmosphere *atm;
 };
 
 #endif // LL_DRAWPOOLWLSKY_H
