@@ -35,7 +35,8 @@
 
 #include "lldrawpool.h"
 #include "SilverLining.h"
-class LLGLSLShader;
+// Substitute your own registration name and license code here
+static SilverLining::Atmosphere *atm= new SilverLining::Atmosphere("COMPANY","KEY");
 
 class LLDrawPoolWLSky : public LLDrawPool {
 public:
@@ -76,9 +77,11 @@ public:
 	static void cleanupGL();
 	static void restoreGL();
 private:
+	static bool comp(SilverLining::ObjectHandle c1,SilverLining::ObjectHandle c2);
 	void renderFog();
 	void renderStars();
 	void renderLighting();
+	void renderClouds();
 
 	void DoAtmo();
 
@@ -89,7 +92,6 @@ private:
 	void SetupCumulusMediocrisClouds();
 
 private:
-	static SilverLining::Atmosphere *atm;	// The Atmosphere object is the main interface to SilverLining.
 };
 
 #endif // LL_DRAWPOOLWLSKY_H

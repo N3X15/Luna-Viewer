@@ -53,10 +53,12 @@
 // All SilverLining objects are in the SilverLining namespace.
 using namespace SilverLining;
 
-Atmosphere *LLDrawPoolWLSky::atm;	// The Atmosphere object is the main interface to SilverLining.
-
+// Statics and defines for a simple, self-contained demo application
+//  Main interface to silverlining.
+//static Atmosphere *atm = 0;
 
 #define kVisibility 20000.0f
+
 LLDrawPoolWLSky::LLDrawPoolWLSky(void) :
 	LLDrawPool(POOL_WL_SKY)
 {
@@ -216,6 +218,38 @@ void LLDrawPoolWLSky::render(S32 pass)
         llinfos << "EndFrame()" << llendl;
 	atm->EndFrame();
 
+}
+//static 
+bool LLDrawPoolWLSky::comp(ObjectHandle c1, ObjectHandle c2)
+{
+	LLVector3 pos=LLViewerCamera::getInstance()->getOrigin();
+        double d1 = atm->GetObjectDistance(c1, c2, pos.mV[VX], pos.mV[VY], pos.mV[VZ]);
+        double d2 = atm->GetObjectDistance(c2, c1, pos.mV[VX], pos.mV[VY], pos.mV[VZ]);
+
+        return (d1 > d2);
+}
+
+void LLDrawPoolWLSky::renderClouds()
+{
+        std::vector<ObjectHandle>& objs = atm->GetObjects();
+
+        sort(objs.begin(), objs.end(), comp);
+
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_DEPTH_TEST);
+        glDepthMask(0);
+        glEnable(GL_TEXTURE_2D);
+        glDisable(GL_LIGHTING);
+        glDisable(GL_FOG);
+
+        std::vector<ObjectHandle>::iterator it;
+        for (it = objs.begin(); it != objs.end(); it++)
+        {
+                atm->DrawObject(*it);
+        }
+
+        glDepthMask(1);
 }
 
 void LLDrawPoolWLSky::renderFog()
