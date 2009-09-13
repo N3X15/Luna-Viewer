@@ -133,6 +133,7 @@ if (LINUX)
   # End of hacks.
 
   add_definitions(
+      -Wno-unused-value
       -DLL_LINUX=1
       -D_REENTRANT
       -fexceptions
@@ -230,9 +231,10 @@ endif (DARWIN)
 if (LINUX OR DARWIN)
   set(GCC_WARNINGS "-Wall -Wno-sign-compare -Wno-trigraphs -Wno-non-virtual-dtor")
 
-  if (NOT GCC_DISABLE_FATAL_WARNINGS)
-    set(GCC_WARNINGS "${GCC_WARNINGS} -Werror")
-  endif (NOT GCC_DISABLE_FATAL_WARNINGS)
+  # Whoever did this:  I hate you.
+  ##if (NOT GCC_DISABLE_FATAL_WARNINGS)
+  ##  set(GCC_WARNINGS "${GCC_WARNINGS} -Werror")
+  ##endif (NOT GCC_DISABLE_FATAL_WARNINGS)
 
   set(GCC_CXX_WARNINGS "${GCC_WARNINGS} -Wno-reorder")
 
