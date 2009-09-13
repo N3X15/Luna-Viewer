@@ -34,7 +34,7 @@
 #define LL_DRAWPOOLWLSKY_H
 
 #include "lldrawpool.h"
-
+#include "SilverLining.h"
 class LLGLSLShader;
 
 class LLDrawPoolWLSky : public LLDrawPool {
@@ -89,7 +89,7 @@ private:
 	void SetupCumulusMediocrisClouds();
 
 private:
-	static SilverLining::Atmosphere * atm = 0;	// The Atmosphere object is the main interface to SilverLining.
+	static SilverLining::Atmosphere *atm;	// The Atmosphere object is the main interface to SilverLining.
 };
 
 #endif // LL_DRAWPOOLWLSKY_H

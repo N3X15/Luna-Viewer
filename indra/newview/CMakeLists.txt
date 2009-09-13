@@ -48,6 +48,9 @@ include(ViewerMiscLibs)
 #SET_SOURCE_FILES_PROPERTIES(LuaBase.swig PROPERTIES SWIG_FLAGS "-includeall")
 #SWIG_ADD_MODULE(LuaBase lua LuaBase.swig LuaBase.cpp)
 
+find_package(Cg)
+find_package(GLUT)
+
 if (WINDOWS)
     include(CopyWinLibs)
 endif (WINDOWS)
@@ -81,7 +84,9 @@ include_directories(
     ${LSCRIPT_INCLUDE_DIRS}/lscript_compile
     ${EMERALD_INCLUDE_DIRS}
     ${SILVERLINING_INCLUDE_DIRS}
-    )
+    ${CG_INCLUDE_PATH}
+    ${GLUT_INCLUDE_DIR}
+)
 
 if (WINDOWS)
 	include_directories(
@@ -1407,7 +1412,11 @@ target_link_libraries(${VIEWER_BINARY_NAME}
     ${ELFIO_LIBRARIES}
     ${EMERALD_LIBRARIES}
     ${LUA_LIBRARY}
-		${OTR_LIBRARY}
+    ${OTR_LIBRARY}
+    ${SILVERLINING_LIBRARY}
+    ${CG_GL_LIBRARY}
+    ${CG_LIBRARY}
+    ${GLUT_LIBRARIES}
     )
 endif (WINDOWS)
 

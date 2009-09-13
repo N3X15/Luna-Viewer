@@ -36,6 +36,7 @@
 
 #include "llerror.h"
 #include "llgl.h"
+#include "lldir.h"
 #include "pipeline.h"
 #include "llviewercamera.h"
 #include "llimage.h"
@@ -52,18 +53,21 @@
 // All SilverLining objects are in the SilverLining namespace.
 using namespace SilverLining;
 
-static LLDrawPoolWLSky::Atmosphere *atm = 0;	// The Atmosphere object is the main interface to SilverLining.
+Atmosphere *LLDrawPoolWLSky::atm;	// The Atmosphere object is the main interface to SilverLining.
 
+
+#define kVisibility 20000.0f
 LLDrawPoolWLSky::LLDrawPoolWLSky(void) :
 	LLDrawPool(POOL_WL_SKY)
 {
-
+	llinfos << "Initializing SilverLining..." << llendl;
 	LLWLParamManager::instance()->propagateParameters();
 
 	// PUT YOUR OWN DAMN LICENSE KEY HERE
 	atm = new Atmosphere("Your Company Name", "Your License Code");
 	atm->ShowFramerate(true);
-	int err=atm->Initialize(Atmosphere::OPENGL, LLDir::getInstance()->getExpandedFilename(FL_PATH_SKY,""), true, 0);
+	int err=atm->Initialize(Atmosphere::OPENGL, gDirUtilp->getExpandedFilename(FL_PATH_SKY,"").c_str(), true, 0);
+
 	Location loc;
 	loc.SetLatitude(45);
 	loc.SetLongitude(-122);
@@ -99,14 +103,12 @@ LLDrawPoolWLSky::LLDrawPoolWLSky(void) :
 	//SetupCumulusMediocrisClouds();
 
 	// Set visibility
-	atm->GetConditions()->SetVisibility(kVisibility);
+	atm->GetConditions()->SetVisibility(20000.0f);
 }
 
 LLDrawPoolWLSky::~LLDrawPoolWLSky()
 {
 	//llinfos << "destructing wlsky draw pool." << llendl;
-	sCloudNoiseTexture = NULL;
-	sCloudNoiseRawImage = NULL;
 }
 
 LLViewerImage *LLDrawPoolWLSky::getDebugTexture()
@@ -126,6 +128,7 @@ void LLDrawPoolWLSky::endRenderPass( S32 pass )
 
 void LLDrawPoolWLSky::renderLighting()
 {
+    llinfos << "renderLighting" << llendl;
     float x, y, z, r, g, b, ra, ga, ba;
     atm->GetSunOrMoonPosition(&x, &y, &z);
     atm->GetSunOrMoonColor(&r, &g, &b);
@@ -150,8 +153,9 @@ void LLDrawPoolWLSky::renderLighting()
     glMaterialfv(GL_FRONT, GL_EMISSION, no_mat);
 }
 
-void LLDrawPoolWLSky::DoAtmo() const
+void LLDrawPoolWLSky::DoAtmo()
 {
+	llinfos << "DoAtmo()" << llendl;
 	assert(atm);
 
 	// Set up wind blowing south at 50 meters/sec
@@ -173,85 +177,50 @@ void LLDrawPoolWLSky::DoAtmo() const
 	atm->GetConditions()->SetVisibility(kVisibility);
 }
 
-
-void LLDrawPoolWLSky::renderHeavenlyBodies()
-{
-	LLGLSPipelineSkyBox gls_skybox;
-	LLGLEnable blend_on(GL_BLEND);
-	gPipeline.disableLights();
-
-#if 0 // when we want to re-add a texture sun disc, here's where to do it.
-	LLFace * face = gSky.mVOSkyp->mFace[LLVOSky::FACE_SUN];
-	if (gSky.mVOSkyp->getSun().getDraw() && face->getGeomCount())
-	{
-		LLImageGL * tex  = face->getTexture();
-		gGL.getTexUnit(0)->bind(tex);
-		LLColor4 color(gSky.mVOSkyp->getSun().getInterpColor());
-		LLFacePool::LLOverrideFaceColor color_override(this, color);
-		face->renderIndexed();
-	}
-#endif
-
-	LLFace * face = gSky.mVOSkyp->mFace[LLVOSky::FACE_MOON];
-
-	if (gSky.mVOSkyp->getMoon().getDraw() && face->getGeomCount())
-	{
-		// *NOTE: even though we already bound this texture above for the
-		// stars register combiners, we bind again here for defensive reasons,
-		// since LLImageGL::bind detects that it's a noop, and optimizes it out.
-		LLImageGL * tex  = face->getTexture();
-		gGL.getTexUnit(0)->bind(tex);
-		LLColor4 color(gSky.mVOSkyp->getMoon().getInterpColor());
-		F32 a = gSky.mVOSkyp->getMoon().getDirection().mV[2];
-		if (a > 0.f)
-		{
-			a = a*a*4.f;
-		}
-			
-		color.mV[3] = llclamp(a, 0.f, 1.f);
-		
-		LLFacePool::LLOverrideFaceColor color_override(this, color);
-		face->renderIndexed();
-	}
-}
-
 void LLDrawPoolWLSky::render(S32 pass)
 {
 	if (!gPipeline.hasRenderType(LLPipeline::RENDER_TYPE_SKY))
 	{
 		return;
-	}	
+	}
+	llinfos << "Rendering..." << llendl;
+	
 	LLFastTimer ftm(LLFastTimer::FTM_RENDER_WL_SKY);
-
+	llinfos << "BeginFrame(True)" << llendl;
 	atm->BeginFrame(true);
 
+        llinfos << "Camheight" << llendl;
 	const F32 camHeightLocal = LLWLParamManager::instance()->getDomeOffset() * LLWLParamManager::instance()->getDomeRadius();
 
+        llinfos << "Clipping" << llendl;
 	LLGLDepthTest depth(GL_TRUE, GL_FALSE);
 	LLGLDisable clip(GL_CLIP_PLANE0);
 
 	LLGLClampToFarClip far_clip(glh_get_current_projection());
-
-
-
+        llinfos << "Cam Origin" << llendl;
 	LLVector3 const & origin = LLViewerCamera::getInstance()->getOrigin();
+        llinfos << "glPushMatrix" << llendl;
 	glPushMatrix();
 
+        llinfos << "glTranslatef" << llendl;
 		glTranslatef(origin.mV[0], origin.mV[1], origin.mV[2]);
 
+	        llinfos << "RenderFog" << llendl;
 		//renderHeavenlyBodies();
 		renderFog();
-		renderStars();
+		//renderStars();
 		
-
+        llinfos << "glPopMatrix" << llendl;
 	glPopMatrix();
 
+        llinfos << "EndFrame()" << llendl;
 	atm->EndFrame();
 
 }
 
 void LLDrawPoolWLSky::renderFog()
 {
+	llinfos << "Rendering fog" << llendl;
 	glEnable(GL_FOG);
 	glFogi(GL_FOG_MODE, GL_EXP);
 	glHint(GL_FOG_HINT, GL_NICEST);
@@ -272,7 +241,7 @@ void LLDrawPoolWLSky::renderFog()
 	else
 	{
 		GLfloat fogColor[4];
-		atm->GetHorizonColor(yaw, &fogColor[0], &fogColor[1], &fogColor[2]);
+		atm->GetHorizonColor(LLViewerCamera::getInstance()->getYaw(), &fogColor[0], &fogColor[1], &fogColor[2]);
 		glFogfv(GL_FOG_COLOR, fogColor);
 
 		float density = 1.0 / kVisibility;
@@ -302,7 +271,6 @@ void LLDrawPoolWLSky::resetDrawOrders()
 //static
 void LLDrawPoolWLSky::cleanupGL()
 {
-	sCloudNoiseTexture = NULL;
 }
 
 //static
@@ -313,8 +281,9 @@ void LLDrawPoolWLSky::restoreGL()
 
 
 // Configure high cirrus clouds.
-static void LLDrawPoolWLSky::SetupCirrusClouds()
+void LLDrawPoolWLSky::SetupCirrusClouds()
 {
+    llinfos << "Cirrus" << llendl;
     CloudLayer *cirrusCloudLayer;
 
     cirrusCloudLayer = CloudLayerFactory::Create(CIRRUS_FIBRATUS);
@@ -329,8 +298,9 @@ static void LLDrawPoolWLSky::SetupCirrusClouds()
 }
 
 // Add a cumulus congestus deck with 40% sky coverage.
-static void LLDrawPoolWLSky::SetupCumulusCongestusClouds()
+void LLDrawPoolWLSky::SetupCumulusCongestusClouds()
 {
+    llinfos << "Cumulus Congestus" << llendl;
     CloudLayer *cumulusCongestusLayer;
 
     cumulusCongestusLayer = CloudLayerFactory::Create(CUMULUS_CONGESTUS);
@@ -349,6 +319,7 @@ static void LLDrawPoolWLSky::SetupCumulusCongestusClouds()
 // Sets up a solid stratus deck.
 void LLDrawPoolWLSky::SetupStratusClouds()
 {
+    llinfos << "Stratus" << llendl;
     CloudLayer *stratusLayer;
 
     stratusLayer = CloudLayerFactory::Create(NIMBOSTRATUS);
@@ -364,6 +335,7 @@ void LLDrawPoolWLSky::SetupStratusClouds()
 // A thunderhead; note a Cumulonimbus cloud layer contains a single cloud.
 void LLDrawPoolWLSky::SetupCumulonimbusClouds()
 {
+    llinfos << "Cumulonimus" << llendl;
     CloudLayer *cumulonimbusLayer;
 
     cumulonimbusLayer = CloudLayerFactory::Create(CUMULONIMBUS_CAPPILATUS);
@@ -381,6 +353,7 @@ void LLDrawPoolWLSky::SetupCumulonimbusClouds()
 // you'll have a LOT of clouds because they are small.
 void LLDrawPoolWLSky::SetupCumulusMediocrisClouds()
 {
+    llinfos << "Cumulus mediocris" << llendl;
     CloudLayer *cumulusMediocrisLayer;
 
     cumulusMediocrisLayer = CloudLayerFactory::Create(CUMULUS_MEDIOCRIS);
