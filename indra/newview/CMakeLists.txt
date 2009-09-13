@@ -39,6 +39,7 @@ include(UnixInstall)
 include(LLKDU)
 include(Emerald)
 include(LUA)
+include(SilverLining)
 include(ViewerMiscLibs)
 
 #FIND_PACKAGE(SWIG REQUIRED)
@@ -79,6 +80,7 @@ include_directories(
     ${LSCRIPT_INCLUDE_DIRS}
     ${LSCRIPT_INCLUDE_DIRS}/lscript_compile
     ${EMERALD_INCLUDE_DIRS}
+    ${SILVERLINING_INCLUDE_DIRS}
     )
 
 if (WINDOWS)
