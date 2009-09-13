@@ -52,11 +52,7 @@
 // All SilverLining objects are in the SilverLining namespace.
 using namespace SilverLining;
 
-LLPointer<LLImageGL> LLDrawPoolWLSky::sCloudNoiseTexture = NULL;
-
-LLPointer<LLImageRaw> LLDrawPoolWLSky::sCloudNoiseRawImage = NULL;
-
-
+static LLDrawPoolWLSky::Atmosphere *atm = 0;	// The Atmosphere object is the main interface to SilverLining.
 
 LLDrawPoolWLSky::LLDrawPoolWLSky(void) :
 	LLDrawPool(POOL_WL_SKY)
