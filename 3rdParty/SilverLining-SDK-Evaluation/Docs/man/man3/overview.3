@@ -1,0 +1,102 @@
+.TH "overview" 3 "3 Sep 2009" "Version 1.818" "SilverLining" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+overview \- Overview of SilverLining 
+.SH "SDK Contents"
+.PP
+The SilverLining SDK includes the following subdirectories:
+.PP
+.PD 0
+.IP "\(bu" 2
+\fBlib:\fP The SilverLining libraries built against various runtime libraries. You'll need to link one of these into your project, as described in the table below. 
+.IP "\(bu" 2
+\fBinclude:\fP The public header files for use with the SilverLining libraries. 
+.IP "\(bu" 2
+\fBsamplecode:\fP Sample code for simple OpenGL and Direct3D applications that use SilverLining. You'll also find a modified 'osgviewer' application that integrates SilverLining under OpenSceneGraph 2.4, and a modified Ogre3D demo application.
+.PP
+.PD 0
+.IP "\(bu" 2
+\fBresources:\fP Graphics, shaders, and other resources needed by SilverLining, including the DLL's specific to OpenGL and DirectX9 for Windows users. These files must be redistributed with your application. 
+.IP "\(bu" 2
+\fBdocs:\fP Documentation for SilverLining (you're reading it!) 
+.IP "\(bu" 2
+\fBthird-party\fP: Third-party DLL's required for SilverLining (Windows users only)
+.PP
+The \fBlib\fP directory contains several versions of the SilverLining library for linking against projects that use different runtime libraries. Builds are available for Microsoft Visual C++ 8 or 9 in the lib/vc8, and lib/vc9 directories, respectively. Within each of these directories you'll find x64 and win32 subdirectories that contain 64-bit and 32-bit builds, respectively. Linux developers will find the static library linux/libSilverLining.a in here, built for 32-bit. If you purchase a license, you'll have the full source to recompile your own library for 64 bit if need be. A MacOSX 10.5 build for gcc is also included in macos/libSilverLining.a.
+.SS "Windows Build Settings"
+Visual C++ 6.0 and Visual Studio .NET 2003 (VC7) were supported up to SilverLining version 1.094. If you use one of these development environments, the sample SDK for this version may be obtained from http://www.sundog-soft.com/1-094/silverlining-sdk.exe . Licensed users will find the full version of 1.094 in this same subdirectory of our website; adjust the download instructions you received with your license purchase accordingly. Be aware that we no longer offer support for VC6 and VC7.
+.PP
+To check what runtime library you are using in Visual Studio 2005, open up the project properties, and view the C/C++ 'Code Generation' settings. Add the library according to the chart below, by adding it to the 'Additional Dependencies' in your Linker / Input settings. Finally, be sure that your linker path is set to include the appropriate lib directory for your development environment (for example, lib/vc8/win32 - see 'additional library directories' under the Linker / General tab.)
+.PP
+Also, you will need to link in the system library winmm.lib in order to obtain the definition of timeGetTime().
+.PP
+Project files and libraries are included for Visual Studio 2005 (VC8), and Visual Studio 2008 (VC9).
+.PP
+\fBRuntime Library\fP\fBSilverLining Library\fP  Multi-threadedSilverLining-MT.lib  Multi-threaded DebugSilverLining-MTD.lib  Single-threadedSilverLining-ST.lib  Single-threaded DebugSilverLining-STD.lib  Multi-threaded DLLSilverLining-MT-DLL.lib  Multi-threaded Debug DLLSilverLining-MTD-DLL.lib  
+.PP
+The libraries are built with default byte alignment. If you have specific byte alignment requirements for your application, contact support@sundog-soft.com for any specialized builds you may require.
+.PP
+The libraries listed above will dynamically link in a DirectX9, DirectX10, or OpenGL rendering library at runtime. Some developers prefer to avoid runtime DLL dependencies; and for customers porting SilverLining to game consoles, this may be required. Licensed users with the full source will find build configurations for the SilverLining library in its project file for statically linking in these renderers, avoiding the runtime dependency on our renderer DLL's.
+.SS "Linux Build Settings and Dependencies"
+To successfully link against SilverLining for Linux, you must have OpenGL, GLUT, and NVidia's Cg Toolkit installed on your system. Make sure you have the latest drivers for your graphics card installed.
+.PP
+OpenGL and GLUT should be available through your Linux distribution; Cg for Linux may be obtained from NVidia's developer website, currently at http://developer.nvidia.com/object/cg_download.html
+.PP
+We provide a pre-built static library for gcc in our Linux SDK, in the lib/linux subdirectory. The OpenGL sample code provided includes a makefile that illustrates how to link in SilverLining.
+.PP
+In short, add the lib directory of the sdk to your library path (-L), add the include directory to your include path (-I), and include the libraries Cg, CgGL, SilverLining, GL, pthreads, and glut (-l).
+.PP
+That's all there is to it. Licensed users with full source code will also find a makefile for rebuilding the SilverLining library itself. To rebuild the library, you'll also need to define the LINUX preprocessor definition, as well as SILVERLINING_STATIC_RENDERER_OPENGL to statically link in the code in the SilverLiningOpenGL subdirectory.
+.SS "MacOSX Build Settings and Dependencies"
+SilverLining requires the Cg Toolkit to be installed from developer.nvidia.com, or from our website. You also need the MacOSX developer kit, which includes the OpenGL and GLUT frameworks you need. We provide a prebuilt binary in lib/macos/ for gcc under MacOSX 10.5.
+.PP
+To compile an application that links in SilverLining, refer to the Makefile included with the OpenGLSample code in the SampleCode directory. You need to include the path to SilverLining's public headers, as well as the OpenGL, GLUT, and Cg frameworks.
+.PP
+Licensed users with the full source code may also recompile the SilverLining library itself using the Makefile provided. It defines SILVERLINING_STATIC_RENDERER_OPENGL in order to statically link in the OpenGL renderer found in the SilverLiningOpenGL directory, and defines MAC in order to pick up the MacOS-specific code.
+.SH "Distributing SilverLining with Your Application"
+.PP
+You must ship the \fBresources\fP subdirectory, in its entirety, with your application. You will specify where this subdirectory is installed when you call Atmosphere::Initialize().
+.PP
+For Windows applications, the following dll's must be installed on the user's system, or be installed alongside your executable:
+.PP
+.PD 0
+.IP "\(bu" 2
+\fBthird-party/glut32.dll\fP (required only for OpenGL applications) 
+.IP "\(bu" 2
+\fBthird-party/mkOpenGLJPEGImage.dll\fP (required only for OpenGL applications) 
+.IP "\(bu" 2
+\fBthird-party/Cg/bin/cg.dll\fP 
+.IP "\(bu" 2
+\fBthird-party/Cg/bin/cgGL.dll\fP 
+.IP "\(bu" 2
+\fBthird-party/Cg/bin/cgD3D8.dll\fP 
+.IP "\(bu" 2
+\fBthird-party/Cg/bin/cgD3d9.dll\fP 
+.IP "\(bu" 2
+\fBthird-party/Cg/bin/cgD3d10.dll\fP 
+.PP
+If your project is linked against the dynamically linked runtime libraries, be sure that the required Microsoft DLL's are distributed with your application as well.
+.PP
+Linux application developers must ensure that OpenGL, GLUT, and Cg (available at developer.nvidia.com) are installed on the target systems, as well as the latest graphics drivers for their 3D video card.
+.PP
+MacOSX developers must install the Cg toolkit as well, in addition to the MacOS developer kit, which includes the OpenGL and GLUT frameworks you need.
+.SH "Overview of SilverLining"
+.PP
+Using SilverLining isn't complicated, and involves understanding only a few classes and how they interact with each other. While developing an application with SilverLining, you'll likely encounter these classes in this order:
+.PP
+First, you'll create an \fBSilverLining::Atmosphere\fP object, which is the primary interface to SilverLining for your application. After instantiating it, it needs to be initialized so that it knows if you're using OpenGL, DirectX 9, or DirectX 10.
+.PP
+Next, you'll want to create a \fBSilverLining::AtmosphericConditions\fP object, in order to configure your Atmosphere to your liking.
+.PP
+The first things you'll want to configure in AtmosphericConditions are the time and location you wish to simulate. To do this, you'll need to instantiate and configure a LocalTime and a Location class, and pass these into \fBSilverLining::AtmosphericConditions::SetTime()\fP and \fBSilverLining::AtmosphericConditions::SetLocation()\fP.
+.PP
+If you want to simulate wind in your scene to make your clouds move, just set up a \fBSilverLining::WindVolume\fP class and pass that into \fBSilverLining::AtmosphericConditions::SetWind()\fP.
+.PP
+If you want to add clouds to your scene, you'll need to create some \fBSilverLining::CloudLayer\fP objects and pass them into \fBSilverLining::AtmosphericConditions::AddCloudLayer()\fP. CloudLayer objects are created with the \fBSilverLining::CloudLayerFactory\fP class, which allows you to create cumulus congestus, cumulus mediocris, cumulonimbus, stratus, or cirrus cloud decks. After creating the CloudLayer you want, configure it for the desired dimensions, precipitation, and cloud coverage, call \fBSilverLining::CloudLayer::SeedClouds()\fP to populate the cloud layer with clouds, and then pass it into your AtmosphericConditions.
+.PP
+Once your AtmosphericConditions are set up to your liking, pass them into your Atmosphere using \fBSilverLining::Atmosphere::SetConditions()\fP.
+.PP
+That's all the setup that's required. Now, to actually see the simulated sky and clouds in your scene, only three more things are necessary: at the beginning of each frame, pass your modelivew and projection matrices into SilverLining using \fBSilverLining::Atmosphere::SetCameraMatrix()\fP and \fBSilverLining::Atmosphere::SetProjectionMatrix()\fP. Then, call \fBSilverLining::Atmosphere::BeginFrame()\fP before rendering the objects in your scene, and call \fBSilverLining::Atmosphere::EndFrame()\fP at the end of your frame.
+.PP
+That's really all there is to it; we've discussed every class you need to know about already. Users who want to take advantage of the lighting and fog simulation provided by SilverLining can obtain this information from the Atmosphere class, and CloudLayers can also provide shadow maps for use in casting shadows in your scenes from the clouds. Details on that may be found in \fBUsing SilverLining\fP. 

@@ -1,0 +1,3 @@
+<area shape="rect" href="$_atmospheric_conditions_8h.html" title="Configures the time, location, atmosphere, and cloud cover." alt="" coords="5,84,397,111">
+<area shape="rect" href="$_atmosphere_8h.html" title="The main interface to SilverLining." alt="" coords="41,161,361,188">
+<area shape="rect" href="$_cloud_layer_8h.html" title="Methods for configuration and initializing cloud decks." alt="" coords="45,239,357,265">

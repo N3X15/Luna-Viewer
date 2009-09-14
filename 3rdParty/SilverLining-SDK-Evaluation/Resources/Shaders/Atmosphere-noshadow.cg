@@ -1,0 +1,23 @@
+void main(  float4 position     : POSITION,
+			float4 color        : COLOR,
+			float3 texCoord     : TEXCOORD0,
+			
+       	out float4 oPosition    : POSITION,
+		out float4 oColor       : COLOR,
+			
+  uniform float4x4 modelViewProj,
+  uniform float4x4 shadowXform,
+  uniform float3 fadeDistVec
+  )
+  
+  {
+  		oPosition = mul(modelViewProj, position);
+  		float fade = fadeDistVec.y;
+  		float d = texCoord.z;
+		float4 density = float4(d, d, d, 1.0);
+		float4 baseColor = float4(0.5, 0.5, 1.0, 1.0);
+		float4 fadeColor = float4(fade, fade, fade, 1.0);
+
+		oColor = baseColor * density * fadeColor;
+  }
+  

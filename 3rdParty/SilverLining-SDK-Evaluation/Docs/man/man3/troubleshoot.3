@@ -1,0 +1,32 @@
+.TH "troubleshoot" 3 "3 Sep 2009" "Version 1.818" "SilverLining" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+troubleshoot \- SilverLining Troubleshooting Tips 
+.SH "SilverLining crashes at startup"
+.PP
+If you're using the evaluation version of the Windows SDK, SilverLining will display a dialog box when the Atmosphere constructor is invoked, warning you about the time restriction on the SDK. If you instantiate your Atmosphere object after your application is in full-screen mode, some applications will not be able to handle a dialog box being displayed while full-screen mode is active. To work around this, instantiate your Atmosphere object before entering full-screen mode.
+.PP
+Another situation may be OpenSceneGraph applications running with multiple monitors. The OSG sample code we provide does not handle the case of multiple contexts. Run in single-monitor mode to get started.
+.SH "Atmosphere::Initialize() returns an error code"
+.PP
+There are several cases that might cause the initialization of SilverLining to fail; here are the error codes returned from Atmosphere::Initialize for each:
+.PP
+\fBE_RESOURCES_PATH_INVALID:\fP This error will occur if the file SilverLining.config could not be opened within the resources path you specified in your call to Atmosphere::Initialize(). Usually, this means that your resource path is incorrect. Make sure the backslashes in your path are escaped, and that your path includes a trailing backslash, and double-check that the path you specified exists. The SilverLining SDK will be installed to different paths depending on whether you're on a 32-bit or 64-bit OS, for example.
+.PP
+\fBE_CONFIGURATION_FILE_NOT_FOUND:\fP If the file SilverLining.config within your resources directory could not be parsed for any reason, this error will be returned. Generally, this means the config file has been modified incorrectly or is otherwise corrupt.
+.PP
+\fBE_CANT_LOAD_RENDERER_DLL:\fP SilverLining will construct a path to the appropriate renderer DLL based on whether you're using DirectX or OpenGL, VC8 or VC9, and 32 or 64 bit builds. These DLL's are stored within your resources directory; an example path might end up being resources/vc8/win32/SilverLiningOpenGL-MT.dll for instance. If the renderer was unable to load this DLL at runtime, then this error will be returned. If you haven't moved these DLL's out of this location and you are specifying a valid value for the renderer parameter of Atmosphere::Initialize, please contact support@sundog-soft.com and indicate what renderer you're using, what version of Visual Studio, and whether you're using 32 or 64 bit versions of our libraries. Also send us a copy of your call to Atmosphere::Initialize().
+.PP
+\fBE_CANT_INITIALIZE_RENDERER_SUBSYSTEM:\fP This means SilverLining was unable to get some basic information from OpenGL or DirectX and was unable to set up its buffers for rendering to textures. Usually, this means you called Atmosphere::Initialize() before your rendering context was set up, or from outside of your rendering thread altogether. Be sure you're within the context you intend to use for rendering when calling Initialize(). For DirectX users, be sure not to use D3DCREATE_PUREDEVICE. SilverLining also requires a lockable backbuffer, if you're using an engine that does not provide this (such as Ogre3D,) set the render-offscreen setting in resources/Silverlining.config to 'yes' to disable direct use of the backbuffer.
+.PP
+\fBE_CANT_LOAD_METABALL_TEXTURE:\fP This error will return if the file wispy-metaball.tga could not be loaded from within your specified resources directory path. Contact support@sundog-soft.com if you haven't moved or modified this file.
+.SH "My sky is sideways / upside down / otherwise misoriented"
+.PP
+Be sure to call Atmosphere::SetUpVector() and Atmosphere::SetRightVector() prior to calling Atmosphere::Initialize() so we know which way is up. Also, take care in setting the handedness parameter of Atmosphere::Initialize.
+.SH "My sky doesn't appear or doesn't move with the camera"
+.PP
+SilverLining assumes that the current modelview and projection matrices represent your camera's view when Atmosphere::BeginFrame() is called. Some engines will reset their modelview and projection matrices outside of their own internal rendering code. When this happens, your sky will appear static or won't be in the right place at all. You may need to explicitly obtain your modelview and projection matrices, and set them directly via OpenGL or DirectX prior to calling Atmosphere::BeginFrame().
+.SH "My sky or clouds are rendering funny"
+.PP
+Try opening up the file resources/SilverLining.config in a text editor, and set 'disable-shaders' to 'yes'. Although we test SilverLining on a wide variety of systems, our shaders will sometimes compile in unexpected ways on new hardware we haven't encountered yet. Disabling shaders will cause SilverLining to fall back to more compatible methods of transforming its vertices, at a slight performance cost. If you run into this situation, please contact support@sundog-soft.com with your system information (especially what graphics card you're using) so we can support shaders on your system going forward. 

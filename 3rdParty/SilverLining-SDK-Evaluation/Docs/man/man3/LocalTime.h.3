@@ -1,0 +1,101 @@
+.TH "/home/fkane/sl/Public Headers/LocalTime.h" 3 "3 Sep 2009" "Version 1.818" "SilverLining" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+/home/fkane/sl/Public Headers/LocalTime.h \- An object to describe the local time, time zone, and daylight savings time observation.  
+
+.PP
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <time.h>\fP
+.br
+
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fBSilverLining::LocalTime\fP"
+.br
+.RI "\fIA class to represent the simulated local time, time zone, and daylight savings time observation. \fP"
+.in -1c
+.SS "Enumerations"
+
+.in +1c
+.ti -1c
+.RI "enum \fBTimeZones\fP { , \fBCET\fP =  1, \fBEET\fP =  2, \fBBT\fP =  3, \fBCCT\fP =  8, \fBJST\fP =  9, \fBGST\fP =  10, \fBIDLE\fP =  12, \fBWAT\fP =  -1, \fBAT\fP =  -2, \fBAST\fP =  -4, \fBEST\fP =  -5, \fBCST\fP =  -6, \fBMST\fP =  -7, \fBPST\fP =  -8, \fBYST\fP =  -9, \fBAHST\fP =  -10, \fBNT\fP =  -11, \fBIDLW\fP =  -12 }"
+.br
+.RI "\fIAn enumeration of defined time zones worldwide. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+An object to describe the local time, time zone, and daylight savings time observation. 
+
+
+.SH "Enumeration Type Documentation"
+.PP 
+.SS "enum \fBTimeZones\fP"
+.PP
+An enumeration of defined time zones worldwide. 
+.PP
+Time zones are expressed as the hour correction (prior to daylight savings adjustments) from GMT. This enum provides names for the civilian time zones, and notes their military equivalents. 
+.PP
+\fBEnumerator: \fP
+.in +1c
+.TP
+\fB\fICET \fP\fP
+ZULU Greenwich Mean Time, UTC, Western European (WET). 
+.TP
+\fB\fIEET \fP\fP
+ALPHA Central European. 
+.TP
+\fB\fIBT \fP\fP
+BETA Eastern European. 
+.TP
+\fB\fICCT \fP\fP
+CHARLIE Baghdad. 
+.TP
+\fB\fIJST \fP\fP
+HOTEL China Coast. 
+.TP
+\fB\fIGST \fP\fP
+INDIA Japan Standard. 
+.TP
+\fB\fIIDLE \fP\fP
+KILO Guam Standard. 
+.TP
+\fB\fIWAT \fP\fP
+MIKE International Date Line East, NZST (New Zealand Standard). 
+.TP
+\fB\fIAT \fP\fP
+NOVEMBER West Africa. 
+.TP
+\fB\fIAST \fP\fP
+OSCAR Azores. 
+.TP
+\fB\fIEST \fP\fP
+QUEBEC Atlantic Standard. 
+.TP
+\fB\fICST \fP\fP
+ROMEO Eastern Standard. 
+.TP
+\fB\fIMST \fP\fP
+SIERRA Central Standard. 
+.TP
+\fB\fIPST \fP\fP
+TANGO Mountain Standard. 
+.TP
+\fB\fIYST \fP\fP
+UNIFORM Pacific Standard. 
+.TP
+\fB\fIAHST \fP\fP
+VICTOR Yukon Standard. 
+.TP
+\fB\fINT \fP\fP
+WHISKEY Alaska-Hawaii Standard; Central Alaska (CAT), Hawaii Std (HST). 
+.TP
+\fB\fIIDLW \fP\fP
+X-RAY Nome. 
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for SilverLining from the source code.

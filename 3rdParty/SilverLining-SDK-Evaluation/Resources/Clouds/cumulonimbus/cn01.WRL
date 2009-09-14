@@ -1,0 +1,4243 @@
+#VRML V2.0 utf8
+
+# Produced by 3D Studio MAX VRML97 exporter, Version 9, Revision 1
+# MAX File: Cumulonimbus_02.max, Date: Fri Mar 28 09:57:29 2008
+
+DEF V2Grp01 Transform {
+  translation 0 0 0
+  rotation -1 0 0 -1.571
+  children [
+    DEF Sphere01 Transform {
+      translation -1342 -2241 -1600
+      children [
+        DEF VSph01 Transform {
+          translation 0 317.6 -773.7
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere02 Transform {
+      translation -2296 -1375 -2000
+      children [
+        DEF VSph02 Transform {
+          translation 900.7 -1023 0.0001221
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere03 Transform {
+      translation -1356 -1987 -1600
+      children [
+        DEF VSph03 Transform {
+          translation 0 -695 -783.1
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere04 Transform {
+      translation -2315 -801 -2000
+      children [
+        DEF VSph04 Transform {
+          translation 900.7 -1023 0.0001221
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere05 Transform {
+      translation -2360 -527 -2000
+      children [
+        DEF VSph05 Transform {
+          translation 900.7 -1023 0.0001221
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere06 Transform {
+      translation -2379 336 -2400
+      children [
+        DEF VSph06 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere07 Transform {
+      translation -2342 726 -2400
+      children [
+        DEF VSph07 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere08 Transform {
+      translation -1891 -1236 -1600
+      children [
+        DEF VSph08 Transform {
+          translation 625.4 3329 -696.1
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere09 Transform {
+      translation -1930 -804 -1600
+      children [
+        DEF VSph09 Transform {
+          translation 900.7 -1612 -783.1
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere10 Transform {
+      translation -1986 -550 -1600
+      children [
+        DEF VSph10 Transform {
+          translation -878.2 -6.104e-005 -764.9
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere11 Transform {
+      translation -1936 -508 -2400
+      children [
+        DEF VSph11 Transform {
+          translation -251.8 84.98 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere12 Transform {
+      translation -1956 -9 -1600
+      children [
+        DEF VSph12 Transform {
+          translation -878.2 -3.338e-005 -764.9
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere13 Transform {
+      translation -1844 -148 -2400
+      children [
+        DEF VSph13 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere14 Transform {
+      translation -1995 766 -1600
+      children [
+        DEF VSph14 Transform {
+          translation 0 879.3 -749.8
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere15 Transform {
+      translation -1975 752 -2000
+      children [
+        DEF VSph15 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere16 Transform {
+      translation -1882 713 -2400
+      children [
+        DEF VSph16 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere17 Transform {
+      translation -1836 1127 -2000
+      children [
+        DEF VSph17 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere18 Transform {
+      translation -1894 1034 -2400
+      children [
+        DEF VSph18 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere19 Transform {
+      translation -1422 -1241 -1200
+      children [
+        DEF VSph19 Transform {
+          translation -307.2 -684.1 -1158
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere20 Transform {
+      translation -1588 -1257 -1600
+      children [
+        DEF VSph20 Transform {
+          translation -289.8 -1202 -656.3
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere21 Transform {
+      translation -1562 -1285 -2000
+      children [
+        DEF VSph21 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere22 Transform {
+      translation -1480 -984 -1600
+      children [
+        DEF VSph22 Transform {
+          translation -942.7 -1202 -656.3
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere23 Transform {
+      translation -1454 -978 -2000
+      children [
+        DEF VSph23 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere24 Transform {
+      translation -1458 -962 -2400
+      children [
+        DEF VSph24 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere25 Transform {
+      translation -1489 -539 -1200
+      children [
+        DEF VSph25 Transform {
+          translation -1071 -232.7 -1158
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere26 Transform {
+      translation -1476 -524 -1600
+      children [
+        DEF VSph26 Transform {
+          translation -1401 -1202 -656.3
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere27 Transform {
+      translation -1582 -598 -2400
+      children [
+        DEF VSph27 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere28 Transform {
+      translation -2996 -1398 -1856
+      children [
+        DEF VSph28 Transform {
+          translation 5247 -550.3 -538.1
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere29 Transform {
+      translation -1455 -136 -1600
+      children [
+        DEF VSph29 Transform {
+          translation -1401 -1202 -656.3
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere30 Transform {
+      translation -1427 200 -1200
+      children [
+        DEF VSph30 Transform {
+          translation 3903 -1791 -1210
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere31 Transform {
+      translation -1569 389 -2400
+      children [
+        DEF VSph31 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere32 Transform {
+      translation -1418 702 -1600
+      children [
+        DEF VSph32 Transform {
+          translation 0 879.3 -749.8
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere33 Transform {
+      translation -1406 1119 -2000
+      children [
+        DEF VSph33 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere34 Transform {
+      translation -1167 -1380 -1200
+      children [
+        DEF VSph34 Transform {
+          translation -1071 -232.7 -1158
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere35 Transform {
+      translation -1061 -904 -1200
+      children [
+        DEF VSph35 Transform {
+          translation -1071 -232.7 -1158
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere36 Transform {
+      translation -1042 -938 -1600
+      children [
+        DEF VSph36 Transform {
+          translation -587.3 573.8 -530.1
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere37 Transform {
+      translation -1161 -974 -2000
+      children [
+        DEF VSph37 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere38 Transform {
+      translation -1072 -493 -2000
+      children [
+        DEF VSph38 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere39 Transform {
+      translation -1014 -575 -2400
+      children [
+        DEF VSph39 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere40 Transform {
+      translation -1005 -136 -1600
+      children [
+        DEF VSph40 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere41 Transform {
+      translation -1156 -88 -2400
+      children [
+        DEF VSph41 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere42 Transform {
+      translation -1097 367 -1200
+      children [
+        DEF VSph42 Transform {
+          translation -1697 225.7 -1165
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere43 Transform {
+      translation -1141 355 -1600
+      children [
+        DEF VSph43 Transform {
+          translation 0 879.3 -749.8
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere44 Transform {
+      translation -1161 291 -2000
+      children [
+        DEF VSph44 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere45 Transform {
+      translation -1146 254 -2400
+      children [
+        DEF VSph45 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere46 Transform {
+      translation -1180 620 -1200
+      children [
+        DEF VSph46 Transform {
+          translation 3903 -1791 -1210
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere47 Transform {
+      translation -1150 669 -1600
+      children [
+        DEF VSph47 Transform {
+          translation 0 879.3 -749.8
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere48 Transform {
+      translation -1051 605 -2000
+      children [
+        DEF VSph48 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere49 Transform {
+      translation -1095 745 -2400
+      children [
+        DEF VSph49 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere50 Transform {
+      translation -1001 1141 -2400
+      children [
+        DEF VSph50 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere51 Transform {
+      translation -670 -1361 -2000
+      children [
+        DEF VSph51 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere52 Transform {
+      translation -686 -1308 -2400
+      children [
+        DEF VSph52 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere53 Transform {
+      translation -776 -903 -1200
+      children [
+        DEF VSph53 Transform {
+          translation -1071 -232.7 -1158
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere54 Transform {
+      translation -654 -943 -1600
+      children [
+        DEF VSph54 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere55 Transform {
+      translation -751 -971 -2400
+      children [
+        DEF VSph55 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere56 Transform {
+      translation -767 -499 -1600
+      children [
+        DEF VSph56 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere57 Transform {
+      translation -665 -431 -2000
+      children [
+        DEF VSph57 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere58 Transform {
+      translation -766 -561 -2400
+      children [
+        DEF VSph58 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere59 Transform {
+      translation -658 -164 -1200
+      children [
+        DEF VSph59 Transform {
+          translation 3398 -392.8 -1210
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere60 Transform {
+      translation -635 -186 -2000
+      children [
+        DEF VSph60 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere61 Transform {
+      translation -674 -40 -2400
+      children [
+        DEF VSph61 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere62 Transform {
+      translation -752 1656 -1950
+      children [
+        DEF VSph62 Transform {
+          translation 0.0001831 -3805 -68.02
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere63 Transform {
+      translation -719 658 -2400
+      children [
+        DEF VSph63 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere64 Transform {
+      translation -788 2053 -1950
+      children [
+        DEF VSph64 Transform {
+          translation 0.0001831 -3805 -68.02
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere65 Transform {
+      translation -718 1087 -1600
+      children [
+        DEF VSph65 Transform {
+          translation -6.104e-005 879.3 -749.8
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere66 Transform {
+      translation -230 -1358 -1200
+      children [
+        DEF VSph66 Transform {
+          translation -2900 414.3 -1116
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere67 Transform {
+      translation -244 -1364 -2000
+      children [
+        DEF VSph67 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere68 Transform {
+      translation -327 -482 -1600
+      children [
+        DEF VSph68 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere69 Transform {
+      translation -282 -542 -2000
+      children [
+        DEF VSph69 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere70 Transform {
+      translation -372 -21 -1200
+      children [
+        DEF VSph70 Transform {
+          translation -298.3 -2857 -1210
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere71 Transform {
+      translation -335 -91 -1600
+      children [
+        DEF VSph71 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere72 Transform {
+      translation -346 289 -1200
+      children [
+        DEF VSph72 Transform {
+          translation 0.0001221 -2806 -1210
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere73 Transform {
+      translation -279 219 -1600
+      children [
+        DEF VSph73 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere74 Transform {
+      translation -219 614 -1200
+      children [
+        DEF VSph74 Transform {
+          translation 0.0001221 -2786 -1210
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere75 Transform {
+      translation -316 657 -1600
+      children [
+        DEF VSph75 Transform {
+          translation -3.052e-005 879.3 -749.8
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere76 Transform {
+      translation -313 649 -2400
+      children [
+        DEF VSph76 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere77 Transform {
+      translation -271 1048 -1600
+      children [
+        DEF VSph77 Transform {
+          translation -3.052e-005 879.3 -749.8
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere78 Transform {
+      translation -307 1092 -2000
+      children [
+        DEF VSph78 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere79 Transform {
+      translation 61 -1225 -400
+      children [
+        DEF VSph79 Transform {
+          translation 129.6 396.6 436.4
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere80 Transform {
+      translation 99 -1383 -800
+      children [
+        DEF VSph80 Transform {
+          translation 0 70.88 784.7
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere81 Transform {
+      translation 102 -809 -400
+      children [
+        DEF VSph81 Transform {
+          translation -247.1 493.8 436.4
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere82 Transform {
+      translation 120 -825 -800
+      children [
+        DEF VSph82 Transform {
+          translation 240.8 6.104e-005 211.8
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere83 Transform {
+      translation 192 -834 -1200
+      children [
+        DEF VSph83 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere84 Transform {
+      translation 97 -894 -1600
+      children [
+        DEF VSph84 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere85 Transform {
+      translation 105 -931 -2400
+      children [
+        DEF VSph85 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere86 Transform {
+      translation 89 -573 0
+      children [
+        DEF VSph86 Transform {
+          translation 363.8 -1204 5.263e-005
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere87 Transform {
+      translation 172 -456 -800
+      children [
+        DEF VSph87 Transform {
+          translation 469.6 450.4 774.2
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere88 Transform {
+      translation 191 -541 -1200
+      children [
+        DEF VSph88 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere89 Transform {
+      translation 129 -595 -1600
+      children [
+        DEF VSph89 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere90 Transform {
+      translation 45 -488 -2400
+      children [
+        DEF VSph90 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere91 Transform {
+      translation 93 -60 -1200
+      children [
+        DEF VSph91 Transform {
+          translation -150.1 -2806 -1210
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere92 Transform {
+      translation 143 -27 -1600
+      children [
+        DEF VSph92 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere93 Transform {
+      translation 54 -143 -2000
+      children [
+        DEF VSph93 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere94 Transform {
+      translation 162 371 -1600
+      children [
+        DEF VSph94 Transform {
+          translation -4.578e-005 879.3 -749.8
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere95 Transform {
+      translation 93 365 -2400
+      children [
+        DEF VSph95 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere96 Transform {
+      translation 176 1887 -1950
+      children [
+        DEF VSph96 Transform {
+          translation 0.0001831 -3805 -68.02
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere97 Transform {
+      translation 143 1028 -1600
+      children [
+        DEF VSph97 Transform {
+          translation -4.578e-005 1167 -749.8
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere98 Transform {
+      translation 30 1049 -2400
+      children [
+        DEF VSph98 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere99 Transform {
+      translation 543 -1291 -400
+      children [
+        DEF VSph99 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere100 Transform {
+      translation 561 -1390 -800
+      children [
+        DEF VSph100 Transform {
+          translation 1233 76.6 831.1
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere101 Transform {
+      translation 565 -1252 -2400
+      children [
+        DEF VSph101 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere102 Transform {
+      translation 539 -860 -2000
+      children [
+        DEF VSph102 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere103 Transform {
+      translation 448 -804 -2400
+      children [
+        DEF VSph103 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere104 Transform {
+      translation 473 -514 0
+      children [
+        DEF VSph104 Transform {
+          translation -95.89 0 -234.8
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere105 Transform {
+      translation 427 -544 -800
+      children [
+        DEF VSph105 Transform {
+          translation 346 6.104e-005 123.5
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere106 Transform {
+      translation 502 -529 -1200
+      children [
+        DEF VSph106 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere107 Transform {
+      translation 517 -585 -2000
+      children [
+        DEF VSph107 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere108 Transform {
+      translation 450 -100 -1200
+      children [
+        DEF VSph108 Transform {
+          translation 0.0001221 -2786 -1210
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere109 Transform {
+      translation 441 -199 -1600
+      children [
+        DEF VSph109 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere110 Transform {
+      translation 497 216 -1200
+      children [
+        DEF VSph110 Transform {
+          translation 0.0001221 -2783 -1210
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere111 Transform {
+      translation 432 399 -2000
+      children [
+        DEF VSph111 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere112 Transform {
+      translation 458 394 -2400
+      children [
+        DEF VSph112 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere113 Transform {
+      translation 430 688 -1600
+      children [
+        DEF VSph113 Transform {
+          translation -3.052e-005 879.3 -749.8
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere114 Transform {
+      translation 418 600 -2000
+      children [
+        DEF VSph114 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere115 Transform {
+      translation 546 774 -2400
+      children [
+        DEF VSph115 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere116 Transform {
+      translation 527 2047 -1950
+      children [
+        DEF VSph116 Transform {
+          translation 0.0001831 -3805 -68.02
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere117 Transform {
+      translation 439 1070 -1600
+      children [
+        DEF VSph117 Transform {
+          translation -3.052e-005 879.3 -749.8
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere118 Transform {
+      translation 429 1087 -2000
+      children [
+        DEF VSph118 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere119 Transform {
+      translation 437 1135 -2400
+      children [
+        DEF VSph119 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere120 Transform {
+      translation 804 -1289 0
+      children [
+        DEF VSph120 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere121 Transform {
+      translation 995 -1332 -400
+      children [
+        DEF VSph121 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere122 Transform {
+      translation 894 -1314 -800
+      children [
+        DEF VSph122 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere123 Transform {
+      translation 805 -1242 -1200
+      children [
+        DEF VSph123 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere124 Transform {
+      translation 986 -1237 -1600
+      children [
+        DEF VSph124 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere125 Transform {
+      translation 807 -1250 -2000
+      children [
+        DEF VSph125 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere126 Transform {
+      translation 872 -830 0
+      children [
+        DEF VSph126 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere127 Transform {
+      translation 947 -920 -1200
+      children [
+        DEF VSph127 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere128 Transform {
+      translation 812 -981 -2000
+      children [
+        DEF VSph128 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere129 Transform {
+      translation 949 -512 -400
+      children [
+        DEF VSph129 Transform {
+          translation 0 3.052e-005 309.1
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere130 Transform {
+      translation 971 -543 -1200
+      children [
+        DEF VSph130 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere131 Transform {
+      translation 890 -587 -2000
+      children [
+        DEF VSph131 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere132 Transform {
+      translation 931 -189 -1200
+      children [
+        DEF VSph132 Transform {
+          translation 8.738 -2500 -1210
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere133 Transform {
+      translation 916 -70 -1600
+      children [
+        DEF VSph133 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere134 Transform {
+      translation 844 255 -1200
+      children [
+        DEF VSph134 Transform {
+          translation 0.0001221 -2380 -1210
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere135 Transform {
+      translation 989 384 -2000
+      children [
+        DEF VSph135 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere136 Transform {
+      translation 849 283 -2400
+      children [
+        DEF VSph136 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere137 Transform {
+      translation 992 703 -1600
+      children [
+        DEF VSph137 Transform {
+          translation -6.104e-005 879.3 -749.8
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere138 Transform {
+      translation 963 635 -2000
+      children [
+        DEF VSph138 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere139 Transform {
+      translation 809 1009 -1600
+      children [
+        DEF VSph139 Transform {
+          translation -6.104e-005 879.3 -749.8
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere140 Transform {
+      translation 1292 -1369 0
+      children [
+        DEF VSph140 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere141 Transform {
+      translation 1394 -1224 -400
+      children [
+        DEF VSph141 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere142 Transform {
+      translation 1278 -1228 -1600
+      children [
+        DEF VSph142 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere143 Transform {
+      translation 1306 -1250 -2000
+      children [
+        DEF VSph143 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere144 Transform {
+      translation 1280 -1240 -2400
+      children [
+        DEF VSph144 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere145 Transform {
+      translation 1202 -958 -800
+      children [
+        DEF VSph145 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere146 Transform {
+      translation 1243 -836 -2400
+      children [
+        DEF VSph146 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere147 Transform {
+      translation 1336 -567 0
+      children [
+        DEF VSph147 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere148 Transform {
+      translation 1291 -568 -400
+      children [
+        DEF VSph148 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere149 Transform {
+      translation 1275 -489 -800
+      children [
+        DEF VSph149 Transform {
+          translation 403 -176.3 742.9
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere150 Transform {
+      translation 1296 -594 -1600
+      children [
+        DEF VSph150 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere151 Transform {
+      translation 1317 -488 -2400
+      children [
+        DEF VSph151 Transform {
+          translation 0 203.1 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere152 Transform {
+      translation 1306 -98 -2000
+      children [
+        DEF VSph152 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere153 Transform {
+      translation 1310 215 -1200
+      children [
+        DEF VSph153 Transform {
+          translation 0.0001221 -2415 -1210
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere154 Transform {
+      translation 1372 282 -2000
+      children [
+        DEF VSph154 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere155 Transform {
+      translation 1236 339 -2400
+      children [
+        DEF VSph155 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere156 Transform {
+      translation 1231 695 -1600
+      children [
+        DEF VSph156 Transform {
+          translation 0 879.3 -749.8
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere157 Transform {
+      translation 1248 793 -2000
+      children [
+        DEF VSph157 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere158 Transform {
+      translation 1213 2013 -1950
+      children [
+        DEF VSph158 Transform {
+          translation 0.0002441 -3805 -68.02
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere159 Transform {
+      translation 1286 1032 -2400
+      children [
+        DEF VSph159 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere160 Transform {
+      translation 1678 -1291 -1600
+      children [
+        DEF VSph160 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere161 Transform {
+      translation 1741 -1380 -2400
+      children [
+        DEF VSph161 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere162 Transform {
+      translation 1674 -974 -400
+      children [
+        DEF VSph162 Transform {
+          translation -1346 -278.3 -534.1
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere163 Transform {
+      translation 1652 -848 -1200
+      children [
+        DEF VSph163 Transform {
+          translation -4095 2181 -1155
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere164 Transform {
+      translation 1681 -819 -1600
+      children [
+        DEF VSph164 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere165 Transform {
+      translation 1770 -830 -2000
+      children [
+        DEF VSph165 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere166 Transform {
+      translation 1650 -522 -1200
+      children [
+        DEF VSph166 Transform {
+          translation -350.7 439 1122
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere167 Transform {
+      translation 1766 -534 -1600
+      children [
+        DEF VSph167 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere168 Transform {
+      translation 1684 357 -1200
+      children [
+        DEF VSph168 Transform {
+          translation 0.0001221 -2786 -1210
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere169 Transform {
+      translation 1678 302 -2400
+      children [
+        DEF VSph169 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere170 Transform {
+      translation 1788 1617 -1950
+      children [
+        DEF VSph170 Transform {
+          translation 0.0002441 -3805 -68.02
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere171 Transform {
+      translation 1799 620 -2400
+      children [
+        DEF VSph171 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere172 Transform {
+      translation 1705 1028 -2000
+      children [
+        DEF VSph172 Transform {
+          translation 692 -1079 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere173 Transform {
+      translation 1791 1080 -2400
+      children [
+        DEF VSph173 Transform {
+          translation 692 -1079 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere174 Transform {
+      translation 2141 -1244 -2400
+      children [
+        DEF VSph174 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere175 Transform {
+      translation 2183 -868 -1200
+      children [
+        DEF VSph175 Transform {
+          translation -2093 -1017 -642.2
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere176 Transform {
+      translation 2079 -919 -1600
+      children [
+        DEF VSph176 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere177 Transform {
+      translation 2152 -827 -2400
+      children [
+        DEF VSph177 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere178 Transform {
+      translation 2127 -467 -1200
+      children [
+        DEF VSph178 Transform {
+          translation -2093 -1017 -642.2
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere179 Transform {
+      translation 2028 -553 -1600
+      children [
+        DEF VSph179 Transform {
+          translation -119.5 1754 -787.9
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere180 Transform {
+      translation 2036 -432 -2400
+      children [
+        DEF VSph180 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere181 Transform {
+      translation 2183 -108 -2000
+      children [
+        DEF VSph181 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere182 Transform {
+      translation 2783 -38.68 -1200
+      children [
+        DEF VSph182 Transform {
+          translation -464.5 754.3 -1210
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere183 Transform {
+      translation 2749 81.32 -2000
+      children [
+        DEF VSph183 Transform {
+          translation 0 0 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    },
+    DEF Sphere184 Transform {
+      translation 2005 1006 -2400
+      children [
+        DEF VSph184 Transform {
+          translation 0 -572.6 0
+          rotation 1 0 0 -1.571
+          children [
+            Shape {
+              appearance Appearance {
+                material Material {
+                  diffuseColor 0.8 0.8 0.8
+                  ambientIntensity 0.2
+                  specularColor 0 0 0
+                  shininess 0.06615
+                  transparency 0
+                }
+              }
+              geometry Sphere { radius 400 }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

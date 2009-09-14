@@ -1,0 +1,82 @@
+Software Development Kit License Agreement
+
+ 
+
+In order to begin your installation, you must agree to this license agreement. Please read it carefully and click on the Accept button to begin your installation.
+
+ 
+
+License
+
+ 
+
+Sundog Software, LLC (“Sundog”) grants you a non-exclusive, nontransferable, license to use the Silverlining Software Development Kit (the “SDK”).  The SDK is comprised of sample source code (the “Sample Code”), documentation files (the “Documentation”), image resource files (the “Resources”) and an Application Programming Interface and Code Libraries (collectively, the “API”). Under this License, You may (i) use, modify, and incorporate all or portions of the Sample Code, Resources, and the API into Your own programs (the “User Programs”), (ii) distribute the Sample Code in object code format, the Resources in binary format, and the API linked into anexecutable application only as part of the User Programs; (iii) use the SDK subject to end user license agreement or conditions stated on the Documentation, respectively, and (iv) use the SDK solely for the purpose of internal development.  You may not (i) distribute the SDK as a stand-alone product without any modification; (ii) sell, sublicense, rent, loan, or lease the SDK and the Documentation to any third party; (iii) reverse engineer, decompile, disassemble or otherwise attempt to discover the source code of the SDK or (iv) breach or violate the Terms of Use subject to Section 2 of this Agreement; or (v) use the SDK and the Documentation to create any software which is substantially similar to SilverLining (the “Software”).
+
+ 
+
+The SDK functionality is limited to five (5) minutes per application run.  If You want a longer run time, You may purchase a separate, per-product license code from Sundog at www.sundog-soft.com.  Such license will permit the distribution of one executable application that links in the Silverlining libraries, along with incremental updates to that executable application.
+
+ 
+
+Sundog has no obligation to provide service, defect correction, or any maintenance or support for the SDK unless such a service plan has been purchased separately.  You may purchase a 3-month service plan as part of a license purchase from Sundog at www.sundog-soft.com. Sundog anticipates that it will supply updates for enhancement to the SDK, however, Sundog is under no contractual obligation to do so.
+
+ 
+
+Terms of Use
+
+ 
+
+Please strictly comply with the terms set forth below under this SDK License Agreement.  The Sample Code, API and Documentation shall be distributed with User Programs to Your customers under the terms of Your end user license agreement, provided it includes terms that are substantially similar to those applicable to the Sample Code and API, as described herein.  You are required to include Sundog’s copyright notices – e.g., “Portions of this software include SilverLining(tm) technology, and is copyrighted and is proprietary of Sundog Software, LLC” in User Programs which include all or portions of the SDK.
+
+
+Sundog Software, LLC, may list You as a customer in Sundog Software, LLC's promotional materials, website, and other marketing materials, unless you have requested confidentiality in writing to sales@sundog-soft.com and received receipt of your request.
+ 
+
+Intellectual Property Rights
+
+ 
+
+The SDK is copyrighted and is a proprietary product of of Sundog Software, LLC. You agree to protect Sundog’s copyright and other ownership interests in all items in this SDK. You agree that all copies of items in the SDK reproduced and distributed by You are subject to the terms of this Agreement and will contain the same copyright, trademark, and other proprietary notices as appropriate and as appear on or in the master items delivered by Sundog in SDK.  Except as stated herein, this Agreement does not grant you any rights to patents, copyrights, trade secrets, trademarks, or any other rights in respect to the items in this SDK.
+
+ 
+
+Limitation of Liability
+
+ 
+
+IN NO EVENT WILL SUNDOG BE LIABLE FOR ANY DAMAGES, INCLUDING ANY LOSS OF PROFITS, OR OTHER INCIDENTAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF YOUR USE OR INABILITY TO USE THE SDK, EVEN IF SUNDOG HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. Some jurisdictions do not allow the exclusion or limitation of incidental, consequential or special damages, so the above limitations may not apply to you,
+
+ 
+
+Disclaimer of Warranty
+
+ 
+
+SUNDOG licenses the SDK to You only on an “AS IS” basis. With respect to the SDK, SUNDOG makes no representation as to ItS adequacy for any particular purpose or to produce any particular result. SUNDOG shall not be liable for loss or damage arising out of this Agreement or from the distribution or use of User Programs. SUNDOG does not and cannot warrant the performance or results you may obtain by using the SDK.
+
+ 
+
+Indemnification
+
+ 
+
+You agree to indemnify, hold harmless, and defend Sundog from and against any claims or lawsuits, including attorneys’ reasonable fees, that arise or result from the use or distribution of User Programs containing the Sample Code, provided that Sundog gives You prompt written notice of any such claim, tenders to You the defense or settlement of such a claim at Your expense, and cooperates with You, at Your expense, in defending or settling such claim.
+
+ 
+
+Duration
+
+ 
+
+This License shall continue for as long as you use the Software, except that it will automatically terminate if You fail to comply with any term or condition of this Agreement. Upon such termination, or in order for you to terminate the Agreement, You agree to immediately return all full and partial copies of the SDK to Sundog or destroy all User Programs which contain all or any portion of the Sample Code.
+
+ 
+
+Miscellaneous
+
+ 
+
+This Agreement is governed by the laws of the State of Washington, USA, without regard to conflicts of laws principles.  If any provision of this Agreement shall be unlawful, void, or for any reason unenforceable, then that provision shall be deemed severed from this Agreement and shall not affect the validity or enforceability of the remaining provisions of this Agreement. This Agreement is the complete statement of the agreement and supersedes any proposal or prior communications between us relating to the subject matter of this Agreement.  
+
+
+

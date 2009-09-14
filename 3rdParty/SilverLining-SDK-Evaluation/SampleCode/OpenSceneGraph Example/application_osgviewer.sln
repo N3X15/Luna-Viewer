@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Applications osgviewer", "application_osgviewer.vcproj", "{BC652DFD-C4C5-4077-A3C7-3B887F5CFB08}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		MinSizeRel|Win32 = MinSizeRel|Win32
+		Release|Win32 = Release|Win32
+		RelWithDebInfo|Win32 = RelWithDebInfo|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BC652DFD-C4C5-4077-A3C7-3B887F5CFB08}.Debug|Win32.ActiveCfg = Debug|Win32
+		{BC652DFD-C4C5-4077-A3C7-3B887F5CFB08}.Debug|Win32.Build.0 = Debug|Win32
+		{BC652DFD-C4C5-4077-A3C7-3B887F5CFB08}.MinSizeRel|Win32.ActiveCfg = MinSizeRel|Win32
+		{BC652DFD-C4C5-4077-A3C7-3B887F5CFB08}.MinSizeRel|Win32.Build.0 = MinSizeRel|Win32
+		{BC652DFD-C4C5-4077-A3C7-3B887F5CFB08}.Release|Win32.ActiveCfg = Release|Win32
+		{BC652DFD-C4C5-4077-A3C7-3B887F5CFB08}.Release|Win32.Build.0 = Release|Win32
+		{BC652DFD-C4C5-4077-A3C7-3B887F5CFB08}.RelWithDebInfo|Win32.ActiveCfg = RelWithDebInfo|Win32
+		{BC652DFD-C4C5-4077-A3C7-3B887F5CFB08}.RelWithDebInfo|Win32.Build.0 = RelWithDebInfo|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
