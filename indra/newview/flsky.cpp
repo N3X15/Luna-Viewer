@@ -1,3 +1,7 @@
+
+#include "llviewerprecompiledheaders.h"
+#include "flsky.h"
+
 // library includes
 #include "llerror.h"
 #include "llviewercontrol.h"
@@ -18,14 +22,14 @@
 #include "SilverLining.h"
 using namespace SilverLining;
 
-FLSky::FLSky() :
-	mAtm("","")
+void FLSky::Init()
 {
+	mAtm = new Atmosphere("","");
 	mAtm->ShowFramerate(true);
 
 	// Tell SilverLining we're rendering in OpenGL, the Resources directory is 2 directories
 	// above the working directory, and we're using a right-handed coordinate system.
-	if (mAtm->Initialize(Atmosphere::OPENGL, gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS,"SilverLining")+"/", true, 0) == Atmosphere::E_NOERROR)
+	if (mAtm->Initialize(Atmosphere::OPENGL, gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS,"SilverLining").c_str(), true, 0) == Atmosphere::E_NOERROR)
 	{
 		// Set up all the clouds
 		SetupAtmosphericConditions();
@@ -40,7 +44,7 @@ FLSky::FLSky() :
 //static
 void FLSky::UpdateCamera()
 {
-	if(gSavedSettings.getBool("SilverLiningDebug"))
+	if(gSavedSettings.getBOOL("SilverLiningDebug"))
 		llinfos << "UpdateCamera()" << llendl;
 	// Pass in the view and projection matrices to SilverLining.
 	double mv[16], proj[16];
@@ -82,7 +86,7 @@ void FLSky::SetupCumulusCongestusClouds()
         cumulusCongestusLayer->SetBaseWidth(30000);
         cumulusCongestusLayer->SetDensity(0.4);
         cumulusCongestusLayer->SetLayerPosition(0, 0);
-        cumulusCongestusLayer->SeedClouds(*atm);
+        cumulusCongestusLayer->SeedClouds(*mAtm);
         cumulusCongestusLayer->GenerateShadowMaps(false);
 
         mAtm->GetConditions()->AddCloudLayer(cumulusCongestusLayer);
@@ -102,9 +106,9 @@ void FLSky::SetupCirrusClouds()
 
         mAtm->GetConditions()->AddCloudLayer(cirrusCloudLayer);
 }
-void FLSky::ConvertCart2Geo(int X,int Y,double *_lat,double *_long)
+void FLSky::ConvertCart2Geo(double X,double Y,double *_lat,double *_long)
 {
-	FLGeoCoord point = new FLGeoCoord;
+	//FLGeoCoord point = new FLGeoCoord;
 	// Sim Y = N, [0-1048576] -> [-90S,90N]
 	// 	1.) Convert to fraction		(524288/1048576) 	= .5
 	//	2.) Multiply by -180 [0,180]	
@@ -112,13 +116,13 @@ void FLSky::ConvertCart2Geo(int X,int Y,double *_lat,double *_long)
 	//	3.) Subtract 90 to get degrees
 	//	    North/South of eq.		(90-90)			= 0
 	// Latitude = 0, so it's
-	_lat=(((double)Y/1048576.0)*-180.0)-90.0;
+	*_lat=(((double)Y/1048576.0)*-180.0)-90.0;
 
 	// Convert from Sim X position [0-1048576] to Longitude ([-180W,+180E])
 	//	524288/1048576		= .5
 	//	.5*360			= 180	// No need to flip
 	//	180-180			= 0	// Prime Meridian
-	_long=(((double)X/1048576.0)*360.0)-180.0;
+	*_long=(((double)X/1048576.0)*360.0)-180.0;
 }
 // Sets the simulated location and local time.
 // Note, it's important that your longitude in the Location agrees with 
@@ -156,5 +160,10 @@ void FLSky::RenderEnd()
 //static
 void FLSky::GetLightingColor(double *r,double *g,double *b)
 {
-	mAtm->GetSunOrMoonColor(r,g,b);
+	float rf,gf,bf;
+	
+	mAtm->GetSunOrMoonColor(&rf,&gf,&bf);
+	*r=(double)rf;
+	*g=(double)gf;
+	*b=(double)bf;
 }

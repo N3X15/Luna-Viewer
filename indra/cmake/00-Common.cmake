@@ -142,6 +142,8 @@ if (LINUX)
       -fsigned-char
       -g
       -pthread
+      -DLINUX 
+      -DGLUT_DISABLE_ATEXIT_HACK
       )
   #if (COMPILE_OTR)
     add_definitions(

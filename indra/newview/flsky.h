@@ -3,8 +3,8 @@
 */
 #ifndef FL_SKY_H
 #define FL_SKY_H
-#include "SilverLining.h"
 
+#include "SilverLining.h"
 
 #define SILVERLINING_COMPANY 	"YOUR COMPANY"
 #define SILVERLINING_KEY	"LICENSE KEY"
@@ -15,9 +15,7 @@ class FLSky
 {
 public:
 	// @brief Sets up the class.
-	FLSky();
-	// @brief Destructor.
-	~FLSky();
+	static void Init();
 	
 	// @brief Get SilverLining::Atmosphere instance.
 	Atmosphere* 	getAtmosphere();
@@ -33,15 +31,15 @@ public:
 
 	static void	 	GetLightingColor(double *r,double *g,double *b);
 	static void		UpdateCamera();
-	static void		ConvertCart2Geo(int x,int y,double *_lat,double *_long);
-private
-	Atmosphere*	mAtm;
-	void		SetupAtmosphericConditions();
+	static void		ConvertCart2Geo(double x,double y,double *_lat,double *_long);
+	static Atmosphere*	mAtm;
+private:
+	static void		SetupAtmosphericConditions();
 	// @brief Big, fluffy clouds
-	void 		SetupCumulusCongestusClouds();
-	void 		SetupCirrusClouds();
-	void		SetTimeAndLocation(int Lat=45,int Long=-122);
-	void		SetupFog();
+	static void 		SetupCumulusCongestusClouds();
+	static void 		SetupCirrusClouds();
+	static void		SetTimeAndLocation(int Lat=45,int Long=-122);
+	static void		SetupFog();
 	
-}
+};
 #endif // FL_SKY_H

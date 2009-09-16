@@ -185,11 +185,23 @@ void LLDrawPoolWLSky::render(S32 pass)
 	{
 		return;
 	}
+	if(!atm)
+		llerrs << "Unable to find SilverLining Atmosphere!" << llendl;
 	llinfos << "Rendering..." << llendl;
 	
 	LLFastTimer ftm(LLFastTimer::FTM_RENDER_WL_SKY);
+
+	llinfos << "Set Camera Matrix..." << llendl;
+	double mv[16], proj[16];
+	glGetDoublev(GL_MODELVIEW_MATRIX, mv);
+	glGetDoublev(GL_PROJECTION_MATRIX, proj);
+	atm->SetCameraMatrix(mv);
+	atm->SetProjectionMatrix(proj);
+
 	llinfos << "BeginFrame(True)" << llendl;
-	atm->BeginFrame(true);
+
+	//if(!atm->BeginFrame(true)) 
+	//	llerrs << "Failed to draw sky." << llendl;
 
         llinfos << "Camheight" << llendl;
 	const F32 camHeightLocal = LLWLParamManager::instance()->getDomeOffset() * LLWLParamManager::instance()->getDomeRadius();
@@ -210,7 +222,7 @@ void LLDrawPoolWLSky::render(S32 pass)
 	        llinfos << "RenderFog" << llendl;
 		//renderHeavenlyBodies();
 		renderFog();
-		//renderStars();
+		renderClouds();
 		
         llinfos << "glPopMatrix" << llendl;
 	glPopMatrix();
