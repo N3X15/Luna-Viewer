@@ -22,9 +22,12 @@
 #include "SilverLining.h"
 using namespace SilverLining;
 
+// Thanks to MichelleZ in efnet #OpenSL for pointing out my idiocy. :P
+Atmosphere* FLSky::mAtm = NULL;
+
 void FLSky::Init()
 {
-	mAtm = new Atmosphere("","");
+	mAtm= new Atmosphere("","");
 	mAtm->ShowFramerate(true);
 
 	// Tell SilverLining we're rendering in OpenGL, the Resources directory is 2 directories

@@ -148,6 +148,7 @@ void display_startup()
 	gPipeline.disableLights();
 
 	gViewerWindow->setup2DRender();
+	FLSky::Init();
 	gGL.getTexUnit(0)->setTextureBlendType(LLTexUnit::TB_MULT);
 
 	gGL.color4f(1,1,1,1);
@@ -182,6 +183,7 @@ void display_update_camera()
 	// update all the sky/atmospheric/water settings
 	LLWLParamManager::instance()->update(LLViewerCamera::getInstance());
 	LLWaterParamManager::instance()->update(LLViewerCamera::getInstance());
+	FLSky::UpdateCamera();
 
 	// Update land visibility too
 	LLWorld::getInstance()->setLandFarClip(final_far);
