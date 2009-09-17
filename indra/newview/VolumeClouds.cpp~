@@ -1,10 +1,11 @@
-#include "Common.h"
+
+#include "llviewerprecompiledheaders.h"
 
 #define GL_CLAMP_TO_EDGE 0x812F
 
 #define NUM_CLOUD_FILES		11		//number of cloud data files
 #define DIST_MUL_IMPOSTOR	4		//used for impostor/3d distance interpolation
-#define DIST_MUL_3D			2		//same as above
+#define DIST_MUL_3D		2		//same as above
 #define ALPHA_ADJUST		0.3f	//tweak the fading between impostors and 3d models so we 
 									//don't get transparent clouds
 
@@ -139,7 +140,7 @@ int VolumetricClouds::Create(int Num, float PlaneSize, float PlaneHeight)
 	return 0;
 }
 
-void VolumetricClouds::Update(Vector3 Sun, Vector3 Camera)
+void VolumetricClouds::Update(LLVector3 Sun, LLVector3 Camera)
 {
 	Vector3 SunDir, ToCam;
 
@@ -194,7 +195,7 @@ int VolumetricClouds::GetImpostorSize(float d)
 	return Size;
 }
 
-void VolumetricClouds::Render(Vector3 Camera, Vector3 Sun)
+void VolumetricClouds::Render(LLVector3 Camera, LLVector3 Sun)
 {
 	unsigned i, j;
 
@@ -251,7 +252,7 @@ void VolumetricClouds::Render(Vector3 Camera, Vector3 Sun)
 	}
 }
 
-void VolumetricClouds::MakeCloudImpostor(VolumetricCloud* Cloud, Vector3 Sun, Vector3 Camera)
+void VolumetricClouds::MakeCloudImpostor(VolumetricCloud* Cloud, LLVector3 Sun, LLVector3 Camera)
 {
 	unsigned i;
 	
@@ -419,7 +420,7 @@ void VolumetricClouds::MakeCloudImpostor(VolumetricCloud* Cloud, Vector3 Sun, Ve
 	Cloud->ImpostorSize = ViewportSize;
 }
 
-void VolumetricClouds::LightCloud(VolumetricCloud* Cloud, Vector3 Sun)
+void VolumetricClouds::LightCloud(VolumetricCloud* Cloud, LLVector3 Sun)
 {
 //	assume Sun is a point!!
 	Sun = Normalize(Sun) * Cloud->Radius * 1.5f + Cloud->Center;
@@ -571,7 +572,7 @@ void VolumetricClouds::LightCloud(VolumetricCloud* Cloud, Vector3 Sun)
 	glPopMatrix();				
 }
 
-void VolumetricClouds::RenderCloud3D(VolumetricCloud* Cloud, Vector3 Camera, Vector3 Sun, float alpha)
+void VolumetricClouds::RenderCloud3D(VolumetricCloud* Cloud, LLVector3 Camera, LLVector3 Sun, float alpha)
 {
 	unsigned i;
 	

@@ -39,7 +39,7 @@ include(UnixInstall)
 include(LLKDU)
 include(Emerald)
 include(LUA)
-include(SilverLining)
+#include(SilverLining)
 include(ViewerMiscLibs)
 
 #FIND_PACKAGE(SWIG REQUIRED)
@@ -48,8 +48,8 @@ include(ViewerMiscLibs)
 #SET_SOURCE_FILES_PROPERTIES(LuaBase.swig PROPERTIES SWIG_FLAGS "-includeall")
 #SWIG_ADD_MODULE(LuaBase lua LuaBase.swig LuaBase.cpp)
 
-find_package(Cg)
-find_package(GLUT)
+#find_package(Cg)
+#find_package(GLUT)
 
 if (WINDOWS)
     include(CopyWinLibs)
@@ -83,7 +83,6 @@ include_directories(
     ${LSCRIPT_INCLUDE_DIRS}
     ${LSCRIPT_INCLUDE_DIRS}/lscript_compile
     ${EMERALD_INCLUDE_DIRS}
-    ${SILVERLINING_INCLUDE_DIRS}
     ${CG_INCLUDE_PATH}
     ${GLUT_INCLUDE_DIR}
 )
@@ -512,6 +511,7 @@ set(viewer_SOURCE_FILES
     otr_wrapper.cpp
     otr_floater_smp_dialog.cpp
     otr_floater_smp_progress.cpp
+    VolumeClouds.cpp
     flsky.cpp
     )
 
@@ -958,6 +958,7 @@ set(viewer_HEADER_FILES
     otr_wrapper.h
     otr_floater_smp_dialog.h
     otr_floater_smp_progress.h
+    VolumeClouds.h
     flsky.h
     )
 

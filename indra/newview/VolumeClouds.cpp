@@ -1,10 +1,11 @@
-#include "Common.h"
+
+#include "llviewerprecompiledheaders.h"
 
 #define GL_CLAMP_TO_EDGE 0x812F
 
 #define NUM_CLOUD_FILES		11		//number of cloud data files
 #define DIST_MUL_IMPOSTOR	4		//used for impostor/3d distance interpolation
-#define DIST_MUL_3D			2		//same as above
+#define DIST_MUL_3D		2		//same as above
 #define ALPHA_ADJUST		0.3f	//tweak the fading between impostors and 3d models so we 
 									//don't get transparent clouds
 
@@ -13,9 +14,11 @@ VolumetricClouds::VolumetricClouds()
 	Albedo = 0.95f;
 	Extinction = 80.0f;
 	SplatBufferSize = 32;		//size of the splat buffer (this is a good value)
-	ImpostorSize = 512;			//maximum size of the impostor
+	ImpostorSize = 512;		//maximum size of the impostor
 }
 
+// @brief Generate a cloud
+// @todo Procedurally generate a cloud deck.
 void VolumetricClouds::GrowCloud(VolumetricCloud* Cloud, int level, float radius, LLVector3 Position)
 {
 	FILE* fp = NULL;
@@ -114,6 +117,7 @@ void VolumetricClouds::GenerateTexture()
 	delete [] B;		
 }
 
+// @brief Generate a cloud deck.
 int VolumetricClouds::Create(int Num, float PlaneSize, float PlaneHeight)
 {
 	int i;
@@ -127,8 +131,8 @@ int VolumetricClouds::Create(int Num, float PlaneSize, float PlaneHeight)
 		Cloud.Center.z = rand() % (int)(PlaneSize * 2) - PlaneSize;
 		Cloud.Center.y = PlaneHeight;
 		Cloud.Radius = 15.0f;
-		Cloud.LastLight = Vector3(0, 0, 0);
-		Cloud.LastCamera = Vector3(0, 0, 0);
+		Cloud.LastLight = LLVector3(0, 0, 0);
+		Cloud.LastCamera = LLVector3(0, 0, 0);
 		Cloud.ImpostorTex = 0;
 		
 		GrowCloud(&Cloud, 0, Cloud.Radius, Cloud.Center);
@@ -141,7 +145,7 @@ int VolumetricClouds::Create(int Num, float PlaneSize, float PlaneHeight)
 
 void VolumetricClouds::Update(LLVector3 Sun, LLVector3 Camera)
 {
-	Vector3 SunDir, ToCam;
+	LLVector3 SunDir, ToCam;
 
 	SunDir = Normalize(Sun);
 	
