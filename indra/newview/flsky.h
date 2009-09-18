@@ -1,5 +1,5 @@
 /**
-* Dunno what to license this yet.  Assume closed-source (AKA if you're not me, close this window kthx)
+* GPL v2.0 here
 */
 #ifndef FL_SKY_H
 #define FL_SKY_H

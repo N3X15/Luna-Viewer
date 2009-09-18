@@ -1,4 +1,6 @@
-
+/**
+* GPL v2.0 here
+*/
 #include "llviewerprecompiledheaders.h"
 #include "flsky.h"
 #include "llsky.h" 		// gSky
