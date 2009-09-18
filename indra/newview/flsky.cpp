@@ -27,26 +27,21 @@ FLSky::CloudList FLSky::mClouds;
 
 VolumetricClouds* FLSky::Create(LLViewerRegion *region)
 {
+	U64 i = region->getHandle();	
 	VolumetricClouds* Clouds= new VolumetricClouds();
 	// 10 clouds on a 500x500 plane @ 192 height (?)
 	Clouds->Create(10,256,192.f,region);
-	mClouds.push_back(Clouds);
+	mClouds[i]=Clouds;
 	llinfos << "Created cloud deck on region \"" << region->getName() << "\"." << llendl;
 	return Clouds;
 }
 
 void FLSky::DestroyDeck(LLViewerRegion *region)
 {
-	CloudListIter i=mClouds.begin();
-	for(;i<mClouds.end();i++)
-	{
-		if(((VolumetricClouds*)*i)->GetRegionHandle()==region->getHandle())
-		{
-			//((VolumetricClouds*)*i)->Destroy();
-			delete *i;
-			llinfos << "Destroyed cloud deck on region \"" << region->getName() << "\"." << llendl;
-		}
-	}
+	U64 i = region->getHandle();	
+	mClouds[i]->Destroy();
+	delete [] mClouds[i];
+	llinfos << "Destroyed cloud deck on region \"" << region->getName() << "\"." << llendl;
 }
 
 //void FLSky::UpdateSettings()
@@ -60,11 +55,9 @@ void FLSky::UpdateCamera()
 	LLVector3 sun = gSky.getSunDirection();
 	LLVector3 camera;
 	LLViewerCamera::getInstance()->lookDir(camera);
-	int n=mClouds.size();
-	int i;
-	for(i=0;i<n;i++)
+	for(CloudListIter i = mClouds.begin();i!=mClouds.end();i++)
 	{
-		mClouds[i]->Update(LLV2V(sun),LLV2V(camera));
+		i->second->Update(LLV2V(sun),LLV2V(camera));
 	}
 }
 
@@ -73,10 +66,8 @@ void FLSky::Render()
 	LLVector3 sun = gSky.getSunDirection();
 	LLVector3 camera;
 	LLViewerCamera::getInstance()->lookDir(camera);
-	int n=mClouds.size();
-	int i;
-	for(i=0;i<n;i++)
+	for(CloudListIter i = mClouds.begin();i!=mClouds.end();i++)
 	{
-		mClouds[i]->Render(LLV2V(sun),LLV2V(camera));
+		i->second->Render(LLV2V(sun),LLV2V(camera));
 	}
 }

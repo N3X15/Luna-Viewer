@@ -22,8 +22,8 @@ public:
 	static void Render();
 	static void UpdateCamera();
 
-	typedef std::vector<VolumetricClouds*>::iterator CloudListIter;
-	typedef std::vector<VolumetricClouds*> CloudList;
+	typedef std::map<U64,VolumetricClouds*>::iterator CloudListIter;
+	typedef std::map<U64,VolumetricClouds*> CloudList;
 	
 	static CloudList	mClouds;
 	

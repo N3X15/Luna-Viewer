@@ -123,7 +123,7 @@ void VolumetricClouds::GenerateTexture()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);	
 
-	delete [] B;		
+	delete [] B;	
 }
 
 // @brief Generate a cloud deck.
@@ -799,9 +799,9 @@ void VolumetricClouds::SortParticles(VolumetricCloud* Cloud, int mode)
 
 void VolumetricClouds::Destroy()
 {
-/*
-	unsigned i;
-	for (i = 0; i < Clouds.size(); i++)
+	int i,n;
+	n=Clouds.size();
+	for(i=0;i<n;i++)
 	{
 		Clouds[i].Puffs.clear();
 		delete [] Clouds[i].VertexBuffer;
@@ -809,5 +809,5 @@ void VolumetricClouds::Destroy()
 		delete [] Clouds[i].TexCoordBuffer;
 	}
 				
-	Clouds.clear();*/
+	Clouds.clear();
 }
