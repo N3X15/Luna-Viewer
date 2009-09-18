@@ -1,4 +1,0 @@
-<area shape="rect" href="$_wind_volume_8h.html" title="Defines an area of a given wind speed and direction." alt="" coords="5,84,120,111">
-<area shape="rect" href="$_location_8h.html" title="Represents the geographic location being simulated." alt="" coords="144,84,235,111">
-<area shape="rect" href="$_local_time_8h.html" title="An object to describe the local time, time zone, and daylight savings time observation..." alt="" coords="259,84,360,111">
-<area shape="rect" href="$_millisecond_timer_8h.html" title="Exposes an interface applications may use to manipulate time." alt="" coords="384,84,525,111">

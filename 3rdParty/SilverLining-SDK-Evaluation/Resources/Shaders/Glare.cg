@@ -1,9 +1,0 @@
-void main(in float3 texCoord : TEXCOORD0,
-          in float4 inColor : COLOR,
-          out float4 color : COLOR,
-		  uniform sampler2D psf : TEXUNIT0,
-		  uniform float4 intensity )
-{
-    color.rgb = intensity.xyz * (float3)tex2D(psf, texCoord.xy) * inColor.rgb;
-    color.a = 1.0;
-}

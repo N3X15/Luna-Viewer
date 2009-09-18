@@ -50,6 +50,8 @@
 #include "llvocache.h"
 #include "llweb.h"
 
+#include "VolumeClouds.h"
+
 // Surface id's
 #define LAND  1
 #define WATER 2
@@ -298,6 +300,7 @@ protected:
 public:
 	LLWind  mWind;
 	LLCloudLayer mCloudLayer;
+	VolumetricClouds *mVolumeClouds;
 	LLViewerParcelOverlay	*mParcelOverlay;
 
 	LLStat	mBitStat;

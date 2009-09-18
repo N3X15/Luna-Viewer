@@ -1,7 +1,0 @@
-<area shape="rect" href="$_atmosphere_8h.html" title="The main interface to SilverLining." alt="" coords="473,84,588,110">
-<area shape="rect" href="$_atmospheric_conditions_8h.html" title="Configures the time, location, atmosphere, and cloud cover." alt="" coords="168,161,355,188">
-<area shape="rect" href="$_random_number_generator_8h.html" title="A virtual base class for overriding SilverLining&#39;s random number generator in..." alt="" coords="379,161,587,188">
-<area shape="rect" href="$_wind_volume_8h.html" title="Defines an area of a given wind speed and direction." alt="" coords="501,238,616,265">
-<area shape="rect" href="$_location_8h.html" title="Represents the geographic location being simulated." alt="" coords="96,238,187,265">
-<area shape="rect" href="$_local_time_8h.html" title="An object to describe the local time, time zone, and daylight savings time observation..." alt="" coords="211,238,312,265">
-<area shape="rect" href="$_millisecond_timer_8h.html" title="Exposes an interface applications may use to manipulate time." alt="" coords="336,238,477,265">

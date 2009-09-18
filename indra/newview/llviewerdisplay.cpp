@@ -148,7 +148,7 @@ void display_startup()
 	gPipeline.disableLights();
 
 	gViewerWindow->setup2DRender();
-	FLSky::Init();
+//	FLSky::Init();
 	gGL.getTexUnit(0)->setTextureBlendType(LLTexUnit::TB_MULT);
 
 	gGL.color4f(1,1,1,1);
@@ -720,8 +720,8 @@ void display(BOOL rebuild, F32 zoom_factor, int subfield, BOOL for_snapshot)
 		{
 			LLAppViewer::instance()->pingMainloopTimeout("Display:Sky");
 			LLFastTimer t(LLFastTimer::FTM_UPDATE_SKY);	
-//			gSky.updateSky();
-			FLSky::UpdateCamera();
+			gSky.updateSky();
+			FLSky::Render();
 		}
 
 //		if(gUseWireframe)
@@ -873,7 +873,7 @@ void display(BOOL rebuild, F32 zoom_factor, int subfield, BOOL for_snapshot)
 	display_stats();
 			
 	// FlexLife End rendering loop.	
-	FLSky::RenderEnd();
+//	FLSky::RenderEnd();
 	LLAppViewer::instance()->pingMainloopTimeout("Display:Done");
 }
 

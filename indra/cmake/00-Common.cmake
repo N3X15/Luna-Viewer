@@ -140,7 +140,7 @@ if (LINUX)
       -fno-math-errno
       -fno-strict-aliasing
       -fsigned-char
-      -g3
+      -g
       -pthread
       -DLINUX 
       -DGLUT_DISABLE_ATEXIT_HACK

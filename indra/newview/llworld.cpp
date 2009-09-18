@@ -61,6 +61,8 @@
 #include "pipeline.h"
 #include "llappviewer.h"		// for do_disconnect()
 
+#include "flsky.h"
+
 //
 // Globals
 //
@@ -180,6 +182,8 @@ LLViewerRegion* LLWorld::addRegion(const U64 &region_handle, const LLHost &host)
 	{
 		llerrs << "Unable to create new region!" << llendl;
 	}
+
+	regionp->mVolumeClouds=FLSky::Create(regionp);
 
 	regionp->mCloudLayer.create(regionp);
 	regionp->mCloudLayer.setWidth((F32)mWidth);

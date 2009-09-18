@@ -1,6 +1,9 @@
 
 #include "llviewerprecompiledheaders.h"
 #include "flsky.h"
+#include "llsky.h" 		// gSky
+#include "llviewercamera.h" 	// LLViewerCamera
+#include "llviewerregion.h"
 
 // library includes
 #include "llerror.h"
@@ -19,13 +22,31 @@
 #include "lldir.h"
 
 #include "VolumeClouds.h"
-VolumetricClouds* FLSky::mClouds = NULL;
 
-void FLSky::Init()
+FLSky::CloudList FLSky::mClouds;
+
+VolumetricClouds* FLSky::Create(LLViewerRegion *region)
 {
-	mClouds= new VolumetricClouds();
-	// 10 clouds on a 5000x5000 plane @ 500 height (?)
-	mClouds->Create(10,5000,500);
+	VolumetricClouds* Clouds= new VolumetricClouds();
+	// 10 clouds on a 500x500 plane @ 192 height (?)
+	Clouds->Create(10,256,192.f,region);
+	mClouds.push_back(Clouds);
+	llinfos << "Created cloud deck on region \"" << region->getName() << "\"." << llendl;
+	return Clouds;
+}
+
+void FLSky::DestroyDeck(LLViewerRegion *region)
+{
+	CloudListIter i=mClouds.begin();
+	for(;i<mClouds.end();i++)
+	{
+		if(((VolumetricClouds*)*i)->GetRegionHandle()==region->getHandle())
+		{
+			//((VolumetricClouds*)*i)->Destroy();
+			delete *i;
+			llinfos << "Destroyed cloud deck on region \"" << region->getName() << "\"." << llendl;
+		}
+	}
 }
 
 //void FLSky::UpdateSettings()
@@ -36,18 +57,26 @@ void FLSky::Init()
 //static
 void FLSky::UpdateCamera()
 {
-	LLVector3 sun = gSky->getSunDirection();
+	LLVector3 sun = gSky.getSunDirection();
 	LLVector3 camera;
-	LLViewerCamera::getInstance()->lookDir(&camera);
-
-	mClouds->Update(sun,camera);
+	LLViewerCamera::getInstance()->lookDir(camera);
+	int n=mClouds.size();
+	int i;
+	for(i=0;i<n;i++)
+	{
+		mClouds[i]->Update(LLV2V(sun),LLV2V(camera));
+	}
 }
 
 void FLSky::Render()
 {
-	LLVector3 sun = gSky->getSunDirection();
+	LLVector3 sun = gSky.getSunDirection();
 	LLVector3 camera;
-	LLViewerCamera::getInstance()->lookDir(&camera);
-
-	mClouds->Render(sun,camera);
+	LLViewerCamera::getInstance()->lookDir(camera);
+	int n=mClouds.size();
+	int i;
+	for(i=0;i<n;i++)
+	{
+		mClouds[i]->Render(LLV2V(sun),LLV2V(camera));
+	}
 }

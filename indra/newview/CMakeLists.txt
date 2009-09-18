@@ -958,6 +958,8 @@ set(viewer_HEADER_FILES
     otr_wrapper.h
     otr_floater_smp_dialog.h
     otr_floater_smp_progress.h
+    Color.h
+    Vector.h
     VolumeClouds.h
     flsky.h
     )

@@ -66,6 +66,9 @@
 #include "llworld.h"
 #include "llspatialpartition.h"
 
+#include "VolumeClouds.h"
+#include "flsky.h"
+
 // Viewer object cache version, change if object update
 // format changes. JC
 const U32 INDRA_OBJECT_CACHE_VERSION = 14;
@@ -179,6 +182,7 @@ LLViewerRegion::LLViewerRegion(const U64 &handle,
 	updateRenderMatrix();
 
 	mLandp = new LLSurface('l', NULL);
+	mVolumeClouds=NULL;
 	if (!gNoRender)
 	{
 		// Create the composition layer for the surface
@@ -244,6 +248,8 @@ void LLViewerRegion::initStats()
 
 LLViewerRegion::~LLViewerRegion() 
 {
+	if(mVolumeClouds!=NULL)
+		FLSky::DestroyDeck(this);
 	if(mHttpResponderPtr)
 	{
 		(static_cast<BaseCapabilitiesComplete*>(mHttpResponderPtr.get()))->setRegion(NULL) ;

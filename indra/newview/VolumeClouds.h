@@ -2,18 +2,28 @@
 #include "llviewerprecompiledheaders.h"
 #include "v3math.h"
 #include "v4math.h"
+#include "llviewerregion.h"
+
+#include <vector>
+#include "Vector.h"
+#include "Color.h"
+
 #ifndef _VOLUMETRIC_H
 #define _VOLUMETRIC_H
 
 #define SORT_TOWARD 0
 #define SORT_AWAY 1
 
+// FROM Common.h
+#define PI 3.141592653589f
+#define SQR(x) ( (x) * (x) )
+
 struct CloudPuff
 {
 	float 	Size;
 	int 	ID;
 	float 	Angle;
-	LLVector3 Position;
+	Vector3 Position;
 	float	DistanceToCam;
 	Color4 	Color;
 	float	Life;	
@@ -21,20 +31,20 @@ struct CloudPuff
 
 struct VolumetricCloud
 {
-	vector<CloudPuff> Puffs;
+	std::vector<CloudPuff> Puffs;
 	unsigned 	ImpostorTex;
-	LLVector3		BoundingBox1, BoundingBox2;
-	LLVector3 	Center;
+	Vector3		BoundingBox1, BoundingBox2;
+	Vector3 	Center;
 	float		Radius;
-	LLVector3*	VertexBuffer;
+	Vector3*	VertexBuffer;
 	Color4*		ColorBuffer;
-	LLVector2*	TexCoordBuffer;
+	Vector2*	TexCoordBuffer;
 	
-	LLVector3		LastCamera;
-	LLVector3		LastLight;
+	Vector3		LastCamera;
+	Vector3		LastLight;
 	float		DistanceFromCamera;
 	int			ImpostorSize;
-	LLVector3		vx, vy;	//up and right vectors for impostor rendering
+	Vector3		vx, vy;	//up and right vectors for impostor rendering
 };
 
 class VolumetricClouds
@@ -42,26 +52,27 @@ class VolumetricClouds
 public:
 	VolumetricClouds();
 	
-	int 	Create(int NumClouds, float PlaneSize, float PlaneHeight);	
-	void	Update(LLVector3 Sun, LLVector3 Camera);
-	void	Render(LLVector3 Sun, LLVector3 Camera);
+	int 	Create(int NumClouds, float PlaneSize, float PlaneHeight, LLViewerRegion *Region);	
+	void	Update(Vector3 Sun, Vector3 Camera);
+	void	Render(Vector3 Sun, Vector3 Camera);
 	void	Destroy();
 	void	GetInfo(int* Sprites, int* Impostors)
 	{
 		*Sprites = NumSprites;
 		*Impostors = NumImpostors;
 	}
+	const U64 GetRegionHandle() {return mRegionHandle;}
 
 private:
 
-	void	UpdateCloud(VolumetricCloud* Cloud, LLVector3 Sun, LLVector3 Camera);
+	void	UpdateCloud(VolumetricCloud* Cloud, Vector3 Sun, Vector3 Camera);
 	void	RenderCloudImpostor(VolumetricCloud* Cloud, float alpha); 
-	void	RenderCloud3D(VolumetricCloud* Cloud, LLVector3 Camera, LLVector3 Sun, float alpha);
+	void	RenderCloud3D(VolumetricCloud* Cloud, Vector3 Camera, Vector3 Sun, float alpha);
 
-	void	MakeCloudImpostor(VolumetricCloud* Cloud, LLVector3 Sun, LLVector3 Camera);
+	void	MakeCloudImpostor(VolumetricCloud* Cloud, Vector3 Sun, Vector3 Camera);
 	
-	void	LightCloud(VolumetricCloud* Cloud, LLVector3 Sun);
-	void	GrowCloud(VolumetricCloud* Cloud, int level, float radius, LLVector3 Position);
+	void	LightCloud(VolumetricCloud* Cloud, Vector3 Sun);
+	void	GrowCloud(VolumetricCloud* Cloud, int level, float radius, Vector3 Position);
 
 	int		GetImpostorSize(float distance2);	
 	void	GenerateTexture();
@@ -97,12 +108,42 @@ private:
 	unsigned PuffTexture;
 	unsigned PuffImage;
 
-	vector<VolumetricCloud> Clouds;
+	std::vector<VolumetricCloud> Clouds;
 	
-	int	SplatBufferSize;
+	int SplatBufferSize;
 	int ImpostorSize;
 	int NumSprites, NumImpostors;
 	float Albedo, Extinction;
+	U64 mRegionHandle;
+
 };
 
+inline LLVector3 V2LLV(const Vector3 i)
+{
+	return LLVector3(i.x,i.y,i.z);
+}
+inline Vector3 LLV2V(const LLVector3 i)
+{
+	return Vector3(i.mV[VX],i.mV[VY],i.mV[VZ]);
+}
+inline Vector3 LLVd2V(const LLVector3d i)
+{
+	return Vector3((float)i.mdV[VX],(float)i.mdV[VY],(float)i.mdV[VZ]);
+}
+
+// __fastcall (M$-specific)
+inline float carmack_func(float x)
+{
+	int carmack;
+	float isx, halfx;	//Inverse Squareroot of x
+
+	halfx = 0.5f*x;
+	carmack = *(int*)&x; 
+	carmack = 0x5f3759df - (carmack>>1); 
+	isx = *(float*)&carmack; 
+
+	isx = isx*(1.5f-halfx*isx*isx);  //Newton-Rhapson step, add more for accuracy
+
+	return isx;
+}
 #endif
