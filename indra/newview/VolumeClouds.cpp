@@ -335,7 +335,7 @@ void VolumetricClouds::MakeCloudImpostor(VolumetricCloud* Cloud, Vector3 Sun, Ve
 	
 	Cloud->vx = vx;		Cloud->vy = vy; //store for rendering
 
-	LLGLEnable gt2(GL_TEXTURE_2D);
+	//LLGLEnable gt2(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, PuffTexture);
 	
 	LLGLEnable blend(GL_BLEND);
@@ -495,7 +495,7 @@ void VolumetricClouds::LightCloud(VolumetricCloud* Cloud, Vector3 Sun)
 	Vector3 vy(mat[1], mat[5], mat[9] );	
 	
 	{
-		LLGLEnable gl_tex2d(GL_TEXTURE_2D);
+	//	LLGLEnable gl_tex2d(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, PuffTexture);
 	}
 
@@ -510,7 +510,7 @@ void VolumetricClouds::LightCloud(VolumetricCloud* Cloud, Vector3 Sun)
 	glGetDoublev(GL_PROJECTION_MATRIX, mp);
 	glGetIntegerv(GL_VIEWPORT, vp);		
 
-	LLGLEnable gl_tex2d(GL_TEXTURE_2D);
+	//LLGLEnable gl_tex2d(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, PuffTexture);
 
 	// Our blending is enabled
@@ -624,7 +624,7 @@ void VolumetricClouds::RenderCloud3D(VolumetricCloud* Cloud, Vector3 Camera, Vec
 	Vector3 vx(mat[0], mat[4], mat[8] );
 	Vector3 vy(mat[1], mat[5], mat[9] );	
 
-	LLGLEnable gl_tex2d(GL_TEXTURE_2D);
+	//LLGLEnable gl_tex2d(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, PuffTexture);
 	
 	LLGLEnable gl_blend(GL_BLEND);
@@ -708,7 +708,7 @@ void VolumetricClouds::RenderCloud3D(VolumetricCloud* Cloud, Vector3 Camera, Vec
 
 void VolumetricClouds::RenderCloudImpostor(VolumetricCloud* Cloud, float alpha)
 {
-	LLGLEnable gl_tex2d(GL_TEXTURE_2D);
+	//LLGLEnable gl_tex2d(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, Cloud->ImpostorTex);
 
 	LLGLEnable blend(GL_BLEND);
