@@ -42,7 +42,7 @@ void FLSky::DestroyDeck(LLViewerRegion *region)
 {
 	U64 i = region->getHandle();	
 	mClouds[i]->Destroy();
-	delete [] mClouds[i];
+	mClouds.erase(i);
 	llinfos << "Destroyed cloud deck on region \"" << region->getName() << "\"." << llendl;
 }
 

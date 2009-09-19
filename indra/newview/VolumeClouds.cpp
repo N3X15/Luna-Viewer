@@ -134,7 +134,12 @@ int VolumetricClouds::Create(int Num, float PlaneSize, float PlaneHeight,LLViewe
 {
 	int i;
 	
-	GenerateTexture();
+	// Reset GL State to default here.  Maybe.
+	{
+		LLGLSDefault gl_default;
+		GenerateTexture();
+	}
+
 	mRegionHandle=Region->getHandle();
 
 	for (i = 0; i < Num; i++)
@@ -160,6 +165,7 @@ int VolumetricClouds::Create(int Num, float PlaneSize, float PlaneHeight,LLViewe
 
 void VolumetricClouds::Update(Vector3 Sun, Vector3 Camera)
 {
+	LLGLSDefault gl_default; // Default GL States?
 	llinfos << "Init SunDir,ToCam" << llendl;
 	Vector3 SunDir, ToCam;
 
@@ -201,7 +207,6 @@ void VolumetricClouds::Update(Vector3 Sun, Vector3 Camera)
 			}
 		}
 	}
-	LLGLState::restoreGL();
 }
 
 int VolumetricClouds::GetImpostorSize(float d)
@@ -251,6 +256,7 @@ void VolumetricClouds::Render(Vector3 Camera, Vector3 Sun)
 	float dist_impostor, dist_3D;
 	float alpha;
 
+	LLGLSDefault gl_default;
 	for (i = 0; i < Clouds.size(); i++)
 	{
 		dist_impostor = Clouds[i].Radius * DIST_MUL_IMPOSTOR; //beyond this render only the impostor
@@ -272,7 +278,8 @@ void VolumetricClouds::Render(Vector3 Camera, Vector3 Sun)
 			else
 			{
 				//in between, interpolate nicely and tweak the alpha to make it look prettier
-				alpha = (Clouds[i].DistanceFromCamera - dist_3D) / (dist_impostor - dist_3D);		
+				alpha = (Clouds[i].DistanceFromCamera - dist_3D) / (dist_impostor - dist_3D);
+
 				RenderCloudImpostor(&Clouds[i], ALPHA_ADJUST + alpha);
 				RenderCloud3D(&Clouds[i], Camera, Sun, 1.0f - alpha);
 			}
@@ -328,12 +335,12 @@ void VolumetricClouds::MakeCloudImpostor(VolumetricCloud* Cloud, Vector3 Sun, Ve
 	
 	Cloud->vx = vx;		Cloud->vy = vy; //store for rendering
 
-	glEnable(GL_TEXTURE_2D);
+	LLGLEnable gt2(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, PuffTexture);
 	
-	glEnable(GL_BLEND);
+	LLGLEnable blend(GL_BLEND);
 	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-	
+
 	Vector3 Light = Normalize(Camera - Sun);
 	Vector3 Omega;
 	Color4  ParticleColor;
@@ -487,8 +494,10 @@ void VolumetricClouds::LightCloud(VolumetricCloud* Cloud, Vector3 Sun)
 	Vector3 vx(mat[0], mat[4], mat[8] );
 	Vector3 vy(mat[1], mat[5], mat[9] );	
 	
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, PuffTexture);
+	{
+		LLGLEnable gl_tex2d(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, PuffTexture);
+	}
 
 	float SolidAngle = 0.09f, Area;
 	unsigned Pixels;
@@ -501,15 +510,17 @@ void VolumetricClouds::LightCloud(VolumetricCloud* Cloud, Vector3 Sun)
 	glGetDoublev(GL_PROJECTION_MATRIX, mp);
 	glGetIntegerv(GL_VIEWPORT, vp);		
 
-	glEnable(GL_TEXTURE_2D);
+	LLGLEnable gl_tex2d(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, PuffTexture);
 
-	//our blending is enabled
-	glEnable(GL_BLEND);
+	// Our blending is enabled
+	LLGLEnable gl_blend(GL_BLEND);
 	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable(GL_ALPHA_TEST);
+
+	// Enable Alphawhatever
+	LLGLEnable gl_at(GL_ALPHA_TEST);
 	glAlphaFunc(GL_GREATER, 0);
-	
+
 	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	
 	llinfos << "Setup light..." << llendl;
@@ -585,19 +596,16 @@ void VolumetricClouds::LightCloud(VolumetricCloud* Cloud, Vector3 Sun)
 		
 		glEnd();				
 	}	
-	glDisable(GL_ALPHA_TEST);
-	glDisable(GL_BLEND);
-	glDisable(GL_TEXTURE_2D);
+//	glDisable(GL_ALPHA_TEST);
+//	glDisable(GL_BLEND);
+//	glDisable(GL_TEXTURE_2D);
 	glPopAttrib();
 		
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
 	
 	glMatrixMode(GL_MODELVIEW);
-	glPopMatrix();	
-
-	// Reset states?  (I have no idea how to get around the LLGLState stuff, hopefully this will work.)
-	LLGLState::restoreGL();			
+	glPopMatrix();		
 }
 
 void VolumetricClouds::RenderCloud3D(VolumetricCloud* Cloud, Vector3 Camera, Vector3 Sun, float alpha)
@@ -615,11 +623,11 @@ void VolumetricClouds::RenderCloud3D(VolumetricCloud* Cloud, Vector3 Camera, Vec
 		
 	Vector3 vx(mat[0], mat[4], mat[8] );
 	Vector3 vy(mat[1], mat[5], mat[9] );	
-	
-	glEnable(GL_TEXTURE_2D);
+
+	LLGLEnable gl_tex2d(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, PuffTexture);
 	
-	glEnable(GL_BLEND);
+	LLGLEnable gl_blend(GL_BLEND);
 	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 	
 	Vector3 Light = Normalize(Camera - Sun);
@@ -693,48 +701,48 @@ void VolumetricClouds::RenderCloud3D(VolumetricCloud* Cloud, Vector3 Camera, Vec
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	glDisableClientState(GL_COLOR_ARRAY);	
 
-	glDisable(GL_TEXTURE_2D);	
-	glDisable(GL_BLEND);
-	LLGLState::restoreGL();
+//	glDisable(GL_TEXTURE_2D);	
+//	glDisable(GL_BLEND);
+//	LLGLState::restoreGL();
 }
 
 void VolumetricClouds::RenderCloudImpostor(VolumetricCloud* Cloud, float alpha)
 {
-	glEnable(GL_TEXTURE_2D);
+	LLGLEnable gl_tex2d(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, Cloud->ImpostorTex);
-		
-	glEnable(GL_BLEND);
-	glEnable(GL_ALPHA_TEST);
+
+	LLGLEnable blend(GL_BLEND);
+	LLGLEnable at(GL_ALPHA_TEST);
 	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA); //_MINUS_SRC_ALPHA);
 	glAlphaFunc(GL_GREATER, 0.0f);
-	
+
 	//we might get some hard edges because we don't clear the whole texture when
 	//redrawing the impostor so a small adjustment of tex coords will fix this
 	float texcoord = (float)(Cloud->ImpostorSize) / (float)ImpostorSize - 0.001f;
-	
+
 	//and here we make the cloud transparent depending on the alpha value
 	//we use alpha in all components because of our special blending parameters
 	glColor4f(alpha, alpha, alpha, alpha);
-	
+
 	glBegin(GL_QUADS);
-				
+			
 	glTexCoord2f(0.0f, 0.0f); 			
 	glVertex3fv(!(Cloud->Center + (Cloud->vx + Cloud->vy) * -Cloud->Radius));
-		
+	
 	glTexCoord2f(texcoord, 0.0f); 		
 	glVertex3fv(!(Cloud->Center + (Cloud->vx - Cloud->vy) *  Cloud->Radius));
-		
+	
 	glTexCoord2f(texcoord, texcoord); 		
 	glVertex3fv(!(Cloud->Center + (Cloud->vx + Cloud->vy) *  Cloud->Radius)); 
-		
+	
 	glTexCoord2f(0.0f, texcoord); 		
 	glVertex3fv(!(Cloud->Center + (Cloud->vy - Cloud->vx) *  Cloud->Radius));
-		
+	
 	glEnd();
 
-	glDisable(GL_TEXTURE_2D);		
-	glDisable(GL_BLEND);
-	glDisable(GL_ALPHA_TEST);
+//	glDisable(GL_TEXTURE_2D);		
+//	glDisable(GL_BLEND);
+//	glDisable(GL_ALPHA_TEST);
 	
 	NumImpostors++;
 }
@@ -796,7 +804,6 @@ void VolumetricClouds::Destroy()
 		delete [] Clouds[i].VertexBuffer;
 		delete [] Clouds[i].ColorBuffer;
 		delete [] Clouds[i].TexCoordBuffer;
-	}
-				
+	}			
 	Clouds.clear();
 }
