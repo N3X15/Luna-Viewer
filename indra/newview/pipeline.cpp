@@ -2671,6 +2671,11 @@ void LLPipeline::renderGeom(LLCamera& camera, BOOL forceVBOUpdate)
 			LLDrawPool *poolp = *iter1;
 			
 			cur_type = poolp->getType();
+			if(cur_type==LLDrawPool::POOL_CLOUDS)
+			{
+				FLSky::Render();
+				break;
+			}
 
 			if (occlude && cur_type >= LLDrawPool::POOL_GRASS)
 			{

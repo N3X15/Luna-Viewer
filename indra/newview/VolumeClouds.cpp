@@ -136,7 +136,7 @@ int VolumetricClouds::Create(int Num, float PlaneSize, float PlaneHeight,LLViewe
 	
 	// Reset GL State to default here.  Maybe.
 	{
-		LLGLSDefault gl_default;
+	//	LLGLSDefault gl_default;
 		GenerateTexture();
 	}
 
@@ -145,11 +145,12 @@ int VolumetricClouds::Create(int Num, float PlaneSize, float PlaneHeight,LLViewe
 	for (i = 0; i < Num; i++)
 	{
 		VolumetricCloud Cloud;
-		Cloud.Center = LLVd2V(Region->getCenterGlobal());
-		// Was: rand() % (int)(PlaneSize * 2) - PlaneSize;
-		Cloud.Center.x+=rand() % (int)(PlaneSize * 2);
-		Cloud.Center.y+=rand() % (int)(PlaneSize * 2);
-		Cloud.Center.z = PlaneHeight;
+		LLVector3 center(
+			(rand() % (int)(PlaneSize * 2))*PlaneSize,
+			(rand() % (int)(PlaneSize * 2))*PlaneSize,
+			PlaneHeight
+		);
+		Cloud.Center=LLVd2V(Region->getPosGlobalFromRegion(center));
 		Cloud.Radius = 15.0f;
 		Cloud.LastLight = Vector3(0, 0, 0);
 		Cloud.LastCamera = Vector3(0, 0, 0);
@@ -166,26 +167,21 @@ int VolumetricClouds::Create(int Num, float PlaneSize, float PlaneHeight,LLViewe
 void VolumetricClouds::Update(Vector3 Sun, Vector3 Camera)
 {
 	LLGLSDefault gl_default; // Default GL States?
-	llinfos << "Init SunDir,ToCam" << llendl;
+	llinfos << "Sun @ <" << Sun.x << "," << Sun.y << "," << Sun.z << ">" << ";Cam @ <" << Camera.x << "," << Camera.y << "," << Camera.z << ">" << llendl;
 	Vector3 SunDir, ToCam;
 
-	llinfos << "Normalize Sun" << llendl;
 	SunDir = Normalize(Sun);
 	
 	for (unsigned i = 0; i < Clouds.size(); i++)
 	{
-		llinfos << "Update Cloud #" << i << llendl;
 		//if the angle between the camera and the cloud center
 		//has changed enough since the last lighting calculation
 		//recalculate the lighting (very slow - don't move the sun :) )
 
-		llinfos << "#" << i << ": Cam direction" << llendl;
 		ToCam =  Normalize(Camera - Clouds[i].Center);
 
-		llinfos << "#" << i << ": Dot(SunDir,Cloud)" << llendl;
 		if (Dot(SunDir, Clouds[i].LastLight) < 0.99f)
 		{
-			llinfos << "#" << i << ": Light cloud" << llendl;
 			LightCloud(&Clouds[i], Sun);
 			MakeCloudImpostor(&Clouds[i], Sun, Camera);
 			Clouds[i].LastLight = SunDir;
@@ -523,7 +519,7 @@ void VolumetricClouds::LightCloud(VolumetricCloud* Cloud, Vector3 Sun)
 
 	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	
-	llinfos << "Setup light..." << llendl;
+	//llinfos << "Setup light..." << llendl;
 	Color4 LightColor(1.0f, 1.0f, 1.0f, 1.0f), ParticleColor;
 	float factor = 1.0f;
 	int ReadX, ReadY;

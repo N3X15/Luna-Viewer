@@ -184,6 +184,8 @@ LLViewerRegion* LLWorld::addRegion(const U64 &region_handle, const LLHost &host)
 	}
 
 	regionp->mVolumeClouds=FLSky::Create(regionp);
+//	regionp->mVolumeClouds->setWidth((F32)mWidth);
+//	regionp->mVolumeClouds->setWindPointer(&regionp->mWind);
 
 	regionp->mCloudLayer.create(regionp);
 	regionp->mCloudLayer.setWidth((F32)mWidth);

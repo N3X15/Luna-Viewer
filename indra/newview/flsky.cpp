@@ -6,6 +6,7 @@
 #include "llsky.h" 		// gSky
 #include "llviewercamera.h" 	// LLViewerCamera
 #include "llviewerregion.h"
+#include "llagent.h"		// gAgent
 
 // library includes
 #include "llerror.h"
@@ -55,21 +56,19 @@ void FLSky::DestroyDeck(LLViewerRegion *region)
 void FLSky::UpdateCamera()
 {
 	LLVector3 sun = gSky.getSunDirection();
-	LLVector3 camera;
-	LLViewerCamera::getInstance()->lookDir(camera);
+	LLVector3d camera = gAgent.calcFocusPositionTargetGlobal();
 	for(CloudListIter i = mClouds.begin();i!=mClouds.end();i++)
 	{
-		i->second->Update(LLV2V(sun),LLV2V(camera));
+		i->second->Update(LLV2V(sun),LLVd2V(camera));
 	}
 }
 
 void FLSky::Render()
 {
 	LLVector3 sun = gSky.getSunDirection();
-	LLVector3 camera;
-	LLViewerCamera::getInstance()->lookDir(camera);
+	LLVector3d camera = gAgent.calcFocusPositionTargetGlobal();
 	for(CloudListIter i = mClouds.begin();i!=mClouds.end();i++)
 	{
-		i->second->Render(LLV2V(sun),LLV2V(camera));
+		i->second->Render(LLV2V(sun),LLVd2V(camera));
 	}
 }
