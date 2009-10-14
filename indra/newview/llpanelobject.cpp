@@ -1055,6 +1055,15 @@ void LLPanelObject::getState( )
 	switch (selected_item)
 	{
 	case MI_SPHERE:
+		mSpinScaleX->set( scale_x );
+		mSpinScaleY->set( scale_y );
+		calcp->setVar(LLCalc::X_HOLE, scale_x);
+		calcp->setVar(LLCalc::Y_HOLE, scale_y);
+		mSpinScaleX->setMinValue(0.0f);
+		mSpinScaleX->setMaxValue(1.0f);
+		mSpinScaleY->setMinValue(0.0f);
+		mSpinScaleY->setMaxValue(1.0f);
+		break;
 	case MI_TORUS:
 	case MI_TUBE:
 	case MI_RING:

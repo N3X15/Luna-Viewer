@@ -4,7 +4,7 @@
 #include "llagentconstants.h"
 #include "llappviewer.h"
 #include "llformat.h"
-#include "llversionviewer.h"
+//#include "llversionviewer.h"
 #include "llviewerjointattachment.h"
 #include "llviewerobject.h"
 #include "llwearable.h"
@@ -14,16 +14,11 @@
 #include "rlvmultistringsearch.h"
 
 // ============================================================================
-/*
- * RlvHandler
- * ==========
- *
- */
 
 typedef std::map<LLUUID, RlvObject> rlv_object_map_t;
 typedef std::multimap<S32, LLUUID> rlv_detach_map_t;
 typedef std::map<S32, LLUUID> rlv_reattach_map_t;
-typedef std::multimap<LLUUID, ERlvBehaviour> rlv_exception_map_t;
+typedef std::multimap<ERlvBehaviour, RlvException> rlv_exception_map_t;
 
 class RlvHandler
 {
@@ -34,64 +29,65 @@ public:
 	// --------------------------------
 
 	/*
-	 * Rule checking functions
+	 * Attachment point helper functions
 	 */
 public:
 	// Returns a pointer to the attachment point for a supplied parameter
 	LLViewerJointAttachment* getAttachPoint(const std::string& strText, bool fExact) const;
-	LLViewerJointAttachment* getAttachPoint(const LLInventoryCategory* pFolder, bool fStrict) const;
 	LLViewerJointAttachment* getAttachPoint(const LLInventoryItem* pItem, bool fStrict) const;
+	LLViewerJointAttachment* getAttachPoint(const LLInventoryCategory* pFolder, bool fStrict) const;
+	LLViewerJointAttachment* getAttachPointLegacy(const LLInventoryCategory* pFolder) const;
 	S32                      getAttachPointIndex(std::string strText, bool fExact) const;
 	S32                      getAttachPointIndex(LLViewerObject* pObj) const;
 	S32                      getAttachPointIndex(const LLViewerJointAttachment* pObj) const;
 	bool                     hasAttachPointName(const LLInventoryItem* pItem, bool fStrict) const;
 
-	// Returns a pointer to the currently executing command (do *not* save this pointer)
-	const RlvCommand* getCurrentCommand() const { return m_pCurCommand; }
-	// Returns the UUID of the object we're currently executing a command for
-	const LLUUID& getCurrentObject() const		{ return m_idCurObject; }
+	// --------------------------------
 
-	// Returns TRUE is at least one object contains the specified behaviour (and optional parameter)
+	/*
+	 * Rule checking functions
+	 */
 	// NOTE: - to check @detach=n    -> hasLockedAttachment() / hasLockedHUD() / isDetachable()
+	//       - to check exceptions   -> isException()
 	//       - to check @addoutfit=n -> isWearable()
 	//       - to check @remoutfit=n -> isRemovable()
-	//       - to check exceptions   -> isException()
-	//  (You *can* use hasBehaviour(); the specialized ones just don't have to iterate over all the objects)
+public:
+	// Returns TRUE is at least one object contains the specified behaviour (and optional option)
 	bool hasBehaviour(ERlvBehaviour eBehaviour) const { return (eBehaviour < RLV_BHVR_COUNT) ? (0 != m_Behaviours[eBehaviour]) : false; }
-	bool hasBehaviour(const std::string& strBehaviour) const;
 	bool hasBehaviour(ERlvBehaviour eBehaviour, const std::string& strOption) const;
-	bool hasBehaviour(const std::string& strBehaviour, const std::string& strOption) const;
-
-	// Returns TRUE if at least one object (except the specified one) contains the specified behaviour
+	// Returns TRUE if at least one object (except the specified one) contains the specified behaviour (and optional option)
 	bool hasBehaviourExcept(ERlvBehaviour eBehaviour, const LLUUID& idObj) const;
-	bool hasBehaviourExcept(const std::string& strBehaviour, const LLUUID& uuid) const;
 	bool hasBehaviourExcept(ERlvBehaviour eBehaviour, const std::string& strOption, const LLUUID& idObj) const;
-	bool hasBehaviourExcept(const std::string& strBehaviour, const std::string& strOption, const LLUUID& idObj) const;
 
-	// Returns TRUE if there is at least 1 undetachable attachment
+	// Returns TRUE if there is at least 1 non-detachable attachment
 	bool hasLockedAttachment() const { return (0 != m_Attachments.size()); }
-	// Returns TRUE if there is at least 1 undetachable HUD attachment
+	// Returns TRUE if there is at least 1 non-detachable HUD attachment
 	bool hasLockedHUD() const;
-
-	// Returns TRUE if the attachment on the specified attachment point is detachable
+	// Returns TRUE if the specified attachment point is detachable
 	bool isDetachable(S32 idxAttachPt) const { return (idxAttachPt) && (m_Attachments.find(idxAttachPt) == m_Attachments.end()); }
 	bool isDetachable(const LLInventoryItem* pItem) const;
+	bool isDetachable(LLViewerJointAttachment* pAttachPt) const;
 	bool isDetachable(LLViewerObject* pObj) const;
-	// Marks the specified attachment point as (un)detachable (return value indicates success ; used by unit tests)
+	// Returns TRUE if the specified attachment point is set non-detachable by anything other than pObj (or one of its children)
+	bool isDetachableExcept(S32 idxAttachPt, LLViewerObject* pObj) const;
+	// Marks the specified attachment point as (non-)detachable (return value indicates success ; used by unit tests)
 	bool setDetachable(S32 idxAttachPt, const LLUUID& idRlvObj, bool fDetachable);
 	bool setDetachable(LLViewerObject* pObj, const LLUUID& idRlvObj, bool fDetachable);
 
-	// Adds or removes an exception for the specified restriction
-	void addException(ERlvBehaviour eBehaviour, const LLUUID& uuid);
-	void removeException(ERlvBehaviour eBehaviour, const LLUUID& uuid);
-	// Returns TRUE is the specified UUID is exempt from a restriction (tplure/sendim/recvim/etc)
-	bool isException(ERlvBehaviour eBehaviour, const LLUUID& uuid) const;
-	bool isException(const std::string& strBehaviour, const LLUUID& uuid) const;
+	// Adds or removes an exception for the specified behaviour
+	void addException(const LLUUID& idObj, ERlvBehaviour eBhvr, const RlvExceptionOption& varOption);
+	void removeException(const LLUUID& idObj, ERlvBehaviour eBhvr, const RlvExceptionOption& varOption);
+	// Returns TRUE if the specified option was added as an exception for the specified behaviour
+	bool isException(ERlvBehaviour eBhvr, const RlvExceptionOption& varOption, ERlvExceptionCheck typeCheck = RLV_CHECK_DEFAULT) const;
+	// Returns TRUE if the specified behaviour should behave "permissive" (rather than "strict"/"secure")
+	bool isPermissive(ERlvBehaviour eBhvr) const;
 
 	// Returns TRUE if the specified layer is removable (use hasBehaviour(RLV_BHVR_REMOUTFIT) for the general case)
 	bool isRemovable(EWearableType type) const	{ return (type < WT_COUNT) ? (0 == m_LayersRem[type]) : true; }
 	// Returns TRUE if the specified layer is not remoutfit blocked by any object (except the one specified by UUID)
 	bool isRemovableExcept(EWearableType type, const LLUUID& idObj) const;
+	// Returns TRUE if the inventory item is strippable by @detach or @remoutfit
+	bool isStrippable(const LLUUID& idItem) const;
 	// Returns TRUE if the specified layer is wearable (use hasBehaviour(RLV_BHVR_ADDOUTFIT) for the general case)
 	bool isWearable(EWearableType type) const	{ return (type < WT_COUNT) ? (0 == m_LayersAdd[type]) : true; }
 
@@ -108,12 +104,6 @@ public:
 	// Returns TRUE if the inventory item is part of a folded composite folder and should be hidden from @getoufit or @getattach
 	bool isHiddenCompositeItem(const LLUUID& idItem, const std::string& strItemType) const;
 
-	// Returns TRUE if the inventory item is strippable by @detach or @remoutfit
-	bool isStrippable(const LLUUID& idItem) const;
-
-	// Returns TRUE if the specified object can 
-	bool canShowHoverText(LLViewerObject* pObj) const;
-
 	// --------------------------------
 
 	/*
@@ -121,30 +111,29 @@ public:
 	 */
 public:
 	// Accessors
-	bool isReplyInProgress() const		{ return m_fReplyInProgress; }		// send_chat_from_viewer()
-	bool getCanCancelTp() const			{ return m_fCanCancelTp; }			// @accepttp and @tpto
-	void setCanCancelTp(bool fAllow)	{ m_fCanCancelTp = fAllow; }		// @accepttp and @tpto
+	bool getCanCancelTp() const			{ return m_fCanCancelTp; }						// @accepttp and @tpto
+	void setCanCancelTp(bool fAllow)	{ m_fCanCancelTp = fAllow; }					// @accepttp and @tpto
 
 	// Command specific helper functions
+	bool               canShowHoverText(LLViewerObject* pObj) const;					// @showhovertext* command family
 	void               filterChat(std::string& strUTF8Text, bool fFilterEmote) const;	// @sendchat, @recvchat and @redirchat
 	void               filterLocation(std::string& strUTF8Text) const;					// @showloc
 	void               filterNames(std::string& strUTF8Text) const;						// @shownames
 	const std::string& getAnonym(const std::string& strName) const;						// @shownames
 	std::string        getVersionString() const;										// @version
+	std::string        getVersionNumString() const;										// @versionnum
 	BOOL               isAgentNearby(const LLUUID& uuid) const;							// @shownames
 	bool               redirectChatOrEmote(const std::string& strUTF8Test) const;		// @redirchat and @rediremote
 
-	// Externally invoked event handlers
-	void onAttach(LLViewerJointAttachment* pAttachPt);						// LLVOAvatar::attachObject()
-	void onDetach(LLViewerJointAttachment* pAttachPt);						// LLVOAvatar::detachObject()
-	bool onGC();															// RlvGCTimer::tick()
-	void onSavedAssetIntoInventory(const LLViewerInventoryItem* pItem);		// LLInventoryModel::processSaveAssetIntoInventory()
-
 	// Command processing helper functions
-	BOOL processCommand(const LLUUID& uuid, const std::string& strCommand);
-	void retainCommand(const LLUUID& uuid, const std::string& strCmd);
-	static void sendBusyMessage(const LLUUID& idTo, const std::string& strMsg, const LLUUID& idSession = LLUUID::null);
-	BOOL sendCommandReply(const std::string& strChannel, const std::string& strReply) const;
+	BOOL processCommand(const LLUUID& idObj, const std::string& strCommand, bool fFromObj);
+	void processRetainedCommands();
+	void retainCommand(const std::string& strObj, const LLUUID& idObj, const std::string& strCmd);
+
+	// Returns a pointer to the currently executing command (do *not* save this pointer)
+	const RlvCommand* getCurrentCommand() const { return m_pCurCommand; }
+	// Returns the UUID of the object we're currently executing a command for
+	const LLUUID& getCurrentObject() const		{ return m_idCurObject; }
 
 	// Initialization
 	static BOOL canDisable();
@@ -167,6 +156,9 @@ public:
 	std::string getSharedPath(const LLUUID& idFolder) const;
 	// Returns a pointer to the shared root folder (if there is one)
 	static LLViewerInventoryCategory* getSharedRoot();
+	// A "folded folder" is a folder whose items logically belong to the grandparent rather than the parent
+	bool isFoldedFolder(const LLInventoryCategory* pFolder, bool fAttach) const;
+	bool isFoldedFolderLegacy(const LLInventoryCategory* pFolder, bool fAttach) const;
 protected:
 	// Find all folders that match a supplied criteria (clears the supplied array)
 	bool findSharedFolders(const std::string& strCriteria, LLInventoryModel::cat_array_t& folders) const;
@@ -188,16 +180,21 @@ public:
 	BOOL removeObserver(RlvObserver* pObserver)	{ return m_Emitter.remObserver(pObserver); }
 	void addBehaviourObserver(RlvBehaviourObserver* pBhvrObserver);
 	void removeBehaviourObserver(RlvBehaviourObserver* pBhvrObserver);
-	void notifyBehaviourObservers();
+	void notifyBehaviourObservers(const RlvCommand& rlvCmd, bool fInternal);
+
+	// Externally invoked event handlers
+	void onAttach(LLViewerJointAttachment* pAttachPt, bool fFullyLoaded);	// LLVOAvatar::attachObject()
+	void onDetach(LLViewerJointAttachment* pAttachPt);						// LLVOAvatar::detachObject()
+	bool onGC();															// RlvGCTimer::tick()
+	void onSavedAssetIntoInventory(const LLUUID& idItem);					// LLInventoryModel::processSaveAssetIntoInventory()
 protected:
 	BOOL processAddCommand(const LLUUID& uuid, const RlvCommand& rlvCmd);
 	BOOL processRemoveCommand(const LLUUID& uuid, const RlvCommand& rlvCmd);
+	BOOL processClearCommand(const LLUUID& idObj, const RlvCommand& rlvCmd);
 	BOOL processReplyCommand(const LLUUID& uuid, const RlvCommand& rlvCmd) const;
 	BOOL processForceCommand(const LLUUID& uuid, const RlvCommand& rlvCmd) const;
 
-	/*
-	 * Event handlers (exist for no other reason than to keep the length of the processXXX functions down)
-	 */
+	// Command handlers (exist for no other reason than to keep the length of the processXXX functions down)
 	void onForceDetach(const LLUUID& idObj, const std::string& strOption) const;
 	void onForceRemOutfit(const LLUUID& idObj, const std::string& strOption) const;
 	bool onForceSit(const LLUUID& uuid, const std::string& strOption) const;
@@ -212,6 +209,7 @@ protected:
 	 */
 public:
 	static BOOL fNoSetEnv;
+	static BOOL fLegacyNaming;
 
 	static const std::string cstrSharedRoot;		// Name of the shared root folder
 	static const std::string cstrBlockedRecvIM;		// Stand-in text for incoming IM when recvim restricted
@@ -232,6 +230,7 @@ protected:
 
 	rlv_retained_list_t  m_Retained;
 	rlv_reattach_map_t   m_AttachPending;
+	rlv_reattach_map_t   m_DetachPending;
 	RlvGCTimer*          m_pGCTimer;
 	RlvWLSnapshot*       m_pWLSnapshot;
 
@@ -240,12 +239,12 @@ protected:
 
 	mutable RlvEventEmitter<RlvObserver>     m_Emitter;
 	mutable std::list<RlvBehaviourObserver*> m_BhvrObservers;
+	RlvBehaviourNotifyObserver*				 m_pBhvrNotify;
 
-	static  BOOL				 m_fEnabled;		// Use setEnabled() to toggle this
-	mutable BOOL				 m_fReplyInProgress;// See sendCommandReply
-	static	BOOL				 m_fFetchStarted;	// TRUE if we fired off an inventory fetch
-	static  BOOL				 m_fFetchComplete;	// TURE if everything was fetched
-	static  RlvMultiStringSearch m_AttachLookup;	// Lookup table for attachment names (lower case)
+	static BOOL			m_fEnabled;					// Use setEnabled() to toggle this
+	static BOOL			m_fFetchStarted;			// TRUE if we fired off an inventory fetch
+	static BOOL			m_fFetchComplete;			// TRUE if everything was fetched
+	static RlvMultiStringSearch m_AttachLookup;		// Lookup table for attachment names (lower case)
 
 	bool m_fCanCancelTp;
 
@@ -276,11 +275,10 @@ extern rlv_handler_t gRlvHandler;
 // Inlined member functions
 //
 
-// Checked: 2009-07-09 (RLVa-1.0.0f)
-inline void RlvHandler::addException(ERlvBehaviour eBehaviour, const LLUUID& uuid)
+// Checked: 2009-10-04 (RLVa-1.0.4a) | Modified: RLVa-1.0.4a
+inline void RlvHandler::addException(const LLUUID& idObj, ERlvBehaviour eBhvr, const RlvExceptionOption& varOption)
 {
-	if (!uuid.isNull())
-		m_Exceptions.insert(std::pair<LLUUID, ERlvBehaviour>(uuid, eBehaviour));
+	m_Exceptions.insert(std::pair<ERlvBehaviour, RlvException>(eBhvr, RlvException(idObj, eBhvr, varOption)));
 }
 
 // Checked: 2009-07-09 (RLVa-1.0.0f) | Modified: RLVa-1.0.0f
@@ -290,7 +288,7 @@ inline bool RlvHandler::canShowHoverText(LLViewerObject *pObj) const
 		    !( (hasBehaviour(RLV_BHVR_SHOWHOVERTEXTALL)) ||
 			   ( (hasBehaviour(RLV_BHVR_SHOWHOVERTEXTWORLD)) && (!pObj->isHUDAttachment()) ) ||
 			   ( (hasBehaviour(RLV_BHVR_SHOWHOVERTEXTHUD)) && (pObj->isHUDAttachment()) ) ||
-			   (isException(RLV_BHVR_SHOWHOVERTEXT, pObj->getID())) ) );
+			   (isException(RLV_BHVR_SHOWHOVERTEXT, pObj->getID(), RLV_CHECK_PERMISSIVE)) ) );
 }
 
 // Checked: 2009-05-23 (RLVa-0.2.0d) | Modified: RLVa-0.2.0d
@@ -317,10 +315,16 @@ inline std::string RlvHandler::getSharedPath(const LLUUID& idFolder) const
 // Checked: 2009-06-07 (RLVa-0.2.1c)
 inline std::string RlvHandler::getVersionString()  const
 {
-	return llformat("RestrainedLife viewer v%d.%d.%d (%s %d.%d.%d.%d - RLVa %d.%d.%d)",
+	return llformat("RestrainedLife viewer v%d.%d.%d (%s - RLVa %d.%d.%d)",
 		RLV_VERSION_MAJOR, RLV_VERSION_MINOR, RLV_VERSION_PATCH,
-		LLAppViewer::instance()->getSecondLifeTitle().c_str(), LL_VERSION_MAJOR, LL_VERSION_MINOR, LL_VERSION_PATCH, LL_VERSION_BUILD,
+		LLAppViewer::instance()->getSecondLifeTitle().c_str(), 
 		RLVa_VERSION_MAJOR, RLVa_VERSION_MINOR, RLVa_VERSION_PATCH);
+}
+
+// Checked: 2009-10-04 (RLVa-1.0.4b) | Added: RLVa-1.0.4b
+inline std::string RlvHandler::getVersionNumString()  const
+{
+	return llformat("%d%02d%02d%02d", RLV_VERSION_MAJOR, RLV_VERSION_MINOR, RLV_VERSION_PATCH, RLV_VERSION_BUILD);
 }
 
 // Checked: 2009-05-23 (RLVa-0.2.0d) | Modified: RLVa-0.2.0d
@@ -333,18 +337,6 @@ inline bool RlvHandler::hasAttachPointName(const LLInventoryItem *pItem, bool fS
 inline bool RlvHandler::hasBehaviour(ERlvBehaviour eBehaviour, const std::string& strOption) const
 {
 	return hasBehaviourExcept(eBehaviour, strOption, LLUUID::null);
-}
-
-// Checked:
-inline bool RlvHandler::hasBehaviour(const std::string& strBehaviour) const
-{
-	return hasBehaviourExcept(strBehaviour, LLUUID::null);
-}
-
-// Checked:
-inline bool RlvHandler::hasBehaviour(const std::string& strBehaviour, const std::string& strOption) const
-{
-	return hasBehaviourExcept(strBehaviour, strOption, LLUUID::null);
 }
 
 // Checked:
@@ -367,28 +359,40 @@ inline bool RlvHandler::hasBehaviourExcept(ERlvBehaviour eBehaviour, const LLUUI
 	}
 #endif // RLV_EXPERIMENTAL_COMPOSITES
 
+// Checked: 2009-09-08 (RLVa-1.0.2c) | Added: RLVa-1.0.2c
+inline bool RlvHandler::isDetachable(LLViewerJointAttachment *pAttachPt) const
+{
+	// If there's an attached object it's faster to just use that; otherwise look up the attachment index because it might be locked empty
+	return (pAttachPt == NULL) || 
+		   ( (pAttachPt->getObject() != NULL) && isDetachable(pAttachPt->getObject()) ) || (isDetachable(getAttachPointIndex(pAttachPt)));
+}
+
 // Checked: 2009-05-23 (RLVa-0.2.0d) | Modified: RLVa-0.2.0d
 inline bool RlvHandler::isDetachable(LLViewerObject* pObj) const
 {
 	return (pObj == NULL) || (!pObj->isAttachment()) || (isDetachable(getAttachPointIndex(pObj)));
 }
 
-// Checked:
-inline bool RlvHandler::isException(ERlvBehaviour eBehaviour, const LLUUID& uuid) const
+inline bool RlvHandler::isPermissive(ERlvBehaviour eBhvr) const
 {
-	for (rlv_exception_map_t::const_iterator itException = m_Exceptions.lower_bound(uuid), 
-			endException = m_Exceptions.upper_bound(uuid); itException != endException; ++itException)
-	{
-		if (itException->second == eBehaviour)
-			return true;
-	}
-	return false;
+	return (RlvCommand::hasStrictVariant(eBhvr)) 
+		? !((hasBehaviour(RLV_BHVR_PERMISSIVE)) || (isException(RLV_BHVR_PERMISSIVE, eBhvr, RLV_CHECK_PERMISSIVE)))
+		: true;
 }
 
-// Checked:
-inline bool RlvHandler::isException(const std::string& strBehaviour, const LLUUID& uuid) const
+// Checked: 2009-07-29 (RLVa-1.0.1b) | Added: RLVa-1.0.1b
+inline bool RlvHandler::isFoldedFolder(const LLInventoryCategory* pFolder, bool fAttach) const
 {
-	return hasBehaviour(strBehaviour, uuid.asString());
+	return
+	  (
+		// .(<attachpt>) type folder (on detach we don't care about its children, but on attach there can only be 1 attachment)
+		( (gRlvHandler.getAttachPoint(pFolder, true)) &&
+		  ( (!fAttach) || (1 == rlvGetDirectDescendentsCount(pFolder, LLAssetType::AT_OBJECT))) )
+		#ifdef RLV_EXTENSION_FLAG_NOSTRIP
+		// .(nostrip) folder
+		|| ( (pFolder) && (".("RLV_FOLDER_FLAG_NOSTRIP")" == pFolder->getName()) )
+		#endif // RLV_EXTENSION_FLAG_NOSTRIP
+	  );
 }
 
 // Checked: 2009-05-23 (RLVa-0.2.0d) | Added: RLVa-0.2.0d
@@ -407,30 +411,27 @@ inline bool RlvHandler::isRemovableExcept(EWearableType type, const LLUUID& idOb
 	}
 #endif // RLV_EXTENSION_FLAG_NOSTRIP
 
-// Checked: 2009-07-09 (RLVa-1.0.0f)
-inline void RlvHandler::removeException(ERlvBehaviour eBehaviour, const LLUUID &uuid)
+// Checked: 2009-10-04 (RLVa-1.0.4a) | Modified: RLVa-1.0.4a
+inline void RlvHandler::removeException(const LLUUID& idObj, ERlvBehaviour eBhvr, const RlvExceptionOption& varOption)
 {
-	if (!uuid.isNull())
+	for (rlv_exception_map_t::iterator itException = m_Exceptions.lower_bound(eBhvr), 
+			endException = m_Exceptions.upper_bound(eBhvr); itException != endException; ++itException)
 	{
-		for (rlv_exception_map_t::iterator itException = m_Exceptions.lower_bound(uuid), 
-				endException = m_Exceptions.upper_bound(uuid); itException != endException; ++itException)
+		if ( (itException->second.idObject == idObj) && (itException->second.varOption == varOption) )
 		{
-			if (itException->second == eBehaviour)
-			{
-				m_Exceptions.erase(itException);
-				break;
-			}
+			m_Exceptions.erase(itException);
+			break;
 		}
 	}
 }
 
-// Checked:
-inline void RlvHandler::retainCommand(const LLUUID& uuid, const std::string& strCmd)
+// Checked: 2009-08-05 (RLVa-1.0.1e) | Modified: RLVa-1.0.1e
+inline void RlvHandler::retainCommand(const std::string& strObj, const LLUUID& idObj, const std::string& strCmd)
 {
 	#ifdef RLV_DEBUG
-		RLV_INFOS << "[" << uuid << "]: " << strCmd << " (retaining)" << LL_ENDL;
+		RLV_INFOS << "[" << idObj << "]: " << strCmd << " (retaining)" << LL_ENDL;
 	#endif // RLV_DEBUG
-	m_Retained.push_back(RlvRetainedCommand(uuid, strCmd));
+	m_Retained.push_back(RlvRetainedCommand(strObj, idObj, strCmd));
 }
 
 // Checked: 2009-05-23 (RLVa-0.2.0d) | Modified: RLVa-0.2.0d

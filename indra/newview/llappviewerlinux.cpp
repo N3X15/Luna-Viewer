@@ -3,9 +3,9 @@
  * @brief The LLAppViewerLinux class definitions
  *
  * $LicenseInfo:firstyear=2007&license=viewergpl$
- * 
+ *
  * Copyright (c) 2007-2009, Linden Research, Inc.
- * 
+ *
  * Second Life Viewer Source Code
  * The source code in this file ("Source Code") is provided by Linden Lab
  * to you under the terms of the GNU General Public License, version 2.0
@@ -13,22 +13,22 @@
  * ("Other License"), formally executed by you and Linden Lab.  Terms of
  * the GPL can be found in doc/GPL-license.txt in this distribution, or
  * online at http://secondlifegrid.net/programs/open_source/licensing/gplv2
- * 
+ *
  * There are special exceptions to the terms and conditions of the GPL as
  * it is applied to this Source Code. View the full text of the exception
  * in the file doc/FLOSS-exception.txt in this software distribution, or
  * online at
  * http://secondlifegrid.net/programs/open_source/licensing/flossexception
- * 
+ *
  * By copying, modifying or distributing this software, you acknowledge
  * that you have read and understood your obligations described above,
  * and agree to abide by those obligations.
- * 
+ *
  * ALL LINDEN LAB SOURCE CODE IS PROVIDED "AS IS." LINDEN LAB MAKES NO
  * WARRANTIES, EXPRESS, IMPLIED OR OTHERWISE, REGARDING ITS ACCURACY,
  * COMPLETENESS OR PERFORMANCE.
  * $/LicenseInfo$
- */ 
+ */
 
 #include "llviewerprecompiledheaders.h"
 
@@ -92,7 +92,7 @@ static void exceptionTerminateHandler()
 	gOldTerminateHandler(); // call old terminate() handler
 }
 
-int main( int argc, char **argv ) 
+int main( int argc, char **argv )
 {
 	LLMemType mt1(LLMemType::MTYPE_STARTUP);
 
@@ -119,7 +119,7 @@ int main( int argc, char **argv )
 	}
 
 		// Run the application main loop
-	if(!LLApp::isQuitting()) 
+	if(!LLApp::isQuitting())
 	{
 		viewer_app_ptr->mainLoop();
 	}
@@ -188,7 +188,7 @@ static inline BOOL do_basic_glibc_backtrace()
 		for (i = 0; i < size; i++)
 		{
 			// the format of the StraceFile is very specific, to allow (kludgy) machine-parsing
-			fprintf(StraceFile, "%-3d ", i);
+			fprintf(StraceFile, "%-3d ", (unsigned)i);
 			fprintf(StraceFile, "%-32s\t", "unknown");
 			fprintf(StraceFile, "%p ", stackarray[i]);
 			fprintf(StraceFile, "%s\n", strings[i]);
@@ -196,7 +196,7 @@ static inline BOOL do_basic_glibc_backtrace()
 
 		success = TRUE;
 	}
-	
+
 	if (StraceFile != stderr)
 		fclose(StraceFile);
 
@@ -313,7 +313,7 @@ static inline BOOL do_elfio_glibc_backtrace()
 		fprintf(StraceFile, "%s\n", strings[btpos]);
 	got_sym:;
 	}
-	
+
 	if (StraceFile != stderr)
 		fclose(StraceFile);
 
@@ -348,7 +348,7 @@ bool LLAppViewerLinux::init()
 	// libraries likes to use glib functions; in short, do this here
 	// really early in app startup!
 	if (!g_thread_supported ()) g_thread_init (NULL);
-	
+
 	return LLAppViewer::init();
 }
 
@@ -410,14 +410,14 @@ void viewerappapi_init(ViewerAppAPI *server)
 	if (!dbus_server_init)
 	{
 		GError *error = NULL;
-		
+
 		server->connection = lldbus_g_bus_get(DBUS_BUS_SESSION, &error);
 		if (server->connection)
 		{
 			lldbus_g_object_type_install_info(viewerappapi_get_type(), &dbus_glib_viewerapp_object_info);
-			
+
 			lldbus_g_connection_register_g_object(server->connection, VIEWERAPI_PATH, G_OBJECT(server));
-			
+
 			DBusGProxy *serverproxy = lldbus_g_proxy_new_for_name(server->connection, DBUS_SERVICE_DBUS, DBUS_PATH_DBUS, DBUS_INTERFACE_DBUS);
 
 			guint request_name_ret_unused;
@@ -427,11 +427,11 @@ void viewerappapi_init(ViewerAppAPI *server)
 				// total success.
 				dbus_server_init = true;
 			}
-			else 
+			else
 			{
 				llwarns << "Unable to register service name: " << error->message << llendl;
 			}
-	
+
 			g_object_unref(serverproxy);
 		}
 		else
@@ -459,7 +459,7 @@ gboolean viewer_app_api_GoSLURL(ViewerAppAPI *obj, gchar *slurl, gboolean **succ
 		// todo: hmm, how to get there from here?
 		//xxx->mWindow->bringToFront();
 		success = true;
-	}		
+	}
 
 	*success_rtn = g_new (gboolean, 1);
 	(*success_rtn)[0] = (gboolean)success;
@@ -498,7 +498,7 @@ bool LLAppViewerLinux::sendURLToOtherInstance(const std::string& url)
 	GError *error = NULL;
 
 	g_type_init();
-	
+
 	bus = lldbus_g_bus_get (DBUS_BUS_SESSION, &error);
 	if (bus)
 	{
@@ -526,7 +526,7 @@ bool LLAppViewerLinux::sendURLToOtherInstance(const std::string& url)
 
 	if (error)
 		g_error_free(error);
-	
+
 	return success;
 }
 
@@ -595,7 +595,7 @@ void LLAppViewerLinux::handleCrashReporting(bool reportFreeze)
 		// Always generate the report, have the logger do the asking, and
 		// don't wait for the logger before exiting (-> total cleanup).
 		if (CRASH_BEHAVIOR_NEVER_SEND != cb)
-		{	
+		{
 			// launch the actual crash logger
 			const char* ask_dialog = "-dialog";
 			if (CRASH_BEHAVIOR_ASK != cb)
@@ -615,7 +615,7 @@ void LLAppViewerLinux::handleCrashReporting(bool reportFreeze)
 				execv(cmd.c_str(), (char* const*) cmdargv);		/* Flawfinder: ignore */
 				llwarns << "execv failure when trying to start " << cmd << llendl;
 				_exit(1); // avoid atexit()
-			} 
+			}
 			else
 			{
 				if (pid > 0)
@@ -625,7 +625,7 @@ void LLAppViewerLinux::handleCrashReporting(bool reportFreeze)
 					// free up the screen/keyboard/etc.
 					////int childExitStatus;
 					////waitpid(pid, &childExitStatus, 0);
-				} 
+				}
 				else
 				{
 					llwarns << "fork failure." << llendl;
@@ -657,7 +657,7 @@ bool LLAppViewerLinux::beingDebugged()
 		{
 			char buf[1024];
 			ssize_t n;
-			
+
 			n = readlink(name, buf, sizeof(buf) - 1);
 			if (n != -1)
 			{
@@ -669,7 +669,7 @@ bool LLAppViewerLinux::beingDebugged()
 				} else {
 					base += 1;
 				}
-				
+
 				if (strcmp(base, "gdb") == 0)
 				{
 					debugged = yes;

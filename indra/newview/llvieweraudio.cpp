@@ -68,6 +68,7 @@ void init_audio()
 	if (!mute_audio && FALSE == gSavedSettings.getBOOL("NoPreload"))
 	{
 		gAudiop->preloadSound(LLUUID(gSavedSettings.getString("UISndAlert")));
+		gAudiop->preloadSound(LLUUID(gSavedSettings.getString("EmeraldAvatarAgeAlertSoundUUID")));
 		gAudiop->preloadSound(LLUUID(gSavedSettings.getString("UISndBadKeystroke")));
 		//gAudiop->preloadSound(LLUUID(gSavedSettings.getString("UISndChatFromObject")));
 		gAudiop->preloadSound(LLUUID(gSavedSettings.getString("UISndClick")));
@@ -130,10 +131,6 @@ void audio_update_volume(bool force_update)
 		gAudiop->setDopplerFactor(gSavedSettings.getF32("AudioLevelDoppler"));
 		gAudiop->setDistanceFactor(gSavedSettings.getF32("AudioLevelDistance")); 
 		gAudiop->setRolloffFactor(gSavedSettings.getF32("AudioLevelRolloff"));
-#ifdef kAUDIO_ENABLE_WIND
-		gAudiop->enableWind(!mute_audio);
-#endif
-
 		gAudiop->setMuted(mute_audio);
 		
 		if (force_update)

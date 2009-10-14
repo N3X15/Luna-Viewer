@@ -128,6 +128,7 @@ BOOL LLGroupDropTarget::handleDragAndDrop(S32 x, S32 y, MASK mask, BOOL drop,
 		case DAD_TEXTURE:
 		case DAD_SOUND:
 		case DAD_LANDMARK:
+		case DAD_CALLINGCARD:
 		case DAD_SCRIPT:
 		case DAD_OBJECT:
 		case DAD_NOTECARD:
@@ -158,7 +159,6 @@ BOOL LLGroupDropTarget::handleDragAndDrop(S32 x, S32 y, MASK mask, BOOL drop,
 			break;
 		}
 		case DAD_CATEGORY:
-		case DAD_CALLINGCARD:
 		default:
 			*accept = ACCEPT_NO;
 			break;

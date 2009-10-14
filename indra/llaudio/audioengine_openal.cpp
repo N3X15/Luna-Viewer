@@ -190,7 +190,7 @@ LLAudioChannel *LLAudioEngine_OpenAL::createChannel()
 
 void LLAudioEngine_OpenAL::setInternalGain(F32 gain)
 {
-	//llinfos << "LLAudioEngine_OpenAL::setInternalGain() Gain: " << gain << llendl;
+	llinfos << "LLAudioEngine_OpenAL::setInternalGain() Gain: " << gain << llendl;
 	alListenerf(AL_GAIN, gain);
 }
 

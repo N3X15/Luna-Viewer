@@ -223,7 +223,7 @@ void OtrFloaterSmpProgress::setStatusName(const char *message_string_name)
 void OtrFloaterSmpProgress::setFinalStatus(const char *message_string_name)
 {
     setPercent(100);
-    setStatus(message_string_name);
+    setStatusName(message_string_name);
 }
 
 // static

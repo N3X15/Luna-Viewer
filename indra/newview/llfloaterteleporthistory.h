@@ -61,10 +61,11 @@ class LLFloaterTeleportHistory : public LLFloater
 		BOOL postBuild();
 
 		/// @brief: adds a teleport destination to the list of visited places
-		void addEntry(std::string regionName, S16 x, S16 y, S16 z);
+		void addEntry(std::string regionName, S16 x, S16 y, S16 z,bool outList);
 
 	protected:
-		static void onPlacesSelected(LLUICtrl* ctrl, void* data);
+		static void onInPlacesSelected(LLUICtrl* ctrl, void* data);
+		static void onOutPlacesSelected(LLUICtrl* ctrl, void* data);
 		static void onTeleport(void* data);
 		static void onShowOnMap(void* data);
 		static void onCopySLURL(void* data);
@@ -72,8 +73,9 @@ class LLFloaterTeleportHistory : public LLFloater
 		/// @brief: enables or disables the "Teleport", "Show On Map" and "Copy To SLURL" buttons **/
 		void setButtonsEnabled(BOOL on);
 
-		LLScrollListCtrl* mPlacesList;
-
+		LLScrollListCtrl* mPlacesInList;
+		LLScrollListCtrl* mPlacesOutList;
+		LLScrollListItem* pItem;
 		S32 id;
 
 		/// @brief: to see if this was the first time setVisible() was called (at program startup)

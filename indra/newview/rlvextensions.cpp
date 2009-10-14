@@ -1,5 +1,6 @@
 #include "llviewerprecompiledheaders.h"
 #include "llagent.h"
+#include "llfloaterwindlight.h"
 #include "llviewercontrol.h"
 #include "llviewerwindow.h"
 #include "llvoavatar.h"
@@ -11,13 +12,14 @@
 // ============================================================================
 
 std::map<std::string, S16> RlvExtGetSet::m_DbgAllowed;
+std::map<std::string, std::string> RlvExtGetSet::m_PseudoDebug;
 
 // Checked: 2009-06-03 (RLVa-0.2.0h) | Modified: RLVa-0.2.0h
 RlvExtGetSet::RlvExtGetSet()
 {
 	if (!m_DbgAllowed.size())	// m_DbgAllowed is static and should only be initialized once
 	{
-		m_DbgAllowed.insert(std::pair<std::string, S16>("AvatarSex", DBG_READ | DBG_PSEUDO));
+		m_DbgAllowed.insert(std::pair<std::string, S16>("AvatarSex", DBG_READ | DBG_WRITE | DBG_PSEUDO));
 		m_DbgAllowed.insert(std::pair<std::string, S16>("RenderResolutionDivisor", DBG_READ | DBG_WRITE));
 		#ifdef RLV_EXTENSION_CMD_GETSETDEBUG_EX
 			m_DbgAllowed.insert(std::pair<std::string, S16>(RLV_SETTING_FORBIDGIVETORLV, DBG_READ));
@@ -64,7 +66,7 @@ BOOL RlvExtGetSet::processCommand(const LLUUID& idObj, const RlvCommand& rlvCmd)
 		{
 			if ( ("get" == strGetSet) && (RLV_TYPE_REPLY == rlvCmd.getParamType()) )
 			{
-				gRlvHandler.sendCommandReply(rlvCmd.getParam(), onGetDebug(strSetting));
+				rlvSendChatReply(rlvCmd.getParam(), onGetDebug(strSetting));
 				return TRUE;
 			}
 			else if ( ("set" == strGetSet) && (RLV_TYPE_FORCE == rlvCmd.getParamType()) )
@@ -78,7 +80,7 @@ BOOL RlvExtGetSet::processCommand(const LLUUID& idObj, const RlvCommand& rlvCmd)
 		{
 			if ( ("get" == strGetSet) && (RLV_TYPE_REPLY == rlvCmd.getParamType()) )
 			{
-				gRlvHandler.sendCommandReply(rlvCmd.getParam(), onGetEnv(strSetting));
+				rlvSendChatReply(rlvCmd.getParam(), onGetEnv(strSetting));
 				return TRUE;
 			}
 			else if ( ("set" == strGetSet) && (RLV_TYPE_FORCE == rlvCmd.getParamType()) )
@@ -171,19 +173,27 @@ std::string RlvExtGetSet::onGetDebug(std::string strSetting)
 	return std::string();
 }
 
-// Checked: 2009-06-03 (RLVa-0.2.0h) | Added: RLVa-0.2.0h
+// Checked: 2009-10-03 (RLVa-1.0.4e) | Added: RLVa-1.0.4e
 std::string RlvExtGetSet::onGetPseudoDebug(const std::string& strSetting)
 {
 	// Skip sanity checking because it's all done in RlvExtGetSet::onGetDebug() already
 	if ("AvatarSex" == strSetting)
 	{
-		if (gAgent.getAvatarObject())
-			return llformat("%d", (gAgent.getAvatarObject()->getSex() == SEX_MALE)); // [See LLFloaterCustomize::LLFloaterCustomize()]
+		std::map<std::string, std::string>::const_iterator itPseudo = m_PseudoDebug.find(strSetting);
+		if (itPseudo != m_PseudoDebug.end())
+		{
+			return itPseudo->second;
+		}
+		else
+		{
+			if (gAgent.getAvatarObject())
+				return llformat("%d", (gAgent.getAvatarObject()->getSex() == SEX_MALE)); // [See LLFloaterCustomize::LLFloaterCustomize()]
+		}
 	}
 	return std::string();
 }
 
-// Checked: 2009-06-03 (RLVa-0.2.0h) | Modified: RLVa-0.2.0h
+// Checked: 2009-10-10 (RLVa-1.0.4e) | Modified: RLVa-1.0.4e
 void RlvExtGetSet::onSetDebug(std::string strSetting, const std::string& strValue)
 {
 	S16 dbgFlags;
@@ -218,11 +228,36 @@ void RlvExtGetSet::onSetDebug(std::string strSetting, const std::string& strValu
 				pSetting->setPersist( (pSetting->isDefault()) ? ((dbgFlags & DBG_PERSIST) == DBG_PERSIST) : false );
 			}
 		}
+		else
+		{
+			onSetPseudoDebug(strSetting, strValue);
+		}
 	}
 }
 
+// Checked: 2009-10-10 (RLVa-1.0.4e) | Modified: RLVa-1.0.4e
+void RlvExtGetSet::onSetPseudoDebug(const std::string& strSetting, const std::string& strValue)
+{
+	if ("AvatarSex" == strSetting)
+	{
+		BOOL fValue;
+		if (LLStringUtil::convertToBOOL(strValue, fValue))
+			m_PseudoDebug[strSetting] = strValue;
+	}
+}
+
+// Checked: 2009-09-16 (RLVa-1.0.3c) | Modified: RLVa-1.0.3c
 std::string RlvExtGetSet::onGetEnv(std::string strSetting)
 {
+	// HACK: - create a LLFloaterWindLight instance if there isn't one already
+	//       - isOpen() is actually instanceExists()
+	//       - creating an instance results in showing the floater which is why we need to ->close() it
+	if (!LLFloaterWindLight::isOpen())
+	{
+		LLFloaterWindLight::instance()->close();
+		LLFloaterWindLight::instance()->syncMenu();
+	}
+
 	LLWLParamManager* pWLParams = LLWLParamManager::instance();
 
 	F32 nValue = 0.0f;
@@ -238,7 +273,7 @@ std::string RlvExtGetSet::onGetEnv(std::string strSetting)
 	else if ("cloudscale" == strSetting)			nValue = pWLParams->mCloudScale;
 	else if ("cloudscrollx" == strSetting)			nValue = pWLParams->mCurParams.getCloudScrollX() - 10.0f;
 	else if ("cloudscrolly" == strSetting)			nValue = pWLParams->mCurParams.getCloudScrollY() - 10.0f;
-	else if ("densitymultiplier" == strSetting)		nValue = pWLParams->mDensityMult * 1000;
+	else if ("densitymultiplier" == strSetting)		nValue = pWLParams->mDensityMult.x * pWLParams->mDensityMult.mult;
 	else if ("distancemultiplier" == strSetting)	nValue = pWLParams->mDistanceMult;
 	else if ("eastangle" == strSetting)				nValue = pWLParams->mCurParams.getEastAngle() / F_TWO_PI;
 	else if ("hazedensity" == strSetting)			nValue = pWLParams->mHazeDensity.r;
@@ -260,7 +295,7 @@ std::string RlvExtGetSet::onGetEnv(std::string strSetting)
 		if ( ('r' == ch) || ('g' == ch) || ('b' == ch) || ('i' == ch) )
 		{
 			WLColorControl* pColour = NULL;
-			strSetting.erase(strSetting.length() - 2, 1);
+			strSetting.erase(strSetting.length() - 1, 1);
 			
 			if ("ambient" == strSetting)			pColour = &pWLParams->mAmbient;
 			else if ("bluedensity" == strSetting)	pColour = &pWLParams->mBlueDensity;
@@ -272,10 +307,10 @@ std::string RlvExtGetSet::onGetEnv(std::string strSetting)
 
 			if (pColour)
 			{
-				if ('r' == ch)		nValue = pColour->b;
-				else if ('g' == ch)	nValue = pColour->b;
+				if ('r' == ch)		nValue = pColour->r;
+				else if ('g' == ch)	nValue = pColour->g;
 				else if ('b' == ch)	nValue = pColour->b;
-				else if (('i' == ch) && (pColour->hasSliderName)) nValue = pColour->i;
+				else if (('i' == ch) && (pColour->hasSliderName)) nValue = llmax(pColour->r, pColour->g, pColour->b);
 
 				if (pColour->isBlueHorizonOrDensity)	nValue /= 2.0f;
 				else if (pColour->isSunOrAmbientColor)	nValue /= 3.0f;
@@ -286,8 +321,16 @@ std::string RlvExtGetSet::onGetEnv(std::string strSetting)
 	return llformat("%f", nValue);
 }
 
+// Checked: 2009-09-16 (RLVa-1.0.3c) | Modified: RLVa-1.0.3c
 void RlvExtGetSet::onSetEnv(std::string strSetting, const std::string& strValue)
 {
+	// HACK: see RlvExtGetSet::onGetEnv
+	if (!LLFloaterWindLight::isOpen())
+	{
+		LLFloaterWindLight::instance()->close();
+		LLFloaterWindLight::instance()->syncMenu();
+	}
+
 	LLWLParamManager* pWLParams = LLWLParamManager::instance();
 	WLFloatControl* pFloat = NULL;
 	WLColorControl* pColour = NULL;
@@ -405,7 +448,7 @@ void RlvExtGetSet::onSetEnv(std::string strSetting, const std::string& strValue)
 
 	if ( ('r' == ch) || ('g' == ch) || ('b' == ch) || ('i' == ch) )
 	{
-		strSetting.erase(strSetting.length() - 2, 1);
+		strSetting.erase(strSetting.length() - 1, 1);
 		
 		if ("ambient" == strSetting)			pColour = &pWLParams->mAmbient;
 		else if ("bluedensity" == strSetting)	pColour = &pWLParams->mBlueDensity;

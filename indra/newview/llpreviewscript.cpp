@@ -94,12 +94,12 @@ const std::string HELLO_LSL =
 	"{\n"
 	"    state_entry()\n"
     "    {\n"
-    "        llSay(0, \"Hello, Avatar!\");\n"
+    "        llOwnerSay(\"Hello, Avatar!\");\n"
     "    }\n"
 	"\n"
 	"    touch_start(integer total_number)\n"
 	"    {\n"
-	"        llSay(0, \"Touched.\");\n"
+	"        llOwnerSay(\"Touched.\");\n"
 	"    }\n"
 	"}\n";
 const std::string HELP_LSL_URL = "http://wiki.secondlife.com/wiki/LSL_Portal";
@@ -1304,13 +1304,31 @@ void LLPreviewLSL::saveIfNeeded()
 	const LLInventoryItem *inv_item = getItem();
 	// save it out to asset server
 	std::string url = gAgent.getRegion()->getCapability("UpdateScriptAgent");
+
+	BOOL domono = TRUE;
+	if(utf8text.find("//mono\n") != -1)
+	{
+		domono = TRUE;
+		LLSD row;
+		row["columns"][0]["value"] = "Detected compile-as-mono directive";
+		row["columns"][0]["font"] = "SANSSERIF_SMALL";
+		mScriptEd->mErrorList->addElement(row);
+	}else if(utf8text.find("//lsl2\n") != -1)
+	{
+		domono = FALSE;
+		LLSD row;
+		row["columns"][0]["value"] = "Detected compile-as-LSL2 directive";
+		row["columns"][0]["font"] = "SANSSERIF_SMALL";
+		mScriptEd->mErrorList->addElement(row);
+	}
+
 	if(inv_item)
 	{
 		getWindow()->incBusyCount();
 		mPendingUploads++;
 		if (!url.empty())
 		{
-			uploadAssetViaCaps(url, filename, mItemUUID);
+			uploadAssetViaCaps(url, filename, mItemUUID, domono);
 		}
 		else if (gAssetStorage)
 		{
@@ -1321,12 +1339,12 @@ void LLPreviewLSL::saveIfNeeded()
 
 void LLPreviewLSL::uploadAssetViaCaps(const std::string& url,
 									  const std::string& filename,
-									  const LLUUID& item_id)
+									  const LLUUID& item_id, BOOL mono)
 {
 	llinfos << "Update Agent Inventory via capability" << llendl;
 	LLSD body;
 	body["item_id"] = item_id;
-	body["target"] = "mono";//"lsl2";
+	body["target"] = (mono == TRUE) ? "mono" : "lsl2";
 	LLHTTPClient::post(url, body, new LLUpdateAgentInventoryResponder(body, filename, LLAssetType::AT_LSL_TEXT));
 }
 

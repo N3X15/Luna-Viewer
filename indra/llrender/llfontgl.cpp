@@ -68,6 +68,7 @@ const F32 PIXEL_CORRECTION_DISTANCE = 0.01f;
 const F32 PAD_UVY = 0.5f; // half of vertical padding between glyphs in the glyph texture
 const F32 DROP_SHADOW_SOFT_STRENGTH = 0.3f;
 
+/*
 F32 llfont_round_x(F32 x)
 {
 	//return llfloor((x-LLFontGL::sCurOrigin.mX)/LLFontGL::sScaleX+0.5f)*LLFontGL::sScaleX+LLFontGL::sCurOrigin.mX;
@@ -81,6 +82,7 @@ F32 llfont_round_y(F32 y)
 	//return llfloor(y+0.5f);
 	return y;
 }
+*/
 
 // static
 U8 LLFontGL::getStyleFromString(const std::string &style)
@@ -507,6 +509,7 @@ S32 LLFontGL::render(const LLWString &wstr,
 	// Remember last-used texture to avoid unnecesssary bind calls.
 	LLImageGL *last_bound_texture = NULL;
 
+	gGL.begin(LLRender::QUADS);
 	for (i = begin_offset; i < begin_offset + length; i++)
 	{
 		llwchar wch = wstr[i];
@@ -576,29 +579,30 @@ S32 LLFontGL::render(const LLWString &wstr,
 		}
 		else
 		{
-			if (!hasGlyph(wch))
+			const LLFontGlyphInfo* fgi = getGlyphInfo(wch);
+			if(!fgi || !fgi->mIsRendered)
 			{
-				addChar(wch);
+				if(!addChar(wch))
+				{
+					LL_ERRS("FONTS") << "Missing Glyph Info" << LL_ENDL;
+					break;
+				}
+				//Zwag: Can this possibly fail after the above didn't fail?
+				fgi = getGlyphInfo(wch);
 			}
-
-			const LLFontGlyphInfo* fgi= getGlyphInfo(wch);
-			if (!fgi)
+			
+			if ((start_x + scaled_max_pixels) < (cur_x + fgi->mXBearing + fgi->mWidth))
 			{
-				llerrs << "Missing Glyph Info" << llendl;
+				// Not enough room for this character.
 				break;
 			}
+
 			// Per-glyph bitmap texture.
 			LLImageGL *image_gl = mFontBitmapCachep->getImageGL(fgi->mBitmapNum);
 			if (last_bound_texture != image_gl)
 			{
 				gGL.getTexUnit(0)->bind(image_gl);
 				last_bound_texture = image_gl;
-			}
-
-			if ((start_x + scaled_max_pixels) < (cur_x + fgi->mXBearing + fgi->mWidth))
-			{
-				// Not enough room for this character.
-				break;
 			}
 
 			// Draw the text at the appropriate location
@@ -623,11 +627,17 @@ S32 LLFontGL::render(const LLWString &wstr,
 			if (next_char && (next_char < LAST_CHARACTER))
 			{
 				// Kern this puppy.
-				if (!hasGlyph(next_char))
+				LLFontGlyphInfo* next_fgi = getGlyphInfo(next_char);
+				if (!next_fgi || !next_fgi->mIsRendered)
 				{
-					addChar(next_char);
+					if(!addChar(next_char))
+					{
+						LL_ERRS("FONTS") << "Can't get glyph info!" << LL_ENDL;
+						break;
+					}
+					next_fgi = getGlyphInfo(next_char);
 				}
-				cur_x += getXKerning(wch, next_char);
+				cur_x += getXKerning(fgi, next_fgi);
 			}
 
 			// Round after kerning.
@@ -641,6 +651,7 @@ S32 LLFontGL::render(const LLWString &wstr,
 			cur_render_y = cur_y;
 		}
 	}
+	gGL.end();
 
 	if (right_x)
 	{
@@ -1092,20 +1103,16 @@ void LLFontGL::removeEmbeddedChar( llwchar wc ) const
 void LLFontGL::renderQuad(const LLRectf& screen_rect, const LLRectf& uv_rect, F32 slant_amt) const
 {
 	gGL.texCoord2f(uv_rect.mRight, uv_rect.mTop);
-	gGL.vertex2f(llfont_round_x(screen_rect.mRight), 
-				llfont_round_y(screen_rect.mTop));
+	gGL.vertex2f(screen_rect.mRight, screen_rect.mTop);
 
 	gGL.texCoord2f(uv_rect.mLeft, uv_rect.mTop);
-	gGL.vertex2f(llfont_round_x(screen_rect.mLeft), 
-				llfont_round_y(screen_rect.mTop));
+	gGL.vertex2f(screen_rect.mLeft, screen_rect.mTop);
 
 	gGL.texCoord2f(uv_rect.mLeft, uv_rect.mBottom);
-	gGL.vertex2f(llfont_round_x(screen_rect.mLeft + slant_amt), 
-				llfont_round_y(screen_rect.mBottom));
+	gGL.vertex2f(screen_rect.mLeft + slant_amt, screen_rect.mBottom);
 
 	gGL.texCoord2f(uv_rect.mRight, uv_rect.mBottom);
-	gGL.vertex2f(llfont_round_x(screen_rect.mRight + slant_amt), 
-				llfont_round_y(screen_rect.mBottom));
+	gGL.vertex2f(screen_rect.mRight + slant_amt, screen_rect.mBottom);
 }
 
 void LLFontGL::drawGlyph(const LLRectf& screen_rect, const LLRectf& uv_rect, const LLColor4& color, U8 style, F32 drop_shadow_strength) const
@@ -1113,7 +1120,7 @@ void LLFontGL::drawGlyph(const LLRectf& screen_rect, const LLRectf& uv_rect, con
 	F32 slant_offset;
 	slant_offset = ((style & ITALIC) ? ( -mAscender * 0.2f) : 0.f);
 
-	gGL.begin(LLRender::QUADS);
+	
 	{
 		//FIXME: bold and drop shadow are mutually exclusive only for convenience
 		//Allow both when we need them.
@@ -1179,7 +1186,6 @@ void LLFontGL::drawGlyph(const LLRectf& screen_rect, const LLRectf& uv_rect, con
 		}
 
 	}
-	gGL.end();
 }
 
 std::string LLFontGL::nameFromFont(const LLFontGL* fontp)

@@ -217,6 +217,22 @@ void LLFloaterObjectIMInfo::update(const LLUUID& object_id, const std::string& n
 	mOwnerID = owner_id;
 	mOwnerIsGroup = owner_is_group;
 
+	std::string tempname = name;
+
+	size_t found = tempname.find(" ");
+	while(found != std::string::npos)
+	{
+		tempname.replace(found, 1, "");
+		found = tempname.find(" ");
+	}
+
+	if (tempname.length() < 1)
+	{
+		tempname = "no name";
+//		chat.mFromName = name;
+		childSetText("ObjectName",tempname);
+	}
+
 	if (gCacheName) gCacheName->get(owner_id,owner_is_group,nameCallback,this);
 
 	// If we do not have slurl, try resolving using the region_id and localpos

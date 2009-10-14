@@ -94,20 +94,8 @@ U64 get_cpu_clock_count()
 #endif // LL_WINDOWS
 
 
-#if (LL_LINUX || LL_SOLARIS) && (defined(__i386__) || defined(__amd64__))
-U64 get_cpu_clock_count()
-{
-	U64 x;
-	__asm__ volatile (".byte 0x0f, 0x31" : "=A" (x));
-	return x;
-}
-#endif
-
-#if LL_DARWIN || (LL_SOLARIS && defined(__sparc__))
-//
-// Mac implementation of CPU clock
-//
-// Just use gettimeofday implementation for now
+#if LL_LINUX || LL_DARWIN || LL_SOLARIS
+// Both Linux and Mac use gettimeofday for accurate time
 
 U64 get_cpu_clock_count()
 {

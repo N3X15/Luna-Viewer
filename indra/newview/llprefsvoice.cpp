@@ -121,7 +121,7 @@ BOOL LLPrefsVoice::postBuild()
 	childSetVisible("enable_voice_check", !voice_disabled);
 	childSetEnabled("enable_voice_check", !voice_disabled);
 
-	bool enable = !voice_disabled && gSavedSettings.getBOOL("EnableVoiceChat");
+	bool enable = !voice_disabled && gSavedPerAccountSettings.getBOOL("EnableVoiceChat");
 	childSetValue("enable_voice_check", enable);
 	onCommitEnableVoiceChat(getChild<LLCheckBoxCtrl>("enable_voice_check"), this);
 
@@ -136,7 +136,7 @@ BOOL LLPrefsVoice::postBuild()
 
 void LLPrefsVoice::apply()
 {
-	gSavedSettings.setBOOL("EnableVoiceChat", childGetValue("enable_voice_check"));
+	gSavedPerAccountSettings.setBOOL("EnableVoiceChat", childGetValue("enable_voice_check"));
 
 	gSavedSettings.setString("PushToTalkButton", childGetValue("modifier_combo"));
 	gSavedSettings.setBOOL("VoiceCallsFriendsOnly", childGetValue("voice_call_friends_only_check"));
@@ -197,11 +197,11 @@ void LLPrefsVoice::onClickResetVoice(void* user_data)
 {
 	// *TODO: Change this to make voice really reset
 	BOOL voice_disabled = gSavedSettings.getBOOL("CmdLineDisableVoice");
-	bool enable = !voice_disabled && gSavedSettings.getBOOL("EnableVoiceChat");
+	bool enable = !voice_disabled && gSavedPerAccountSettings.getBOOL("EnableVoiceChat");
 	if(enable)
 	{
-		gSavedSettings.setBOOL("EnableVoiceChat", FALSE);
-		gSavedSettings.setBOOL("EnableVoiceChat", TRUE);
+		gSavedPerAccountSettings.setBOOL("EnableVoiceChat", FALSE);
+		gSavedPerAccountSettings.setBOOL("EnableVoiceChat", TRUE);
 	}
 }
 

@@ -722,24 +722,26 @@ void LLAvatarTracker::processTerminateFriendship(LLMessageSystem* msg, void**)
 	msg->getUUID("ExBlock", "OtherID", id);
 	if(id.notNull())
 	{
-		std::string first, last;
-		LLSD args;
-		if(gCacheName->getName(id, first, last))
-		{
-			args["NAME"] = first + " " + last;
-		}else
-		{
-			args["NAME"] = "(unknown name) (key: "+id.asString()+")";	
-		}
-		LLNotifications::instance().add("FriendshipDissolved", args);
-
 		LLAvatarTracker& at = LLAvatarTracker::instance();
 		LLRelationship* buddy = get_ptr_in_map(at.mBuddyInfo, id);
-		if(!buddy) return;
-		at.mBuddyInfo.erase(id);
-		at.mModifyMask |= LLFriendObserver::REMOVE;
-		delete buddy;
-		at.notifyObservers();
+		if(buddy)
+		{
+			at.mBuddyInfo.erase(id);
+			at.mModifyMask |= LLFriendObserver::REMOVE;
+			delete buddy;
+			at.notifyObservers();
+
+			std::string first, last;
+			LLSD args;
+			if(gCacheName->getName(id, first, last))
+			{
+				args["NAME"] = first + " " + last;
+			}else
+			{
+				args["NAME"] = "(unknown name) (key: "+id.asString()+")";	
+			}
+			LLNotifications::instance().add("FriendshipDissolved", args);
+		}
 	}
 }
 

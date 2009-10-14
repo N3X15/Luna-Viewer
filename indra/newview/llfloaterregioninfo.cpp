@@ -3089,8 +3089,8 @@ bool LLDispatchEstateUpdateInfo::operator()(
 		panel->setSunHour(sun_hour);
 	}
 
-	bool visible_from_mainland = (bool)(flags & REGION_FLAGS_EXTERNALLY_VISIBLE);
-	bool god = gAgent.isGodlike();
+	//bool visible_from_mainland = (bool)(flags & REGION_FLAGS_EXTERNALLY_VISIBLE);
+	//bool god = gAgent.isGodlike();
 	bool linden_estate = (estate_id <= ESTATE_LAST_LINDEN);
 
 	// If visible from mainland, disable the access allowed
@@ -3098,7 +3098,8 @@ bool LLDispatchEstateUpdateInfo::operator()(
 	// However, gods need to be able to edit the access list for
 	// linden estates, regardless of visibility, to allow object
 	// and L$ transfers.
-	bool enable_agent = (!visible_from_mainland || (god && linden_estate));
+	//bool enable_agent = (!visible_from_mainland || (god && linden_estate));
+	bool enable_agent = true;
 	bool enable_group = enable_agent;
 	bool enable_ban = !linden_estate;
 	panel->setAccessAllowedEnabled(enable_agent, enable_group, enable_ban);

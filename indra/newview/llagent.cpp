@@ -67,6 +67,7 @@
 #include "llface.h"
 #include "llfirstuse.h"
 #include "llfloater.h"
+#include "llfloaterao.h"
 #include "llfloateractivespeakers.h"
 #include "llfloateravatarinfo.h"
 #include "llfloateravatarlist.h"
@@ -134,6 +135,7 @@
 #include "llappviewer.h"
 #include "llviewerjoystick.h"
 #include "llfollowcam.h"
+#include "llfloaterteleporthistory.h"
 
 using namespace LLVOAvatarDefines;
 
@@ -349,7 +351,7 @@ LLAgent::LLAgent() :
 	mLeftKey(0),
 	mUpKey(0),
 	mYawKey(0.f),
-	mPitchKey(0),
+	mPitchKey(0.f),
 
 	mOrbitLeftKey(0.f),
 	mOrbitRightKey(0.f),
@@ -741,15 +743,15 @@ void LLAgent::moveYaw(F32 mag, bool reset_view)
 //-----------------------------------------------------------------------------
 // movePitch()
 //-----------------------------------------------------------------------------
-void LLAgent::movePitch(S32 direction)
+void LLAgent::movePitch(F32 mag)
 {
-	setKey(direction, mPitchKey);
+	mPitchKey = mag;
 
-	if (direction > 0)
+	if (mag > 0)
 	{
 		setControlFlags(AGENT_CONTROL_PITCH_POS );
 	}
-	else if (direction < 0)
+	else if (mag < 0)
 	{
 		setControlFlags(AGENT_CONTROL_PITCH_NEG);
 	}
@@ -1534,13 +1536,10 @@ LLVector3 LLAgent::calcFocusOffset(LLViewerObject *object, LLVector3 original_fo
 //-----------------------------------------------------------------------------
 BOOL LLAgent::calcCameraMinDistance(F32 &obj_min_distance)
 {
-	obj_min_distance = 0.f;
-	return TRUE;
 	/* Emerald:
 	We don't care about minimum distances in Emerald. No we don't.
 	~Zwag
 	*/
-	/*
 	BOOL soft_limit = FALSE; // is the bounding box to be treated literally (volumes) or as an approximation (avatars)
 
 	if (!mFocusObject || mFocusObject->isDead())
@@ -1713,7 +1712,7 @@ BOOL LLAgent::calcCameraMinDistance(F32 &obj_min_distance)
 	obj_min_distance += LLViewerCamera::getInstance()->getNear() + (soft_limit ? 0.1f : 0.2f);
 	
 	return TRUE;
-	*/
+	
 }
 
 F32 LLAgent::getCameraZoomFraction()
@@ -1726,7 +1725,10 @@ F32 LLAgent::getCameraZoomFraction()
 		// already [0,1]
 		return mHUDTargetZoom;
 	}
-	/*
+	else if (gSavedSettings.getBOOL("EmeraldDisableMinZoomDist"))
+	{
+		return mCameraZoomFraction;
+	}
 	else if (mFocusOnAvatar && cameraThirdPerson())
 	{
 		return clamp_rescale(mCameraZoomFraction, MIN_ZOOM_FRACTION, MAX_ZOOM_FRACTION, 1.f, 0.f);
@@ -1739,10 +1741,10 @@ F32 LLAgent::getCameraZoomFraction()
 	else
 	{
 		F32 min_zoom;
-		const F32 DIST_FUDGE = 16.f; // meters
-		F32 max_zoom = llmin(mDrawDistance - DIST_FUDGE, 
-								LLWorld::getInstance()->getRegionWidthInMeters() - DIST_FUDGE,
-								MAX_CAMERA_DISTANCE_FROM_AGENT);
+		//const F32 DIST_FUDGE = 16.f; // meters
+		F32 max_zoom = 65535.f*4.f;//llmin(mDrawDistance - DIST_FUDGE, 
+						//		LLWorld::getInstance()->getRegionWidthInMeters() - DIST_FUDGE,
+						//		MAX_CAMERA_DISTANCE_FROM_AGENT);
 
 		F32 distance = (F32)mCameraFocusOffsetTarget.magVec();
 		if (mFocusObject.notNull())
@@ -1762,14 +1764,14 @@ F32 LLAgent::getCameraZoomFraction()
 		}
 
 		return clamp_rescale(distance, min_zoom, max_zoom, 1.f, 0.f);
-		*/
+		
 		/*
 		Emerald:
 		We still don't care about minimums and maximums. No we don't.
 		~Zwag
 		*/
 		return mCameraZoomFraction;
-	//}
+	}
 }
 
 void LLAgent::setCameraZoomFraction(F32 fraction)
@@ -1777,12 +1779,12 @@ void LLAgent::setCameraZoomFraction(F32 fraction)
 	// 0.f -> camera zoomed all the way out
 	// 1.f -> camera zoomed all the way in
 	LLObjectSelectionHandle selection = LLSelectMgr::getInstance()->getSelection();
-
+	BOOL disable_min = gSavedSettings.getBOOL("EmeraldDisableMinZoomDist");
 	if (selection->getObjectCount() && selection->getSelectType() == SELECT_TYPE_HUD)
 	{
 		mHUDTargetZoom = fraction;
-	}/*
-	else if (mFocusOnAvatar && cameraThirdPerson())
+	}
+	else if (mFocusOnAvatar && cameraThirdPerson() && !disable_min)
 	{
 		mCameraZoomFraction = rescale(fraction, 0.f, 1.f, MAX_ZOOM_FRACTION, MIN_ZOOM_FRACTION);
 	}
@@ -1792,20 +1794,19 @@ void LLAgent::setCameraZoomFraction(F32 fraction)
 		camera_offset_dir.normalize();
 		mCameraFocusOffsetTarget = camera_offset_dir * rescale(fraction, 0.f, 1.f, APPEARANCE_MAX_ZOOM, APPEARANCE_MIN_ZOOM);
 	}
-	*/
 	else
 	{
-		/*
+		
 		F32 min_zoom = LAND_MIN_ZOOM;
-		const F32 DIST_FUDGE = 16.f; // meters
-		F32 max_zoom = llmin(mDrawDistance - DIST_FUDGE, 
-								LLWorld::getInstance()->getRegionWidthInMeters() - DIST_FUDGE,
-								MAX_CAMERA_DISTANCE_FROM_AGENT);
+		//const F32 DIST_FUDGE = 16.f; // meters
+		//F32 max_zoom = llmin(mDrawDistance - DIST_FUDGE, 
+		//						LLWorld::getInstance()->getRegionWidthInMeters() - DIST_FUDGE,
+		//						MAX_CAMERA_DISTANCE_FROM_AGENT);
 
+		if (!disable_min)
+		{
 		if (mFocusObject.notNull())
 		{
-			if (mFocusObject.notNull())
-			{
 				if (mFocusObject->isAvatar())
 				{
 					min_zoom = AVATAR_MIN_ZOOM;
@@ -1816,11 +1817,14 @@ void LLAgent::setCameraZoomFraction(F32 fraction)
 				}
 			}
 		}
-		*/
+		else
+		{
+			min_zoom = 0.f;
+		}
 		LLVector3d camera_offset_dir = mCameraFocusOffsetTarget;
 		camera_offset_dir.normalize();
 		//mCameraFocusOffsetTarget = camera_offset_dir * rescale(fraction, 0.f, 1.f, max_zoom, min_zoom);
-		mCameraFocusOffsetTarget = camera_offset_dir * rescale(fraction, 0.f, 65535.*4., 1.f, 0.f);
+		mCameraFocusOffsetTarget = camera_offset_dir * rescale(fraction, 0.f, 65535.*4., 1.f, min_zoom);
 	}
 	startCameraAnimation();
 }
@@ -1910,6 +1914,8 @@ void LLAgent::cameraZoomIn(const F32 fraction)
 	//~Zwag
 	// Don't move through focus point
 
+	if (!gSavedSettings.getBOOL("EmeraldDisableMinZoomDist"))
+	{
 	if (mFocusObject)
 	{
 		LLVector3 camera_offset_dir((F32)camera_offset_unit.mdV[VX], (F32)camera_offset_unit.mdV[VY], (F32)camera_offset_unit.mdV[VZ]);
@@ -1925,6 +1931,7 @@ void LLAgent::cameraZoomIn(const F32 fraction)
 	}
 
 	new_distance = llmax(new_distance, min_zoom);
+	}
 
 	// Don't zoom too far back
 	const F32 DIST_FUDGE = 16.f; // meters
@@ -2602,7 +2609,7 @@ void LLAgent::propagate(const F32 dt)
 	yaw( YAW_RATE * mYawKey * dt );
 
 	const F32 PITCH_RATE = 90.f * DEG_TO_RAD;			// radians per second
-	pitch(PITCH_RATE * (F32) mPitchKey * dt);
+	pitch(PITCH_RATE * mPitchKey * dt);
 	
 	// handle auto-land behavior
 	if (mAvatarObject.notNull())
@@ -2821,17 +2828,6 @@ void LLAgent::startTyping()
 		sendAnimationRequest(ANIM_AGENT_TYPE, ANIM_REQUEST_START);
 	}
 	gChatBar->sendChatFromViewer("", CHAT_TYPE_START, FALSE);
-
-	// Addition for avatar list support.
-	// Makes the fact that this avatar is typing appear in the list
-	if ( LLFloaterAvatarList::getInstance() )
-	{
-		LLAvatarListEntry *ent = LLFloaterAvatarList::getInstance()->getAvatarEntry(getID());
-		if ( NULL != ent )
-		{
-			ent->setActivity(ACTIVITY_TYPING);
-		}
-	}
 }
 
 //-----------------------------------------------------------------------------
@@ -3684,6 +3680,7 @@ F32	LLAgent::calcCameraFOVZoomFactor()
 		// don't FOV zoom on mostly transparent objects
 		LLVector3 focus_offset = mFocusObjectOffset;
 		F32 obj_min_dist = 0.f;
+		if (!gSavedSettings.getBOOL("EmeraldDisableMinZoomDist"))
 		calcCameraMinDistance(obj_min_dist);
 		F32 current_distance = llmax(0.001f, camera_offset_dir.magVec());
 
@@ -4095,6 +4092,7 @@ void LLAgent::changeCameraToMouselook(BOOL animate)
 	if( mCameraMode != CAMERA_MODE_MOUSELOOK )
 	{
 		gFocusMgr.setKeyboardFocus( NULL );
+		if (gSavedSettings.getBOOL("EmeraldAONoStandsInMouselook"))	LLFloaterAO::stopMotion(LLFloaterAO::getCurrentStandId(), FALSE,TRUE);
 		
 		mLastCameraMode = mCameraMode;
 		mCameraMode = CAMERA_MODE_MOUSELOOK;
@@ -4302,12 +4300,14 @@ void LLAgent::changeCameraToCustomizeAvatar(BOOL avatar_animate, BOOL camera_ani
 	}
 
 // [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g)
+	if(gSavedSettings.getBOOL("EmeraldAppearanceForceStand"))
 	if ( (gRlvHandler.hasBehaviour(RLV_BHVR_UNSIT)) && (mAvatarObject.notNull()) && (mAvatarObject->mIsSitting) )
 	{
 		return;
 	}
 // [/RLVa:KB]
 
+	if(gSavedSettings.getBOOL("EmeraldAppearanceForceStand"))
 	setControlFlags(AGENT_CONTROL_STAND_UP); // force stand up
 	gViewerWindow->getWindow()->resetBusyCount();
 
@@ -4320,6 +4320,8 @@ void LLAgent::changeCameraToCustomizeAvatar(BOOL avatar_animate, BOOL camera_ani
 	gSavedSettings.setBOOL("MouselookBtnState", FALSE);
 	gSavedSettings.setBOOL("ThirdPersonBtnState", FALSE);
 	gSavedSettings.setBOOL("BuildBtnState", FALSE);
+
+	mAvatarObject->setAppearanceFlag(true);
 
 	if (camera_animate)
 	{
@@ -4351,7 +4353,7 @@ void LLAgent::changeCameraToCustomizeAvatar(BOOL avatar_animate, BOOL camera_ani
 
 	if (mAvatarObject.notNull())
 	{
-		if(avatar_animate)
+		if(avatar_animate && gSavedSettings.getBOOL("EmeraldAppearanceAnimate"))
 		{
 				// Remove any pitch from the avatar
 			LLVector3 at = mFrameAgent.getAtAxis();
@@ -6228,7 +6230,21 @@ void LLAgent::teleportRequest(
 	const U64& region_handle,
 	const LLVector3& pos_local)
 {
+// [RLVa:KB] - Alternate: Emerald | Checked: 2009-10-10 (RLVa-1.0.4e)
+	// If we're getting teleported due to @tpto we should disregard any @tploc=n or @unsit=n restrictions from the same object
+	if ( (rlv_handler_t::isEnabled()) &&
+		 ( (gRlvHandler.hasBehaviourExcept(RLV_BHVR_TPLOC, gRlvHandler.getCurrentObject())) ||
+		   ( (mAvatarObject.notNull()) && (mAvatarObject->mIsSitting) && 
+			 (gRlvHandler.hasBehaviourExcept(RLV_BHVR_UNSIT, gRlvHandler.getCurrentObject()))) ) )
+	{
+		return;
+	}
+// [/RLVa:KB]
+
 	LLViewerRegion* regionp = getRegion();
+
+	// Set last region data for teleport history
+	gAgent.setLastRegionData(regionp->getName(),gAgent.getPositionAgent());
 	if(regionp && teleportCore())
 	{
 		llinfos << "TeleportRequest: '" << region_handle << "':" << pos_local
@@ -6262,7 +6278,7 @@ void LLAgent::teleportViaLandmark(const LLUUID& landmark_asset_id)
 {
 // [RLVa:KB] - Checked: 2009-07-07 (RLVa-1.0.0d)
 	if ( (rlv_handler_t::isEnabled()) &&
-		 ( (gRlvHandler.hasBehaviour("tplm")) || 
+		 ( (gRlvHandler.hasBehaviour(RLV_BHVR_TPLM)) || 
 		   ((gRlvHandler.hasBehaviour(RLV_BHVR_UNSIT)) && (mAvatarObject.notNull()) && (mAvatarObject->mIsSitting)) ))
 	{
 		return;
@@ -6270,6 +6286,8 @@ void LLAgent::teleportViaLandmark(const LLUUID& landmark_asset_id)
 // [/RLVa:KB]
 
 	LLViewerRegion *regionp = getRegion();
+	// Set last region data for teleport history
+	gAgent.setLastRegionData(regionp->getName(),gAgent.getPositionAgent());
 	if(regionp && teleportCore())
 	{
 		LLMessageSystem* msg = gMessageSystem;
@@ -6285,6 +6303,8 @@ void LLAgent::teleportViaLandmark(const LLUUID& landmark_asset_id)
 void LLAgent::teleportViaLure(const LLUUID& lure_id, BOOL godlike)
 {
 	LLViewerRegion* regionp = getRegion();
+	// Set last region data for teleport history
+	gAgent.setLastRegionData(regionp->getName(),gAgent.getPositionAgent());
 	if(regionp && teleportCore())
 	{
 		U32 teleport_flags = 0x0;
@@ -6336,7 +6356,7 @@ void LLAgent::teleportViaLocation(const LLVector3d& pos_global)
 // [RLVa:KB] - Alternate: Snowglobe-1.0 | Checked: 2009-07-07 (RLVa-1.0.0d)
 	// If we're getting teleported due to @tpto we should disregard any @tploc=n or @unsit=n restrictions from the same object
 		if ( (rlv_handler_t::isEnabled()) &&
-			 ( (gRlvHandler.hasBehaviourExcept("tploc", gRlvHandler.getCurrentObject())) ||
+		 ( (gRlvHandler.hasBehaviourExcept(RLV_BHVR_TPLOC, gRlvHandler.getCurrentObject())) ||
 			   ( (mAvatarObject.notNull()) && (mAvatarObject->mIsSitting) && 
 				 (gRlvHandler.hasBehaviourExcept(RLV_BHVR_UNSIT, gRlvHandler.getCurrentObject()))) ) )
 		{
@@ -7042,10 +7062,17 @@ void LLAgent::processAgentInitialWearablesUpdate( LLMessageSystem* mesgsys, void
 		}
 
 		// now that we have the asset ids...request the wearable assets
+// [RLVa:KB] - Checked: 2009-08-08 (RLVa-1.0.1g) | Added: RLVa-1.0.1g
+		LLInventoryFetchObserver::item_ref_t rlvItems;
+// [/RLVa:KB]
 		for( i = 0; i < WT_COUNT; i++ )
 		{
 			if( !gAgent.mWearableEntry[i].mItemID.isNull() )
 			{
+// [RLVa:KB] - Checked: 2009-08-08 (RLVa-1.0.1g) | Added: RLVa-1.0.1g
+				if (rlv_handler_t::isEnabled())
+					rlvItems.push_back(gAgent.mWearableEntry[i].mItemID);
+// [/RLVa:KB]
 				gWearableList.getAsset( 
 					asset_id_array[i],
 					LLStringUtil::null,
@@ -7053,6 +7080,15 @@ void LLAgent::processAgentInitialWearablesUpdate( LLMessageSystem* mesgsys, void
 					LLAgent::onInitialWearableAssetArrived, (void*)(intptr_t)i );
 			}
 		}
+
+// [RLVa:KB] - Checked: 2009-08-08 (RLVa-1.0.1g) | Added: RLVa-1.0.1g
+		// TODO-RLVa: checking that we're in STATE_STARTED is probably not needed, but leave it until we can be absolutely sure
+		if ( (rlv_handler_t::isEnabled()) && (LLStartUp::getStartupState() == STATE_STARTED) )
+		{
+			RlvCurrentlyWorn f;
+			f.fetchItems(rlvItems);
+		}
+// [/RLVa:KB]
 	}
 }
 
@@ -7527,7 +7563,11 @@ void LLAgent::sendAgentSetAppearance()
 			msg->nextBlockFast(_PREHASH_VisualParam );
 			
 			// We don't send the param ids.  Instead, we assume that the receiver has the same params in the same sequence.
-			const F32 param_value = param->getWeight();
+			F32 param_value;
+			if(param->getID() == 507)
+				param_value = mAvatarObject->getActualBoobGrav();
+			else
+				param_value = param->getWeight();
 			const U8 new_weight = F32_to_U8(param_value, param->getMinWeight(), param->getMaxWeight());
 			msg->addU8Fast(_PREHASH_ParamValue, new_weight );
 			transmitted_params++;
@@ -8142,6 +8182,22 @@ void LLAgent::parseTeleportMessages(const std::string& xml_filename)
 			} //end if ( message exists and has a name)
 		} //end for (all message in set)
 	}//end for (all message sets in xml file)
+}
+
+void LLAgent::setLastRegionData(std::string regionName, LLVector3 agentCoords)
+{
+	mLastRegion = regionName;
+	mLastCoordinates = agentCoords;
+}
+
+std::string LLAgent::getLastRegion()
+{
+	return mLastRegion;
+}
+
+LLVector3 LLAgent::getLastCoords()
+{
+	return mLastCoordinates;
 }
 
 // EOF

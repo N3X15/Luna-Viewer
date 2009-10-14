@@ -234,12 +234,14 @@ void LLStatusBar::draw()
 {
 	refresh();
 
+	/*
 	if (isBackgroundVisible())
 	{
 		gl_drop_shadow(0, getRect().getHeight(), getRect().getWidth(), 0, 
 			LLUI::sColorsGroup->getColor("ColorDropShadow"), 
 			LLUI::sConfigGroup->getS32("DropShadowFloater") );
 	}
+	*/
 	LLPanel::draw();
 }
 

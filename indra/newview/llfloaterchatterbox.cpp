@@ -40,6 +40,8 @@
 #include "llfloaterchat.h"
 #include "llfloaterfriends.h"
 #include "llfloatergroups.h"
+
+#include "lggFloaterIrc.h"
 #include "llviewercontrol.h"
 #include "llimview.h"
 #include "llimpanel.h"
@@ -52,6 +54,7 @@ LLFloaterMyFriends::LLFloaterMyFriends(const LLSD& seed)
 {
 	mFactoryMap["friends_panel"] = LLCallbackMap(LLFloaterMyFriends::createFriendsPanel, NULL);
 	mFactoryMap["groups_panel"] = LLCallbackMap(LLFloaterMyFriends::createGroupsPanel, NULL);
+	mFactoryMap["irc_panel"] = LLCallbackMap(LLFloaterMyFriends::createIRCPanel,NULL);
 	// do not automatically open singleton floaters (as result of getInstance())
 	BOOL no_open = FALSE;
 	LLUICtrlFactory::getInstance()->buildFloater(this, "floater_my_friends.xml", &getFactoryMap(), no_open);
@@ -84,6 +87,11 @@ void* LLFloaterMyFriends::createFriendsPanel(void* data)
 void* LLFloaterMyFriends::createGroupsPanel(void* data)
 {
 	return new LLPanelGroups();
+}
+
+void* LLFloaterMyFriends::createIRCPanel(void* data)
+{
+	return new lggPanelIRC();
 }
 
 //
@@ -205,10 +213,11 @@ void LLFloaterChatterBox::draw()
 
 	LLMultiFloater::draw();
 }
-
 void LLFloaterChatterBox::onOpen()
 {
 	gSavedSettings.setBOOL("ShowCommunicate", TRUE);
+	
+
 }
 
 void LLFloaterChatterBox::onClose(bool app_quitting)

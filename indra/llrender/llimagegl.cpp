@@ -1157,7 +1157,7 @@ BOOL LLImageGL::readBackRaw(S32 discard_level, LLImageRaw* imageraw, bool compre
 	GLenum error ;
 	while((error = glGetError()) != GL_NO_ERROR)
 	{
-		llwarns << "GL Error happens before reading back texture. Error code: " << error << llendl ;
+		llwarns << "GL Error happens before reading back texture. Error code: " << gluErrorString(error) << llendl ;
 	}
 	//-----------------------------------------------------------------------------------------------
 

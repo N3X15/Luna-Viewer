@@ -10,11 +10,8 @@
 #include "rlvhelper.h"
 
 // ============================================================================
-/*
- * RlvEvent
- * ========
- * Passed to observer event handlers (contains the same paramaters as RlvHandler::processXXXCommand)
- */
+// RlvEvent - Passed to observer event handlers (contains the same paramaters as RlvHandler::processXXXCommand)
+//
 
 class RlvEvent
 {
@@ -63,6 +60,7 @@ public:
 
 	virtual BOOL onAddCommand(const EventType& rlvEvent)    { return FALSE; }
 	virtual BOOL onRemoveCommand(const EventType& rlvEvent) { return FALSE; }
+	virtual BOOL onClearCommand(const EventType& rlvEvent)  { return FALSE; }
 	virtual BOOL onReplyCommand(const EventType& rlvEvent)  { return FALSE; }
 	virtual BOOL onForceCommand(const EventType& rlvEvent)  { return FALSE; }
 };
@@ -155,8 +153,73 @@ class RlvEventEmitter
 class RlvBehaviourObserver
 {
 public:
-	virtual ~RlvBehaviourObserver() { };
-	virtual void changed() = 0;
+	virtual ~RlvBehaviourObserver() {}
+	virtual void changed(const RlvCommand& rlvCmd, bool fInternal) = 0;
+};
+
+// ============================================================================
+
+class RlvBehaviourNotifyObserver : public RlvBehaviourObserver
+{
+public:
+	virtual ~RlvBehaviourNotifyObserver() { }
+
+	void changed(const RlvCommand& rlvCmd, bool fInternal)
+	{
+		if (fInternal)
+			return;
+
+		std::string strCmd = rlvCmd.asString(), strNotify; ERlvParamType eCmdType = rlvCmd.getParamType();
+		if ( (RLV_TYPE_ADD == eCmdType) || (RLV_TYPE_REMOVE == eCmdType) )
+			strNotify = llformat("/%s=%s", strCmd.c_str(), rlvCmd.getParam().c_str());
+		else if (RLV_TYPE_CLEAR == eCmdType)
+			strNotify = llformat("/%s", strCmd.c_str());
+		else
+			return;
+
+		for (std::multimap<LLUUID, notifyData>::const_iterator itNotify = m_Notifications.begin(); 
+				itNotify != m_Notifications.end(); ++itNotify)
+		{
+			if ( (itNotify->second.strFilter.empty()) || (std::string::npos != strCmd.find(itNotify->second.strFilter)) )
+				rlvSendChatReply(itNotify->second.nChannel, strNotify);
+		}
+	}
+
+	void addNotify(const LLUUID& idObj, S32 nChannel, const std::string& strFilter)
+	{
+		m_Notifications.insert(std::pair<LLUUID, notifyData>(idObj, notifyData(nChannel, strFilter)));
+	}
+
+	void clearNotify(const LLUUID& idObj)
+	{
+		m_Notifications.erase(idObj);
+	}
+
+	bool hasNotify()
+	{
+		return (m_Notifications.size() != 0);
+	}
+
+	void removeNotify(const LLUUID& idObj, S32 nChannel, const std::string& strFilter)
+	{
+		for (std::multimap<LLUUID, notifyData>::iterator itNotify = m_Notifications.lower_bound(idObj), 
+				endNotify = m_Notifications.upper_bound(idObj); itNotify != endNotify; ++itNotify)
+		{
+			if ( (itNotify->second.nChannel == nChannel) && (itNotify->second.strFilter == strFilter) )
+			{
+				m_Notifications.erase(itNotify);
+				break;
+			}
+		}
+	}
+protected:
+	struct notifyData
+	{
+		S32         nChannel;
+		std::string strFilter;
+		notifyData(S32 channel, const std::string& filter) : nChannel(channel), strFilter(filter) {}
+	};
+	std::multimap<LLUUID, notifyData> m_Notifications;
 };
 
 // ============================================================================

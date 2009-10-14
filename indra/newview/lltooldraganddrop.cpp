@@ -383,8 +383,8 @@ LLToolDragAndDrop::dragOrDrop3dImpl LLToolDragAndDrop::sDragAndDrop3d[DAD_COUNT]
 	{
 		&LLToolDragAndDrop::dad3dNULL, // Dest: DT_NONE
 		&LLToolDragAndDrop::dad3dNULL, // Dest: DT_SELF
-		&LLToolDragAndDrop::dad3dNULL, // Dest: DT_AVATAR
-		&LLToolDragAndDrop::dad3dNULL, // Dest: DT_OBJECT
+		&LLToolDragAndDrop::dad3dGiveInventory, // Dest: DT_AVATAR
+		&LLToolDragAndDrop::dad3dUpdateInventory, // Dest: DT_OBJECT
 		&LLToolDragAndDrop::dad3dNULL, // Dest: DT_LAND
 	},
 	//	Source: DAD_LANDMARK
@@ -1854,7 +1854,7 @@ BOOL LLToolDragAndDrop::isInventoryGiveAcceptable(LLInventoryItem* item)
 	switch(item->getType())
 	{
 	case LLAssetType::AT_CALLINGCARD:
-		acceptable = FALSE;
+		acceptable = TRUE;
 		break;
 	case LLAssetType::AT_OBJECT:
 		if(my_avatar->isWearingAttachment(item->getUUID()))
@@ -1904,7 +1904,7 @@ BOOL LLToolDragAndDrop::isInventoryGroupGiveAcceptable(LLInventoryItem* item)
 	switch(item->getType())
 	{
 	case LLAssetType::AT_CALLINGCARD:
-		acceptable = FALSE;
+		acceptable = TRUE;
 		break;
 	case LLAssetType::AT_OBJECT:
 		if(my_avatar->isWearingAttachment(item->getUUID()))
@@ -2015,6 +2015,7 @@ bool LLToolDragAndDrop::handleGiveDragAndDrop(LLUUID dest_agent, LLUUID session_
 	// check the type
 	switch(cargo_type)
 	{
+	case DAD_CALLINGCARD:
 	case DAD_TEXTURE:
 	case DAD_SOUND:
 	case DAD_LANDMARK:
@@ -2069,7 +2070,6 @@ bool LLToolDragAndDrop::handleGiveDragAndDrop(LLUUID dest_agent, LLUUID session_
 		}
 		break;
 	}
-	case DAD_CALLINGCARD:
 	default:
 		*accept = ACCEPT_NO;
 		break;
@@ -2120,10 +2120,10 @@ EAcceptance LLToolDragAndDrop::dad3dRezAttachmentFromInv(
 		return ACCEPT_NO;
 	}
 
-// [RLVa:KB] - Checked: 2009-07-06 (RLVa-1.0.0c) | Modified: RLVa-1.0.0c
+// [RLVa:KB] - Checked: 2009-09-08 (RLVa-1.0.2c) | Modified: RLVa-1.0.2c
 	LLViewerJointAttachment* pAttachPt = NULL;
 	if ( (rlv_handler_t::isEnabled()) && (gRlvHandler.hasLockedAttachment()) && (!RlvSettings::getEnableWear()) &&
-		 ( ((pAttachPt = gRlvHandler.getAttachPoint(item, true)) == NULL) || (!gRlvHandler.isDetachable(pAttachPt->getObject())) ) )
+		 ( ((pAttachPt = gRlvHandler.getAttachPoint(item, true)) == NULL) || (!gRlvHandler.isDetachable(pAttachPt)) ) )
 	{
 		return ACCEPT_NO_LOCKED;
 	}

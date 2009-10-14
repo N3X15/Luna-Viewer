@@ -413,9 +413,9 @@ void LLSnapshotLivePreview::draw()
 		LLColor4 bg_color(0.f, 0.f, 0.3f, 0.4f);
 		gl_rect_2d(getRect(), bg_color);
 		LLRect &rect = mImageRect[mCurImageIndex];
-		LLRect shadow_rect = mImageRect[mCurImageIndex];
-		shadow_rect.stretch(BORDER_WIDTH);
-		gl_drop_shadow(shadow_rect.mLeft, shadow_rect.mTop, shadow_rect.mRight, shadow_rect.mBottom, LLColor4(0.f, 0.f, 0.f, mNeedsFlash ? 0.f :0.5f), 10);
+		//LLRect shadow_rect = mImageRect[mCurImageIndex];
+		//shadow_rect.stretch(BORDER_WIDTH);
+		//gl_drop_shadow(shadow_rect.mLeft, shadow_rect.mTop, shadow_rect.mRight, shadow_rect.mBottom, LLColor4(0.f, 0.f, 0.f, mNeedsFlash ? 0.f :0.5f), 10);
 
 		LLColor4 image_color(1.f, 1.f, 1.f, 1.f);
 		gGL.color4fv(image_color.mV);

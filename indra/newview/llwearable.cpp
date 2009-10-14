@@ -550,6 +550,11 @@ BOOL LLWearable::isDirty()
 			weight = llclamp( weight, param->getMinWeight(), param->getMaxWeight() );
 			
 			U8 a = F32_to_U8( param->getWeight(), param->getMinWeight(), param->getMaxWeight() );
+			if(param->getID() == 507)
+			{
+					weight = get_if_there(mVisualParamMap, param->getID(), avatar->getActualBoobGrav());
+					weight = llclamp( weight, param->getMinWeight(), param->getMaxWeight() );
+			}
 			U8 b = F32_to_U8( weight,             param->getMinWeight(), param->getMaxWeight() );
 			if( a != b  )
 			{
@@ -638,6 +643,17 @@ void LLWearable::writeToAvatar( BOOL set_by_user )
 		{
 			S32 param_id = param->getID();
 			F32 weight = get_if_there(mVisualParamMap, param_id, param->getDefaultWeight());
+			if(param_id == 507)
+			{
+				 //ZOMG: When switching shapes from inventory
+
+			llwarns << "-------------------------------- " << llendl;
+			llwarns << "write To Avatar for  " << avatar->getFullname() << llendl;
+			llwarns << "-------------------------------- " << llendl;
+
+				avatar->setActualBoobGrav(weight);
+				//continue;
+			}
 			// only animate with user-originated changes
 			if (set_by_user)
 			{
@@ -698,7 +714,7 @@ void LLWearable::writeToAvatar( BOOL set_by_user )
 
 //	if( set_by_user )
 //	{
-//		gAgent.sendAgentSetAppearance();
+		gAgent.sendAgentSetAppearance();
 //	}
 }
 
@@ -728,6 +744,10 @@ void LLWearable::removeFromAvatar( EWearableType type, BOOL set_by_user )
 		if( (((LLViewerVisualParam*)param)->getWearableType() == type) && (param->getGroup() == VISUAL_PARAM_GROUP_TWEAKABLE ) )
 		{
 			S32 param_id = param->getID();
+			llwarns << "-------------------------------- " << llendl;
+			llwarns << "remove From Avatar " << llendl;
+			llwarns << "-------------------------------- " << llendl;
+			//if(param->getID() != 507)
 			avatar->setVisualParamWeight( param_id, param->getDefaultWeight(), set_by_user );
 		}
 	}
@@ -775,6 +795,10 @@ void LLWearable::readFromAvatar()
 	{
 		if( (((LLViewerVisualParam*)param)->getWearableType() == mType) && (param->getGroup() == VISUAL_PARAM_GROUP_TWEAKABLE ) )
 		{
+			if(param->getID() == 507)
+			{
+				avatar->setActualBoobGrav(param->getWeight());
+			}
 			mVisualParamMap[param->getID()] = param->getWeight();
 		}
 	}
@@ -826,6 +850,11 @@ void LLWearable::copyDataFrom( LLWearable* src )
 		{
 			S32 id = param->getID();
 			F32 weight = get_if_there(src->mVisualParamMap, id, param->getDefaultWeight() );
+			if(id == 507)
+			{
+				 // ZOMG: from saving new shape
+				//weight = get_if_there(src->mVisualParamMap, id, avatar->getActualBoobGrav() );
+			}
 			mVisualParamMap[id] = weight;
 		}
 	}

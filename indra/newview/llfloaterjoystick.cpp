@@ -155,6 +155,7 @@ void LLFloaterJoystick::refresh()
 	
 	m3DCursor = gSavedSettings.getBOOL("Cursor3D");
 	mAutoLeveling = gSavedSettings.getBOOL("AutoLeveling");
+	mMouselookYaw = gSavedSettings.getBOOL("JoystickMouselookYaw");
 	mZoomDirect  = gSavedSettings.getBOOL("ZoomDirect");
 
 	mAvatarEnabled = gSavedSettings.getBOOL("JoystickAvatarEnabled");
@@ -244,6 +245,7 @@ void LLFloaterJoystick::cancel()
 
 	gSavedSettings.setBOOL("Cursor3D", m3DCursor);
 	gSavedSettings.setBOOL("AutoLeveling", mAutoLeveling);
+	gSavedSettings.setBOOL("JoystickMouselookYaw", mMouselookYaw);
 	gSavedSettings.setBOOL("ZoomDirect", mZoomDirect );
 
 	gSavedSettings.setBOOL("JoystickAvatarEnabled", mAvatarEnabled);

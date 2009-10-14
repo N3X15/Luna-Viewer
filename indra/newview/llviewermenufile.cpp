@@ -71,6 +71,8 @@
 // system libraries
 #include <boost/tokenizer.hpp>
 
+#include "importtracker.h"
+
 typedef LLMemberListener<LLView> view_listener_t;
 
 
@@ -382,8 +384,9 @@ class ImportLinkset : public view_listener_t
 		{
 			if(header["Version"].asInteger() == 2)
 			{
-				LLSD obj_llsd=data["Objects"];
-				gImportTracker.prepare(obj_llsd);
+				//LLSD obj_llsd=data["Objects"];
+				//gImportTracker.prepare(obj_llsd);
+				gImportTracker.importer(filename, NULL);
 			}
 			else
 				gImportTracker.import(data);

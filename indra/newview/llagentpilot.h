@@ -86,7 +86,6 @@ private:
 	struct Action
 	{
 	public:
-
 		EActionType		mType;
 		LLVector3d		mTarget;
 		F64				mTime;

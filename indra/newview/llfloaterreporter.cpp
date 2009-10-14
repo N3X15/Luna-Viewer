@@ -743,7 +743,7 @@ LLSD LLFloaterReporter::gatherReport()
 		summary << short_platform << " V" << LL_VERSION_MAJOR << "."
 			<< LL_VERSION_MINOR << "."
 			<< LL_VERSION_PATCH << "."
-			<< LL_VIEWER_BUILD
+			<< LL_VERSION_BUILD
 			<< " (" << regionp->getName() << ")"
 			<< "[" << category_name << "] "
 			<< "\"" << childGetValue("summary_edit").asString() << "\"";
@@ -764,7 +764,7 @@ LLSD LLFloaterReporter::gatherReport()
 		details << "V" << LL_VERSION_MAJOR << "."								// client version moved to body of email for abuse reports
 			<< LL_VERSION_MINOR << "."
 			<< LL_VERSION_PATCH << "."
-			<< LL_VIEWER_BUILD << std::endl << std::endl;
+			<< LL_VERSION_BUILD << std::endl << std::endl;
 	}
 	std::string object_name = childGetText("object_name");
 	std::string owner_name = childGetText("owner_name");

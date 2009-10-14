@@ -1208,7 +1208,53 @@ void LLIMSpeakerMgr::updateSpeakerList()
 	
 	return;
 }
+//lgg todo setIrcSpeakers setSpeaker
+void LLIMSpeakerMgr::setIrcSpeakers(const LLSD& speakers)
+{
+	
+	for (speaker_map_t::iterator speaker_it = mSpeakers.begin(); speaker_it != mSpeakers.end(); ++speaker_it)
+	{
+		LLSpeaker* tempspeakerp = speaker_it->second;
+		tempspeakerp->mStatus = LLSpeaker::STATUS_NOT_IN_CHANNEL;
+		tempspeakerp->mDotColor = INACTIVE_COLOR;
+		tempspeakerp->mActivityTimer.resetWithExpiry(SPEAKER_TIMEOUT);
+	}
 
+	//mSpeakers.clear();
+	//mSpeakersSorted.clear();
+	
+
+	for(int i = 0; i < speakers.size(); i++)
+	{
+		LLSD personData = speakers[i];
+		/*(llinfos << " adding a new person to the list " << 
+			personData["irc_agent_id"].asString().c_str() << "=id----" <<
+			personData["irc_agent_name"].asString().c_str() << "=name----" <<
+			personData["irc_agent_mod"].asString().c_str() << "=mod----" << 
+			personData["irc_channel"].asString().c_str() << "=chan----" << 
+			personData["irc_mode"].asString().c_str() << "=mode----" <<	llendl;
+			*/
+
+		LLUUID agent_id = LLUUID((const LLUUID&)personData["irc_agent_id"]);
+		LLPointer<LLSpeaker> speakerp = findSpeaker(agent_id);
+		if(speakerp.isNull())
+		{
+
+			speakerp = setSpeaker(
+				agent_id,
+				personData["irc_agent_name"].asString(),
+				LLSpeaker::STATUS_TEXT_ONLY,
+				LLSpeaker::SPEAKER_AGENT);
+
+			
+		}
+		speakerp->mDotColor = ACTIVE_COLOR;
+		speakerp->mStatus = LLSpeaker::STATUS_TEXT_ONLY;
+		speakerp->mIsModerator = personData["irc_agent_mod"].asBoolean();
+		
+
+	}
+}
 void LLIMSpeakerMgr::setSpeakers(const LLSD& speakers)
 {
 	if ( !speakers.isMap() ) return;

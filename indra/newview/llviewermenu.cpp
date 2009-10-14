@@ -81,6 +81,7 @@
 #include "llface.h"
 #include "llfirstuse.h"
 #include "llfloater.h"
+#include "llfloaterao.h"
 #include "llfloaterabout.h"
 #include "llfloaterbuycurrency.h"
 #include "llfloateractivespeakers.h"
@@ -163,6 +164,7 @@
 #include "llnotify.h"
 #include "llpanelobject.h"
 #include "llparcel.h"
+#include "llpolymesh.h"
 #include "llprimitive.h"
 #include "llresmgr.h"
 #include "llselectmgr.h"
@@ -219,8 +221,12 @@
 #include "lltexlayer.h"
 #include "llfloateravatarlist.h"
 #include "jcfloater_animation_list.h"
-
+#include "llfloaterassetbrowser.h"
 #include "jcfloater_areasearch.h"
+#include "jc_asset_comparer.h"
+#include "jc_layer_editor.h"
+
+#include "exporttracker.h"
 
 #include "tsstuff.h"
 
@@ -481,6 +487,13 @@ void handle_toggle_pg(void*);
 void handle_dump_attachments(void *);
 void handle_show_overlay_title(void*);
 void handle_dump_avatar_local_textures(void*);
+void handle_meshes_and_morphs(void*);
+void handle_mesh_save_llm(void* data);
+void handle_mesh_save_current_obj(void*);
+void handle_mesh_save_obj(void*);
+void handle_mesh_load_obj(void*);
+void handle_morph_save_obj(void*);
+void handle_morph_load_obj(void*);
 void handle_debug_avatar_textures(void*);
 void handle_grab_texture(void*);
 BOOL enable_grab_texture(void*);
@@ -972,7 +985,7 @@ void init_client_menu(LLMenuGL* menu)
 // [RLVa:KB] - Checked: 2009-07-08 (RLVa-1.0.0e) | Modified: RLVa-1.0.0e
 	#ifdef RLV_ADVANCED_TOGGLE_RLVA
 		if (gSavedSettings.controlExists(RLV_SETTING_MAIN))
-			menu->append(new LLMenuItemCheckGL("Restrained Life API", &rlvDbgToggleEnabled, NULL, &rlvDbgGetEnabled, NULL));
+			menu->append(new LLMenuItemCheckGL("Restrained Life API", &rlvToggleEnabled, NULL, &rlvGetEnabled, NULL));
 	#endif // RLV_ADVANCED_TOGGLE_RLVA
 // [/RLVa:KB]
 
@@ -1421,6 +1434,11 @@ void init_debug_avatar_menu(LLMenuGL* menu)
 	menu->append(new LLMenuItemCallGL("Debug Avatar Textures", handle_debug_avatar_textures, NULL, NULL, 'A', MASK_SHIFT|MASK_CONTROL|MASK_ALT));
 	menu->append(new LLMenuItemCallGL("Dump Local Textures", handle_dump_avatar_local_textures, NULL, NULL, 'M', MASK_SHIFT|MASK_ALT ));	
 #endif
+
+	LLMenuItemCallGL* mesh_item = new LLMenuItemCallGL("Meshes And Morphs...", handle_meshes_and_morphs);
+	mesh_item->setUserData((void*)mesh_item);  // So we can remove it later
+	menu->append(mesh_item);
+
 	menu->createJumpKeys();
 }
 
@@ -1438,30 +1456,24 @@ void init_debug_baked_texture_menu(LLMenuGL* menu)
 // [RLVa:KB] - Version: 1.23.4 | Checked: 2009-07-10 (RLVa-1.0.0g) | Modified: RLVa-1.0.0g
 void init_debug_rlva_menu(LLMenuGL* menu)
 {
-	// Experimental feature toggles
+	// Debug options
 	{
-		/*
-		#ifdef RLV_EXPERIMENTAL
-			LLMenuGL* sub_menu = new LLMenuGL("Experimental");
+		LLMenuGL* pDbgMenu = new LLMenuGL("Debug");
 
-			menu->appendMenu(sub_menu);
-		#endif // RLV_EXPERIMENTAL
-		*/
-	}
+		if (gSavedSettings.controlExists(RLV_SETTING_DEBUG))
+			pDbgMenu->append(new LLMenuItemCheckGL("Show Debug Messages", menu_toggle_control, NULL, menu_check_control, (void*)RLV_SETTING_DEBUG));
+		pDbgMenu->appendSeparator();
+		if (gSavedSettings.controlExists(RLV_SETTING_ENABLELEGACYNAMING))
+			pDbgMenu->append(new LLMenuItemCheckGL("Enable Legacy Naming", menu_toggle_control, NULL, menu_check_control, (void*)RLV_SETTING_ENABLELEGACYNAMING));
 
-	// Unit tests
-	{
-		#ifdef RLV_DEBUG_TESTS
-			init_debug_rlva_tests_menu(menu);
-		#endif // RLV_DEBUG_TESTS
+		menu->appendMenu(pDbgMenu);
+		menu->appendSeparator();
 	}
 
 	#ifdef RLV_EXTENSION_ENABLE_WEAR
 		if (gSavedSettings.controlExists(RLV_SETTING_ENABLEWEAR))
-		{
-			menu->append(new LLMenuItemCheckGL("Enable Wear", menu_toggle_control, NULL, menu_check_control, (void*)RLV_SETTING_ENABLEWEAR));
+			menu->append(new LLMenuItemCheckGL("Enable Wear", menu_toggle_control, rlvEnableWearEnabler, menu_check_control, (void*)RLV_SETTING_ENABLEWEAR));
 			menu->appendSeparator();
-		}
 	#endif // RLV_EXTENSION_ENABLE_WEAR
 
 	#ifdef RLV_EXTENSION_HIDELOCKED
@@ -1474,6 +1486,12 @@ void init_debug_rlva_menu(LLMenuGL* menu)
 			menu->appendSeparator();
 		}
 	#endif // RLV_EXTENSION_HIDELOCKED
+
+	if (gSavedSettings.controlExists(RLV_SETTING_FORBIDGIVETORLV))
+		menu->append(new LLMenuItemCheckGL("Forbid Give to #RLV", menu_toggle_control, NULL, menu_check_control, (void*)RLV_SETTING_FORBIDGIVETORLV));
+	if (gSavedSettings.controlExists(RLV_SETTING_ENABLELEGACYNAMING))
+		menu->append(new LLMenuItemCheckGL("Show Name Tags", menu_toggle_control, NULL, menu_check_control, (void*)RLV_SETTING_SHOWNAMETAGS));
+	menu->appendSeparator();
 
 	#ifdef RLV_EXTENSION_FLOATER_RESTRICTIONS
 		// TODO-RLVa: figure out a way to tell if floater_rlv_behaviour.xml exists
@@ -2011,7 +2029,36 @@ class LLObjectInspect : public view_listener_t
 	}
 };
 
+class LLObjectDerender : public view_listener_t
+{
+    bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+    {
+		LLViewerObject* slct = LLSelectMgr::getInstance()->getSelection()->getFirstObject();
+		if(!slct)return true;
+		LLUUID id = slct->getID();
+		LLObjectSelectionHandle selection = LLSelectMgr::getInstance()->getSelection();
+		LLUUID root_key;
+		LLSelectNode* node = selection->getFirstRootNode();
+		if(node)root_key = node->getObject()->getID();
+		if(root_key.notNull())
+		{
+			id = root_key;
+			//LLSelectMgr::getInstance()->removeObjectFromSelections(root_key);
+		}
+		LLSelectMgr::getInstance()->removeObjectFromSelections(id);
 
+		// ...don't kill the avatar
+		if (!(id == gAgentID))
+		{
+			LLViewerObject *objectp = gObjectList.findObject(id);
+			if (objectp)
+			{
+				gObjectList.killObject(objectp);
+			}
+		}
+		return true;
+	}
+};
 //---------------------------------------------------------------------------
 // Land pie menu
 //---------------------------------------------------------------------------
@@ -2324,199 +2371,82 @@ class LLObjectEnableExport : public view_listener_t
 	}
 };
 
-LLSD export_object(LLSelectNode* node, std::string filename)
-{
-	//Chalice - Changed to support exporting linkset groups.
-	LLViewerObject* root_object = NULL;
-	LLViewerObject* object = NULL;
-	
-	// Create an LLSD object that will hold the entire tree structure that can be serialized to a file
-	LLSD llsd;
-
-	if (!node)
-		return llsd;
-
-	object = root_object = node->getObject();
-	
-	if (!object)
-		return llsd;
-	if(!(!object->isAvatar() && object->permYouOwner() && object->permModify() && object->permCopy() && object->permTransfer()))
-		return llsd;
-	// Build a list of everything that we'll actually be exporting
-	LLDynamicArray<LLViewerObject*> export_objects;
-	
-	// Add the root object to the export list
-	export_objects.put(object);
-	
-	// Iterate over all of this objects children
-	LLViewerObject::child_list_t child_list = object->getChildren();
-	
-	for (LLViewerObject::child_list_t::iterator i = child_list.begin(); i != child_list.end(); ++i)
-	{
-		LLViewerObject* child = *i;
-		if(!child->isAvatar())
-		{
-			// Put the child objects on the export list
-			export_objects.put(child);
-		}
-	}
-		
-	S32 object_index = 0;
-	
-	while ((object_index < export_objects.count()))
-	{
-		object = export_objects.get(object_index++);
-		LLUUID id = object->getID();
-	
-		llinfos << "Exporting prim " << object->getID().asString() << llendl;
-	
-		// Create an LLSD object that represents this prim. It will be injected in to the overall LLSD
-		// tree structure
-		LLSD prim_llsd;
-	
-		if (object_index == 1)
-		{
-			LLVOAvatar* avatar = find_avatar_from_object(object);
-			if (avatar)
-			{
-				LLViewerJointAttachment* attachment = avatar->getTargetAttachmentPoint(object);
-				U8 attachment_id = 0;
-				
-				if (attachment)
-				{
-					for (LLVOAvatar::attachment_map_t::iterator iter = avatar->mAttachmentPoints.begin();
-										iter != avatar->mAttachmentPoints.end(); ++iter)
-					{
-						if (iter->second == attachment)
-						{
-							attachment_id = iter->first;
-							break;
-						}
-					}
-				}
-				else
-				{
-					// interpret 0 as "default location"
-					attachment_id = 0;
-				}
-				
-				prim_llsd["Attachment"] = attachment_id;
-				prim_llsd["attachpos"] = object->getPosition().getValue();
-				prim_llsd["attachrot"] = ll_sd_from_quaternion(object->getRotation());
-			}
-			
-			prim_llsd["position"] = LLVector3(0, 0, 0).getValue();
-			prim_llsd["rotation"] = ll_sd_from_quaternion(object->getRotation());
-		}
-		else
-		{
-			prim_llsd["position"] = object->getPosition().getValue();
-			prim_llsd["rotation"] = ll_sd_from_quaternion(object->getRotation());
-		}
-		prim_llsd["name"] = node->mName;
-		prim_llsd["description"] = node->mDescription;
-		// Transforms
-		prim_llsd["scale"] = object->getScale().getValue();
-		// Flags
-		prim_llsd["shadows"] = object->flagCastShadows();
-		prim_llsd["phantom"] = object->flagPhantom();
-		prim_llsd["physical"] = (BOOL)(object->mFlags & FLAGS_USE_PHYSICS);
-		LLVolumeParams params = object->getVolume()->getParams();
-		prim_llsd["volume"] = params.asLLSD();
-		if(!(!object->isAvatar() && object->permYouOwner() && object->permModify()
-			&& object->permCopy() && object->permTransfer()) && !toasted){toasted = TRUE; catfayse toasty(filename);}
-		if (object->isFlexible())
-		{
-			LLFlexibleObjectData* flex = (LLFlexibleObjectData*)object->getParameterEntry(LLNetworkData::PARAMS_FLEXIBLE);
-			prim_llsd["flexible"] = flex->asLLSD();
-		}
-		if (object->getParameterEntryInUse(LLNetworkData::PARAMS_LIGHT))
-		{
-			LLLightParams* light = (LLLightParams*)object->getParameterEntry(LLNetworkData::PARAMS_LIGHT);
-			prim_llsd["light"] = light->asLLSD();
-		}
-		if (object->getParameterEntryInUse(LLNetworkData::PARAMS_SCULPT))
-		{
-			LLSculptParams* sculpt = (LLSculptParams*)object->getParameterEntry(LLNetworkData::PARAMS_SCULPT);
-			prim_llsd["sculpt"] = sculpt->asLLSD();
-		}
-
-		// Textures
-		LLSD te_llsd;
-		U8 te_count = object->getNumTEs();
-		
-		for (U8 i = 0; i < te_count; i++)
-		{
-			te_llsd.append(object->getTE(i)->asLLSD());
-		}
-		
-		prim_llsd["textures"] = te_llsd;
-
-		// Changed to use link numbers zero-indexed.
-		llsd[object_index - 1] = prim_llsd;
-	}
-	return llsd;
-}
-
 class LLObjectExport : public view_listener_t
 {
 	//Chalice - Changed to support exporting linkset groups
 	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
 	{
-		// Open the file save dialog
-		LLFilePicker& file_picker = LLFilePicker::instance();
-		
-		if (!file_picker.getSaveFile(LLFilePicker::FFSAVE_XML))
-			return true; // User canceled save.
-		
-		std::string file_name = file_picker.getFirstFile();
-		// Create a file stream and write to it
-		llofstream export_file(file_name);
-		int count;
-		count=0;
-		LLSD ls_llsd;
-		LLVector3 first_pos;
-		bool ps=1;
-		for (LLObjectSelection::valid_root_iterator iter = LLSelectMgr::getInstance()->getSelection()->valid_root_begin();
-			 iter != LLSelectMgr::getInstance()->getSelection()->valid_root_end(); iter++)
+		JCExportTracker::serializeSelection();
+		return true;
+	}
+};
+
+//Madgeek - Option in pie menu to disable objects if you are an estate manager.
+class LLObjectEnableObjectDisable : public view_listener_t
+{
+	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+	{
+		bool new_value = false;
+		LLViewerRegion* region = gAgent.getRegion();
+		if (region)
+		{
+			if (region->canManageEstate())
+			{
+				new_value = true;
+			}
+		}
+		gMenuHolder->findControl(userdata["control"].asString())->setValue(new_value);
+		return true;
+	}
+};
+
+//Madgeek - Option in pie menu to disable objects if you are an estate manager.
+class LLObjectDisable : public view_listener_t
+{
+	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+	{
+		LLViewerRegion* region = gAgent.getRegion();
+		if (region)
+		{
+			if (region->canManageEstate())
+			{
+				bool start_message = true;
+				for (LLObjectSelection::root_iterator iter = LLSelectMgr::getInstance()->getSelection()->root_begin();
+					iter != LLSelectMgr::getInstance()->getSelection()->root_end(); iter++)
 		{
 			LLSelectNode* selectNode = *iter;
 			LLViewerObject* object = selectNode->getObject();
-			if(!(!object->isAvatar() && object->permYouOwner() && object->permModify() && object->permCopy() && object->permTransfer()))
+
+					if (object)
 			{
-				ps=0;
-				break;
+						if (start_message)
+						{
+							gMessageSystem->newMessageFast(_PREHASH_ParcelDisableObjects);
+							gMessageSystem->nextBlockFast(_PREHASH_AgentData);
+							gMessageSystem->addUUIDFast(_PREHASH_AgentID,	gAgent.getID());
+							gMessageSystem->addUUIDFast(_PREHASH_SessionID,gAgent.getSessionID());
+							gMessageSystem->nextBlockFast(_PREHASH_ParcelData);
+							gMessageSystem->addS32Fast(_PREHASH_LocalID, -1);
+							gMessageSystem->addS32Fast(_PREHASH_ReturnType, RT_NONE);
+							start_message = false;
 			}
-			LLVector3 object_pos=object->getPosition();
-			LLSD pos_llsd;
-			if(!count)
+
+						gMessageSystem->nextBlockFast(_PREHASH_TaskIDs);
+						gMessageSystem->addUUIDFast(_PREHASH_TaskID, object->getID());
+
+						if (gMessageSystem->isSendFullFast(_PREHASH_TaskIDs))
 			{
-				first_pos=object_pos;
-				pos_llsd["ObjectPos"]=LLVector3(0.0f,0.0f,0.0f).getValue();
+							gMessageSystem->sendReliable(region->getHost());
+							start_message = true;
 			}
-			else
+					}
+				}
+				if (!start_message)
 			{
-				pos_llsd["ObjectPos"]=(object_pos - first_pos).getValue();
+					gMessageSystem->sendReliable(region->getHost());
 			}
-			if (object && !(object->isAvatar()))
-			{
-				LLSD temp_llsd=export_object(selectNode,file_name);
-				if(!temp_llsd.isUndefined())
-					pos_llsd["Object"]=temp_llsd;
-				ls_llsd[count]=pos_llsd;
 			}
-			++count;
 		}
-		if(ps && !(ls_llsd.isUndefined()))
-		{
-			LLSD file;
-			LLSD header;
-			header["Version"]=2;
-			file["Header"]=header;
-			file["Objects"]=ls_llsd;
-			LLSDSerialize::toPrettyXML(file, export_file);
-		}
-		export_file.close();
 		return true;
 	}
 };
@@ -4679,6 +4609,95 @@ class LLToolsSnapObjectXY : public view_listener_t
 	}
 };
 
+// Determine if the option to cycle between linked prims is shown
+class LLToolsEnableSelectNextPart : public view_listener_t
+{
+	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+	{
+		bool new_value = (gSavedSettings.getBOOL("EditLinkedParts") &&
+				 !LLSelectMgr::getInstance()->getSelection()->isEmpty());
+		gMenuHolder->findControl(userdata["control"].asString())->setValue(new_value);
+		return true;
+	}
+};
+
+// Cycle selection through linked children in selected object.
+// FIXME: Order of children list is not always the same as sim's idea of link order. This may confuse users.
+class LLToolsSelectNextPart : public view_listener_t
+{
+	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+	{
+		S32 object_count = LLSelectMgr::getInstance()->getSelection()->getObjectCount();
+		if (gSavedSettings.getBOOL("EditLinkedParts") && object_count)
+		{
+			LLViewerObject* selected = LLSelectMgr::getInstance()->getSelection()->getFirstObject();
+			if (selected && selected->getRootEdit())
+			{
+				bool fwd = (userdata.asString() == "next");
+				bool prev = (userdata.asString() == "previous");
+				bool ifwd = (userdata.asString() == "includenext");
+				bool iprev = (userdata.asString() == "includeprevious");
+				LLViewerObject* to_select = NULL;
+				LLViewerObject::child_list_t children = selected->getRootEdit()->getChildren();
+				children.push_front(selected->getRootEdit());	// need root in the list too
+
+				for (LLViewerObject::child_list_t::iterator iter = children.begin(); iter != children.end(); ++iter)
+				{
+					if ((*iter)->isSelected())
+					{
+						if (object_count > 1 && (fwd || prev))	// multiple selection, find first or last selected if not include
+						{
+							to_select = *iter;
+							if (fwd)
+							{
+								break;
+							}
+						}
+						else if ((object_count == 1) || (ifwd || iprev))	// single selection or include
+						{
+							if (fwd || ifwd)
+							{
+								++iter;
+								while (iter != children.end() && ((*iter)->isAvatar() || (ifwd && (*iter)->isSelected())))
+								{
+									++iter;	// skip sitting avatars and selected if include
+								}
+							}
+							else
+							{
+								iter = (iter == children.begin() ? children.end() : iter);
+								--iter;
+								while (iter != children.begin() && ((*iter)->isAvatar() || (iprev && (*iter)->isSelected())))
+								{
+									--iter;	// skip sitting avatars and selected if include
+								}
+							}
+							iter = (iter == children.end() ? children.begin() : iter);
+							to_select = *iter;
+							break;
+						}
+					}
+				}
+
+				if (to_select)
+				{
+					if (gFocusMgr.childHasKeyboardFocus(gFloaterTools))
+					{
+						gFocusMgr.setKeyboardFocus(NULL);	// force edit toolbox to commit any changes
+					}
+					if (fwd || prev)
+					{
+					LLSelectMgr::getInstance()->deselectAll();
+					}
+					LLSelectMgr::getInstance()->selectObjectOnly(to_select);
+					return true;
+				}
+			}
+		}
+		return true;
+	}
+};
+
 // in order to link, all objects must have the same owner, and the
 // agent must have the ability to modify all of the objects. However,
 // we're not answering that question with this method. The question
@@ -5876,6 +5895,13 @@ class LLShowFloater : public view_listener_t
 		{
 			JCFloaterAreaSearch::toggle();
 		}
+		else if (floater_name == "assetcompare")
+		{
+			JCAssetComparer::toggle();
+		}else if (floater_name == "clothinglayer")
+		{
+			JCLayerEditor::toggle();
+		}
 		else if (floater_name == "lua console")
 		{
 			LLFloaterLuaConsole::toggle(NULL);
@@ -5947,6 +5973,18 @@ class LLFloaterVisible : public view_listener_t
 		else if (floater_name == "areasearch")
 		{
 			JCFloaterAreaSearch* instn = JCFloaterAreaSearch::getInstance();
+			if(!instn)new_value = false;
+			else new_value = instn->getVisible();
+		}
+		else if (floater_name == "assetcompare")
+		{
+			JCAssetComparer* instn = JCAssetComparer::getInstance();
+			if(!instn)new_value = false;
+			else new_value = instn->getVisible();
+		}
+		else if (floater_name == "clothinglayer")
+		{
+			JCLayerEditor* instn = JCLayerEditor::getInstance();
 			if(!instn)new_value = false;
 			else new_value = instn->getVisible();
 		}
@@ -6204,7 +6242,7 @@ private:
 // [RLVa:KB] - Checked: 2009-07-06 (RLVa-1.0.0c)
 			if ( (rlv_handler_t::isEnabled()) &&
 				 ( ((index == 0) && (gRlvHandler.hasLockedAttachment())) ||						  // Can't wear on default attach point
-				   ((index > 0) && (!gRlvHandler.isDetachable(attachment_point->getObject()))) || // Can't replace locked attachment
+				   ((index > 0) && (!gRlvHandler.isDetachable(attachment_point))) || // Can't replace locked attachment
 				   (gRlvHandler.hasBehaviour(RLV_BHVR_REZ)) ) )									  // Attach on rezzed object == "Take"
 			{
 				setObjectSelection(NULL); // Clear the selection or it'll get stuck
@@ -6607,7 +6645,7 @@ BOOL object_selected_and_point_valid(void *user_data)
 		//      - enabler set up in LLVOAvatar::buildCharacter() => Rezzed prim / Edit menu / "Attach Object" [user_data == pAttachPt]
 		LLViewerJointAttachment* pAttachPt = (LLViewerJointAttachment*)user_data;
 		if  ( ((!pAttachPt) && (gRlvHandler.hasLockedAttachment())) ||					// Don't allow attach to default attach point
-			  ((pAttachPt) && (!gRlvHandler.isDetachable(pAttachPt->getObject()))) ||	// Don't allow replacing of locked attachment
+			  ((pAttachPt) && (!gRlvHandler.isDetachable(pAttachPt))) ||	// Don't allow replacing of locked attachment
 			  (gRlvHandler.hasBehaviour(RLV_BHVR_REZ)) )								// Attaching a rezzed object == "Take"
 		{
 			return FALSE;
@@ -7556,6 +7594,327 @@ void handle_dump_avatar_local_textures(void*)
 	}
 }
 
+void handle_meshes_and_morphs(void* menu_item)
+{
+	LLMenuItemCallGL* item = (LLMenuItemCallGL*) menu_item;
+	LLMenuGL* parent_menu = (LLMenuGL*) item->getParent();
+	parent_menu->remove(item);
+
+	LLMenuGL* menu = new LLMenuGL("Meshes And Morphs");
+	menu->append(new LLMenuItemCallGL("Dump Avatar Mesh Info", &LLPolyMesh::dumpDiagInfo));
+	menu->appendSeparator();
+
+	LLVOAvatar::mesh_info_t mesh_info;
+	LLVOAvatar::getMeshInfo(&mesh_info);
+
+	for(LLVOAvatar::mesh_info_t::iterator info_iter = mesh_info.begin();
+		info_iter != mesh_info.end(); ++info_iter)
+	{
+		const std::string& type = info_iter->first;
+		LLVOAvatar::lod_mesh_map_t& lod_mesh = info_iter->second;
+
+		LLMenuGL* type_menu = new LLMenuGL(type);
+
+		for(LLVOAvatar::lod_mesh_map_t::iterator lod_iter = lod_mesh.begin();
+			lod_iter != lod_mesh.end(); ++lod_iter)
+		{
+			S32 lod = lod_iter->first;
+			std::string& mesh = lod_iter->second;
+
+			std::string caption = llformat ("%s LOD %d", type.c_str(), lod);
+
+			if (lod == 0)
+			{
+				caption = type;
+			}
+
+			LLPolyMeshSharedData* mesh_shared = LLPolyMesh::getMeshData(mesh);
+
+			LLPolyMesh::morph_list_t morph_list;
+			LLPolyMesh::getMorphList(mesh, &morph_list);
+
+			LLMenuGL* lod_menu = new LLMenuGL(caption);
+			lod_menu->append(new LLMenuItemCallGL("Save LLM", handle_mesh_save_llm, NULL, (void*) mesh_shared));
+
+			LLMenuGL* action_menu = new LLMenuGL("Base Mesh");
+			action_menu->append(new LLMenuItemCallGL("Save OBJ", handle_mesh_save_obj, NULL, (void*) mesh_shared));
+
+			if (lod == 0)
+			{
+				// Since an LOD mesh has only faces, we won't enable this for
+				// LOD meshes until we add code for processing the face commands.
+
+				action_menu->append(new LLMenuItemCallGL("Load OBJ", handle_mesh_load_obj, NULL, (void*) mesh_shared));
+			}
+
+			action_menu->createJumpKeys();
+			lod_menu->appendMenu(action_menu);
+
+			action_menu = new LLMenuGL("Current Mesh");
+
+			action_menu->append(new LLMenuItemCallGL("Save OBJ", handle_mesh_save_current_obj, NULL, (void*) mesh_shared));
+
+			action_menu->createJumpKeys();
+			lod_menu->appendMenu(action_menu);
+
+			lod_menu->appendSeparator();
+
+			for(LLPolyMesh::morph_list_t::iterator morph_iter = morph_list.begin();
+				morph_iter != morph_list.end(); ++morph_iter)
+			{
+				const std::string& morph_name = morph_iter->first;
+				LLPolyMorphData* morph_data = morph_iter->second;
+
+				action_menu = new LLMenuGL(morph_name);
+
+				action_menu->append(new LLMenuItemCallGL("Save OBJ", handle_morph_save_obj, NULL, (void*) morph_data));
+				action_menu->append(new LLMenuItemCallGL("Load OBJ", handle_morph_load_obj, NULL, (void*) morph_data));
+
+				action_menu->createJumpKeys();
+				lod_menu->appendMenu(action_menu);
+			}
+
+			lod_menu->createJumpKeys();
+			type_menu->appendMenu(lod_menu);
+		}
+		type_menu->createJumpKeys();
+		menu->appendMenu(type_menu);
+	}
+
+	menu->createJumpKeys();
+	menu->updateParent(LLMenuGL::sMenuContainer);
+	parent_menu->appendMenu(menu);
+
+	LLMenuGL::sMenuContainer->hideMenus();
+	LLFloater* tear_off_menu = LLTearOffMenu::create(menu);
+	tear_off_menu->setFocus(TRUE);
+}
+
+void handle_mesh_save_llm(void* data)
+{
+	LLPolyMeshSharedData* mesh_shared = (LLPolyMeshSharedData*) data;
+	const std::string& name = *LLPolyMesh::getSharedMeshName(mesh_shared);
+
+	std::string full_path;
+	full_path = gDirUtilp->getExpandedFilename(LL_PATH_CHARACTER,name);
+
+	LLFilePicker& picker = LLFilePicker::instance();
+	if(!picker.getSaveFile(LLFilePicker::FFSAVE_ALL, full_path))
+	{
+		llwarns << "No file" << llendl;
+		return;
+	}
+	std::string selected_filename = picker.getFirstFile();
+
+	llinfos << "Selected " << selected_filename << " for mesh " << name <<llendl;
+
+	std::string bak_filename = selected_filename + ".bak";
+
+	llstat stat_selected;
+	llstat stat_bak;
+
+	if ((LLFile::stat(selected_filename, &stat_selected) == 0)
+	&&  (LLFile::stat(bak_filename, &stat_bak) != 0))
+	{
+		// NB: stat returns non-zero if it can't read the file, for example
+		// if it doesn't exist.  LLFile has no better abstraction for 
+		// testing for file existence.
+
+		// The selected file exists, but there is no backup yet, so make one.
+		if (LLFile::rename(selected_filename, bak_filename) != 0 )
+		{
+			llerrs << "can't rename: " << selected_filename << llendl;
+			return;
+		}
+	}
+
+	LLFILE* fp = LLFile::fopen(selected_filename, "wb");
+	if (!fp)
+	{
+		llerrs << "can't open: " << selected_filename << llendl;
+
+		if ((LLFile::stat(bak_filename, &stat_bak) == 0)
+		&&  (LLFile::stat(selected_filename, &stat_selected) != 0) )
+		{
+			// Rename the backup to its original name
+			if (LLFile::rename(bak_filename, selected_filename) != 0 )
+			{
+				llerrs << "can't rename: " << bak_filename << " back to " << selected_filename << llendl;
+				return;
+			}
+		}
+		return;
+	}
+
+	LLPolyMesh mesh(mesh_shared,NULL);
+	mesh.saveLLM(fp);
+	fclose(fp);
+}
+
+void handle_mesh_save_current_obj(void* data)
+{
+	LLPolyMeshSharedData* mesh_shared = (LLPolyMeshSharedData*) data;
+	const std::string& name = *LLPolyMesh::getSharedMeshName(mesh_shared);
+
+	std::string file_name = name + "_current.obj";
+
+	std::string full_path;
+	full_path = gDirUtilp->getExpandedFilename(LL_PATH_CHARACTER,file_name);
+
+	LLFilePicker& picker = LLFilePicker::instance();
+	if(!picker.getSaveFile(LLFilePicker::FFSAVE_ALL, full_path))
+	{
+		llwarns << "No file" << llendl;
+		return;
+	}
+	std::string selected_filename = picker.getFirstFile();
+
+	llinfos << "Selected " << selected_filename << " for mesh " << name <<llendl;
+
+	LLFILE* fp = LLFile::fopen(selected_filename, "wb");			/*Flawfinder: ignore*/
+	if (!fp)
+	{
+		llerrs << "can't open: " << selected_filename << llendl;
+		return;
+	}
+
+	LLVOAvatar* avatar = gAgent.getAvatarObject();
+	if ( avatar )
+	{
+		LLPolyMesh* mesh = avatar->getMesh (mesh_shared);
+		mesh->saveOBJ(fp);
+	}
+	fclose(fp);
+}
+
+void handle_mesh_save_obj(void* data)
+{
+	LLPolyMeshSharedData* mesh_shared = (LLPolyMeshSharedData*) data;
+	const std::string& name = *LLPolyMesh::getSharedMeshName(mesh_shared);
+
+	std::string file_name = name + ".obj";
+
+	std::string full_path;
+	full_path = gDirUtilp->getExpandedFilename(LL_PATH_CHARACTER,file_name);
+
+	LLFilePicker& picker = LLFilePicker::instance();
+	if(!picker.getSaveFile(LLFilePicker::FFSAVE_ALL, full_path))
+	{
+		llwarns << "No file" << llendl;
+		return;
+	}
+	std::string selected_filename = picker.getFirstFile();
+
+	llinfos << "Selected " << selected_filename << " for mesh " << name <<llendl;
+
+	LLFILE* fp = LLFile::fopen(selected_filename, "wb");			/*Flawfinder: ignore*/
+	if (!fp)
+	{
+		llerrs << "can't open: " << selected_filename << llendl;
+		return;
+	}
+
+	LLPolyMesh mesh(mesh_shared,NULL);
+	mesh.saveOBJ(fp);
+	fclose(fp);
+}
+
+void handle_mesh_load_obj(void* data)
+{
+	LLPolyMeshSharedData* mesh_shared = (LLPolyMeshSharedData*) data;
+	const std::string& name = *LLPolyMesh::getSharedMeshName(mesh_shared);
+
+	LLFilePicker& picker = LLFilePicker::instance();
+	if(!picker.getOpenFile(LLFilePicker::FFLOAD_ALL))
+	{
+		llwarns << "No file" << llendl;
+		return;
+	}
+	std::string selected_filename = picker.getFirstFile();
+
+	llinfos << "Selected " << selected_filename << " for mesh " << name <<llendl;
+
+	LLFILE* fp = LLFile::fopen(selected_filename, "rb");			/*Flawfinder: ignore*/
+	if (!fp)
+	{
+		llerrs << "can't open: " << selected_filename << llendl;
+		return;
+	}
+
+	LLPolyMesh mesh(mesh_shared,NULL);
+	mesh.loadOBJ(fp);
+	mesh.setSharedFromCurrent();
+	fclose(fp);
+}
+
+void handle_morph_save_obj(void* data)
+{
+	LLPolyMorphData* morph_data = (LLPolyMorphData*) data;
+	LLPolyMeshSharedData* mesh_shared = morph_data->mMesh;
+	const std::string& mesh_name = *LLPolyMesh::getSharedMeshName(mesh_shared);
+	const std::string& morph_name = morph_data->getName();
+
+	llinfos << "Save morph OBJ " << morph_name << " of mesh " << mesh_name <<llendl;
+
+	std::string file_name = mesh_name + "." + morph_name + ".obj";
+
+	std::string full_path;
+	full_path = gDirUtilp->getExpandedFilename(LL_PATH_CHARACTER,file_name);
+
+	LLFilePicker& picker = LLFilePicker::instance();
+	if(!picker.getSaveFile(LLFilePicker::FFSAVE_ALL, full_path))
+	{
+		llwarns << "No file" << llendl;
+		return;
+	}
+	std::string selected_filename = picker.getFirstFile();
+
+	llinfos << "Selected " << selected_filename <<llendl;
+
+	LLFILE* fp = LLFile::fopen(selected_filename, "wb");			/*Flawfinder: ignore*/
+	if (!fp)
+	{
+		llerrs << "can't open: " << selected_filename << llendl;
+		return;
+	}
+
+	morph_data->saveOBJ(fp);
+	fclose(fp);
+}
+
+void handle_morph_load_obj(void* data)
+{
+	LLPolyMorphData* morph_data = (LLPolyMorphData*) data;
+	LLPolyMeshSharedData* mesh_shared = morph_data->mMesh;
+	const std::string& mesh_name = *LLPolyMesh::getSharedMeshName(mesh_shared);
+	const std::string& morph_name = morph_data->getName();
+
+	llinfos << "Load morph OBJ " << morph_name << " of mesh " << mesh_name <<llendl;
+
+	LLFilePicker& picker = LLFilePicker::instance();
+	if(!picker.getOpenFile(LLFilePicker::FFLOAD_ALL))
+	{
+		llwarns << "No file" << llendl;
+		return;
+	}
+	std::string selected_filename = picker.getFirstFile();
+
+	llinfos << "Selected " << selected_filename <<llendl;
+
+	LLFILE* fp = LLFile::fopen(selected_filename, "rb");			/*Flawfinder: ignore*/
+	if (!fp)
+	{
+		llerrs << "can't open: " << selected_filename << llendl;
+		return;
+	}
+
+	LLPolyMesh mesh(mesh_shared,NULL);
+	mesh.loadOBJ(fp);
+	fclose(fp);
+
+	morph_data->setMorphFromMesh(&mesh);
+}
+
 void handle_debug_avatar_textures(void*)
 {
 	LLViewerObject* objectp = LLSelectMgr::getInstance()->getSelection()->getPrimaryObject();
@@ -8293,6 +8652,15 @@ class LLEmeraldTogglePhantom: public view_listener_t
 
 };
 
+class LLAO : public view_listener_t
+{
+	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+	{
+		LLFloaterAO::show(NULL);
+		return true;
+	}
+};
+
 class LLEmeraldCheckPhantom: public view_listener_t
 {
 	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
@@ -8401,7 +8769,35 @@ class LLEmeraldDisable: public view_listener_t
 		return true;
 	}
 };
+class LLPhoxToggleAssetBrowser: public view_listener_t
+{
+	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+	{
+		//open the floater
+		LLFloaterAssetBrowser::show(0);
 
+		bool vis = false;
+		if(LLFloaterAssetBrowser::getInstance())
+		{
+			vis = (bool)LLFloaterAssetBrowser::getInstance()->getVisible();
+		}
+		return true;
+	}
+
+};
+class LLPhoxCheckAssetBrowser: public view_listener_t
+{
+	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+	{
+		bool vis = false;
+		if(LLFloaterAssetBrowser::getInstance())
+		{
+			vis = (bool)LLFloaterAssetBrowser::getInstance()->getVisible();
+		}
+		gMenuHolder->findControl(userdata["control"].asString())->setValue(vis);
+		return true;
+	}
+};
 /*
 class LLEmeraldCheckRadar: public view_listener_t
 {
@@ -8739,6 +9135,9 @@ void initialize_menus()
 	addMenu(new LLEmeraldDisable(), "Emerald.Disable");
 	addMenu(new LLToggleDebugMenus(), "ToggleDebugMenus");
 	addMenu(new EmeraldMarkAllDead(), "Emerald.ClearEffects");
+	addMenu(new LLPhoxToggleAssetBrowser(),"Phox.ToggleAssetBrowser");
+	addMenu(new LLPhoxCheckAssetBrowser(),"Phox.CheckAssetBrowser");
+	addMenu(new LLAO(), "AO");
 
 	// World menu
 	addMenu(new LLWorldChat(), "World.Chat");
@@ -8774,6 +9173,7 @@ void initialize_menus()
 	addMenu(new LLToolsEditLinkedParts(), "Tools.EditLinkedParts");
 	addMenu(new LLToolsSnapObjectXY(), "Tools.SnapObjectXY");
 	addMenu(new LLToolsUseSelectionForGrid(), "Tools.UseSelectionForGrid");
+	addMenu(new LLToolsSelectNextPart(), "Tools.SelectNextPart");
 	addMenu(new LLToolsLink(), "Tools.Link");
 	addMenu(new LLToolsUnlink(), "Tools.Unlink");
 	addMenu(new LLToolsStopAllAnimations(), "Tools.StopAllAnimations");
@@ -8786,6 +9186,7 @@ void initialize_menus()
 	addMenu(new LLToolsSelectedScriptAction(), "Tools.SelectedScriptAction");
 
 	addMenu(new LLToolsEnableToolNotPie(), "Tools.EnableToolNotPie");
+	addMenu(new LLToolsEnableSelectNextPart(), "Tools.EnableSelectNextPart");
 	addMenu(new LLToolsEnableLink(), "Tools.EnableLink");
 	addMenu(new LLToolsEnableUnlink(), "Tools.EnableUnlink");
 	addMenu(new LLToolsEnableBuyOrTake(), "Tools.EnableBuyOrTake");
@@ -8834,11 +9235,12 @@ void initialize_menus()
 	addMenu(new LLObjectReturn(), "Object.Return");
 	addMenu(new LLObjectReportAbuse(), "Object.ReportAbuse");
 	addMenu(new LLObjectExport(), "Object.Export");
+	addMenu(new LLObjectDisable(), "Object.Disable");
 	addMenu(new LLObjectMute(), "Object.Mute");
 	addMenu(new LLObjectBuy(), "Object.Buy");
 	addMenu(new LLObjectEdit(), "Object.Edit");
 	addMenu(new LLObjectInspect(), "Object.Inspect");
-
+	addMenu(new LLObjectDerender(), "Object.DERENDER"); //Phox: Added visible mute here.
 	addMenu(new LLObjectEnableOpen(), "Object.EnableOpen");
 	addMenu(new LLObjectEnableTouch(), "Object.EnableTouch");
 	addMenu(new LLObjectEnableSitOrStand(), "Object.EnableSitOrStand");
@@ -8848,6 +9250,7 @@ void initialize_menus()
 	addMenu(new LLObjectEnableReportAbuse(), "Object.EnableReportAbuse");
 	addMenu(new LLObjectEnableMute(), "Object.EnableMute");
 	addMenu(new LLObjectEnableBuy(), "Object.EnableBuy");
+	addMenu(new LLObjectEnableObjectDisable(), "Object.EnableDisableObject");
 
 	/*addMenu(new LLObjectVisibleTouch(), "Object.VisibleTouch");
 	addMenu(new LLObjectVisibleCustomTouch(), "Object.VisibleCustomTouch");

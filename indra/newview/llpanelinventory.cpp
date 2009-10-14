@@ -881,6 +881,7 @@ BOOL LLTaskCategoryBridge::dragOrDrop(MASK mask, BOOL drop,
 		case DAD_CATEGORY:
 			accept = LLToolDragAndDrop::getInstance()->dadUpdateInventoryCategory(object,drop);
 			break;
+		case DAD_CALLINGCARD:
 		case DAD_TEXTURE:
 		case DAD_SOUND:
 		case DAD_LANDMARK:
@@ -934,7 +935,6 @@ BOOL LLTaskCategoryBridge::dragOrDrop(MASK mask, BOOL drop,
 											  LLToolDragAndDrop::getInstance()->getSourceID());
 			}
 			break;
-		case DAD_CALLINGCARD:
 		default:
 			break;
 		}
@@ -1388,7 +1388,7 @@ void LLTaskNotecardBridge::openItem()
 		return;
 	}
 // [RLVa:KB] - Checked: 2009-07-06 (RLVa-1.0.0c)
-	if ( (rlv_handler_t::isEnabled()) && ((gRlvHandler.hasBehaviour("viewnote")) || (!gRlvHandler.isDetachable(object))) )
+	if ( (rlv_handler_t::isEnabled()) && ((gRlvHandler.hasBehaviour(RLV_BHVR_VIEWNOTE)) || (!gRlvHandler.isDetachable(object))) )
 	{
 		return;
 	}

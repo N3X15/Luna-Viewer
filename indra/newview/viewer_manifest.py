@@ -65,6 +65,8 @@ class ViewerManifest(LLManifest):
             self.path("shaders")
             # include the entire beams directory
             self.path("beams")
+            self.path("beamsColors")
+	    self.path("bridge_assets")
             # ... and the entire windlight directory
             self.path("windlight")
             self.end_prefix("app_settings")
@@ -686,10 +688,6 @@ class Linux_i686Manifest(LinuxManifest):
         #self.path("secondlife-i686.supp")
 
         self.path("app_settings/mozilla-runtime-linux-i686")
-	if self.prefix("/usr/lib",dst="lib"):
-            self.path("libotr.so.2.2.0")
-            self.path("libotr.so.2")
-            self.end_prefix("lib")
 
         if self.prefix("../../libraries/i686-linux/lib_release_client", dst="lib"):
 #            self.path("libkdu_v42R.so", "libkdu.so")
@@ -707,8 +705,8 @@ class Linux_i686Manifest(LinuxManifest):
             self.path("libalut.so")
             self.path("libopenal.so", "libopenal.so.1")
             self.path("liblua5.1.so")
-#            self.path("libotr.so.2.2.0")
-#            self.path("libotr.so.2")
+            self.path("libotr.so.2.2.0")
+            self.path("libotr.so.2")
             self.end_prefix("lib")
 
             # Vivox runtimes

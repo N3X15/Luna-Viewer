@@ -562,6 +562,23 @@ F32 LLFont::getXKerning(const llwchar char_left, const llwchar char_right) const
 	return delta.x*(1.f/64.f);
 }
 
+//Zwag: My "optimised" version of the above function that takes known pointers.
+F32 LLFont::getXKerning(const LLFontGlyphInfo* left_fgi, const LLFontGlyphInfo* right_fgi) const
+{
+	if (mFTFace == NULL)
+		return 0.0;
+
+	llassert(!mIsFallback);
+	U32 left_glyph = left_fgi ? left_fgi->mGlyphIndex : 0;
+	U32 right_glyph = right_fgi ? right_fgi->mGlyphIndex : 0;
+
+	FT_Vector  delta;
+
+	llverify(!FT_Get_Kerning(mFTFace, left_glyph, right_glyph, ft_kerning_unfitted, &delta));
+
+	return delta.x*(1.f/64.f);
+}
+
 void LLFont::setSubImageLuminanceAlpha(const U32 x,
 									   const U32 y,
 									   const U32 bitmap_num,

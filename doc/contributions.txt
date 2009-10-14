@@ -40,6 +40,7 @@ Alejandro Rosenthal
 Aleric Inglewood
 	VWR-10759
 	VWR-10837
+	VWR-14426
 Alissa Sabre
 	VWR-81
 	VWR-83
@@ -541,6 +542,8 @@ TBBle Kurosawa
 	VWR-1892
 Teardrops Fall
 	VWR-5366
+Techwolf Lupindo
+	VWR-12385
 tenebrous pau
 	VWR-247
 Tharax Ferraris

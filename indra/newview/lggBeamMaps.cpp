@@ -1,6 +1,6 @@
 /* Copyright (c) 2009
  *
- * Modular Systems Ltd. All rights reserved.
+ * Greg Hendrickson (LordGregGreg Back) All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or
  * without modification, are permitted provided that the following
@@ -31,15 +31,53 @@
 
 #include "llviewerprecompiledheaders.h"
 #include "lggBeamMaps.h"
+#include "lggBeamsColors.h"
 #include "llfile.h"
 #include "llagent.h"
 #include "llsdserialize.h"
 #include "llviewercontrol.h"
 #include "llhudeffecttrail.h"
 #include "llhudmanager.h"
-using namespace std;
+//using namespace std;
 
 lggBeamMaps gLggBeamMaps;
+F32 hueToRgb ( F32 val1In, F32 val2In, F32 valHUeIn )
+{
+	while ( valHUeIn < 0.0f ) valHUeIn += 1.0f;
+	while ( valHUeIn > 1.0f ) valHUeIn -= 1.0f;
+	if ( ( 6.0f * valHUeIn ) < 1.0f ) return ( val1In + ( val2In - val1In ) * 6.0f * valHUeIn );
+	if ( ( 2.0f * valHUeIn ) < 1.0f ) return ( val2In );
+	if ( ( 3.0f * valHUeIn ) < 2.0f ) return ( val1In + ( val2In - val1In ) * ( ( 2.0f / 3.0f ) - valHUeIn ) * 6.0f );
+	return ( val1In );
+}
+
+void hslToRgb ( F32 hValIn, F32 sValIn, F32 lValIn, F32& rValOut, F32& gValOut, F32& bValOut )
+{
+	if ( sValIn < 0.00001f )
+	{
+		rValOut = lValIn;
+		gValOut = lValIn;
+		bValOut = lValIn;
+	}
+	else
+	{
+		F32 interVal1;
+		F32 interVal2;
+
+		if ( lValIn < 0.5f )
+			interVal2 = lValIn * ( 1.0f + sValIn );
+		else
+			interVal2 = ( lValIn + sValIn ) - ( sValIn * lValIn );
+
+		interVal1 = 2.0f * lValIn - interVal2;
+
+		rValOut = hueToRgb ( interVal1, interVal2, hValIn + ( 1.f / 3.f ) );
+		gValOut = hueToRgb ( interVal1, interVal2, hValIn );
+		bValOut = hueToRgb ( interVal1, interVal2, hValIn - ( 1.f / 3.f ) );
+	}
+}
+
+
 
 LLSD lggBeamMaps::getPic(std::string filename)
 {
@@ -50,6 +88,64 @@ LLSD lggBeamMaps::getPic(std::string filename)
 	return data;
 	
 }
+LLColor4U lggBeamMaps::getCurrentColor(LLColor4U agentColor)
+{
+	std::string settingName = gSavedSettings.getString("EmeraldBeamColorFile");
+
+	if(settingName=="===OFF===") return agentColor;
+
+	if(settingName != lastColorFileName)
+	{
+		lastColorFileName=settingName;
+	
+		std::string path_name(gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS, "beamsColors", ""));
+		std::string path_name2(gDirUtilp->getExpandedFilename( LL_PATH_USER_SETTINGS , "beamsColors", ""));
+		std::string filename =path_name +settingName+".xml";
+		if(gDirUtilp->fileExists(filename))
+		{
+		}else
+		{
+			filename =path_name2 +settingName+".xml";
+			if(!gDirUtilp->fileExists(filename))
+			{
+				return agentColor;
+			}
+		}
+
+		lastColorsData=lggBeamsColors::fromLLSD(getPic(filename));
+	}
+	agentColor = beamColorFromData(lastColorsData);
+	
+	return agentColor;
+}
+
+static LLFrameTimer timer;
+LLColor4U lggBeamMaps::beamColorFromData(lggBeamsColors data)
+{
+
+	F32 r, g, b;
+	LLColor4 output;
+	LLColor4U toReturn;
+	F32 timeinc =  timer.getElapsedTimeF32()*0.3f*((data.rotateSpeed+.01f)) * (360/(data.endHue-data.startHue));
+
+	S32 diference = llround(data.endHue  - data.startHue);
+	if(diference == 360 || diference == 720)
+	{
+		//full rainbow
+		//liner one
+		hslToRgb(fmod(timeinc,1.0f), 1.0f, 0.5f, r, g, b);
+
+	}else
+	{
+		F32 variance = ((data.endHue/360.0f)-(data.startHue/360.0f))/2.0f;
+		hslToRgb((data.startHue/360.0f) + variance + (sinf(timeinc)*(variance)), 1.0f, 0.5f, r, g, b);
+	}
+	output.set(r, g, b);
+
+	toReturn.setVecScaleClamp(output);
+	return toReturn;
+
+}
 void lggBeamMaps::fireCurrentBeams(LLPointer<LLHUDEffectSpiral> mBeam, LLColor4U rgb)
 {
 	if(scale == 0.0f)return;
@@ -57,8 +153,9 @@ void lggBeamMaps::fireCurrentBeams(LLPointer<LLHUDEffectSpiral> mBeam, LLColor4U
 	for(int i = 0; i < (int)dots.size(); i++)
 	{
 		LLColor4U myColor = rgb;
-		if(rgb == LLColor4U::black)
+		if(	gSavedSettings.getString("EmeraldBeamColorFile")=="===OFF===")
 			myColor = dots[i].c;
+
 		F32 distanceAdjust = dist_vec(mBeam->getPositionGlobal(),gAgent.getPositionGlobal()) ;
 		F32 pulse = (F32)(.75f+sinf(gFrameTimeSeconds*1.0f)*0.25f);
 		LLVector3d offset = dots[i].p;
@@ -203,5 +300,61 @@ std::vector<std::string> lggBeamMaps::getFileNames()
 	return names;
 
 	
+
+}
+
+std::vector<std::string> lggBeamMaps::getColorsFileNames()
+{
+
+	std::vector<std::string> names;	
+	std::string path_name(gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS, "beamsColors", ""));
+	bool found = true;			
+	while(found) 
+	{
+		std::string name;
+		found = gDirUtilp->getNextFileInDir(path_name, "*.xml", name, false);
+		if(found)
+		{
+
+			name=name.erase(name.length()-4);
+
+			// bugfix for SL-46920: preventing filenames that break stuff.
+			char * curl_str = curl_unescape(name.c_str(), name.size());
+			std::string unescaped_name(curl_str);
+			curl_free(curl_str);
+			curl_str = NULL;
+
+			names.push_back(name);
+
+			//LL_DEBUGS2("AppInit", "Shaders") << "name: " << name << LL_ENDL;
+			//loadPreset(unescaped_name,FALSE);
+		}
+	}
+	std::string path_name2(gDirUtilp->getExpandedFilename(LL_PATH_USER_SETTINGS, "beamsColors", ""));
+	found = true;			
+	while(found) 
+	{
+		std::string name;
+		found = gDirUtilp->getNextFileInDir(path_name2, "*.xml", name, false);
+		if(found)
+		{
+
+			name=name.erase(name.length()-4);
+
+			// bugfix for SL-46920: preventing filenames that break stuff.
+			char * curl_str = curl_unescape(name.c_str(), name.size());
+			std::string unescaped_name(curl_str);
+			curl_free(curl_str);
+			curl_str = NULL;
+
+			names.push_back(name);
+
+			//LL_DEBUGS2("AppInit", "Shaders") << "name: " << name << LL_ENDL;
+			//loadPreset(unescaped_name,FALSE);
+		}
+	}
+	return names;
+
+
 
 }

@@ -42,7 +42,7 @@ struct LLGridData
 {
 	const char* mLabel;
 	const char* mName;
-	const char* mLoginURI;
+	const char* mGridURI;
 	const char* mHelperURI;
 };
 
@@ -147,14 +147,13 @@ static LLGridData gGridInfo[GRID_INFO_COUNT] =
 	  "" }
 };
 
-const EGridInfo DEFAULT_GRID_CHOICE = GRID_INFO_AGNI;
-
-
 unsigned char gMACAddress[MAC_ADDRESS_BYTES];		/* Flawfinder: ignore */
 
 LLViewerLogin::LLViewerLogin() :
-	mGridChoice(DEFAULT_GRID_CHOICE)
+	mGridChoice(DEFAULT_GRID_CHOICE),
+	mCurrentURI(0)
 {
+	parseCommandLineURIs();
 }
 
 void LLViewerLogin::setGridChoice(EGridInfo grid)
@@ -164,26 +163,26 @@ void LLViewerLogin::setGridChoice(EGridInfo grid)
 		llerrs << "Invalid grid index specified." << llendl;
 	}
 
-	if(mGridChoice != grid || gSavedSettings.getS32("ServerChoice") != grid)
+	mGridChoice = grid;
+	if(GRID_INFO_LOCAL == mGridChoice)
 	{
-		mGridChoice = grid;
-		if(GRID_INFO_LOCAL == mGridChoice)
-		{
-			mGridName = LOOPBACK_ADDRESS_STRING;
-		}
-		else if(GRID_INFO_OTHER == mGridChoice)
-		{
-			// *FIX:Mani - could this possibly be valid?
-			mGridName = "other"; 
-		}
-		else
-		{
-			mGridName = gGridInfo[mGridChoice].mLabel;
-		}
-
-		gSavedSettings.setS32("ServerChoice", mGridChoice);
-		gSavedSettings.setString("CustomServer", "");
+		mGridName = LOOPBACK_ADDRESS_STRING;
 	}
+	else if (GRID_INFO_OTHER == mGridChoice)
+	{
+		// *FIX:Mani - could this possibly be valid?
+		mGridName = "other"; 
+	}
+	else
+	{
+		mGridName = gGridInfo[mGridChoice].mLabel;
+		setGridURI(getStaticGridURI(grid));
+		setHelperURI(getStaticGridHelperURI(grid));
+		setLoginPageURI(std::string());
+	}
+
+	gSavedSettings.setS32("ServerChoice", mGridChoice);
+	gSavedSettings.setString("CustomServer", "");
 }
 
 void LLViewerLogin::setGridChoice(const std::string& grid_name)
@@ -217,19 +216,36 @@ void LLViewerLogin::setGridChoice(const std::string& grid_name)
     }
 }
 
-void LLViewerLogin::resetURIs()
+void LLViewerLogin::setGridURI(const std::string& uri)
+{
+	std::vector<std::string> uri_list;
+	uri_list.push_back(uri);
+	setGridURIs(uri_list);
+}
+
+void LLViewerLogin::setGridURIs(const std::vector<std::string>& urilist)
+{
+	mGridURIs.clear();
+	mGridURIs.insert(mGridURIs.begin(), urilist.begin(), urilist.end());
+	mCurrentURI = 0;
+}
+
+/*void LLViewerLogin::resetURIs()
 {
     // Clear URIs when picking a new server
-	gSavedSettings.setValue("CmdLineLoginURI", LLSD::emptyArray());
+	if (!gSavedSettings.controlExists("CmdLineGridURI"))
+		gSavedSettings.declareLLSD("CmdLineGridURI", LLSD::emptyArray(), "Command line", false);
+	else
+		gSavedSettings.setValue("CmdLineGridURI", LLSD::emptyArray());
 	gSavedSettings.setString("CmdLineHelperURI", "");
-}
+}*/
 
 EGridInfo LLViewerLogin::getGridChoice() const
 {
 	return mGridChoice;
 }
 
-std::string LLViewerLogin::getGridLabel() const
+std::string LLViewerLogin::getGridLabel()
 {
 	if(mGridChoice == GRID_INFO_NONE)
 	{
@@ -239,8 +255,14 @@ std::string LLViewerLogin::getGridLabel() const
 	{
 		return gGridInfo[mGridChoice].mLabel;
 	}
-
-	return mGridName;
+	else if (!mGridName.empty())
+	{
+		return mGridName;
+	}
+	else
+	{
+		return LLURI(getCurrentGridURI()).hostName();
+	}
 }
 
 std::string LLViewerLogin::getKnownGridLabel(EGridInfo grid_index) const
@@ -252,78 +274,136 @@ std::string LLViewerLogin::getKnownGridLabel(EGridInfo grid_index) const
 	return gGridInfo[GRID_INFO_NONE].mLabel;
 }
 
-void LLViewerLogin::getLoginURIs(std::vector<std::string>& uris) const
+const std::vector<std::string>& LLViewerLogin::getGridURIs()
+{
+	return mGridURIs;
+}
+
+void LLViewerLogin::parseCommandLineURIs()
 {
 	// return the login uri set on the command line.
 		LLSD v = sCmdLineURIs;
-		if(v.isArray())
+		if (!v.isUndefined())
 		{
-			for(LLSD::array_const_iterator itr = v.beginArray();
-				itr != v.endArray(); ++itr)
+			bool foundRealURI = false;
+			if(v.isArray())
 			{
-				std::string uri = itr->asString();
-				if(!uri.empty())
+				for(LLSD::array_const_iterator itr = v.beginArray();
+					itr != v.endArray(); ++itr)
 				{
-					uris.push_back(uri);
+					std::string uri = itr->asString();
+					if(!uri.empty())
+					{
+						foundRealURI = true;
+						LLStringUtil::toLower(uri);
+						mGridURIs.push_back(uri);
+					}
 				}
 			}
-		}
-		else
-		{
-			std::string uri = v.asString();
-			if(!uri.empty())
+			else if (v.isString())
 			{
-				uris.push_back(uri);
+				std::string uri = v.asString();
+				if(!uri.empty())
+				{
+					foundRealURI = true;
+					LLStringUtil::toLower(uri);
+					mGridURIs.push_back(uri);
+				}
+			}
+
+			if (foundRealURI)
+			{
+				mGridChoice = GRID_INFO_OTHER;
+				mCurrentURI = 0;
+				mGridName = getGridLabel();
 			}
 		}
+	
+	setLoginPageURI(gSavedSettings.getString("LoginPage"));
+	setHelperURI(gSavedSettings.getString("CmdLineHelperURI"));
+}
 
-	// If there was no command line uri...
-	if(uris.empty())
+const std::string LLViewerLogin::getCurrentGridURI()
+{
+	return (mGridURIs.size() > mCurrentURI ? mGridURIs[mCurrentURI] : std::string());
+}
+
+bool LLViewerLogin::tryNextURI()
+{
+	if (++mCurrentURI < mGridURIs.size())
 	{
-		// If its a known grid choice, get the uri from the table,
-		// else try the grid name.
-		if(mGridChoice > GRID_INFO_NONE && mGridChoice < GRID_INFO_OTHER)
-		{
-			uris.push_back(gGridInfo[mGridChoice].mLoginURI);
-		}
-		else
-		{
-			uris.push_back(mGridName);
-		}
+		return true;
+	}
+	else
+	{
+		mCurrentURI = 0;
+		return false;
 	}
 }
 
-std::string LLViewerLogin::getHelperURI() const
+const std::string LLViewerLogin::getStaticGridHelperURI(const EGridInfo grid) const
 {
-	std::string helper_uri = gSavedSettings.getString("CmdLineHelperURI");
+	std::string helper_uri;
+	// grab URI from selected grid
+	if(grid > GRID_INFO_NONE && grid < GRID_INFO_OTHER)
+	{
+		helper_uri = gGridInfo[grid].mHelperURI;
+	}
+
 	if (helper_uri.empty())
 	{
-		// grab URI from selected grid
-		if(mGridChoice > GRID_INFO_NONE && mGridChoice < GRID_INFO_OTHER)
-		{
-			helper_uri = gGridInfo[mGridChoice].mHelperURI;
-		}
-
-		if (helper_uri.empty())
-		{
-			// what do we do with unnamed/miscellaneous grids?
-			// for now, operations that rely on the helper URI (currency/land purchasing) will fail
-		}
+		// what do we do with unnamed/miscellaneous grids?
+		// for now, operations that rely on the helper URI (currency/land purchasing) will fail
 	}
 	return helper_uri;
+}
+
+const std::string LLViewerLogin::getHelperURI() const
+{
+	return mHelperURI;
+}
+
+void LLViewerLogin::setHelperURI(const std::string& uri)
+{
+	mHelperURI = uri;
+}
+
+const std::string LLViewerLogin::getLoginPageURI() const
+{
+	return mLoginPageURI;
+}
+
+void LLViewerLogin::setLoginPageURI(const std::string& uri)
+{
+	mLoginPageURI = uri;
 }
 
 bool LLViewerLogin::isInProductionGrid()
 {
 	// *NOTE:Mani This used to compare GRID_INFO_AGNI to gGridChoice,
 	// but it seems that loginURI trumps that.
-	std::vector<std::string> uris;
-	getLoginURIs(uris);
-	LLStringUtil::toLower(uris[0]);
-	if((uris[0].find("agni") != std::string::npos))
+	std::vector<std::string> uris = getGridURIs();
+	if (uris.size() > 0)
 	{
-		return true;
+		if((getCurrentGridURI().find("agni") != std::string::npos))
+		{
+			return true;
+		}
 	}
 
 	return false;
+}
+
+const std::string LLViewerLogin::getStaticGridURI(const EGridInfo grid) const
+{
+	// If its a known grid choice, get the uri from the table,
+	// else try the grid name.
+	if(mGridChoice > GRID_INFO_NONE && mGridChoice < GRID_INFO_OTHER)
+	{
+		return gGridInfo[mGridChoice].mGridURI;
+	}
+	else
+	{
+		return mGridName;
+	}
 }

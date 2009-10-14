@@ -448,7 +448,7 @@ void LLMenuItemGL::draw( void )
 	U8 font_style = mStyle;
 	if (getEnabled() && !mDrawTextDisabled )
 	{
-		font_style |= LLFontGL::DROP_SHADOW_SOFT;
+		//font_style |= LLFontGL::DROP_SHADOW_SOFT;
 	}
 
 	if ( getEnabled() && getHighlight() )
@@ -1604,7 +1604,7 @@ void LLMenuItemBranchDownGL::draw( void )
 	U8 font_style = getFontStyle();
 	if (getEnabled() && !getDrawTextDisabled() )
 	{
-		font_style |= LLFontGL::DROP_SHADOW_SOFT;
+		//font_style |= LLFontGL::DROP_SHADOW_SOFT;
 	}
 
 	LLColor4 color;
@@ -2413,8 +2413,8 @@ void LLMenuGL::createJumpKeys()
 				{
 					char jump_key = uppercase_word[i];
 					
-					if (LLStringOps::isDigit(jump_key) || LLStringOps::isUpper(jump_key) &&
-						mJumpKeys.find(jump_key) == mJumpKeys.end())
+					if (LLStringOps::isDigit(jump_key) || (LLStringOps::isUpper(jump_key) &&
+						mJumpKeys.find(jump_key) == mJumpKeys.end()))
 					{
 						mJumpKeys.insert(std::pair<KEY, LLMenuItemGL*>(jump_key, (*item_it)));
 						(*item_it)->setJumpKey(jump_key);
@@ -2476,6 +2476,11 @@ BOOL LLMenuGL::handleJumpKey(KEY key)
 // Add the menu item to this menu.
 BOOL LLMenuGL::append( LLMenuItemGL* item )
 {
+	if (mSpilloverMenu)
+	{
+		return mSpilloverMenu->append(item);
+	}
+
 	mItems.push_back( item );
 	addChild( item );
 	arrange();
@@ -2490,6 +2495,32 @@ BOOL LLMenuGL::appendNoArrange( LLMenuItemGL* item )
 	addChild( item );
 	return TRUE;
 }
+
+// Remove a menu item from this menu.
+BOOL LLMenuGL::remove( LLMenuItemGL* item )
+{
+	if (mSpilloverMenu)
+	{
+		cleanupSpilloverBranch();
+	}
+
+	item_list_t::iterator found_iter = std::find(mItems.begin(), mItems.end(), item);
+	if (found_iter != mItems.end())
+	{
+		mItems.erase(found_iter);
+	}
+
+	removeChild( item );
+
+	// We keep it around in case someone is pointing at it.
+	// The caller can delete it if it's safe.
+    // Note that getMenu() will still not work since its parent isn't a menu.
+	sMenuContainer->addChild( item );
+
+	arrange();
+	return TRUE;
+}
+
 
 // add a separator to this menu
 BOOL LLMenuGL::appendSeparator( const std::string &separator_name )
@@ -2780,6 +2811,11 @@ void LLMenuGL::updateParent(LLView* parentp)
 	{
 		(*item_iter)->updateBranchParent(parentp);
 	}
+
+	if (mSpilloverMenu)
+	{
+		mSpilloverMenu->updateParent(parentp);
+	}
 }
 
 BOOL LLMenuGL::handleAcceleratorKey(KEY key, MASK mask)
@@ -2882,12 +2918,14 @@ BOOL LLMenuGL::handleHover( S32 x, S32 y, MASK mask )
 
 void LLMenuGL::draw( void )
 {
+	/*
 	if (mDropShadowed && !mTornOff)
 	{
 		gl_drop_shadow(0, getRect().getHeight(), getRect().getWidth(), 0, 
 			LLUI::sColorsGroup->getColor("ColorDropShadow"), 
 			LLUI::sConfigGroup->getS32("DropShadowFloater") );
 	}
+	*/
 
 	LLColor4 bg_color = mBackgroundColor;
 
@@ -4300,6 +4338,9 @@ BOOL LLMenuHolderGL::hideMenus()
 	{
 		return FALSE;
 	}
+
+	sItemActivationTimer.stop();
+
 	BOOL menu_visible = hasVisibleMenu();
 	if (menu_visible)
 	{

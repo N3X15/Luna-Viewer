@@ -154,6 +154,7 @@ public:
 	
 	void updateSpeakers(const LLSD& update);
 	void setSpeakers(const LLSD& speakers);
+	void setIrcSpeakers(const LLSD& speakers);
 protected:
 	virtual void updateSpeakerList();
 };

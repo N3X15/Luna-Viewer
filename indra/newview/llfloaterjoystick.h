@@ -63,6 +63,7 @@ private:
 	S32 mJoystickAxis[7];
 	bool m3DCursor;
 	bool mAutoLeveling;
+	bool mMouselookYaw;
 	bool mZoomDirect;
 
 	// Modes prefs

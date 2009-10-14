@@ -65,7 +65,7 @@
 #include "llnotify.h"
 #include "llkeyboard.h"
 #include "llerrorcontrol.h"
-#include "llversionviewer.h"
+//#include "llversionviewer.h"
 #include "llappviewer.h"
 #include "llvosurfacepatch.h"
 #include "llvowlsky.h"
@@ -163,6 +163,49 @@ static bool handleAvatarLODChanged(const LLSD& newvalue)
 static bool handleAvatarMaxVisibleChanged(const LLSD& newvalue)
 {
 	LLVOAvatar::sMaxVisible = (U32) newvalue.asInteger();
+	return true;
+}
+
+static bool handleAvMorphTimeChanged(const LLSD& newvalue)
+{
+	LLVOAvatar::sAvMorphTime = (F32) newvalue.asReal();
+	return true;
+}
+
+
+static bool handleAvatarBoobMassChanged(const LLSD& newvalue)
+{
+	LLVOAvatar::sBoobMass = (F32) newvalue.asReal();
+	return true;
+}
+
+static bool handleAvatarBoobHardnessChanged(const LLSD& newvalue)
+{
+	LLVOAvatar::sBoobHardness = (F32) newvalue.asReal();
+	return true;
+}
+
+static bool handleAvatarBoobVelMaxChanged(const LLSD& newvalue)
+{
+	LLVOAvatar::sBoobVelMax = (F32) newvalue.asReal();
+	return true;
+}
+
+static bool handleAvatarBoobFrictionChanged(const LLSD& newvalue)
+{
+	LLVOAvatar::sBoobFriction = (F32) newvalue.asReal();
+	return true;
+}
+
+static bool handleAvatarBoobFrictionFractionChanged(const LLSD& newvalue)
+{
+	LLVOAvatar::sBoobFrictionFraction = (F32) newvalue.asReal();
+	return true;
+}
+
+static bool handleAvatarBoobToggleChanged(const LLSD& newvalue)
+{
+	LLVOAvatar::sBoobToggle = (BOOL) newvalue.asReal();
 	return true;
 }
 
@@ -462,6 +505,20 @@ bool handleVoiceClientPrefsChanged(const LLSD& newvalue)
 	return true;
 }
 
+// [RLVa:KB] - Checked: 2009-08-11 (RLVa-1.0.1h) | Added: RLVa-1.0.1h
+bool rlvHandleEnableLegacyNamingChanged(const LLSD& newvalue)
+{
+	rlv_handler_t::fLegacyNaming = newvalue.asBoolean();
+	return true;
+}
+
+bool rlvHandleShowNameTagsChanged(const LLSD& newvalue)
+{
+	RlvSettings::fShowNameTags = newvalue.asBoolean();
+	return true;
+}
+// [/RLVa:KB]
+
 ////////////////////////////////////////////////////////////////////////////
 
 void settings_setup_listeners()
@@ -491,6 +548,14 @@ void settings_setup_listeners()
 	gSavedSettings.getControl("RenderDelayCreation")->getSignal()->connect(boost::bind(&handleRenderDelayCreationChanged, _1));
 	gSavedSettings.getControl("RenderUnloadedAvatar")->getSignal()->connect(boost::bind(&handleRenderUnloadedAvatarChanged, _1));
 	gSavedSettings.getControl("RenderGamma")->getSignal()->connect(boost::bind(&handleGammaChanged, _1));
+	gSavedSettings.getControl("AvatarMorphTime")->getSignal()->connect(boost::bind(&handleAvMorphTimeChanged, _1));
+	gSavedSettings.getControl("EmeraldNewShiny")->getSignal()->connect(boost::bind(&handleSetShaderChanged, _1));
+	gSavedSettings.getControl("EmeraldBoobMass")->getSignal()->connect(boost::bind(&handleAvatarBoobMassChanged, _1));
+	gSavedSettings.getControl("EmeraldBoobHardness")->getSignal()->connect(boost::bind(&handleAvatarBoobHardnessChanged, _1));
+	gSavedSettings.getControl("EmeraldBoobVelMax")->getSignal()->connect(boost::bind(&handleAvatarBoobVelMaxChanged, _1));
+	gSavedSettings.getControl("EmeraldBoobFriction")->getSignal()->connect(boost::bind(&handleAvatarBoobFrictionChanged, _1));
+	gSavedSettings.getControl("EmeraldBoobFrictionFraction")->getSignal()->connect(boost::bind(&handleAvatarBoobFrictionFractionChanged, _1));
+	gSavedSettings.getControl("EmeraldBreastPhysicsToggle")->getSignal()->connect(boost::bind(&handleAvatarBoobToggleChanged, _1));
 	gSavedSettings.getControl("RenderFogRatio")->getSignal()->connect(boost::bind(&handleFogRatioChanged, _1));
 	gSavedSettings.getControl("RenderMaxPartCount")->getSignal()->connect(boost::bind(&handleMaxPartCountChanged, _1));
 	gSavedSettings.getControl("RenderDynamicLOD")->getSignal()->connect(boost::bind(&handleRenderDynamicLODChanged, _1));
@@ -555,6 +620,18 @@ void settings_setup_listeners()
 	gSavedSettings.getControl("FlycamAxisDeadZone4")->getSignal()->connect(boost::bind(&handleJoystickChanged, _1));
 	gSavedSettings.getControl("FlycamAxisDeadZone5")->getSignal()->connect(boost::bind(&handleJoystickChanged, _1));
 	gSavedSettings.getControl("FlycamAxisDeadZone6")->getSignal()->connect(boost::bind(&handleJoystickChanged, _1));
+	gSavedSettings.getControl("JoystickStreamAxisScale0")->getSignal()->connect(boost::bind(&handleJoystickChanged, _1));
+	gSavedSettings.getControl("JoystickStreamAxisScale1")->getSignal()->connect(boost::bind(&handleJoystickChanged, _1));
+	gSavedSettings.getControl("JoystickStreamAxisScale2")->getSignal()->connect(boost::bind(&handleJoystickChanged, _1));
+	gSavedSettings.getControl("JoystickStreamAxisScale3")->getSignal()->connect(boost::bind(&handleJoystickChanged, _1));
+	gSavedSettings.getControl("JoystickStreamAxisScale4")->getSignal()->connect(boost::bind(&handleJoystickChanged, _1));
+	gSavedSettings.getControl("JoystickStreamAxisScale5")->getSignal()->connect(boost::bind(&handleJoystickChanged, _1));
+	gSavedSettings.getControl("JoystickStreamAxisDeadZone0")->getSignal()->connect(boost::bind(&handleJoystickChanged, _1));
+	gSavedSettings.getControl("JoystickStreamAxisDeadZone1")->getSignal()->connect(boost::bind(&handleJoystickChanged, _1));
+	gSavedSettings.getControl("JoystickStreamAxisDeadZone2")->getSignal()->connect(boost::bind(&handleJoystickChanged, _1));
+	gSavedSettings.getControl("JoystickStreamAxisDeadZone3")->getSignal()->connect(boost::bind(&handleJoystickChanged, _1));
+	gSavedSettings.getControl("JoystickStreamAxisDeadZone4")->getSignal()->connect(boost::bind(&handleJoystickChanged, _1));
+	gSavedSettings.getControl("JoystickStreamAxisDeadZone5")->getSignal()->connect(boost::bind(&handleJoystickChanged, _1));
 	gSavedSettings.getControl("AvatarAxisScale0")->getSignal()->connect(boost::bind(&handleJoystickChanged, _1));
 	gSavedSettings.getControl("AvatarAxisScale1")->getSignal()->connect(boost::bind(&handleJoystickChanged, _1));
 	gSavedSettings.getControl("AvatarAxisScale2")->getSignal()->connect(boost::bind(&handleJoystickChanged, _1));
@@ -587,7 +664,7 @@ void settings_setup_listeners()
 	gSavedSettings.getControl("VectorizeEnable")->getSignal()->connect(boost::bind(&handleVectorizeChanged, _1));
 	gSavedSettings.getControl("VectorizeProcessor")->getSignal()->connect(boost::bind(&handleVectorizeChanged, _1));
 	gSavedSettings.getControl("VectorizeSkin")->getSignal()->connect(boost::bind(&handleVectorizeChanged, _1));
-	gSavedSettings.getControl("EnableVoiceChat")->getSignal()->connect(boost::bind(&handleVoiceClientPrefsChanged, _1));
+	gSavedPerAccountSettings.getControl("EnableVoiceChat")->getSignal()->connect(boost::bind(&handleVoiceClientPrefsChanged, _1));
 	gSavedSettings.getControl("PTTCurrentlyEnabled")->getSignal()->connect(boost::bind(&handleVoiceClientPrefsChanged, _1));
 	gSavedSettings.getControl("PushToTalkButton")->getSignal()->connect(boost::bind(&handleVoiceClientPrefsChanged, _1));
 	gSavedSettings.getControl("PushToTalkToggle")->getSignal()->connect(boost::bind(&handleVoiceClientPrefsChanged, _1));
@@ -596,6 +673,13 @@ void settings_setup_listeners()
 	gSavedSettings.getControl("VoiceOutputAudioDevice")->getSignal()->connect(boost::bind(&handleVoiceClientPrefsChanged, _1));
 	gSavedSettings.getControl("AudioLevelMic")->getSignal()->connect(boost::bind(&handleVoiceClientPrefsChanged, _1));
 	gSavedSettings.getControl("LipSyncEnabled")->getSignal()->connect(boost::bind(&handleVoiceClientPrefsChanged, _1));	
+
+// [RLVa:KB] - Checked: 2009-08-11 (RLVa-1.0.1h) | Added: RLVa-1.0.1h
+	if (gSavedSettings.controlExists(RLV_SETTING_ENABLELEGACYNAMING))
+		gSavedSettings.getControl(RLV_SETTING_ENABLELEGACYNAMING)->getSignal()->connect(boost::bind(&rlvHandleEnableLegacyNamingChanged, _1));
+	if (gSavedSettings.controlExists(RLV_SETTING_SHOWNAMETAGS))
+		gSavedSettings.getControl(RLV_SETTING_SHOWNAMETAGS)->getSignal()->connect(boost::bind(&rlvHandleShowNameTagsChanged, _1));
+// [/RLVa:KB]
 }
 
 template <> eControlType get_control_type<U32>(const U32& in, LLSD& out) 
@@ -719,4 +803,3 @@ void test_cached_control()
 	if((std::string)test_BrowserHomePage != "http://www.secondlife.com") llerrs << "Fail BrowserHomePage" << llendl;
 }
 #endif // TEST_CACHED_CONTROL
-

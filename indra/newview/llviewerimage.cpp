@@ -966,7 +966,9 @@ bool LLViewerImage::updateFetch()
 
 void LLViewerImage::setIsMissingAsset()
 {
-	llwarns << mLocalFileName << " " << mID << ": Marking image as missing" << llendl;
+	//Zwagoth: spammy while IMG_DEFAULT is missing... GG LL
+	// $TODO$ Fix IMG_DEFAULT so its not missing.
+	//llwarns << mLocalFileName << " " << mID << ": Marking image as missing" << llendl;
 	if (mHasFetcher)
 	{
 		LLAppViewer::getTextureFetch()->deleteRequest(getID(), true);

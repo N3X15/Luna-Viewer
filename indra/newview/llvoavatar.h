@@ -108,6 +108,7 @@ public:
 	void idleUpdateLipSync(bool voice_enabled);
 	void idleUpdateLoadingEffect();
 	void idleUpdateWindEffect();
+	void idleUpdateBoobEffect();
 	void idleUpdateNameTag(const LLVector3& root_pos_last);
 	void idleUpdateRenderCost();
 	void idleUpdateTractorBeam();
@@ -208,6 +209,8 @@ public:
 public:
 	static void		onCustomizeStart();
 	static void		onCustomizeEnd();
+	U8              mCheckingCryolife;
+    BOOL            mIsCryolife;
 
 public:
 	static void		dumpTotalLocalTextureByteCount();
@@ -270,6 +273,7 @@ public:
 	void onFirstTEMessageReceived();
 	void updateSexDependentLayerSets( BOOL set_by_user );
 	void dirtyMesh(); // Dirty the avatar mesh
+	LLPolyMesh* getMesh( LLPolyMeshSharedData *shared_data );
 	void hideSkirt();
 
 	virtual void setParent(LLViewerObject* parent);
@@ -349,6 +353,11 @@ public:
 public:
 	void			setLocTexTE( U8 te, LLViewerImage* image, BOOL set_by_user );
 	void			setupComposites();
+
+	typedef std::map<S32,std::string> lod_mesh_map_t;
+	typedef std::map<std::string,lod_mesh_map_t> mesh_info_t;
+
+	static void getMeshInfo (mesh_info_t* mesh_info);
 
 	//--------------------------------------------------------------------
 	// Handling partially loaded avatars (Ruth)
@@ -496,6 +505,33 @@ private:
 	F32				mLastAppearanceBlendTime;
 
 	//--------------------------------------------------------------------
+	// boob bounce stuff
+	//--------------------------------------------------------------------
+
+private:
+	LLVector3		mLastChestPos;
+	F32				mBoobGravity;
+	F32				mBoobDisplacement;
+	F32				mLastDisplacement;
+	F32				mLastTime;
+	F32				mActualBoobGrav;
+	bool			mFirstIdleUpdateBoobGravRan;
+	LLFrameTimer	mBoobBounceTimer;
+
+public:
+	F32				getActualBoobGrav() { return mActualBoobGrav; }
+	void			setActualBoobGrav(F32 grav) { mActualBoobGrav = llclamp(grav,-1.5f,2.0f); mFirstIdleUpdateBoobGravRan = true; }
+
+	static F32		sBoobMass;
+	static F32		sBoobHardness;
+	static F32		sBoobZMax;
+	static F32		sBoobVelMax;
+	static F32		sBoobZInfluence;
+	static F32		sBoobFriction;
+	static F32		sBoobFrictionFraction;
+	static BOOL		sBoobToggle;
+
+	//--------------------------------------------------------------------
 	// Attachments
 	//--------------------------------------------------------------------
 public:
@@ -523,6 +559,7 @@ public:
 	static F32		sLODFactor; // user-settable LOD factor
 	static BOOL		sJointDebug; // output total number of joints being touched for each avatar
 	static BOOL     sDebugAvatarRotation;
+	static F32		sAvMorphTime;
 
 	static S32 sNumVisibleAvatars; // Number of instances of this class
 	

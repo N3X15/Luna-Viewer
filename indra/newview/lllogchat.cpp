@@ -33,6 +33,7 @@
 #include "llviewerprecompiledheaders.h"
 
 #include "lllogchat.h"
+#include "llviewercontrol.h"
 #include "llappviewer.h"
 #include "llfloaterchat.h"
 
@@ -72,10 +73,20 @@ std::string LLLogChat::timestamp(bool withdate)
 	timep = utc_to_pacific_time(utc_time, gPacificDaylightTime);
 
 	std::string text;
+	if (gSavedSettings.getBOOL("EmeraldAddSecondsInLog"))
+	{
+		if (withdate)
+			text = llformat("[%d-%02d-%02d %02d:%02d:%02d]  ", (timep->tm_year-100)+2000, timep->tm_mon+1, timep->tm_mday, timep->tm_hour, timep->tm_min, timep->tm_sec);
+		else
+			text = llformat("[%02d:%02d:%02d]  ", timep->tm_hour, timep->tm_min, timep->tm_sec);
+	}
+	else
+	{
 	if (withdate)
 		text = llformat("[%d/%02d/%02d %d:%02d]  ", (timep->tm_year-100)+2000, timep->tm_mon+1, timep->tm_mday, timep->tm_hour, timep->tm_min);
 	else
 		text = llformat("[%d:%02d]  ", timep->tm_hour, timep->tm_min);
+	}
 
 	return text;
 }

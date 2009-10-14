@@ -184,6 +184,11 @@ public:
 	void			clearRenderState(U8 clearstate);
 	U8				getRenderState();
 
+	// get/set last region data
+	std::string		getLastRegion();
+	LLVector3		getLastCoords();
+	void			setLastRegionData(std::string regionName,LLVector3 agentCoords);
+
 	// Set the home data
 	void			setRegion(LLViewerRegion *regionp);
 	LLViewerRegion	*getRegion() const;
@@ -220,7 +225,7 @@ public:
 	void			heardChat(const LLUUID& id);
 	void			lookAtLastChat();
 	void			lookAtObject(LLUUID avatar_id, ECameraPosition camera_pos);
-	F32			getTypingTime() { return mTypingTimer.getElapsedTimeF32(); }
+	F32				getTypingTime() { return mTypingTimer.getElapsedTimeF32(); }
 
 	void			setAFK();
 	void			clearAFK();
@@ -458,7 +463,7 @@ public:
 	void			moveLeftNudge(S32 direction);
 	void			moveUp(S32 direction);
 	void			moveYaw(F32 mag, bool reset_view = true);
-	void			movePitch(S32 direction);
+	void			movePitch(F32 mag);
 
 	void			setOrbitLeftKey(F32 mag)				{ mOrbitLeftKey = mag; }
 	void			setOrbitRightKey(F32 mag)				{ mOrbitRightKey = mag; }
@@ -733,7 +738,7 @@ protected:
 						LLWearable* wearable, const LLUUID& category_id = LLUUID::null,
 						BOOL notify = TRUE);
 public:
-	// TODO: Make these private!
+	// TODO: Make these private! 
 	LLUUID			mSecureSessionID;			// secure token for this login session
 
 	F32				mDrawDistance;
@@ -914,6 +919,9 @@ private:
 	BOOL			mFirstLogin;
 	BOOL			mGenderChosen;
 	
+	std::string		mLastRegion;
+	LLVector3		mLastCoordinates;
+
 	//--------------------------------------------------------------------
 	// Wearables
 	//--------------------------------------------------------------------

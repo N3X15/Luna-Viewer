@@ -76,6 +76,9 @@ LLApp* LLApp::sApplication = NULL;
 //static
 BOOL LLApp::sLogInSignal = FALSE;
 
+//Allows the generation of core files for post mortum under gdb
+BOOL LLApp::sGenerateCores = FALSE; 
+
 // static
 LLApp::EAppStatus LLApp::sStatus = LLApp::APP_STATUS_STOPPED; // Keeps track of application status
 LLAppErrorHandler LLApp::sErrorHandler = NULL;
@@ -726,6 +729,15 @@ void default_unix_signal_handler(int signum, siginfo_t *info, void *)
 				llwarns << "Signal handler - Flagging error status and waiting for shutdown" << llendl;
 			}
 			// Flag status to ERROR, so thread_error does its work.
+			
+			if(LLApp::sGenerateCores)	//Don't gracefully handle any signals crash and core for a gdb post mortum
+			{
+				clear_signals();
+				llwarns << "Fatal signal recieved, not handling the crash here, passing back to operating system" << llendl;
+				raise(signum);
+				return;
+			}		
+
 			LLApp::setError();
 			// Block in the signal handler until somebody says that we're done.
 			while (LLApp::sErrorThreadRunning && !LLApp::isStopped())

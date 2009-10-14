@@ -382,7 +382,7 @@ static gcry_error_t calculate_pubkey_auth(unsigned char **authbufp,
     /* Write the data to be MAC'd */
     write_mpi(our_dh_pub, ourpublen, "Our DH pubkey");
     write_mpi(their_dh_pub, theirpublen, "Their DH pubkey");
-    bufp[0] = ((privkey->pubkey_type) >> 16) & 0xff;
+    bufp[0] = ((privkey->pubkey_type) >> 8) & 0xff;
     bufp[1] = (privkey->pubkey_type) & 0xff;
     bufp += 2; lenp -= 2;
     memmove(bufp, privkey->pubkey_data, privkey->pubkey_datalen);
@@ -413,7 +413,7 @@ static gcry_error_t calculate_pubkey_auth(unsigned char **authbufp,
     lenp = totallen;
 
     /* Write the data to be encrypted */
-    bufp[0] = ((privkey->pubkey_type) >> 16) & 0xff;
+    bufp[0] = ((privkey->pubkey_type) >> 8) & 0xff;
     bufp[1] = (privkey->pubkey_type) & 0xff;
     bufp += 2; lenp -= 2;
     memmove(bufp, privkey->pubkey_data, privkey->pubkey_datalen);
@@ -520,7 +520,7 @@ static gcry_error_t check_pubkey_auth(unsigned char fingerprintbufp[20],
 
     write_mpi(their_dh_pub, theirpublen, "Their DH pubkey");
     write_mpi(our_dh_pub, ourpublen, "Our DH pubkey");
-    bufp[0] = (pubkey_type >> 16) & 0xff;
+    bufp[0] = (pubkey_type >> 8) & 0xff;
     bufp[1] = pubkey_type & 0xff;
     bufp += 2; lenp -= 2;
     memmove(bufp, fingerprintstart, fingerprintend - fingerprintstart);

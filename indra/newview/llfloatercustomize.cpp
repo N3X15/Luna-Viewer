@@ -77,6 +77,8 @@
 
 #include "llfilepicker.h"
 
+#include "jc_layer_editor.h"
+
 using namespace LLVOAvatarDefines;
 
 //*TODO:translate : The ui xml for this really needs to be integrated with the appearance paramaters
@@ -1210,6 +1212,18 @@ void LLScrollingPanelParam::onSliderMoved(LLUICtrl* ctrl, void* userdata)
 	F32 new_weight = self->percentToWeight( (F32)slider->getValue().asReal() );
 	if (current_weight != new_weight )
 	{
+		LLFloaterCustomize* floater_customize = gFloaterCustomize;
+		if (!floater_customize) return;
+
+		//KOWs avatar height stuff
+		LLVOAvatar* avatar = gAgent.getAvatarObject();
+		F32 avatar_size = (avatar->mBodySize.mV[VZ]) + (F32)0.17; //mBodySize is actually quite a bit off.
+		avatar_size += (F32)99; //mBodySize is actually quite a bit off.
+		
+		floater_customize->getChild<LLTextBox>("HeightText")->setValue(llformat("%.2f", avatar_size) + "m");
+		floater_customize->getChild<LLTextBox>("HeightText2")->setValue(llformat("%.2f",llround(avatar_size / 0.3048)) + "'"
+																	  + llformat("%.2f",llround(avatar_size * 39.37) % 12) + "\"");
+
 		gAgent.getAvatarObject()->setVisualParamWeight( param, new_weight, FALSE);
 		gAgent.getAvatarObject()->updateVisualParams();
 	}
@@ -1482,6 +1496,38 @@ BOOL LLFloaterCustomize::postBuild()
 			if (panel) tab_container->removeTabPanel(panel);
 		}
 	}
+
+	/////EMERALD CLOTHING SHIT
+	if(gSavedSettings.getBOOL("EmeraldClothingMode"))
+	{
+		LLTabContainer* tab_container = getChild<LLTabContainer>("customize tab container");
+		if (tab_container)
+		{
+			LLPanel* panel;
+			panel = tab_container->getPanelByName("Shirt");
+			if (panel) tab_container->removeTabPanel(panel);
+			panel = tab_container->getPanelByName("Pants");
+			if (panel) tab_container->removeTabPanel(panel);
+			panel = tab_container->getPanelByName("Shoes");
+			if (panel) tab_container->removeTabPanel(panel);
+			panel = tab_container->getPanelByName("Socks");
+			if (panel) tab_container->removeTabPanel(panel);
+			panel = tab_container->getPanelByName("Jacket");
+			if (panel) tab_container->removeTabPanel(panel);
+			panel = tab_container->getPanelByName("Gloves");
+			if (panel) tab_container->removeTabPanel(panel);
+			panel = tab_container->getPanelByName("Undershirt");
+			if (panel) tab_container->removeTabPanel(panel);
+			panel = tab_container->getPanelByName("Underpants");
+			if (panel) tab_container->removeTabPanel(panel);
+			panel = tab_container->getPanelByName("Skirt");
+			if (panel) tab_container->removeTabPanel(panel);
+			panel = tab_container->getPanelByName("clothes_placeholder");
+		}
+
+		childSetVisible("Layers",true);
+		childSetAction("Layers", LLFloaterCustomize::onBtnLayers, (void*)this);
+	}
 	
 	// Scrolling Panel
 	initScrollingPanelList();
@@ -1497,6 +1543,17 @@ void LLFloaterCustomize::open()
 }
 
 ////////////////////////////////////////////////////////////////////////////
+
+// static
+void LLFloaterCustomize::onBtnLayers( void* userdata )
+{
+	gFloaterView->sendChildToBack(gFloaterCustomize);
+	handle_reset_view();  // Calls askToSaveIfDirty
+
+	JCLayerEditor::toggle();
+}
+
+
 
 // static
 void LLFloaterCustomize::setCurrentWearableType( EWearableType type )
@@ -1978,6 +2035,21 @@ void LLFloaterCustomize::draw()
 	// to be called when the tabs change or an inventory item
 	// arrives. Figure out some way to avoid this if possible.
 	updateInventoryUI();
+
+	LLFloaterCustomize* floater_customize = gFloaterCustomize;
+	if (!floater_customize) return;
+
+	//KOWs avatar height stuff
+	LLVOAvatar* avatar = gAgent.getAvatarObject();
+	F32 avatar_size = (avatar->mBodySize.mV[VZ]) + (F32)0.17; //mBodySize is actually quite a bit off.
+		
+	floater_customize->getChild<LLTextBox>("HeightText")->setValue(llformat("%.2f", avatar_size) + "m");
+	//inches = avatar_size * 39.37
+	//round(inches) + inches % 12
+	std::string temp = llformat("%.0f",(F32)llfloor(avatar_size / 0.3048));
+	std::string temp2 = llformat("%.0f",(F32)(llround(avatar_size * 39.37) % 12));
+	floater_customize->getChild<LLTextBox>("HeightText2")->setValue(temp + "'"
+																  + temp2 + "\"");
 
 	LLScrollingPanelParam::sUpdateDelayFrames = 0;
 	

@@ -183,7 +183,7 @@ if (LINUX)
   if (VIEWER)
     add_definitions(-DAPPID=secondlife)
     add_definitions(-fvisibility=hidden)
-    add_definitions(-msse2)
+    # add_definitions(-msse2)
     # don't catch SIGCHLD in our base application class for the viewer - some of our 3rd party libs may need their *own* SIGCHLD handler to work.  Sigh!  The viewer doesn't need to catch SIGCHLD anyway.
     add_definitions(-DLL_IGNORE_SIGCHLD)
     if (NOT STANDALONE)

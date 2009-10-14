@@ -557,6 +557,7 @@ public:
 	virtual const std::string& getPrefix() { return sPrefix; }
 
 	virtual LLUIImagePtr getIcon() const;
+	virtual void	performAction(LLFolderView* folder, LLInventoryModel* model, std::string action);
 	virtual void openItem();
 
 protected:

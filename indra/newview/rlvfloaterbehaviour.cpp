@@ -131,7 +131,7 @@ BOOL RlvFloaterBehaviour::postBuild()
  * RlvBehaviourObserver overrides
  */
 
-void RlvFloaterBehaviour::changed()
+void RlvFloaterBehaviour::changed(const RlvCommand& /*rlvCmd*/, bool /*fInternal*/)
 {
 	refreshAll();
 }

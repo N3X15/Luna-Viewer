@@ -11,6 +11,27 @@
       <string>String</string>
       <key>Value</key>
       <string>/lua</string>
+    <key>InventorySearchType</key>
+    <map>
+      <key>Comment</key>
+      <string>Controls what type of inventory search we perform.</string>
+      <key>Persist</key>
+      <integer>0</integer>
+      <key>Type</key>
+      <string>U32</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
+    <key>ShowPartialSearchResults</key>
+    <map>
+      <key>Comment</key>
+      <string>Toggles whether to search using partial search filters on normal (name, desc, creator) searches.</string>
+      <key>Persist</key>
+      <integer>0</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
     </map>
     <key>ColorllFunction</key>
     <map>
@@ -26,6 +47,76 @@
         <real>0.0</real>
         <real>0.15</real>
       </array>
+    </map>
+<key>zmm_deffov</key>
+  <map>
+    <key>Comment</key>
+    <string>The delta to spam you the script jump difference</string>
+    <key>Persist</key>
+    <integer>1</integer>
+    <key>Type</key>
+    <string>F32</string>
+    <key>Value</key>
+    <real>1.0</real>
+  </map>
+  <key>zmm_mlfov</key>
+  <map>
+    <key>Comment</key>
+    <string>1=norm, under1 zoom out, over1 zoom in</string>
+    <key>Persist</key>
+    <integer>1</integer>
+    <key>Type</key>
+    <string>F32</string>
+    <key>Value</key>
+    <real>1</real>
+  </map>
+  <key>zmm_isinml</key>
+  <map>
+    <key>Comment</key>
+    <string>fuckyouslandyourshittymethodofseeingifakeyisdownornot...</string>
+    <key>Persist</key>
+    <integer>0</integer>
+    <key>Type</key>
+    <string>Boolean</string>
+    <key>Value</key>
+    <integer>0</integer>
+  </map>
+<key>zmm_rightmousedown</key>
+  <map>
+    <key>Comment</key>
+    <string>fuckyouslandyourshittymethodofseeingifakeyisdownornot...</string>
+    <key>Persist</key>
+    <integer>0</integer>
+    <key>Type</key>
+    <string>Boolean</string>
+    <key>Value</key>
+    <integer>0</integer>
+  </map>
+    <key>ColorllFunction</key>
+    <map>
+      <key>Comment</key>
+      <string>Color for llFunction builtins in the script editor.</string>
+      <key>Persist</key>
+      <integer>0</integer>
+      <key>Type</key>
+      <string>Color3</string>
+      <key>Value</key>
+      <array>
+        <real>0.5</real>
+        <real>0.0</real>
+        <real>0.15</real>
+      </array>
+    </map>
+	<key>EmeraldDisableMinZoomDist</key>
+    <map>
+      <key>Comment</key>
+      <string>Disable the constraint on the closest distance the camera is allowed to get to an object.</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
     </map>
     <key>RestrainedLife</key>
     <map>
@@ -71,6 +162,17 @@
       <key>Value</key>
       <integer>1</integer>
     </map>
+    <key>RLVaEnableLegacyNaming</key>
+    <map>
+      <key>Comment</key>
+      <string>Enables legacy naming convention for folders</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
      <key>RLVaEnableWear</key>
      <map>
        <key>Comment</key>
@@ -80,7 +182,7 @@
        <key>Type</key>
        <string>Boolean</string>
        <key>Value</key>
-       <integer>0</integer>
+      <integer>1</integer>
      </map>
      <key>RLVaHideLockedLayers</key>
      <map>
@@ -103,6 +205,61 @@
        <string>Boolean</string>
        <key>Value</key>
        <integer>0</integer>
+    </map>
+    <key>RLVaShowNameTags</key>
+    <map>
+      <key>Comment</key>
+      <string>Display of names above avatars is subject to the general "Show Names" setting when @shownames=n restricted</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
+    <key>WarnFirstRLVDetach</key>
+    <map>
+      <key>Comment</key>
+      <string>Enables FirstRLVDetach warning dialog</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
+    <key>WarnFirstRLVEnableWear</key>
+    <map>
+      <key>Comment</key>
+      <string>Enables RLVEnableWear warning dialog</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
+    <key>WarnFirstRLVFartouch</key>
+    <map>
+      <key>Comment</key>
+      <string>Enables FirstRLVFartouch warning dialog</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
+    <key>WarnFirstRLVGiveToRLV</key>
+    <map>
+      <key>Comment</key>
+      <string>Enables FirstRLVGiveToRLV warning dialog</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
     </map>
     <key>AFKTimeout</key>
     <map>
@@ -189,7 +346,7 @@
       <key>Type</key>
       <string>Boolean</string>
       <key>Value</key>
-      <integer>0</integer>
+      <integer>1</integer>
     </map>
     <key>AllowTapTapHoldRun</key>
     <map>
@@ -426,6 +583,17 @@
     <map>
       <key>Comment</key>
       <string>Enable streaming video</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
+  <key>AuditTexture</key>
+  <map>
+    <key>Comment</key>
+    <string>Enable texture auditting.</string>
       <key>Persist</key>
       <integer>1</integer>
       <key>Type</key>
@@ -2271,10 +2439,21 @@
       <key>Value</key>
       <integer>0</integer>
     </map>
+    <key>JoystickMouselookYaw</key>
+        <map>
+        <key>Comment</key>
+            <string>Pass joystick yaw to scripts in Mouselook.</string>
+        <key>Persist</key>
+            <integer>1</integer>
+        <key>Type</key>
+            <string>Boolean</string>
+        <key>Value</key>
+            <integer>1</integer>
+        </map>
     <key>Cursor3D</key>
     <map>
       <key>Comment</key>
-      <string>Tread Joystick values as absolute positions (not deltas).</string>
+            <string>Treat Joystick values as absolute positions (not deltas).</string>
       <key>Persist</key>
       <integer>1</integer>
       <key>Type</key>
@@ -3255,6 +3434,28 @@
         <real>1.0</real>
       </array>
     </map>
+  <key>EmeraldAddSecondsInLog</key>
+    <map>
+      <key>Comment</key>
+      <string>Add the seconds to the timestamp in the logs</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
+  <key>EmeraldAddSecondsInHistory</key>
+    <map>
+      <key>Comment</key>
+      <string>Add the seconds to the timestamp in all the chat windows</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
 	<key>EmeraldAgentUpdatesPerSecond</key>
     <map>
       <key>Comment</key>
@@ -3270,6 +3471,154 @@
     <map>
       <key>Comment</key>
       <string>Allow MU* pose style in chat and IM (with ':' as a synonymous to '/me ')</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
+    <key>EmeraldAOEnabled</key>
+    <map>
+      <key>Comment</key>
+      <string>Turn on Animation Overrider</string>
+      <key>Persist</key>
+      <integer>0</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
+    <key>EmeraldAOAdvanced</key>
+    <map>
+      <key>Comment</key>
+      <string>Advanced options</string>
+      <key>Persist</key>
+      <integer>0</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
+    <key>EmeraldAOSitsEnabled</key>
+    <map>
+      <key>Comment</key>
+      <string>Overrides sit animations.</string>
+      <key>Persist</key>
+      <integer>0</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
+    <key>EmeraldAONoStandsInMouselook</key>
+    <map>
+      <key>Comment</key>
+      <string>Disables stand anims during mouselook</string>
+      <key>Persist</key>
+      <integer>0</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
+    <key>EmeraldAOStandInterval</key>
+    <map>
+      <key>Comment</key>
+      <string>AO stand time in seconds</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>F32</string>
+      <key>Value</key>
+      <real>20</real>
+    </map>
+    <key>EmeraldAOStandRandomize</key>
+    <map>
+      <key>Comment</key>
+      <string>Randomize stand anims</string>
+      <key>Persist</key>
+      <integer>0</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
+    <key>EmeraldAORect</key>
+    <map>
+      <key>Comment</key>
+      <string>Rectangle for AO window</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Rect</string>
+      <key>Value</key>
+      <array>
+        <integer>0</integer>
+        <integer>100</integer>
+        <integer>100</integer>
+        <integer>100</integer>
+      </array>
+    </map>
+    <key>EmeraldAppearanceAnimate</key>
+    <map>
+      <key>Comment</key>
+      <string>Play appearance anim when entering appearance mode?</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
+    <key>EmeraldAppearanceForceStand</key>
+    <map>
+      <key>Comment</key>
+      <string>Unsit avatar when entering appearance mode?</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
+    <key>EmeraldAvatarAgeAlert</key>
+    <map>
+      <key>Comment</key>
+      <string>Enables the avatar age alert</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <real>0</real>
+    </map>
+    <key>EmeraldAvatarAgeAlertDays</key>
+    <map>
+      <key>Comment</key>
+      <string>You will be notified when an avatar younger than X days appears on the radar</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>F32</string>
+      <key>Value</key>
+      <real>3</real>
+    </map>
+    <key>EmeraldAvatarAgeAlertSoundUUID</key>
+    <map>
+      <key>Comment</key>
+      <string>The signal sound for the avatar age alert</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>String</string>
+      <key>Value</key>
+      <string>5fcbee19-8dd4-2888-d6bf-14310d2f7c9f</string>
+    </map>
+    <key>EmeraldCryoDetection</key>
+    <map>
+      <key>Comment</key>
+      <string>Passivly scan for cryo life using advanced detection</string>
       <key>Persist</key>
       <integer>1</integer>
       <key>Type</key>
@@ -3375,6 +3724,17 @@
       <string>String</string>
       <key>Value</key>
       <string>Emerald</string>
+    </map>
+    <key>EmeraldBeamColorFile</key>
+    <map>
+      <key>Comment</key>
+      <string>Beam file for the shape of your beam</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>String</string>
+      <key>Value</key>
+      <string>===OFF===</string>
     </map>
     <key>EmeraldBeamShapeScale</key>
     <map>
@@ -3700,6 +4060,17 @@
       <key>Value</key>
       <integer>1</integer>
     </map>
+    <key>EmeraldCmdLineAO</key>
+    <map>
+      <key>Comment</key>
+      <string>Turn AO on/off</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>String</string>
+      <key>Value</key>
+      <string>cao</string>
+    </map>
     <key>EmeraldCmdLineHeight</key>
     <map>
       <key>Comment</key>
@@ -3754,6 +4125,17 @@
       <string>String</string>
       <key>Value</key>
       <string>rezplat</string>
+    </map>
+    <key>EmeraldCopyObjKeySeparator</key> <!-- Madgeek -->
+    <map>
+      <key>Comment</key>
+      <string>This chunk of text goes between keys when you use the Copy Key button with multiple objects selected.</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>String</string>
+      <key>Value</key>
+      <string>, </string>
     </map>
     <key>EmeraldPlatformSize</key>
     <map>
@@ -3975,6 +4357,249 @@
       <key>Value</key>
       <integer>1</integer>
     </map>
+    <key>EmeraldIRC_ColorChannel</key>
+    <map>
+      <key>Comment</key>
+      <string>IRC_ColorChannel</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Color4</string>
+      <key>Value</key>
+      <array>
+        <real>1.0</real>
+        <real>1.0</real>
+        <real>0.8</real>
+        <real>1.0</real>
+      </array>
+    </map>
+    <key>EmeraldIRC_ColorAction</key>
+    <map>
+      <key>Comment</key>
+      <string>EmeraldIRC_ColorAction</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Color4</string>
+      <key>Value</key>
+      <array>
+        <real>1.0</real>
+        <real>0.8</real>
+        <real>1.0</real>
+        <real>1.0</real>
+      </array>
+    </map>
+    <key>EmeraldIRC_ColorPrivate</key>
+    <map>
+      <key>Comment</key>
+      <string>Color of new objects textures</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Color4</string>
+      <key>Value</key>
+      <array>
+        <real>0.8</real>
+        <real>1.0</real>
+        <real>1.0</real>
+        <real>1.0</real>
+      </array>
+    </map>
+    <key>EmeraldIRC_ColorNotice</key>
+    <map>
+      <key>Comment</key>
+      <string>Color of new objects textures</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Color4</string>
+      <key>Value</key>
+      <array>
+        <real>0.9</real>
+        <real>0.9</real>
+        <real>1.0</real>
+        <real>1.0</real>
+      </array>
+    </map>
+    <key>EmeraldIRC_ColorJoin</key>
+    <map>
+      <key>Comment</key>
+      <string>Color of new objects textures</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Color4</string>
+      <key>Value</key>
+      <array>
+        <real>1.0</real>
+        <real>0.9</real>
+        <real>0.9</real>
+        <real>1.0</real>
+      </array>
+    </map>
+    <key>EmeraldIRC_ColorQuit</key>
+    <map>
+      <key>Comment</key>
+      <string>Color of new objects textures</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Color4</string>
+      <key>Value</key>
+      <array>
+        <real>1.0</real>
+        <real>0.5</real>
+        <real>0.5</real>
+        <real>1.0</real>
+      </array>
+    </map>
+    <key>EmeraldIRC_ColorKick</key>
+    <map>
+      <key>Comment</key>
+      <string>Color of new objects textures</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Color4</string>
+      <key>Value</key>
+      <array>
+        <real>1.0</real>
+        <real>0.4</real>
+        <real>0.4</real>
+        <real>1.0</real>
+      </array>
+    </map>
+    <key>EmeraldIRC_ColorNick</key>
+    <map>
+      <key>Comment</key>
+      <string>Color of new objects textures</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Color4</string>
+      <key>Value</key>
+      <array>
+        <real>1.0</real>
+        <real>0.7</real>
+        <real>0.9</real>
+        <real>1.0</real>
+      </array>
+    </map>
+    <key>EmeraldIRC_ColorSystem</key>
+    <map>
+      <key>Comment</key>
+      <string>Color of new objects textures</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Color4</string>
+      <key>Value</key>
+      <array>
+        <real>0.7</real>
+        <real>1.0</real>
+        <real>0.7</real>
+        <real>1.0</real>
+      </array>
+    </map>
+    <key>EmeraldIRC_ShowChannel</key>
+    <map>
+      <key>Comment</key>
+      <string>Show the related IRC messages in the chat window.</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
+    <key>EmeraldIRC_ShowAction</key>
+    <map>
+      <key>Comment</key>
+      <string>Show the related IRC messages in the chat window.</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
+    <key>EmeraldIRC_ShowPrivate</key>
+    <map>
+      <key>Comment</key>
+      <string>Show the related IRC messages in the chat window.</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
+    <key>EmeraldIRC_ShowNotice</key>
+    <map>
+      <key>Comment</key>
+      <string>Show the related IRC messages in the chat window.</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
+    <key>EmeraldIRC_ShowJoin</key>
+    <map>
+      <key>Comment</key>
+      <string>Show the related IRC messages in the chat window.</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
+    <key>EmeraldIRC_ShowQuit</key>
+    <map>
+      <key>Comment</key>
+      <string>Show the related IRC messages in the chat window.</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
+    <key>EmeraldIRC_ShowKick</key>
+    <map>
+      <key>Comment</key>
+      <string>Show the related IRC messages in the chat window.</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
+    <key>EmeraldIRC_ShowNick</key>
+    <map>
+      <key>Comment</key>
+      <string>Show the related IRC messages in the chat window.</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
+    <key>EmeraldIRC_ShowSystem</key>
+    <map>
+      <key>Comment</key>
+      <string>Show the related IRC messages in the chat window.</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
     <key>EmeraldKeepUnpackedCacheFiles</key>
     <map>
       <key>Comment</key>
@@ -4019,6 +4644,17 @@
       <key>Value</key>
       <integer>0</integer>
     </map>
+    <key>EmeraldMegaprims</key>
+    <map>
+      <key>Comment</key>
+      <string>>Disables the 10m limit on prims</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
     <key>EmeraldMiniMapPrimMaxRadius</key>
     <map>
       <key>Comment</key>
@@ -4040,6 +4676,72 @@
       <string>F32</string>
       <key>Value</key>
       <real>40</real>
+    </map>
+    <key>EmeraldMuteGroupWhenNoticesDisabled</key>
+    <map>
+      <key>Comment</key>
+      <string>When "Receive group notices" is disabled, mute also the group chat. (Muting means that it won't open new windows.)</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+   </map>
+    <key>EmeraldMuteAllGroups</key>
+    <map>
+      <key>Comment</key>
+      <string>Mute all groups at a time. (Muting means that it won't open new windows.)</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
+    <key>EmeraldDisplayTotalScriptJumps</key>
+    <map>
+      <key>Comment</key>
+      <string>Display significant changes to the sim's total script count</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
+    <key>EmeraldNewShiny</key>
+    <map>
+      <key>Comment</key>
+      <string>new shiny x.x</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
+    <key>Emeraldnumscriptdiff</key>
+    <map>
+      <key>Comment</key>
+      <string>The delta to spam you the script jump difference</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>F32</string>
+      <key>Value</key>
+      <real>100.0</real>
+    </map>
+    <key>Emeraldnumscripts</key>
+    <map>
+      <key>Comment</key>
+      <string>temp..</string>
+      <key>Persist</key>
+      <integer>0</integer>
+      <key>Type</key>
+      <string>F32</string>
+      <key>Value</key>
+      <real>0.0</real>
     </map>
     <key>EmeraldParticleChat</key>
     <map>
@@ -4072,7 +4774,7 @@
       <key>Type</key>
       <string>Boolean</string>
       <key>Value</key>
-      <integer>1</integer>
+      <integer>0</integer>
     </map>
     <key>EmeraldRadarAlertDraw</key>
     <map>
@@ -4083,7 +4785,7 @@
       <key>Type</key>
       <string>Boolean</string>
       <key>Value</key>
-      <integer>1</integer>
+      <integer>0</integer>
     </map>
     <key>EmeraldRadarAlertChatRange</key>
     <map>
@@ -4094,7 +4796,7 @@
       <key>Type</key>
       <string>Boolean</string>
       <key>Value</key>
-      <integer>1</integer>
+      <integer>0</integer>
     </map>
     <key>EmeraldRadarChatAlerts</key>
     <map>
@@ -4105,7 +4807,7 @@
       <key>Type</key>
       <string>Boolean</string>
       <key>Value</key>
-      <integer>1</integer>
+      <integer>0</integer>
     </map>
     <key>EmeraldRadarChatKeys</key>
     <map>
@@ -4128,17 +4830,6 @@
       <string>S32</string>
       <key>Value</key>
       <integer>-777777777</integer>
-    </map>
-    <key>EmeraldRainbowBeam</key>
-    <map>
-      <key>Comment</key>
-      <string>Use color cycling selection beam.</string>
-      <key>Persist</key>
-      <integer>1</integer>
-      <key>Type</key>
-      <string>Boolean</string>
-      <key>Value</key>
-      <integer>0</integer>
     </map>
     <key>EmeraldRenderHighlightSelections</key>
     <map>
@@ -4272,17 +4963,6 @@
       <key>Value</key>
       <integer>1</integer>
     </map>
-    <key>EmeraldSendTypingIndicators</key>
-    <map>
-      <key>Comment</key>
-      <string>Let other clients see when you are typing in IMs</string>
-      <key>Persist</key>
-      <integer>1</integer>
-      <key>Type</key>
-      <string>Boolean</string>
-      <key>Value</key>
-      <integer>1</integer>
-    </map>
     <key>EmeraldUseOTR</key>
     <map>
       <key>Comment</key>
@@ -4293,6 +4973,17 @@
       <string>U32</string>
       <key>Value</key>
       <integer>2</integer>
+    </map>
+    <key>EmeraldOTRInTypingStop</key>
+    <map>
+      <key>Comment</key>
+      <string>Setting this to true will make all encrypted OTR messages be sent in an IM_TYPING_STOP packet.  This is non-standard behavior, but prevents OTR encrypted IM from being saved and delivered as offline IM.  Though it currently works LL may decide to disable the feature at any time.  This is incompatible with previous versions of OTR.</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
     </map>
     <key>EmeraldVelocityDoubleClickTeleport</key>
     <map>
@@ -4382,10 +5073,10 @@
       <key>Value</key>
       <integer>0</integer>
     </map>
-    <key>EnableRippleWater</key>
+    <key>EmeraldExportProperties</key>
     <map>
       <key>Comment</key>
-      <string>Whether to use ripple water shader or not</string>
+      <string>o.o</string>
       <key>Persist</key>
       <integer>1</integer>
       <key>Type</key>
@@ -4393,10 +5084,88 @@
       <key>Value</key>
       <integer>1</integer>
     </map>
-    <key>EnableVoiceChat</key>
+    <key>EmeraldExportInventory</key>
     <map>
       <key>Comment</key>
-      <string>Enable talking to other residents with a microphone</string>
+      <string>o.o</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
+    <key>EmeraldExportTextures</key>
+    <map>
+      <key>Comment</key>
+      <string>o.o</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
+    <key>EmeraldBuildBridge</key>
+    <map>
+      <key>Comment</key>
+      <string>whether or not to create the lsl bridge</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
+    <key>EmeraldUseBridgeRadar</key>
+    <map>
+      <key>Comment</key>
+      <string>whether or not to use the lsl bridge to boost radar</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
+    <key>EmeraldUseBridgeOnline</key>
+    <map>
+      <key>Comment</key>
+      <string>whether or not to use the lsl bridge to boost online info</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
+    
+    <key>WarnEmeraldBuildBridge</key>
+    <map>
+      <key>Comment</key>
+      <string>Enables bridge warning dialog</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
+    <key>EmeraldClothingMode</key>
+    <map>
+      <key>Comment</key>
+      <string>now you fucked up</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
+    <key>EnableRippleWater</key>
+    <map>
+      <key>Comment</key>
+      <string>Whether to use ripple water shader or not</string>
       <key>Persist</key>
       <integer>1</integer>
       <key>Type</key>
@@ -4618,7 +5387,6 @@
         <integer>0</integer>
       </array>
     </map>
-    <key>OtrFloaterSmpRect</key>
     <key>OtrFloaterSmpDialogRect</key>
     <map>
       <key>Comment</key>
@@ -4929,6 +5697,83 @@
         <integer>0</integer>
       </array>
     </map>
+  <key>AvatarMorphTime</key>
+  <map>
+    <key>Comment</key>
+    <string>Time it takes to morph into new shape.</string>
+    <key>Persist</key>
+    <integer>1</integer>
+    <key>Type</key>
+    <string>F32</string>
+    <key>Value</key>
+    <real>0.65</real>
+  </map>
+  <key>EmeraldBoobMass</key>
+  <map>
+    <key>Comment</key>
+    <string>Mass of boobs.</string>
+    <key>Persist</key>
+    <integer>1</integer>
+    <key>Type</key>
+    <string>F32</string>
+    <key>Value</key>
+    <real>61.0</real>
+  </map>
+   <key>EmeraldBoobHardness</key>
+  <map>
+    <key>Comment</key>
+    <string>Hardness (dampening) of boobs.</string>
+    <key>Persist</key>
+    <integer>1</integer>
+    <key>Type</key>
+    <string>F32</string>
+    <key>Value</key>
+    <real>23</real>
+  </map>
+    <key>EmeraldBreastPhysicsToggle</key>
+    <map>
+      <key>Comment</key>
+      <string>Enables/Disables breast physics</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
+  <key>EmeraldBoobVelMax</key>
+  <map>
+    <key>Comment</key>
+    <string>Max amount of velocity boobs can have</string>
+    <key>Persist</key>
+    <integer>1</integer>
+    <key>Type</key>
+    <string>F32</string>
+    <key>Value</key>
+    <real>83</real>
+  </map>
+  <key>EmeraldBoobFriction</key>
+  <map>
+    <key>Comment</key>
+    <string>Internal friction (brings boobs to rest). Shouldn't ever be above 1.</string>
+    <key>Persist</key>
+    <integer>1</integer>
+    <key>Type</key>
+    <string>F32</string>
+    <key>Value</key>
+    <real>58</real>
+  </map>
+  <key>EmeraldBoobFrictionFraction</key>
+  <map>
+    <key>Comment</key>
+    <string>Friction Fraction of FPS (used to keep friction uniform through FPS change).</string>
+    <key>Persist</key>
+    <integer>1</integer>
+    <key>Type</key>
+    <string>F32</string>
+    <key>Value</key>
+    <real>17</real>
+  </map>
     <key>FloaterFindRect2</key>
     <map>
       <key>Comment</key>
@@ -5732,6 +6577,83 @@
 	  <string>S32</string>
 	  <key>Value</key>
 	  <real>13900</real>
+	</map>
+	<key>EmeraldGUSEnabled</key>
+	<map>
+	  <key>Comment</key>
+	  <string>Enable the Greenlife Utility Stream</string>
+	  <key>Persist</key>
+	  <integer>1</integer>
+	  <key>Type</key>
+	  <string>Boolean</string>
+	  <key>Value</key>
+	  <real>0</real>
+	</map>
+	<key>EmeraldGUSChannel</key>
+	<map>
+	  <key>Comment</key>
+	  <string>Chat-channel to whisper GUS data</string>
+	  <key>Persist</key>
+	  <integer>1</integer>
+	  <key>Type</key>
+	  <string>S32</string>
+	  <key>Value</key>
+	  <real>16000</real>
+	</map>
+	<key>EmeraldGUSRefresh</key>
+	<map>
+	  <key>Comment</key>
+	  <string>Frequency for updating standard GUS data</string>
+	  <key>Persist</key>
+	  <integer>1</integer>
+	  <key>Type</key>
+	  <string>F32</string>
+	  <key>Value</key>
+	  <real>5.0</real>
+	</map>
+	<key>EmeraldGUSFastEventsEnabled</key>
+	<map>
+	  <key>Comment</key>
+	  <string>Enable GUS Fast Events for rapidly-changing GUS variables (channel is one higher than EmeraldGUSChannel)</string>
+	  <key>Persist</key>
+	  <integer>1</integer>
+	  <key>Type</key>
+	  <string>Boolean</string>
+	  <key>Value</key>
+	  <real>0</real>
+	</map>
+	<key>EmeraldGUSFastEventsRefresh</key>
+	<map>
+	  <key>Comment</key>
+	  <string>Frequency for updating rapidly-changing GUS varibles</string>
+	  <key>Persist</key>
+	  <integer>1</integer>
+	  <key>Type</key>
+	  <string>F32</string>
+	  <key>Value</key>
+	  <real>20.0</real>
+	</map>
+	<key>EmeraldGUSEyeRot</key>
+	<map>
+	  <key>Comment</key>
+	  <string>Stream avatar eyeball mesh rotation using the Greenlife Utility Stream (GUS)</string>
+	  <key>Persist</key>
+	  <integer>1</integer>
+	  <key>Type</key>
+	  <string>Boolean</string>
+	  <key>Value</key>
+	  <real>0</real>
+	</map>
+	<key>EmeraldGUSEyelidState</key>
+	<map>
+	  <key>Comment</key>
+	  <string>Stream avatar eyelid state using the Greenlife Utility Stream (GUS)</string>
+	  <key>Persist</key>
+	  <integer>1</integer>
+	  <key>Type</key>
+	  <string>Boolean</string>
+	  <key>Value</key>
+	  <real>0</real>
 	</map>
     <key>FlyingAtExit</key>
     <map>
@@ -7170,7 +8092,7 @@
     <key>MiniMapScale</key>
     <map>
       <key>Comment</key>
-      <string>Miniature world map zoom levle (pixels per region)</string>
+      <string>Miniature world map zoom level (pixels per region)</string>
       <key>Persist</key>
       <integer>1</integer>
       <key>Type</key>
@@ -7669,7 +8591,7 @@
       <key>Type</key>
       <string>F32</string>
       <key>Value</key>
-      <real>0.0</real>
+      <real>128000.0</real>
     </map>
     <key>OverdrivenColor</key>
     <map>
@@ -10173,7 +11095,7 @@
       <key>Type</key>
       <string>Boolean</string>
       <key>Value</key>
-      <integer>1</integer>
+      <integer>0</integer>
     </map>
     <key>ShowSelectionBeam</key>
     <map>
@@ -12912,6 +13834,17 @@
       <key>Value</key>
       <integer>1</integer>
     </map>
+    <key>WarnEmeraldRadarChat</key>
+    <map>
+      <key>Comment</key>
+      <string>Enables radarchat info dialog</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
     <key>WarnFirstAppearance</key>
     <map>
       <key>Comment</key>
@@ -13509,6 +14442,22 @@
         <integer>0</integer>
       </array>
     </map>
+    <key>FloaterAssetCompareRect</key>
+    <map>
+      <key>Comment</key>
+      <string>Rectangle</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Rect</string>
+      <key>Value</key>
+      <array>
+        <integer>0</integer>
+        <integer>500</integer>
+        <integer>200</integer>
+        <integer>0</integer>
+      </array>
+    </map>
     <key>AppName</key>
     <map>
       <key>Comment</key>
@@ -13530,6 +14479,50 @@
       <string>Boolean</string>
       <key>Value</key>
       <integer>0</integer>
+    </map>
+    <key>wlfAdvSettingsPopup</key>
+    <map>
+      <key>Comment</key>
+      <string>Show the settings popup</string>
+      <key>Persist</key>
+      <integer>0</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
+        <key>LogTextureDownloadsToViewerLog</key>
+    <map>
+      <key>Comment</key>
+      <string>Send texture download details to the viewer log</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
+    <key>LogTextureDownloadsToSimulator</key>
+    <map>
+      <key>Comment</key>
+      <string>Send a digest of texture info to the sim</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
+    <key>TextureLoggingThreshold</key>
+    <map>
+      <key>Comment</key>
+      <string>Specifies the byte threshold at which texture download data should be sent to the sim.</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>U32</string>
+      <key>Value</key>
+      <integer>1</integer>
     </map>
   </map>
 </llsd>

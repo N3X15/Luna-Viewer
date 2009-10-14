@@ -360,6 +360,8 @@ public:
 
 	LLVector3d getPosition();
 
+	BOOL getNeedsBridgeAssist();
+
 	/**
 	 * @brief Returns the age of this entry in frames
 	 *
@@ -382,6 +384,8 @@ public:
 	 * @brief Returns the name of the avatar
 	 */
 	std::string getName();
+	time_t getTime();
+	void resetTime();
 
 	void setName(std::string name);
 
@@ -413,6 +417,11 @@ public:
 	 */
 	void setActivity(ACTIVITY_TYPE activity);
 
+
+	void setAlert();
+
+	BOOL getAlert();
+
 	/**
 	 * @brief Returns the activity type
 	 */
@@ -440,8 +449,12 @@ private:
 
 	LLUUID mID;
 	std::string mName;
+	time_t mTime;
 	LLVector3d mPosition;
+	BOOL mNeedBridgeAssist;
+	F32 mLastBridgeRequestTime;
 	LLVector3d mDrawPosition;
+	BOOL mAlert;
 	BOOL mMarked;
 	BOOL mFocused;
 	BOOL mIsLinden;
@@ -526,11 +539,18 @@ public:
 	 * @brief Process the reply to a request for avatar properties
 	 */
 	static void processAvatarPropertiesReply(LLMessageSystem *msg, void**);
+
+	/**
+	* @brief Process the update pos based on bridge info
+	*/
+	static void processBridgeReply(std::vector<LLUUID> avatars, LLSD bridgeResponce);
 	
 	/**
 	 * @brief Process the reply to a request for avatar properties
 	 */
 	static void processSoundTrigger(LLMessageSystem *msg, void**);
+
+	static void callbackEmeraldChat(const LLSD &notification, const LLSD &response);
 
 	/**
 	 * @brief Returns TRUE if the avatar is in the list of known avatars
@@ -569,6 +589,7 @@ private:
 		LIST_AGE,
 		LIST_PAYMENT,
 		LIST_ACTIVITY,
+		LIST_TIME,
 		LIST_CLIENT
 	};
 
@@ -608,6 +629,9 @@ private:
 	static void onClickTrack(void *userdata);
 	static void onClickMark(void *userdata);
 
+	static void onClickAgeAlert(LLUICtrl* ctrl,void *userdata);
+	static void onClickAgeAlertDays(LLUICtrl* ctrl,void *userdata);
+
 	static void onClickPrevInList(void *userdata);
 	static void onClickNextInList(void *userdata);
 	static void onClickPrevMarked(void *userdata);
@@ -615,6 +639,7 @@ private:
 	static void onClickGetKey(void *userdata);
 
 	static void onDoubleClick(void *userdata);
+	static void lookAtAvatar(LLUUID &uuid);
 
 	static void onClickFreeze(void *userdata);
 	static void onClickEject(void *userdata);
@@ -654,6 +679,8 @@ private:
 	 */
 	LLScrollListCtrl*			mAvatarList;
 	std::map<LLUUID, LLAvatarListEntry>	mAvatars;
+
+	F32 mlastBridgeCallTime;
 
 	struct LLAreaAlertEntry
 	{

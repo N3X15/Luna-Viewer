@@ -1,4 +1,19 @@
 # -*- cmake -*-
+#include(Python)
+
+#execute_process(
+#      COMMAND ${PYTHON_EXECUTABLE} ${SCRIPTS_DIR}/svnversion.py
+#      OUTPUT_VARIABLE SVN_VERSION
+#      OUTPUT_STRIP_TRAILING_WHITESPACE
+#      )
+#add_definitions(-DEMERALD_SVN_VERSION=${SVN_VERSION})
+#
+#execute_process(
+#      COMMAND ${PYTHON_EXECUTABLE} ${SCRIPTS_DIR}/svnbranch.py
+#      OUTPUT_VARIABLE SVN_BRANCH
+#      OUTPUT_STRIP_TRAILING_WHITESPACE
+#      )
+#add_definitions(-DEMERALD_BRANCH="${SVN_BRANCH}")
 
 include(APR)
 include(Boost)

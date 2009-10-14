@@ -137,6 +137,7 @@ LLPreferenceCore::LLPreferenceCore(LLTabContainer* tab_container, LLButton * def
 	mAudioPanel(NULL),
 	mMsgPanel(NULL),
 	mSkinsPanel(NULL),
+	mEmeraldPanel(NULL),
 	mLCDPanel(NULL)
 {
 	mGeneralPanel = new LLPanelGeneral();

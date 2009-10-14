@@ -10,24 +10,37 @@
 #ifndef LL_CALCPARSER_H
 #define LL_CALCPARSER_H
 
+#include <boost/version.hpp>
+#if BOOST_VERSION >= 103600
+#include <boost/spirit/include/classic_attribute.hpp>
+#include <boost/spirit/include/classic_core.hpp>
+#include <boost/spirit/include/classic_error_handling.hpp>
+#include <boost/spirit/include/classic_position_iterator.hpp>
+#include <boost/spirit/include/phoenix1_binders.hpp>
+#include <boost/spirit/include/classic_symbols.hpp>
+using namespace boost::spirit::classic;
+#else
 #include <boost/spirit/attribute.hpp>
 #include <boost/spirit/core.hpp>
 #include <boost/spirit/error_handling.hpp>
 #include <boost/spirit/iterator/position_iterator.hpp>
 #include <boost/spirit/phoenix/binders.hpp>
 #include <boost/spirit/symbols/symbols.hpp>
+using namespace boost::spirit;
+#endif
+
 #include <map>
 #include <string>
 
 #include "llcalc.h"
 #include "llmath.h"
 
-struct LLCalcParser : boost::spirit::grammar<LLCalcParser>
+struct LLCalcParser : grammar<LLCalcParser>
 {
 	LLCalcParser(F32& result, LLCalc::calc_map_t* constants, LLCalc::calc_map_t* vars) :
 		mResult(result), mConstants(constants), mVariables(vars) {};
 	
-	struct value_closure : boost::spirit::closure<value_closure, F32>
+	struct value_closure : closure<value_closure, F32>
 	{
 		member1 value;
 	};
@@ -36,8 +49,8 @@ struct LLCalcParser : boost::spirit::grammar<LLCalcParser>
 	struct definition
 	{
 		// Rule declarations
-		boost::spirit::rule<ScannerT> statement, identifier;
-		boost::spirit::rule<ScannerT, value_closure::context_t> expression, term,
+		rule<ScannerT> statement, identifier;
+		rule<ScannerT, value_closure::context_t> expression, term,
 			power, 
 			unary_expr, 
 			factor, 
@@ -46,11 +59,10 @@ struct LLCalcParser : boost::spirit::grammar<LLCalcParser>
 			group;
 
 		// start() should return the starting symbol
-		boost::spirit::rule<ScannerT> const& start() const { return statement; }
+		rule<ScannerT> const& start() const { return statement; }
 		
 		definition(LLCalcParser const& self)
 		{
-			using namespace boost::spirit;
 			using namespace phoenix;
 			
 			assertion<std::string> assert_domain("Domain error");

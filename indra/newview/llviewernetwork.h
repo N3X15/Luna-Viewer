@@ -77,7 +77,9 @@ public:
 
 	void setGridChoice(EGridInfo grid);
 	void setGridChoice(const std::string& grid_name);
-	void resetURIs();
+	void setGridURI(const std::string& uri);
+	void setGridURIs(const std::vector<std::string>& urilist); 
+	//void resetURIs();
 
 	/**
 	* @brief Get the enumeration of the grid choice.
@@ -91,20 +93,36 @@ public:
 	* If the grid is 'other', returns something
 	* the string used to specifiy the grid.
 	**/
-	std::string getGridLabel() const; 
-
+	std::string getGridLabel();
+	
 	std::string getKnownGridLabel(EGridInfo grid_index) const; 
 
-	void getLoginURIs(std::vector<std::string>& uris) const;
-	std::string getHelperURI() const;
+	const std::string getCurrentGridURI();
+	bool tryNextURI();
+	
+	const std::vector<std::string>& getGridURIs();
+	const std::string getHelperURI() const;
+	void setHelperURI(const std::string& uri);
+	const std::string getLoginPageURI() const;
+	void setLoginPageURI(const std::string& uri);
 
 	bool isInProductionGrid();
 	static LLSD		sCmdLineURIs;
-
 private:
+	void parseCommandLineURIs();
+	const std::string getStaticGridURI(const EGridInfo grid) const;
+	const std::string getStaticGridHelperURI(const EGridInfo grid) const;
+
 	EGridInfo mGridChoice;
 	std::string mGridName;
+	std::string mHelperURI;
+	std::string mLoginPageURI;
+	std::vector<std::string> mGridURIs;
+	
+	unsigned int mCurrentURI;
 };
+
+const EGridInfo DEFAULT_GRID_CHOICE = GRID_INFO_AGNI;
 
 const S32 MAC_ADDRESS_BYTES = 6;
 extern unsigned char gMACAddress[MAC_ADDRESS_BYTES];		/* Flawfinder: ignore */

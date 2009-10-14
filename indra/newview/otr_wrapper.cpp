@@ -42,7 +42,7 @@ OTR_Wrapper::~OTR_Wrapper()
 
 #define otrwui_tracing 1 // $TODO$ use some debug compile flag?
 #if otrwui_tracing
-static void otrwui_trace(const char *msg)
+extern "C" void otrwui_trace(const char *msg)
 {
     llinfos << "$PLOTR$TRACE$" << msg << llendl;
 }
@@ -146,7 +146,7 @@ static int otrwui_is_logged_in(
 	const LLRelationship* info = NULL;
 	info = LLAvatarTracker::instance().getBuddyInfo(recipient_uuid);
     int result;
-    if (!info)                  result = -1;
+    if (!info)                  result = 1; // hack, should be -1.  but we'll pretend non-friends are always online
     else if (!info->isOnline()) result = 0;
     else                        result = 1;
 #if otrwui_tracing
@@ -179,7 +179,7 @@ static void otrwui_inject_message(
     {
         LLUUID sessionUUID = *((LLUUID*)opdata);
         LLUUID otherUUID(recipient);
-        deliver_otr_message(message, sessionUUID, otherUUID, IM_NOTHING_SPECIAL);
+        otr_deliver_message(message, sessionUUID, otherUUID, IM_NOTHING_SPECIAL);
     }
 }
 
@@ -283,13 +283,13 @@ static void otrwui_gone_secure(
         context->active_fingerprint->trust &&
         *(context->active_fingerprint->trust))
     {
-        otr_log_message_getstring_name(session_id, "otr_log_start_private");
+        //otr_log_message_getstring_name(session_id, "otr_log_start_private");
     }
     else
     {
-        otr_log_message_getstring_name(session_id, "otr_log_start_unverified");
+        //otr_log_message_getstring_name(session_id, "otr_log_start_unverified");
     }
-    show_otr_status(session_id);
+    otr_show_status(session_id);
 }
 
 static void otrwui_gone_insecure(
@@ -304,7 +304,7 @@ static void otrwui_gone_insecure(
     }
     LLUUID session_id = *((LLUUID*)opdata);
     otr_log_message_getstring(session_id, "otr_log_gone_insecure");
-    show_otr_status(session_id);
+    otr_show_status(session_id);
 }
 
 static void otrwui_still_secure(
@@ -323,13 +323,13 @@ static void otrwui_still_secure(
         context->active_fingerprint->trust &&
         *(context->active_fingerprint->trust))
     {
-        otr_log_message_getstring_name(session_id, "otr_log_still_private");
+        //otr_log_message_getstring_name(session_id, "otr_log_still_private");
     }
     else
     {
-        otr_log_message_getstring_name(session_id, "otr_log_still_unverified");
+        //otr_log_message_getstring_name(session_id, "otr_log_still_unverified");
     }
-    show_otr_status(session_id);
+    otr_show_status(session_id);
 }
 
 static void otrwui_log_message(
@@ -344,7 +344,7 @@ static int otrwui_max_message_size(
     void *opdata, ConnContext *context)
 {
     /* Find the maximum message size supported by this protocol. */
-    return (MAX_MSG_BUF_SIZE - 1);
+    return (MAX_MSG_BUF_SIZE - 24);
 }
 
 static const char *otrwui_account_name(
@@ -464,6 +464,24 @@ void OTR_Wrapper::init()
                 gDirUtilp->getExpandedFilename(
                     LL_PATH_PER_SL_ACCOUNT, OTR_PUBLIC_KEYS_FILE);
             otrl_privkey_read_fingerprints(gOTR->userstate, pubpath.c_str(), NULL, NULL);
+#if 0 // this will gen a key, if the user doesn't have one, at init() time
+            if (gOTR && gOTR->userstate)
+            {
+                OtrlPrivKey *r = gOTR->userstate->privkey_root;
+                OtrlPrivKey *k = gOTR->userstate->privkey_root;
+                while (k && (k != r))
+                {
+                    if (0 == strcmp(gOTR->get_protocolid(), k->protocol))
+                    {
+                        return;
+                    }
+                }
+                char my_uuid[UUID_STR_SIZE];
+                gAgent.getID().toString(&(my_uuid[0]));
+                otrl_privkey_generate(gOTR->userstate, privpath.c_str(),
+                                      my_uuid, gOTR->get_protocolid());
+            }
+#endif
         }
     }
 }

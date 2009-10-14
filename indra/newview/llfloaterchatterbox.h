@@ -129,6 +129,7 @@ public:
 
 	static void* createFriendsPanel(void* data);
 	static void* createGroupsPanel(void* data);
+	static void* createIRCPanel(void* data);
 
 	// visibility policy for LLUISingleton
 	static bool visible(LLFloater* instance, const LLSD& key)
@@ -148,12 +149,20 @@ public:
 	{
 		if (visible(instance, key))
 		{
+			if(instance->getHost())
+			{
 			LLFloaterChatterBox::hideInstance();
+			}
+			else
+			{
+				VisibilityPolicy<LLFloater>::hide(instance, key);
+			}
 		}
 	}
 
 protected:
 	LLTabContainer* mTabs;
+
 };
 
 #endif // LL_LLFLOATERCHATTERBOX_H

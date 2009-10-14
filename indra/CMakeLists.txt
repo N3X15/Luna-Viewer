@@ -10,6 +10,7 @@ cmake_minimum_required(VERSION 2.4.8 FATAL_ERROR)
 # This makes cmake 2.6 not complain about version 2.4 compatibility.
 if(COMMAND cmake_policy)
   cmake_policy(SET CMP0003 OLD)
+  cmake_policy(SET CMP0005 OLD)
 endif(COMMAND cmake_policy)
 
 set(ROOT_PROJECT_NAME "SecondLife" CACHE STRING

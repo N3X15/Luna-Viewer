@@ -96,6 +96,9 @@ public:
 	virtual void	resetDirty();				// Clear dirty state
 
 	virtual void	setFocus(BOOL b);
+	
+	// Allow prevalidation of text input field
+	void			setPrevalidate( BOOL (*func)(const LLWString &) );
 
 	// Selects item by underlying LLSD value, using LLSD::asString() matching.  
 	// For simple items, this is just the name of the label.
@@ -107,6 +110,9 @@ public:
 
 	void			setAllowTextEntry(BOOL allow, S32 max_chars = 50, BOOL make_tentative = TRUE);
 	void			setTextEntry(const LLStringExplicit& text);
+	void			setFocusText(BOOL b);	// Sets focus to the text input area instead of the list
+	BOOL			isTextDirty() const;	// Returns TRUE if the user has modified the text input area
+	void			resetTextDirty();		// Resets the dirty flag on the input field
 
 	LLScrollListItem*	add(const std::string& name, EAddPosition pos = ADD_BOTTOM, BOOL enabled = TRUE);	// add item "name" to menu
 	LLScrollListItem*	add(const std::string& name, const LLUUID& id, EAddPosition pos = ADD_BOTTOM, BOOL enabled = TRUE);
@@ -179,6 +185,8 @@ public:
 	static void		onItemSelected(LLUICtrl* item, void *userdata);
 	static void		onTextEntry(LLLineEditor* line_editor, void* user_data);
 	static void		onTextCommit(LLUICtrl* caller, void* user_data);
+	
+	void			setSuppressTentative(bool suppress);
 
 	void			updateSelection();
 	virtual void	showList();
@@ -198,6 +206,7 @@ private:
 	BOOL				mAllowTextEntry;
 	S32					mMaxChars;
 	BOOL				mTextEntryTentative;
+	bool				mSuppressTentative;
 	void				(*mPrearrangeCallback)(LLUICtrl*,void*);
 	void				(*mTextEntryCallback)(LLLineEditor*, void*);
 };

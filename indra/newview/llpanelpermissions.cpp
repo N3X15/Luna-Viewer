@@ -963,12 +963,21 @@ void LLPanelPermissions::onClickCopyObjKey(void* data)
 {
 	//NAMESHORT - Was requested on the forums, was going to integrate a textbox with the ID, but due to lack of room on the floater,
 	//We now have a copy button :>
-	LLViewerObject* object = LLSelectMgr::getInstance()->getSelection()->getFirstRootObject();
-	if(!object) return;
-
-	char buffer[UUID_STR_LENGTH];		/*Flawfinder: ignore*/
-	object->getID().toString(buffer);
-	gViewerWindow->mWindow->copyTextToClipboard(utf8str_to_wstring(buffer));
+	//Madgeek - Hacked together method to copy more than one key, separated by comma.
+	std::string output;
+	std::string separator = gSavedSettings.getString("EmeraldCopyObjKeySeparator");
+	for (LLObjectSelection::root_iterator iter = LLSelectMgr::getInstance()->getSelection()->root_begin();
+		iter != LLSelectMgr::getInstance()->getSelection()->root_end(); iter++)
+	{
+		LLSelectNode* selectNode = *iter;
+		LLViewerObject* object = selectNode->getObject();
+		if (object)
+		{
+			if (!output.empty()) output.append(separator);
+			output.append(object->getID().asString());
+		}
+	}
+	if (!output.empty()) gViewerWindow->mWindow->copyTextToClipboard(utf8str_to_wstring(output));
 }
 
 ///----------------------------------------------------------------------------

@@ -648,7 +648,7 @@ void LLNetMap::setDirectionPos( LLTextBox* text_box, F32 rotation )
 
 void LLNetMap::updateMinorDirections()
 {
-	if (getChild<LLTextBox>("ne_label") == NULL)
+	if (getChild<LLTextBox>("ne_label", TRUE, FALSE) == NULL)
 	{
 		return;
 	}

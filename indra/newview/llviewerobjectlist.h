@@ -43,13 +43,12 @@
 
 // project includes
 #include "llviewerobject.h"
-#include "llvoavatar.h"
-#include "importtracker.h"
+
 
 class LLNetMap;
 class LLDebugBeacon;
 
-extern ImportTracker gImportTracker;
+
 
 const U32 CLOSE_BIN_SIZE = 10;
 const U32 NUM_BINS = 16;

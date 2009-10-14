@@ -814,12 +814,14 @@ BOOL LLFace::getGeometryVolume(const LLVolume& volume,
 		if (num_indices + (S32) mIndicesIndex > mVertexBuffer->getNumIndices())
 		{
 			llwarns << "Index buffer overflow!" << llendl;
+			llwarns << "Object: " << getViewerObject()->mID << llendl;
 			return FALSE;
 		}
 
 		if (num_vertices + mGeomIndex > mVertexBuffer->getNumVerts())
 		{
 			llwarns << "Vertex buffer overflow!" << llendl;
+			llwarns << "Object: " << getViewerObject()->mID << llendl;
 			return FALSE;
 		}
 	}
@@ -960,7 +962,7 @@ BOOL LLFace::getGeometryVolume(const LLVolume& volume,
 			0.75f
 		};
 
-		if (getPoolType() != LLDrawPool::POOL_ALPHA && (LLPipeline::sRenderDeferred || LLPipeline::sRenderBump && tep->getShiny()))
+		if (getPoolType() != LLDrawPool::POOL_ALPHA && (LLPipeline::sRenderDeferred || (LLPipeline::sRenderBump && tep->getShiny())))
 		{
 			color.mV[3] = U8 (alpha[tep->getShiny()] * 255);
 		}

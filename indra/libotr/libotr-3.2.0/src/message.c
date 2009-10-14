@@ -456,9 +456,9 @@ static void maybe_resend(EncrData *edata)
 	err = otrl_proto_create_data(&resendmsg,
 		edata->context, edata->context->lastmessage, NULL, 0);
 	if (!err) {
-	    const char *format = "The last message "
-		"to %s was resent.";
-	    char *buf;
+	    //const char *format = "The last message "
+		//"to %s was resent.";
+	    //char *buf;
 
 	    /* Resend the message */
 	    otrl_message_fragment_and_send(edata->ops, edata->opdata, edata->context, resendmsg, OTRL_FRAGMENT_SEND_ALL, NULL);
@@ -469,8 +469,8 @@ static void maybe_resend(EncrData *edata)
 		/* We're actually just sending it
 		 * for the first time. */
 		edata->ignore_message = 1;
-	    } else {
-		/* Let the user know we resent it */
+	    } /*else {
+		// Let the user know we resent it 
 		buf = malloc(strlen(format) +
 			strlen(edata->context->username) - 1);
 		if (buf) {
@@ -490,7 +490,7 @@ static void maybe_resend(EncrData *edata)
 			free(buf);
 		    }
 		}
-	    }
+	    }*/
 	}
     }
 }
@@ -994,7 +994,7 @@ int otrl_message_receiving(OtrlUserState us, const OtrlMessageAppOps *ops,
 			if ((flags & OTRL_MSGFLAGS_IGNORE_UNREADABLE)) {
 			    edata.ignore_message = 1;
 			    break;
-			}
+			}/*
 			format = is_conflict ? "We received an unreadable "
 			    "encrypted message from %s." :
 			    "We received a malformed data message from %s.";
@@ -1010,14 +1010,14 @@ int otrl_message_receiving(OtrlUserState us, const OtrlMessageAppOps *ops,
 					"OTR Error", buf, NULL);
 			    }
 			    free(buf);
-			}
+			}*/
 			if (ops->inject_message) {
 			    ops->inject_message(opdata, accountname, protocol,
 				    sender, is_conflict ? "?OTR Error: "
-					    "You transmitted an unreadable "
-					    "encrypted message." :
-					    "?OTR Error: You transmitted "
-					    "a malformed data message");
+					    "You sent an unreadable "
+					    "message. It has been resent." :
+					    "?OTR Error: You sent "
+					    "a malformed message, it has been resent.");
 			}
 			edata.ignore_message = 1;
 			break;
@@ -1220,7 +1220,7 @@ int otrl_message_receiving(OtrlUserState us, const OtrlMessageAppOps *ops,
 		    otrerror = message;
 		}
 		if (!ops->display_otr_message(opdata, accountname, protocol,
-			    sender, otrerror)) {
+			    sender, otrerror)) { 
 		    edata.ignore_message = 1;
 		}
 	    }
@@ -1285,8 +1285,7 @@ int otrl_message_receiving(OtrlUserState us, const OtrlMessageAppOps *ops,
 		 * (not us) is going to free() the *message pointer,
 		 * not g_free() it. */
 		const char *plainmsg = (*newmessagep) ? *newmessagep : message;
-		const char *format = "The following message received "
-		    "from %s was NOT encrypted: [%s]";
+		const char *format = "NOT encrypted: [%s]";
 		char *buf = 0;
                 if (policy & OTRL_POLICY_REQUIRE_ENCRYPTION) {
                     format = "%s sent a message that was NOT encrypted.";
@@ -1301,7 +1300,7 @@ int otrl_message_receiving(OtrlUserState us, const OtrlMessageAppOps *ops,
                     /* Remove "%s%s", add username + message + '\0' */
                 }
 		if (buf) {
-		    sprintf(buf, format, context->username, plainmsg);
+		    sprintf(buf, format, plainmsg);
 		    if (ops->display_otr_message) {
 			if (!ops->display_otr_message(opdata, accountname,
 				    protocol, sender, buf)) {

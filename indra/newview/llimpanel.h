@@ -184,11 +184,15 @@ extern void otr_authenticate_key(LLUUID session_id, const char *trust);
 extern void otr_log_message_getstring_name(LLUUID session_id, const char *message_name);
 extern void otr_log_message_getstring(LLUUID session_id, const char *message_name);
 extern void otr_log_message(LLUUID session_id, const char *message);
-extern void show_otr_status(LLUUID session_id);
-extern void deliver_otr_message(const std::string& utf8_text,
+extern void otr_show_status(LLUUID session_id);
+extern void otr_deliver_message(const std::string& utf8_text,
                                 const LLUUID& im_session_id,
                                 const LLUUID& other_participant_id,
                                 EInstantMessage dialog);
+extern void deliver_message(const std::string& utf8_text,
+                            const LLUUID& im_session_id,
+                            const LLUUID& other_participant_id,
+                            EInstantMessage dialog);
 #endif // USE_OTR // [/$PLOTR$]
 
 class LLFloaterIMPanel : public LLFloater
@@ -249,6 +253,7 @@ public:
 	static void		onTabClick( void* userdata );
 
 	static void		onClickProfile( void* userdata );
+	static void		onClickHistory( void* userdata );
 	static void		onClickTeleport( void* userdata );
 	static void		onClickGroupInfo( void* userdata );
 	static void		onClickClose( void* userdata );
@@ -268,6 +273,7 @@ public:
 	void updateSpeakersList(const LLSD& speaker_updates);
 	void processSessionUpdate(const LLSD& update);
 	void setSpeakers(const LLSD& speaker_list);
+	void setIRCSpeakers(const LLSD& speaker_list);
 	LLVoiceChannel* getVoiceChannel() { return mVoiceChannel; }
 	EInstantMessage getDialogType() const { return mDialog; }
 

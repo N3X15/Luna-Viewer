@@ -5,396 +5,161 @@
             <map>
             <key>color</key>
                 <array>
-                    <real>0</real>
-                    <real>0</real>
-                    <real>0</real>
+                    <real>1</real>
+                    <real>1</real>
+                    <real>1</real>
                     <real>1</real>
                 </array>
             <key>offset</key>
                 <array>
                     <real>0</real>
-                    <real>-21</real>
-                    <real>20</real>
+                    <real>0</real>
+                    <real>0</real>
                 </array>
             </map>
             <map>
             <key>color</key>
                 <array>
-                    <real>0</real>
-                    <real>0</real>
-                    <real>0</real>
+                    <real>1</real>
+                    <real>1</real>
+                    <real>1</real>
                     <real>1</real>
                 </array>
             <key>offset</key>
                 <array>
+                    <real>-1</real>
                     <real>0</real>
-                    <real>22</real>
-                    <real>20</real>
+                    <real>0</real>
                 </array>
-            </map>
-            <map>
+            </map><map>
             <key>color</key>
                 <array>
-                    <real>0</real>
-                    <real>0</real>
-                    <real>0</real>
+                    <real>1</real>
+                    <real>1</real>
+                    <real>1</real>
                     <real>1</real>
                 </array>
             <key>offset</key>
                 <array>
+                    <real>-2</real>
                     <real>0</real>
-                    <real>22</real>
-                    <real>-21</real>
+                    <real>0</real>
                 </array>
-            </map>
-            <map>
+            </map><map>
             <key>color</key>
                 <array>
-                    <real>0</real>
-                    <real>0</real>
-                    <real>0</real>
+                    <real>1</real>
+                    <real>1</real>
+                    <real>1</real>
                     <real>1</real>
                 </array>
             <key>offset</key>
                 <array>
+                    <real>-3</real>
                     <real>0</real>
-                    <real>-20</real>
-                    <real>-24</real>
+                    <real>0</real>
                 </array>
-            </map>
-
-
-
-
-
-
-
-
-
-<map>
+            </map><map>
             <key>color</key>
                 <array>
-                    <real>0</real>
-                    <real>0</real>
-                    <real>0</real>
+                    <real>1</real>
+                    <real>1</real>
+                    <real>1</real>
                     <real>1</real>
                 </array>
             <key>offset</key>
                 <array>
-                    <real>-20</real>
-                    <real>-21</real>
-                    <real>20</real>
+                    <real>-4</real>
+                    <real>0</real>
+                    <real>0</real>
                 </array>
-            </map>
-            <map>
+            </map><map>
             <key>color</key>
                 <array>
-                    <real>0</real>
-                    <real>0</real>
-                    <real>0</real>
+                    <real>1</real>
+                    <real>1</real>
+                    <real>1</real>
                     <real>1</real>
                 </array>
             <key>offset</key>
                 <array>
-                    <real>-20</real>
-                    <real>22</real>
-                    <real>20</real>
+                    <real>-5</real>
+                    <real>0</real>
+                    <real>0</real>
                 </array>
-            </map>
-            <map>
+            </map><map>
             <key>color</key>
                 <array>
-                    <real>0</real>
-                    <real>0</real>
-                    <real>0</real>
+                    <real>1</real>
+                    <real>1</real>
+                    <real>1</real>
                     <real>1</real>
                 </array>
             <key>offset</key>
                 <array>
-                    <real>-20</real>
-                    <real>22</real>
-                    <real>-21</real>
+                    <real>-6</real>
+                    <real>0</real>
+                    <real>0</real>
                 </array>
-            </map>
-            <map>
+            </map><map>
             <key>color</key>
                 <array>
-                    <real>0</real>
-                    <real>0</real>
-                    <real>0</real>
+                    <real>1</real>
+                    <real>1</real>
+                    <real>1</real>
                     <real>1</real>
                 </array>
             <key>offset</key>
                 <array>
-                    <real>-20</real>
-                    <real>-20</real>
-                    <real>-24</real>
+                    <real>-7</real>
+                    <real>0</real>
+                    <real>0</real>
                 </array>
-            </map>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<map>
+            </map><map>
             <key>color</key>
                 <array>
-                    <real>0</real>
-                    <real>0</real>
-                    <real>0</real>
+                    <real>1</real>
+                    <real>1</real>
+                    <real>1</real>
                     <real>1</real>
                 </array>
             <key>offset</key>
                 <array>
-                    <real>20</real>
-                    <real>-21</real>
-                    <real>20</real>
+                    <real>-8</real>
+                    <real>0</real>
+                    <real>0</real>
                 </array>
-            </map>
-            <map>
+            </map><map>
             <key>color</key>
                 <array>
-                    <real>0</real>
-                    <real>0</real>
-                    <real>0</real>
+                    <real>1</real>
+                    <real>1</real>
+                    <real>1</real>
                     <real>1</real>
                 </array>
             <key>offset</key>
                 <array>
-                    <real>20</real>
-                    <real>22</real>
-                    <real>20</real>
+                    <real>-9</real>
+                    <real>0</real>
+                    <real>0</real>
                 </array>
-            </map>
-            <map>
+            </map><map>
             <key>color</key>
                 <array>
-                    <real>0</real>
-                    <real>0</real>
-                    <real>0</real>
+                    <real>1</real>
+                    <real>1</real>
+                    <real>1</real>
                     <real>1</real>
                 </array>
             <key>offset</key>
                 <array>
-                    <real>20</real>
-                    <real>22</real>
-                    <real>-21</real>
-                </array>
-            </map>
-            <map>
-            <key>color</key>
-                <array>
+                    <real>-10</real>
                     <real>0</real>
                     <real>0</real>
-                    <real>0</real>
-                    <real>1</real>
-                </array>
-            <key>offset</key>
-                <array>
-                    <real>20</real>
-                    <real>-20</real>
-                    <real>-24</real>
-                </array>
-            </map>
-
-
-
-
-<map>
-            <key>color</key>
-                <array>
-                    <real>0</real>
-                    <real>0</real>
-                    <real>0</real>
-                    <real>1</real>
-                </array>
-            <key>offset</key>
-                <array>
-                    <real>40</real>
-                    <real>-21</real>
-                    <real>20</real>
-                </array>
-            </map>
-            <map>
-            <key>color</key>
-                <array>
-                    <real>0</real>
-                    <real>0</real>
-                    <real>0</real>
-                    <real>1</real>
-                </array>
-            <key>offset</key>
-                <array>
-                    <real>40</real>
-                    <real>22</real>
-                    <real>20</real>
-                </array>
-
-
-<map>
-            <key>color</key>
-                <array>
-                    <real>0</real>
-                    <real>0</real>
-                    <real>0</real>
-                    <real>1</real>
-                </array>
-            <key>offset</key>
-                <array>
-                    <real>60</real>
-                    <real>-21</real>
-                    <real>20</real>
-                </array>
-            </map>
-            <map>
-            <key>color</key>
-                <array>
-                    <real>0</real>
-                    <real>0</real>
-                    <real>0</real>
-                    <real>1</real>
-                </array>
-            <key>offset</key>
-                <array>
-                    <real>60</real>
-                    <real>22</real>
-                    <real>20</real>
-                </array>
-            </map>
-            <map>
-            <key>color</key>
-                <array>
-                    <real>0</real>
-                    <real>0</real>
-                    <real>0</real>
-                    <real>1</real>
-                </array>
-            <key>offset</key>
-                <array>
-                    <real>60</real>
-                    <real>22</real>
-                    <real>-21</real>
-                </array>
-            </map>
-            <map>
-            <key>color</key>
-                <array>
-                    <real>0</real>
-                    <real>0</real>
-                    <real>0</real>
-                    <real>1</real>
-                </array>
-            <key>offset</key>
-                <array>
-                    <real>60</real>
-                    <real>-20</real>
-                    <real>-24</real>
-                </array>
-            </map>
-
-<map>
-            <key>color</key>
-                <array>
-                    <real>0</real>
-                    <real>0</real>
-                    <real>0</real>
-                    <real>1</real>
-                </array>
-            <key>offset</key>
-                <array>
-                    <real>80</real>
-                    <real>-21</real>
-                    <real>20</real>
-                </array>
-            </map>
-            <map>
-            <key>color</key>
-                <array>
-                    <real>0</real>
-                    <real>0</real>
-                    <real>0</real>
-                    <real>1</real>
-                </array>
-            <key>offset</key>
-                <array>
-                    <real>80</real>
-                    <real>22</real>
-                    <real>20</real>
-                </array>
-            </map>
-            <map>
-            <key>color</key>
-                <array>
-                    <real>0</real>
-                    <real>0</real>
-                    <real>0</real>
-                    <real>1</real>
-                </array>
-            <key>offset</key>
-                <array>
-                    <real>80</real>
-                    <real>22</real>
-                    <real>-21</real>
-                </array>
-            </map>
-            <map>
-            <key>color</key>
-                <array>
-                    <real>0</real>
-                    <real>0</real>
-                    <real>0</real>
-                    <real>1</real>
-                </array>
-            <key>offset</key>
-                <array>
-                    <real>80</real>
-                    <real>-20</real>
-                    <real>-24</real>
-                </array>
-            </map>
-            </map>
-            <map>
-            <key>color</key>
-                <array>
-                    <real>0</real>
-                    <real>0</real>
-                    <real>0</real>
-                    <real>1</real>
-                </array>
-            <key>offset</key>
-                <array>
-                    <real>40</real>
-                    <real>22</real>
-                    <real>-21</real>
-                </array>
-            </map>
-            <map>
-            <key>color</key>
-                <array>
-                    <real>0</real>
-                    <real>0</real>
-                    <real>0</real>
-                    <real>1</real>
-                </array>
-            <key>offset</key>
-                <array>
-                    <real>40</real>
-                    <real>-20</real>
-                    <real>-24</real>
                 </array>
             </map>
         </array>
     <key>scale</key>
-        <real>0.02</real>
+        <real>2.3</real>
     </map>
 </llsd>

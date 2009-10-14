@@ -29,11 +29,11 @@
  * COMPLETENESS OR PERFORMANCE.
  * $/LicenseInfo$
  */
-#include <iostream>
-#include <iomanip> // for setprecision
+
 
 #include "llviewerprecompiledheaders.h"
-
+#include <iostream>
+//#include <iomanip> // for setprecision
 #include "llviewerjoystick.h"
 
 #include "llviewercontrol.h"
@@ -49,6 +49,8 @@
 #include "llchat.h"
 #include "llviewerstats.h"
 
+bool LLViewerJoystick::streamEnabled = false;
+F32 LLViewerJoystick::streamRefresh = 0.0001f;
 
 // ----------------------------------------------------------------------------
 // Constants
@@ -170,8 +172,27 @@ LLViewerJoystick::LLViewerJoystick()
 
 	// factor in bandwidth? bandwidth = gViewerStats->mKBitStat
 	mPerfScale = 4000.f / gSysCPU.getMhz();
-}
 
+	initStream();
+}
+//static
+void LLViewerJoystick::initStream()
+{
+	streamEnabled = gSavedSettings.getBOOL("JoystickStreamEnabled");
+	streamRefresh = gSavedSettings.getF32("JoystickStreamRefresh");
+	gSavedSettings.getControl("JoystickStreamEnabled")->getSignal()->connect(&updateStreamEnabled);
+	gSavedSettings.getControl("JoystickStreamRefresh")->getSignal()->connect(&updateStreamRefresh);
+}
+//static
+void LLViewerJoystick::updateStreamEnabled(const LLSD &data)
+{
+	streamEnabled = (bool)data.asBoolean();
+}
+//static
+void LLViewerJoystick::updateStreamRefresh(const LLSD &data)
+{
+	streamRefresh = (F32)data.asReal();
+}
 // -----------------------------------------------------------------------------
 LLViewerJoystick::~LLViewerJoystick()
 {
@@ -421,14 +442,41 @@ void LLViewerJoystick::agentFly(F32 inc)
 }
 
 // -----------------------------------------------------------------------------
-void LLViewerJoystick::agentRotate(F32 pitch_inc, F32 yaw_inc)
+void LLViewerJoystick::agentPitch(F32 pitch_inc)
 {
-	LLQuaternion new_rot;
-	pitch_inc = gAgent.clampPitchToLimits(-pitch_inc);
-	const LLQuaternion qx(pitch_inc, gAgent.getLeftAxis());
-	const LLQuaternion qy(-yaw_inc, gAgent.getReferenceUpVector());
-	new_rot.setQuat(qx * qy);
-	gAgent.rotate(new_rot);
+	if (pitch_inc < 0)
+	{
+		gAgent.setControlFlags(AGENT_CONTROL_PITCH_POS);
+	}
+	else if (pitch_inc > 0)
+	{
+		gAgent.setControlFlags(AGENT_CONTROL_PITCH_NEG);
+	}
+	
+	gAgent.pitch(-pitch_inc);
+}
+
+// -----------------------------------------------------------------------------
+void LLViewerJoystick::agentYaw(F32 yaw_inc)
+{	
+	// Cannot steer some vehicles in mouselook if the script grabs the controls
+	if (gAgent.cameraMouselook() && !gSavedSettings.getBOOL("JoystickMouselookYaw"))
+	{
+		gAgent.rotate(-yaw_inc, gAgent.getReferenceUpVector());
+	}
+	else
+	{
+		if (yaw_inc < 0)
+		{
+			gAgent.setControlFlags(AGENT_CONTROL_YAW_POS);
+		}
+		else if (yaw_inc > 0)
+		{
+			gAgent.setControlFlags(AGENT_CONTROL_YAW_NEG);
+		}
+
+		gAgent.yaw(-yaw_inc);
+	}
 }
 
 // -----------------------------------------------------------------------------
@@ -603,11 +651,33 @@ void LLViewerJoystick::moveAvatar(bool reset)
 	}
 
 	bool is_zero = true;
+	static bool btn_held = false;
 
 	if (mBtn[1] == 1)
 	{
-		agentJump();
+		if (gSavedSettings.getBOOL("AutomaticFly"))
+		{
+			if (!gAgent.getFlying())
+			{
+				gAgent.moveUp(1);
+			}
+			else if (!btn_held)
+			{
+				btn_held = true;
+				gAgent.setFlying(FALSE);
+			}
+		}
+		else if (!btn_held)
+		{
+			btn_held = true;
+			gAgent.setFlying(!gAgent.getFlying());
+		}
+
 		is_zero = false;
+	}
+	else
+	{
+		btn_held = false;
 	}
 
 	F32 axis_scale[] =
@@ -766,11 +836,13 @@ void LLViewerJoystick::moveAvatar(bool reset)
 		{
 			if (gAgent.getFlying())
 			{
-				agentRotate(eff_rx, eff_ry);
+				agentPitch(eff_rx);
+				agentYaw(eff_ry);
 			}
 			else
 			{
-				agentRotate(eff_rx, 2.f * eff_ry);
+				agentPitch(eff_rx);
+				agentYaw(2.f * eff_ry);
 			}
 		}
 	}
@@ -779,7 +851,8 @@ void LLViewerJoystick::moveAvatar(bool reset)
 		agentSlide(sDelta[X_I]);		// move sideways
 		agentFly(sDelta[Y_I]);			// up/down & crouch
 		agentPush(sDelta[Z_I]);			// forward/back
-		agentRotate(sDelta[RX_I], sDelta[RY_I]);	// pitch & turn
+		agentPitch(sDelta[RX_I]);		// pitch
+		agentYaw(sDelta[RY_I]);			// turn
 	}
 }
 
@@ -1035,7 +1108,7 @@ void LLViewerJoystick::streamData(bool reset) //tG
 
 		sStreamDelta[i] = sStreamDelta[i] + (cur_delta[i]-sStreamDelta[i])*time*feather;
 
-		is_zero = is_zero && (abs((int)sStreamDelta[i]) < 0.001f); //Check (almost) zero value after feathering
+		is_zero = is_zero && (abs((int)(sStreamDelta[i]*1000.f))); //Check (almost) zero value after feathering
 	}
 	//Note: this only streams the processed axis values (i.e. not position/quat rotation)
 	if(!mSendStream)return; //Only send if prompted (i.e. on a timer)
@@ -1117,6 +1190,13 @@ void LLViewerJoystick::scanJoystick()
 	if (!mOverrideCamera)
 #endif
 	updateStatus();
+
+	// App focus check Needs to happen AFTER updateStatus in case the joystick
+	// is not centred when the app loses focus.
+	if (!gFocusMgr.getAppHasFocus())
+	{
+		return;
+	}
 
 	static long toggle_flycam = 0;
 

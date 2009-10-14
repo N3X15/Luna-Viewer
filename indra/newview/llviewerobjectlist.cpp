@@ -78,6 +78,7 @@
 extern F32 gMinObjectDistance;
 extern BOOL gAnimateTextures;
 
+#include "importtracker.h"
 extern ImportTracker gImportTracker;
 
 void dialog_refresh_all();

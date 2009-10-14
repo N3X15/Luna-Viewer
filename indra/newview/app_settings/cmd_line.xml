@@ -333,6 +333,14 @@
       <string>CrashOnStartup</string>
     </map>
 
+    <key>coreoncrash</key>
+    <map>
+      <key>desc</key>
+      <string>Disables the crash logger and creates a core file in the event of a crash</string>
+      <key>map-to</key>
+      <string>CoreOnCrash</string>
+    </map>
+
     <key>appname</key>
     <map>
       <key>desc</key>

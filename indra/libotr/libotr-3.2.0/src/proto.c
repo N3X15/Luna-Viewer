@@ -746,6 +746,111 @@ err:
     return err;
 }
 
+/* free all the fragments we have collected */
+gcry_error_t otrl_free_fragments(ConnContext *context)
+{
+    if (!context)
+    {
+        /* $TODO$ better error code */
+        return gcry_error(GPG_ERR_CONFLICT);
+    }
+    else if (context->fragments)
+    {
+        int i;
+        for (i = 0; i < context->fragment_n; ++i)
+        {
+            if (context->fragments[i]) free(context->fragments[i]);
+        }
+        free(context->fragments);
+    }
+    context->fragments = NULL;
+    context->fragment_len = 0;
+    context->fragment_n = 0;
+    context->fragment_k = 0;
+    return gcry_error(GPG_ERR_NO_ERROR);
+}
+
+/* start collecting fragments */
+static gcry_error_t otrl_malloc_fragments(ConnContext *context, int how_many)
+{
+    if ((!context) || (how_many <= 0))
+    {
+        return gcry_error(GPG_ERR_CONFLICT); /* $TODO$ better error code */
+    }
+    else if (context->fragments)
+    {
+        otrl_free_fragments(context); /* shouldn't happen, but be resilient if it does */
+    }
+    context->fragments = (char **)malloc(how_many * sizeof(char *));
+    if (!context->fragments)
+    {
+        return gcry_error(GPG_ERR_ENOMEM);
+    }
+    else
+    {
+        int i;
+        for (i = 0; i < how_many; ++i)
+        {
+            context->fragments[i] = NULL;
+        }
+        context->fragment_n = how_many;
+	context->fragment_k = 0;
+        context->fragment_len = 0;
+        return gcry_error(GPG_ERR_NO_ERROR);
+    }
+}
+
+/* add a new fragment to our collection */
+static gcry_error_t otrl_add_fragment(ConnContext *context, int k, int len, const char *frag)
+{
+    if ((!context) || (!frag) || (k < 0) || (context->fragment_n <= k))
+    {
+        return gcry_error(GPG_ERR_CONFLICT); /* $TODO$ better error code */
+    }
+    context->fragments[k] = (char*)malloc(len + 1);
+    if (! context->fragments[k])
+    {
+        return gcry_error(GPG_ERR_ENOMEM);
+    }
+    memmove(context->fragments[k], frag, len);
+    context->fragments[k][len] = 0;
+    context->fragment_len += len;
+    context->fragment_k++;
+    return gcry_error(GPG_ERR_NO_ERROR);
+}
+
+/* put all the fragments together in one string */
+static gcry_error_t otrl_assemble_fragments(char **unfragmessagep, ConnContext *context)
+{
+    *unfragmessagep = (char *)malloc(context->fragment_len + 1);
+    if (! *unfragmessagep)
+    {
+        otrl_free_fragments(context);
+        return gcry_error(GPG_ERR_ENOMEM);
+    }
+    else
+    {
+        int i;
+        char *p = *unfragmessagep;
+        for (i = 0; i < context->fragment_n; ++i)
+        {
+            char *q = context->fragments[i];
+            if (!q)
+            {
+                /* inconsistent fragments */
+                free(*unfragmessagep);
+                *unfragmessagep = NULL;
+                otrl_free_fragments(context);
+                return gcry_error(GPG_ERR_CONFLICT); /* $TODO$ better error code */
+            }
+            while (*q) { *p = *q; p++; q++; }
+        }
+        *p = 0;
+        otrl_free_fragments(context);
+        return gcry_error(GPG_ERR_NO_ERROR);
+    }
+}
+
 /* Accumulate a potential fragment into the current context. */
 OtrlFragmentResult otrl_proto_fragment_accumulate(char **unfragmessagep,
 	ConnContext *context, const char *msg)
@@ -754,75 +859,62 @@ OtrlFragmentResult otrl_proto_fragment_accumulate(char **unfragmessagep,
     const char *tag;
 
     tag = strstr(msg, "?OTR,");
-    if (tag) {
+    if (! tag) 
+    {   /* not a fragmented message */
+        if (context->fragments)
+        {
+            /* We didn't get all of the last one.  $TODO$ send NAK */
+            otrl_free_fragments(context);
+        }
+	res = OTRL_FRAGMENT_UNFRAGMENTED;
+    }
+    else
+    {
 	unsigned short n = 0, k = 0;
 	int start = 0, end = 0;
+        gcry_error_t err;
 
 	sscanf(tag, "?OTR,%hu,%hu,%n%*[^,],%n", &k, &n, &start, &end);
-	if (k > 0 && n > 0 && k <= n && start > 0 && end > 0 && start < end) {
-	    if (k == 1) {
-		int fraglen = end - start - 1;
-		free(context->fragment);
-		context->fragment = malloc(fraglen + 1);
-		if (fraglen + 1 > fraglen && context->fragment) {
-		    memmove(context->fragment, tag + start, fraglen);
-		    context->fragment_len = fraglen;
-		    context->fragment[context->fragment_len] = '\0';
-		    context->fragment_n = n;
-		    context->fragment_k = k;
-		} else {
-		    free(context->fragment);
-		    context->fragment = NULL;
-		    context->fragment_len = 0;
-		    context->fragment_n = 0;
-		    context->fragment_k = 0;
-		}
-	    } else if (n == context->fragment_n &&
-		    k == context->fragment_k + 1) {
-		int fraglen = end - start - 1;
-		char *newfrag = realloc(context->fragment,
-			context->fragment_len + fraglen + 1);
-		if (context->fragment_len + fraglen + 1 > fraglen && newfrag) {
-		    context->fragment = newfrag;
-		    memmove(context->fragment + context->fragment_len,
-			    tag + start, fraglen);
-		    context->fragment_len += fraglen;
-		    context->fragment[context->fragment_len] = '\0';
-		    context->fragment_k = k;
-		} else {
-		    free(context->fragment);
-		    context->fragment = NULL;
-		    context->fragment_len = 0;
-		    context->fragment_n = 0;
-		    context->fragment_k = 0;
-		}
-	    } else {
-		free(context->fragment);
-		context->fragment = NULL;
-		context->fragment_len = 0;
-		context->fragment_n = 0;
-		context->fragment_k = 0;
-	    }
-	}
-
-	if (context->fragment_n > 0 &&
-		context->fragment_n == context->fragment_k) {
-	    /* We've got a complete message */
-	    *unfragmessagep = context->fragment;
-	    context->fragment = NULL;
-	    context->fragment_len = 0;
-	    context->fragment_n = 0;
-	    context->fragment_k = 0;
-	    res = OTRL_FRAGMENT_COMPLETE;
-	}
-    } else {
-	/* Unfragmented message, so discard any fragment we may have */
-	free(context->fragment);
-	context->fragment = NULL;
-	context->fragment_len = 0;
-	context->fragment_n = 0;
-	context->fragment_k = 0;
-	res = OTRL_FRAGMENT_UNFRAGMENTED;
+	if (k > 0 && n > 0 && k <= n && start > 0 && end > 0 && start < end)
+        {
+            k--;
+            if (!context->fragments)
+            {
+                /* starting a new fragmented message */
+                err = otrl_malloc_fragments(context, n);
+                if (err) return OTRL_FRAGMENT_INCOMPLETE; /* $TODO$ */
+            }
+            else if (n != context->fragment_n)
+            {
+                /* must be starting a new message, but we didn't get
+                 * all of the old one $TODO$ send a NAK */
+                otrl_free_fragments(context);
+                err = otrl_malloc_fragments(context, n);
+                if (err) return OTRL_FRAGMENT_INCOMPLETE; /* $TODO$ */
+            }
+            else if (context->fragments[k])
+            {
+                /* We already got fragment K.  Not likely to be a
+                 * duplicate, so this must be for a new message.  But
+                 * we didn't get all of the old one $TODO$ send a
+                 * NAK */
+                otrl_free_fragments(context);
+                err = otrl_malloc_fragments(context, n);
+                if (err) return OTRL_FRAGMENT_INCOMPLETE; /* $TODO$ */
+            }
+            err = otrl_add_fragment(context, k, end - start - 1, tag + start);
+            if (err) return OTRL_FRAGMENT_INCOMPLETE; /* $TODO$ */
+            if (context->fragment_k == context->fragment_n)
+            {
+                err = otrl_assemble_fragments(unfragmessagep, context);
+                if (err) return OTRL_FRAGMENT_INCOMPLETE; /* $TODO$ */
+                else     return OTRL_FRAGMENT_COMPLETE;
+            }
+            else
+            {
+                res = OTRL_FRAGMENT_INCOMPLETE;
+            }
+        }
     }
 
     return res;

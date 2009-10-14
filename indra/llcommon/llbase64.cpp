@@ -65,3 +65,21 @@ std::string LLBase64::encode(const U8* input, size_t input_size)
 	return output;
 }
 
+// static
+std::vector<U8> LLBase64::decode(std::string input)
+{
+	std::vector<U8> data;
+	if (input.length() > 0)
+	{
+		// Because we're decoding binary data, we don't want the null terminator
+		// figured into our array size calculations, so we reduce the reported size by 1.
+		size_t data_length = static_cast<size_t>(apr_base64_decode_len(input.c_str())) - 1;
+		if (data_length > 0)
+		{
+			data.resize(data_length);
+			apr_base64_decode_binary(&data[0], input.c_str());
+		}
+	}
+	
+	return data;
+}

@@ -56,7 +56,7 @@ typedef struct context {
 					  this account... */
     char * protocol;                   /* ... and this protocol */
 
-    char *fragment;                    /* The part of the fragmented message
+    char **fragments;                  /* The parts of the fragmented message
 					  we've seen so far */
     size_t fragment_len;               /* The length of fragment */
     unsigned short fragment_n;         /* The total number of fragments

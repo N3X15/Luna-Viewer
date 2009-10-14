@@ -117,8 +117,8 @@ public:
 	// Use these for temporarily muting the audio system.
 	// Does not change buffers, initialization, etc. but
 	// stops playing new sounds.
-	virtual void setMuted(bool muted);
-	virtual bool getMuted() const { return mMuted; }
+	void setMuted(bool muted);
+	bool getMuted() const { return mMuted; }
 
 	F32 getMasterGain();
 	void setMasterGain(F32 gain);
@@ -237,6 +237,7 @@ protected:
 	LLAudioBuffer *mBuffers[MAX_BUFFERS];
 	
 	F32 mMasterGain;
+	F32 mInternalGain;			// Actual gain set; either mMasterGain or 0 when mMuted is true.
 	F32 mSecondaryGain[AUDIO_TYPE_COUNT];
 
 	// Hack!  Internet streams are treated differently from other sources!
@@ -305,7 +306,8 @@ public:
 	virtual void setGain(const F32 gain)							{ mGain = llclamp(gain, 0.f, 1.f); }
 
 	const LLUUID &getID() const		{ return mID; }
-	bool isDone();
+	bool isDone() const;
+	bool isMuted() const { return mSourceMuted; }
 
 	LLAudioData *getCurrentData();
 	LLAudioData *getQueuedData();
@@ -321,6 +323,7 @@ public:
 	friend class LLAudioChannel;
 protected:
 	void setChannel(LLAudioChannel *channelp);
+public:
 	LLAudioChannel *getChannel() const						{ return mChannelp; }
 
 protected:
@@ -328,6 +331,7 @@ protected:
 	LLUUID			mOwnerID;	// owner of the object playing the sound
 	F32				mPriority;
 	F32				mGain;
+	bool			mSourceMuted;
 	bool			mAmbient;
 	bool			mLoop;
 	bool			mSyncMaster;
@@ -408,17 +412,22 @@ public:
 
 	friend class LLAudioEngine;
 	friend class LLAudioSource;
+
 protected:
 	virtual void play() = 0;
 	virtual void playSynced(LLAudioChannel *channelp) = 0;
 	virtual void cleanup() = 0;
+	void setWaiting(bool waiting)               { mWaiting = waiting; }
+
+public:
 	virtual bool isPlaying() = 0;
-	void setWaiting(const bool waiting)			{ mWaiting = waiting; }
 	bool isWaiting() const						{ return mWaiting; }
 
+protected:
 	virtual bool updateBuffer(); // Check to see if the buffer associated with the source changed, and update if necessary.
 	virtual void update3DPosition() = 0;
 	virtual void updateLoop() = 0; // Update your loop/completion status, for use by queueing/syncing.
+
 protected:
 	LLAudioSource	*mCurrentSourcep;
 	LLAudioBuffer	*mCurrentBufferp;

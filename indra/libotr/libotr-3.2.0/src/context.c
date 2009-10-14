@@ -26,6 +26,7 @@
 
 /* libotr headers */
 #include "context.h"
+#include "proto.h"
 
 /* Create a new connection context. */
 static ConnContext * new_context(const char * user, const char * accountname,
@@ -38,7 +39,7 @@ static ConnContext * new_context(const char * user, const char * accountname,
     context->username = strdup(user);
     context->accountname = strdup(accountname);
     context->protocol = strdup(protocol);
-    context->fragment = NULL;
+    context->fragments = NULL;
     context->fragment_len = 0;
     context->fragment_n = 0;
     context->fragment_k = 0;
@@ -198,11 +199,7 @@ void otrl_context_force_finished(ConnContext *context)
 {
     context->msgstate = OTRL_MSGSTATE_FINISHED;
     otrl_auth_clear(&(context->auth));
-    free(context->fragment);
-    context->fragment = NULL;
-    context->fragment_len = 0;
-    context->fragment_n = 0;
-    context->fragment_k = 0;
+    otrl_free_fragments(context);
     context->active_fingerprint = NULL;
     context->their_keyid = 0;
     gcry_mpi_release(context->their_y);

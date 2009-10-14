@@ -240,7 +240,7 @@ gcry_error_t otrl_privkey_read_FILEp(OtrlUserState us, FILE *privf)
     }
 
     /* Get each account */
-    for(i=1; i<gcry_sexp_length(allkeys); ++i) {
+    for(i=1; i<((size_t)gcry_sexp_length(allkeys)); ++i) {
 	gcry_sexp_t names, protos, privs;
 	char *name, *proto;
 	gcry_sexp_t accounts;

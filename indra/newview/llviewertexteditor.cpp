@@ -97,7 +97,7 @@ public:
 		else
 		{
 // [RLVa:KB] - Checked: 2009-07-06 (RLVa-1.0.0c)
-			if ( (rlv_handler_t::isEnabled()) && (gRlvHandler.hasBehaviour("viewnote")) )
+			if ( (rlv_handler_t::isEnabled()) && (gRlvHandler.hasBehaviour(RLV_BHVR_VIEWNOTE)) )
 			{
 				return;
 			}
@@ -1275,8 +1275,13 @@ std::string LLViewerTextEditor::appendTime(bool prepend_newline)
 	// Convert to Pacific, based on server's opinion of whether
 	// it's daylight savings time there.
 	timep = utc_to_pacific_time(utc_time, gPacificDaylightTime);
+	std::string text;
 
-	std::string text = llformat("[%d:%02d]  ", timep->tm_hour, timep->tm_min);
+	if (gSavedSettings.getBOOL("EmeraldAddSecondsInHistory"))
+		text = llformat("[%d:%02d:%02d]  ", timep->tm_hour, timep->tm_min, timep->tm_sec);
+	else
+		text = llformat("[%d:%02d]  ", timep->tm_hour, timep->tm_min, timep->tm_sec);
+
 	appendColoredText(text, false, prepend_newline, LLColor4::grey);
 
 	return text;

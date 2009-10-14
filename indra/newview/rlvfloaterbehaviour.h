@@ -28,7 +28,7 @@ public:
 	 * RlvBehaviourObserver overrides
 	 */
 public:
-	/*virtual*/ void changed();
+	/*virtual*/ void changed(const RlvCommand& rlvCmd, bool fInternal);
 
 	/*
 	 * Member functions

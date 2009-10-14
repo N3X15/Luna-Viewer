@@ -109,7 +109,6 @@ BOOL OtrFloaterSmpDialog::postBuild()
     childSetAction("otr_smp_help_btn",   onClickHelp, this);
     childSetAction("otr_smp_cancel_btn", onClickCancel, this);
     childSetAction("otr_smp_auth_btn",   onClickAuth, this);
-    setDefaultBtn("otr_smp_cancel_btn");
     LLComboBox *veri = getChild<LLComboBox>("otr_smp_veri_combo");
     veri->setCommitCallback(onClickVeri);
     veri->setCallbackUserData(this);

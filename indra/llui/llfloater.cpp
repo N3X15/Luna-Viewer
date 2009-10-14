@@ -1402,6 +1402,7 @@ void LLFloater::draw()
 		S32 right = getRect().getWidth() - LLPANEL_BORDER_WIDTH;
 		S32 bottom = LLPANEL_BORDER_WIDTH;
 
+		/*
 		LLColor4 shadow_color = LLUI::sColorsGroup->getColor("ColorDropShadow");
 		F32 shadow_offset = (F32)LLUI::sConfigGroup->getS32("DropShadowFloater");
 		if (!isBackgroundOpaque())
@@ -1412,6 +1413,7 @@ void LLFloater::draw()
 		gl_drop_shadow(left, top, right, bottom, 
 			shadow_color, 
 			llround(shadow_offset));
+		*/
 
 		// No transparent windows in simple UI
 		if (isBackgroundOpaque())

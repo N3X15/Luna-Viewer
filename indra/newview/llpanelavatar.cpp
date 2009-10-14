@@ -83,6 +83,10 @@
 #include "lluictrlfactory.h"
 #include "llviewermenu.h"
 
+#include "jc_lslviewerbridge.h"
+
+#include <iosfwd>
+
 // Statics
 std::list<LLPanelAvatar*> LLPanelAvatar::sAllPanels;
 BOOL LLPanelAvatar::sAllowFirstLife = FALSE;
@@ -1321,6 +1325,44 @@ void LLPanelAvatar::setAvatar(LLViewerObject *avatarp)
 	setAvatarID(avatarp->getID(), name, ONLINE_STATUS_YES);
 }
 
+class JCProfileCallback : public JCBridgeCallback
+{
+public:
+	JCProfileCallback(LLUUID avvie)
+	{
+		avatar = avvie;
+	}
+
+	void fire(LLSD data)
+	{
+		//printchat("lol, \n"+std::string(LLSD::dumpXML(data)));
+		//LLPanelAvatar
+		for (std::list<LLPanelAvatar*>::iterator iter = LLPanelAvatar::sAllPanels.begin(); iter != LLPanelAvatar::sAllPanels.end(); ++iter)
+		{
+			LLPanelAvatar* panelp = *iter;
+			if (panelp->mAvatarID == avatar)
+			{
+				BOOL status = atoi(data[0].asString().c_str());
+
+				panelp->childSetVisible("online_yes", TRUE);
+				if(status)
+				{
+					panelp->childSetColor("online_yes",LLColor4::green);
+					panelp->childSetValue("online_yes","Currently Online");
+				}else
+				{
+					panelp->childSetColor("online_yes",LLColor4::red);
+					panelp->childSetValue("online_yes","Currently Offline");
+				}
+			}
+		}
+		//printchat("lol, \n"+std::string(LLSD::dumpXML(data)));
+	}
+
+private:
+	LLUUID avatar;
+};
+
 void LLPanelAvatar::setOnlineStatus(EOnlineStatus online_status)
 {
 	// Online status NO could be because they are hidden
@@ -1333,6 +1375,8 @@ void LLPanelAvatar::setOnlineStatus(EOnlineStatus online_status)
 	}
 
 	mPanelSecondLife->childSetVisible("online_yes", (online_status == ONLINE_STATUS_YES));
+    if(gSavedSettings.getBOOL("EmeraldUseBridgeOnline"))
+		JCLSLBridge::bridgetolsl("online_status|"+mAvatarID.asString(), new JCProfileCallback(mAvatarID));
 
 	// Since setOnlineStatus gets called after setAvatarID
 	// need to make sure that "Offer Teleport" doesn't get set
@@ -1568,7 +1612,14 @@ void LLPanelAvatar::resetGroupList()
 				row["id"] = id ;
 				row["columns"][0]["value"] = group_string;
 				row["columns"][0]["font"] = "SANSSERIF_SMALL";
+				if (group_data.mListInProfile)
+				{
 				row["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
+				}
+				else
+				{
+					row["columns"][0]["color"] = gColors.getColor("ScrollUnselectedColor").getValue();
+				}
 				row["columns"][0]["width"] = 0;
 				group_list->addElement(row);
 			}
@@ -1917,7 +1968,7 @@ void LLPanelAvatar::processAvatarPropertiesReply(LLMessageSystem *msg, void**)
 		timeinfo->tm_year = year - 1900;
 		timeinfo->tm_mday = day;
 		time_t birth = mktime(timeinfo);
-		stringstream NumberString;
+		std::stringstream NumberString;
 		NumberString << (difftime(now,birth) / (60*60*24));
 		born_on += " (";
 		born_on += NumberString.str();
@@ -2063,7 +2114,31 @@ void LLPanelAvatar::processAvatarGroupsReply(LLMessageSystem *msg, void**)
 				row["id"] = group_id;
 				row["columns"][0]["value"] = group_string;
 				row["columns"][0]["font"] = "SANSSERIF_SMALL";
+				LLGroupData *group_data = NULL;
+
+				if (avatar_id == agent_id) // own avatar
+				{
+					// Search for this group in the agent's groups list
+					LLDynamicArray<LLGroupData>::iterator i;
+
+					for (i = gAgent.mGroups.begin(); i != gAgent.mGroups.end(); i++)
+					{
+						if (i->mID == group_id)
+						{
+							group_data = &*i;
+							break;
+						}
+					}
+				}
+				// Set normal color if not found or if group is visible in profile
+				if (!group_data || group_data->mListInProfile)
+				{
 				row["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
+				}
+				else
+				{
+					row["columns"][0]["color"] = gColors.getColor("ScrollUnselectedColor").getValue();
+				}
 				if (group_list)
 				{
 					group_list->addElement(row);

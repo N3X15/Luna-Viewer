@@ -2216,6 +2216,7 @@ void addParticleSourcesToList(LLDrawable *drawablep)
 			LLAvatarListEntry *ent = LLFloaterAvatarList::getInstance()->getAvatarEntry(id);
 			if ( NULL != ent )
 			{
+				if ( ent->getActivity() != ACTIVITY_TYPING)
 				ent->setActivity(ACTIVITY_PARTICLES);
 			}
 		}
@@ -2377,8 +2378,32 @@ void LLPipeline::postSort(LLCamera& camera)
 				LLVector3 pos = gAgent.getPosAgentFromGlobal(pos_global);
 				if (gPipeline.sRenderBeacons)
 				{
-					//pos += LLVector3(0.f, 0.f, 0.2f);
-					gObjectList.addDebugBeacon(pos, "", LLColor4(1.f, 1.f, 0.f, 0.5f), LLColor4(1.f, 1.f, 1.f, 0.5f), gSavedSettings.getS32("DebugBeaconLineWidth"));
+					LLAudioChannel* channel = sourcep->getChannel();
+					bool const is_playing = channel && channel->isPlaying();
+					S32 width = 2;
+					LLColor4 color = LLColor4(0.f, 0.f, 1.f, 0.5f);
+					if (is_playing)
+					{
+					  	llassert(!sourcep->isMuted());
+						F32 gain = sourcep->getGain() * channel->getSecondaryGain();
+						if (gain == 0.f)
+						{
+						  color = LLColor4(1.f, 0.f, 0.f, 0.5f);
+						}
+						else if (gain == 1.f)
+						{
+						  color = LLColor4(0.f, 1.f, 0.f, 0.5f);
+						  width = gSavedSettings.getS32("DebugBeaconLineWidth");
+						}
+						else
+						{
+						  color = LLColor4(1.f, 1.f, 0.f, 0.5f);
+						  width = 1 + gain * (gSavedSettings.getS32("DebugBeaconLineWidth") - 1);
+						}
+					}
+					else if (sourcep->isMuted())
+						color = LLColor4(0.f, 1.f, 1.f, 0.5f);
+					gObjectList.addDebugBeacon(pos, "", color, LLColor4(1.f, 1.f, 1.f, 0.5f), width);
 				}
 			}
 			// now deal with highlights for all those seeable sound sources
@@ -2398,6 +2423,7 @@ void LLPipeline::postSort(LLCamera& camera)
 
 			if ( ent )
 			{
+				if ( ent->getActivity() != ACTIVITY_TYPING)
 				ent->setActivity(ACTIVITY_SOUND);
 			}
 		}
@@ -4246,6 +4272,9 @@ void LLPipeline::enableLightsAvatar()
 
 void LLPipeline::enableLightsAvatarEdit(const LLColor4& color)
 {
+	//Danny: Turn off local lights for appearance if they're disabled.
+	if(mLightingDetail < 1)
+		return;
 	U32 mask = 0x2002; // Avatar backlight only, set ambient
 	setupAvatarLights(TRUE);
 	enableLights(mask);

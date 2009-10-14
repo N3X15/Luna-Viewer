@@ -7,9 +7,9 @@
 #ifndef IMPORTTRACKER_H
 #define IMPORTTRACKER_H
 
-#include "llagent.h"
+#include "llviewerobject.h"
 
-using namespace std;
+
 
 class ImportTracker
 {
@@ -27,17 +27,22 @@ class ImportTracker
 		~ImportTracker() { localids.clear(); linkset.clear(); }
 	
 		//Chalice - support import of linkset groups
-		void prepare(LLSD &file_data);
+		void importer(std::string file, void (*callback)(LLViewerObject*));
 		void cleargroups();
 		void import(LLSD &ls_data);
 		void expectRez();
 		void clear();
+		void finish();
 		void cleanUp();
 		void get_update(S32 newid, BOOL justCreated = false, BOOL createSelected = false);
 		
 		const int getState() { return state; }
+
+		U32 asset_insertions;
 		
 	protected:		
+		void send_inventory(LLSD &prim);
+		void send_properties(LLSD &prim, int counter);
 		void send_vectors(LLSD &prim, int counter);
 		void send_shape(LLSD &prim);
 		void send_image(LLSD &prim);
@@ -61,10 +66,16 @@ class ImportTracker
 		LLVector3			linksetoffset;
 		LLVector3			initialPos;
 		LLSD				linkset;
+
+		std::string filepath;
+		std::string asset_dir;
+		void	(*mDownCallback)(LLViewerObject*);
+
+		U32 lastrootid;
 };
 
 extern ImportTracker gImportTracker;
 
-extern LLAgent gAgent;
+//extern LLAgent gAgent;
 
 #endif

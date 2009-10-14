@@ -1215,7 +1215,7 @@ void LLVoiceClient::terminate()
 
 void LLVoiceClient::updateSettings()
 {
-	setVoiceEnabled(gSavedSettings.getBOOL("EnableVoiceChat"));
+	setVoiceEnabled(gSavedPerAccountSettings.getBOOL("EnableVoiceChat"));
 	setUsePTT(gSavedSettings.getBOOL("PTTCurrentlyEnabled"));
 	std::string keyString = gSavedSettings.getString("PushToTalkButton");
 	setPTTKey(keyString);
@@ -1588,10 +1588,11 @@ void LLVoiceClient::stateMachine()
 						parcelChanged();
 					}
 				}
-				else
-				{
-					LL_WARNS("Voice") << "region doesn't have ParcelVoiceInfoRequest capability.  This is normal for a short time after teleporting, but bad if it persists for very long." << LL_ENDL;
-				}
+// Removed this warning since it spams the log file uselessly on OpenSim grids.
+//				else
+//				{
+//					LL_WARNS("Voice") << "region doesn't have ParcelVoiceInfoRequest capability.  This is normal for a short time after teleporting, but bad if it persists for very long." << LL_ENDL;
+//				}
 			}
 		}
 	}
@@ -5807,7 +5808,7 @@ void LLVoiceClient::setVoiceEnabled(bool enabled)
 
 bool LLVoiceClient::voiceEnabled()
 {
-	return gSavedSettings.getBOOL("EnableVoiceChat") && !gSavedSettings.getBOOL("CmdLineDisableVoice");
+	return gSavedPerAccountSettings.getBOOL("EnableVoiceChat") && !gSavedSettings.getBOOL("CmdLineDisableVoice");
 }
 
 void LLVoiceClient::setLipSyncEnabled(BOOL enabled)
@@ -7040,7 +7041,7 @@ class LLViewerRequiredVoiceVersion : public LLHTTPNode
 				{
 					//sAlertedUser = TRUE;
 					LLNotifications::instance().add("VoiceVersionMismatch");
-					gSavedSettings.setBOOL("EnableVoiceChat", FALSE); // toggles listener
+					gSavedPerAccountSettings.setBOOL("EnableVoiceChat", FALSE); // toggles listener
 				}
 			}
 		}

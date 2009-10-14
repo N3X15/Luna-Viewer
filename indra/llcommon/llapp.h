@@ -291,6 +291,7 @@ private:
 
 public:
 	static BOOL sLogInSignal;
+	static BOOL sGenerateCores; // Generate a core on a crash rather than the signal handler crash logger route;
 };
 
 #endif // LL_LLAPP_H

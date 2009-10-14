@@ -32,7 +32,7 @@
 
 /* Copyright (c) 2009
  *
- * Modular Systems Ltd. All rights reserved.
+ * Modular Systems All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or
  * without modification, are permitted provided that the following
@@ -75,6 +75,7 @@
 #include "lldriverparam.h"
 #include "lleditingmotion.h"
 #include "llemote.h"
+#include "llfloaterao.h"
 #include "llfirstuse.h"
 #include "llheadrotmotion.h"
 #include "llhudeffecttrail.h"
@@ -110,11 +111,16 @@
 #include "llgesturemgr.h" //needed to trigger the voice gesticulations
 #include "llvoiceclient.h"
 #include "llvoicevisualizer.h" // Ventrella
-
+#include "llviewermessage.h"
 #include "llsdserialize.h" // client resolver
 #include "lggBeamMaps.h"
+#include "llfloateravatarlist.h"
 
 #include "boost/lexical_cast.hpp"
+
+// [RLVa:KB]
+#include "llstartup.h"
+// [/RLVa:KB]
 
 using namespace LLVOAvatarDefines;
 //-----------------------------------------------------------------------------
@@ -722,6 +728,18 @@ F32 LLVOAvatar::sLODFactor = 1.f;
 BOOL LLVOAvatar::sUseImpostors = FALSE;
 BOOL LLVOAvatar::sJointDebug = FALSE;
 
+F32 LLVOAvatar::sBoobHardness			= 67.0f;
+F32 LLVOAvatar::sBoobMass				= 32.0f;
+F32 LLVOAvatar::sBoobZInfluence			= 20.f; //30 before fps additions
+F32 LLVOAvatar::sBoobFriction			= 70.f;
+F32 LLVOAvatar::sBoobFrictionFraction	= 30.0f; //not used, keeping var just in case for now
+F32 LLVOAvatar::sBoobZMax				= 43.f;
+F32 LLVOAvatar::sBoobVelMax				= 27.f;
+BOOL LLVOAvatar::sBoobToggle			= TRUE;
+
+F32 LLVOAvatar::sAvMorphTime			= 0.65f;
+
+
 F32 LLVOAvatar::sUnbakedTime = 0.f;
 F32 LLVOAvatar::sUnbakedUpdateTime = 0.f;
 F32 LLVOAvatar::sGreyTime = 0.f;
@@ -775,8 +793,12 @@ LLVOAvatar::LLVOAvatar(const LLUUID& id,
 	mTexEyeColor( NULL ),
 	mNeedsSkin(FALSE),
 	mUpdatePeriod(1),
+	mCheckingCryolife(0),
+    mIsCryolife(FALSE),
 	mFullyLoadedInitialized(FALSE),
-	mHasBakedHair( FALSE )
+	mHasBakedHair( FALSE ),
+	mActualBoobGrav( -53.0f ),
+	mFirstIdleUpdateBoobGravRan( false )
 {
 	LLMemType mt(LLMemType::MTYPE_AVATAR);
 	//VTResume();  // VTune
@@ -997,6 +1019,17 @@ LLVOAvatar::LLVOAvatar(const LLUUID& id,
 
 	}
 
+	// grab the boob savedparams (prob a better place for this)
+	sBoobMass				= gSavedSettings.getF32("EmeraldBoobMass");
+	sBoobHardness			= gSavedSettings.getF32("EmeraldBoobHardness");
+	//sBoobZMax				= gSavedSettings.getF32("EmeraldBoobZMax");
+	sBoobVelMax				= gSavedSettings.getF32("EmeraldBoobVelMax");
+	//sBoobZInfluence			= gSavedSettings.getF32("EmeraldBoobZInfluence");
+	sBoobFriction			= gSavedSettings.getF32("EmeraldBoobFriction");
+	sBoobFrictionFraction	= gSavedSettings.getF32("EmeraldBoobFrictionFraction");
+	sBoobToggle				= gSavedSettings.getBOOL("EmeraldBreastPhysicsToggle");
+
+
 	if (gNoRender)
 	{
 		return;
@@ -1165,6 +1198,47 @@ void LLVOAvatar::dumpScratchTextureByteCount()
 {
 	llinfos << "Scratch Texture GL: " << (sScratchTexBytes/1024) << "KB" << llendl;
 }
+
+// static
+void LLVOAvatar::getMeshInfo (mesh_info_t* mesh_info)
+{
+	if (!mesh_info) return;
+
+	LLVOAvatarXmlInfo::mesh_info_list_t::iterator iter = sAvatarXmlInfo->mMeshInfoList.begin();
+	LLVOAvatarXmlInfo::mesh_info_list_t::iterator end  = sAvatarXmlInfo->mMeshInfoList.end();
+
+	for (; iter != end; ++iter)
+	{
+		LLVOAvatarXmlInfo::LLVOAvatarMeshInfo* avatar_info = (*iter);
+		std::string type = avatar_info->mType;
+		S32         lod  = avatar_info->mLOD;
+		std::string file = avatar_info->mMeshFileName;
+
+		mesh_info_t::iterator iter_info = mesh_info->find(type);
+		if(iter_info == mesh_info->end()) 
+		{
+			lod_mesh_map_t lod_mesh;
+			lod_mesh.insert(std::pair<S32,std::string>(lod, file));
+			mesh_info->insert(std::pair<std::string,lod_mesh_map_t>(type, lod_mesh));
+		}
+		else
+		{
+			lod_mesh_map_t& lod_mesh = iter_info->second;
+			lod_mesh_map_t::iterator iter_lod = lod_mesh.find(lod);
+			if (iter_lod == lod_mesh.end())
+			{
+				lod_mesh.insert(std::pair<S32,std::string>(lod, file));
+			}
+			else
+			{
+				// Should never happen
+				llwarns << "Duplicate mesh LOD " << type << " " << lod << " " << file << llendl;
+			}
+		}
+	}
+	return;
+}
+
 
 // static
 void LLVOAvatar::dumpBakedStatus()
@@ -1576,7 +1650,7 @@ BOOL LLVOAvatar::lineSegmentIntersect(const LLVector3& start, const LLVector3& e
 		)
 {
 
-	if (mIsSelf && !gAgent.needsRenderAvatar() || !LLPipeline::sPickAvatar)
+	if ((mIsSelf && !gAgent.needsRenderAvatar()) || !LLPipeline::sPickAvatar)
 	{
 		return FALSE;
 	}
@@ -2581,6 +2655,7 @@ BOOL LLVOAvatar::idleUpdate(LLAgent &agent, LLWorld &world, const F64 &time)
 	idleUpdateVoiceVisualizer( voice_enabled );
 	idleUpdateMisc( detailed_update );
 	idleUpdateAppearanceAnimation();
+	idleUpdateBoobEffect();
 	idleUpdateLipSync( voice_enabled );
 	idleUpdateLoadingEffect();
 	idleUpdateBelowWater();	// wind effect uses this
@@ -2591,22 +2666,6 @@ BOOL LLVOAvatar::idleUpdate(LLAgent &agent, LLWorld &world, const F64 &time)
 	return TRUE;
 }
 
-/*
-void LLVOAvatar::GetAttachments()
-{
-	for (attachment_map_t::iterator iter = mAttachmentPoints.begin();
-        	iter != mAttachmentPoints.end(); )
-        {
-		attachment_map_t::iterator curiter = iter++;
-                LLViewerJointAttachment* attachment = curiter->second;
-                LLViewerObject *attached_object = attachment->getObject();
-
-                BOOL visibleAttachment = visible || (attached_object &&
-                	!(attached_object->mDrawable->getSpatialBridge() &&
-                        attached_object->mDrawable->getSpatialBridge()->getRadius() < 2.0));
-		
-	}
-}*/
 void LLVOAvatar::idleUpdateVoiceVisualizer(bool voice_enabled)
 {
 	// disable voice visualizer when in mouselook
@@ -2809,7 +2868,7 @@ void LLVOAvatar::idleUpdateAppearanceAnimation()
 	{
 		ESex avatar_sex = getSex();
 		F32 appearance_anim_time = mAppearanceMorphTimer.getElapsedTimeF32();
-		if (appearance_anim_time >= APPEARANCE_MORPH_TIME)
+		if (appearance_anim_time >= sAvMorphTime)
 		{
 			mAppearanceAnimating = FALSE;
 			for (LLVisualParam *param = getFirstVisualParam(); 
@@ -2829,9 +2888,15 @@ void LLVOAvatar::idleUpdateAppearanceAnimation()
 		}
 		else
 		{
-			F32 blend_frac = calc_bouncy_animation(appearance_anim_time / APPEARANCE_MORPH_TIME);
-			F32 last_blend_frac = calc_bouncy_animation(mLastAppearanceBlendTime / APPEARANCE_MORPH_TIME);
+			F32 blend_frac = calc_bouncy_animation(appearance_anim_time / sAvMorphTime);
+			F32 last_blend_frac = calc_bouncy_animation(mLastAppearanceBlendTime / sAvMorphTime);
 			F32 morph_amt;
+			// if it's over 5 seconds, just forget the bouncy anim
+			if(sAvMorphTime > 5.f)
+			{
+				blend_frac = appearance_anim_time / sAvMorphTime;
+				last_blend_frac = mLastAppearanceBlendTime / sAvMorphTime;
+			}
 			if (last_blend_frac == 1.f)
 			{
 				morph_amt = 1.f;
@@ -2850,6 +2915,8 @@ void LLVOAvatar::idleUpdateAppearanceAnimation()
 			{
 				if (param->getGroup() == VISUAL_PARAM_GROUP_TWEAKABLE)
 				{
+						// so boobs don't go spastic when a shape's changed, but still seems buggy
+						//if(param->getID() != 507)
 					param->animate(morph_amt, mAppearanceAnimSetByUser);
 				}
 			}
@@ -2866,6 +2933,105 @@ void LLVOAvatar::idleUpdateAppearanceAnimation()
 		}
 		dirtyMesh();
 	}
+}
+
+// ------------------------------------------------------------
+// Danny: ZOMG Boob Phsyics go!
+// ------------------------------------------------------------
+void LLVOAvatar::idleUpdateBoobEffect()
+{
+
+	if(mFirstIdleUpdateBoobGravRan != true)
+		return;
+
+	if (mBoobBounceTimer.getElapsedTimeF32() - mLastDisplacement > 0.02f) // cap updates to 50fps
+		mLastDisplacement = mBoobBounceTimer.getElapsedTimeF32();
+	else
+		return;
+	if(mActualBoobGrav == -53.f)
+		return;
+
+	LLVisualParam *param;
+	param = getVisualParam(105); //boob size
+	F32 boobSize = param->getCurrentWeight();
+	param = getVisualParam(507);
+	ESex avatar_sex = getSex();
+
+	LLVector3 Pos = mChestp->getWorldPosition();
+
+	F32 originWeight = mActualBoobGrav;
+
+	// Convert values from percent to real value
+	F32 zInfluence		= sBoobZInfluence/100.f*50.f;
+	//F32 zMax			= sBoobZMax/100.f*3.f;
+	F32 velMax			= sBoobVelMax/100.f*0.01f; // was 0.1 max
+	F32 boobMass		= sBoobMass/100.f*20.f;
+	F32 boobHardness	= sBoobHardness/100.f*1.0f;
+	F32 friction		= sBoobFriction/100.f*0.5f;
+	F32 minVel			= sBoobFrictionFraction/100.f*velMax;
+
+	F32 FPS = llclamp(gFPSClamped, 1.f, 50.f);
+
+	if(!getAppearanceFlag() && sBoobToggle == TRUE && !mAppearanceAnimating)
+	{
+		F32 difftime;
+		difftime = mBoobBounceTimer.getElapsedTimeF32() - mLastTime;
+		//LLQuaternion root_rot = mRoot.getWorldRotation();
+		LLQuaternion root_rot = mChestp->getWorldRotation();
+		
+		F32 boobVel = 0.f;
+		LLVector3 distance = (Pos - mLastChestPos) * ~root_rot;
+		boobVel = distance.mV[VZ];
+		boobVel +=	distance[VX] * 0.3f;
+		boobVel +=	distance.mV[VY] * 0.3f;
+		boobVel =	llclamp(boobVel, -velMax, velMax);
+
+		//llwarns << "boobvel = " << boobVel << llendl;
+		//if  movement's negligable, just return. Prevents super slight jiggling.
+		 if(fabs(boobVel) <= minVel)
+			 boobVel = 0.0f;
+
+		boobVel *=	zInfluence * (llclamp(boobSize, 0.0f, 0.5f) / 0.5f);
+
+
+
+		boobHardness = -(1.5f - ( (1.5f - (boobHardness))*((FPS - 1.f )/ (50.f - 1.f)) ));
+		friction	 =	(1.f - (1.f - friction)) + ((1.f - friction) - (1.f - (1.f - friction)))*((FPS - 1.f )/ (50.f - 1.f));
+
+		mBoobDisplacement	+= boobVel * boobMass;
+		mBoobGravity		+= boobHardness * (mBoobDisplacement-originWeight);
+		mBoobGravity		*= friction;
+
+		mBoobDisplacement += mBoobGravity;
+
+		//llwarns << getFullname() << " hard = " << boobHardness << llendl;
+		//llwarns << getFullname() << " friction = " << friction << llendl;
+
+		// clamp both 'just in case'
+		mBoobDisplacement	= llclamp(mBoobDisplacement, -1.5f, 2.0f);
+		mBoobGravity		= llclamp(mBoobGravity, -1.5f, 2.0f);
+						
+		param->setWeight(llclamp(mBoobDisplacement, -1.5f, 2.0f), FALSE);
+		param->apply(avatar_sex);
+		updateVisualParams();
+
+	}
+
+	if(getAppearanceFlag() && mBoobDisplacement != mActualBoobGrav)
+	{
+			llwarns << "RETURNING TO ACTUAL BOOB GRAV " << mActualBoobGrav << " for " << getFullname() << llendl;
+			mBoobDisplacement = mActualBoobGrav;
+			param->setWeight(llclamp(mActualBoobGrav, -1.5f, 2.0f), FALSE);
+			param->apply(avatar_sex);
+			updateVisualParams();
+			//if (mIsSelf)
+//				gAgent.sendAgentSetAppearance();
+			//dirtyMesh();
+	}
+
+	mLastTime = mBoobBounceTimer.getElapsedTimeF32();
+	mLastChestPos = mChestp->getWorldPosition();
+			
 }
 
 void LLVOAvatar::idleUpdateLipSync(bool voice_enabled)
@@ -3000,7 +3166,67 @@ void LLVOAvatar::idleUpdateWindEffect()
 		}
 	}
 }
+//cryo check, basically the same as vLife
+class CryoResolverTimeout : public LLEventTimer
+{
+public:
+    CryoResolverTimeout(LLVOAvatar* avatar);
+    virtual ~CryoResolverTimeout();
 
+    //function to be called at the supplied frequency
+    virtual BOOL tick();
+    LLVOAvatar* avatarp;
+    U32 counter;
+};
+CryoResolverTimeout::CryoResolverTimeout(LLVOAvatar* avatar) : LLEventTimer( (F32)1.0 ), counter(0)
+{
+    avatarp = avatar;
+    //printchat("init fake");
+};
+CryoResolverTimeout::~CryoResolverTimeout()
+{
+}
+
+BOOL CryoResolverTimeout::tick()
+{
+	if(avatarp)
+	{
+		if(!avatarp || avatarp->isDead())return TRUE;
+		if(counter > 2)
+		{
+			if(avatarp && avatarp->mIsCryolife == FALSE)
+			{
+				avatarp->mIsCryolife = FALSE;
+				avatarp->mCheckingCryolife = 2;
+			}
+
+			//LLVector3 root_pos_last = avatarp->mRoot.getWorldPosition();
+			//avatarp->idleUpdateNameTag(root_pos_last);
+
+			return TRUE;
+		}else
+		{
+			if(!avatarp->isDead() && avatarp->mCheckingCryolife == 1)
+			{
+	            
+				send_improved_im(avatarp->getID(),
+								"oh hi",
+								"cryo::ping",
+								IM_ONLINE,
+								IM_TYPING_STOP,
+								avatarp->getID(),
+								NO_TIMESTAMP,
+								(U8*)EMPTY_BINARY_BUCKET,
+								EMPTY_BINARY_BUCKET_SIZE);
+
+	            
+			}
+			counter += 1;
+			return FALSE;
+		}
+	}
+	return TRUE;
+}
 bool LLVOAvatar::updateClientTags()
 {
 	std::string client_list_filename = gDirUtilp->getExpandedFilename(LL_PATH_USER_SETTINGS, "client_list.xml");
@@ -3063,7 +3289,7 @@ bool LLVOAvatar::loadClientTags()
 
 void LLVOAvatar::resolveClient(LLColor4& avatar_name_color, std::string& client, LLVOAvatar* avatar)
 {
-	LLColor4 colorBackup = avatar_name_color;
+	LLColor4 colourBackup = avatar_name_color;
 	LLUUID idx = avatar->getTE(0)->getID();
 	if(LLVOAvatar::sClientResolutionList.has("isComplete") && LLVOAvatar::sClientResolutionList.has(idx.asString()))
 	{
@@ -3071,8 +3297,13 @@ void LLVOAvatar::resolveClient(LLColor4& avatar_name_color, std::string& client,
 		client = cllsd["name"].asString();
 		LLColor4 colour;
 		colour.setValue(cllsd["color"]);
+		if(cllsd["multiple"].asReal() != 0)
+		{
 		avatar_name_color += colour;
 		avatar_name_color *= 1.0/(cllsd["multiple"].asReal()+1.0f);
+		}
+		else
+			avatar_name_color = colour;
 	}else
 	{
 		//legacy code
@@ -3087,6 +3318,11 @@ void LLVOAvatar::resolveClient(LLColor4& avatar_name_color, std::string& client,
 			avatar_name_color += LLColor4::red;//vlife jcool410
 			avatar_name_color = avatar_name_color * 0.5;
 			client = "VLife";
+		}else if(idx == LLUUID("f5feab57-bde5-2074-97af-517290213eaa"))
+		{
+			
+			avatar_name_color = LLColor4::grey4 * 1.2f;//ONYX OMG HAX
+			client = "Onyx";
 		}else if(idx == LLUUID("adcbe893-7643-fd12-f61c-0b39717e2e32"))
 		{
 			avatar_name_color += LLColor4::pink;//tyk3n
@@ -3109,7 +3345,7 @@ void LLVOAvatar::resolveClient(LLColor4& avatar_name_color, std::string& client,
 			avatar_name_color = avatar_name_color * 0.5;
 			client = "Day Oh proxy";
 		}else if(idx == LLUUID("e52d21f7-3c8b-819f-a3db-65c432295dac") || idx == LLUUID("0f6723d2-5b23-6b58-08ab-308112b33786"))
-		{
+		{				//to detect a tweaked cryolife o.o
 			avatar_name_color += LLColor4::cyan;//cryolife
 			avatar_name_color += LLColor4::cyan;
 			avatar_name_color = avatar_name_color * 0.5;
@@ -3210,6 +3446,33 @@ void LLVOAvatar::resolveClient(LLColor4& avatar_name_color, std::string& client,
 		avatar_name_color += colour;
 		avatar_name_color *= 1.0/(cllsd["multiple"].asReal()+1.0f);
 	}
+	if(avatar->mCheckingCryolife < 2 && !avatar->mIsCryolife)
+    {
+		if(gSavedSettings.getBOOL("EmeraldCryoDetection"))
+		{
+			if(avatar->mCheckingCryolife < 1)
+			{
+				avatar->mCheckingCryolife = 1; 
+				send_improved_im(avatar->getID(),
+							"oh hi",
+							"cryo::ping",
+							IM_ONLINE,
+							IM_TYPING_STOP,
+							avatar->getID(),
+							NO_TIMESTAMP,
+							(U8*)EMPTY_BINARY_BUCKET,
+							EMPTY_BINARY_BUCKET_SIZE);
+				new CryoResolverTimeout(avatar);
+			}
+		}
+    }
+    else if(avatar->mIsCryolife)
+    {
+        avatar_name_color += LLColor4::cyan;//cryolife
+        avatar_name_color += LLColor4::cyan;
+        avatar_name_color = avatar_name_color * 0.5;
+        client = "CryoLife";
+    }
 }
 
 void LLVOAvatar::idleUpdateNameTag(const LLVector3& root_pos_last)
@@ -3227,16 +3490,16 @@ void LLVOAvatar::idleUpdateNameTag(const LLVector3& root_pos_last)
 	const F32 NAME_SHOW_TIME = gSavedSettings.getF32("RenderNameShowTime");	// seconds
 	const F32 FADE_DURATION = gSavedSettings.getF32("RenderNameFadeDuration"); // seconds
 // [RLVa:KB] - Checked: 2009-07-08 (RLVa-1.0.0e) | Added: RLVa-0.2.0b
-	BOOL fRlvShowNames = gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES);
+	bool fRlvShowNames = gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES);
 // [/RLVa:KB]
 	BOOL visible_avatar = isVisible() || mNeedsAnimUpdate;
 	BOOL visible_chat = gSavedSettings.getBOOL("UseChatBubbles") && (mChats.size() || mTyping);
 	BOOL render_name =	visible_chat ||
 						(visible_avatar &&
-						((sRenderName == RENDER_NAME_ALWAYS) ||
-// [RLVa:KB] - Comment out the line above (and uncomment the line below) to hide avie name tags under @shownmames=n
-						//((sRenderName == RENDER_NAME_ALWAYS && !fRlvShowNames) ||
+// [RLVa:KB] - Checked: 2009-08-11 (RLVa-1.0.1h) | Added: RLVa-1.0.0h
+						( (!fRlvShowNames) || (RlvSettings::fShowNameTags) ) &&
 // [/RLVa:KB]
+						((sRenderName == RENDER_NAME_ALWAYS) ||
 						(sRenderName == RENDER_NAME_FADE && time_visible < NAME_SHOW_TIME)));
 	// If it's your own avatar, don't draw in mouselook, and don't
 	// draw if we're specifically hiding our own name.
@@ -3458,6 +3721,11 @@ void LLVOAvatar::idleUpdateNameTag(const LLVector3& root_pos_last)
 				{
 					line += "\n";
 					line += "(Editing Appearance)";
+					setAppearanceFlag(true);
+				}
+				else
+				{
+					setAppearanceFlag(false);
 				}
 				mNameAway = is_away;
 				mNameBusy = is_busy;
@@ -3574,41 +3842,6 @@ void LLVOAvatar::idleUpdateNameTag(const LLVector3& root_pos_last)
 	}
 }
 
-F32 hueToRgb ( F32 val1In, F32 val2In, F32 valHUeIn )
-{
-	if ( valHUeIn < 0.0f ) valHUeIn += 1.0f;
-	if ( valHUeIn > 1.0f ) valHUeIn -= 1.0f;
-	if ( ( 6.0f * valHUeIn ) < 1.0f ) return ( val1In + ( val2In - val1In ) * 6.0f * valHUeIn );
-	if ( ( 2.0f * valHUeIn ) < 1.0f ) return ( val2In );
-	if ( ( 3.0f * valHUeIn ) < 2.0f ) return ( val1In + ( val2In - val1In ) * ( ( 2.0f / 3.0f ) - valHUeIn ) * 6.0f );
-	return ( val1In );
-}
-
-void hslToRgb ( F32 hValIn, F32 sValIn, F32 lValIn, F32& rValOut, F32& gValOut, F32& bValOut )
-{
-	if ( sValIn < 0.00001f )
-	{
-		rValOut = lValIn;
-		gValOut = lValIn;
-		bValOut = lValIn;
-	}
-	else
-	{
-		F32 interVal1;
-		F32 interVal2;
-
-		if ( lValIn < 0.5f )
-			interVal2 = lValIn * ( 1.0f + sValIn );
-		else
-			interVal2 = ( lValIn + sValIn ) - ( sValIn * lValIn );
-
-		interVal1 = 2.0f * lValIn - interVal2;
-
-		rValOut = hueToRgb ( interVal1, interVal2, hValIn + ( 1.f / 3.f ) );
-		gValOut = hueToRgb ( interVal1, interVal2, hValIn );
-		bValOut = hueToRgb ( interVal1, interVal2, hValIn - ( 1.f / 3.f ) );
-	}
-}
 
 void LLVOAvatar::idleUpdateTractorBeam()
 {
@@ -3622,19 +3855,7 @@ void LLVOAvatar::idleUpdateTractorBeam()
 
 
 	
-	LLColor4U rgb = LLColor4U(gAgent.getEffectColor());
-	
-	BOOL colorShifting = gSavedSettings.getBOOL("EmeraldRainbowBeam");
-	if(colorShifting)
-	{
-		F32 r, g, b;
-		LLColor4 output;
-		hslToRgb(0.5f+sinf(gFrameTimeSeconds*0.3f), 1.0f, 0.5f, r, g, b);
-		//hslToRgb(0.25f+sinf(gFrameTimeSeconds*1.2f)*(0.166f/2.0f), 1.0f, 0.5f, r, g, b);
-		output.set(r, g, b);
-		rgb.setVecScaleClamp(output);
-	
-	}
+	LLColor4U rgb = gLggBeamMaps.getCurrentColor(LLColor4U(gAgent.getEffectColor()));
 	
 	// This is only done for yourself (maybe it should be in the agent?)
 	if (!needsRenderBeam() || !mIsBuilt)
@@ -3757,10 +3978,8 @@ void LLVOAvatar::idleUpdateTractorBeam()
 			mBeam->setColor(rgb );
 			mBeam->setNeedsSendToSim(TRUE);
 			mBeamTimer.reset();
-			//LGG Picture Projection
-			LLColor4U shift = LLColor4U::black;
-			if(colorShifting) shift = rgb;
-			gLggBeamMaps.fireCurrentBeams(mBeam,shift );
+
+			gLggBeamMaps.fireCurrentBeams(mBeam,rgb );
 		}
 	}
 }
@@ -5112,6 +5331,14 @@ void LLVOAvatar::processAnimationStateChanges()
 		// playing, but not signaled, so stop
 		if (found_anim == mSignaledAnimations.end())
 		{
+			if (mIsSelf)
+			{
+				if ((gSavedSettings.getBOOL("EmeraldAOEnabled")) && LLFloaterAO::stopMotion(anim_it->first, FALSE)) // if the AO replaced this anim serverside then stop it serverside
+				{
+//					return TRUE; //no local stop needed
+				}
+			}
+
 			processSingleAnimationStateChange(anim_it->first, FALSE);
 			mPlayingAnimations.erase(anim_it++);
 			continue;
@@ -5130,6 +5357,19 @@ void LLVOAvatar::processAnimationStateChanges()
 		{
 			if (processSingleAnimationStateChange(anim_it->first, TRUE))
 			{
+
+				if (mIsSelf) // AO is only for ME
+				{
+					if (gSavedSettings.getBOOL("EmeraldAOEnabled"))
+					{
+						if (LLFloaterAO::startMotion(anim_it->first, 0,FALSE)) // AO overrides the anim if needed
+						{
+//								return TRUE; // not playing it locally
+						}
+					}
+				}
+
+
 				mPlayingAnimations[anim_it->first] = anim_it->second;
 				++anim_it;
 				continue;
@@ -5174,6 +5414,15 @@ BOOL LLVOAvatar::processSingleAnimationStateChange( const LLUUID& anim_id, BOOL 
 	{
 		if (anim_id == ANIM_AGENT_TYPE)
 		{
+			// Avatar list support
+			if ( LLFloaterAvatarList::getInstance() )
+			{
+				LLAvatarListEntry *ent = LLFloaterAvatarList::getInstance()->getAvatarEntry(getID());
+				if ( ent )
+				{
+					ent->setActivity(ACTIVITY_TYPING);
+				}
+			}
 			if (gAudiop)
 			{
 				LLVector3d char_pos_global = gAgent.getPosGlobalFromAgent(getCharacterPosition());
@@ -5214,6 +5463,18 @@ BOOL LLVOAvatar::processSingleAnimationStateChange( const LLUUID& anim_id, BOOL 
 	}
 	else //stop animation
 	{
+		if (anim_id == ANIM_AGENT_TYPE)
+		{
+			// Avatar list support
+			if ( LLFloaterAvatarList::getInstance() )
+			{
+				LLAvatarListEntry *ent = LLFloaterAvatarList::getInstance()->getAvatarEntry(getID());
+				if ( ent )
+				{
+					ent->setActivity(ACTIVITY_NONE);
+				}
+			}
+		}
 		if (anim_id == ANIM_AGENT_SIT_GROUND_CONSTRAINED)
 		{
 			mIsSitting = FALSE;
@@ -5251,7 +5512,7 @@ void LLVOAvatar::resetAnimations()
 
 //-----------------------------------------------------------------------------
 // startMotion()
-// id is the asset if of the animation to start
+// id is the asset id of the animation to start
 // time_offset is the offset into the animation at which to start playing
 //-----------------------------------------------------------------------------
 BOOL LLVOAvatar::startMotion(const LLUUID& id, F32 time_offset)
@@ -6291,6 +6552,21 @@ void LLVOAvatar::hideSkirt()
 	mMeshLOD[MESH_ID_SKIRT]->setVisible(FALSE, TRUE);
 }
 
+//-----------------------------------------------------------------------------
+// getMesh( LLPolyMeshSharedData *shared_data )
+//-----------------------------------------------------------------------------
+LLPolyMesh* LLVOAvatar::getMesh( LLPolyMeshSharedData *shared_data )
+{
+	for (polymesh_map_t::iterator i = mMeshes.begin(); i != mMeshes.end(); ++i)
+	{
+		LLPolyMesh* mesh = i->second;
+		if (mesh->getSharedData() == shared_data)
+		{
+			return mesh;
+		}
+	}
+	return NULL;
+}
 
 //-----------------------------------------------------------------------------
 // requestLayerSetUpdate()
@@ -6390,7 +6666,34 @@ BOOL LLVOAvatar::attachObject(LLViewerObject *viewer_object)
 // [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g)
 		if (rlv_handler_t::isEnabled())
 		{
-			gRlvHandler.onAttach(attachment);
+			static bool fRlvFullyLoaded = false;
+			static LLFrameTimer* pRlvFullyLoadedTimer = NULL;
+
+			// There's no way to know when we're done reattaching what was attached at log-off but this ugly evil bad hack tries anyway
+			if (!fRlvFullyLoaded)
+			{
+				if (pRlvFullyLoadedTimer)
+				{
+					if (pRlvFullyLoadedTimer->getElapsedTimeF32() > 30.0f)
+					{
+						fRlvFullyLoaded = true;
+						delete pRlvFullyLoadedTimer;
+						pRlvFullyLoadedTimer = NULL;
+					}
+					else
+					{
+						pRlvFullyLoadedTimer->reset();
+					}
+				}
+				else if ( (!pRlvFullyLoadedTimer) && 
+					      ( (0 == mPendingAttachment.size()) || 
+						    ((1 == mPendingAttachment.size()) && (mPendingAttachment[0] == viewer_object)) ) )
+				{
+					pRlvFullyLoadedTimer = new LLFrameTimer();
+				}
+			}
+
+			gRlvHandler.onAttach(attachment, fRlvFullyLoaded);
 		}
 // [/RLVa:KB]
 		
@@ -6521,6 +6824,7 @@ void LLVOAvatar::sitOnObject(LLViewerObject *sit_object)
 
 	gPipeline.markMoved(mDrawable, TRUE);
 	mIsSitting = TRUE;
+	LLFloaterAO::ChangeStand();
 // [RLVa:KB] - Checked: 2009-07-08 (RLVa-1.0.0e) | Added: RLVa-0.2.1d
 	#ifdef RLV_EXTENSION_STARTLOCATION
 	if (rlv_handler_t::isEnabled())
@@ -6551,7 +6855,7 @@ void LLVOAvatar::sitOnObject(LLViewerObject *sit_object)
 
 		//Name Short - Revoke permissions for the object you've just sat on.
 		U32 state = gSavedSettings.getU32("EmeraldRevokePerms");
-		if(state == 1 || state == 3 && !sit_object->permYouOwner())
+		if(state == 1 || (state == 3 && !sit_object->permYouOwner()))
 		{
 			gMessageSystem->newMessageFast(_PREHASH_RevokePermissions);
 			gMessageSystem->nextBlockFast(_PREHASH_AgentData);
@@ -6638,7 +6942,7 @@ void LLVOAvatar::getOffObject()
 		
 		//Name Short - Revoke permissions for the object you've just stood up from.
 		U32 state = gSavedSettings.getU32("EmeraldRevokePerms");
-		if(state == 2 || state == 3 && !sit_object->permYouOwner())
+		if(state == 2 || (state == 3 && !sit_object->permYouOwner()))
 		{
 			gMessageSystem->newMessageFast(_PREHASH_RevokePermissions);
 			gMessageSystem->nextBlockFast(_PREHASH_AgentData);
@@ -7799,6 +8103,8 @@ void LLVOAvatar::releaseUnnecessaryTextures()
 		// skip if this is a skirt and av is not wearing one, or if we don't have a baked texture UUID
         if(baked_index == BAKED_HEAD)
                 continue;
+		if(baked_index == BAKED_EYES)
+                continue;
 		if (!isTextureDefined(bakedDicEntry->mTextureIndex)
 			&& ( (baked_index != BAKED_SKIRT) || isWearingWearableType(WT_SKIRT) ))
 		{
@@ -8388,6 +8694,13 @@ void LLVOAvatar::processAvatarAppearance( LLMessageSystem* mesgsys )
 				if (is_first_appearance_message || (param->getWeight() != newWeight))
 				{
 					//llinfos << "Received update for param " << param->getDisplayName() << " at value " << newWeight << llendl;
+					if(param->getID() == 507)
+					{
+						llwarns << "Boob Grav SET to " << newWeight << " for " << getFullname() << llendl;
+						//param->setWeight(newWeight, FALSE);
+						setActualBoobGrav(newWeight);
+						//param->setAnimationTarget(newWeight, FALSE);
+					}
 					params_changed = TRUE;
 					if(is_first_appearance_message)
 					{
@@ -9531,9 +9844,9 @@ BOOL LLVOAvatar::updateLOD()
 
 	LLFace* facep = mDrawable->getFace(0);
 	if (facep->mVertexBuffer.isNull() ||
-		LLVertexBuffer::sEnableVBOs &&
+		(LLVertexBuffer::sEnableVBOs &&
 		((facep->mVertexBuffer->getUsage() == GL_STATIC_DRAW ? TRUE : FALSE) !=
-		(facep->getPool()->getVertexShaderLevel() > 0 ? TRUE : FALSE)))
+		(facep->getPool()->getVertexShaderLevel() > 0 ? TRUE : FALSE))))
 	{
 		mDirtyMesh = TRUE;
 	}

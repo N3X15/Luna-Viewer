@@ -217,7 +217,7 @@ BOOL LLChatBar::handleKeyHere( KEY key, MASK mask )
 				{
 					if (msg[mInputEditor->getCursor() - 1] != '\n')
 					{
-						//For some reason you have to use a newline character, the Â¶ wont show up in chat.
+						//For some reason you have to use a newline character, the ¶ wont show up in chat.
 						msg = msg.insert(mInputEditor->getCursor(), "\n");
 						mInputEditor->setText(msg);
 						mInputEditor->setCursor(mInputEditor->getCursor() + 1);
@@ -255,7 +255,7 @@ void LLChatBar::refresh()
 	}
 
 	childSetValue("History", LLFloaterChat::instanceVisible(LLSD()));
-
+	
 	childSetValue("ChatChannel",( 1.f * ((S32)(getChild<LLSpinCtrl>("ChatChannel")->get()))) );
 	childSetEnabled("Say", mInputEditor->getText().size() > 0);
 	childSetEnabled("Shout", mInputEditor->getText().size() > 0);
@@ -431,15 +431,6 @@ void LLChatBar::sendChat( EChatType type )
 		LLWString text = mInputEditor->getConvertedText();
 		if (!text.empty())
 		{
-			if(mInputEditor->getText()=="/luareload")
-			{
-				FLLua::init();
-				childSetValue("Chat Editor", LLStringUtil::null);
-				return;
-			}
-			if(FLLua::isMacro(mInputEditor->getText()))
-				FLLua::getInstance()->RunMacro(mInputEditor->getText());
-
 			if(type == CHAT_TYPE_OOC)
 			{
 				std::string tempText=mInputEditor->getText();
@@ -480,32 +471,32 @@ void LLChatBar::sendChat( EChatType type )
 							needsClosingType=2;
 						if(needsClosingType==1)
 						{
-						if(utf8text.at(utf8text.length() - 1) == ')')
-							utf8text+=" ";
-						utf8text+="))";
-					}
-					else if(needsClosingType==2)
-					{
-						if(utf8text.at(utf8text.length() - 1) == ']')
-							utf8text+=" ";
-						utf8text+="]]";
-					}
-					needsClosingType=0;
-					if (utf8text.find("((") == -1 && utf8text.find("))") == (utf8text.length() - 2))
-						needsClosingType=1;
-					else if (utf8text.find("[[") == -1 && utf8text.find("]]") == (utf8text.length() - 2))
-						needsClosingType=2;
-					if(needsClosingType==1)
-					{
-						if(utf8text.at(0) == '(')
-							utf8text.insert(0," ");
-						utf8text.insert(0,"((");
-					}
-					else if(needsClosingType==2)
-					{
-						if(utf8text.at(0) == '[')
-							utf8text.insert(0," ");
-						utf8text.insert(0,"[[");
+							if(utf8text.at(utf8text.length() - 1) == ')')
+								utf8text+=" ";
+							utf8text+="))";
+						}
+						else if(needsClosingType==2)
+						{
+							if(utf8text.at(utf8text.length() - 1) == ']')
+								utf8text+=" ";
+							utf8text+="]]";
+						}
+						needsClosingType=0;
+						if (utf8text.find("((") == -1 && utf8text.find("))") == (utf8text.length() - 2))
+							needsClosingType=1;
+						else if (utf8text.find("[[") == -1 && utf8text.find("]]") == (utf8text.length() - 2))
+							needsClosingType=2;
+						if(needsClosingType==1)
+						{
+							if(utf8text.at(0) == '(')
+								utf8text.insert(0," ");
+							utf8text.insert(0,"((");
+						}
+						else if(needsClosingType==2)
+						{
+							if(utf8text.at(0) == '[')
+								utf8text.insert(0," ");
+							utf8text.insert(0,"[[");
 						}
 					}
 				}
@@ -565,17 +556,17 @@ void LLChatBar::startChat(const char* line)
 {
 	if (gSavedSettings.getBOOL("EmeraldUseChatBar"))
 	{
-		gChatBar->setVisible(TRUE);
-		gChatBar->setKeyboardFocus(TRUE);
-		gSavedSettings.setBOOL("ChatVisible", TRUE);
+	gChatBar->setVisible(TRUE);
+	gChatBar->setKeyboardFocus(TRUE);
+	gSavedSettings.setBOOL("ChatVisible", TRUE);
 
-		if (line && gChatBar->mInputEditor)
-		{
-			std::string line_string(line);
-			gChatBar->mInputEditor->setText(line_string);
-		}
-		// always move cursor to end so users don't obliterate chat when accidentally hitting WASD
-		gChatBar->mInputEditor->setCursorToEnd();
+	if (line && gChatBar->mInputEditor)
+	{
+		std::string line_string(line);
+		gChatBar->mInputEditor->setText(line_string);
+	}
+	// always move cursor to end so users don't obliterate chat when accidentally hitting WASD
+	gChatBar->mInputEditor->setCursorToEnd();
 	}
 }
 
@@ -729,11 +720,11 @@ void LLChatBar::sendChatFromViewer(const LLWString &wtext, EChatType type, BOOL 
 	if ( (0 == channel) && (rlv_handler_t::isEnabled()) )
 	{
 		// Adjust the (public) chat "volume" on chat and gestures (also takes care of playing the proper animation)
-		if ( ((CHAT_TYPE_SHOUT == type) || (CHAT_TYPE_NORMAL == type)) && (gRlvHandler.hasBehaviour("chatnormal")) )
+		if ( ((CHAT_TYPE_SHOUT == type) || (CHAT_TYPE_NORMAL == type)) && (gRlvHandler.hasBehaviour(RLV_BHVR_CHATNORMAL)) )
 			type = CHAT_TYPE_WHISPER;
-		else if ( (CHAT_TYPE_SHOUT == type) && (gRlvHandler.hasBehaviour("chatshout")) )
+		else if ( (CHAT_TYPE_SHOUT == type) && (gRlvHandler.hasBehaviour(RLV_BHVR_CHATSHOUT)) )
 			type = CHAT_TYPE_NORMAL;
-		else if ( (CHAT_TYPE_WHISPER == type) && (gRlvHandler.hasBehaviour("chatwhisper")) )
+		else if ( (CHAT_TYPE_WHISPER == type) && (gRlvHandler.hasBehaviour(RLV_BHVR_CHATWHISPER)) )
 			type = CHAT_TYPE_NORMAL;
 
 		animate &= !gRlvHandler.hasBehaviour(RLV_BHVR_REDIRCHAT);
@@ -775,24 +766,23 @@ void LLChatBar::sendChatFromViewer(const LLWString &wtext, EChatType type, BOOL 
 	send_chat_from_viewer(utf8_out_text, type, channel);
 }
 
-// void send_chat_from_viewer(const std::string& utf8_out_text, EChatType type, S32 channel)
+//void send_chat_from_viewer(const std::string& utf8_out_text, EChatType type, S32 channel)
 // [RLVa:KB] - Checked: 2009-07-07 (RLVa-1.0.0d) | Modified: RLVa-0.2.2a
 void send_chat_from_viewer(std::string utf8_out_text, EChatType type, S32 channel)
 // [/RLVa:KB]
 {
-// [RLVa:KB] - Alternate: Emerald-370 | Checked: 2009-07-07 (RLVa-1.0.0d) | Modified: RLVa-0.2.2a
+// [RLVa:KB] - Alternate: Emerald-370 | Checked: 2009-08-05 (RLVa-1.0.1e) | Modified: RLVa-1.0.1e
 	// Only process chat messages (ie not CHAT_TYPE_START, CHAT_TYPE_STOP, etc)
-	if ( (rlv_handler_t::isEnabled()) && (!gRlvHandler.isReplyInProgress()) &&
-		 ( (CHAT_TYPE_WHISPER == type) || (CHAT_TYPE_NORMAL == type) || (CHAT_TYPE_SHOUT == type) ) )
+	if ( (rlv_handler_t::isEnabled()) && ( (CHAT_TYPE_WHISPER == type) || (CHAT_TYPE_NORMAL == type) || (CHAT_TYPE_SHOUT == type) ) )
 	{
 		if (0 == channel)
 		{
 			// (We already did this before, but LLChatHandler::handle() calls this directly)
-			if ( ((CHAT_TYPE_SHOUT == type) || (CHAT_TYPE_NORMAL == type)) && (gRlvHandler.hasBehaviour("chatnormal")) )
+			if ( ((CHAT_TYPE_SHOUT == type) || (CHAT_TYPE_NORMAL == type)) && (gRlvHandler.hasBehaviour(RLV_BHVR_CHATNORMAL)) )
 				type = CHAT_TYPE_WHISPER;
-			else if ( (CHAT_TYPE_SHOUT == type) && (gRlvHandler.hasBehaviour("chatshout")) )
+			else if ( (CHAT_TYPE_SHOUT == type) && (gRlvHandler.hasBehaviour(RLV_BHVR_CHATSHOUT)) )
 				type = CHAT_TYPE_NORMAL;
-			else if ( (CHAT_TYPE_WHISPER == type) && (gRlvHandler.hasBehaviour("chatwhisper")) )
+			else if ( (CHAT_TYPE_WHISPER == type) && (gRlvHandler.hasBehaviour(RLV_BHVR_CHATWHISPER)) )
 				type = CHAT_TYPE_NORMAL;
 
 			// Redirect chat if needed
@@ -803,50 +793,27 @@ void send_chat_from_viewer(std::string utf8_out_text, EChatType type, S32 channe
 			}
 
 			// Filter public chat if sendchat restricted (and filter anything that redirchat didn't redirect)
-			if ( (gRlvHandler.hasBehaviour("sendchat")) || (gRlvHandler.hasBehaviour(RLV_BHVR_REDIRCHAT)) )
+			if ( (gRlvHandler.hasBehaviour(RLV_BHVR_SENDCHAT)) || (gRlvHandler.hasBehaviour(RLV_BHVR_REDIRCHAT)) )
 				gRlvHandler.filterChat(utf8_out_text, true);
 		}
 		else
 		{
 			// Don't allow chat on a non-public channel if sendchannel restricted (unless the channel is an exception)
-			if ( (gRlvHandler.hasBehaviour("sendchannel")) && (!gRlvHandler.hasBehaviour("sendchannel", llformat("%d", channel))) )
+			if ( (gRlvHandler.hasBehaviour(RLV_BHVR_SENDCHANNEL)) && (!gRlvHandler.isException(RLV_BHVR_SENDCHANNEL, channel)) )
 				return;
 
 			// Don't allow chat on debug channel if @sendchat, @redirchat or @rediremote restricted (shows as public chat on viewers)
 			if (channel >= CHAT_CHANNEL_DEBUG)
 			{
 				bool fIsEmote = rlvIsEmote(utf8_out_text);
-				if ( (gRlvHandler.hasBehaviour("sendchat")) || 
+				if ( (gRlvHandler.hasBehaviour(RLV_BHVR_SENDCHAT)) || 
 					 ((!fIsEmote) && (gRlvHandler.hasBehaviour(RLV_BHVR_REDIRCHAT))) || 
 					 ((fIsEmote) && (gRlvHandler.hasBehaviour(RLV_BHVR_REDIREMOTE))) )
-			{
-				return;
+				{
+					return;
+				}
 			}
 		}
-		}
-	}
-// [/RLVa:KB]
-
-// [RLVa:KB] - Alternate: Emerald-370
-	// Emerald specific: the RLV spec defines a "nothing to return" as a zero length chat message which gets inhibited by the code below
-	//
-	// TODO-RLVa: it would be better to just send the message directly from inside RlvHandler, but postpone that until v1.1 so no
-	//            subtle new bug gets introduced at the last minute
-	if ( (rlv_handler_t::isEnabled()) && (gRlvHandler.isReplyInProgress()) && (0 == utf8_out_text.length()) )
-	{
-		LLMessageSystem* msg = gMessageSystem;
-		msg->newMessageFast(_PREHASH_ChatFromViewer);
-		msg->nextBlockFast(_PREHASH_AgentData);
-		msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID());
-		msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
-		msg->nextBlockFast(_PREHASH_ChatData);
-		msg->addStringFast(_PREHASH_Message, utf8_out_text);
-		msg->addU8Fast(_PREHASH_Type, type);
-		msg->addS32("Channel", channel);
-
-		gAgent.sendReliableMessage();
-
-		LLViewerStats::getInstance()->incStat(LLViewerStats::ST_CHAT_COUNT);
 	}
 // [/RLVa:KB]
 
@@ -877,19 +844,19 @@ void send_chat_from_viewer(std::string utf8_out_text, EChatType type, S32 channe
 		pos += next_split;
 
 		// *FIXME: Queue messages and wait for server
-	LLMessageSystem* msg = gMessageSystem;
-	msg->newMessageFast(_PREHASH_ChatFromViewer);
-	msg->nextBlockFast(_PREHASH_AgentData);
-	msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID());
-	msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
-	msg->nextBlockFast(_PREHASH_ChatData);
+		LLMessageSystem* msg = gMessageSystem;
+		msg->newMessageFast(_PREHASH_ChatFromViewer);
+		msg->nextBlockFast(_PREHASH_AgentData);
+		msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID());
+		msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
+		msg->nextBlockFast(_PREHASH_ChatData);
 		msg->addStringFast(_PREHASH_Message, send);
-	msg->addU8Fast(_PREHASH_Type, type);
-	msg->addS32("Channel", channel);
+		msg->addU8Fast(_PREHASH_Type, type);
+		msg->addS32("Channel", channel);
 
-	gAgent.sendReliableMessage();
+		gAgent.sendReliableMessage();
 
-	LLViewerStats::getInstance()->incStat(LLViewerStats::ST_CHAT_COUNT);
+		LLViewerStats::getInstance()->incStat(LLViewerStats::ST_CHAT_COUNT);
 	}
 }
 

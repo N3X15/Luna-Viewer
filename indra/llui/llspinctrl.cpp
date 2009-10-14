@@ -294,10 +294,12 @@ void LLSpinCtrl::onEditorCommit( LLUICtrl* caller, void *userdata )
 	LLSpinCtrl* self = (LLSpinCtrl*) userdata;
 	llassert( caller == self->mEditor );
 
-	if( self->mEditor->evaluateFloat() )
-	{
-		std::string text = self->mEditor->getText();
-		
+	//if( self->mEditor-evaluateFloat() )
+	//{
+	//	std::string text = self->mEditor->getText();
+	std::string text = self->mEditor->getText();
+	if( LLLineEditor::postvalidateFloat( text ) )
+	{	
 		LLLocale locale(LLLocale::USER_LOCALE);
 		F32 val = (F32) atof(text.c_str());
 

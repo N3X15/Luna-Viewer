@@ -344,7 +344,7 @@ static gcry_error_t serialize_mpi_array(unsigned char **buffer, int *buflen,
 static gcry_error_t unserialize_mpi_array(gcry_mpi_t **mpis,
 	unsigned int expcount, const unsigned char *buffer, const int buflen)
 {
-    int i;
+    unsigned int i;
     int lenp = buflen;
     unsigned int thecount = 0;
     const unsigned char* bufp = buffer;
