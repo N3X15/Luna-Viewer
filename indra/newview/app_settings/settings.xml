@@ -11,6 +11,7 @@
       <string>String</string>
       <key>Value</key>
       <string>/lua</string>
+	</map>
     <key>InventorySearchType</key>
     <map>
       <key>Comment</key>
