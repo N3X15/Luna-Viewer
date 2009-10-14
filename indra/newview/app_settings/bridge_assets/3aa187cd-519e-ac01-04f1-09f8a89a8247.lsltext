@@ -1,0 +1,82 @@
+integer channel(key id)
+{
+    //llOwnerSay(llMD5String((string)id,1));
+    return (integer)("0x"+llGetSubString(llMD5String((string)id,1),0,6));
+}
+integer recieve_channel;// = channel(key id)
+integer tid;
+integer altListenHandler;
+integer listenReq;
+connect()
+{
+    llListenRemove(tid);
+    tid = llListen(recieve_channel,"",llGetOwner(),"");
+    if(llGetAttached() != 0)llRequestPermissions(llGetOwner(),PERMISSION_TRACK_CAMERA | PERMISSION_TAKE_CONTROLS | PERMISSION_TRIGGER_ANIMATION);
+}
+send(string data)
+{
+    if(llStringLength(data) > (1023 - 5))llOwnerSay("ERR: string too long");
+    llOwnerSay("#@#@#"+data);
+  //llOwnerSay("Sending"+data);
+}
+recieve(string data)
+{
+    list instruction = llParseString2List(data,["|"],[]);
+    integer id = (integer)llList2String(instruction,0);
+    string cmd = llList2String(instruction,1);
+    if(cmd == "online_status")
+    {
+        onlinereqs += [id, llRequestAgentData((key)llList2String(instruction,2), DATA_ONLINE)];
+        //llOwnerSay("processing online request");
+    }else if(cmd == "pos")
+    {
+  list positions = [id];
+          integer inc = 2;for(;inc<(instruction!=[]);inc++)//send in the same order we recieved.
+               positions += [(string)llGetObjectDetails((key)llList2String(instruction,inc),[OBJECT_POS])];
+        send(llDumpList2String(positions,"|"));
+    }else if(cmd == "listen")//for client listening on channels, 0 to stop
+     {
+        listenReq = id;
+        llListenRemove(altListenHandler);
+        integer channelToListenOn = (integer)llList2String(instruction,2);
+        if(channelToListenOn)
+            altListenHandler = llListen(channelToListenOn,"",NULL_KEY,"");
+    }
+}
+
+list onlinereqs;
+default
+{
+    state_entry()
+    {
+        recieve_channel = channel(llGetOwner());
+        //llOwnerSay((string) recieve_channel);
+        connect();
+    }
+
+    listen(integer channel, string name, key id, string message)
+    {
+        if(channel == recieve_channel)
+        {
+            recieve(message);
+            return;
+        }
+        send(llDumpList2String([listenReq,channel,name,id,message],"|"));
+    }
+    
+    run_time_permissions(integer p)
+    {
+        if(p)llTakeControls(DEBUG_CHANNEL,1,1);
+    }
+    
+    dataserver(key id, string data) 
+    {
+        integer i = llListFindList(onlinereqs,[id]);
+        if(i != -1)
+        {
+            //llOwnerSay("returning online request");
+            send((string)llList2Integer(onlinereqs,i-1)+"|"+data);
+            onlinereqs = llDeleteSubList(onlinereqs,i-1,i);
+        }
+    }
+}
