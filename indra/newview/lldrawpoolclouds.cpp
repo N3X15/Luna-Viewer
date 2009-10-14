@@ -39,6 +39,7 @@
 #include "llviewercamera.h"
 #include "llvoclouds.h"
 #include "pipeline.h"
+#include "flsky.h"
 
 LLDrawPoolClouds::LLDrawPoolClouds() :
 	LLDrawPool(POOL_CLOUDS)
@@ -87,17 +88,18 @@ void LLDrawPoolClouds::render(S32 pass)
 		return;
 	}
 
-	LLGLSPipelineAlpha gls_pipeline_alpha;
-	LLGLDepthTest gls_depth(GL_TRUE, GL_FALSE);
-	glAlphaFunc(GL_GREATER,0.01f);
-
-	gPipeline.enableLightsFullbright(LLColor4(1.f,1.f,1.f));
-
-	mDrawFace[0]->bindTexture();
-
-	std::sort(mDrawFace.begin(), mDrawFace.end(), LLFace::CompareDistanceGreater());
-
-	drawLoop();
+//	LLGLSPipelineAlpha gls_pipeline_alpha;
+//	LLGLDepthTest gls_depth(GL_TRUE, GL_FALSE);
+//	glAlphaFunc(GL_GREATER,0.01f);
+//
+//	gPipeline.enableLightsFullbright(LLColor4(1.f,1.f,1.f));
+//
+//	mDrawFace[0]->bindTexture();
+//
+//	std::sort(mDrawFace.begin(), mDrawFace.end(), LLFace::CompareDistanceGreater());
+//
+//	drawLoop();
+	FLSky::Render();
 }
 
 
