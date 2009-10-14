@@ -34,9 +34,8 @@
 #define LL_DRAWPOOLWLSKY_H
 
 #include "lldrawpool.h"
-#include "SilverLining.h"
-// Substitute your own registration name and license code here
-static SilverLining::Atmosphere *atm= new SilverLining::Atmosphere("COMPANY","KEY");
+
+class LLGLSLShader;
 
 class LLDrawPoolWLSky : public LLDrawPool {
 public:
@@ -77,21 +76,15 @@ public:
 	static void cleanupGL();
 	static void restoreGL();
 private:
-	static bool comp(SilverLining::ObjectHandle c1,SilverLining::ObjectHandle c2);
-	void renderFog();
-	void renderStars();
-	void renderLighting();
-	void renderClouds();
-
-	void DoAtmo();
-
-	void SetupCirrusClouds();
-	void SetupCumulusCongestusClouds();
-	void SetupStratusClouds();
-	void SetupCumulonimbusClouds();
-	void SetupCumulusMediocrisClouds();
+	void renderDome(F32 camHeightLocal, LLGLSLShader * shader) const;
+	void renderSkyHaze(F32 camHeightLocal) const;
+	void renderStars(void) const;
+	void renderSkyClouds(F32 camHeightLocal) const;
+	void renderHeavenlyBodies();
 
 private:
+	static LLPointer<LLImageGL> sCloudNoiseTexture;
+	static LLPointer<LLImageRaw> sCloudNoiseRawImage;
 };
 
 #endif // LL_DRAWPOOLWLSKY_H

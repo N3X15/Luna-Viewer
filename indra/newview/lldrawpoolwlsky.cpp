@@ -36,7 +36,6 @@
 
 #include "llerror.h"
 #include "llgl.h"
-#include "lldir.h"
 #include "pipeline.h"
 #include "llviewercamera.h"
 #include "llimage.h"
@@ -48,69 +47,40 @@
 #include "llface.h"
 #include "llrender.h"
 
+LLPointer<LLImageGL> LLDrawPoolWLSky::sCloudNoiseTexture = NULL;
 
-#include "SilverLining.h"
-// All SilverLining objects are in the SilverLining namespace.
-using namespace SilverLining;
+LLPointer<LLImageRaw> LLDrawPoolWLSky::sCloudNoiseRawImage = NULL;
 
-// Statics and defines for a simple, self-contained demo application
-//  Main interface to silverlining.
-//static Atmosphere *atm = 0;
 
-#define kVisibility 20000.0f
 
 LLDrawPoolWLSky::LLDrawPoolWLSky(void) :
 	LLDrawPool(POOL_WL_SKY)
 {
-	llinfos << "Initializing SilverLining..." << llendl;
+	const std::string cloudNoiseFilename(gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS, "windlight", "clouds2.tga"));
+	llinfos << "loading WindLight cloud noise from " << cloudNoiseFilename << llendl;
+
+	LLPointer<LLImageFormatted> cloudNoiseFile(LLImageFormatted::createFromExtension(cloudNoiseFilename));
+
+	if(cloudNoiseFile.isNull()) {
+		llerrs << "Error: Failed to load cloud noise image " << cloudNoiseFilename << llendl;
+	}
+
+	cloudNoiseFile->load(cloudNoiseFilename);
+
+	sCloudNoiseRawImage = new LLImageRaw();
+
+	cloudNoiseFile->decode(sCloudNoiseRawImage, 0.0f);
+
+	LLImageGL::create(sCloudNoiseTexture, sCloudNoiseRawImage, TRUE);
+
 	LLWLParamManager::instance()->propagateParameters();
-
-	// PUT YOUR OWN DAMN LICENSE KEY HERE
-	atm = new Atmosphere("Your Company Name", "Your License Code");
-	atm->ShowFramerate(true);
-	int err=atm->Initialize(Atmosphere::OPENGL, gDirUtilp->getExpandedFilename(FL_PATH_SKY,"").c_str(), true, 0);
-
-	Location loc;
-	loc.SetLatitude(45);
-	loc.SetLongitude(-122);
-
-	LocalTime tm;
-	tm.SetYear(1971);
-	tm.SetMonth(8);
-	tm.SetDay(7);
-	tm.SetHour(30);
-	tm.SetMinutes(30);
-	tm.SetSeconds(0);
-	tm.SetObservingDaylightSavingsTime(true);
-	tm.SetTimeZone(PST);
-
-	atm->GetConditions()->SetTime(tm);
-	atm->GetConditions()->SetLocation(loc);
-
-	assert(atm);
-
-	// Set up wind blowing south at 50 meters/sec
-	WindVolume wv;
-	wv.SetDirection(180);
-	wv.SetMinAltitude(0);
-	wv.SetMaxAltitude(10000);
-	wv.SetWindSpeed(50);
-	atm->GetConditions()->SetWind(wv);
-
-	// Set up the desired cloud types.
-	SetupCirrusClouds();
-	SetupCumulusCongestusClouds();
-	//SetupStratusClouds();
-	//SetupCumulonimbusClouds();
-	//SetupCumulusMediocrisClouds();
-
-	// Set visibility
-	atm->GetConditions()->SetVisibility(20000.0f);
 }
 
 LLDrawPoolWLSky::~LLDrawPoolWLSky()
 {
 	//llinfos << "destructing wlsky draw pool." << llendl;
+	sCloudNoiseTexture = NULL;
+	sCloudNoiseRawImage = NULL;
 }
 
 LLViewerImage *LLDrawPoolWLSky::getDebugTexture()
@@ -120,63 +90,169 @@ LLViewerImage *LLDrawPoolWLSky::getDebugTexture()
 
 void LLDrawPoolWLSky::beginRenderPass( S32 pass )
 {
-
 }
 
 void LLDrawPoolWLSky::endRenderPass( S32 pass )
 {
-
 }
 
-void LLDrawPoolWLSky::renderLighting()
+void LLDrawPoolWLSky::renderDome(F32 camHeightLocal, LLGLSLShader * shader) const
 {
-    llinfos << "renderLighting" << llendl;
-    float x, y, z, r, g, b, ra, ga, ba;
-    atm->GetSunOrMoonPosition(&x, &y, &z);
-    atm->GetSunOrMoonColor(&r, &g, &b);
-    atm->GetAmbientColor(&ra, &ga, &ba);
+	LLVector3 const & origin = LLViewerCamera::getInstance()->getOrigin();
 
-    GLfloat light_ambient[] = {ra, ga, ba, 1.0};
-    GLfloat light_diffuse[] = {r, g, b, 1.0};
-    GLfloat light_specular[] = {0.0, 0.0, 0.0, 1.0};
-    GLfloat light_position[] = {x, y, z, 0};
+	llassert_always(NULL != shader);
 
-    glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
-    glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
-    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
-    glEnable(GL_LIGHT0);
+	glPushMatrix();
 
-    GLfloat mat_amb_diff[] = {1.0, 1.0, 1.0, 1.0};
-    GLfloat no_mat[] = {0, 0, 0, 0};
-    glMaterialfv(GL_FRONT, GL_AMBIENT, mat_amb_diff);
-    glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_amb_diff);
-    glMaterialfv(GL_FRONT, GL_SPECULAR, no_mat);
-    glMaterialfv(GL_FRONT, GL_EMISSION, no_mat);
+	//chop off translation
+	if (LLPipeline::sReflectionRender && origin.mV[2] > 256.f)
+	{
+		glTranslatef(origin.mV[0], origin.mV[1], 256.f-origin.mV[2]*0.5f);
+	}
+	else
+	{
+		glTranslatef(origin.mV[0], origin.mV[1], origin.mV[2]);
+	}
+		
+
+	// the windlight sky dome works most conveniently in a coordinate system
+	// where Y is up, so permute our basis vectors accordingly.
+	glRotatef(120.f, 1.f / F_SQRT3, 1.f / F_SQRT3, 1.f / F_SQRT3);
+
+	glScalef(0.333f, 0.333f, 0.333f);
+
+	glTranslatef(0.f,-camHeightLocal, 0.f);
+	
+	// Draw WL Sky	
+	shader->uniform3f("camPosLocal", 0.f, camHeightLocal, 0.f);
+
+	gSky.mVOWLSkyp->drawDome();
+
+	glPopMatrix();
 }
 
-void LLDrawPoolWLSky::DoAtmo()
+void LLDrawPoolWLSky::renderSkyHaze(F32 camHeightLocal) const
 {
-	llinfos << "DoAtmo()" << llendl;
-	assert(atm);
+	if (gPipeline.canUseWindLightShaders() && gPipeline.hasRenderType(LLPipeline::RENDER_TYPE_SKY))
+	{
+		LLGLSLShader* shader =
+			LLPipeline::sUnderWaterRender ?
+				&gObjectSimpleWaterProgram :
+				&gWLSkyProgram;
 
-	// Set up wind blowing south at 50 meters/sec
-	WindVolume wv;
-	wv.SetDirection(180);
-	wv.SetMinAltitude(0);
-	wv.SetMaxAltitude(10000);
-	wv.SetWindSpeed(50);
-	atm->GetConditions()->SetWind(wv);
+		LLGLDisable blend(GL_BLEND);
 
-	// Set up the desired cloud types.
-	SetupCirrusClouds();
-	SetupCumulusCongestusClouds();
-	//SetupStratusClouds();
-	//SetupCumulonimbusClouds();
-	//SetupCumulusMediocrisClouds();
+		shader->bind();
 
-	// Set visibility
-	atm->GetConditions()->SetVisibility(kVisibility);
+		/// Render the skydome
+		renderDome(camHeightLocal, shader);	
+
+		shader->unbind();
+	}
+}
+
+void LLDrawPoolWLSky::renderStars(void) const
+{
+	LLGLSPipelineSkyBox gls_sky;
+	LLGLEnable blend(GL_BLEND);
+	gGL.setSceneBlendType(LLRender::BT_ALPHA);
+	
+	// *NOTE: have to have bound the cloud noise texture already since register
+	// combiners blending below requires something to be bound
+	// and we might as well only bind once.
+	//gGL.getTexUnit(0)->enable(LLTexUnit::TT_TEXTURE);
+	
+	gPipeline.disableLights();
+
+	if (!LLPipeline::sReflectionRender)
+	{
+		glPointSize(2.f);
+	}
+
+	// *NOTE: we divide by two here and GL_ALPHA_SCALE by two below to avoid
+	// clamping and allow the star_alpha param to brighten the stars.
+	bool error;
+	LLColor4 star_alpha(LLColor4::black);
+	star_alpha.mV[3] = LLWLParamManager::instance()->mCurParams.getFloat("star_brightness", error) / 2.f;
+	llassert_always(!error);
+
+	// gl_FragColor.rgb = gl_Color.rgb;
+	// gl_FragColor.a = gl_Color.a * star_alpha.a;
+	gGL.getTexUnit(0)->setTextureColorBlend(LLTexUnit::TBO_REPLACE, LLTexUnit::TBS_PREV_COLOR);
+	gGL.getTexUnit(0)->setTextureAlphaBlend(LLTexUnit::TBO_MULT_X2, LLTexUnit::TBS_PREV_ALPHA, LLTexUnit::TBS_CONST_ALPHA);
+	glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, star_alpha.mV);
+
+	gSky.mVOWLSkyp->drawStars();
+
+	glPointSize(1.f);
+
+	// and disable the combiner states
+	gGL.getTexUnit(0)->setTextureBlendType(LLTexUnit::TB_MULT);
+}
+
+void LLDrawPoolWLSky::renderSkyClouds(F32 camHeightLocal) const
+{
+	if (gPipeline.canUseWindLightShaders() && gPipeline.hasRenderType(LLPipeline::RENDER_TYPE_CLOUDS))
+	{
+		LLGLSLShader* shader =
+			LLPipeline::sUnderWaterRender ?
+				&gObjectSimpleWaterProgram :
+				&gWLCloudProgram;
+
+		LLGLEnable blend(GL_BLEND);
+		LLGLSBlendFunc blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		gGL.setAlphaRejectSettings(LLRender::CF_DEFAULT);
+
+		gGL.getTexUnit(0)->bind(sCloudNoiseTexture);
+
+		shader->bind();
+
+		/// Render the skydome
+		renderDome(camHeightLocal, shader);
+
+		shader->unbind();
+	}
+}
+
+void LLDrawPoolWLSky::renderHeavenlyBodies()
+{
+	LLGLSPipelineSkyBox gls_skybox;
+	LLGLEnable blend_on(GL_BLEND);
+	gPipeline.disableLights();
+
+#if 0 // when we want to re-add a texture sun disc, here's where to do it.
+	LLFace * face = gSky.mVOSkyp->mFace[LLVOSky::FACE_SUN];
+	if (gSky.mVOSkyp->getSun().getDraw() && face->getGeomCount())
+	{
+		LLImageGL * tex  = face->getTexture();
+		gGL.getTexUnit(0)->bind(tex);
+		LLColor4 color(gSky.mVOSkyp->getSun().getInterpColor());
+		LLFacePool::LLOverrideFaceColor color_override(this, color);
+		face->renderIndexed();
+	}
+#endif
+
+	LLFace * face = gSky.mVOSkyp->mFace[LLVOSky::FACE_MOON];
+
+	if (gSky.mVOSkyp->getMoon().getDraw() && face->getGeomCount())
+	{
+		// *NOTE: even though we already bound this texture above for the
+		// stars register combiners, we bind again here for defensive reasons,
+		// since LLImageGL::bind detects that it's a noop, and optimizes it out.
+		LLImageGL * tex  = face->getTexture();
+		gGL.getTexUnit(0)->bind(tex);
+		LLColor4 color(gSky.mVOSkyp->getMoon().getInterpColor());
+		F32 a = gSky.mVOSkyp->getMoon().getDirection().mV[2];
+		if (a > 0.f)
+		{
+			a = a*a*4.f;
+		}
+			
+		color.mV[3] = llclamp(a, 0.f, 1.f);
+		
+		LLFacePool::LLOverrideFaceColor color_override(this, color);
+		face->renderIndexed();
+	}
 }
 
 void LLDrawPoolWLSky::render(S32 pass)
@@ -185,114 +261,39 @@ void LLDrawPoolWLSky::render(S32 pass)
 	{
 		return;
 	}
-	if(!atm)
-		llerrs << "Unable to find SilverLining Atmosphere!" << llendl;
-	llinfos << "Rendering..." << llendl;
-	
 	LLFastTimer ftm(LLFastTimer::FTM_RENDER_WL_SKY);
 
-	llinfos << "Set Camera Matrix..." << llendl;
-	double mv[16], proj[16];
-	glGetDoublev(GL_MODELVIEW_MATRIX, mv);
-	glGetDoublev(GL_PROJECTION_MATRIX, proj);
-	atm->SetCameraMatrix(mv);
-	atm->SetProjectionMatrix(proj);
-
-	llinfos << "BeginFrame(True)" << llendl;
-
-	//if(!atm->BeginFrame(true)) 
-	//	llerrs << "Failed to draw sky." << llendl;
-
-        llinfos << "Camheight" << llendl;
 	const F32 camHeightLocal = LLWLParamManager::instance()->getDomeOffset() * LLWLParamManager::instance()->getDomeRadius();
 
-        llinfos << "Clipping" << llendl;
+	LLGLSNoFog disableFog;
 	LLGLDepthTest depth(GL_TRUE, GL_FALSE);
 	LLGLDisable clip(GL_CLIP_PLANE0);
 
 	LLGLClampToFarClip far_clip(glh_get_current_projection());
-        llinfos << "Cam Origin" << llendl;
+
+	renderSkyHaze(camHeightLocal);
+
 	LLVector3 const & origin = LLViewerCamera::getInstance()->getOrigin();
-        llinfos << "glPushMatrix" << llendl;
 	glPushMatrix();
 
-        llinfos << "glTranslatef" << llendl;
 		glTranslatef(origin.mV[0], origin.mV[1], origin.mV[2]);
 
-	        llinfos << "RenderFog" << llendl;
-		//renderHeavenlyBodies();
-		renderFog();
-		renderClouds();
+		// *NOTE: have to bind a texture here since register combiners blending in
+		// renderStars() requires something to be bound and we might as well only
+		// bind the moon's texture once.
+		LLImageGL * tex  = gSky.mVOSkyp->mFace[LLVOSky::FACE_MOON]->getTexture();
+		gGL.getTexUnit(0)->bind(tex);
+
+		renderHeavenlyBodies();
+
+		renderStars();
 		
-        llinfos << "glPopMatrix" << llendl;
+
 	glPopMatrix();
 
-        llinfos << "EndFrame()" << llendl;
-	atm->EndFrame();
+	renderSkyClouds(camHeightLocal);
 
-}
-//static 
-bool LLDrawPoolWLSky::comp(ObjectHandle c1, ObjectHandle c2)
-{
-	LLVector3 pos=LLViewerCamera::getInstance()->getOrigin();
-        double d1 = atm->GetObjectDistance(c1, c2, pos.mV[VX], pos.mV[VY], pos.mV[VZ]);
-        double d2 = atm->GetObjectDistance(c2, c1, pos.mV[VX], pos.mV[VY], pos.mV[VZ]);
-
-        return (d1 > d2);
-}
-
-void LLDrawPoolWLSky::renderClouds()
-{
-        std::vector<ObjectHandle>& objs = atm->GetObjects();
-
-        sort(objs.begin(), objs.end(), comp);
-
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-        glEnable(GL_DEPTH_TEST);
-        glDepthMask(0);
-        glEnable(GL_TEXTURE_2D);
-        glDisable(GL_LIGHTING);
-        glDisable(GL_FOG);
-
-        std::vector<ObjectHandle>::iterator it;
-        for (it = objs.begin(); it != objs.end(); it++)
-        {
-                atm->DrawObject(*it);
-        }
-
-        glDepthMask(1);
-}
-
-void LLDrawPoolWLSky::renderFog()
-{
-	llinfos << "Rendering fog" << llendl;
-	glEnable(GL_FOG);
-	glFogi(GL_FOG_MODE, GL_EXP);
-	glHint(GL_FOG_HINT, GL_NICEST);
-
-	// Need to light the fog, or it will glow in the dark...
-	float ar, ag, ab;
-	atm->GetSunOrMoonColor(&ar, &ag, &ab);
-
-	if (atm->GetFogEnabled())
-	{
-		float density, r, g, b;
-		atm->GetFogSettings(&density, &r, &g, &b);
-		glFogf(GL_FOG_DENSITY, density);
-
-		GLfloat fogColor[4] = {r * ar, g * ag, b * ab, 1.0};
-		glFogfv(GL_FOG_COLOR, fogColor);
-	}
-	else
-	{
-		GLfloat fogColor[4];
-		atm->GetHorizonColor(LLViewerCamera::getInstance()->getYaw(), &fogColor[0], &fogColor[1], &fogColor[2]);
-		glFogfv(GL_FOG_COLOR, fogColor);
-
-		float density = 1.0 / kVisibility;
-		glFogf(GL_FOG_DENSITY, density);
-	}
+	gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
 }
 
 void LLDrawPoolWLSky::prerender()
@@ -317,100 +318,11 @@ void LLDrawPoolWLSky::resetDrawOrders()
 //static
 void LLDrawPoolWLSky::cleanupGL()
 {
+	sCloudNoiseTexture = NULL;
 }
 
 //static
 void LLDrawPoolWLSky::restoreGL()
 {
-
-}
-
-
-// Configure high cirrus clouds.
-void LLDrawPoolWLSky::SetupCirrusClouds()
-{
-    llinfos << "Cirrus" << llendl;
-    CloudLayer *cirrusCloudLayer;
-
-    cirrusCloudLayer = CloudLayerFactory::Create(CIRRUS_FIBRATUS);
-    cirrusCloudLayer->SetBaseAltitude(8000);
-    cirrusCloudLayer->SetThickness(0);
-    cirrusCloudLayer->SetBaseLength(100000);
-    cirrusCloudLayer->SetBaseWidth(100000);
-    cirrusCloudLayer->SetLayerPosition(0, 0);
-    cirrusCloudLayer->SeedClouds(*atm);
-
-    atm->GetConditions()->AddCloudLayer(cirrusCloudLayer);
-}
-
-// Add a cumulus congestus deck with 40% sky coverage.
-void LLDrawPoolWLSky::SetupCumulusCongestusClouds()
-{
-    llinfos << "Cumulus Congestus" << llendl;
-    CloudLayer *cumulusCongestusLayer;
-
-    cumulusCongestusLayer = CloudLayerFactory::Create(CUMULUS_CONGESTUS);
-    cumulusCongestusLayer->SetBaseAltitude(1500);
-    cumulusCongestusLayer->SetThickness(100);
-    cumulusCongestusLayer->SetBaseLength(30000);
-    cumulusCongestusLayer->SetBaseWidth(30000);
-    cumulusCongestusLayer->SetDensity(0.4);
-    cumulusCongestusLayer->SetLayerPosition(0, 0);
-    cumulusCongestusLayer->SeedClouds(*atm);
-    cumulusCongestusLayer->GenerateShadowMaps(false);
-
-    atm->GetConditions()->AddCloudLayer(cumulusCongestusLayer);
-}
-
-// Sets up a solid stratus deck.
-void LLDrawPoolWLSky::SetupStratusClouds()
-{
-    llinfos << "Stratus" << llendl;
-    CloudLayer *stratusLayer;
-
-    stratusLayer = CloudLayerFactory::Create(NIMBOSTRATUS);
-    stratusLayer->SetBaseAltitude(1000);
-    stratusLayer->SetThickness(600);
-    stratusLayer->SetDensity(0.5);
-    stratusLayer->SetLayerPosition(0, 0);
-    stratusLayer->SeedClouds(*atm);
-
-    atm->GetConditions()->AddCloudLayer(stratusLayer);
-}
-
-// A thunderhead; note a Cumulonimbus cloud layer contains a single cloud.
-void LLDrawPoolWLSky::SetupCumulonimbusClouds()
-{
-    llinfos << "Cumulonimus" << llendl;
-    CloudLayer *cumulonimbusLayer;
-
-    cumulonimbusLayer = CloudLayerFactory::Create(CUMULONIMBUS_CAPPILATUS);
-    cumulonimbusLayer->SetBaseAltitude(1000);
-    cumulonimbusLayer->SetThickness(3000);
-    cumulonimbusLayer->SetBaseLength(3000);
-    cumulonimbusLayer->SetBaseWidth(5000);
-    cumulonimbusLayer->SetLayerPosition(5000, 5000);
-    cumulonimbusLayer->SeedClouds(*atm);
-
-    atm->GetConditions()->AddCloudLayer(cumulonimbusLayer);
-}
-
-// Cumulus mediocris are little, puffy clouds. Keep the density low for realism, otherwise
-// you'll have a LOT of clouds because they are small.
-void LLDrawPoolWLSky::SetupCumulusMediocrisClouds()
-{
-    llinfos << "Cumulus mediocris" << llendl;
-    CloudLayer *cumulusMediocrisLayer;
-
-    cumulusMediocrisLayer = CloudLayerFactory::Create(CUMULUS_MEDIOCRIS);
-    cumulusMediocrisLayer->SetBaseAltitude(1000);
-    cumulusMediocrisLayer->SetThickness(100);
-    cumulusMediocrisLayer->SetBaseLength(20000);
-    cumulusMediocrisLayer->SetBaseWidth(20000);
-    cumulusMediocrisLayer->SetDensity(0.2);
-    cumulusMediocrisLayer->SetLayerPosition(0, 0);
-    cumulusMediocrisLayer->SeedClouds(*atm);
-    cumulusMediocrisLayer->GenerateShadowMaps(false);
-
-    atm->GetConditions()->AddCloudLayer(cumulusMediocrisLayer);
+	LLImageGL::create(sCloudNoiseTexture, sCloudNoiseRawImage, TRUE);
 }
