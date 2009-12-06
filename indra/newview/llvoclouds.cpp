@@ -52,6 +52,8 @@
 #include "pipeline.h"
 #include "llspatialpartition.h"
 
+#include "flsky.h"
+
 LLUUID gCloudTextureID = IMG_CLOUD_POOF;
 
 

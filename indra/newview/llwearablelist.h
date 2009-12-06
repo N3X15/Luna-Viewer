@@ -60,7 +60,7 @@ public:
 	// Callback
 	static void	 	    processGetAssetReply(const char* filename, const LLAssetID& assetID, void* user_data, S32 status, LLExtStat ext_status);
 
-protected:
+public:
 	std::map< LLUUID, LLWearable* > mList;
 };
 

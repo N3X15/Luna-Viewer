@@ -43,7 +43,7 @@
 
 // project includes
 #include "llviewerobject.h"
-
+#include "llvoavatar.h"
 
 class LLNetMap;
 class LLDebugBeacon;
