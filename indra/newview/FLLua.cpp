@@ -21,8 +21,17 @@
  *
  * $Id$
  */
+
+/**
+* Structure:
+*
+* STATIC: FLLua
+*  - sInstance=FLLua() (THREAD,INTERPRETER)
+*/
 #include "llviewerprecompiledheaders.h"
-#include<boost/tokenizer.hpp>
+#include <vector>
+#include <queue>
+#include <boost/tokenizer.hpp>
 #include "FLLua.h"
 
 /* Lua libraries */
@@ -49,7 +58,6 @@ extern "C" {
 #include "llglheaders.h"
 #include "llversionviewer.h"
 
-/* tolua++ */
 
 /* Lua classes */
 #include "LuaBase.h"
@@ -61,17 +69,31 @@ extern "C" {
 extern int luaopen_SL(lua_State* L); // declare the wrapped module
 }
 
+HookRequest::HookRequest(const char *name)
+{
+	mName=name;
+}
+
+HookRequest::Add(const char *arg)
+{
+	mArgs.push_back(arg);
+}
+
+
 //#define LUA_HOOK_SPAM 
 
 FLLua::FLLua() :
-	LLThread(std::string("Lua")),
-	L(NULL)
+	LLThread("Lua"),
+	mUserDatap(NULL)
 {
-	run();	
+	// Do nothing.
 }
+
 FLLua* FLLua::sInstance = NULL;
+// static
 FLLua* FLLua::getInstance()
 {
+	LL_WARNS("Lua") << "Lua interpreter should not be directly accessed!" << llendl;
 	return sInstance;
 }
 
@@ -80,10 +102,12 @@ void FLLua::init()
 {
 	LL_INFOS("Lua") << "Starting Lua..." << llendl;
 	sInstance=new FLLua();
-	sInstance->callLuaHook("OnLuaInit",0);
+	sInstance->start();
+	FLLua::callLuaHook("OnLuaInit",0);
 	LL_INFOS("Lua") << "Lua started." << llendl;
 }
 
+/// Run the interpreter.
 void FLLua::run()
 {
 	LL_INFOS("Lua") << "Thread initialized." << llendl;
@@ -93,7 +117,6 @@ void FLLua::run()
 
 	luaL_openlibs(L);
 
-	//tolua_LuaBase_open(L);
 	luaopen_SL(L);
 
 	std::string  version; 
@@ -110,9 +133,38 @@ void FLLua::run()
 #if 0
 	RunFile(gDirUtilp->getExpandedFilename(FL_PATH_MACROS,"unit_tests.lua"));
 #endif
+
+	while(1)
+	{
+		// Process Hooks
+		if(!mQueuedHooks.empty())
+		{
+			// Peek at the top of the stack
+			HookRequest hr = mQueuedHooks.front();
+			this->ExecuteHook(hr);		
+		}
+		// Process Macros/Raw Commands
+		if(!mQueuedCommands.empty())
+		{
+			// Top of stack
+			std::string hr = mQueuedCommands.front();
+			
+			// Is this shit a macro?
+			if(FLLua::isMacro(hr))
+				this->RunMacro(hr); // Run macro.
+			else
+				this->RunString(hr); // Run command.
+		}
+		ms_sleep(10);
+	}
 }
 
-void SHLHooks_InitTable(lua_State *l, FLLua* lol)
+void FLLua::callMacro(const std::string command)
+{
+	mQueuedCommands.push_back(command);
+}
+
+void FLHooks_InitTable(lua_State *l, FLLua* lol)
 {
 	FLLua** ud = reinterpret_cast<FLLua**>(lua_newuserdata(l, sizeof(FLLua*)));
 	
@@ -145,6 +197,7 @@ void FLLua::RunFile(std::string  file)
 	}
 }
 
+// static
 bool FLLua::isMacro(const std::string  tokenized)
 {
 	typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
@@ -232,38 +285,42 @@ void FLLua::RunMacro(const std::string  what)
 	this->RunFile(macrofile);
 }
 
-bool FLLua::callLuaHook(const char *EventName,int numargs,...)
+// Static
+void FLLua::callLuaHook(const char *EventName,int numargs,...)
 {
-	
-
 	va_list arglist;
     	va_start(arglist,numargs);
 
+	HookRequest hook=new HookRequest(EventName);
+	for(int i = 0;i<numargs;i++)
+        {
+		hook.Add(va_arg(arglist,const char *));
+        }
+
+	mQueuedHooks.push_back(hook);
+}
+
+void FLLua::ExecuteHook(HookRequest hook)
+{
 	lua_getglobal(L,"CallHook");
 #ifdef LUA_HOOK_SPAM
-	LL_INFOS("Lua") << "Firing event: " << EventName << llendl;
+	LL_INFOS("Lua") << "Firing event: " << hook.getName() << llendl;
 #endif
 	if(lua_isfunction(L,1))
 	{
-		lua_pushstring(L,EventName);
-		for(int i = 0;i<numargs;i++)
+		lua_pushstring(L,hook.getName());
+		for(int i = 0;i<hook.getNumArgs();i++)
         	{
-			lua_pushstring(L,va_arg(arglist,const char *));
+			lua_pushstring(L,hook.getArg(i));
         	}
 
-		if(lua_pcall(L,numargs+1,0,0)!=0)
+		if(lua_pcall(L,hook.getNumArgs()+1,0,0)!=0)
 		{
 			char errbuff[1024];
-			sprintf(errbuff,"Error executing the %s hook: %s",EventName,lua_tostring(L,-1));
+			sprintf(errbuff,"Error executing the %s hook: %s",hook.getName(),lua_tostring(L,-1));
 			LuaError(errbuff);
 		}
 	}
-    if(lua_isnil(L,1)) return true;
-	if(lua_isboolean(L,1))
-	{
-		return (lua_toboolean(L,1)==1);
-	}
-	return true;
 }
 
 

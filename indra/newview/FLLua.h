@@ -24,6 +24,8 @@
 #include "llviewerprecompiledheaders.h"
 
 #include <string>
+#include <queue>
+#include <vector>
 
 extern "C" {
 	#include "lua/lua.h"
@@ -35,6 +37,21 @@ extern "C" {
 //typedef std::string LLString; // Fixing broken LL code.
 #include "message.h"
 #include "llviewerimage.h"
+
+class HookRequest
+{
+public:
+	HookRequest(const char *Name);
+
+	void Add(const char *arg);
+	
+	const char* getName(){ return mName; }
+	const char* getArg(unsigned idx){ return mArgs[idx]; }
+	int getNumArgs(){ return mArgs.size(); };
+private:
+	vector<const char *> mArgs;
+	const char *mName;
+}
 
 class FLLua : public LLThread
 {
@@ -52,18 +69,25 @@ public:
 
 	void RunFile(std::string file);
 	static bool isMacro(const std::string what);
-	void RunMacro(const std::string what);
+	static void callMacro(const std::string cmd);
 private:
+	void RunMacro(const std::string what);
 	lua_State *L; // Lua stack
 	static FLLua *sInstance;
+
+	// Queued hooks
+	static queue<HookRequest> mQueuedHooks;
+	static queue<std::string> mQueuedCommands;
+
+	void ExecuteHook(HookRequest hook);
 public:
 };
 
 //extern FLLua *gLuaHooks;
 
-void SHLHooks_CreateMetatable(lua_State *L);
-void SHLHooks_InitTable(lua_State *L, FLLua* lol);
-int SHLHooks_SetHook(lua_State* l);
+void FLHooks_CreateMetatable(lua_State *L);
+void FLHooks_InitTable(lua_State *L, FLLua* lol);
+int FLHooks_SetHook(lua_State* l);
 
 int LuaBase_SendChat(lua_State *L);
 void LuaBase_CreateMetatable(lua_State *L);
