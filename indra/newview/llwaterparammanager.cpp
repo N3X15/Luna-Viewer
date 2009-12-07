@@ -151,7 +151,7 @@ void LLWaterParamManager::loadPreset(const std::string & name,bool propagate)
 	escaped_filename += ".xml";
 
 	std::string pathName(gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS, "windlight/water", escaped_filename));
-	llinfos << "Loading water settings from " << pathName << llendl;
+	//llinfos << "Loading water settings from " << pathName << llendl; //Leave this commented out to speed up loading time at startup --Liny
 	
 	std::ifstream presetsXML;
 	presetsXML.open(pathName.c_str());
@@ -160,7 +160,7 @@ void LLWaterParamManager::loadPreset(const std::string & name,bool propagate)
 	if(!presetsXML)
 	{
 		pathName=gDirUtilp->getExpandedFilename( LL_PATH_USER_SETTINGS , "windlight/water", escaped_filename);
-		llinfos << "Loading User water setting from " << pathName << llendl;
+		//llinfos << "Loading User water setting from " << pathName << llendl; //Same as above --Liny
 		presetsXML.open(pathName.c_str());
 	}
 

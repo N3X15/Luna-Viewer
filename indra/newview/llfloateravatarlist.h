@@ -576,6 +576,7 @@ private:
 
 public:
 	static LLFloaterAvatarList* getInstance(){ return sInstance; }
+	static void lookAtAvatar(LLUUID &uuid);
 private:
 	// when a line editor loses keyboard focus, it is committed.
 	// commit callbacks are named onCommitWidgetName by convention.
@@ -587,6 +588,7 @@ private:
 		LIST_AVATAR_NAME,
 		LIST_DISTANCE,
 		LIST_AGE,
+		LIST_SIM,
 		LIST_PAYMENT,
 		LIST_ACTIVITY,
 		LIST_TIME,
@@ -639,22 +641,26 @@ private:
 	static void onClickGetKey(void *userdata);
 
 	static void onDoubleClick(void *userdata);
-	static void lookAtAvatar(LLUUID &uuid);
+	//static void lookAtAvatar(LLUUID &uuid);
 
 	static void onClickFreeze(void *userdata);
 	static void onClickEject(void *userdata);
-//	static void onClickBan(void *userdata);
-//	static void onClickUnban(void *userdata);
+	static void onClickBan(void *userdata);
+	static void onClickUnban(void *userdata);
 	static void onClickMute(void *userdata);
 	static void onClickUnmute(void *userdata);
 	static void onClickAR(void *userdata);
 	static void onClickTeleport(void *userdata);
-	static void onClickEjectFromEstate(void *userdata);
+	static void onClickKickFromEstate(void *userdata);
+	static void onClickBanFromEstate(void *userdata);
+	static void onClickTPHFromEstate(void *userdata);
+	static void onClickGTFOFromEstate(void *userdata);
 
 	static void callbackFreeze(const LLSD& notification, const LLSD& response);
 	static void callbackEject(const LLSD& notification, const LLSD& response);
 	static void callbackAR(void *userdata);
 	static void callbackEjectFromEstate(const LLSD& notification, const LLSD& response);
+	static void callbackBanFromEstate(const LLSD& notification, const LLSD& response);
 
 	static void callbackIdle(void *userdata);
 
@@ -742,6 +748,7 @@ private:
 	 * @brief Used to delay avatar data requests
 	 */
 	LLTimer mDataRequestTimer;
+	LLTimer mUpdateThrottleTimer;
 
 	/**
 	 * @brief Avatar the camera is focused on

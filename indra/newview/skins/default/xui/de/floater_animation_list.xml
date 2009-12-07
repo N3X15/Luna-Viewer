@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<floater name="animation list" title="aktuelle Animationen">
+	<scroll_list name="animation_list" tool_tip="Shift oder STRG gedrückt halten um mehrere auszuwählen">
+		<!-- Icons relating to the avatar, currently: tracking, and marked -->
+		<column name="Anim Name" label="Ani Name"/>
+    <column name="Animation UUID" label="Ani UUID"/>
+    <!--<column name="object_name" label="Entfernung" dynamicwidth="true"/>-->
+		<column name="Source Object UUID" label="Quell Objekt UUID"/>
+    <column name="Source Owner" label="Eigentümer Quelle"/>
+    <!-- What the avatar is doing: producing sounds, rezzing, particles, etc -->
+	</scroll_list>
+	<panel name="options">
+	</panel>
+  <button label="Ausgewählte stoppen" name="Stop Selected" tool_tip="Ausgewählte Animationen stoppen"/>
+  <button label="Anim Rechte entziehen" name="Revoke Selected" tool_tip="Entzieht ausgewählten Objekten die Animations Rechte"/>
+  <button label="Stoppen, Rechte entziehen" name="Stop+Revoke Selected" tool_tip="Entzieht ausgewählten Objekten die Animations Rechte und stoppt dazu gehörende Animationen"/>
+  <button label="Öffne Eigentümer Profil" name="Open Owner Profile" tool_tip="Öffnet Eigentümer Profil/e der ausgewählten Objekte"/>
+  <button label="Objekt zurückschicken" name="Return Object" tool_tip="Schickt ausgewählte Objekte zurück, benötigt passende Land Rechte"/>
+</floater>

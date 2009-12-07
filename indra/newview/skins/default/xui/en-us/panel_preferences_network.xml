@@ -10,7 +10,7 @@
 	</text>
 	<slider bottom_delta="-25" can_edit_text="true"
 	     decimal_digits="0" enabled="true" follows="left|top" height="15"
-	     increment="10" initial_val="50" left_delta="0" max_val="1500" min_val="50"
+	     increment="10" initial_val="50" left_delta="0" max_val="8000" min_val="50"
 	     mouse_opaque="true" name="max_bandwidth" show_text="true" value="500"
 	     width="180" />
 	<text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
@@ -71,4 +71,15 @@
 	     increment="1" initial_val="13000" label="Port Number:" label_width="75"
 	     left_delta="20" max_val="13050" min_val="13000" mouse_opaque="true"
 	     name="connection_port" width="150" />
+  <button bottom="-250" enabled="false" follows="left|bottom"
+	     font="SansSerif" halign="center" height="22" label="Clear Inventory Cache" left="340"
+	     left_delta="30" mouse_opaque="true" name="clear_inv_cache" scale_image="true"
+	     width="175" />
+  <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+     bottom="-70" bottom_delta="-17" drop_shadow_visible="true" enabled="true"
+     follows="left|top" font="SansSerifSmall" h_pad="0" halign="left"
+     height="10" left="12" mouse_opaque="false" name="o.o"
+     v_pad="0" width="900">
+    You must be logged in to use the inventory clear cache.
+  </text>
 </panel>

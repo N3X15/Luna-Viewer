@@ -12,11 +12,11 @@
  *      copyright notice, this list of conditions and the following
  *      disclaimer in the documentation and/or other materials provided
  *      with the distribution.
- *   3. Neither the name Modular Systems Ltd nor the names of its contributors
+ *   3. Neither the name Modular Systems nor the names of its contributors
  *      may be used to endorse or promote products derived from this
  *      software without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY MODULAR SYSTEMS LTD AND CONTRIBUTORS “AS IS”
+ * THIS SOFTWARE IS PROVIDED BY MODULAR SYSTEMS AND CONTRIBUTORS “AS IS”
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
  * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
  * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL MODULAR SYSTEMS OR CONTRIBUTORS
@@ -98,7 +98,7 @@ bool GUS::fastEvent()
 	std::string nMessage = genFEMessage();
 	FEchanged = FEchanged || (sFEMessage != nMessage);
 	if(!FEchanged)return false;
-	F32 GUS_FE_freq = llclamp(gSavedSettings.getF32("EmeraldGUSFastEventsRefresh"), 0.0001f, 20.f);
+	F32 GUS_FE_freq = llclamp(FERefresh, 0.0001f, 20.f);
 	if(FELimiter < GUS_FE_freq)
 	{
 		whisper(gSavedSettings.getS32("EmeraldGUSChannel")+1, nMessage);
@@ -124,6 +124,14 @@ std::string GUS::genMessage()
 			cmds.push_back("EYEROT");
 			cmds.push_back(sQuat(getEyeRot()));
 		}
+	}
+	
+	//send look at pos maybeh
+	if(gSavedSettings.getBOOL("EmeraldGUSLookAt"))
+	{
+			cmds.push_back("LOOKAT");
+			cmds.push_back(getLookAtString());
+		
 	}
 	
 	for(p = cmds.begin(); p != cmds.end(); p++)
@@ -156,7 +164,19 @@ std::string GUS::genFEMessage()
 	return message.str();
 }
 
-void GUS::whisper(S32 channel, std::string message)
+void GUS::whisper(S32 channel, std::string message, bool force)
+{
+	if(channel > 0 || force)
+		chatmessage(channel, message, CHAT_TYPE_WHISPER);
+}
+
+void GUS::say(S32 channel, std::string message, bool force)
+{
+	if(channel > 0 || force)
+		chatmessage(channel, message, CHAT_TYPE_NORMAL);
+}
+
+void GUS::chatmessage(S32 channel, std::string message, U8 type)
 {
 	LLMessageSystem* msg = gMessageSystem;
 	msg->newMessageFast(_PREHASH_ChatFromViewer);
@@ -165,7 +185,7 @@ void GUS::whisper(S32 channel, std::string message)
 	msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
 	msg->nextBlockFast(_PREHASH_ChatData);
 	msg->addStringFast(_PREHASH_Message, message.c_str());
-	msg->addU8Fast(_PREHASH_Type, CHAT_TYPE_WHISPER);
+	msg->addU8Fast(_PREHASH_Type, type);
 	msg->addS32("Channel", channel);
 	gAgent.sendReliableMessage();
 	LLViewerStats::getInstance()->incStat(LLViewerStats::ST_CHAT_COUNT);
@@ -178,10 +198,11 @@ LLQuaternion GUS::getEyeRot()
 	LLQuaternion eyerot;
 	if(avatarp)
 	{
-		LLJoint* jointp = avatarp->getJoint("mEyeLeft");
-		if(jointp)
+		LLJoint* jointlp = avatarp->getJoint("mEyeLeft");
+		LLJoint* jointrp = avatarp->getJoint("mEyeRight");
+		if(jointlp && jointrp)
 		{
-			eyerot = jointp->getRotation();
+			eyerot = nlerp(0.5, jointlp->getRotation(), jointrp->getRotation()); //Uchi wants Lerp 'n' Slerp o.o!
 		}
 	}
 	return eyerot;
@@ -196,6 +217,15 @@ std::string GUS::sQuat(LLQuaternion quat)
 	return squat; // lol squat
 }
 
+std::string GUS::sVec3(LLVector3 vec)
+{
+	std::stringstream strstr;
+	strstr << std::setiosflags(std::ios::fixed) << std::setprecision(6); // delicious iomanip
+	strstr << "<" << vec.mV[0] << ", " << vec.mV[1] << ", "  << vec.mV[2] << ">";
+	std::string svec = strstr.str(); // lol strstrstr
+	return svec;
+}
+
 bool GUS::getEyelidState() //FALSE == open, TRUE == shut
 {
 	LLVOAvatar* avatarp;
@@ -206,4 +236,17 @@ bool GUS::getEyelidState() //FALSE == open, TRUE == shut
 		weight = avatarp->getVisualParam("Blink_Left")->getWeight();
 	}
 	return (weight!=0.f);
+}
+std::string GUS::getLookAtString()
+{
+	LLVOAvatar* avatarp= gAgent.getAvatarObject();
+	if(avatarp)
+	{
+		if( avatarp->getAnimationData("LookAtPoint"))
+		{
+			LLVector3* pos = (LLVector3*) avatarp->getAnimationData("LookAtPoint");
+			return llformat("<%.6f, %.6f, %.6f>",(F32)(pos->mV[VX]),(F32)(pos->mV[VY]),(F32)(pos->mV[VZ]));
+		}
+	}
+	return "NULL";
 }

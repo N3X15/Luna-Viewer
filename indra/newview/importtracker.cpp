@@ -442,6 +442,7 @@ public:
 						domono = FALSE;
 					}
 					delete buffer;
+					buffer = 0;
 					body["target"] = (domono == TRUE) ? "mono" : "lsl2";
 					cmdline_printchat("posting content as " + data->assetid.asString());
 					LLHTTPClient::post(url, body, new JCPostInvUploadResponder(body, data->assetid, data->type,inv_item,data));

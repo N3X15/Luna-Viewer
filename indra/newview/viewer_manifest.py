@@ -411,7 +411,7 @@ class WindowsManifest(ViewerManifest):
 class DarwinManifest(ViewerManifest):
     def construct(self):
         # copy over the build result (this is a no-op if run within the xcode script)
-        self.path(self.args['configuration'] + "/GreenLife Emerald Viewer.app", dst="")
+        self.path(self.args['configuration'] + "/FlexLife Viewer.app", dst="")
 
         if self.prefix(src="", dst="Contents"):  # everything goes in Contents
             # Expand the tar file containing the assorted mozilla bits into
@@ -710,13 +710,13 @@ class Linux_i686Manifest(LinuxManifest):
             self.end_prefix("lib")
 
             # Vivox runtimes
-            if self.prefix(src="vivox-runtime/i686-linux", dst="bin"):
-                    self.path("SLVoice")
-                    self.end_prefix()
-            if self.prefix(src="vivox-runtime/i686-linux", dst="lib"):
-                    self.path("libortp.so")
-                    self.path("libvivoxsdk.so")
-                    self.end_prefix("lib")
+#            if self.prefix(src="vivox-runtime/i686-linux", dst="bin"):
+#                    self.path("SLVoice")
+#                    self.end_prefix()
+#            if self.prefix(src="vivox-runtime/i686-linux", dst="lib"):
+#                    self.path("libortp.so")
+#                    self.path("libvivoxsdk.so")
+#                    self.end_prefix("lib")
 
 class Linux_x86_64Manifest(LinuxManifest):
     def construct(self):

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<panel name="EmeraldIRC">
+	<scroll_list name="EmeraldIRC_list">
+		<column label="" name="EmeraldIRC_name"/>
+	</scroll_list>
+
+	<pad/>
+	<button label="IM/Call" name="EmeraldIRC_IM"/>
+	<button label="Neu" name="EmeraldIRC_new"/>
+	<button label="Bearbeiten" name="EmeraldIRC_edit"/>
+  <button label="Entfernen" name="EmeraldIRC_remove"/>
+  <button label="Neu laden" name="EmeraldIRC_refresh"/>
+  <button label="Hilfe" name="EmeraldIRC_Help"/>
+</panel>

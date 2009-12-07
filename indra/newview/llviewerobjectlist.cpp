@@ -532,6 +532,8 @@ void LLViewerObjectList::processObjectUpdate(LLMessageSystem *mesgsys,
 			}
 			processUpdateCore(objectp, user_data, i, update_type, NULL, justCreated);
 		}
+		
+ 	
 	}
 
 	LLVOAvatar::cullAvatarsByPixelArea();
@@ -1359,7 +1361,7 @@ LLViewerObject *LLViewerObjectList::createObject(const LLPCode pcode, LLViewerRe
 
 	updateActive(objectp);
 
-	FLLua::getInstance()->callLuaHook("OnObjectCreated",2,fullid.asString().c_str(),LLPrimitive::pCodeToString(pcode).c_str());
+	FLLua::callLuaHook("OnObjectCreated",2,fullid.asString().c_str(),LLPrimitive::pCodeToString(pcode).c_str());
 
 	return objectp;
 }

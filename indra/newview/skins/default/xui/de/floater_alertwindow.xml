@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<floater name="EmeraldAlertWindow" title="Emerald - Stichwort Alarm">
+     <check_box label="Wird irgendeines der Stichwörter(getrennt durch Kommas)" name="EmeraldKeywords_Alert"/>
+      <line_editor name="EmeraldKeywords_Entries"/>
+      <text name="EmKeyw">in diesen Optionen gefunden:</text>
+     <check_box label="Instant Message Fenster" name="EmeraldKeywords_IM"/>
+     <check_box label="öffentliches Chat Fenster" name="EmeraldKeywords_LocalChat"/>
+     <check_box label="Markiere die Nachricht in dieser Farbe:" name="EmeraldKeywords_Highlight"/>
+     <color_swatch label="" name="EmeraldKeywords_Color" tool_tip="Klick um Farbauswahl zu öffnen."/>
+     <check_box label="Spiele diesen Hinweis Ton: (UUID)" name="EmeraldKeywords_PlaySound"/>
+      <line_editor name="EmeraldKeywords_SoundUUID"/>
+     <button label="Speichern" name="EmeraldKeywords_save"/>
+     <button label="Abbrechen" name="EmeraldKeywords_cancel"/>
+</floater> 

@@ -45,6 +45,20 @@
     </form>
   </template>
 
+  <template name="okcancelbuttonscanceldefault">
+    <form>
+      <button
+       index="0"
+       name="OK"
+       text="$yestext"/>
+      <button
+       default="true"
+       index="1"
+       name="Cancel"
+       text="$notext"/>
+    </form>
+  </template>
+
   <template name="okcancelignore">
     <form>
       <button
@@ -3174,6 +3188,24 @@ Kick [EVIL_USER] from this estate?
 
   <notification
    icon="alertmodal.tga"
+   name="EmeraldIRCInfo"
+   type="alert">
+IRC Profile -- [NICK]
+Nick:       [NICK]
+User:       [USER]
+Host:       [HOST]
+Real Name:  [REALNAME]
+Channels:   [CHANNELS]
+Servers:    [SERVERS]
+Idle Time:  [IDLE]
+    <usetemplate
+     name="okcancelbuttons"
+     notext="Close"
+     yestext="Private IM"/>
+  </notification>
+
+  <notification
+   icon="alertmodal.tga"
    name="EstateChangeCovenant"
    type="alertmodal">
 Are you sure you want to change the Estate Covenant?
@@ -3446,7 +3478,7 @@ Does this group contain Mature content?
    label="Confirm restart"
    name="ConfirmRestart"
    type="alert">
-Do you really want to restart this region in 2 minutes?
+Do you really want to restart this region?
     <usetemplate
      name="okcancelbuttons"
      notext="Cancel"
@@ -6005,6 +6037,28 @@ Grant this request?
 
   <notification
    icon="notify.tga"
+   name="ScriptTextBoxDialog"
+   type="notify">
+    [FIRST] [LAST]&apos;s &apos;[TITLE]&apos;
+    [MESSAGE]
+    <form name="form">
+      <input name="message" type="text">
+        [DEFAULT]
+      </input>
+      <button
+       index="-1"
+       name="Ignore"
+       text="Ignore"/>
+      <button
+       index="0"
+       name="Send"
+       text="Send"/>
+    </form>
+  </notification>
+  
+
+  <notification
+   icon="notify.tga"
    name="FirstBalanceIncrease"
    type="notify">
 You just received L$[AMOUNT].
@@ -6136,6 +6190,40 @@ You can find example sculpted textures in the inventory library.
    name="FirstMedia"
    type="notify">
 You have begun playing media.  Media can set to play automatically in the preferences window under Audio / Video. Note that this can be a security risk for media sites you do not trust.
+  </notification>
+
+  <notification
+   icon="notify.tga"
+   name="FirstRLVDetach"
+   type="notify">
+One of your attachments was made nondetachable using Restrained Life.
+Please note that this also disables the &apos;Wear&apos; option on all prim attachments in your inventory unless they are properly named.
+
+For more information search for &apos;Restrained Life&apos; on the SL wiki.
+  </notification>
+
+  <notification
+   icon="notify.tga"
+   name="FirstRLVFartouch"
+   type="notify">
+You have been fartouch restricted: you will be unable to touch objects farther than 1.5m from your avatar until the restriction is lifted.
+
+Tip: if an object is out of range the mouse cursor will not change as you hover over it and you'll hear an error sound if you try to right-click it.
+  </notification>
+
+  <notification
+   icon="alertmodal.tga"
+   name="FirstRLVGiveToRLV"
+   type="alertmodal">
+Folders starting with &apos;#RLV/~&apos; can automatically be placed under your #RLV shared folder after you accept the inventory offer.
+
+Please note that - if enabled - the accepted inventory items will instantly be available to scripts and will have full use of the RLV API which may cause unexpected or undesirable situations.
+
+Do you want to enable this feature?
+    <usetemplate
+     name="okcancelbuttonscanceldefault"
+     notext="No"
+     yestext="Yes"/>
   </notification>
 
   <notification
@@ -6419,14 +6507,13 @@ The URL you clicked cannot be opened from this web browser.
        text="No"/>
     </form>
   </notification>
-  
-  <notification
+   <notification
    icon="notify.tga"
-   name="QueryEmeraldOTR"
+   name="QueryEmeraldBuildBridge"
    type="alertmodal">
-    OTR is a way to encrypt your Instant Messages, which secures your privacy by making it impossible for anyone other than your intended target to read your Instant Messages.
-    This prevents third parties from reading your messages, and such a level of privacy removes Linden Labs ability to verify and respond to reports concerning activity inside private messages.
-    Do you want this feature to be automatically activated when available?
+    Emerald has a feature to create and attach an full perm item.
+    This allows it to get better online data and radar data.
+    Would you like to permit this?
     <form name="form">
       <button
        index="0"
@@ -6438,7 +6525,99 @@ The URL you clicked cannot be opened from this web browser.
        text="No"/>
     </form>
   </notification>
-  
+  <notification
+   icon="notify.tga"
+   name="QueryEmeraldOTR"
+   type="alertmodal">
+    OTR encrypts your IMs so they can't be
+    read by anyone other than the person you are talking to.
+
+    Do you want to automatically secure your IMs?
+    <form name="form">
+      <button
+       index="0"
+       name="Yes"
+       text="Yes"/>
+      <button
+       index="1"
+       name="No"
+       text="No"/>
+    </form>
+  </notification>
+  <notification
+   icon="notify.tga"
+   name="QueryEmeraldNCreatorExport"
+   type="alertmodal">
+    You are exporting an item that you are not the creator of; You
+    should always make sure you have the rights to export content.
+    <form name="form">
+      <button
+       index="0"
+       name="Ok"
+       text="Ok"/>
+    </form>
+  </notification>
+  <notification
+   icon="notify.tga"
+   name="EmeraldStealth"
+   type="alertmodal">
+    This will go through your settings and disable any features that may be used to determine what client you are running.
+    This Means that some features will be disabled, and although you will not be warned if you choose to turn some of them back on,
+    they may be used to identify that your client has emerald features.
+    Currently clicking yes will
+    * disable lsl Bridge boosts
+    * disable OTR auto responce
+    * disable rainbow colored selection beams
+    * disable custom beam shapes
+    * disable advanced detection of cryolife
+    * disable clothing protection
+    * disable GUS
+    * disable selection beam stream
+    * disable radar key chat
+    If you really wish to turn off these features, press yes.
+    <form name="form">
+      <button
+       index="0"
+       name="Yes"
+       text="Yes"/>
+      <button
+       index="1"
+       name="No"
+       text="No"/>
+    </form>
+  </notification>
+  <notification
+   icon="notify.tga"
+   name="EmeraldNoStealth"
+   type="alertmodal">
+    This will change your settings to re-enable all of the features that stealth mode may turn off.  This may turn on features that you did not have activated before stealth mode.  If you wish to do this, press yes.
+    <form name="form">
+      <button
+       index="0"
+       name="Yes"
+       text="Yes"/>
+      <button
+       index="1"
+       name="No"
+       text="No"/>
+    </form>
+  </notification>
+  <notification
+   icon="notify.tga"
+   name="EmeraldRadarChat"
+   type="alertmodal">
+    A script you own is requesting access to your radar's data so it can lower lag, would you like to allow this? Unless you are trying to hide that you are using Emerald, this is OK to allow.
+    <form name="form">
+      <button
+       index="1"
+       name="Yes"
+       text="Yes"/>
+      <button
+       index="0"
+       name="No"
+       text="No"/>
+    </form>
+  </notification>
   <notification
 	   icon="notifytip.tga"
 	   name="BlockedDialogs"
@@ -6486,94 +6665,220 @@ Yes
   <global name="PermNo">
 No
   </global>
-  
+
   <notification
    icon="alertmodal.tga"
    label="Emerald Help"
    name="EmeraldHelp_TeleportLogin"
    type="alertmodal">
-Help text will go here, please update notifications.xml
-the related entries are at the bottom of the file.
+    Double Click Tp - If you double click something in a tp enabled sim, you will teleport there.
+    Double Click Autopilot - Same thing, except that you will just attempt to walk there.
+    Velocity Interpolate - If you tp, you keep the same velocity you had before the tp.
 
-TeleportLogin
+    Download Client Tags - Downloads a small xml file from modularsystems with up to date detection rules.
+    Display Client Tags - Users this file to detect viewers who voluntarily allow themselves to be identified.
 
+    Login PreCache Delay - How long you wish to delay login to load textures.  (Keep above 0)
   </notification>
   <notification
    icon="alertmodal.tga"
    label="Emerald Help"
    name="EmeraldHelp_Voice"
    type="alertmodal">
-Help text will go here, please update notifications.xml
-the related entries are at the bottom of the file.
+    These are voice server settings for advanced users.
+    You probably do not want to change this.
 
-Voice
-
+    If you are using a relay program such as GridProxy or Par,
+    you may wish to set both of these to bhr.vivox.com
+    If you want to have voice
   </notification>
   <notification
    icon="alertmodal.tga"
    label="Emerald Help"
    name="EmeraldHelp_Shields"
    type="alertmodal">
-Help text will go here, please update notifications.xml
-the related entries are at the bottom of the file.
-
-Shields
-
+    Clothing Layer Protection - Masks your individual texture layers to prevent theft
+    (Note: Leaving this on is also what allows people to see what client you are using)
+    Stealth Mode and Full Features Mode - Click the buttons for more info
+    Dialog Spam Prevention - Puts a cap on how many LLDialog's a user may prompt you with
+    This prevents a spam attack that can end up crashing you.
+    Revoke Permissions - Removes a objects permission to animate or control your input
+    If this is not done, the object retains the right to your permissions indefinitely.
+    Show Load URL Dialogs - You may disable these if you are being spammed with them.
+    Disallow LLMapDestination - Prevent scripts from being able to open your map window
+    Broadcast Viewer Effects - Allows normal behavior of the client letting other know where
+    you are pointing and looking.  (You need this on if you don't want your beam going to your hip)
+    Broadcast Camera Points - Allows other to see where you are looking with ShowLookAt
+    Enable Active Cryolife Detection - Sends silent invisible pings to avatars to detect if they
+    are using a viewer made to copybot.
   </notification>
   <notification
    icon="alertmodal.tga"
    label="Emerald Help"
    name="EmeraldHelp_IM"
    type="alertmodal">
-Help text will go here, please update notifications.xml
-the related entries are at the bottom of the file.
-
-IM
-
+    Announce Incoming IMs - Sends you a notification when someone begins typing to you (before they send)
+    Steal Focus - makes this notification pop up a IM window to the person typing to you
+    AutoResponse - Allows you to send a canned response to certain people when they IM you
+    Vertical IM tabs - Rearranges the IM window with tabs arranged vertically
+    OTR - This is automatic encryption of your IM's to prevent sniffers from spying.
+    Strongly recommended to use Require OTR setting.
+    Typing stop packets - sends encrypted messages differently so they do not wind up in offline emails.
+  </notification>
+  <notification
+   icon="alertmodal.tga"
+   label="Emerald Help"
+   name="EmeraldHelp_Chat"
+   type="alertmodal">
+    Display Radar Info To Chat - Alerts you via chat messages when people enter or leave.
+    Display Total Script Changes - If the total scripts in the region jumps suddenly, you will be notified.
+    Use this in combined with radar info to chat to help see who may be lagging the sim.
+    Autocomplete OOC - If you begin a chat with (( , the corresponding )) will automatically be added when you send.
+    Allow MU* Poses - Allows a preceding colon to act the same as /me.
+    Show Money Changes in Chat - Provides informative chat information for all money actions with timestamps.
+    Add Seconds to timestamps - Allows your timestamps to be more precise.
   </notification>
   <notification
    icon="alertmodal.tga"
    label="Emerald Help"
    name="EmeraldHelp_Misc"
    type="alertmodal">
-Help text will go here, please update notifications.xml
-the related entries are at the bottom of the file.
-
-Misc
-
+    Enable Always Fly - Allows you to override parcel settings as if you were in admin mode.
+    Enable Phantom - Allows you to make your avatar unable to be moved by attacks.  Objects Pass through you.
+    Enable Sit - Allows you to sit anywhere, even in air, to lock your avatar from moving (even if being orbited).
+    Block Sitting - Turns off the the single click sit option to prevent accidentally giving a object permissions.
+    Show Agent Name on LookAt - Allows you to see who is looking where if LookAt Setting is enabled (in advanced menu).
+    ECS key reset camera - Whether or not you want the esc key to center your camera behind you.
+    Show Search Bar - Hides lag meters and instead displays a search bar in top right corner.
+    Enable RLV - Turns on a multitude of features that allow lsl objects to control your viewer.
   </notification>
   <notification
    icon="alertmodal.tga"
    label="Emerald Help"
    name="EmeraldHelp_CmdLine"
    type="alertmodal">
-Help text will go here, please update notifications.xml
-the related entries are at the bottom of the file.
-
-CmdLine
-
+    Various Options For Command Line features.
+    To use a command, type it in your chat bar (Local chat) and press enter.
   </notification>
   <notification
    icon="alertmodal.tga"
    label="Emerald Help"
    name="EmeraldHelp_Avatar"
    type="alertmodal">
-Help text will go here, please update notifications.xml
-the related entries are at the bottom of the file.
+    X,Y,and Z Modifiers - Allow you to slightly adjust you avatars bounding box.
+    This is useful (Z Modifier) to raise or lower where your avatars feet hit the ground.
+    Agents Updates Per Second - How many updates you send the sim each second.
+    Make this slightly higher for better performance (NEVER above 20)
+    Make this lower to help lower sim lag.
+    Emerald Clothing Mode - Allows mode for infinite layers of clothing
 
-Avatar
+    Selection Beam Particles
+    These are the particles that come from your hand when you right click and select objects.
+    Left Side:
+    Choose a Color rotation Pattern if you wish your beams to not stay a constant color.
+    Create New - Allows you to define a new range of hues to slide colors between.
+    You Must Save, and then select it from the drop down.
+    Right Side:
+    Allows you to customise a pattern shape for your beams.
+    Choose one from the drop down, or create a new one.
+    When Creating a new one, click on the color picker to define the color for the next click.
 
+    Scale - Increases the size of the beam shape.  (Already scaled by distance)
+    Beam Updates Per Second - Allows you to lower lag by keeping this low.
+
+    Enable Transmission of Beam Pos - Sends chat messages for creative lsl objects to receive beam data.
   </notification>
   <notification
    icon="alertmodal.tga"
    label="Emerald Help"
    name="EmeraldHelp_Build"
    type="alertmodal">
-Help text will go here, please update notifications.xml
-the related entries are at the bottom of the file.
+    New Object Settings - Allows you to replace wood textured 0.5 Object with more Presets
+    Pivot Point - Allows you to change the pivot point of an object.
+    This allows for more advanced rotation and building methods.
+    Enable Highlight Of Selection Prims - Shows the (laggy) yellow highlight on selected prims.
+    Show Axis Arrow on Root Prim - Moves the axis from the center of the object to the center of the root.
+    Enable Mega Prim - Allows you to create objects larger than 10 meter if you are on a open grid.
+  </notification>
+  <notification
+   icon="alertmodal.tga"
+   label="Emerald Help"
+   name="EmeraldHelp_IRC"
+   type="alertmodal">
+    Use the color picker for each different kind of message type to set the color used to display the related text.
 
-Build
+    Toggling the checkboxes allows the selection of which types of information should be shown on the chat window.
+  </notification>
+  <notification
+   icon="alertmodal.tga"
+   label="Emerald Help"
+   name="EmeraldHelp_UtilityStream"
+   type="alertmodal">
+    The Utility Stream is a way to send data from the client to special lsl objects.
+    Information such as your avatars eyelid state can optionally be set to send a chat
+    message (on set channel) each time it changes, for other objects to listen and react to.
+  </notification>
+  <notification
+   icon="alertmodal.tga"
+   label="Emerald Help"
+   name="EmeraldHelp_Inventory"
+   type="alertmodal">
+    Inventory Mirroring  -
+    Allows you to back up your inventory tree to a offline folder.
+    Once you have defined a save location, you may right click on
+    Selected items in your inventory, and choose the export option.
+    Wear Objects via Double Click - Double Click wears the object, instead of showing properties.
+  </notification>
 
+  <notification
+   icon="alertmodal.tga"
+   label="Emerald Help"
+   name="EmeraldHelp_IRCSettings"
+   type="alertmodal">
+IRC is an alternative type of group chat.
+Irc chats happen inside irc "channels", all people on the same server and channel can talk with each other
+
+To join an existing chat, click on the "New" button under the irc tab
+Type in a nick (anything that no one else has chosen), the server, and the channel you wish to connect to, and then press save.
+
+To create a new irc group chat, follow the same instructions, just choose a channel that is not already taken.
+Instruct everyone else you wish to connect to to type in the same information as you, just a different nick.
+
+Settings Tag: This is the name of the group chat, it will appear under the irc tab for you to identify by
+Nick: This is like a user name, choose one that is not already picked by someone else
+Nick Password: This is not your sl password.  Some servers allow you to keep a nick, even after you log off (look at /msg nickserv help for more information)
+Server: This is the server you would like to connect to.  You are free to use the modular systems server, or anyone you want here.
+Server Password: Some servers require a password (most don't) to connect, put that here
+Channel: This is like the chat room name you wish to join.
+Channel Password: You can set up a channel to have a password by (/msg ChanServ), if you have, place it here.
+  </notification>
+
+  <notification
+   icon="alertmodal.tga"
+   label="Emerald Help"
+   name="EmeraldHelp_Effects"
+   type="alertmodal">
+Breast Physics
+This enables you and other avatar's breasts to have actual physics applied to them. You can use these settings to fine-tune the physics to match your personal taste.
+
+-Mass
+   A higher value will seemingly increase the total effect
+-Rebound
+   Controls how quickly the breasts will come to rest after any movement.
+-Max Vel
+   The amount of "momentum" they can recieve. Lower for less bounce
+-Min Vel
+   Percentage of the Max Vel that doesn't effect boob physics.
+-Friction
+   This controls the internal friction. Brings the breasts to a halt. Higher the number, quicker they stop.
+ 
+
+  </notification>
+  <notification
+	   icon="notifytip.tga"
+	   name="NoShadows"
+	   type="notifytip">
+Shadows can't be enabled due to your graphics settings being set to low. Please make sure that your settings are set to ultra with all shader options enabled.
   </notification>
 
 </notifications>

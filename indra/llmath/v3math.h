@@ -154,6 +154,9 @@ class LLVector3
 		static BOOL parseVector3(const std::string& buf, LLVector3* value);
 };
 
+std::ostream& operator<<(std::ostream& s, const LLVector3 &a);
+
+
 typedef LLVector3 LLSimLocalVec;
 
 // Non-member functions 

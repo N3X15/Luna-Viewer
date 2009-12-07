@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<panel name="Adv_Settings">
+<panel filename="panel_bg_tab.xml"/>
+<slider label="Sichtweite:" name="DrawDistance" tool_tip="Ändert ihre Sichtweite"/>
+<slider label="Bandbreite:" name="max_bandwidth" tool_tip="Ändert ihre Netzwerk Bandbreite in kbps (kilobits pro second)"/>
+<slider label="Partikel:" name="MaxParticleCount" tool_tip="Max. Partikel Anzahl"/>
+<slider label="Max Avatare:" name="RenderAvatarMaxVisible" tool_tip="Wieviele Avatare angezeigt werden. Kleinerer Wert verbessert FPS bei vielen Avataren. Ersatzavatare muss aktiviert sein. [Standard 35]"/>
+<slider label="Max Node:" name="RenderMaxNodeSize" tool_tip="Maximum Speichergrösse zum Anzeigen NEUER Objekte in kb. Alles über dem Maximum wird nicht angezeigt. [Standard 4096]"/>
+<combo_box name="WLPresetsCombo" tool_tip="WindLight Himmel Vorlagen."/>
+<button label="" name="expand" tool_tip="Fenster verstecken"/>
+</panel>

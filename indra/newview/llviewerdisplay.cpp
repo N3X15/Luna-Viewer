@@ -83,8 +83,6 @@
 #include "llwaterparammanager.h"
 #include "llpostprocess.h"
 
-#include "flsky.h"
-
 extern LLPointer<LLImageGL> gStartImageGL;
 
 LLPointer<LLImageGL> gDisconnectedImagep = NULL;
@@ -148,7 +146,6 @@ void display_startup()
 	gPipeline.disableLights();
 
 	gViewerWindow->setup2DRender();
-//	FLSky::Init();
 	gGL.getTexUnit(0)->setTextureBlendType(LLTexUnit::TB_MULT);
 
 	gGL.color4f(1,1,1,1);
@@ -183,7 +180,6 @@ void display_update_camera()
 	// update all the sky/atmospheric/water settings
 	LLWLParamManager::instance()->update(LLViewerCamera::getInstance());
 	LLWaterParamManager::instance()->update(LLViewerCamera::getInstance());
-	FLSky::UpdateCamera();
 
 	// Update land visibility too
 	LLWorld::getInstance()->setLandFarClip(final_far);
@@ -405,7 +401,7 @@ void display(BOOL rebuild, F32 zoom_factor, int subfield, BOOL for_snapshot)
 			break;
 		}
 	}
-	else if(LLAppViewer::instance()->logoutRequestSent())
+    else if(LLAppViewer::instance()->logoutRequestSent())
 	{
 		LLAppViewer::instance()->pingMainloopTimeout("Display:Logout");
 		F32 percent_done = gLogoutTimer.getElapsedTimeF32() * 100.f / gLogoutMaxTime;
@@ -721,12 +717,11 @@ void display(BOOL rebuild, F32 zoom_factor, int subfield, BOOL for_snapshot)
 			LLAppViewer::instance()->pingMainloopTimeout("Display:Sky");
 			LLFastTimer t(LLFastTimer::FTM_UPDATE_SKY);	
 			gSky.updateSky();
-			FLSky::Render();
 		}
 
 //		if(gUseWireframe)
-// [RLVa:KB] - Checked: 2009-07-06 (RLVa-1.0.0c)
-		if ( (gUseWireframe) && ( (!rlv_handler_t::isEnabled()) || (!gRlvHandler.hasLockedAttachment()) ) )
+// [RLVa:KB] - Checked: 2009-10-10 (RLVa-1.0.5a) | Modified: RLVa-1.0.5a
+		if ( (gUseWireframe) && ( (!rlv_handler_t::isEnabled()) || (!gRlvHandler.hasLockedAttachment(RLV_LOCK_REMOVE)) ) )
 // [/RLVa:KB]
 		{
 			glClearColor(0.5f, 0.5f, 0.5f, 0.f);
@@ -871,9 +866,7 @@ void display(BOOL rebuild, F32 zoom_factor, int subfield, BOOL for_snapshot)
 	}
 
 	display_stats();
-			
-	// FlexLife End rendering loop.	
-//	FLSky::RenderEnd();
+				
 	LLAppViewer::instance()->pingMainloopTimeout("Display:Done");
 }
 

@@ -827,6 +827,7 @@ void LLPanelLogin::loadLoginPage()
 		login_page = sInstance->getString( "real_url" );
 		vl->setLoginPageURI(login_page);
 	}
+	
 	oStr << login_page;
 	
 	// Use the right delimeter depending on how LLURI parses the URL
@@ -1214,6 +1215,8 @@ void LLPanelLogin::onLoginComboLostFocus(LLFocusableElement* fe, void*)
 		{
 			if (combo->isTextDirty())
 			{
+				combo->resetDirty();
+				combo->resetTextDirty();
 				clearPassword();
 			}
 			onSelectLoginEntry(combo, NULL);	

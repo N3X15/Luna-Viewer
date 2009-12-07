@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<floater name="BeamColor" title="Beam Farbwechsel">
+     <panel name="BeamColor_Picker">
+      </panel>
+<text name="beamcolor_text">
+Linksklick um die Startfarbe festzulegen.
+Rechtsklick um die letzte Farbe festzulegen</text>
+<color_swatch label="" name="BeamColor_Preview" tool_tip="Öffnet den Farbdialog"/>
+<text name="beamcolor_text2">Vorschau</text>
+<slider name="BeamColor_Speed" label="Rotation Speed:" tool_tip="Regelt die Geschwindigkeit des Farbwechsels"/>
+	<button label="Speichern" name="BeamColor_Save"/>
+	<button label="Laden" name="BeamColor_Load"/>
+	<button label="Abbrechen" name="BeamColor_Cancel"/>
+</floater> 

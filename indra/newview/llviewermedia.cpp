@@ -552,7 +552,7 @@ void LLViewerMedia::buildMediaManagerData( LLMediaManagerData* init_data )
 	std::string profile_dir = gDirUtilp->getExpandedFilename( LL_PATH_MOZILLA_PROFILE, "" );
 	init_data->setBrowserProfileDir( profile_dir );
 	init_data->setBrowserComponentDir( component_dir );
-	std::string profile_name("GreenLife Emerald Viewer");
+	std::string profile_name("Emerald Viewer");
 	init_data->setBrowserProfileName( profile_name );
 	init_data->setBrowserParentWindow( gViewerWindow->getMediaWindow() );
 

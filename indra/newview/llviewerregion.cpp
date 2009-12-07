@@ -66,8 +66,8 @@
 #include "llworld.h"
 #include "llspatialpartition.h"
 
-#include "VolumeClouds.h"
-#include "flsky.h"
+//#include "VolumeClouds.h"
+//#include "flsky.h"
 
 // Viewer object cache version, change if object update
 // format changes. JC
@@ -182,7 +182,7 @@ LLViewerRegion::LLViewerRegion(const U64 &handle,
 	updateRenderMatrix();
 
 	mLandp = new LLSurface('l', NULL);
-	mVolumeClouds=NULL;
+	//mVolumeClouds=NULL;
 	if (!gNoRender)
 	{
 		// Create the composition layer for the surface
@@ -248,8 +248,8 @@ void LLViewerRegion::initStats()
 
 LLViewerRegion::~LLViewerRegion() 
 {
-	if(mVolumeClouds!=NULL)
-		FLSky::DestroyDeck(this);
+	//if(mVolumeClouds!=NULL)
+	//	FLSky::DestroyDeck(this);
 	if(mHttpResponderPtr)
 	{
 		(static_cast<BaseCapabilitiesComplete*>(mHttpResponderPtr.get()))->setRegion(NULL) ;

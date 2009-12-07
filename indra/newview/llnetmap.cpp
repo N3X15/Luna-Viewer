@@ -111,6 +111,12 @@ LLNetMap::LLNetMap(const std::string& name) :
 	(new LLEnableTracking())->registerListener(this, "MiniMap.EnableTracking");
 	(new LLShowAgentProfile())->registerListener(this, "MiniMap.ShowProfile");
 	(new LLEnableProfile())->registerListener(this, "MiniMap.EnableProfile");
+	(new LLCamFollow())->registerListener(this, "MiniMap.CamFollow"); //moymod - add cam follow crap thingie
+	(new mmsetred())->registerListener(this, "MiniMap.setred");
+	(new mmsetgreen())->registerListener(this, "MiniMap.setgreen");
+	(new mmsetblue())->registerListener(this, "MiniMap.setblue");
+	(new mmsetyellow())->registerListener(this, "MiniMap.setyellow");
+	(new mmsetcustom())->registerListener(this, "MiniMap.setcustom");
 
 	LLUICtrlFactory::getInstance()->buildPanel(this, "panel_mini_map.xml");
 
@@ -169,7 +175,19 @@ void LLNetMap::translatePan( F32 delta_x, F32 delta_y )
 
 
 ///////////////////////////////////////////////////////////////////////////////////
+LLColor4 mm_mapcols[1024];
+LLUUID mm_mapkeys[1024];
+U32 mm_netmapnum;
 
+void LLNetMap::mm_setcolor(LLUUID key,LLColor4 col){
+	if(mm_netmapnum>1023){
+		llinfos << "Minimap color buffer filled, lol, relog or something to clear it" << llendl;
+		return;
+	}
+	mm_mapcols[mm_netmapnum]=col;
+	mm_mapkeys[mm_netmapnum]=key;
+	mm_netmapnum+=1;
+}
 void LLNetMap::draw()
 {
  	static LLFrameTimer map_timer;
@@ -300,7 +318,11 @@ void LLNetMap::draw()
 			memset( default_texture, 0, mObjectImagep->getWidth() * mObjectImagep->getHeight() * mObjectImagep->getComponents() );
 
 			// Draw buildings
+			//gObjectList.renderObjectsForMap(*this);
+			if(!gSavedSettings.getBOOL("mm_fastminimap")){
 			gObjectList.renderObjectsForMap(*this);
+				mObjectImagep->setSubImage(mObjectRawImagep, 0, 0, mObjectImagep->getWidth(), mObjectImagep->getHeight());
+			}
 
 			mObjectImagep->setSubImage(mObjectRawImagep, 0, 0, mObjectImagep->getWidth(), mObjectImagep->getHeight());
 			
@@ -351,6 +373,7 @@ void LLNetMap::draw()
 		std::vector<LLUUID> avatar_ids;
 		std::vector<LLVector3d> positions;
 		LLWorld::getInstance()->getAvatars(&avatar_ids, &positions);
+		U32 a;
 		for(U32 i=0; i<avatar_ids.size(); i++)
 		{
 			avatar_color = standard_color;
@@ -365,6 +388,9 @@ void LLNetMap::draw()
 			if(LLMuteList::getInstance()->isMuted(avatar_ids[i])) avatar_color = muted_color;
 			if(is_agent_friend(avatar_ids[i])) avatar_color = friend_color;
 			if((last == "Linden") || (last == "Tester")) avatar_color = linden_color;
+			
+			// MOYMOD Minimap custom av colors.
+			for(a=0;a<mm_netmapnum;a+=1)if(avatar_ids[i]==mm_mapkeys[a])avatar_color=mm_mapcols[a];
 
 // [RLVa:KB] - Alternate: Emerald-370 | Checked: 2009-07-21 (RLVa-1.0.0) | Added: RLVa-1.0.0
 			// Emerald-specific: shouldn't be able to tell anything "personal" about anyone from the minimap under @shownames=n
@@ -849,6 +875,66 @@ bool LLNetMap::LLEnableTracking::handleEvent(LLPointer<LLEvent> event, const LLS
 	self->findControl(userdata["control"].asString())->setValue(LLTracker::isTracking(NULL));
 	return true;
 }
+
+
+bool LLNetMap::LLCamFollow::handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+{
+	LLNetMap *self = mPtr;
+	LLFloaterAvatarList::lookAtAvatar(self->mClosestAgentAtLastRightClick);
+	return true;
+}
+
+
+
+//moymod - minimap color shit
+
+
+
+bool LLNetMap::mmsetred::handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+{
+	LLNetMap *self = mPtr;
+	//if(self->mClosestAgentAtLastRightClick){
+		mm_setcolor(self->mClosestAgentAtLastRightClick,LLColor4(1.0,0.0,0.0,1.0));
+	//}
+	return true;
+}
+bool LLNetMap::mmsetgreen::handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+{
+	LLNetMap *self = mPtr;
+	//if(self->mClosestAgentAtLastRightClick){
+		mm_setcolor(self->mClosestAgentAtLastRightClick,LLColor4(0.0,1.0,0.0,1.0));
+	//}
+	return true;
+}
+bool LLNetMap::mmsetblue::handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+{
+	LLNetMap *self = mPtr;
+	//if(self->mClosestAgentAtLastRightClick){
+		mm_setcolor(self->mClosestAgentAtLastRightClick,LLColor4(0.0,0.0,1.0,1.0));
+	//}
+	return true;
+}
+bool LLNetMap::mmsetyellow::handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+{
+	LLNetMap *self = mPtr;
+	//if(self->mClosestAgentAtLastRightClick){
+		mm_setcolor(self->mClosestAgentAtLastRightClick,LLColor4(1.0,1.0,0.0,1.0));
+	//}
+	return true;
+}
+bool LLNetMap::mmsetcustom::handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+{
+	LLNetMap *self = mPtr;
+	//if(self->mClosestAgentAtLastRightClick){
+		mm_setcolor(self->mClosestAgentAtLastRightClick,gSavedSettings.getColor4("mm_customminimapcolor"));
+	//}
+	return true;
+}
+
+
+//end minimapshti
+
+
 
 bool LLNetMap::LLShowAgentProfile::handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
 {

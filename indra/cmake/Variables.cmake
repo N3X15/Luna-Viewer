@@ -34,6 +34,7 @@ set(VIEWER_DIR ${CMAKE_SOURCE_DIR}/${VIEWER_PREFIX})
 set(LIBS_PREBUILT_DIR ${CMAKE_SOURCE_DIR}/../libraries CACHE PATH
     "Location of prebuilt libraries.")
 
+
 if (EXISTS ${CMAKE_SOURCE_DIR}/Server.cmake)
   # We use this as a marker that you can try to use the proprietary libraries.
   set(INSTALL_PROPRIETARY ON CACHE BOOL "Install proprietary binaries")

@@ -79,6 +79,8 @@ void LLAudioEngine::setDefaults()
 	mMuted = false;
 	mUserData = NULL;
 
+	mWindMuted = false; // disable wind /ez
+
 	mLastStatus = 0;
 
 	mNumChannels = 0;
@@ -636,6 +638,7 @@ bool LLAudioEngine::updateBufferForData(LLAudioData *adp, const LLUUID &audio_uu
 
 void LLAudioEngine::enableWind(bool enable)
 {
+	enable = enable & !mWindMuted; // disable wind /ez
 	if (enable && (!mEnableWind))
 	{
 		initWind();
@@ -794,6 +797,11 @@ void LLAudioEngine::setMuted(bool muted)
 		setMasterGain(mMasterGain);
 	}
 	enableWind(!mMuted);
+}
+
+void LLAudioEngine::setWindMuted(bool windMuted) // disable wind /ez
+{
+	mWindMuted = windMuted;
 }
 
 void LLAudioEngine::setMasterGain(const F32 gain)

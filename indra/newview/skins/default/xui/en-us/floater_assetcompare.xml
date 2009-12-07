@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<floater
+	name="Asset Comparison Utility"
+	title="Asset Comparison Utility"
+	can_resize="true"
+	can_minimize="true"
+	can_close="true"
+	can_drag_on_left="false"
+	rect_control="FloaterAssetCompareRect"
+	min_width="500"
+	min_height="200"
+	>
+  <button bottom="-40" follows="left|top" font="SansSerif" height="20" label="Reload"
+       left_delta="0" mouse_opaque="true" name="Reload"
+	     scale_image="TRUE" width="80" />
+  
+  <button bottom_delta="-40" font="SansSerif" halign="center" height="32" label=""
+     label_selected="" left_delta="5" mouse_opaque="true" name="pick_a_btn"
+     tool_tip="Object Picker - Identify subject A" follows="left|top"
+     width="32" image_selected="UIImgFaceSelectedUUID" image_unselected="UIImgFaceUUID" />
+  <text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+	     bottom_delta="16" drop_shadow_visible="true" follows="left|top"
+	     font="SansSerifSmall" h_pad="0" halign="left" height="16" left_delta="32"
+	     mouse_opaque="true" name="object_a_name_label" v_pad="0" width="60">
+    Name:
+  </text>
+  <text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+	     bottom_delta="0" drop_shadow_visible="true" follows="left|top"
+	     font="SansSerifSmall" h_pad="0" halign="left" height="16" left_delta="66"
+	     mouse_opaque="true" name="object_a_name" v_pad="0" width="109">
+    A Consetetur Sadipscing
+  </text>
+  <text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+	     bottom_delta="-16" drop_shadow_visible="true" follows="left|top"
+	     font="SansSerifSmall" h_pad="0" halign="left" height="16" left_delta="-66"
+	     mouse_opaque="true" name="owner_a_name_label" v_pad="0" width="60">
+    Owner:
+  </text>
+  <text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+	     bottom_delta="0" drop_shadow_visible="true" follows="left|top"
+	     font="SansSerifSmall" h_pad="0" halign="left" height="16" left_delta="66"
+	     mouse_opaque="true" name="owner_a_name" v_pad="0" width="109">
+    A Hendrerit Vulputate
+  </text>
+
+  <button bottom_delta="0" font="SansSerif" halign="center" height="32" label=""
+     label_selected="" left_delta="150" mouse_opaque="true" name="pick_b_btn"
+     tool_tip="Object Picker - Identify subject B" follows="left|top"
+     width="32" image_selected="UIImgFaceSelectedUUID" image_unselected="UIImgFaceUUID" />
+  <text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+	     bottom_delta="16" drop_shadow_visible="true" follows="left|top"
+	     font="SansSerifSmall" h_pad="0" halign="left" height="16" left_delta="32"
+	     mouse_opaque="true" name="object_b_name_label" v_pad="0" width="60">
+    Name:
+  </text>
+  <text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+	     bottom_delta="0" drop_shadow_visible="true" follows="left|top"
+	     font="SansSerifSmall" h_pad="0" halign="left" height="16" left_delta="66"
+	     mouse_opaque="true" name="object_b_name" v_pad="0" width="109">
+    B Consetetur Sadipscing
+  </text>
+  <text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+	     bottom_delta="-16" drop_shadow_visible="true" follows="left|top"
+	     font="SansSerifSmall" h_pad="0" halign="left" height="16" left_delta="-66"
+	     mouse_opaque="true" name="owner_b_name_label" v_pad="0" width="60">
+    Owner:
+  </text>
+  <text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+	     bottom_delta="0" drop_shadow_visible="true" follows="left|top"
+	     font="SansSerifSmall" h_pad="0" halign="left" height="16" left_delta="66"
+	     mouse_opaque="true" name="owner_b_name" v_pad="0" width="109">
+    B Hendrerit Vulputate
+  </text>
+  
+  
+</floater>

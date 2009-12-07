@@ -69,6 +69,9 @@
 #include "object_flags.h"
 #include "llimview.h"
 
+#include "llparcel.h" // moymod
+#include "llviewerparcelmgr.h" // moymod
+
 
 // MAX ITEMS is based on (sizeof(uuid)+2) * count must be < MTUBYTES
 // or 18 * count < 1200 => count < 1200/18 => 66. I've cut it down a
@@ -1356,8 +1359,17 @@ void LLToolDragAndDrop::dropObject(LLViewerObject* raycast_target,
 	msg->nextBlockFast(_PREHASH_AgentData);
 	msg->addUUIDFast(_PREHASH_AgentID,  gAgent.getID());
 	msg->addUUIDFast(_PREHASH_SessionID,  gAgent.getSessionID());
-	msg->addUUIDFast(_PREHASH_GroupID, gAgent.getGroupID());
 
+	//MOYMOD 2009-05, If avatar is in land group/land owner group,
+	//	it rezzes it with it to prevent autoreturn/whatever...
+	if(gSavedSettings.getBOOL("mm_alwaysRezWithLandGroup")){
+		LLParcel *parcel = LLViewerParcelMgr::getInstance()->getAgentParcel();
+		if(gAgent.isInGroup(parcel->getGroupID())){
+			msg->addUUIDFast(_PREHASH_GroupID, parcel->getGroupID());
+		}else if(gAgent.isInGroup(parcel->getOwnerID())){
+			msg->addUUIDFast(_PREHASH_GroupID, parcel->getOwnerID());
+		}else msg->addUUIDFast(_PREHASH_GroupID, gAgent.getGroupID());
+	}else msg->addUUIDFast(_PREHASH_GroupID, gAgent.getGroupID());
 	msg->nextBlock("RezData");
 	// if it's being rezzed from task inventory, we need to enable
 	// saving it back into the task inventory.
@@ -1976,7 +1988,7 @@ EAcceptance LLToolDragAndDrop::willObjectAcceptInventory(LLViewerObject* obj, LL
 // [RLVa:KB] - Checked: 2009-07-06 (RLVa-1.0.0c)
 	if (rlv_handler_t::isEnabled())
 	{
-		if (!gRlvHandler.isDetachable(obj))
+		if (gRlvHandler.isLockedAttachment(obj, RLV_LOCK_REMOVE))
 		{
 			return ACCEPT_NO_LOCKED;		// Disallow inventory drops on a locked attachment
 		}
@@ -2120,10 +2132,12 @@ EAcceptance LLToolDragAndDrop::dad3dRezAttachmentFromInv(
 		return ACCEPT_NO;
 	}
 
-// [RLVa:KB] - Checked: 2009-09-08 (RLVa-1.0.2c) | Modified: RLVa-1.0.2c
+// [RLVa:KB] - Checked: 2009-10-10 (RLVa-1.0.5) | Modified: RLVa-1.0.5
 	LLViewerJointAttachment* pAttachPt = NULL;
-	if ( (rlv_handler_t::isEnabled()) && (gRlvHandler.hasLockedAttachment()) && (!RlvSettings::getEnableWear()) &&
-		 ( ((pAttachPt = gRlvHandler.getAttachPoint(item, true)) == NULL) || (!gRlvHandler.isDetachable(pAttachPt)) ) )
+	if ( (rlv_handler_t::isEnabled()) && (gRlvHandler.hasLockedAttachment(RLV_LOCK_ANY)) && (!RlvSettings::getEnableWear()) &&
+		 ( ((pAttachPt = gRlvHandler.getAttachPoint(item, true)) == NULL) ||			// Item should specify an attachpt that
+		   (gRlvHandler.isLockedAttachment(pAttachPt->getObject(), RLV_LOCK_REMOVE)) ||	// doesn't have an undetachable object
+		   (gRlvHandler.isLockedAttachment(pAttachPt, RLV_LOCK_ADD)) ) )				// and that is attachable
 	{
 		return ACCEPT_NO_LOCKED;
 	}
@@ -2559,17 +2573,6 @@ EAcceptance LLToolDragAndDrop::dad3dWearCategory(
 			return ACCEPT_NO;
 		}
 	}
-
-// [RLVa:KB] - Version: 1.23.4 | Checked: 2009-07-06 (RLVa-1.0.0c) | Deprecated: RLVa-0.2.2a
-/*
-	if ( (rlv_handler_t::isEnabled()) && 
-		 ( (gRlvHandler.hasLockedAttachment()) || 
-		   (gRlvHandler.hasBehaviour(RLV_BHVR_ADDOUTFIT)) || (gRlvHandler.hasBehaviour(RLV_BHVR_REMOUTFIT)) ) )
-	{
-		return ACCEPT_NO_LOCKED;
-	}
-*/
-// [/RLVa:KB]
 
 	if(mSource == SOURCE_AGENT)
 	{

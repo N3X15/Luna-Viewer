@@ -71,9 +71,35 @@ void LLHUDEffect::packData(LLMessageSystem *mesgsys)
 void LLHUDEffect::unpackData(LLMessageSystem *mesgsys, S32 blocknum)
 {
 	mesgsys->getUUIDFast(_PREHASH_Effect, _PREHASH_ID, mID, blocknum);
+	mesgsys->getUUIDFast(_PREHASH_Effect, _PREHASH_AgentID, mSenderID, blocknum);
 	mesgsys->getU8Fast(_PREHASH_Effect, _PREHASH_Type, mType, blocknum);
 	mesgsys->getF32Fast(_PREHASH_Effect, _PREHASH_Duration, mDuration, blocknum);
 	mesgsys->getBinaryDataFast(_PREHASH_Effect,_PREHASH_Color, mColor.mV, 4, blocknum);
+}
+
+void LLHUDEffect::cancellate()
+{
+	if(getOriginatedHere() || mDuration == F32(0.05))return;
+	setOriginatedHere(TRUE);
+	setDuration(F32(0.05));
+	//setSourceObject(NULL);
+	setTargetObject(NULL);
+	mColor.setAlpha(0);
+	LLMessageSystem* msg = gMessageSystem;
+	msg->newMessageFast(_PREHASH_ViewerEffect);
+	msg->nextBlockFast(_PREHASH_AgentData);
+	msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID());
+	msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
+	msg->nextBlockFast(_PREHASH_Effect);
+	packData(msg);
+	gAgent.sendMessage();
+	msg->newMessageFast(_PREHASH_ViewerEffect);
+	msg->nextBlockFast(_PREHASH_AgentData);
+	msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID());
+	msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
+	msg->nextBlockFast(_PREHASH_Effect);
+	packData(msg);
+	gAgent.sendMessage();
 }
 
 void LLHUDEffect::render()
@@ -98,7 +124,8 @@ void LLHUDEffect::setColor(const LLColor4U &color)
 
 void LLHUDEffect::setDuration(const F32 duration)
 {
-	mDuration = duration;
+	if(duration < F32(2.49))mDuration = duration;
+	else mDuration = F32(2.49);
 }
 
 void LLHUDEffect::setNeedsSendToSim(const BOOL send_to_sim)

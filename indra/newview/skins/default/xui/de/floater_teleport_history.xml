@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<floater name="teleporthistory" title="Teleport Verlauf">
+	<scroll_list name="places_list">
+		<column label="Region" name="region"/>
+		<column label="Position" name="position"/>
+		<column label="Besucht" name="visited"/>
+		<!--Hidden fields, used as storage for prebuilt strings, please keep at width 0-->
+		<column label="SLURL" name="slurl"/>
+		<column label="Sim String" name="simstring"/>
+	</scroll_list>
+	<button label="Teleport" label_selected="Teleport" name="teleport" tool_tip="Teleport zur ausgewählten Position"/>
+	<button label="Auf Karte Zeigen" label_selected="Auf Karte zeigen"	name="show_on_map"	tool_tip="Center map on this location"/>
+	<button label="SLURL kopieren" name="copy_slurl" tool_tip="Kopiert aktuelle SLURL in die Zwischenablage"/>
+</floater>
+
+<floater name="teleporthistory" title="Teleport History">
+	<tab_container label="TPlistTabs" name="tplisttabs">
+		<panel label="Teleported into" name="TP-in">
+			<scroll_list name="places_list_in">
+				<column label="Region" name="region" />
+				<column label="Position" name="position" />
+				<column label="Besucht" name="visited" />
+				<!--Hidden fields, used as storage for prebuilt strings, please keep at width 0-->
+				<column label="SLURL" name="slurl" />
+				<column label="Sim String" name="simstring" />
+			</scroll_list>
+		</panel>
+		<panel label="Teleported out of" name="TP-out">
+			<scroll_list name="places_list_out">
+				<column label="Region" name="region" />
+				<column label="Position" name="position" />
+				<column label="Besucht" name="visited" />
+				<!--Hidden fields, used as storage for prebuilt strings, please keep at width 0-->
+				<column label="SLURL" name="slurl" />
+				<column label="Sim String" name="simstring" />
+			</scroll_list>
+		</panel>
+	</tab_container>
+	<button label="Teleport" label_selected="Teleport" name="teleport" tool_tip="Teleport zur ausgewählten Position" />
+	<button label="Auf Karte zeigen" label_selected="Auf Karte zeigen" name="show_on_map" tool_tip="Ausgewählte Position auf der Karte anzeigen"/>
+	<button label="Aktuelle SLURL kopieren" name="copy_slurl" tool_tip="Aktuelle SLURL in die Zwischenablage kopieren."/>
+</floater>

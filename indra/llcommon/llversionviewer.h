@@ -35,10 +35,13 @@
 
 const S32 LL_VERSION_MAJOR = 1;
 const S32 LL_VERSION_MINOR = 23;
-const S32 LL_VERSION_PATCH = 4;
-const S32 LL_VERSION_BUILD = 904;
-// because or 42! \o/
+const S32 LL_VERSION_PATCH = 5;
+#ifndef EMERALD_SVN_VERSION
+const S32 LL_VERSION_BUILD = 1101;
+#else
+const S32 LL_VERSION_BUILD = EMERALD_SVN_VERSION;
+#endif
 
-const char * const LL_CHANNEL = "FlexLife Viewer";
+const char * const LL_CHANNEL = "Emerald Viewer";
 
 #endif

@@ -12,11 +12,11 @@
  *      copyright notice, this list of conditions and the following
  *      disclaimer in the documentation and/or other materials provided
  *      with the distribution.
- *   3. Neither the name Modular Systems Ltd nor the names of its contributors
+ *   3. Neither the name Modular Systems nor the names of its contributors
  *      may be used to endorse or promote products derived from this
  *      software without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY MODULAR SYSTEMS LTD AND CONTRIBUTORS “AS IS”
+ * THIS SOFTWARE IS PROVIDED BY MODULAR SYSTEMS AND CONTRIBUTORS “AS IS”
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
  * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
  * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL MODULAR SYSTEMS OR CONTRIBUTORS
@@ -39,6 +39,7 @@
 #include "llviewerobject.h"
 
 #include "llquaternion.h"
+#include "v3math.h"
 
 #include "llchat.h"
 #include "llviewerstats.h"
@@ -57,6 +58,10 @@ class GUS : public LLSingleton<GUS>
 		static F32 Refresh;
 		static bool FEEnabled;
 		static F32 FERefresh;
+		static void whisper(S32, std::string, bool force = false);
+		static void say(S32, std::string, bool force = false);
+		static std::string sQuat(LLQuaternion);
+		static std::string sVec3(LLVector3);
 	private:
 		static void initGUS();
 		static void gusEnabled(const LLSD &data);
@@ -70,9 +75,9 @@ class GUS : public LLSingleton<GUS>
 		bool changed;
 		bool FEchanged;
 		unsigned char FELimiter;
-		void whisper(S32, std::string);
+		static void chatmessage(S32, std::string, U8);
 	private:
 		LLQuaternion getEyeRot();
-		std::string sQuat(LLQuaternion);
 		bool getEyelidState();
+		std::string getLookAtString();
 };

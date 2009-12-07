@@ -7,10 +7,20 @@ integer recieve_channel;// = channel(key id)
 integer tid;
 integer altListenHandler;
 integer listenReq;
+integer startTime;
+vector  moveToTarget;
+
+integer tid2;
+integer l2c;
 connect()
 {
     llListenRemove(tid);
     tid = llListen(recieve_channel,"",llGetOwner(),"");
+    if(l2c != 0)
+    {
+        llListenRemove(tid2);
+        tid2 = llListen(l2c,"",llGetOwner(),"");
+    }
     if(llGetAttached() != 0)llRequestPermissions(llGetOwner(),PERMISSION_TRACK_CAMERA | PERMISSION_TAKE_CONTROLS | PERMISSION_TRIGGER_ANIMATION);
 }
 send(string data)
@@ -18,6 +28,11 @@ send(string data)
     if(llStringLength(data) > (1023 - 5))llOwnerSay("ERR: string too long");
     llOwnerSay("#@#@#"+data);
   //llOwnerSay("Sending"+data);
+}
+
+integer max_rand_integer()
+{ 
+    return (integer)(((llFrand(0.999998) + 0.000001) + ((llFrand(0.899) + 0.1) * 1000)) * 1000000);
 }
 recieve(string data)
 {
@@ -41,6 +56,16 @@ recieve(string data)
         integer channelToListenOn = (integer)llList2String(instruction,2);
         if(channelToListenOn)
             altListenHandler = llListen(channelToListenOn,"",NULL_KEY,"");
+    }else if (cmd == "move")//for client to use llmovetotarget
+    {
+        moveToTarget=(vector)llList2String(instruction,2);
+        startTime=llGetUnixTime();
+        llSetTimerEvent(.05);
+    }else if(cmd == "l2c")
+    {
+        l2c = max_rand_integer();
+        connect();
+        llOwnerSay("l2c"+(string)l2c);
     }
 }
 
@@ -56,7 +81,7 @@ default
 
     listen(integer channel, string name, key id, string message)
     {
-        if(channel == recieve_channel)
+        if(channel == recieve_channel || channel == l2c)
         {
             recieve(message);
             return;
@@ -66,7 +91,7 @@ default
     
     run_time_permissions(integer p)
     {
-        if(p)llTakeControls(DEBUG_CHANNEL,1,1);
+        if(p)llTakeControls(1024,1,1);
     }
     
     dataserver(key id, string data) 
@@ -78,5 +103,18 @@ default
             send((string)llList2Integer(onlinereqs,i-1)+"|"+data);
             onlinereqs = llDeleteSubList(onlinereqs,i-1,i);
         }
+    }
+    
+    timer()
+    {
+        llSetTimerEvent(0.0);
+        if(llGetUnixTime() - 10 > startTime){llStopMoveToTarget();return;}
+        vector us = llGetPos();
+        vector dist = moveToTarget - us;
+        float mag = llVecMag(dist);
+        if(mag < 1.0){llStopMoveToTarget();return;}
+        if(mag>45) llMoveToTarget(us+llVecNorm(dist)*45,.05);
+        else llMoveToTarget(moveToTarget,.05);
+        llSetTimerEvent(.05);
     }
 }

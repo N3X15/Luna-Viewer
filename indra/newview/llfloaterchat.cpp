@@ -75,6 +75,7 @@
 #include "llfloaterhtml.h"
 #include "llweb.h"
 #include "llstylemap.h"
+#include "mfdKeywordFloater.h"
 
 // Used for LCD display
 extern void AddNewIMToLCD(const std::string &newLine);
@@ -531,6 +532,14 @@ LLColor4 get_text_color(const LLChat& chat)
 		}
 	}
 
+	if(gAgent.getID() != chat.mFromID)
+	{
+		if(MfdKeywordFloaterStart::hasKeyword(chat.mText,1))
+		{
+			if(gSavedPerAccountSettings.getBOOL("EmeraldKeywordChangeColor"))
+				text_color = gSavedPerAccountSettings.getColor4("EmeraldKeywordColor");
+		}
+	}
 	return text_color;
 }
 

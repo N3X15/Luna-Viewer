@@ -105,6 +105,7 @@ void LLToolMgr::initTools()
 	gBasicToolset->addTool( LLToolCompInspect::getInstance() );
 	gFaceEditToolset->addTool( LLToolCamera::getInstance() );
 
+	clearSavedTool();
 	// On startup, use "select" tool
 	setCurrentToolset(gBasicToolset);
 
@@ -189,6 +190,7 @@ LLTool* LLToolMgr::getCurrentTool()
 	else
 	{
 		mOverrideTool = mBaseTool ? mBaseTool->getOverrideTool(override_mask) : NULL;
+		mOverrideTool = (mBaseTool == gToolNull) ? NULL : mOverrideTool;	// don't override gTullNull
 
 		// use override tool if available otherwise drop back to base tool
 		cur_tool = mOverrideTool ? mOverrideTool : mBaseTool;

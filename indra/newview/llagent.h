@@ -517,7 +517,7 @@ public:
 
 	// to a global location - this will probably need to be
 	// deprecated.
-	void teleportViaLocation(const LLVector3d& pos_global); 
+	void teleportViaLocation(const LLVector3d& pos_global, bool go_to = false); 
 
 	// cancel the teleport, may or may not be allowed by server
 	void teleportCancel();

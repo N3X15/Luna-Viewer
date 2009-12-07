@@ -493,7 +493,8 @@ bool LLViewerInventoryCategory::fetchDescendents()
 		}
 		else
 		{	//Deprecated, but if we don't have a capability, use the old system.
-			llinfos << "WebFetchInventoryDescendents capability not found.  Using deprecated UDP message." << llendl;
+			//Great, but we don't need to know about it, removed this info message.
+			//llinfos << "WebFetchInventoryDescendents capability not found.  Using deprecated UDP message." << llendl;
 			LLMessageSystem* msg = gMessageSystem;
 			msg->newMessage("FetchInventoryDescendents");
 			msg->nextBlock("AgentData");

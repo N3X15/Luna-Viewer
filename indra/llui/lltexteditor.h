@@ -321,6 +321,7 @@ protected:
 	virtual void	unbindEmbeddedChars(const LLFontGL* font) const {}
 	
 	S32				findHTMLToken(const std::string &line, S32 pos, BOOL reverse) const;
+	S32				findHTMLToken(const std::string &line, S32 pos, BOOL reverse, const char *end_delims) const;
 	BOOL			findHTML(const std::string &line, S32 *begin, S32 *end) const;
 
 	// Abstract inner base class representing an undoable editor command.

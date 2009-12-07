@@ -417,7 +417,7 @@
 			<spinner label="B" left="115" name="Path Limit Begin"/>
 			<spinner label="E" name="Path Limit End"/>
 			<text left="115" name="text taper2">
-				Verjüngung
+				Verjüngung(2)
 			</text>
 			<spinner label="X" left="115" name="Taper X"/>
 			<spinner label="Y" name="Taper Y"/>

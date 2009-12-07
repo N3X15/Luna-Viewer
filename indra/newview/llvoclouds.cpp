@@ -52,7 +52,7 @@
 #include "pipeline.h"
 #include "llspatialpartition.h"
 
-#include "flsky.h"
+//#include "flsky.h"
 
 LLUUID gCloudTextureID = IMG_CLOUD_POOF;
 
@@ -60,7 +60,7 @@ LLUUID gCloudTextureID = IMG_CLOUD_POOF;
 LLVOClouds::LLVOClouds(const LLUUID &id, const LLPCode pcode, LLViewerRegion *regionp)
 :	LLAlphaObject(id, LL_VO_CLOUDS, regionp)
 {
-#if 0
+#if 1
 	mCloudGroupp = NULL;
 	mbCanSelect = FALSE;
 	setNumTEs(1);
@@ -93,7 +93,7 @@ BOOL LLVOClouds::idleUpdate(LLAgent &agent, LLWorld &world, const F64 &time)
 	if (mDrawable)
 	{
 		gPipeline.markRebuild(mDrawable, LLDrawable::REBUILD_VOLUME, TRUE);
-		FLSky::UpdateCamera();
+		//FLSky::UpdateCamera();
 	}
 
 	return TRUE;
@@ -108,7 +108,7 @@ void LLVOClouds::setPixelAreaAndAngle(LLAgent &agent)
 
 void LLVOClouds::updateTextures(LLAgent &agent)
 {
-	//getTEImage(0)->addTextureStats(mPixelArea);
+	getTEImage(0)->addTextureStats(mPixelArea);
 }
 
 LLDrawable* LLVOClouds::createDrawable(LLPipeline *pipeline)
@@ -128,8 +128,8 @@ BOOL LLVOClouds::updateGeometry(LLDrawable *drawable)
 	{
 		return TRUE;
 	}
-	FLSky::Render();
-#if 0
+	//FLSky::Render();
+#if 1
 	dirtySpatialGroup();
 
 	LLFace *facep;

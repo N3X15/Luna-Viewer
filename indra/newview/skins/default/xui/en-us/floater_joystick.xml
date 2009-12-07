@@ -16,10 +16,11 @@
 	<spinner bottom="-88" left="10" width="120" label_width="80" control_name="JoystickAxis6" name="JoystickAxis6" label="Zoom Mapping" decimal_digits="0" increment="1" min_val="-1" max_val="5"/>
 	<spinner bottom="-48" left="400" width="155" label_width="105" control_name="JoystickStreamRefresh" name="JoystickStreamRefresh" label="Stream Refresh Rate" decimal_digits="1" increment="1.0" min_val="0.1" max_val="20"/>
 	<spinner bottom="-68" left="400" width="155" label_width="90" control_name="JoystickStreamChannel" name="JoystickStreamChannel" label="Stream Channel" decimal_digits="0" increment="1" min_val = "-99999" max_val = "999999"/>
-
+	
 	<check_box bottom="-100" left="150" control_name="ZoomDirect" label="Direct Zoom" name="ZoomDirect" />
 	<check_box bottom="-100" left="242" control_name="Cursor3D" label="3D Cursor" name="Cursor3D" />
 	<check_box bottom="-100" left="330" control_name="AutoLeveling" label="Auto Level" name="AutoLeveling" />
+	<check_box bottom="-112" left="420" control_name="JoystickMouselookYaw" label="Mouselook Steers" name="MouselookSteers" />
 
 	<text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
 	     bottom="-120" drop_shadow_visible="true" enabled="true" follows="left|top"
@@ -32,7 +33,7 @@
 	<check_box bottom="-127" left="194" width="60" halign="center" border_drop_shadow_visible="true" control_name="JoystickBuildEnabled" name="JoystickBuildEnabled">Build</check_box>
 	<check_box bottom="-127" left="262" width="60" halign="center" border_drop_shadow_visible="true" control_name="JoystickFlycamEnabled" name="JoystickFlycamEnabled">Flycam</check_box>
 	<check_box bottom="-127" left="330" width="60" halign="center" border_drop_shadow_visible="true" control_name="JoystickStreamEnabled" name="JoystickStreamEnabled">Stream</check_box>
-
+	
 	<text bottom="-144" left="20" width="94" halign="right" name="XScale">X Scale</text>
 	<spinner bottom="-144" left="125" width="56" label_width="0" control_name="AvatarAxisScale1" name="AvatarAxisScale1" decimal_digits="2" increment="0.1" min_val="-50" max_val="50"/>
 	<spinner bottom="-144" left="195" width="56" label_width="0" control_name="BuildAxisScale1" name="BuildAxisScale1" decimal_digits="2" increment="0.1" min_val="-1024" max_val="1024"/>
@@ -67,7 +68,6 @@
 	<spinner bottom="-244" left="195" width="56" label_width="0" control_name="BuildAxisScale3" name="BuildAxisScale3" decimal_digits="2" increment="0.1" min_val="-1024" max_val="1024"/>
 	<spinner bottom="-244" left="265" width="56" label_width="0" control_name="FlycamAxisScale3" name="FlycamAxisScale3" decimal_digits="2" increment="0.1" min_val="-1024" max_val="1024"/>
 	<spinner bottom="-244" left="332" width="56" label_width="0" control_name="JoystickStreamAxisScale3" name="JoystickStreamAxisScale3" decimal_digits="2" increment="0.1" min_val="-1024" max_val="1024"/>
-
 
 	<text bottom="-274" left="20" width="94" halign="right" name="XDeadZone">X Dead Zone</text>
 	<spinner bottom="-274" left="125" width="56" label_width="0" control_name="AvatarAxisDeadZone1" name="AvatarAxisDeadZone1" decimal_digits="2" increment="0.01" min_val="0" max_val="1"/>

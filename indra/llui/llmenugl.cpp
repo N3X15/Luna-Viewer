@@ -448,7 +448,7 @@ void LLMenuItemGL::draw( void )
 	U8 font_style = mStyle;
 	if (getEnabled() && !mDrawTextDisabled )
 	{
-		//font_style |= LLFontGL::DROP_SHADOW_SOFT;
+		font_style |= LLFontGL::DROP_SHADOW_SOFT;
 	}
 
 	if ( getEnabled() && getHighlight() )
@@ -1604,7 +1604,7 @@ void LLMenuItemBranchDownGL::draw( void )
 	U8 font_style = getFontStyle();
 	if (getEnabled() && !getDrawTextDisabled() )
 	{
-		//font_style |= LLFontGL::DROP_SHADOW_SOFT;
+		font_style |= LLFontGL::DROP_SHADOW_SOFT;
 	}
 
 	LLColor4 color;

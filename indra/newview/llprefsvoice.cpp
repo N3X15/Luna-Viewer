@@ -200,8 +200,20 @@ void LLPrefsVoice::onClickResetVoice(void* user_data)
 	bool enable = !voice_disabled && gSavedPerAccountSettings.getBOOL("EnableVoiceChat");
 	if(enable)
 	{
+		//Seems to make voice at least reconnect to the current channel.
+		//Was hopeing it would have actualy restarted voice. --Liny
 		gSavedPerAccountSettings.setBOOL("EnableVoiceChat", FALSE);
+		LLFloaterVoiceDeviceSettings* voice_device_settings = LLFloaterVoiceDeviceSettings::getInstance();
+		if(voice_device_settings)
+		{
+			voice_device_settings->apply();
+		}
 		gSavedPerAccountSettings.setBOOL("EnableVoiceChat", TRUE);
+		voice_device_settings = LLFloaterVoiceDeviceSettings::getInstance();
+		if(voice_device_settings)
+		{
+			voice_device_settings->apply();
+		}
 	}
 }
 

@@ -41,6 +41,8 @@
 #include "lluictrlfactory.h"
 #include "llviewercontrol.h"
 #include "llviewerwindow.h"
+#include "llstartup.h"
+#include "llagent.h"
 
 LLPanelNetwork::LLPanelNetwork()
 {
@@ -53,6 +55,8 @@ BOOL LLPanelNetwork::postBuild()
 	childSetText("cache_location", cache_location);
 		
 	childSetAction("clear_cache", onClickClearCache, this);
+	childSetAction("clear_inv_cache", onClickClearInvCache, this);
+	if(LLStartUp::getStartupState() >= STATE_INVENTORY_SEND)childSetEnabled("clear_inv_cache",true);
 	childSetAction("set_cache", onClickSetCache, this);
 	childSetAction("reset_cache", onClickResetCache, this);
 	
@@ -90,6 +94,11 @@ void LLPanelNetwork::onClickClearCache(void*)
 {
 	// flag client cache for clearing next time the client runs
 	gSavedSettings.setBOOL("PurgeCacheOnNextStartup", TRUE);
+	LLNotifications::instance().add("CacheWillClear");
+}
+void LLPanelNetwork::onClickClearInvCache(void*)
+{
+	gSavedSettings.setString("EmeraldPurgeInvCache",gAgent.getID().asString());
 	LLNotifications::instance().add("CacheWillClear");
 }
 

@@ -175,37 +175,44 @@ static bool handleAvMorphTimeChanged(const LLSD& newvalue)
 
 static bool handleAvatarBoobMassChanged(const LLSD& newvalue)
 {
-	LLVOAvatar::sBoobMass = (F32) newvalue.asReal();
+	LLVOAvatar::sBoobConfig.mass = EmeraldBoobUtils::convertMass((F32) newvalue.asReal());
 	return true;
 }
 
 static bool handleAvatarBoobHardnessChanged(const LLSD& newvalue)
 {
-	LLVOAvatar::sBoobHardness = (F32) newvalue.asReal();
+	LLVOAvatar::sBoobConfig.hardness = EmeraldBoobUtils::convertHardness((F32) newvalue.asReal());
 	return true;
 }
 
 static bool handleAvatarBoobVelMaxChanged(const LLSD& newvalue)
 {
-	LLVOAvatar::sBoobVelMax = (F32) newvalue.asReal();
+	LLVOAvatar::sBoobConfig.velMax = EmeraldBoobUtils::convertVelMax((F32) newvalue.asReal());
+	LLVOAvatar::sBoobConfig.velMin = LLVOAvatar::sBoobConfig.velMin*LLVOAvatar::sBoobConfig.velMax;
 	return true;
 }
 
 static bool handleAvatarBoobFrictionChanged(const LLSD& newvalue)
 {
-	LLVOAvatar::sBoobFriction = (F32) newvalue.asReal();
+	LLVOAvatar::sBoobConfig.friction = EmeraldBoobUtils::convertFriction((F32) newvalue.asReal());
 	return true;
 }
 
-static bool handleAvatarBoobFrictionFractionChanged(const LLSD& newvalue)
+static bool handleAvatarBoobVelMinChanged(const LLSD& newvalue)
 {
-	LLVOAvatar::sBoobFrictionFraction = (F32) newvalue.asReal();
+	LLVOAvatar::sBoobConfig.velMin = EmeraldBoobUtils::convertVelMin((F32) newvalue.asReal())*LLVOAvatar::sBoobConfig.velMax;
 	return true;
 }
 
 static bool handleAvatarBoobToggleChanged(const LLSD& newvalue)
 {
-	LLVOAvatar::sBoobToggle = (BOOL) newvalue.asReal();
+	LLVOAvatar::sBoobConfig.enabled = (BOOL) newvalue.asReal();
+	return true;
+}
+
+static bool handleAvatarBoobXYInfluence(const LLSD& newvalue)
+{
+	LLVOAvatar::sBoobConfig.XYInfluence = (F32) newvalue.asReal();
 	return true;
 }
 
@@ -554,8 +561,9 @@ void settings_setup_listeners()
 	gSavedSettings.getControl("EmeraldBoobHardness")->getSignal()->connect(boost::bind(&handleAvatarBoobHardnessChanged, _1));
 	gSavedSettings.getControl("EmeraldBoobVelMax")->getSignal()->connect(boost::bind(&handleAvatarBoobVelMaxChanged, _1));
 	gSavedSettings.getControl("EmeraldBoobFriction")->getSignal()->connect(boost::bind(&handleAvatarBoobFrictionChanged, _1));
-	gSavedSettings.getControl("EmeraldBoobFrictionFraction")->getSignal()->connect(boost::bind(&handleAvatarBoobFrictionFractionChanged, _1));
+	gSavedSettings.getControl("EmeraldBoobVelMin")->getSignal()->connect(boost::bind(&handleAvatarBoobVelMinChanged, _1));
 	gSavedSettings.getControl("EmeraldBreastPhysicsToggle")->getSignal()->connect(boost::bind(&handleAvatarBoobToggleChanged, _1));
+	gSavedSettings.getControl("EmeraldBoobXYInfluence")->getSignal()->connect(boost::bind(&handleAvatarBoobXYInfluence, _1));
 	gSavedSettings.getControl("RenderFogRatio")->getSignal()->connect(boost::bind(&handleFogRatioChanged, _1));
 	gSavedSettings.getControl("RenderMaxPartCount")->getSignal()->connect(boost::bind(&handleMaxPartCountChanged, _1));
 	gSavedSettings.getControl("RenderDynamicLOD")->getSignal()->connect(boost::bind(&handleRenderDynamicLODChanged, _1));

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<floater can_close="true" can_drag_on_left="false" can_minimize="false"
+     can_resize="false" height="150" name="floater_motd"
+     rect_control="FloaterMOTD" title="Message of the Day" width="350">
+	<text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+	     bottom="-40" drop_shadow_visible="true" follows="left|top" font="SansSerif"
+	     h_pad="0" halign="left" height="16" left="10" mouse_opaque="true"
+	     name="motd" v_pad="0" width="128">
+		MOTD:
+	</text>
+	<text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+	     bottom="-40" drop_shadow_visible="true" follows="left|top" font="SansSerif"
+	     h_pad="0" halign="left" height="16" left="50" mouse_opaque="true"
+	     name="motd_text" right="-10" v_pad="0">
+	</text>
+  <button bottom="10" enabled="true" follows="right|bottom" font="SansSerif"
+	     halign="center" height="20" label="OK" label_selected="OK"
+	     left="-110" mouse_opaque="true" name="OK" scale_image="true" width="90" />
+</floater>

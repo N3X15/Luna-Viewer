@@ -2,19 +2,21 @@
 <floater
 	name="area search"
 	title="Area Search"
-	can_resize="true"
+	can_resize="false"
 	can_minimize="true"
 	can_close="true"
 	can_drag_on_left="false"
 	rect_control="FloaterAreaSearchRect"
 	min_width="565"
-	min_height="300"
+	min_height="650"
+	width="565"
+	height="650"
 	>
 	<scroll_list
 		    name="result_list"
 		    left="10"
 		    right="-10"
-		    top="-150"
+		    top="-250"
 		    bottom="10"
 		    column_padding="0"
 		    can_resize="true"
@@ -24,25 +26,28 @@
 		    search_column="1"
 		    tool_tip="Hold shift or control while clicking to select multiple entries"
 		    >
-		<column name="Name" label="Name" dynamicwidth="true" />
+	<column name="Name" label="Name" dynamicwidth="true" />
     <column name="Description" label="Description" dynamicwidth="true" />
     <column name="Owner" label="Owner" dynamicwidth="true"/>
-		<column name="Group" label="Group" dynamicwidth="true"/>
-    <column name="Pay" label="Pay" width="50"/>
-    <column name="Buy" label="Buy" width="50"/>
+	<column name="Group" label="Group" dynamicwidth="true"/>
 	</scroll_list>
-  <button bottom="-40" follows="left|top" font="SansSerif" height="20" label="Reload"
-       left_delta="10" mouse_opaque="true" name="Reload"
-	     scale_image="TRUE" width="80" />
-  <check_box enabled="false" bottom_delta="-20" follows="left|top" left_delta="0" name="touch_only" label="Scripted Objects with Touch Only" control_name="scripttouchbeacon" />
-  <check_box enabled="false" bottom_delta="-20" follows="left|top" left_delta="0" name="scripted" label="Scripted Objects" control_name="scriptsbeacon" />
-  <check_box enabled="false" bottom_delta="-20" follows="left|top" left_delta="0" name="physical" label="Physical Objects" control_name="physicalbeacon" />
-  <check_box enabled="false" bottom_delta="-20" follows="left|top" left_delta="0" name="sounds" label="Sound Sources" control_name="soundsbeacon" />
-  <check_box enabled="false" bottom_delta="-20" follows="left|top" left_delta="0" name="particles" label="Particle Sources" control_name="particlesbeacon" />
-  <check_box bottom_delta="80" follows="left|top" left_delta="200" name="payable" label="Payable Object" />
-  <check_box bottom_delta="-20" follows="left|top" left_delta="0" name="buyable" label="Buyable Object" />
-  <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom_delta="-30"
-           follows="left|top" font="SansSerifSmall" height="20" left_delta="-90"
+
+  <check_box bottom="-40" follows="left|top" left_delta="0" name="touch_only" label="Scripted Objects with Touch Only" />
+  <check_box bottom_delta="-20" follows="left|top" left_delta="0" name="scripted" label="Scripted Objects" />
+  <check_box bottom_delta="-20" follows="left|top" left_delta="0" name="sounds" label="Sound Sources" />
+  <check_box bottom_delta="-20" follows="left|top" left_delta="0" name="particles" label="Particle Sources"  />
+  <check_box bottom_delta="-20" follows="left|top" left_delta="0" name="animations" label="Animation Sources" />
+  <check_box bottom_delta="80" follows="left|top" left_delta="200" name="payable" label="Payable Objects" />
+  <check_box bottom_delta="-20" follows="left|top" left_delta="0" name="temporary" label="Temporary Objects" />
+  <check_box bottom_delta="-20" follows="left|top" left_delta="0" name="sculpted" label="Sculpted Objects" />
+  <check_box bottom_delta="-20" follows="left|top" left_delta="0" name="flexible" label="Flexible Objects" />
+  <check_box bottom_delta="-20" follows="left|top" left_delta="0" name="phantom" label="Phantom Objects" />
+  <check_box bottom_delta="80" follows="left|top" left_delta="200" name="attachment" label="Attachment" />
+  <check_box bottom_delta="-20" follows="left|top" left_delta="0" name="hudattachment" label="HUD Attachment" />
+  <check_box bottom_delta="-20" follows="left|top" left_delta="0" name="inventoryadd" label="Inventory Add" />
+  
+  <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom="-200"
+           follows="left|top" font="SansSerifSmall" height="20" left="20"
            max_length="256" mouse_opaque="true"
            tool_tip="" name="Name query chunk" label="Name query chunk" width="200" />
   <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom_delta="-20"
@@ -57,8 +62,8 @@
            follows="left|top" font="SansSerifSmall" height="20" left_delta="0"
            max_length="256" mouse_opaque="true"
            tool_tip="" name="Group query chunk" label="Group query chunk" width="200" />
-  <button bottom_delta="-20" follows="left|top" font="SansSerif" height="20" label="Search"
-         left_delta="-90" mouse_opaque="true" name="Search"
-         scale_image="TRUE" width="80" />
+  <button bottom_delta="0" follows="left|top" font="SansSerif" height="20" label="Search Objects"
+         left_delta="210" mouse_opaque="true" name="Search"
+         scale_image="TRUE" width="100" />
   
 </floater>

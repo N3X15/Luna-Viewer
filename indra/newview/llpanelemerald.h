@@ -65,6 +65,7 @@ private:
 	static void onNoStealth(void* data);
 	static void onClickVoiceRevertDebug(void* data);
 	static void onRefresh(void* data);
+	static void onKeywordAllertButton(void * data);
 	static void onBeamDelete(void* data);
 	static void onBeamColorDelete(void* data);
 	static void onCommitApplyControl(LLUICtrl* caller, void* user_data);
@@ -74,6 +75,7 @@ private:
 	static void beamUpdateCall(LLUICtrl* ctrl, void* userdata);
 	static void onClickSetMirror(void*);
     static void onClickOtrHelp(void* data); // [$PLOTR$/]
+	static void onConditionalPreferencesChanged(LLUICtrl* ctrl, void* userdata);
 	//static void onCommitVoiceDebugServerName(LLUICtrl* caller, void* user_data);
 	//static void onCommitAvatarEffectsChange(LLUICtrl* caller, void* user_data);
 	//static void onCommitAutoResponse(LLUICtrl* caller, void* user_data);

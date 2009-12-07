@@ -24,17 +24,18 @@
   <text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
         drop_shadow_visible="true" font="SansSerif" h_pad="0" v_pad="0" halign="center"
         follows="left|top"
-        height="20" width="370"
+        height="40" width="370"
         left="15" bottom="-85"
         mouse_opaque="true" name="otr_smp_prog_status">Authenticating buddy...</text>
-  <string name="otr_smp_prog_I_auth_them" >Authenticating your buddy...</string>
-  <string name="otr_smp_prog_they_auth_me">Your buddy is authenticating you...</string>
-  <string name="otr_smp_prog_I_auth_name" >Authenticating [NAME]...</string>
-  <string name="otr_smp_prog_name_auth_me">[NAME] is authenticating you...</string>
-  <string name="otr_smp_prog_auth_aborted">Authentication aborted</string>
-  <string name="otr_smp_prog_auth_failed" >Authentication failed</string>
-  <string name="otr_smp_prog_auth_errored">Authentication error</string>
-  <string name="otr_smp_prog_auth_ok"     >Authenticated!</string>
+  <string name="otr_smp_prog_I_auth_them"      >Authenticating your buddy...</string>
+  <string name="otr_smp_prog_they_auth_me"     >Your buddy is authenticating you...</string>
+  <string name="otr_smp_prog_I_auth_name"      >Authenticating [NAME]...</string>
+  <string name="otr_smp_prog_name_auth_me"     >[NAME] is authenticating you...</string>
+  <string name="otr_smp_prog_auth_aborted"     >Authentication aborted</string>
+  <string name="otr_smp_prog_auth_failed"      >Authentication failed</string>
+  <string name="otr_smp_prog_auth_errored"     >Authentication error</string>
+  <string name="otr_smp_prog_auth_ok"          >Authenticated!</string>
+  <string name="otr_smp_prog_auth_ok_name_next">You are authenticated!  Now you may want to authenticate [NAME].</string>
   <progress_bar name="otr_smp_prog_progress_bar" color="255,255,255,245"
                 height="20"
                 bottom="-110" left="45" right="-45"

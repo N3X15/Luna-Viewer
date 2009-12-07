@@ -356,8 +356,8 @@ bool LLCrashLogger::init()
 	// We assume that all the logs we're looking for reside on the current drive
 	gDirUtilp->initAppDirs("SecondLife");
 
-	// Default to the product name "GreenLife Emerald Viewer" (this is overridden by the -name argument)
-	mProductName = "GreenLife Emerald Viewer";
+	// Default to the product name "Emerald Viewer" (this is overridden by the -name argument)
+	mProductName = "Emerald Viewer";
 	
 	mCrashSettings.declareS32(CRASH_BEHAVIOR_SETTING, CRASH_BEHAVIOR_ASK, "Controls behavior when viewer crashes "
 		"(0 = ask before sending crash report, 1 = always send crash report, 2 = never send crash report)");

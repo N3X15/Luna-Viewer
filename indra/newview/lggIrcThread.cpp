@@ -12,11 +12,11 @@
  *      copyright notice, this list of conditions and the following
  *      disclaimer in the documentation and/or other materials provided
  *      with the distribution.
- *   3. Neither the name Modular Systems Ltd nor the names of its contributors
+ *   3. Neither the name Modular Systems nor the names of its contributors
  *      may be used to endorse or promote products derived from this
  *      software without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY MODULAR SYSTEMS LTD AND CONTRIBUTORS "AS IS"
+ * THIS SOFTWARE IS PROVIDED BY MODULAR SYSTEMS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
  * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
  * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL MODULAR SYSTEMS OR CONTRIBUTORS
@@ -68,6 +68,8 @@ Ok, here is how this is suposed to work.
 #include "llfloaterchat.h"
 #include "llfloaterchatterbox.h"
 #include "llfloater.h"
+#include "llversionviewer.h"
+#include "lltimer.h"
 
 
 //static
@@ -305,7 +307,7 @@ void lggIrcThread::setData(lggIrcData dat)
 	dataGotten=TRUE;
 
 }
-int lggIrcThread::PrivMessageResponce( char * params, irc_reply_data * hostd, void * conn)
+int lggIrcThread::PrivMessageResponce( char * params, irc_reply_data * hostd, void * connn)
 {
 	
 	
@@ -322,16 +324,24 @@ int lggIrcThread::PrivMessageResponce( char * params, irc_reply_data * hostd, vo
 			if(!strcmp(hostd->target,getChannel().c_str()))
 			{
 				//chan msg
-				if(strstr(&params[1],"ACTION"))
+				//if(strstr(&params[1],"ACTION"))
 				//if(std::string(&params[1]).find_first_of("ACTION")!=std::string::npos)
+				string::size_type pos = std::string(&params[1]).find_first_of(" \001", 1);
+				string command = std::string(&params[1]).substr(1, pos - 1);
+				if (command == "ACTION")
 				{
-					actionDisp(std::string(hostd->nick),std::string(&params[1]));
+					actionDisp(std::string(hostd->nick),(std::string(&params[1]).substr(pos + 1, (std::string(&params[1]).length() - pos) - 2)));
+					if(gSavedSettings.getBOOL("IMInChatConsole"))
+					{				
+						chat.mText = std::string("IRC: ") + std::string(hostd->nick) + std::string(" ") + stripColorCodes(std::string(&params[1]).substr(pos + 1, (std::string(&params[1]).length() - pos) - 2));
+						LLFloaterChat::addChat( chat, TRUE );
+					}
 					return 0;
 				}
 				if(gSavedSettings.getBOOL("EmeraldIRC_ShowChannel"))
 					msg(
 					llformat(": %s",std::string(&params[1]).c_str())
-					,llformat("#%s",hostd->nick),
+					,llformat("%s",hostd->nick),
 					gSavedSettings.getColor("EmeraldIRC_ColorChannel"),true);
 			}else
 			{
@@ -372,18 +382,37 @@ int lggIrcThread::NoticeMessageResponce( char * params, irc_reply_data * hostd, 
 
 		if(hostd->target && hostd->nick)
 		{
-			if(!strcmp(hostd->target,getChannel().c_str()))
+			string::size_type pos = std::string(&params[1]).find_first_of(" \001", 1);
+			string command = std::string(&params[1]).substr(1, pos - 1);
+			if(command == "VERSION")
 			{
-				if(strstr(&params[1],"ACTION"))
-					//if(std::string(&params[1]).find_first_of("ACTION")!=std::string::npos)
+				//displayPrivateIm(std::string(&params[1]),std::string(hostd->nick));
+				msg("CTCP version reply \""+ stripColorCodes(std::string(&params[1]).substr(pos + 1, (std::string(&params[1]).length() - pos) - 2)) +"\" from "+std::string(hostd->nick));
+			}
+			else if(command == "PING")
+			{
+				//displayPrivateIm(std::string(&params[1]),std::string(hostd->nick));
+				F64 temp = atof(stripColorCodes(std::string(&params[1]).substr(pos + 1, (std::string(&params[1]).length() - pos) - 2)).c_str());
+				temp = LLTimer::getTotalSeconds() - temp;
+				msg("Ping reply from "+std::string(hostd->nick)+" in "+llformat("%.2f",temp)+" seconds.");
+				//msg("CTCP version reply \""+ stripColorCodes(std::string(&params[1]).substr(pos + 1, (std::string(&params[1]).length() - pos) - 2)) +"\" from "+std::string(hostd->nick));
+			}
+			else if(!strcmp(hostd->target,getChannel().c_str()))
+			{
+				if (command == "ACTION")
 				{
-					actionDisp(std::string(hostd->nick),std::string(&params[1]));
+					actionDisp(std::string(hostd->nick),(std::string(&params[1]).substr(pos + 1, (std::string(&params[1]).length() - pos) - 2)));
+					if(gSavedSettings.getBOOL("IMInChatConsole"))
+					{				
+						chat.mText = std::string("IRC: ") + std::string(hostd->nick) + std::string(" ") + stripColorCodes(std::string(&params[1]).substr(pos + 1, (std::string(&params[1]).length() - pos) - 2));
+						LLFloaterChat::addChat( chat, TRUE );
+					}
 					return 0;
 				}
 				//chan msg
 				if(gSavedSettings.getBOOL("EmeraldIRC_ShowNotice"))
 					msg(llformat(": %s",std::string(&params[1]).c_str()),
-					llformat("#%s",hostd->nick),
+					llformat("%s",hostd->nick),
 					gSavedSettings.getColor("EmeraldIRC_ColorNotice"),true);
 			}else
 				displayPrivateIm(std::string(&params[1]),std::string(hostd->nick));
@@ -494,7 +523,7 @@ int lggIrcThread::RPL_WHOISUSER( char * params, irc_reply_data * hostd, void * c
 				if( i >> whoR.user)
 					if(i>>whoR.host)
 						if(i>>us)
-							if(i>>whoR.realName)
+							while(i>>whoR.realName)
 							{
 								//do nothing.. stupid warnings.. uhm..
 								us = "";
@@ -524,7 +553,7 @@ int lggIrcThread::RPL_WHOISCHANNELS( char * params, irc_reply_data * hostd, void
 }
 int lggIrcThread::RPL_WHOISSERVER( char * params, irc_reply_data * hostd, void * conn)
 {
-	//2009-09-08T22:13:55Z INFO: lggIrcThread::RPL_WHOISSERVER: Params Shadow Liny irc.modularsystems.sl :Modular Systems Ltd. IRC
+	//2009-09-08T22:13:55Z INFO: lggIrcThread::RPL_WHOISSERVER: Params Shadow Liny irc.modularsystems.sl :Modular Systems IRC
 	if(params)
 	{
 		llinfos << "Params " << params << llendl;
@@ -583,7 +612,7 @@ int lggIrcThread::RPL_ENDOFWHOIS( char * params, irc_reply_data * hostd, void * 
 
 
 
-int lggIrcThread::KickMessageResponce( char * params, irc_reply_data * hostd, void * conn)
+int lggIrcThread::KickMessageResponce( char * params, irc_reply_data * hostd, void * connn)
 {
 	//[20:10]  KICK Params: #emerald Emerald-User354541ac :test and host: 507F089C.80FD756D.8FBBEBA0.IP and ident: lgg and nick lgg and target (null) 
 	//msg( llformat("KICK Params: %s and host: %s and ident: %s and nick %s and target %s ",params,hostd->host,hostd->ident,hostd->nick,hostd->target).c_str());
@@ -599,16 +628,29 @@ int lggIrcThread::KickMessageResponce( char * params, irc_reply_data * hostd, vo
 			istringstream iss(paramstring);
 			iss >> twho;//first part we dont need
 			
-			if(gSavedSettings.getBOOL("EmeraldIRC_ShowKick"))
 			if(iss >> twho)
 			{
-				
-				if(iss >> twhy)
+				if(!strcmp(twho.c_str(),conn->current_nick()) && gSavedSettings.getBOOL("EmeraldIRC_AutoReJoin"))
 				{
-					msg( llformat("%s has been kicked by %s (%s).",twho.c_str(),hostd->nick,twhy.substr(1).c_str()).c_str(),gSavedSettings.getColor("EmeraldIRC_ColorKick"),false);	
-				}else
+					if(iss >> twhy)
+					{
+						msg( llformat("%s has been kicked by %s (%s).",twho.c_str(),hostd->nick,twhy.substr(1).c_str()).c_str(),gSavedSettings.getColor("EmeraldIRC_ColorKick"),false);	
+					}else
+					{
+						msg( llformat("%s has been kicked by %s.",twho.c_str(),hostd->nick).c_str(),gSavedSettings.getColor("EmeraldIRC_ColorKick"),false);	
+					}
+					msg(llformat("Attempting to rejoin %s.",getChannel().c_str()));
+					join();
+				}
+				else if(gSavedSettings.getBOOL("EmeraldIRC_ShowKick"))
 				{
-					msg( llformat("%s has been kicked by %s.",twho.c_str(),hostd->nick).c_str(),gSavedSettings.getColor("EmeraldIRC_ColorKick"),false);	
+					if(iss >> twhy)
+					{
+						msg( llformat("%s has been kicked by %s (%s).",twho.c_str(),hostd->nick,twhy.substr(1).c_str()).c_str(),gSavedSettings.getColor("EmeraldIRC_ColorKick"),false);	
+					}else
+					{
+						msg( llformat("%s has been kicked by %s.",twho.c_str(),hostd->nick).c_str(),gSavedSettings.getColor("EmeraldIRC_ColorKick"),false);	
+					}
 				}
 			}
 		}
@@ -752,8 +794,8 @@ void lggIrcThread::sendChat(std::string chat)
 	if(command == "/help")
 	{
 		msg(std::string("\"/join\" will attempt to re-join the current channel.\n\"/msg NICK MSG\" will send a private MSG to NICK\n\"/kick NICK [REASON]\" will kick NICK from that chat (if you have op rights)\n\"/nick NEWNICK\" will change your current nick to NEWNICK"));
-	}else
-	if(command == "/kick")
+	}
+	else if(command == "/kick")
 	{
 		std::string targetNick;
 		if(i >> targetNick)
@@ -763,36 +805,41 @@ void lggIrcThread::sendChat(std::string chat)
 			{
 				conn->kick((char *)getChannel().c_str(),(char *)targetNick.c_str(),(char *)reason.c_str());
 				//msg(llformat("You have kicked %s from this chat. (%s)",targetNick.c_str(),reason.c_str()));
-			}else
+			}
+			else
 			{
 				conn->kick((char *)getChannel().c_str(),(char *)targetNick.c_str());
 				msg(llformat("You have kicked %s from this chat.",targetNick.c_str()));
 			}
 		}
-	}else
-	if(command == "/nick")
+	}
+	else if(command == "/nick")
 	{
 		std::string targetNick;
 		if(i >> targetNick)
 		{
 			conn->nick((char*)targetNick.c_str());
 			//msg(llformat("Changing your nickname to %s",targetNick.c_str()));
-		}else
+		}
+		else
 		{
 			msg("Invalid format for /nick, format is \"/nick NEWNICK\"");
 		}
 		
-	}else	if(command == "/join")
+	}
+	else if(command == "/join")
 	{
 		msg(llformat("Attempting to rejoin %s, if you wish to join a different channel, please make a new irc group",getChannel().c_str()));
 		join();
-	}else	if(command == "/me")
+	}
+	else if(command == "/me")
 	{
 		// WARNING: Liandra made ugly ANSI C hax here. >_>
-        std::string toSend = llformat("%cACTION %s%c", (char)1, chat.substr(3).c_str(), (char)1 );
-		actionDisp(std::string(conn->current_nick()),toSend);
+        std::string toSend = llformat("%cACTION%s%c", (char)1, chat.substr(3).c_str(), (char)1 );
+		actionDisp(std::string(conn->current_nick()),chat.substr(4).c_str());
 		conn->privmsg((char*)getChannel().c_str(),(char*)toSend.c_str());
-	}else if(command == "/msg")
+	}
+	else if(command == "/msg")
 	{
 		std::string theTarget,theMsg;
 		if(i >> theTarget)
@@ -802,15 +849,57 @@ void lggIrcThread::sendChat(std::string chat)
 				theMsg = chat.substr(5+theTarget.length()+1);
 				conn->privmsg((char*)theTarget.c_str(),(char *)theMsg.c_str());
 				msg(llformat("Send Private Message to %s : %s",theTarget.c_str(),theMsg.c_str()));
-			}else
+			}
+			else
 			{
 				msg("No Message Specified");
 			}
-		}else
+		}
+		else
 		{
 			msg("No target name specified");
 		}
-	}else if(command.substr(0,1)=="/")
+	}
+	else if(command == "/version")
+	{
+		std::string theTarget,theMsg;
+		if(i >> theTarget)
+		{
+			conn->privmsg((char*)theTarget.c_str(),(char*)"\001VERSION\001");
+		}
+		else
+		{
+			msg("No target name specified");
+		}
+	}
+	else if(command == "/ping")
+    {
+        std::string theTarget,theMsg;
+        if(i >> theTarget)
+        {
+            conn->privmsg((char*)theTarget.c_str(),(char*)llformat("\001PING %.2f\001", LLTimer::getTotalSeconds()).c_str());
+        }
+        else
+        {
+            msg("No target name specified");
+        }
+        //msg(llformat("%.2f", LLTimer::getTotalSeconds()));
+    }
+	else if(command == "/slap")
+	{
+		std::string theTarget;
+		if(i >> theTarget)
+		{
+			std::string toSend = llformat("%cACTION slaps %s with a goldfish%c", (char)1, theTarget.c_str(), (char)1 );
+			conn->privmsg((char*)getChannel().c_str(),(char *)toSend.c_str());
+			actionDisp(std::string(conn->current_nick()),llformat("slaps %s with a goldfish",theTarget.c_str()));
+		}
+		else
+		{
+			msg("No target name specified");
+		}
+	}
+	else if(command.substr(0,1)=="/")
 	{
 		conn->raw((char *)std::string(chat.substr(1)+"\r\n").c_str());
 	}
@@ -844,9 +933,10 @@ void lggIrcThread::actionDisp(std::string name, std::string msg)
 {
 	if(gSavedSettings.getBOOL("EmeraldIRC_ShowAction"))
 	{
+		msg = " " + msg;
 		floater = gIMMgr->findFloaterBySession(getMID());
 		floater->addHistoryLine(stripColorCodes(
-		name +" "+ msg.substr(8)
+		name + msg
 		),
 		gSavedSettings.getColor("EmeraldIRC_ColorAction"));
 		notifyStuff();
@@ -870,16 +960,14 @@ void lggIrcThread::notifyStuff()
 		{
 			chat_floater->setFloaterFlashing(previouslyActiveFloater, TRUE);
 		}
-	}
-	if(!gIMMgr->getFloaterOpen())
-	{
-		gIMMgr->notifyNewIM();
+		if(!gIMMgr->getFloaterOpen())
+		{
+			gIMMgr->notifyNewIM();
+		}
 	}
 }
 void lggIrcThread::displayPrivateIm(std::string msg, std::string name)
 {
-
-	if(!gSavedSettings.getBOOL("EmeraldIRC_ShowPrivate"))return;
 	LLUUID uid;
 	uid.generate(name+"lgg"+getChannel());//dont touch this one
 	BOOL found = false;
@@ -890,78 +978,74 @@ void lggIrcThread::displayPrivateIm(std::string msg, std::string name)
 	if(found)
 	{
 
-	
-		LLUUID computed_session_id=LLIMMgr::computeSessionID(IM_PRIVATE_IRC,uid);
-
-		floater = gIMMgr->findFloaterBySession(computed_session_id);
-		if(!gIMMgr->hasSession(computed_session_id))
+		string::size_type pos = std::string(msg.c_str()).find_first_of(" \001", 1);
+		string command = std::string(msg.c_str()).substr(1, pos - 1);
+		if(command == "VERSION")
 		{
-			make_ui_sound("UISndNewIncomingIMSession");
-			gIMMgr->addSession(
-				llformat("%s",name.c_str()),IM_PRIVATE_IRC,uid);
-			//"[PRIVATE - IRC] %s"
-			floater = gIMMgr->findFloaterBySession(computed_session_id);
-
-		}
-		if(!floater)return;
-		if(strstr(msg.c_str(),"ACTION"))
-		{
-			msg  = stripColorCodes(
-				name +" "+ msg.substr(8)
-				);
-			if(gSavedSettings.getBOOL("EmeraldIRC_ShowAction"))
-				floater->addHistoryLine(msg,
-				gSavedSettings.getColor("EmeraldIRC_ColorAction"));
-			
-			if(gSavedSettings.getBOOL("IMInChatConsole"))
-			{				
-				chat.mText = std::string("IRC: ") + msg;
-				LLFloaterChat::addChat( chat, TRUE );
-			}
-			notifyStuff();
-			//actionDisp(name,msg);
+			char	version[45];
+			sprintf(version, "\001VERSION Emerald Viewer %d.%d.%d (%d)\001", LL_VERSION_MAJOR, LL_VERSION_MINOR, LL_VERSION_PATCH, LL_VERSION_BUILD);
+			conn->notice((char *)name.c_str(), (char *)version);
 			return;
-		}else
+		}
+		else if(command == "PING")
 		{
-			
-// 			gIMMgr->addMessage(computed_session_id,
-// 				uid,
-// 				llformat("#%s",name.c_str()),
-// 				llformat(": %s",msg.c_str()),
-// 				LLStringUtil::null,
-// 				IM_PRIVATE_IRC,
-// 				0,
-// 				LLUUID::null,
-// 				LLVector3::zero,
-// 				true);
-			if(gSavedSettings.getBOOL("IMInChatConsole"))
-			{				
-				chat.mText = std::string("IRC: ") + llformat("#%s",name.c_str())+
-
-					llformat(": %s",msg.c_str());
-				LLFloaterChat::addChat( chat, TRUE );
+			conn->notice((char *)name.c_str(), (char *)msg.c_str());
+		}
+		else
+		{
+			if(!gSavedSettings.getBOOL("EmeraldIRC_ShowPrivate"))return;
+			LLUUID computed_session_id=LLIMMgr::computeSessionID(IM_PRIVATE_IRC,uid);
+			floater = gIMMgr->findFloaterBySession(computed_session_id);
+			if(!gIMMgr->hasSession(computed_session_id))
+			{
+				make_ui_sound("UISndNewIncomingIMSession");
+				gIMMgr->addSession(llformat("%s",name.c_str()),IM_PRIVATE_IRC,uid);
+				floater = gIMMgr->findFloaterBySession(computed_session_id);
 			}
-
- 			floater->addHistoryLine(
- 				llformat(": %s",msg.c_str()),
- 				gSavedSettings.getColor("EmeraldIRC_ColorPrivate"),
- 				true,
- 				uid,
- 				llformat("#%s",name.c_str())
- 				);
-			notifyStuff();
+			if(!floater)return;
+			if (command == "ACTION")
+			{
+				msg  = stripColorCodes(
+					name + msg.substr(pos, (msg.length() - pos) - 1)
+					);
+				if(gSavedSettings.getBOOL("EmeraldIRC_ShowAction"))
+				{
+					floater->addHistoryLine(msg,
+					gSavedSettings.getColor("EmeraldIRC_ColorAction"));
+				}
+				if(gSavedSettings.getBOOL("IMInChatConsole"))
+				{				
+					chat.mText = std::string("IRC: ") + msg;
+					LLFloaterChat::addChat( chat, TRUE );
+				}
+				notifyStuff();
+				return;
+			}
+			else
+			{
+				if(gSavedSettings.getBOOL("IMInChatConsole"))
+				{				
+					chat.mText = std::string("IRC: ") + llformat("#%s",name.c_str())+
+						llformat(": %s",msg.c_str());
+					LLFloaterChat::addChat( chat, TRUE );
+				}
+ 				floater->addHistoryLine(
+	 				llformat(": %s",msg.c_str()),
+ 					gSavedSettings.getColor("EmeraldIRC_ColorPrivate"),
+ 					true,
+ 					uid,
+ 					llformat("%s",name.c_str())
+ 					);
+				notifyStuff();
+			}
 		}
 	}else
 	{
 		this->msg( 
-			llformat("#%s: %s",name.c_str(),msg.c_str()) 
-			,
+			llformat("%s: %s",name.c_str(),msg.c_str()),
 			gSavedSettings.getColor("EmeraldIRC_ColorPrivate"),
 			true);
 	}
-	
-
-
 }
 
 void lggIrcThread::msg(std::string message)
@@ -1010,9 +1094,9 @@ void lggIrcThread::msg(std::string message, LLColor4 color, bool notify)
 void lggIrcThread::msg(std::string message, std::string name, LLColor4 color, bool notify)
 {
 	LLUUID uid;
-	uid.generate(name.substr(1)+"lgg"+getChannel().c_str());
+	uid.generate(name+"lgg"+getChannel().c_str());
 
-	llinfos << "Generating Disp uuid from |" << name.substr(1) << "| and |" << getChannel().c_str() << "| it was " << uid.asString() << llendl;
+	llinfos << "Generating Disp uuid from |" << name << "| and |" << getChannel().c_str() << "| it was " << uid.asString() << llendl;
 
 
 	floater  = gIMMgr->findFloaterBySession(getMID());
@@ -1054,9 +1138,9 @@ void lggIrcThread::sendPrivateImToID(std::string msg, LLUUID id)
 			
 			if(command == "/me")
 			{
-				std::string toSend = llformat("%cACTION %s%c", (char)1, msg.substr(3).c_str(), (char)1 );
+				std::string toSend = llformat("%cACTION%s%c", (char)1, msg.substr(3).c_str(), (char)1 );
 				gIMMgr->findFloaterBySession(computed_session_id)->addHistoryLine(
-					llformat("#%s %s",conn->current_nick(),msg.substr(3).c_str()),
+					llformat("%s %s",conn->current_nick(),msg.substr(4).c_str()),
 					gSavedSettings.getColor("EmeraldIRC_ColorPrivate")
 					);
 				conn->privmsg((char*)name.c_str(),(char*)toSend.c_str());
@@ -1065,7 +1149,7 @@ void lggIrcThread::sendPrivateImToID(std::string msg, LLUUID id)
 				conn->privmsg((char*)name.c_str(),(char*)msg.c_str());
 				
 				gIMMgr->findFloaterBySession(computed_session_id)->addHistoryLine(
-					llformat("#%s: %s",conn->current_nick(),msg.c_str()),
+					llformat("%s: %s",conn->current_nick(),msg.c_str()),
 				gSavedSettings.getColor("EmeraldIRC_ColorPrivate")
 				);
 			}
@@ -1127,5 +1211,7 @@ std::string lggIrcThread::stripColorCodes(std::string input)
 
 void lggIrcThread::updateNames()
 {
+	LLSD test;
+	gIMMgr->findFloaterBySession(getMID())->setIRCSpeakers(test);
 	gIMMgr->findFloaterBySession(getMID())->setIRCSpeakers(conn->getSpeakersLLSD());
 }

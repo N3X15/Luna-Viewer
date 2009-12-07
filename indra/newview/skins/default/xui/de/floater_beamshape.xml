@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<floater name="BeamCreator" title="Effekt Partikel Editor" >
+<text name="beamcreator_text">
+		Linksklick um einen neuen Punkt mit der oben rechts eingestellten Farbe zu erstellebn,
+rechtsklick auf einen Punkt um ihn zu löschen. Am Ende auf speichern.
+	</text>
+  <color_swatch label="Farbe" name="beam_color_swatch" tool_tip="Klick für Farbauswahldialog"/>
+      <panel name="beamshape_draw">
+      </panel>
+	<button label="Speichern" name="beamshape_save"/>
+	<button label="Öffnen" name="beamshape_load"/>
+	<button label="Löschen" left_delta="100" name="beamshape_clear"/>
+</floater> 

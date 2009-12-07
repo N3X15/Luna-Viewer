@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<panel border="true" bottom="-371" height="300" left="280" mouse_opaque="true"
+     name="EmeraldIRC" width="350">
+	<scroll_list background_visible="true" bottom="10" column_padding="5" draw_border="true"
+	     draw_heading="false" draw_stripes="true" enabled="true"
+	     follows="left|top|right|bottom" left="10" mouse_opaque="true"
+	     multi_select="false" name="EmeraldIRC_list" tab_stop="true" top="-10"
+	     width="240">
+		<column label="" name="EmeraldIRC_name" width="248" />
+	</scroll_list>
+
+	<pad bottom="-7" height="0" left="-90" width="1" />
+	<button bottom_delta="-25" follows="top|right" font="SansSerif" height="22"
+	     label="IM/Call" left_delta="0" name="EmeraldIRC_IM" width="80" />
+	<button bottom_delta="-25" follows="top|right" font="SansSerif" height="22"
+	     label="New" name="EmeraldIRC_new" width="80" />
+	<button bottom_delta="-25" follows="top|right" font="SansSerif" height="22"
+	     label="Edit" name="EmeraldIRC_edit" width="80" />
+  <button bottom_delta="-25" follows="top|right" font="SansSerif" height="22"
+	     label="Remove" name="EmeraldIRC_remove" width="80" />
+  <button bottom_delta="-25" follows="top|right" font="SansSerif" height="22"
+	     label="Refresh" name="EmeraldIRC_refresh" width="80" />
+  <button bottom_delta="-25" follows="top|right" font="SansSerif" height="22"
+	     label="Help" name="EmeraldIRC_Help" width="80" />
+</panel>

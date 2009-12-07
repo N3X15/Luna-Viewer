@@ -259,6 +259,10 @@ public:
 private:
 	static void onClickNew(void* data);
 	static void onClickDelete(void* data);
+	
+	//Pick import and export - RK
+	static void onClickImport(void* data);
+	static void onClickExport(void* data);
 
 	bool callbackDelete(const LLSD& notification, const LLSD& response);
 };

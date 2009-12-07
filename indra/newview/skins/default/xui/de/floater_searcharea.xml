@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<floater name="area search" title="Objekt Suche" >
+	<scroll_list name="result_list" tool_tip="Shift oder STRG gedrückt halten um mehrere Objekte auszuwählen">
+		<column name="Name" label="Name"/>
+		<column name="Description" label="Beschreibung"/>
+		<column name="Owner" label="Eigentümer"/>
+		<column name="Group" label="Gruppe"/>
+	</scroll_list>
+	<check_box name="touch_only" label="gescriptete Objekte mit Touch"/>
+	<check_box name="scripted" label="gescriptete Objekte"/>
+	<check_box name="sounds" label="Audio Quelle/n"/>
+	<check_box name="particles" label="Partikel Quelle/n"/>
+  <check_box name="animations" label="Animation Quelle/n"/>
+	<check_box name="payable" label="Bezahlbares Objekt/e"/>
+  <check_box name="temporary" label="Temporäre Objekt/e"/>
+  <check_box name="sculpted" label="Sculpted Objekt/e"/>
+  <check_box name="flexible" label="Flexible Objekt/e"/>
+  <check_box name="phantom" label="Phantom Objekt/e"/>
+  <check_box name="attachment" label="Attachment"/>
+  <check_box name="hudattachment" label="HUD Attachment"/>
+  <check_box name="inventoryadd" label="Inventory Add"/>
+	<line_editor tool_tip="" name="Name query chunk" label="Name query chunk"/>
+	<line_editor tool_tip="" name="Description query chunk" label="Description query chunk"/>
+	<line_editor tool_tip="" name="Owner query chunk" label="Owner query chunk"/>
+	<line_editor tool_tip="" name="Group query chunk" label="Group query chunk"/>
+	<button label="Suchen" name="Search"/>
+</floater>

@@ -59,6 +59,7 @@ BOOL LLPanelMsgs::postBuild()
 	childSetAction("enable_popup", onClickEnablePopup, this);
 	childSetAction("reset_dialogs_btn", onClickResetDialogs, this);
 	childSetAction("skip_dialogs_btn", onClickSkipDialogs, this);
+	childSetAction("skip_frst_btn", onClickSkipFirstTime, this);
 	buildLists();
 
 	childSetValue("accept_new_inventory", gSavedSettings.getBOOL("AutoAcceptNewInventory"));
@@ -244,4 +245,34 @@ bool callback_skip_dialogs(const LLSD& notification, const LLSD& response, LLPan
 void LLPanelMsgs::onClickSkipDialogs(void* user_data)
 {
 	LLNotifications::instance().add("SkipShowNextTimeDialogs", LLSD(), LLSD(), boost::bind(&callback_skip_dialogs, _1, _2, (LLPanelMsgs*)user_data));
+}
+
+// static
+void LLPanelMsgs::onClickSkipFirstTime(void* user_data)
+{
+	//EPIC FAIL way to do this. Anyone know a better way to turn all these off? --Liny
+	gSavedSettings.setBOOL("WarnFirstAppearance",false);
+	gSavedSettings.setBOOL("WarnFirstAttach",false);
+	gSavedSettings.setBOOL("WarnFirstBalanceDecrease",false);
+	gSavedSettings.setBOOL("WarnFirstBalanceIncrease",false);
+	gSavedSettings.setBOOL("WarnFirstBuild",false);
+	gSavedSettings.setBOOL("WarnFirstDebugMenus",false);
+	gSavedSettings.setBOOL("WarnFirstFlexible",false);
+	gSavedSettings.setBOOL("WarnFirstGoTo",false);
+	gSavedSettings.setBOOL("WarnFirstInventory",false);
+	gSavedSettings.setBOOL("WarnFirstLeftClickNoHit",false);
+	gSavedSettings.setBOOL("WarnFirstMap",false);
+	gSavedSettings.setBOOL("WarnFirstMedia",false);
+	gSavedSettings.setBOOL("WarnFirstOverrideKeys",false);
+	gSavedSettings.setBOOL("WarnFirstRLVDetach",false);
+	gSavedSettings.setBOOL("WarnFirstRLVEnableWear",false);
+	gSavedSettings.setBOOL("WarnFirstRLVFartouch",false);
+	gSavedSettings.setBOOL("WarnFirstRLVGiveToRLV",false);
+	gSavedSettings.setBOOL("WarnFirstSandbox",false);
+	gSavedSettings.setBOOL("WarnFirstSculptedPrim",false);
+	gSavedSettings.setBOOL("WarnFirstSit",false);
+	gSavedSettings.setBOOL("WarnFirstStreamingMusic",false);
+	gSavedSettings.setBOOL("WarnFirstStreamingVideo",false);
+	gSavedSettings.setBOOL("WarnFirstTeleport",false);
+	gSavedSettings.setBOOL("WarnFirstVoice",false);
 }

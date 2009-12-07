@@ -514,6 +514,10 @@ BOOL LLPanelAvatarPicks::postBuild(void)
 {
 	childSetAction("New...",onClickNew,NULL);
 	childSetAction("Delete...",onClickDelete,NULL);
+
+	//For pick import and export - RK
+	childSetAction("Import...",onClickImport,NULL);
+	childSetAction("Export...",onClickExport,NULL);
 	return TRUE;
 }
 
@@ -1059,6 +1063,11 @@ void LLPanelAvatarPicks::refresh()
 	childSetEnabled("Delete...", self && tab_count > 0);
 	childSetVisible("New...",    self && getPanelAvatar()->isEditable());
 	childSetVisible("Delete...", self && getPanelAvatar()->isEditable());
+	
+	//For pick import/export - RK
+	childSetVisible("Import...", self && getPanelAvatar()->isEditable());
+	childSetEnabled("Export...", self && tab_count > 0);
+	childSetVisible("Export...", self && getPanelAvatar()->isEditable());
 
 	sendAvatarProfileRequestIfNeeded("avatarpicksrequest");
 }
@@ -1075,6 +1084,11 @@ void LLPanelAvatarPicks::deletePickPanels()
 	childSetVisible("New...", false);
 	childSetVisible("Delete...", false);
 	childSetVisible("loading_text", true);
+
+	//For pick import and export - RK
+	childSetVisible("Export...", false);
+	childSetVisible("Import...", false);
+
 }
 
 void LLPanelAvatarPicks::processAvatarPicksReply(LLMessageSystem* msg, void**)
@@ -1125,6 +1139,10 @@ void LLPanelAvatarPicks::processAvatarPicksReply(LLMessageSystem* msg, void**)
 	childSetVisible("New...", true);
 	childSetVisible("Delete...", true);
 	childSetVisible("loading_text", false);
+
+	//For pick import and export - RK
+	childSetVisible("Import...", true);
+	childSetVisible("Export...", true);
 }
 
 
@@ -1149,6 +1167,32 @@ void LLPanelAvatarPicks::onClickNew(void* data)
 		tabs->addTabPanel(panel_pick, panel_pick->getPickName());
 		tabs->selectLastTab();
 	}
+}
+
+//Pick import and export - RK
+void LLPanelAvatarPicks::onClickImport(void* data)
+{
+	LLPanelAvatarPicks* self = (LLPanelAvatarPicks*)data;
+	LLPanelPick* panel_pick = new LLPanelPick(FALSE);
+	LLTabContainer* tabs =  self->getChild<LLTabContainer>("picks tab");
+
+	panel_pick->importNewPick();
+	if(tabs)
+	{
+		tabs->addTabPanel(panel_pick, panel_pick->getPickName());
+		tabs->selectLastTab();
+	}
+}
+
+void LLPanelAvatarPicks::onClickExport(void* data)
+{
+	LLPanelAvatarPicks* self = (LLPanelAvatarPicks*)data;
+	LLTabContainer* tabs =  self->getChild<LLTabContainer>("picks tab");
+	LLPanelPick* panel_pick = tabs?(LLPanelPick*)tabs->getCurrentPanel():NULL;
+
+	if (!panel_pick) return;
+
+	panel_pick->exportPick();
 }
 
 

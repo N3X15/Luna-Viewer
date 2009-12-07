@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<floater name="rlvBehaviours" title="Aktive RLV Einschränkungen">
+  <scroll_list name="behaviour_list">
+    <column label="Einschränkung" name="behaviour"/>
+    <column label="Objekt Name" name="name"/>
+  </scroll_list>
+  <button label="Hinzufügen" name="remove_behaviour_btn"/>
+  <button label="Löschen" name="remove_behaviour_btn" />
+  <button label="Alle löschen" name="remove_behaviour_btn"/>
+</floater>

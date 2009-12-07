@@ -39,9 +39,9 @@
 			     width="220">
 				Select a calling card:
 			</text>
-			<inventory_panel allow_multi_select="false" border="true" bottom_delta="-117"
+			<!-- <inventory_panel allow_multi_select="false" border="true" bottom_delta="-117"
 			     follows="left|top|right|bottom" height="110" left="10" mouse_opaque="true"
-			     name="InventoryPanel" sort_order="AvatarPickerSortOrder" width="115" />
+			     name="InventoryPanel" sort_order="AvatarPickerSortOrder" width="115" /> -->
 		</panel>
 
     <panel name="NearMePanel" label="Near Me"

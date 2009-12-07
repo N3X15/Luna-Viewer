@@ -128,12 +128,13 @@ BOOL LLFloaterAvatarPicker::postBuild()
 
 	getChild<LLScrollListCtrl>("SearchResults")->addCommentText(getString("no_results"));
 
-	LLInventoryPanel* inventory_panel = getChild<LLInventoryPanel>("InventoryPanel");
+	/*LLInventoryPanel* inventory_panel = getChild<LLInventoryPanel>("InventoryPanel");
 	inventory_panel->setFilterTypes(0x1 << LLInventoryType::IT_CALLINGCARD);
 	inventory_panel->setFollowsAll();
 	inventory_panel->setShowFolderState(LLInventoryFilter::SHOW_NON_EMPTY_FOLDERS);
 	inventory_panel->openDefaultFolderForType(LLAssetType::AT_CALLINGCARD);
-	inventory_panel->setSelectCallback(LLFloaterAvatarPicker::onCallingCardSelectionChange, this);
+	inventory_panel->setSelectCallback(LLFloaterAvatarPicker::onCallingCardSelectionChange, this);*/
+	init_cards = FALSE;
 
 	childSetTabChangeCallback("ResidentChooserTabs", "SearchPanel",			onTabChanged, this);
 	childSetTabChangeCallback("ResidentChooserTabs", "CallingCardsPanel",	onTabChanged, this);
@@ -153,6 +154,39 @@ void LLFloaterAvatarPicker::onTabChanged(void* userdata, bool from_click)
 	}
 	
 	self->childSetEnabled("Select", self->visibleItemsSelected());
+	self->chkcards();
+}
+
+void LLFloaterAvatarPicker::chkcards()
+{
+	if(init_cards == FALSE)
+	{
+		LLPanel* active_panel = childGetVisibleTab("ResidentChooserTabs");
+
+		if(active_panel == getChild<LLPanel>("CallingCardsPanel"))
+		{
+			init_cards = TRUE;
+			/*<inventory_panel allow_multi_select="false" border="true" bottom_delta="-117"
+			     follows="left|top|right|bottom" height="110" left="10" mouse_opaque="true"
+			     name="InventoryPanel" sort_order="AvatarPickerSortOrder" width="115" />*/
+			LLRect rect = active_panel->getRect();
+			rect.mLeft += 10;
+			rect.setLeftTopAndSize(rect.mLeft,rect.mTop,rect.getWidth(),110);
+			LLInventoryPanel* panel = new LLInventoryPanel("InventoryPanel", "AvatarPickerSortOrder",
+								 rect, &gInventory,
+								 FALSE, active_panel);
+			panel->setFollowsAll();
+			panel->reshape(rect.getWidth(), rect.getHeight());
+			panel->postBuild();
+			active_panel->addChild(panel);
+			LLInventoryPanel* inventory_panel = getChild<LLInventoryPanel>("InventoryPanel");
+			inventory_panel->setFilterTypes(0x1 << LLInventoryType::IT_CALLINGCARD);
+			inventory_panel->setFollowsAll();
+			inventory_panel->setShowFolderState(LLInventoryFilter::SHOW_NON_EMPTY_FOLDERS);
+			inventory_panel->openDefaultFolderForType(LLAssetType::AT_CALLINGCARD);
+			inventory_panel->setSelectCallback(LLFloaterAvatarPicker::onCallingCardSelectionChange, this);
+		}
+	}
 }
 
 // Destroys the object
@@ -427,7 +461,7 @@ void LLFloaterAvatarPicker::find()
 void LLFloaterAvatarPicker::setAllowMultiple(BOOL allow_multiple)
 {
 	getChild<LLScrollListCtrl>("SearchResults")->setAllowMultipleSelection(allow_multiple);
-	getChild<LLInventoryPanel>("InventoryPanel")->setAllowMultiSelect(allow_multiple);
+	if(init_cards)getChild<LLInventoryPanel>("InventoryPanel")->setAllowMultiSelect(allow_multiple);
 	getChild<LLScrollListCtrl>("NearMe")->setAllowMultipleSelection(allow_multiple);
 }
 

@@ -650,6 +650,7 @@ bool LLAppViewer::init()
 
 	// Build a string representing the current version number.
     gCurrentVersion = llformat("%s %d.%d.%d.%d", 
+
         LL_CHANNEL, 
         LL_VERSION_MAJOR, 
         LL_VERSION_MINOR, 
@@ -805,6 +806,7 @@ bool LLAppViewer::init()
 	// Initialize the window
 	//
 	initWindow();
+
 	{
 		BOOL download = gSavedSettings.getBOOL("EmeraldDownloadClientTags");
 
@@ -960,7 +962,6 @@ bool LLAppViewer::mainLoop()
 		try
 		{
 			LLFastTimer t(LLFastTimer::FTM_FRAME);
-			
 			pingMainloopTimeout("Main:MiscNativeWindowEvents");
 			
 			{
@@ -1703,6 +1704,7 @@ bool LLAppViewer::loadSettingsFromDirectory(const std::string& location_key,
 			llinfos << "Loaded settings file " << full_settings_path << llendl;
 		}
 	}
+
 	return true;
 }
 
@@ -2906,6 +2908,19 @@ bool LLAppViewer::initCache()
 			gSavedSettings.setS32("LocalCacheVersion", cache_version);
 		}
 	}
+	std::string invcache = gSavedSettings.getString("EmeraldPurgeInvCache");
+	if(invcache != "")
+	{
+		gSavedSettings.setString("EmeraldPurgeInvCache","");
+		std::string agent_id_str = invcache;
+		std::string inventory_filename;
+		std::string path(gDirUtilp->getExpandedFilename(LL_PATH_CACHE, agent_id_str));
+		inventory_filename = llformat("%s.inv", path.c_str());
+		std::string gzip_filename(inventory_filename);
+		gzip_filename.append(".gz");
+		LLFile::remove(inventory_filename);
+		LLFile::remove(gzip_filename);
+	}
 	
 	// We have moved the location of the cache directory over time.
 	migrateCacheDirectory();
@@ -3400,26 +3415,34 @@ void LLAppViewer::idle()
 		if(canSend)
 		{
 			//theGenius Indigo - Joystick data is streamed inworld on a specific channel
+			LLViewerJoystick* joystick = LLViewerJoystick::getInstance(); //You need this here! ~tG
+			if(joystick)
+			{
 			if(LLViewerJoystick::streamEnabled)
 			{
 				if(JSstream_update_time > (1.0f / llmax(LLViewerJoystick::streamRefresh, 0.0001f)))
 		   {
-				LLViewerJoystick::getInstance()->cansend(); //Allow data to be sent on the next joystick scan
+						joystick->cansend(); //Allow data to be sent on the next joystick scan
 					JSstream_update_timer.reset();
 				}
 			}
+			}
+			GUS* GussyWussy = GUS::getInstance(); //This is for Laura =P
+			if(GussyWussy)
+			{
 			if(GUS::Enabled)
 			{
 				if(GUS_update_time > (1.0f / llclamp(GUS::Refresh, 0.0001f, 10.f)))
 				{
-					if(GUS::getInstance()->streamData())GUS_update_timer.reset();
-					GUS::getInstance()->FELimiter_dec();
+						if(GussyWussy->streamData())GUS_update_timer.reset();
+						GussyWussy->FELimiter_dec();
 				}
 				if(GUS::FEEnabled)
 				{
 					if(GUS_FE_update_time > (1.0f / llclamp(GUS::FERefresh, 0.0001f, 20.f)))
 					{
-						if(GUS::getInstance()->fastEvent())GUS_FE_update_timer.reset();
+							if(GussyWussy->fastEvent())GUS_FE_update_timer.reset();
+						}
 					}
 				}
 		   }
@@ -4172,6 +4195,7 @@ void LLAppViewer::handleLoginComplete()
 	{
 		RlvCurrentlyWorn::fetchWorn();
 		rlv_handler_t::fetchSharedInventory();
+
 		#ifdef RLV_EXTENSION_STARTLOCATION
 			RlvSettings::updateLoginLastLocation();
 		#endif // RLV_EXTENSION_STARTLOCATION

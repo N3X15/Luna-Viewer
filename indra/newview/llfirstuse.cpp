@@ -355,6 +355,14 @@ void LLFirstUse::EmeraldBridge()
 
 	}
 }
+void LLFirstUse::EmeraldNCreatorExport()
+{
+	if(gSavedSettings.getWarning("EmeraldNCreatorExport"))
+	{
+		gSavedSettings.setWarning("EmeraldNCreatorExport", FALSE);
+		LLNotifications::instance().add("QueryEmeraldNCreatorExport", LLSD(),LLSD());
+	}
+}
 
 // [RLVa:KB] - Version: 1.23.4 | Checked: RLVa-1.0.3a (2009-09-10) | Added: RLVa-1.0.3a
 

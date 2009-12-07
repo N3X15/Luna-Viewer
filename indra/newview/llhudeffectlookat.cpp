@@ -337,14 +337,27 @@ void LLHUDEffectLookAt::unpackData(LLMessageSystem *mesgsys, S32 blocknum)
 	
 	htonmemcpy(source_id.mData, &(packed_data[SOURCE_AVATAR]), MVT_LLUUID, 16);
 
+	/*if(mDuration > 2.5)
+	{
+		cancellate();
+		markDead();
+		return;
+	}*/
+
 	LLViewerObject *objp = gObjectList.findObject(source_id);
-	if (objp && objp->isAvatar())
+	if (objp && objp->isAvatar() && source_id == mSenderID)
 	{
 		setSourceObject(objp);
 	}
 	else
 	{
+		/*if(source_id != mSenderID)
+		{
+			llinfos << "cancelling effect source_id" << llendl;	
+			cancellate();
+		}*/
 		//llwarns << "Could not find source avatar for lookat effect" << llendl;
+		markDead();
 		return;
 	}
 

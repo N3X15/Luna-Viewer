@@ -120,6 +120,9 @@ public:
 	void setMuted(bool muted);
 	bool getMuted() const { return mMuted; }
 
+	void setWindMuted(bool windMuted);
+	bool getWindMuted() const { return mWindMuted; }
+
 	F32 getMasterGain();
 	void setMasterGain(F32 gain);
 
@@ -212,6 +215,8 @@ protected:
 
 	bool mMuted;
 	void* mUserData;
+
+	bool mWindMuted;
 
 	S32 mLastStatus;
 	

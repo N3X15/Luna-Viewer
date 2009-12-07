@@ -76,5 +76,15 @@
 			<menu_item_check label="Ordner immer nach Name" name="Folders Always By Name" />
 			<menu_item_check label="Systemordner nach oben" name="System Folders To Top" />
 		</menu>
+    <menu label="Suche" name="Search">
+      <menu_item_check label="Nach Name" name="By Name"/>
+      <menu_item_check label="Nach Ersteller" name="By Creator"/>
+      <menu_item_check label="Nach Beschreibung" name="By Description"/>
+      </menu_item_check>
+      <menu_item_separator name="separator"/>
+      <menu_item_check label="Nach allem" name="By All"/>
+      <menu_item_separator name="separator"/>
+      <menu_item_check label="Zeige Teil Suchergebnisse" name="Show Partial Search Results"/>
+    </menu>
 	</menu_bar>
 </floater>

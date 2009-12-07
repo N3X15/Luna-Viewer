@@ -106,8 +106,6 @@ public:
 	static EWearableType getCurrentWearableType()					{ return sCurrentWearableType; }
 
 	// Callbacks
-	static void		onBtnLayers( void* userdata );
-
 	static void		onBtnOk( void* userdata );
 	static void		onBtnMakeOutfit( void* userdata );
 	static void		onMakeOutfitCommit( LLMakeOutfitDialog* dialog, void* userdata );

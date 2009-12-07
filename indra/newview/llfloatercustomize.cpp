@@ -77,8 +77,6 @@
 
 #include "llfilepicker.h"
 
-#include "jc_layer_editor.h"
-
 using namespace LLVOAvatarDefines;
 
 //*TODO:translate : The ui xml for this really needs to be integrated with the appearance paramaters
@@ -1496,38 +1494,6 @@ BOOL LLFloaterCustomize::postBuild()
 			if (panel) tab_container->removeTabPanel(panel);
 		}
 	}
-
-	/////EMERALD CLOTHING SHIT
-	if(gSavedSettings.getBOOL("EmeraldClothingMode"))
-	{
-		LLTabContainer* tab_container = getChild<LLTabContainer>("customize tab container");
-		if (tab_container)
-		{
-			LLPanel* panel;
-			panel = tab_container->getPanelByName("Shirt");
-			if (panel) tab_container->removeTabPanel(panel);
-			panel = tab_container->getPanelByName("Pants");
-			if (panel) tab_container->removeTabPanel(panel);
-			panel = tab_container->getPanelByName("Shoes");
-			if (panel) tab_container->removeTabPanel(panel);
-			panel = tab_container->getPanelByName("Socks");
-			if (panel) tab_container->removeTabPanel(panel);
-			panel = tab_container->getPanelByName("Jacket");
-			if (panel) tab_container->removeTabPanel(panel);
-			panel = tab_container->getPanelByName("Gloves");
-			if (panel) tab_container->removeTabPanel(panel);
-			panel = tab_container->getPanelByName("Undershirt");
-			if (panel) tab_container->removeTabPanel(panel);
-			panel = tab_container->getPanelByName("Underpants");
-			if (panel) tab_container->removeTabPanel(panel);
-			panel = tab_container->getPanelByName("Skirt");
-			if (panel) tab_container->removeTabPanel(panel);
-			panel = tab_container->getPanelByName("clothes_placeholder");
-		}
-
-		childSetVisible("Layers",true);
-		childSetAction("Layers", LLFloaterCustomize::onBtnLayers, (void*)this);
-	}
 	
 	// Scrolling Panel
 	initScrollingPanelList();
@@ -1543,17 +1509,6 @@ void LLFloaterCustomize::open()
 }
 
 ////////////////////////////////////////////////////////////////////////////
-
-// static
-void LLFloaterCustomize::onBtnLayers( void* userdata )
-{
-	gFloaterView->sendChildToBack(gFloaterCustomize);
-	handle_reset_view();  // Calls askToSaveIfDirty
-
-	JCLayerEditor::toggle();
-}
-
-
 
 // static
 void LLFloaterCustomize::setCurrentWearableType( EWearableType type )

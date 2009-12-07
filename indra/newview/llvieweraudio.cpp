@@ -132,6 +132,7 @@ void audio_update_volume(bool force_update)
 		gAudiop->setDistanceFactor(gSavedSettings.getF32("AudioLevelDistance")); 
 		gAudiop->setRolloffFactor(gSavedSettings.getF32("AudioLevelRolloff"));
 		gAudiop->setMuted(mute_audio);
+		gAudiop->setWindMuted(gSavedSettings.getBOOL("MuteAmbient")); // disable wind /ez
 		
 		if (force_update)
 		{
@@ -208,7 +209,7 @@ void audio_update_wind(bool force_update)
 	//  Extract height above water to modulate filter by whether above/below water 
 	// 
 	LLViewerRegion* region = gAgent.getRegion();
-	if (region)
+	if (region && !gAudiop->getWindMuted()) // disable wind /ez
 	{
 		static F32 last_camera_water_height = -1000.f;
 		LLVector3 camera_pos = gAgent.getCameraPositionAgent();

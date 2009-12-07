@@ -69,10 +69,5 @@
              image_unselected="toolbar_btn_enabled.tga"
              image_disabled="toolbar_btn_disabled.tga" scale_image="true"
 	       name="inventory_btn" tool_tip="Your items. (Ctrl-I)" width="50" follows="left|right" user_resize="false"/>
-<slider bottom="0" control_name="RenderFarClip"
-	     decimal_digits="0" enabled="true" follows="bottom" height="20"
-	     increment="8" initial_val="160" label=""
-	     label_width="0" max_val="512" min_val="24" mouse_opaque="true"
-	     name="DrawDistance" show_text="true" width="100" auto_resize="false" tool_tip="Change your Draw Distance"/>
   </layout_stack>
 </panel>

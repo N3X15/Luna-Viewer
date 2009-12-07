@@ -141,7 +141,7 @@ int IRC::start(char* server, int port,char* nick,char* user, char* name, char* p
     if(WSAStartup(MAKEWORD(2, 0), &wsa) != 0x0)
     {
         warn("Socket Initialization Error. Program aborted\n");
-		return false;
+		return 1;
     }
 
 	irc_socket=socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
@@ -164,7 +164,7 @@ int IRC::start(char* server, int port,char* nick,char* user, char* name, char* p
 		IPHostEntry* hostInfo = Dns::GetHostByName(in);
 		printf(hostInfo);
 		*/
-	printf("Host Name(%s) Resolved To: %p \n",server,resolv);
+	llinfos<<llformat("Host Name(%s) Resolved To: %p \n",server,resolv)<<llendl;
 	if (!resolv)
 	{
 #ifdef LL_WINDOWS
@@ -197,7 +197,7 @@ _sendmsg("USERHOST " & $nick)
 	if (connect(irc_socket, (const sockaddr*)&rem, sizeof(rem))==SOCKET_ERROR)
 	{
 		#ifdef LL_WINDOWS
-		printf("Failed to connect: %d\n", WSAGetLastError());
+		llinfos<<llformat("Failed to connect: %d\n", WSAGetLastError())<<llendl;
 		#endif
 		closesocket(irc_socket);
 
@@ -247,7 +247,7 @@ void IRC::disconnect()
 	if (connected)
 	{
 		//fclose(dataout);
-		printf("Disconnected from server.\n");
+		llinfos<<"Disconnected from server.\n"<<llendl;
 		connected=false;
 		quit("Leaving");
 		#ifdef LL_WINDOWS

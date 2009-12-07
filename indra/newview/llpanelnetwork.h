@@ -48,6 +48,7 @@ public:
 
 private:
 	static void onClickClearCache(void*);
+	static void onClickClearInvCache(void*);
 	static void onClickSetCache(void*);
 	static void onClickResetCache(void*);
 	static void onCommitPort(LLUICtrl* ctrl, void*);

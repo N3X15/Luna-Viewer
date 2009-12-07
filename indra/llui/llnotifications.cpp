@@ -1147,10 +1147,12 @@ void LLNotifications::forceResponse(const LLNotification::Params& params, S32 op
 	
 	if (selected_item.isUndefined())
 	{
-		llwarns << "Invalid option" << option << " for notification " << (std::string)params.name << llendl;
-		return;
+		llwarns << "Invalid option " << option << " for notification " << (std::string)params.name << llendl;
+		//return;
+	}else
+	{
+		response[selected_item["name"].asString()] = true;
 	}
-	response[selected_item["name"].asString()] = true;
 
 	temp_notify->respond(response);
 }

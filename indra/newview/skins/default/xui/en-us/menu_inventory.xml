@@ -141,11 +141,16 @@
 	     name="Rename" width="128">
 		<on_click filter="" function="Inventory.DoToSelected" userdata="rename" />
 	</menu_item_call>
-	<menu_item_call bottom_delta="-18" height="18" label="Copy Asset UUID" left="0"
-	     mouse_opaque="true" name="Copy Asset UUID" width="128">
-		<on_click filter="" function="Inventory.DoToSelected" userdata="copy_uuid" />
+	<menu_item_call bottom_delta="-18" height="18" label="Export" left="0"
+	     mouse_opaque="true" name="Export" width="128">
+		<on_click filter="" function="Inventory.DoToSelected" userdata="export" />
 	</menu_item_call>
-	<menu_item_separator name="Copy Separator" />
+	<menu_item_separator name="Export Separator" />
+  <menu_item_call bottom_delta="-18" height="18" label="Copy Asset UUID" left="0"
+	     mouse_opaque="true" name="Copy Asset UUID" width="128">
+    <on_click filter="" function="Inventory.DoToSelected" userdata="copy_uuid" />
+  </menu_item_call>
+  <menu_item_separator name="Copy Separator" />
 	<menu_item_call bottom_delta="-18" height="18" label="Copy" left="0" mouse_opaque="true"
 	     name="Copy" width="128">
 		<on_click filter="" function="Inventory.DoToSelected" userdata="copy" />

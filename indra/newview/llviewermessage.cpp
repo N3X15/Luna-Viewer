@@ -1077,6 +1077,8 @@ bool LLOfferInfo::inventory_offer_callback(const LLSD& notification, const LLSD&
 	LLChat chat;
 	std::string log_message;
 	S32 button = LLNotification::getSelectedOption(notification, response);
+	if(button <0)button=IOR_BUSY;//lgg hack to make busy decline workk . how did this break before?
+	//llinfos << "doing the inv offer call back, the button is " << button << " . " << llendl;
 
 	// For muting, we need to add the mute, then decline the offer.
 	// This must be done here because:
@@ -1267,6 +1269,8 @@ bool LLOfferInfo::inventory_offer_callback(const LLSD& notification, const LLSD&
 			chat.mMuted = TRUE;
 		}
 		LLFloaterChat::addChatHistory(chat);
+
+		//llinfos << "Made it to close, trying to add the msg " << chat.mText << " .oh yeah, busy is  " << busy << " ." << llendl;
 
 		// If it's from an agent, we have to fetch the item to throw
 		// it away. If it's from a task or group, just denying the 
@@ -1620,7 +1624,10 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 		char my_uuid[UUID_STR_SIZE];
 		char their_uuid[UUID_STR_SIZE];
 
-		if (gOTR && (IM_NOTHING_SPECIAL == dialog || ((IM_TYPING_STOP == dialog) && (message != "typing"))))
+        if (gOTR &&
+            ((IM_NOTHING_SPECIAL == dialog) ||
+             ((IM_TYPING_STOP == dialog) &&
+              (! ((message == "typing") || (message == "cryo::ping"))))))
 		{
 			// only try OTR for 1 on 1 IM's or special tagged typing_stop packets
 			gAgent.getID().toString(&(my_uuid[0]));
@@ -1732,13 +1739,6 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 		
 		if(session_id != computed_session_id)
 		{
-			LL_WARNS("Check SessionID") << "Invalid session id used by " << name
-				<< " offline=" << offline
-				<< " session_id=" << session_id.asString()
-				<< " from_id=" << from_id.asString()
-				<< " dialog=" << dialog
-				<< " computedSessionID=" << computed_session_id.asString()
-				<< LL_ENDL;
 			session_id = computed_session_id;
 			/*if(!gIMMgr->hasSession(correct_session))
 			{
@@ -1767,7 +1767,7 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 			if(avatarp->mCheckingCryolife < 2 && avatarp->mIsCryolife == FALSE)
 			{
 				boost::regex re(
-					".* \\d*\\.{1}\\d*\\.{1}\\d* \\({1}\\d*\\){1} .{3,5} \\d* \\d* \\d*:\\d*:\\d* \\({1}.*\\){1}.*"
+					".* \\d+\\.\\d+\\.\\d+ \\(\\d+\\) \\w{3,5} \\d+ \\d+ \\d+:\\d+:\\d+ \\(.*\\) <.+,.+,.+>:.+"
 					, boost::regex_constants::icase);
 				if(boost::regex_match(message,re))
 				{
@@ -1983,7 +1983,7 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 	{
 	case IM_CONSOLE_AND_CHAT_HISTORY:
 		// These are used for system messages, hence don't need the name,
-		// as it is always "GreenLife Emerald Viewer".
+		// as it is always "Emerald Viewer".
 	  	// *TODO:translate
 		args["MESSAGE"] = message;
 
@@ -2070,7 +2070,7 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 		}
 		else if (from_id.isNull())
 		{
-			// Messages from "GreenLife Emerald Viewer" ID don't go to IM history
+			// Messages from "Emerald Viewer" ID don't go to IM history
 			// messages which should be routed to IM window come from a user ID with name=SYSTEM_NAME
 			chat.mText = name + ": " + message;
 			LLFloaterChat::addChat(chat, FALSE, FALSE);
@@ -2211,9 +2211,11 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 
 			// If there is inventory, give the user the inventory offer.
 			LLOfferInfo* info = NULL;
+
 			if (has_inventory)
 			{
 				info = new LLOfferInfo;
+				
 				info->mIM = IM_GROUP_NOTICE;
 				info->mFromID = from_id;
 				info->mFromGroup = from_group;
@@ -2973,6 +2975,7 @@ void process_chat_from_simulator(LLMessageSystem *msg, void **user_data)
 //			&& chat.mChatType != CHAT_TYPE_DEBUG_MSG)
 // [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g)
 		// Don't show swirly things for llOwnerSay() chat here because we handle those further down
+
 		if ( (chat.mSourceType == CHAT_SOURCE_OBJECT && chat.mChatType != CHAT_TYPE_DEBUG_MSG) &&
 			((!rlv_handler_t::isEnabled()) || (CHAT_TYPE_OWNER != chat.mChatType)) &&
 			((JCLSLBridge::sBridgeStatus==JCLSLBridge::FAILED) || (CHAT_TYPE_OWNER != chat.mChatType)) )
@@ -3297,7 +3300,7 @@ void process_teleport_start(LLMessageSystem *msg, void**)
 	//if (teleport_flags & TELEPORT_FLAGS_DISABLE_CANCEL)
 // [RLVa:KB] - Alternate: Emerald-370 | Checked: 2009-07-07 (RLVa-1.0.0d) | Added: RLVa-0.2.0b
 	// Emerald specific: disable cancel *only* due to RLV restrictions
-	if ( (teleport_flags & TELEPORT_FLAGS_DISABLE_CANCEL) && (!gRlvHandler.getCanCancelTp()) )
+	if ( /*(teleport_flags & TELEPORT_FLAGS_DISABLE_CANCEL) &&*/ (!gRlvHandler.getCanCancelTp()) )
 // [/RLVa:KB]
 	{
 		gViewerWindow->setProgressCancelButtonVisible(FALSE);
@@ -3337,7 +3340,7 @@ void process_teleport_progress(LLMessageSystem* msg, void**)
 	//if (teleport_flags & TELEPORT_FLAGS_DISABLE_CANCEL)
 // [RLVa:KB] - Alternate: Emerald-370 | Checked: 2009-07-07 (RLVa-1.0.0d) | Added: RLVa-0.2.0b
 	// Emerald specific: disable cancel *only* due to RLV restrictions
-	if ( (teleport_flags & TELEPORT_FLAGS_DISABLE_CANCEL) && (!gRlvHandler.getCanCancelTp()) )
+	if ( /*(teleport_flags & TELEPORT_FLAGS_DISABLE_CANCEL) &&*/ (!gRlvHandler.getCanCancelTp()) )
 // [/RLVa:KB]
 	{
 		gViewerWindow->setProgressCancelButtonVisible(FALSE);
@@ -5867,6 +5870,7 @@ void process_teleport_failed(LLMessageSystem *msg, void**)
 		}
 	}
 
+	if(!gSavedSettings.getBOOL("EmeraldMoveLockDCT") && !gSavedSettings.getBOOL("EmeraldDoubleClickTeleportChat"))//dont throw error when move to target on
 	LLNotifications::instance().add("CouldNotTeleportReason", args);
 
 	if( gAgent.getTeleportState() != LLAgent::TELEPORT_NONE )
@@ -6733,6 +6737,7 @@ void invalid_message_callback(LLMessageSystem* msg,
 
 void LLOfferInfo::forceResponse(InventoryOfferResponse response)
 {
+	//lgg repsnce being sent is 3 which doesnt line up...
 	LLNotification::Params params("UserGiveItem");
 	params.functor(boost::bind(&LLOfferInfo::inventory_offer_callback, this, _1, _2));
 	LLNotifications::instance().forceResponse(params, response);

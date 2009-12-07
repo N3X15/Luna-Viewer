@@ -301,8 +301,40 @@ void LLHoverView::updateText()
 				{
 					mText.push_back( nodep->mDescription );
 				}
+				/*
+				// Line: "Creator: Rick Astley"
+				line.clear();
+				line.append("Creator ");
 
-				// Line: "Owner: James Linden"
+				if (nodep->mValid)
+				{
+					LLUUID creator;
+					std::string name;
+					creator = nodep->mPermissions->getCreator();
+					if (LLUUID::null == creator)
+					{
+						line.append(LLTrans::getString("AvatarNameNobody"));
+					}
+					else if(gCacheName->getFullName(creator, name))
+					{
+// [RLVa:KB] - Checked: 2009-07-08 (RLVa-1.0.0e)
+						if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES))
+						{
+							name = gRlvHandler.getAnonym(name);
+						}
+// [/RLVa:KB]
+
+						line.append(name);
+					}
+					else
+					{
+						line.append(LLTrans::getString("RetrievingData"));
+					}
+				}
+				mText.push_back(line);
+				*/
+
+				// Line: "Owner: Rick James"
 				line.clear();
 				line.append(LLTrans::getString("TooltipOwner") + " ");
 
@@ -340,7 +372,7 @@ void LLHoverView::updateText()
 						if (gCacheName->getGroupName(owner, name))
 						{
 							line.append(name);
-							line.append(LLTrans::getString("TooltipIsGroup"));
+							line.append(" " + LLTrans::getString("TooltipIsGroup"));
 						}
 						else
 						{
@@ -451,6 +483,27 @@ void LLHoverView::updateText()
 				}
 				mText.push_back(line);
 			}
+			line.clear();
+			S32 prim_count = LLSelectMgr::getInstance()->getHoverObjects()->getObjectCount();
+			line.append(llformat("Prims: %d", prim_count));
+			mText.push_back(line);
+
+			line.clear();
+			line.append("Position: ");
+
+			LLViewerRegion *region = gAgent.getRegion();
+			LLVector3 position = region->getPosRegionFromGlobal(hit_object->getPositionGlobal());//regionp->getOriginAgent();
+			LLVector3 mypos = region->getPosRegionFromGlobal(gAgent.getPositionGlobal());
+			
+
+			LLVector3 delta = position - mypos;
+			F32 distance = (F32)delta.magVec();
+
+			line.append(llformat("<%.02f,%.02f,%.02f>",position.mV[0],position.mV[1],position.mV[2]));
+			mText.push_back(line);
+			line.clear();
+			line.append(llformat("Distance: %.02fm",distance));
+			mText.push_back(line);
 			
 			//  If the hover tip shouldn't be shown, delete all the object text
 			if (suppressObjectHoverDisplay)

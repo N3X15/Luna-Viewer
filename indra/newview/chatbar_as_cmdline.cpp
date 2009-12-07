@@ -12,11 +12,11 @@
  *      copyright notice, this list of conditions and the following
  *      disclaimer in the documentation and/or other materials provided
  *      with the distribution.
- *   3. Neither the name Modular Systems Ltd nor the names of its contributors
+ *   3. Neither the name Modular Systems nor the names of its contributors
  *      may be used to endorse or promote products derived from this
  *      software without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY MODULAR SYSTEMS LTD AND CONTRIBUTORS “AS IS”
+ * THIS SOFTWARE IS PROVIDED BY MODULAR SYSTEMS AND CONTRIBUTORS “AS IS”
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
  * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
  * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL MODULAR SYSTEMS OR CONTRIBUTORS
@@ -89,11 +89,13 @@ bool cmd_line_chat(std::string revised_text, EChatType type)
 						if (i >> z)
 						{
 							LLVector3 agentPos = gAgent.getPositionAgent();
-							LLViewerRegion* agentRegion = gAgent.getRegion();
-							if(agentRegion)
+							LLViewerRegion* agentRegionp = gAgent.getRegion();
+							if(agentRegionp)
 							{
 								LLVector3 targetPos(x,y,z);
-								gAgent.teleportRequest(agentRegion->getHandle(),targetPos);
+								LLVector3d pos_global = from_region_handle(agentRegionp->getHandle());
+								pos_global += LLVector3d((F64)targetPos.mV[0],(F64)targetPos.mV[1],(F64)targetPos.mV[2]);
+								gAgent.teleportViaLocation(pos_global);
 								return false;
 							}
 						}
@@ -190,14 +192,9 @@ bool cmd_line_chat(std::string revised_text, EChatType type)
 				LLVector3 agentPos = gAgent.getPositionAgent();
 				U64 agentRegion = gAgent.getRegion()->getHandle();
 				LLVector3 targetPos(agentPos.mV[0],agentPos.mV[1],LLWorld::getInstance()->resolveLandHeightAgent(agentPos));
-				if(gSavedSettings.getBOOL("EmeraldDoubleClickTeleportAvCalc"))
-				{
-					//Chalice - Hax. We want to add half the av height.
-					LLVOAvatar* avatarp = gAgent.getAvatarObject();
-					LLVector3 autoOffSet = avatarp->getScale();
-					targetPos.mV[2]=targetPos.mV[2] + (autoOffSet.mV[2] / 2.0);
-				}
-				gAgent.teleportRequest(agentRegion,targetPos);
+				LLVector3d pos_global = from_region_handle(agentRegion);
+				pos_global += LLVector3d((F64)targetPos.mV[0],(F64)targetPos.mV[1],(F64)targetPos.mV[2]);
+				gAgent.teleportViaLocation(pos_global, true);
 				return false;
 			}else if(command == gSavedSettings.getString("EmeraldCmdLineHeight"))
 			{
@@ -207,7 +204,9 @@ bool cmd_line_chat(std::string revised_text, EChatType type)
 					LLVector3 agentPos = gAgent.getPositionAgent();
 					U64 agentRegion = gAgent.getRegion()->getHandle();
 					LLVector3 targetPos(agentPos.mV[0],agentPos.mV[1],z);
-					gAgent.teleportRequest(agentRegion,targetPos);
+					LLVector3d pos_global = from_region_handle(agentRegion);
+					pos_global += LLVector3d((F64)targetPos.mV[0],(F64)targetPos.mV[1],(F64)targetPos.mV[2]);
+					gAgent.teleportViaLocation(pos_global);
 					return false;
 				}
 			}else if(command == gSavedSettings.getString("EmeraldCmdLineTeleportHome"))

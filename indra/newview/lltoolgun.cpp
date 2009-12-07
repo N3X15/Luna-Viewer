@@ -48,6 +48,8 @@
 #include "lltoolmgr.h"
 #include "lltoolgrab.h"
 
+#include "llviewercamera.h" //::MOYMOD::
+ 
 LLToolGun::LLToolGun( LLToolComposite* composite )
 :	LLTool( std::string("gun"), composite )
 {
@@ -82,6 +84,8 @@ BOOL LLToolGun::handleHover(S32 x, S32 y, MASK mask)
 		const F32 NOMINAL_MOUSE_SENSITIVITY = 0.0025f;
 
 		F32 mouse_sensitivity = gSavedSettings.getF32("MouseSensitivity");
+		
+		mouse_sensitivity *= LLViewerCamera::getInstance()->getDefaultFOV() / (60*DEG_TO_RAD);
 		mouse_sensitivity = clamp_rescale(mouse_sensitivity, 0.f, 15.f, 0.5f, 2.75f) * NOMINAL_MOUSE_SENSITIVITY;
 
 		// ...move the view with the mouse

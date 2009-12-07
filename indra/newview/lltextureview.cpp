@@ -215,18 +215,18 @@ void LLTextureBar::draw()
 	// State
 	// Hack: mirrored from lltexturefetch.cpp
 	struct { const std::string desc; LLColor4 color; } fetch_state_desc[] = {
-		{ "---", LLColor4::red },	// INVALID
+		{ "INV", LLColor4::red },	// INVALID
 		{ "INI", LLColor4::white },	// INIT
 		{ "DSK", LLColor4::cyan },	// LOAD_FROM_TEXTURE_CACHE
-		{ "DSK", LLColor4::blue },	// CACHE_POST
+		{ "DKP", LLColor4::blue },	// CACHE_POST
 		{ "NET", LLColor4::green },	// LOAD_FROM_NETWORK
 		{ "SIM", LLColor4::green },	// LOAD_FROM_SIMULATOR
 		{ "URL", LLColor4::green2 },// LOAD_FROM_HTTP_GET_URL
 		{ "HTP", LLColor4::green },	// LOAD_FROM_HTTP_GET_DATA
 		{ "DEC", LLColor4::yellow },// DECODE_IMAGE
-		{ "DEC", LLColor4::yellow },// DECODE_IMAGE_UPDATE
-		{ "WRT", LLColor4::purple },// WRITE_TO_CACHE
-		{ "WRT", LLColor4::orange },// WAIT_ON_WRITE
+		{ "DIU", LLColor4::yellow },// DECODE_IMAGE_UPDATE
+		{ "WTC", LLColor4::purple },// WRITE_TO_CACHE
+		{ "WOW", LLColor4::orange },// WAIT_ON_WRITE
 		{ "END", LLColor4::red },   // DONE
 #define LAST_STATE 12
 		{ "CRE", LLColor4::magenta }, // LAST_STATE+1

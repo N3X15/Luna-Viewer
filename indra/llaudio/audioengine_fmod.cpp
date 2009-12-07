@@ -492,7 +492,7 @@ bool LLAudioChannelFMOD::updateBuffer()
 		{
 			// This is bad, there should ALWAYS be a sample associated with a legit
 			// buffer.
-			llerrs << "No FMOD sample!" << llendl;
+			llwarns << "No FMOD sample!" << llendl; //Changed to a warning as over rideing the error with the debuger seems to be safe. --Liny
 			return false;
 		}
 

@@ -857,8 +857,9 @@ S32 LLViewerParcelOverlay::renderPropertyLines	()
 
 		gGL.end();
 
-		if (LLSelectMgr::sRenderHiddenSelections && gFloaterTools && gFloaterTools->getVisible())
-		{
+		//Always show property lines -Liny
+		//if (LLSelectMgr::sRenderHiddenSelections && gFloaterTools && gFloaterTools->getVisible())
+		//{
 			LLGLDepthTest depth(GL_TRUE, GL_FALSE, GL_GREATER);
 			
 			colorp  = mColorArray  + BYTES_PER_COLOR   * i;
@@ -884,7 +885,7 @@ S32 LLViewerParcelOverlay::renderPropertyLines	()
 			drawn += vertex_per_edge;
 
 			gGL.end();
-		}
+		//}
 		
 	}
 

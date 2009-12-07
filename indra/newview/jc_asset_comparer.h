@@ -69,6 +69,13 @@ private:
 	static AssetSubjectDetails subjectA;
 	static AssetSubjectDetails subjectB;
 
+	static void update();
+
 public:
 	static JCAssetComparer* getInstance(){ return sInstance; }
+
+	static void processObjectProperties(LLMessageSystem* msg, void** user_data);
+
+	static void callbackLoadOwnerName(const LLUUID& id, const std::string& first, const std::string& last, BOOL is_group, void* data);
+
 };

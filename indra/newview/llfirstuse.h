@@ -116,6 +116,7 @@ public:
 	static void ClientTags();
 	static void EmeraldOTR();
 	static void EmeraldBridge();
+	static void EmeraldNCreatorExport();
 	
 protected:
 	static std::set<std::string> sConfigVariables;

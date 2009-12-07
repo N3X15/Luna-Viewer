@@ -37,10 +37,11 @@
 		<column name="avatar_icon" label="Icon" width="20" />
 		<column name="avatar_name" label="Name" dynamicwidth="true" />
 		<column name="distance" label="Distance" width="70"/>
+    <column name="time" label="Time" width="60" />
 		<column name="age" label="Age" width="50"/>
 		<!-- <column name="payment_data" label="Payment" width="80"/> -->
 		<!-- TrustNet Score -->
-    <!-- <column name="score" label="Score" width="60"/> -->
+    <column name="samesim" label="Sim" width="20"/>
 		<!-- Payment data icons -->
 		<column name="payment_data" label="" width="20" />
 		<!-- What the avatar is doing: producing sounds, rezzing, particles, etc -->
@@ -184,100 +185,45 @@
 		       name="land_tab" width="398">
 			
 			<!-- Upper row -->
-			<button
-			       name="freeze_btn"
-			       label="Freeze"
-			       tool_tip="Freeze the avatar, preventing it from moving"
-			       left="10"
-			       bottom_delta="-190"
-			       width="80"
-			       height="20"
-			       font="SansSerifSmall"
-			       follows="bottom|left"
-			       />
-			<button
-			       name="eject_btn"
-			       label="Eject"
-			       tool_tip="Eject the avatar from the parcel"
-			       left_delta="90"
-			       bottom_delta="0"
-			       width="80"
-			       height="20"
-			       font="SansSerifSmall"
-			       follows="bottom|left"
-			       />
+      <button name="mute_btn" label="Mute" tool_tip="Mute this avatar" left="5"
+      bottom_delta="-180" width="60" height="20" font="SansSerifSmall" follows="bottom|left" />
+      
+			<button name="eject_btn" label="Eject" tool_tip="Eject the avatar from the parcel" left_delta="0"
+			bottom_delta="-22" width="60" height="20" follows="bottom|left" />
 			
-			<button
-			       name="mute_btn"
-			       label="Mute"
-			       tool_tip="Mute this avatar"
-			       left_delta="90"
-			       bottom_delta="0"
-			       width="80"
-			       height="20"
-			       font="SansSerifSmall"
-			       follows="bottom|left"
-			       />
-			
+      <button name="freeze_btn" label="Freeze" tool_tip="Freeze the avatar, preventing it from moving"
+      left_delta="0" bottom_delta="-22" width="60" height="20" follows="bottom|left" />
 
-			<button
-			       name="ar_btn"
-			       label="AR"
-			       tool_tip="Report abuse on this avatar"
-			       left_delta="90"
-			       bottom_delta="0"
-			       width="80"
-			       height="20"
-			       font="SansSerifSmall"
-			       follows="bottom|left"
-			       />
+			<button name="ar_btn" label="AR" tool_tip="Report abuse on this avatar" left_delta="0"
+      bottom_delta="-22" width="60" height="20" font="SansSerifSmall" follows="bottom|left" />
+
+      <button name="unmute_btn" label="Unmute" tool_tip="Unmute this avatar" left_delta="62"
+			bottom_delta="66" width="60" height="20" follows="bottom|left" />
+
+      <button name="ban_btn" label="Ban" tool_tip="Ban this avatar from parcel" left_delta="0"
+			bottom_delta="-22" width="60" height="20" follows="bottom|left" />
 
 			<!-- middle row -->
-			<button
-			       name="estate_eject_btn"
-			       label="Eject from estate"
-			       tool_tip="Eject this avatar from the estate"
-			       left="10"
-			       bottom_delta="-24"
-			       width="170"
-			       height="20"
-			       font="SansSerifSmall"
-			       follows="bottom|left"
-			       />
-			<button
-			       name="unmute_btn"
-			       label="Unmute"
-			       tool_tip="Unmute this avatar"
-			       left_delta="180"
-			       bottom_delta="0"
-			       width="80"
-			       height="20"
-			       font="SansSerifSmall"
-			       follows="bottom|left"
-			       />
-			<button
-			       name="ban_btn"
-			       label="Ban"
-			       tool_tip="Ban this avatar from parcel"
-			       left_delta="90"
-			       bottom_delta="0"
-			       width="80"
-			       height="20"
-			       font="SansSerifSmall"
-			       follows="bottom|left"
-			       />
+      <button name="estate_tph_btn" label="Estate TP Home" tool_tip="Teleport avatar home" left_delta="90"
+			bottom_delta="22" width="100" height="20" follows="bottom|left" />
+      <button name="estate_kick_btn" label="Estate Kick" tool_tip="Kick avatar from the estate" left_delta="0"
+			bottom_delta="-22" width="100" height="20" follows="bottom|left" />
 			<!-- lower row-->
-			<button
-			       name="estate_ban_btn"
-			       label="Ban from estate"
-			       tool_tip="Ban this avatar from the estate"
-			       left="10"
-			       bottom_delta="-24"
-			       width="170"
-			       height="20"
-			       font="SansSerifSmall"
-			       follows="bottom|left"
-			       />
+			<button name="estate_ban_btn" label="Estate Ban" tool_tip="Ban this avatar from the estate" left_delta="0"
+			bottom_delta="-22" width="100" height="20" follows="bottom|left" />
+
+      <button name="estate_gtfo_btn" label="Estate GTFO" tool_tip="Bans, ejects, teleports home, and kicks" left_delta="0"
+			bottom_delta="-22" width="100" height="20" follows="bottom|left" />
+      
+      
+      <check_box height="16" label="Estate Does All Estates" left_delta="112"
+      bottom_delta="66" name="modeb" width="200" follows="bottom|left" radio_style="false" control_name="EmeraldModerateAllEstates"
+			tool_tip="Apply estate actions to all estates" visible="false" />
+
+      <check_box height="16" label="Confirm Actions" left_delta="0"
+      bottom_delta="-22" name="modeb" width="200" follows="bottom|left" radio_style="false" control_name="EmeraldModerateConfirm"
+			tool_tip="Confirm actions" visible="false"/>
+      
 		</panel>
 		
 		
@@ -415,6 +361,17 @@
 				   initial_value="true" enabled="true" radio_style="false"
                    control_name="EmeraldAvatarListKeepOpen"
 			   tool_tip="Hides floater instead of closing to still announce in chat" />
+      <check_box height="16" label="Enable Avatar Age Alert"
+				   left="180" bottom_delta="63" name="agealert"
+				   width="200" follows="bottom|left"
+				   hidden="false" mouse_opaque="true" font="SansSerifSmall"
+				   initial_value="true" enabled="true" radio_style="false"
+                    control_name="EmeraldAvatarAgeAlert"
+			   tool_tip="Enables Avatar Age Alert" />
+      <spinner bottom_delta="130" decimal_digits="0" follows="left|top" height="16"
+          left="200" increment="1" initial_val="3" max_val="9999" min_val="0"
+          mouse_opaque="true" name="AgeAlertDays" label="Age Alert Treshold" label_width="100"
+          tool_tip="Age Alert Treshold" width="160" />
     </panel>
 	</tab_container>
 	

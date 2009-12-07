@@ -65,6 +65,7 @@
 #include "llweb.h" // [$PLOTR$/]
 #include "lggBeamColorMapFloater.h"
 #include "llsliderctrl.h"
+#include "mfdKeywordFloater.h"
 
 ////////begin drop utility/////////////
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -209,6 +210,9 @@ BOOL LLPanelEmerald::postBuild()
 	//childSetCommitCallback("combobox shininess",onComboBoxCommit);
 	getChild<LLButton>("EmeraldPrefs_Stealth")->setClickedCallback(onStealth, this);
 	getChild<LLButton>("EmeraldPrefs_FullFeatures")->setClickedCallback(onNoStealth, this);
+
+
+	getChild<LLButton>("keyword_allert")->setClickedCallback(onKeywordAllertButton,this);
 	
 
 	getChild<LLButton>("BeamColor_new")->setClickedCallback(onCustomBeamColor, this);
@@ -306,9 +310,13 @@ BOOL LLPanelEmerald::postBuild()
 	childSetValue("EmeraldInstantMessageResponseItem", gSavedPerAccountSettings.getBOOL("EmeraldInstantMessageResponseItem"));
 	childSetValue("EmeraldInstantMessageAnnounceIncoming", gSavedPerAccountSettings.getBOOL("EmeraldInstantMessageAnnounceIncoming"));
 	childSetValue("EmeraldInstantMessageAnnounceStealFocus", gSavedPerAccountSettings.getBOOL("EmeraldInstantMessageAnnounceStealFocus"));
+	childSetValue("EmeraldShadowsON", gSavedSettings.getBOOL("EmeraldShadowsToggle"));
 
 	childSetAction("set_mirror", onClickSetMirror, this);
 	childSetCommitCallback("mirror_location", onCommitApplyControl);
+
+	getChild<LLCheckBoxCtrl>("telerequest_toggle")->setCommitCallback(onConditionalPreferencesChanged);
+	getChild<LLCheckBoxCtrl>("mldct_toggle")->setCommitCallback(onConditionalPreferencesChanged);
 
 	refresh();
 	return TRUE;
@@ -344,6 +352,8 @@ void LLPanelEmerald::refresh()
 		comboBox->setSimple(gSavedSettings.getString("EmeraldBeamColorFile"));
 	}
 
+	//epic hax (TODO: make this less hax)
+	onConditionalPreferencesChanged(getChild<LLCheckBoxCtrl>("telerequest_toggle"), NULL);
 
 	//mSkin = gSavedSettings.getString("SkinCurrent");
 	//getChild<LLRadioGroup>("skin_selection")->setValue(mSkin);
@@ -377,6 +387,26 @@ void LLPanelEmerald::apply()
 	gSavedPerAccountSettings.setBOOL("EmeraldInstantMessageAnnounceIncoming", childGetValue("EmeraldInstantMessageAnnounceIncoming").asBoolean());
 	gSavedPerAccountSettings.setBOOL("EmeraldInstantMessageAnnounceStealFocus", childGetValue("EmeraldInstantMessageAnnounceStealFocus").asBoolean());
 	gSavedSettings.setBOOL("EmeraldDoubleClickTeleportMode", childGetValue("EmeraldDoubleClickTeleportMode").asBoolean());
+	if(((gSavedSettings.getU32("RenderQualityPerformance")>=3) && gSavedSettings.getBOOL("WindLightUseAtmosShaders") && gSavedSettings.getBOOL("VertexShaderEnable")) && childGetValue("EmeraldShadowsON").asBoolean())
+	{
+		gSavedSettings.setBOOL("RenderUseFBO", childGetValue("EmeraldShadowsON").asBoolean());
+		gSavedSettings.setBOOL("RenderDeferred", childGetValue("EmeraldShadowsON").asBoolean());
+	}
+	else if(!childGetValue("EmeraldShadowsON").asBoolean())
+	{
+		if(gSavedSettings.getBOOL("RenderDeferred"))
+		{
+			gSavedSettings.setBOOL("RenderDeferred", childGetValue("EmeraldShadowsON").asBoolean());
+			gSavedSettings.setBOOL("RenderUseFBO", childGetValue("EmeraldShadowsON").asBoolean());
+		}
+	}
+	else if(((gSavedSettings.getU32("RenderQualityPerformance")<3) && !gSavedSettings.getBOOL("WindLightUseAtmosShaders") && !gSavedSettings.getBOOL("VertexShaderEnable")) && childGetValue("EmeraldShadowsON").asBoolean())
+	{
+		childSetValue("EmeraldShadowsON",false);
+		LLNotifications::instance().add("NoShadows");
+		llwarns<<"Attempt to enable shadow rendering while graphics settings not on ultra!"<<llendl;
+	}
+	gSavedSettings.setBOOL("EmeraldShadowsToggle", childGetValue("EmeraldShadowsON").asBoolean());
 	gSavedSettings.setU32("EmeraldUseOTR", (U32)childGetValue("EmeraldUseOTR").asReal());
 	gLggBeamMaps.forceUpdate();
 }
@@ -412,8 +442,8 @@ void LLPanelEmerald::onClickBoobReset(void* data)
 	self->getChild<LLSliderCtrl>("EmeraldBoobFriction")->setValue(var->getDefault());
 	var->resetToDefault();
 
-	var = self->findControl("EmeraldBoobFrictionFraction");
-	self->getChild<LLSliderCtrl>("EmeraldBoobFrictionFraction")->setValue(var->getDefault());
+	var = self->findControl("EmeraldBoobVelMin");
+	self->getChild<LLSliderCtrl>("EmeraldBoobVelMin")->setValue(var->getDefault());
 	var->resetToDefault();
 }
 
@@ -422,6 +452,10 @@ void LLPanelEmerald::onCustomBeam(void* data)
 	//LLPanelEmerald* self =(LLPanelEmerald*)data;
 	LggBeamMap::show(true, data);
 
+}
+void LLPanelEmerald::onKeywordAllertButton(void * data)
+{
+	MfdKeywordFloaterStart::show(true,data);
 }
 void LLPanelEmerald::onCustomBeamColor(void* data)
 {
@@ -450,6 +484,7 @@ void LLPanelEmerald::callbackEmeraldStealth(const LLSD &notification, const LLSD
 		gSavedSettings.setBOOL("EmeraldRadarChatKeys",false);
 		gSavedSettings.setBOOL("EmeraldUseBridgeOnline",false);
 		gSavedSettings.setBOOL("EmeraldUseBridgeRadar",false);
+		gSavedSettings.setBOOL("EmeraldMoveLockDCT",false);
 	}
 }
 void LLPanelEmerald::onNoStealth(void* data)
@@ -475,7 +510,9 @@ void LLPanelEmerald::callbackEmeraldNoStealth(const LLSD &notification, const LL
 		gSavedSettings.setBOOL("EmeraldClothingLayerProtection",true);
 		gSavedSettings.setBOOL("EmeraldBuildBridge",true);
 		gSavedSettings.setBOOL("EmeraldUseBridgeOnline",true);
-		gSavedSettings.setBOOL("EmeraldUseBridgeRadar",true);
+		gSavedSettings.setBOOL("EmeraldUseBridgeRadar",true);		
+		gSavedSettings.setBOOL("EmeraldMoveLockDCT",true);
+
 	}
 }
 void LLPanelEmerald::beamUpdateCall(LLUICtrl* crtl, void* userdata)
@@ -615,6 +652,27 @@ void LLPanelEmerald::onClickSetMirror(void* user_data)
 	{
 		std::string cache_location = gDirUtilp->getCacheDir();
 		self->childSetText("mirror_location", cache_location);
+	}
+}
+
+void LLPanelEmerald::onConditionalPreferencesChanged(LLUICtrl* ctrl, void* userdata)
+{
+	LLPanelEmerald* self = (LLPanelEmerald*)ctrl->getParent();
+	if(!self)return;
+	LLCheckBoxCtrl* teleport = self->getChild<LLCheckBoxCtrl>("telerequest_toggle");
+	LLCheckBoxCtrl* movelock = self->getChild<LLCheckBoxCtrl>("mldct_toggle");
+	if(!(teleport && movelock))return;
+	//bool teep = (bool)teleport->getValue().asBoolean();
+	bool moov = (bool)movelock->getValue().asBoolean();
+	if(moov)
+	{
+		teleport->setEnabled(true);
+	}
+	else
+	{
+		teleport->setValue(LLSD(true));
+		gSavedSettings.setBOOL("EmeraldRequestLocalTeleports", true);
+		teleport->setEnabled(false);
 	}
 }
 

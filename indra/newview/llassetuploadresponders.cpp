@@ -542,7 +542,7 @@ void LLUpdateTaskInventoryResponder::uploadComplete(const LLSD& content)
 							content["new_asset"].asUUID(),
 							LLAssetType::AT_NOTECARD);
 					}
-
+					nc->setAssetId(content["new_asset"].asUUID());
 					nc->refreshFromInventory();
 				}
 			}

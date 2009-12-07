@@ -79,7 +79,7 @@
 ///----------------------------------------------------------------------------
 /// Local function declarations, constants, enums, and typedefs
 ///----------------------------------------------------------------------------
-S32 LLFloaterSnapshot::sUIWinHeightLong = 526 ;
+S32 LLFloaterSnapshot::sUIWinHeightLong = 546 ;
 S32 LLFloaterSnapshot::sUIWinHeightShort = LLFloaterSnapshot::sUIWinHeightLong - 230 ;
 S32 LLFloaterSnapshot::sUIWinWidth = 215 ;
 
@@ -1250,6 +1250,11 @@ void LLFloaterSnapshot::Impl::updateControls(LLFloaterSnapshot* floater)
 	floater->childSetVisible("save_btn",			shot_type == LLSnapshotLivePreview::SNAPSHOT_LOCAL);
 	floater->childSetEnabled("keep_aspect_check",	shot_type != LLSnapshotLivePreview::SNAPSHOT_TEXTURE && !sAspectRatioCheckOff);
 	floater->childSetEnabled("layer_types",			shot_type == LLSnapshotLivePreview::SNAPSHOT_LOCAL);
+	if(shot_type != LLSnapshotLivePreview::SNAPSHOT_TEXTURE)
+	{
+		floater->childSetValue("temp_check",			shot_type == LLSnapshotLivePreview::SNAPSHOT_TEXTURE);
+	}
+	floater->childSetEnabled("temp_check",			shot_type == LLSnapshotLivePreview::SNAPSHOT_TEXTURE);
 
 	BOOL is_advance = gSavedSettings.getBOOL("AdvanceSnapshot");
 	BOOL is_local = shot_type == LLSnapshotLivePreview::SNAPSHOT_LOCAL;
@@ -1273,6 +1278,7 @@ void LLFloaterSnapshot::Impl::updateControls(LLFloaterSnapshot* floater)
 	floater->childSetVisible("freeze_frame_check",		is_advance);
 	floater->childSetVisible("auto_snapshot_check",		is_advance);
 	floater->childSetVisible("image_quality_slider",	is_advance && show_slider);
+	floater->childSetVisible("temp_check",				is_advance);
 
 	LLSnapshotLivePreview* previewp = getPreviewView(floater);
 	BOOL got_bytes = previewp && previewp->getDataSize() > 0;
@@ -2037,6 +2043,9 @@ BOOL LLFloaterSnapshot::postBuild()
 	// make sure preview is below snapshot floater
 	sInstance->getRootView()->addChild(previewp);
 	sInstance->getRootView()->addChild(gSnapshotFloaterView);
+
+	gSavedSettings.setBOOL("EmeraldTemporaryUpload",FALSE);
+	childSetValue("temp_check",FALSE);
 
 	Impl::sPreviewHandle = previewp->getHandle();
 

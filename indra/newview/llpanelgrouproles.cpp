@@ -1780,6 +1780,10 @@ BOOL LLPanelGroupRolesSubTab::postBuildSubTab(LLView* root)
 		return FALSE;
 	}
 
+	mAssignedMembersList->setCallbackUserData(this);
+	// Show the member's profile on double click.
+	mAssignedMembersList->setDoubleClickCallback(onMemberDoubleClick);
+
 	mRemoveEveryoneTxt = getString("cant_delete_role");
 
 	mCreateRoleButton = 
@@ -1826,6 +1830,22 @@ BOOL LLPanelGroupRolesSubTab::postBuildSubTab(LLView* root)
 	setFooterEnabled(FALSE);
 
 	return TRUE;
+}
+
+// static
+void LLPanelGroupRolesSubTab::onMemberDoubleClick(void* user_data)
+{
+	LLPanelGroupRolesSubTab* self = static_cast<LLPanelGroupRolesSubTab*>(user_data);
+	self->handleMemberDoubleClick();
+}
+
+void LLPanelGroupRolesSubTab::handleMemberDoubleClick()
+{
+	LLScrollListItem* selected = mAssignedMembersList->getFirstSelected();
+	if (selected)
+	{
+		LLFloaterAvatarInfo::showFromDirectory( selected->getUUID() );
+	}
 }
 
 void LLPanelGroupRolesSubTab::activate()

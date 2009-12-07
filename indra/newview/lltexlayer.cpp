@@ -265,6 +265,7 @@ void LLTexLayerSetBuffer::postRender(BOOL success)
 
 BOOL LLTexLayerSetBuffer::render()
 {
+	BOOL success = TRUE;
 	U8* baked_bump_data = NULL;
 
 	// Default color mask for tex layer render
@@ -273,7 +274,6 @@ BOOL LLTexLayerSetBuffer::render()
 	// do we need to upload, and do we have sufficient data to create an uploadable composite?
 	// When do we upload the texture if gAgent.mNumPendingQueries is non-zero?
 	BOOL upload_now = (gAgent.mNumPendingQueries == 0 && mNeedsUpload && mTexLayerSet->isLocalTextureDataFinal());
-	BOOL success = TRUE;
 
 	// Composite bump
 	if( mBumpTex.notNull() )
@@ -539,6 +539,37 @@ void LLTexLayerSetBuffer::readBackAndUpload(U8* baked_bump_data)
 	delete [] baked_bump_data;
 }
 
+class TextureRetryTimer : public LLEventTimer
+{
+public:
+    TextureRetryTimer(LLTexLayerSet* buff);
+    virtual ~TextureRetryTimer();
+
+    //function to be called at the supplied frequency
+    virtual BOOL tick();
+    LLTexLayerSet* buffp;
+};
+TextureRetryTimer::TextureRetryTimer(LLTexLayerSet* buff) : LLEventTimer( (F32)2.5 )
+{
+    buffp = buff;
+    //printchat("init fake");
+};
+TextureRetryTimer::~TextureRetryTimer()
+{
+}
+
+BOOL TextureRetryTimer::tick()
+{
+	LLTexLayerSetBuffer* curr_layerset_buffer =
+				buffp->hasComposite()?buffp->getComposite():NULL;
+	if(curr_layerset_buffer)
+	{
+		llinfos << "Retrying baked upload." << llendl;
+		curr_layerset_buffer->requestUpload();
+	}else llinfos << "Retry failed, buffer does not exist" << llendl;
+	return TRUE;
+}
+
 
 // static
 void LLTexLayerSetBuffer::onTextureUploadComplete(const LLUUID& uuid, void* userdata, S32 result, LLExtStat ext_status) // StoreAssetData callback (not fixed)
@@ -588,6 +619,7 @@ void LLTexLayerSetBuffer::onTextureUploadComplete(const LLUUID& uuid, void* user
 					{
 						llinfos << "Baked upload failed. Reason: " << result << llendl;
 						// *FIX: retry upload after n seconds, asset server could be busy
+						new TextureRetryTimer(baked_upload_data->mLayerSet);
 					}
 				}
 				else
@@ -604,6 +636,7 @@ void LLTexLayerSetBuffer::onTextureUploadComplete(const LLUUID& uuid, void* user
 		// Baked texture failed to upload, but since we didn't set the new baked texture, it means that they'll
 		// try and rebake it at some point in the future (after login?)
 		llwarns << "Baked upload failed" << llendl;
+		new TextureRetryTimer(baked_upload_data->mLayerSet);
 	}
 
 	delete baked_upload_data;

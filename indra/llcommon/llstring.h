@@ -34,6 +34,7 @@
 #define LL_LLSTRING_H
 
 #include <string>
+#include <stdio.h>
 
 #if LL_LINUX || LL_SOLARIS
 #include <wctype.h>

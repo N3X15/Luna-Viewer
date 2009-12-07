@@ -102,10 +102,10 @@ void LLPanelAudioVolume::onCommitVolumeChange(LLUICtrl* ctrl, void* user_data)
 	{
 		gSavedSettings.setBOOL("MuteUI", FALSE);
 	}
-	else if (control_name == "AudioLevelAmbient")
-	{
-		gSavedSettings.setBOOL("MuteAmbient", FALSE);
-	}
+	//else if (control_name == "AudioLevelAmbient") // disable wind /ez
+	//{
+	//	gSavedSettings.setBOOL("MuteAmbient", FALSE);
+	//}
 	else if (control_name == "AudioLevelMusic")
 	{
 		gSavedSettings.setBOOL("MuteMusic", FALSE);

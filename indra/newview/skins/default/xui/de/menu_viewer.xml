@@ -189,6 +189,12 @@
 		<menu_item_call label="Rasteroptionen..." name="Grid Options..."/>
 		<menu_item_separator label="-----------" name="separator3"/>
 		<menu_item_check label="Verknüpfte Teile bearbeiten" name="Edit Linked Parts"/>
+    <menu label="Verlinkte Teile auswählen" name="Select Linked Parts">
+      <menu_item_call label="nächsten Teil auswählen" name="Select Next Part"/>
+			<menu_item_call label="vorherigen Teil auswählen" name="Select Previous Part"/>
+			<menu_item_call label="nächsten Teil auch auswählen" name="Include Next Part"/>
+			<menu_item_call label="vorherigen Teil auch auswählen" name="Include Previous Part"/>
+		</menu>
 		<menu_item_call label="Verknüpfung" name="Link"/>
 		<menu_item_call label="Verknüpfung aufheben" name="Unlink"/>
 		<menu_item_separator label="-----------" name="separator4"/>
@@ -219,6 +225,9 @@
 			<on_click name="ScriptingPortal_url" userdata="WebLaunchLSLWiki,http://wiki.secondlife.com/wiki/LSL_Portal/de" />
 		</menu_item_call>
 		<menu_item_separator label="-----------" name="separator3"/>
+    <menu_item_call label="Nachricht des Tages..." name="Message of the Day...">
+    </menu_item_call>
+    <menu_item_separator label="-----------" name="separator3"/>
 		<menu_item_call label="Missbrauch melden..." name="Report Abuse..."/>
 		<menu_item_call label="Rempler, Stöße und Schläge..." name="Bumps, Pushes &amp;amp; Hits..."/>
 		<menu_item_call label="Lag-Anzeige" name="Lag Meter"/>
@@ -235,7 +244,6 @@
 		<menu_item_check label="Zeige Blickziel" name="show LookAt" width="155"/>
     <menu_item_check label="Lösche Effekte" name="cleareffects"/>
 		<menu_item_separator label="-----------" name="separator1"/>
-		<menu_item_check label="Rainbow Beam" name="Rainbow Beam"/>
 		<menu_item_check label="SL Particle Chat" name="SL Particle Chat"/>
 		<menu_item_check label="Radar Chat" name="Radar Chat"/>
 		<menu_item_check label="Advanced anzeigen" name="Show Advanced"/>
@@ -244,6 +252,8 @@
 		<menu_item_check label="Objekt Suche" name="Area Search"/>
 		<menu_item_check label="Avatar Liste" name="Avatar List"/>
 		<menu_item_check label="Teleport Verlauf" name="Teleport History"/>
-		<menu_item_check label="Lua Konsole" name="Lua Console"/>
+    <menu_item_check label="Asset Browser" name="asset browser"/>
+    <menu_item_check label="AO" name="AO"/>
+    </menu_item_check>
 	</menu>
 </menu_bar>

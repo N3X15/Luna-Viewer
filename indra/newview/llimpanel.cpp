@@ -85,6 +85,7 @@
 #include "otr_wrapper.h"
 #include "otr_floater_smp_dialog.h"
 #include "otr_floater_smp_progress.h"
+#include "mfdKeywordFloater.h"
 #endif // USE_OTR // [/$PLOTR$]
 
 //
@@ -1646,8 +1647,19 @@ BOOL LLFloaterIMPanel::inviteToSession(const LLDynamicArray<LLUUID>& ids)
 	return TRUE;
 }
 
-void LLFloaterIMPanel::addHistoryLine(const std::string &utf8msg, const LLColor4& color, bool log_to_file, const LLUUID& source, const std::string& name)
+void LLFloaterIMPanel::addHistoryLine(const std::string &utf8msg, LLColor4 incolor, bool log_to_file, const LLUUID& source, const std::string& name)
 {
+	//mfd key word alert
+	if(gAgent.getID() != source)
+	{
+		if(MfdKeywordFloaterStart::hasKeyword(utf8msg,2))
+		{
+			if(gSavedPerAccountSettings.getBOOL("EmeraldKeywordChangeColor"))
+				incolor= gSavedPerAccountSettings.getColor4("EmeraldKeywordColor");
+		}
+	}
+	
+	const LLColor4& color = incolor;
 	// start tab flashing when receiving im for background session from user
 	if (source != LLUUID::null)
 	{
@@ -2577,7 +2589,7 @@ void LLFloaterIMPanel::showOtrStatus()
 
 void LLFloaterIMPanel::otrLogMessage(std::string message)
 {
-    addHistoryLine(message, gSavedSettings.getColor("SystemChatColor"), true, gAgent.getID());
+    addHistoryLine(message, gSavedSettings.getColor("SystemChatColor"), true, mOtherParticipantUUID);
 }
 
 void LLFloaterIMPanel::otrLogMessageGetstring(const char *message_name)

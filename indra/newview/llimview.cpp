@@ -682,7 +682,7 @@ void LLIMMgr::addMessage(
 	// now add message to floater
 	bool is_from_system = target_id.isNull() || (from == SYSTEM_FROM);
 	bool is_encrypted = (msg.substr(0, 3) == "\xe2\x80\xa7");
-	const LLColor4& color = ( is_from_system ? 
+	LLColor4 color = ( is_from_system ? 
 							  gSavedSettings.getColor4("SystemChatColor") : 
 							  ( is_encrypted ? gSavedSettings.getColor("IMEncryptedChatColor") :
 		                        gSavedSettings.getColor("IMChatColor") ) );

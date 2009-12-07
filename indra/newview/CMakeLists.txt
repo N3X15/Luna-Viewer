@@ -107,11 +107,11 @@ set(viewer_SOURCE_FILES
 	chatbar_as_cmdline.cpp
 	IRC.cpp
 	jc_lslviewerbridge.cpp
-	jc_layer_editor.cpp
 	jcfloater_animation_list.cpp
 	jcfloater_areasearch.cpp
 	jc_asset_comparer.cpp
 	jcobjectpropertylist.cpp
+	mfdKeywordFloater.cpp
 	lggBeamMapFloater.cpp
 	lggBeamColorMapFloater.cpp
 	lggBeamsColors.cpp
@@ -232,6 +232,7 @@ set(viewer_SOURCE_FILES
     llfloaterlandmark.cpp
     llfloatermap.cpp
     llfloatermemleak.cpp
+    llfloatermotd.cpp
     llfloatermute.cpp
     llfloaternamedesc.cpp
     llfloaternewim.cpp
@@ -516,7 +517,7 @@ set(viewer_SOURCE_FILES
     LuaBuild_f.cpp
     LuaUI_f.cpp
 #   SLua.cpp
-    LuaBase.cpp
+#    LuaBase.cpp
     FLLua.cpp
     flexconsole.cpp
     rlvhandler.cpp
@@ -557,11 +558,11 @@ set(viewer_HEADER_FILES
     importtracker.h
     IRC.h
 	jc_lslviewerbridge.h
-	jc_layer_editor.h
 	llfloaterao.h
 	jcfloater_animation_list.h
 	jcfloater_areasearch.h
 	jcobjectpropertylist.h
+    mfdKeywordFloater.h
 	exporttracker.h
 	lggBeamMaps.h
 	lggBeamMapFloater.h
@@ -685,6 +686,7 @@ set(viewer_HEADER_FILES
     llfloaterlandmark.h
     llfloatermap.h
     llfloatermemleak.h
+    llfloatermotd.h
     llfloatermute.h
     llfloaternamedesc.h
     llfloaternewim.h
@@ -973,7 +975,7 @@ set(viewer_HEADER_FILES
     VorbisFramework.h
     FLLua.h
 #   SLua.h
-    LuaBase.h
+#    LuaBase.h
 	LuaAgent_f.h
 	LuaAvatar_f.h
 	LuaBase.h
@@ -1217,8 +1219,6 @@ set(viewer_APPSETTINGS_FILES
 
 source_group("App Settings" FILES ${viewer_APPSETTINGS_FILES})
 
-
-
 set_source_files_properties(${viewer_APPSETTINGS_FILES}
                             PROPERTIES HEADER_FILE_ONLY TRUE)
 
@@ -1455,7 +1455,7 @@ target_link_libraries(${VIEWER_BINARY_NAME}
     ${EMERALD_LIBRARIES}
     ${LUA_LIBRARY}
     ${OTR_LIBRARY}
-    ${SILVERLINING_LIBRARY}
+    #${SILVERLINING_LIBRARY}
     ${CG_GL_LIBRARY}
     ${CG_LIBRARY}
     ${GLUT_LIBRARIES}
@@ -1515,7 +1515,7 @@ if (DARWIN)
     MACOSX_BUNDLE_BUNDLE_NAME "FlexLife Viewer"
     MACOSX_BUNDLE_SHORT_VERSION_STRING "asdf"
     MACOSX_BUNDLE_BUNDLE_VERSION "asdf"
-    MACOSX_BUNDLE_COPYRIGHT "Copyright 2009 Rob Nelson"
+    MACOSX_BUNDLE_COPYRIGHT "Copyright (c) 2009 Red Fedora Productions"
     )
 
   add_custom_command(

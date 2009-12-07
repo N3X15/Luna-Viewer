@@ -49,6 +49,8 @@
 #include "llwearable.h"
 #include "llvoavatardefines.h"
 
+#include "emeraldboobutils.h"
+
 extern const LLUUID ANIM_AGENT_BODY_NOISE;
 extern const LLUUID ANIM_AGENT_BREATHE_ROT;
 extern const LLUUID ANIM_AGENT_EDITING;
@@ -509,27 +511,53 @@ private:
 	//--------------------------------------------------------------------
 
 private:
-	LLVector3		mLastChestPos;
-	F32				mBoobGravity;
-	F32				mBoobDisplacement;
-	F32				mLastDisplacement;
-	F32				mLastTime;
-	F32				mActualBoobGrav;
-	bool			mFirstIdleUpdateBoobGravRan;
+	bool			mFirstSetActualBoobGravRan;
+	bool			mFirstSetActualButtGravRan;
+	bool			mFirstSetActualFatGravRan;
 	LLFrameTimer	mBoobBounceTimer;
+	EmeraldAvatarLocalBoobConfig mLocalBoobConfig;
+	EmeraldBoobState mBoobState;
+	EmeraldBoobState mButtState;
+	EmeraldBoobState mFatState;
 
 public:
-	F32				getActualBoobGrav() { return mActualBoobGrav; }
-	void			setActualBoobGrav(F32 grav) { mActualBoobGrav = llclamp(grav,-1.5f,2.0f); mFirstIdleUpdateBoobGravRan = true; }
+	//boob
+	F32				getActualBoobGrav() { return mLocalBoobConfig.actualBoobGrav; }
+	void			setActualBoobGrav(F32 grav)
+	{
+		mLocalBoobConfig.actualBoobGrav = grav;
+		if(!mFirstSetActualBoobGravRan)
+		{
+			mBoobState.boobGrav = grav;
+			mFirstSetActualBoobGravRan = true;
+		}
+	}
 
-	static F32		sBoobMass;
-	static F32		sBoobHardness;
-	static F32		sBoobZMax;
-	static F32		sBoobVelMax;
-	static F32		sBoobZInfluence;
-	static F32		sBoobFriction;
-	static F32		sBoobFrictionFraction;
-	static BOOL		sBoobToggle;
+	//butt
+	F32				getActualButtGrav() { return mLocalBoobConfig.actualButtGrav; }
+	void			setActualButtGrav(F32 grav)
+	{
+		mLocalBoobConfig.actualButtGrav = grav;
+		if(!mFirstSetActualButtGravRan)
+		{
+			mButtState.boobGrav = grav;
+			mFirstSetActualButtGravRan = true;
+		}
+	}
+
+	//fat
+	F32				getActualFatGrav() { return mLocalBoobConfig.actualFatGrav; }
+	void			setActualFatGrav(F32 grav)
+	{
+		mLocalBoobConfig.actualFatGrav = grav;
+		if(!mFirstSetActualFatGravRan)
+		{
+			mFatState.boobGrav = grav;
+			mFirstSetActualFatGravRan = true;
+		}
+	}
+
+	static EmeraldGlobalBoobConfig sBoobConfig;
 
 	//--------------------------------------------------------------------
 	// Attachments

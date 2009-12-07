@@ -12,11 +12,11 @@
  *      copyright notice, this list of conditions and the following
  *      disclaimer in the documentation and/or other materials provided
  *      with the distribution.
- *   3. Neither the name Modular Systems Ltd nor the names of its contributors
+ *   3. Neither the name Modular Systems nor the names of its contributors
  *      may be used to endorse or promote products derived from this
  *      software without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY MODULAR SYSTEMS LTD AND CONTRIBUTORS “AS IS”
+ * THIS SOFTWARE IS PROVIDED BY MODULAR SYSTEMS AND CONTRIBUTORS “AS IS”
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
  * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
  * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL MODULAR SYSTEMS OR CONTRIBUTORS
@@ -50,6 +50,8 @@
 #include "llimagej2c.h"
 
 #include "llviewertexteditor.h"
+
+#include "llfirstuse.h"
 
 JCExportTracker* JCExportTracker::sInstance;
 LLSD JCExportTracker::data;
@@ -335,6 +337,15 @@ bool JCExportTracker::serializeSelection()
 		LLViewerObject* object = selectNode->getObject();
 		if(object)catfayse.put(object);
 	}
+	BOOL creators_identical;
+	LLUUID CreatorID;
+	std::string creator_name;
+	creators_identical = LLSelectMgr::getInstance()->selectGetCreator(CreatorID,
+													  creator_name);
+	if(!creators_identical || (CreatorID.notNull() && CreatorID != gAgent.getID()))
+	{
+		LLFirstUse::EmeraldNCreatorExport();
+	}
 	return serialize(catfayse);
 }
 
@@ -349,6 +360,15 @@ bool JCExportTracker::serialize(LLDynamicArray<LLViewerObject*> objects)
 		
 	if (!file_picker.getSaveFile(LLFilePicker::FFSAVE_XML))
 		return false; // User canceled save.
+
+	F32 throttle = gSavedSettings.getF32("OutBandwidth");
+	// Gross magical value that is 128kbit/s
+	// Sim appears to drop requests if they come in faster than this. *sigh*
+	if(throttle < 128000.)
+	{
+		gMessageSystem->mPacketRing.setOutBandwidth(128000.0);
+	}
+	gMessageSystem->mPacketRing.setUseOutThrottle(TRUE);
 		
 	destination = file_picker.getFirstFile();
 
@@ -412,6 +432,17 @@ bool JCExportTracker::serialize(LLDynamicArray<LLViewerObject*> objects)
 	}else
 	{
 		data = total;
+	}
+
+	if(throttle != 0.)
+	{
+		gMessageSystem->mPacketRing.setOutBandwidth(throttle);
+		gMessageSystem->mPacketRing.setUseOutThrottle(TRUE);
+	}
+	else
+	{
+		gMessageSystem->mPacketRing.setOutBandwidth(0.0);
+		gMessageSystem->mPacketRing.setUseOutThrottle(FALSE);
 	}
 
 	return success;

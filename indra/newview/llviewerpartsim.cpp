@@ -466,6 +466,8 @@ void LLViewerPartGroup::removeParticlesByID(const U32 source_id)
 //static
 void LLViewerPartSim::checkParticleCount(U32 size)
 {
+	//Removed until a cause for the mismatch under linux can be identified.
+	/*
 	if(LLViewerPartSim::sParticleCount2 != LLViewerPartSim::sParticleCount)
 	{
 		llerrs << "sParticleCount: " << LLViewerPartSim::sParticleCount << " ; sParticleCount2: " << LLViewerPartSim::sParticleCount2 << llendl ;
@@ -475,6 +477,7 @@ void LLViewerPartSim::checkParticleCount(U32 size)
 	{
 		llerrs << "curren particle size: " << LLViewerPartSim::sParticleCount2 << " array size: " << size << llendl ;
 	}
+	*/ 
 }
 
 LLViewerPartSim::LLViewerPartSim()

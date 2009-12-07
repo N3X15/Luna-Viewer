@@ -22,6 +22,5 @@
 		     tool_tip="Die Umgebungskarte. (Strg-Umschalt-M)" />
 		<button label="Karte" name="map_btn" tool_tip="Die Weltkarte. (Strg-M)" />
 		<button label="Inventar" name="inventory_btn" tool_tip="Ihre Habseligkeiten. (Strg-I)" />
-    <slider label="" name="DrawDistance" tool_tip="Ändert ihre Sichtweite"/>
 	</layout_stack>
 </panel>

@@ -37,13 +37,13 @@
 	<button bottom_delta="-25" follows="top|right" height="22" label="Remove..."
 	     left_delta="0" name="remove_btn"
 	     tool_tip="Remove this person from your friends list" width="80" />
-  <button bottom_delta="-35" follows="top|right" height="22" label="Add..."
+  <button bottom_delta="-25" follows="top|right" height="22" label="Add..."
 	     left_delta="0" name="add_btn" tool_tip="Offer friendship to a resident"
 	     width="80" />
-  <button bottom_delta="-45" follows="top|right" height="22" label="Import"
+  <button bottom_delta="-30" follows="top|right" height="22" label="Import"
 	     left_delta="0" name="import_btn" tool_tip="Import friends list from HDD"
 	     width="80" />
-  <button bottom_delta="-35" follows="top|right" height="22" label="Export"
+  <button bottom_delta="-25" follows="top|right" height="22" label="Export"
 	     left_delta="0" name="export_btn" tool_tip="Export friends list to HDD"
 	     width="80" />
 </panel>

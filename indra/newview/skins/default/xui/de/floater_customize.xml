@@ -478,6 +478,16 @@ und diesen anziehen.
 			<button font="SansSerifSmall" label="Zurücksetzen" label_selected="Zurücksetzen" name="Revert"/>
 		</panel>
 	</tab_container>
+	<scroll_container name="panel_container"/>
+  <text name="AvatarHeightText">
+    Avatar Höhe:
+  </text>
+  <text name="HeightText">
+    Avatar Höhe
+  </text>
+  <text name="HeightText2">
+    Avatar Höhe2
+  </text>
 	<button label="Abbrechen" label_selected="Abbrechen" name="Cancel"/>
 	<button label="OK" label_selected="OK" name="Ok"/>
 	<button label="Outfit erstellen..." label_selected="Outfit erstellen..." name="Make Outfit" width="115"/>

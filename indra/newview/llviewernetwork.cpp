@@ -212,6 +212,7 @@ void LLViewerLogin::setGridChoice(const std::string& grid_name)
             mGridName = grid_name;
 			gSavedSettings.setS32("ServerChoice", mGridChoice);
 			gSavedSettings.setString("CustomServer", mGridName);
+			setGridURI(mGridName);
         }
     }
 }

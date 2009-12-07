@@ -71,12 +71,14 @@
 	<combo_box label="OTR: nicht privat" name="otr_combo"/>
 	<!--[/$PLOTR$]-->
 	<button label="Profil..." name="profile_callee_btn"/>
+	<button label="Teleport" name="profile_tele_btn"/>
+  <button label="Verlauf" name="history_btn"/>
 	<button label="Anrufen" name="start_call_btn" pad_right="7" width="115"/>
 	<button halign="right" label="Anruf beenden" name="end_call_btn" width="115"/>
 	<panel left_delta="111" name="speaker_controls">
 		<button label="" name="mute_btn" tool_tip="Voice stummschalten"/>
 	</panel>
-  <line_editor label="Passwort" name="password"/>
+	<combo_box label="OTR: nicht privat" name="otr_combo"/>
 	<line_editor label="Für Instant Message hier klicken" name="chat_editor"/>
 	<button label="Senden" name="send_btn"/>
 	<string name="live_help_dialog">

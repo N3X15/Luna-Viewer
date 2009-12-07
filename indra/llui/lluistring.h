@@ -47,7 +47,7 @@
 // Example Usage:
 // LLUIString mMessage("Welcome [USERNAME] to [SECONDLIFE]!");
 // mMessage.setArg("[USERNAME]", "Steve");
-// mMessage.setArg("[SECONDLIFE]", "GreenLife Emerald Viewer");
+// mMessage.setArg("[SECONDLIFE]", "Emerald Viewer");
 // llinfos << mMessage.getString() << llendl; // outputs "Welcome Steve to Second Life"
 // mMessage.setArg("[USERNAME]", "Joe");
 // llinfos << mMessage.getString() << llendl; // outputs "Welcome Joe to Second Life"
