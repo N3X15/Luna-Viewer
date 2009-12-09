@@ -49,9 +49,9 @@ public:
 	const char* getArg(unsigned idx){ return mArgs[idx]; }
 	int getNumArgs(){ return mArgs.size(); };
 private:
-	vector<const char *> mArgs;
+	std::vector<const char *> mArgs;
 	const char *mName;
-}
+};
 
 class FLLua : public LLThread
 {
@@ -63,7 +63,7 @@ public:
 	static void init();
 	static FLLua* getInstance();
 
-	bool callLuaHook(const char *EventName,int numargs,...);
+	static void callLuaHook(const char *EventName,int numargs,...);
 	void RunString(std::string s);
 	void run();
 
@@ -72,15 +72,15 @@ public:
 	static void callMacro(const std::string cmd);
 private:
 	void RunMacro(const std::string what);
+	
 	lua_State *L; // Lua stack
 	static FLLua *sInstance;
 
 	// Queued hooks
-	static queue<HookRequest> mQueuedHooks;
-	static queue<std::string> mQueuedCommands;
+	std::queue<HookRequest*> mQueuedHooks;
+	std::queue<std::string> mQueuedCommands;
 
-	void ExecuteHook(HookRequest hook);
-public:
+	void ExecuteHook(HookRequest *hook);
 };
 
 //extern FLLua *gLuaHooks;

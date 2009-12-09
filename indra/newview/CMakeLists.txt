@@ -517,7 +517,7 @@ set(viewer_SOURCE_FILES
     LuaBuild_f.cpp
     LuaUI_f.cpp
 #   SLua.cpp
-#    LuaBase.cpp
+    LuaBase.cpp
     FLLua.cpp
     flexconsole.cpp
     rlvhandler.cpp
@@ -975,7 +975,7 @@ set(viewer_HEADER_FILES
     VorbisFramework.h
     FLLua.h
 #   SLua.h
-#    LuaBase.h
+	LuaBase.h
 	LuaAgent_f.h
 	LuaAvatar_f.h
 	LuaBase.h

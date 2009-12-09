@@ -284,16 +284,17 @@ bool cmd_line_chat(std::string revised_text, EChatType type)
 				cmdline_printchat("Nothing happens.");
 				return false;
 			} 
-			// FLEXLIFE:  Raw Lua Command from chatbar.
-			// And yes, it currently just shoves the command into the same queue as a macro.
-			else if(command == gSavedSettings.getString("FlexLifeCmdLineLua")
+			else if(command == gSavedSettings.getString("FlexCmdLineLua"))
 			{
+				// FLEXLIFE:  Raw Lua Command from chatbar.
+				// And yes, it currently just shoves the command into the same queue as a macro.
 				FLLua::callMacro(revised_text);
 			}
-			// FLEXLIFE:  Macros
-			//  /m MacroName arg u ments
 			else if(command == "/m" || command=="/macro")
 			{
+				// FLEXLIFE:  Macros
+				//  /m MacroName arg u ments
+
 				// HACK:  Parser needs /m.
 				FLLua::callMacro("/m "+revised_text);
 			}

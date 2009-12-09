@@ -211,6 +211,13 @@ void add_timestamped_line(LLViewerTextEditor* edit, LLChat chat, const LLColor4&
 		(!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES)) )
 // [/RLVa:KB]
 	{
+		// Group chat fuckups on Linux
+		// Check if name == me, if so, set fromID to my UUID
+		std::string myname("");
+		gAgent.getName(myname);
+		if(chat.mFromName==myname)
+			chat.mFromID=gAgent.getID();
+
 		chat.mURL = llformat("secondlife:///app/agent/%s/about",chat.mFromID.asString().c_str());
 	}
 

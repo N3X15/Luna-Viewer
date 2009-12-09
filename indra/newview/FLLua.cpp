@@ -63,28 +63,34 @@ extern "C" {
 #include "LuaBase.h"
 #include "LuaBase_f.h"
 
+//#define LUA_HOOK_SPAM 
+
 extern LLAgent gAgent;
 
 extern "C" {
 extern int luaopen_SL(lua_State* L); // declare the wrapped module
 }
 
+///////////////////////////////////////////////
+// Hook Request 
+///////////////////////////////////////////////
+
 HookRequest::HookRequest(const char *name)
 {
 	mName=name;
 }
 
-HookRequest::Add(const char *arg)
+void HookRequest::Add(const char *arg)
 {
 	mArgs.push_back(arg);
 }
 
 
-//#define LUA_HOOK_SPAM 
-
+///////////////////////////////////////////////
+// Lua Interpreter
+///////////////////////////////////////////////
 FLLua::FLLua() :
-	LLThread("Lua"),
-	mUserDatap(NULL)
+	LLThread("Lua")
 {
 	// Do nothing.
 }
@@ -110,58 +116,98 @@ void FLLua::init()
 /// Run the interpreter.
 void FLLua::run()
 {
-	LL_INFOS("Lua") << "Thread initialized." << llendl;
+	LL_INFOS("Lua") << "Thread initializing." << llendl;
 	L = lua_open();
 
+	LL_INFOS("Lua") << __LINE__ << ": Skipping lua_atpanic" << llendl;
 	//lua_atpanic(L, luaOnPanic);
 
+
+	LL_INFOS("Lua") << __LINE__ << ": Loading standard Lua libs" << llendl;
 	luaL_openlibs(L);
 
+
+	LL_INFOS("Lua") << __LINE__ << ": *** LOADING SWIG BINDINGS ***" << llendl;
 	luaopen_SL(L);
 
 	std::string  version; 
+
+	LL_INFOS("Lua") << __LINE__ << ": Assigning _SLUA_VERSION" << llendl;
 	// Assign _SLUA_VERSION, which contains the version number of the host viewer.
 	version = llformat("_SLUA_VERSION=\"%d.%d.%d.%d\"",LL_VERSION_MAJOR,LL_VERSION_MINOR,LL_VERSION_PATCH,LL_VERSION_BUILD);
 	luaL_dostring(L, version.c_str());
-	
+
+
+	LL_INFOS("Lua") << __LINE__ << ": Assigning _SLUA_CHANNEL" << llendl;	
 	// Assign _SLUA_CHANNEL, which contains the channel name of the host client.
 	version = llformat("_SLUA_CHANNEL=\"%s\"",LL_CHANNEL);
 	luaL_dostring(L, version.c_str());
 
+
+	LL_INFOS("Lua") << __LINE__ << ": Runfile (_init_.lua)" << llendl;
 	RunFile(gDirUtilp->getExpandedFilename(FL_PATH_LUA,"_init_.lua"));
 
 #if 0
 	RunFile(gDirUtilp->getExpandedFilename(FL_PATH_MACROS,"unit_tests.lua"));
 #endif
 
+
+	LL_INFOS("Lua") << __LINE__ << ": *** THREAD LOOP STARTS HERE ***" << llendl;
 	while(1)
 	{
 		// Process Hooks
+		lockData();
+
+
+		//LL_INFOS("Lua") << __LINE__ << ": Checking if hooks are empty" << llendl;
 		if(!mQueuedHooks.empty())
 		{
+			//LL_INFOS("Lua") << __LINE__ << ": Hooks not empty" << llendl;
 			// Peek at the top of the stack
-			HookRequest hr = mQueuedHooks.front();
+			HookRequest *hr = NULL;
+			hr = mQueuedHooks.front();
+			mQueuedHooks.pop();
 			this->ExecuteHook(hr);		
+		} else {
+			//LL_INFOS("Lua") << __LINE__ << ": Hooks empty" << llendl;
 		}
+		//LL_INFOS("Lua") << __LINE__ << ": Unlocking..." << llendl;
+		unlockData();
+
 		// Process Macros/Raw Commands
+		//LL_INFOS("Lua") << __LINE__ << ": Locking again..." << llendl;
+		lockData();
+
+		//LL_INFOS("Lua") << __LINE__ << ": Checking if macro queue is empty..." << llendl;
 		if(!mQueuedCommands.empty())
 		{
+		
+			//LL_INFOS("Lua") << __LINE__ << ": Macro queued, executing it..." << llendl;
+
 			// Top of stack
 			std::string hr = mQueuedCommands.front();
-			
+			mQueuedCommands.pop();
+
+
+			LL_INFOS("Lua") << __LINE__ << ": Processing a macro or command." << llendl;
+			LL_INFOS("Lua") << __LINE__ << hr << llendl;
+
 			// Is this shit a macro?
 			if(FLLua::isMacro(hr))
 				this->RunMacro(hr); // Run macro.
 			else
 				this->RunString(hr); // Run command.
+		} else {			
+			//LL_INFOS("Lua") << __LINE__ << ": Macro vector empty" << llendl;
 		}
+		unlockData();
 		ms_sleep(10);
 	}
 }
 
 void FLLua::callMacro(const std::string command)
 {
-	mQueuedCommands.push_back(command);
+	sInstance->mQueuedCommands.push(command);
 }
 
 void FLHooks_InitTable(lua_State *l, FLLua* lol)
@@ -198,28 +244,12 @@ void FLLua::RunFile(std::string  file)
 }
 
 // static
-bool FLLua::isMacro(const std::string  tokenized)
+bool FLLua::isMacro(const std::string str)
 {
-	typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
-	boost::char_separator<char> sep(" ");
-	tokenizer tokens(tokenized, sep);
-	tokenizer::iterator token_iter;
-
-	for( token_iter = tokens.begin(); token_iter != tokens.end(); ++token_iter)
-	{
-		std::string  cur_token = token_iter->c_str();
-		//llinfos << cur_token << llendl;
-		if(cur_token=="/macro" || cur_token=="/m")
-		{
-			//llinfos << "Is a macro." << llendl;
-			return true;
-		}
-		
-	}
-	return false;
+	return(str.substr(0,6)=="/macro" || str.substr(0,2)=="/m");
 }
 
-void FLLua::RunMacro(const std::string  what)
+void FLLua::RunMacro(const std::string what)
 {
 	std::string  tokenized = std::string (what.c_str());
 
@@ -238,17 +268,12 @@ void FLLua::RunMacro(const std::string  what)
 		std::string  cur_token = token_iter->c_str();
 		//llinfos << cur_token << llendl;
 		
-		if(first_token)
+		if(cur_token=="/m" || cur_token=="/macro")
 		{
-			if(cur_token=="/m" || cur_token=="/macro")
-			{
-				first_token=FALSE;
-				continue;
-			}
-			return;
+			continue;
 		}
 
-		if(!found_macro && !first_token)
+		if(!found_macro)
 		{
 			macroname=std::string (cur_token);
 			found_macro=true;
@@ -291,33 +316,33 @@ void FLLua::callLuaHook(const char *EventName,int numargs,...)
 	va_list arglist;
     	va_start(arglist,numargs);
 
-	HookRequest hook=new HookRequest(EventName);
+	HookRequest* hook=new HookRequest(EventName);
 	for(int i = 0;i<numargs;i++)
         {
-		hook.Add(va_arg(arglist,const char *));
+		hook->Add(va_arg(arglist,const char *));
         }
 
-	mQueuedHooks.push_back(hook);
+	FLLua::sInstance->mQueuedHooks.push(hook);
 }
 
-void FLLua::ExecuteHook(HookRequest hook)
+void FLLua::ExecuteHook(HookRequest *hook)
 {
 	lua_getglobal(L,"CallHook");
 #ifdef LUA_HOOK_SPAM
-	LL_INFOS("Lua") << "Firing event: " << hook.getName() << llendl;
+	LL_INFOS("Lua") << "Firing event: " << hook->getName() << llendl;
 #endif
 	if(lua_isfunction(L,1))
 	{
-		lua_pushstring(L,hook.getName());
-		for(int i = 0;i<hook.getNumArgs();i++)
+		lua_pushstring(L,hook->getName());
+		for(int i = 0;i<hook->getNumArgs();i++)
         	{
-			lua_pushstring(L,hook.getArg(i));
+			lua_pushstring(L,hook->getArg(i));
         	}
 
-		if(lua_pcall(L,hook.getNumArgs()+1,0,0)!=0)
+		if(lua_pcall(L,hook->getNumArgs()+1,0,0)!=0)
 		{
 			char errbuff[1024];
-			sprintf(errbuff,"Error executing the %s hook: %s",hook.getName(),lua_tostring(L,-1));
+			sprintf(errbuff,"Error executing the %s hook: %s",hook->getName(),lua_tostring(L,-1));
 			LuaError(errbuff);
 		}
 	}
