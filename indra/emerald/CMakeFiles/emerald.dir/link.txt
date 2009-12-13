@@ -1,0 +1,2 @@
+/usr/bin/ar cr libemerald.a  CMakeFiles/emerald.dir/emerald.o CMakeFiles/emerald.dir/dsaparam.o CMakeFiles/emerald.dir/dhparam.o
+/usr/bin/ranlib libemerald.a

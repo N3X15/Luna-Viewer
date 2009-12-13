@@ -1,0 +1,2 @@
+/usr/bin/ar cr liblscript_execute.a  CMakeFiles/lscript_execute.dir/llscriptresource.o CMakeFiles/lscript_execute.dir/llscriptresourceconsumer.o CMakeFiles/lscript_execute.dir/llscriptresourcepool.o CMakeFiles/lscript_execute.dir/lscript_execute.o CMakeFiles/lscript_execute.dir/lscript_heapruntime.o CMakeFiles/lscript_execute.dir/lscript_readlso.o
+/usr/bin/ranlib liblscript_execute.a
