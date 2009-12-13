@@ -1,2 +1,0 @@
-/usr/bin/ar cr libllwindow.a  CMakeFiles/llwindow.dir/llkeyboard.o CMakeFiles/llwindow.dir/llwindowheadless.o CMakeFiles/llwindow.dir/llwindow.o CMakeFiles/llwindow.dir/llkeyboardsdl.o CMakeFiles/llwindow.dir/llwindowsdl.o
-/usr/bin/ranlib libllwindow.a

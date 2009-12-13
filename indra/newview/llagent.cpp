@@ -316,6 +316,7 @@ LLAgent::LLAgent() :
 	mAnimationFocusStartGlobal(),
 	mAnimationTimer(),
 	mAnimationDuration(0.33f),
+	
 	mCameraFOVZoomFactor(0.f),
 	mCameraCurrentFOVZoomFactor(0.f),
 	mCameraFocusOffset(),
@@ -323,6 +324,7 @@ LLAgent::LLAgent() :
 
 	mCameraOffsetDefault(),
 	mCameraCollidePlane(),
+
 	mCurrentCameraDistance(2.f),		// meters, set in init()
 	mTargetCameraDistance(2.f),
 	mCameraZoomFraction(1.f),			// deprecated

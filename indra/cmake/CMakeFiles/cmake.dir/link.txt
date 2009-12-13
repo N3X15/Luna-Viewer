@@ -1,2 +1,0 @@
-/usr/bin/ar cr libcmake.a  CMakeFiles/cmake.dir/cmake_dummy.o
-/usr/bin/ranlib libcmake.a

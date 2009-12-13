@@ -1204,7 +1204,7 @@ bool LLAppViewer::mainLoop()
 
 bool LLAppViewer::cleanup()
 {
-	//FLLua::cleanupClass();
+	FLLua::cleanupClass();
 	
 	//----------------------------------------------
 	//this test code will be removed after the test
@@ -1280,8 +1280,8 @@ bool LLAppViewer::cleanup()
 		}
 		else
 		{
-		gAudiop->shutdown();
-	}
+			gAudiop->shutdown();
+		}
 
 		delete gAudiop;
 		gAudiop = NULL;

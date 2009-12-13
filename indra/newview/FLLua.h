@@ -61,6 +61,8 @@ public:
 	~FLLua();
 
 	static void init();
+	static void cleanupClass();
+
 	static FLLua* getInstance();
 
 	static void callLuaHook(const char *EventName,int numargs,...);
@@ -70,6 +72,9 @@ public:
 	void RunFile(std::string file);
 	static bool isMacro(const std::string what);
 	static void callMacro(const std::string cmd);
+
+	// Is shit broken?
+	bool mError;
 private:
 	void RunMacro(const std::string what);
 	
@@ -79,6 +84,7 @@ private:
 	// Queued hooks
 	std::queue<HookRequest*> mQueuedHooks;
 	std::queue<std::string> mQueuedCommands;
+
 
 	void ExecuteHook(HookRequest *hook);
 };

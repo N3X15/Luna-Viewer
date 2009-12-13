@@ -1,2 +1,0 @@
-/usr/bin/ar cr libllimagej2coj.a  CMakeFiles/llimagej2coj.dir/llimagej2coj.o
-/usr/bin/ranlib libllimagej2coj.a

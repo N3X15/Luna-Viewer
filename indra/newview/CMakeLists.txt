@@ -39,7 +39,6 @@ include(UnixInstall)
 include(LLKDU)
 include(Emerald)
 include(LUA)
-#include(SilverLining)
 include(ViewerMiscLibs)
 
 #FIND_PACKAGE(SWIG REQUIRED)
@@ -83,8 +82,6 @@ include_directories(
     ${LSCRIPT_INCLUDE_DIRS}
     ${LSCRIPT_INCLUDE_DIRS}/lscript_compile
     ${EMERALD_INCLUDE_DIRS}
-    ${CG_INCLUDE_PATH}
-    ${GLUT_INCLUDE_DIR}
 )
 
 if (WINDOWS)
@@ -528,8 +525,6 @@ set(viewer_SOURCE_FILES
     otr_wrapper.cpp
     otr_floater_smp_dialog.cpp
     otr_floater_smp_progress.cpp
-    VolumeClouds.cpp
-    flsky.cpp
     greenlife_utility_stream.cpp
     wlfPanel_AdvSettings.cpp
     )
@@ -994,10 +989,6 @@ set(viewer_HEADER_FILES
     otr_wrapper.h
     otr_floater_smp_dialog.h
     otr_floater_smp_progress.h
-    Color.h
-    Vector.h
-    VolumeClouds.h
-    flsky.h
     greenlife_utility_stream.h
     wlfPanel_AdvSettings.h
     )
@@ -1455,10 +1446,6 @@ target_link_libraries(${VIEWER_BINARY_NAME}
     ${EMERALD_LIBRARIES}
     ${LUA_LIBRARY}
     ${OTR_LIBRARY}
-    #${SILVERLINING_LIBRARY}
-    ${CG_GL_LIBRARY}
-    ${CG_LIBRARY}
-    ${GLUT_LIBRARIES}
     )
 endif (WINDOWS)
 

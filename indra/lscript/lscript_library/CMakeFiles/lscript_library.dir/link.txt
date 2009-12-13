@@ -1,2 +1,0 @@
-/usr/bin/ar cr liblscript_library.a  CMakeFiles/lscript_library.dir/lscript_alloc.o CMakeFiles/lscript_library.dir/lscript_export.o CMakeFiles/lscript_library.dir/lscript_library.o
-/usr/bin/ranlib liblscript_library.a

@@ -1,2 +1,0 @@
-/usr/bin/ar cr libllimage.a  CMakeFiles/llimage.dir/llimagebmp.o CMakeFiles/llimage.dir/llimage.o CMakeFiles/llimage.dir/llimagedxt.o CMakeFiles/llimage.dir/llimagej2c.o CMakeFiles/llimage.dir/llimagejpeg.o CMakeFiles/llimage.dir/llimagepng.o CMakeFiles/llimage.dir/llimagetga.o CMakeFiles/llimage.dir/llimageworker.o CMakeFiles/llimage.dir/llpngwrapper.o
-/usr/bin/ranlib libllimage.a

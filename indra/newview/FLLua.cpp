@@ -113,6 +113,12 @@ void FLLua::init()
 	LL_INFOS("Lua") << "Lua started." << llendl;
 }
 
+// static
+void FLLua::cleanupClass()
+{
+	sInstance=0;
+}
+
 /// Run the interpreter.
 void FLLua::run()
 {
@@ -120,7 +126,7 @@ void FLLua::run()
 	L = lua_open();
 
 	LL_INFOS("Lua") << __LINE__ << ": Skipping lua_atpanic" << llendl;
-	//lua_atpanic(L, luaOnPanic);
+	lua_atpanic(L, luaOnPanic);
 
 
 	LL_INFOS("Lua") << __LINE__ << ": Loading standard Lua libs" << llendl;
@@ -162,27 +168,31 @@ void FLLua::run()
 		//LL_INFOS("Lua") << __LINE__ << ": Checking if hooks are empty" << llendl;
 		if(!mQueuedHooks.empty())
 		{
-			//LL_INFOS("Lua") << __LINE__ << ": Hooks not empty" << llendl;
+			LL_INFOS("Lua") << __LINE__ << ": Hooks not empty" << llendl;
+
 			// Peek at the top of the stack
 			HookRequest *hr = NULL;
 			hr = mQueuedHooks.front();
 			mQueuedHooks.pop();
 			this->ExecuteHook(hr);		
 		} else {
-			//LL_INFOS("Lua") << __LINE__ << ": Hooks empty" << llendl;
+			LL_INFOS("Lua") << __LINE__ << ": Hooks empty" << llendl;
 		}
-		//LL_INFOS("Lua") << __LINE__ << ": Unlocking..." << llendl;
+		LL_INFOS("Lua") << __LINE__ << ": Unlocking..." << llendl;
 		unlockData();
 
+		if(mError)
+			return;
+
 		// Process Macros/Raw Commands
-		//LL_INFOS("Lua") << __LINE__ << ": Locking again..." << llendl;
+		LL_INFOS("Lua") << __LINE__ << ": Locking again..." << llendl;
 		lockData();
 
-		//LL_INFOS("Lua") << __LINE__ << ": Checking if macro queue is empty..." << llendl;
+		LL_INFOS("Lua") << __LINE__ << ": Checking if macro queue is empty..." << llendl;
 		if(!mQueuedCommands.empty())
 		{
 		
-			//LL_INFOS("Lua") << __LINE__ << ": Macro queued, executing it..." << llendl;
+			LL_INFOS("Lua") << __LINE__ << ": Macro queued, executing it..." << llendl;
 
 			// Top of stack
 			std::string hr = mQueuedCommands.front();
@@ -201,12 +211,18 @@ void FLLua::run()
 			//LL_INFOS("Lua") << __LINE__ << ": Macro vector empty" << llendl;
 		}
 		unlockData();
+		if(mError)
+			return;
 		ms_sleep(10);
 	}
+	LL_INFOS("Lua") << __LINE__ << ": *** THREAD EXITING ***" << llendl;
 }
 
 void FLLua::callMacro(const std::string command)
 {
+	if(sInstance->mError)
+		FLLua::init();
+
 	sInstance->mQueuedCommands.push(command);
 }
 
@@ -240,6 +256,8 @@ void FLLua::RunFile(std::string  file)
 		LuaError(file.c_str());
 		LuaError(errmsg.c_str());
 		LuaError("Aborting.");
+	
+		mError=true;
 	}
 }
 
@@ -313,6 +331,9 @@ void FLLua::RunMacro(const std::string what)
 // Static
 void FLLua::callLuaHook(const char *EventName,int numargs,...)
 {
+	if(sInstance->mError)
+		FLLua::init();
+
 	va_list arglist;
     	va_start(arglist,numargs);
 
@@ -421,7 +442,7 @@ void Lua_PushClass(lua_State* l, const char* classname)
 
 int luaOnPanic(lua_State *L)
 {	
-	throw std::runtime_error("Lua Error: "+Lua_getErrorMessage(L));
+	LuaError("Lua Error: "+Lua_getErrorMessage(L));
 	return 0;
 }
 

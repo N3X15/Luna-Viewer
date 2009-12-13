@@ -1860,7 +1860,7 @@ void LLVoiceClient::stateMachine()
 					}
 					else
 					{
-						LL_WARNS("Voice") << "region doesn't have ProvisionVoiceAccountRequest capability!" << LL_ENDL;
+						// LL_WARNS("Voice") << "region doesn't have ProvisionVoiceAccountRequest capability!" << LL_ENDL; // opensim log spam x.x
 					}
 				}
 			}

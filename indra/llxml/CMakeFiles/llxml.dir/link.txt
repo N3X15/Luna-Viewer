@@ -1,2 +1,0 @@
-/usr/bin/ar cr libllxml.a  CMakeFiles/llxml.dir/llcontrol.o CMakeFiles/llxml.dir/llxmlnode.o CMakeFiles/llxml.dir/llxmlparser.o CMakeFiles/llxml.dir/llxmltree.o
-/usr/bin/ranlib libllxml.a
