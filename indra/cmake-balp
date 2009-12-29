@@ -1,0 +1,130 @@
+#!/bin/bash
+
+# cmake-Emerald v1.1 (c)2009 Anders Arnholm. Released under GPL license v2:
+# cmake-SnowGlobe v1.1 (c)2009 Anders Arnholm. Released under GPL license v2:
+# cmake-SL v1.31 (c)2008-2009 Henri Beauchamp. Released under GPL license v2:
+# http://www.gnu.org/licenses/gpl.txt
+
+if [ "$LOCAL_DIR" = "" ]; then
+    LOCAL_DIR="snowglobe-$BRANCH"
+fi
+PATH_TO_SOURCES="$BASE_PATH/$LOCAL_DIR"
+PATH_TO_ARCHIVES="$BASE_PATH/balp-build"
+
+# Where to store temporary files:
+TEMP_DIR="/var/tmp/$USER"
+SVN_VERSION=`../scripts/svnversion.py`
+SVN_BRANCH=`../scripts/svnbranch.py`
+USE_SYSTEM_GTK="no"
+USE_SYSTEM_SDL="no"
+USE_SYSTEM_SSL="no"
+# Beware: libdb4 makes use of libapr, libapr makes use of libexpat and
+# libxmlrc-epi makes use of libexpat... so you should keep USE_SYSTEM_APR,
+# USE_SYSTEM_DB4, USE_SYSTEM_EXPAT and USE_SYSTEM_XMLRPC in sync.
+USE_SYSTEM_APR="no"
+USE_SYSTEM_EXPAT="no"
+USE_SYSTEM_XMLRPC="no"
+# Note: you may specify a version number (example: 4.6) instead of "yes"
+# in USE_SYSTEM_DB4 (by default the cmake scripts will attempt to link
+# against DB4.2 only and would fail when set to "yes" if this is not the
+# version installed on your system.
+USE_SYSTEM_DB4="no"
+# You should keep the USE_SYSTEM_CARES setting in sync with the USE_SYSTEM_CURL
+# setting further below...
+USE_SYSTEM_CARES="no"
+# If your system libcurl does not use c-ares (non-blocking DNS calls), better
+# using LL's provided library...
+USE_SYSTEM_CURL="no"
+USE_SYSTEM_OGG="no"
+USE_SYSTEM_ZLIB="no"
+USE_SYSTEM_UUID="no"
+USE_SYSTEM_VORBIS="no"
+USE_SYSTEM_JPEGLIB="no"
+USE_SYSTEM_PERFTOOLS="no"
+USE_SYSTEM_ELFIO="no"
+# When compiling against anything newer than glibc v2.4, do use "yes" here:
+USE_SYSTEM_LIBSTDC="no"
+
+# You may add tune flags here, to optimize the code for your processor.
+# Example, for an Athlon XP:
+# TUNE_FLAGS="-march=athlon-xp"
+TUNE_FLAGS="-fomit-frame-pointer -frename-registers -ftree-vectorize -fweb -fexpensive-optimizations -march=i686 -msse -mfpmath=sse"
+# Set this to "yes" to force vectorization use in the viewer code (only for
+# processors with SSE or Altivec units, and only if you did enable them via
+# the TUNE_FLAGS.
+FORCE_VECTORIZE="yes"
+
+# When using gcc v4.3 or later, you might have to set this to yes...
+ALLOW_WARNINGS="yes"
+
+########### functions definitions ###########
+
+function check() {
+    if [ "$1" != "no" ] ; then
+        if [ -f $2 ] ; then
+            echo "Using the system $3..."
+            return 0
+        else
+            echo "WARNING: system $3 requested but not available..."
+        fi
+    fi
+    return 1
+}
+
+function update_manifest() {
+    grep -v $1 $PATH_TO_SOURCES/indra/newview/viewer_manifest.py >$TEMP_DIR/viewer_manifest.py
+    mv -f $TEMP_DIR/viewer_manifest.py $PATH_TO_SOURCES/indra/newview/viewer_manifest.py
+    chmod +x $PATH_TO_SOURCES/indra/newview/viewer_manifest.py
+}
+
+function compile() {
+    echo "Compiling the client into $TEMP_DIR..."
+    ./develop.py --type=Release build
+}
+
+########### end of functions ###########
+
+if [ "$TEMP_DIR" == "" ] ; then
+    export TEMP_DIR="/usr/tmp/$USER"
+fi
+
+# Check to see if we simply want to retry a compilation:
+if [ "$recompile" == "1" ]; then
+    compile
+    exit $?
+fi
+
+if [ ! -d $BASE_PATH ]; then
+    echo "BASE_PATH ($BASE_PATH) need to be a directory."
+    exit 1
+fi
+# Make sure we don't unpack over an old source tree:
+#echo "Clean up"
+#if [ -d linden ] ; then
+#    rm -rf linden/
+#fi
+#
+#if [ -d $PATH_TO_SOURCES ] && [ "$PATH_TO_SOURCES" != "" ] && [ "$PATH_TO_SOURCES" != "/" ] && [ "$PATH_TO_SOURCES" != "." ] && [ "$PATH_TO_SOURCES" != ".." ] && [ "$PATH_TO_SOURCES" != "$HOME" ] ; then
+#    rm -rf $PATH_TO_SOURCES/
+#fi
+
+# Do a clean build
+#./develop.py clean
+
+# Force the vectorization use if we chose so.
+if [ "$FORCE_VECTORIZE" == "yes" ] ; then
+    TUNE_FLAGS="$TUNE_FLAGS -DLL_VECTORIZE=1"
+fi
+if [ "$ALLOW_WARNINGS" == "yes" ] ; then
+    FATAL_WARNINGS="-DGCC_DISABLE_FATAL_WARNINGS:BOOL=TRUE"
+else
+    FATAL_WARNINGS=""
+fi
+VERSION_FLAGS="-DEMERALD_SVN_VERSION=$SVN_VERSION -DEMERALD_BRANCH=$SVN_BRANCH"
+# Configure the sources and download the LL provided libraries:
+./develop.py --type=Release  configure "$FATAL_WARNINGS" \
+    -DCMAKE_C_FLAGS:STRING="-O2 $TUNE_FLAGS $VERSION_FLAGS" -DCMAKE_CXX_FLAGS:STRING="-O2 $TUNE_FLAGS $VERSION_FLAGS" \
+    -DCMAKE_C_FLAGS_RELEASE:STRING="-O2 $TUNE_FLAGS $VERSION_FLAGS" -DCMAKE_CXX_FLAGS_RELEASE:STRING="-O2 $TUNE_FLAGS $VERSION_FLAGS" \
+    -DCMAKE_C_FLAGS_RELWITHDEBINFO:STRING="-g -O2 $TUNE_FLAGS $VERSION_FLAGS" -DCMAKE_CXX_FLAGS_RELWITHDEBINFO:STRING="-g -O2 $TUNE_FLAGS $VERSION_FLAGS"
+
+compile

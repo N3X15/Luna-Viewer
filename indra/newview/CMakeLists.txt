@@ -1463,7 +1463,7 @@ if (LINUX)
       DEPENDS ${VIEWER_BINARY_NAME}
       )
 
-  set(product FlexLife-${ARCH}-${viewer_VERSION}-SWIG)
+  set(product FlexLife-${ARCH}-${viewer_VERSION})
 
   add_custom_command(
       OUTPUT ${product}.tar.bz2

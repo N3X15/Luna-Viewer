@@ -142,8 +142,7 @@ if (LINUX)
       -fsigned-char
       -g
       -pthread
-      -DLINUX 
-      -DGLUT_DISABLE_ATEXIT_HACK
+      -DLINUX
       )
   #if (COMPILE_OTR)
     add_definitions(
@@ -193,7 +192,7 @@ if (LINUX)
   endif (VIEWER)
 
   set(CMAKE_CXX_FLAGS_DEBUG "-fno-inline ${CMAKE_CXX_FLAGS_DEBUG}")
-  set(CMAKE_CXX_FLAGS_RELEASE "-O2 ${CMAKE_CXX_FLAGS_RELEASE}")
+  set(CMAKE_CXX_FLAGS_RELEASE "-O3 ${CMAKE_CXX_FLAGS_RELEASE}")
 endif (LINUX)
 
 

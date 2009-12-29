@@ -1,0 +1,8 @@
+FlexLife Contributors
+	Wiki coming soon so you can understand the impact of these contributions and further worship these poor souls.
+
+Fred Rookstown (N3X15)
+	Pretty much everything that's currently broken.
+
+Shyotl Kuhr
+	[NO BUGZILLA] Fixing the Lua engine because Fred's retarded.
