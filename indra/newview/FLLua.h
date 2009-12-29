@@ -26,6 +26,7 @@
 #include <string>
 #include <queue>
 #include <vector>
+#include <sstream>
 
 extern "C" {
 	#include "lua/lua.h"
@@ -38,13 +39,17 @@ extern "C" {
 #include "message.h"
 #include "llviewerimage.h"
 
-class HookRequest
+class HookRequest : public std::iostream
 {
 public:
-	HookRequest(const char *Name);
+	void Send();
 
-	void Add(const char *arg);
-	
+	HookRequest& operator<<(int in);
+	HookRequest& operator<<(float in);
+	HookRequest& operator<<(std::string &in);
+	HookRequest& operator<<(const char *in);
+	HookRequest& operator<<(LLUUID &fullid);
+
 	const char* getName(){ return mName; }
 	const char* getArg(unsigned idx){ return mArgs[idx]; }
 	int getNumArgs(){ return mArgs.size(); };
