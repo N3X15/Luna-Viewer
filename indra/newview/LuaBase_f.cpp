@@ -1,4 +1,5 @@
 #include "llviewerprecompiledheaders.h"
+
 #include "LuaBase_f.h"
 
 #include <sstream>
@@ -15,6 +16,8 @@
 #include "llviewerstats.h"
 #include "llviewerobjectlist.h"
 #include "llviewerregion.h"
+#include "llurldispatcher.h"
+#include "flexconsole.h"
 
 //#include <direct.h>
 #include <errno.h>
@@ -31,6 +34,7 @@ void LuaSendChat(const char *msg,bool IsDebug)
 	dongs.mSourceType=CHAT_SOURCE_LUA;
 	if(IsDebug) dongs.mChatType=CHAT_TYPE_DEBUG_MSG;
 	LLFloaterChat::addChat(dongs);
+	LLFloaterLuaConsole::addOutput(mesg,false); //no debug exception yet.
 }
 
 void LuaPrint(const char *msg)
@@ -59,6 +63,11 @@ void LuaWhisper(const char* msg, const char* channel)
 void LuaTouch(const char* uuid)
 {
 	LLViewerObject* object = gObjectList.findObject(LLUUID(uuid));
+	if(!object)
+	{
+		LuaError("No Object Found");
+		return;
+	}
 	LLMessageSystem *msg = gMessageSystem;
 
 	msg->newMessageFast(_PREHASH_ObjectGrab);
@@ -178,6 +187,7 @@ void LuaError(const char* rawmsg)
 	err.mSourceType=CHAT_SOURCE_LUA;
 	err.mChatType=CHAT_TYPE_ERROR;
 	LLFloaterChat::addChat(err);
+	LLFloaterLuaConsole::addOutput(msg,true);
 }
 
 const char* LuaGetCWD()
@@ -199,6 +209,11 @@ LLViewerRegion* LuaRegionFromName(const char *msg)
 {
 	std::string simname(msg);
 	LLSimInfo *sim=LLWorldMap::getInstance()->simInfoFromName(simname);
+	if(!sim)
+	{
+		LuaError("Sim Not Found");
+		return NULL;
+	}
 	return LLWorld::getInstance()->getRegionFromHandle(sim->mHandle);
 }
 
@@ -209,10 +224,12 @@ LLViewerRegion* LuaGetCurrentRegion()
 
 void Lua_tp(const char* SimName, int x, int y, int z)
 {
-	std::string simname(SimName);
-	LLVector3 pl(x,y,z);
-	LLSimInfo *si=LLWorldMap::getInstance()->simInfoFromName(simname);
-	gAgent.teleportRequest(si->mHandle,pl);
+	std::string name(SimName);
+	std::transform(name.begin(), name.end(), name.begin(), tolower);
+	if(name == "home")
+		gAgent.teleportViaLandmark(LLUUID::null);
+	else
+		LLURLDispatcher::dispatchFromTextEditor(llformat("secondlife:///app/teleport/%s/%d/%d/%d",SimName,x,y,z));
 }
 
 bool Lua_exists(const char* Filename)

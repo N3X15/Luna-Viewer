@@ -25,7 +25,10 @@ public:
         static bool isVisible() { if(sInstance) return (sInstance->getVisible() != FALSE); return false; }
         static void toggle(void*);
 
+		static void addOutput(std::string output, bool error);
+
 private:
+		static void	onInputEditorGainFocus(LLFocusableElement* caller,void* userdata);
         static void onClickSend(void*);
         static void onClickClear(void*);
         static void onClickAbort(void*);

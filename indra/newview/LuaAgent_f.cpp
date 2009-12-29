@@ -1,5 +1,6 @@
 #include "llviewerprecompiledheaders.h"
 
+#include "LuaBase_f.h"
 #include "LuaAgent_f.h"
 
 #include "llviewerobjectlist.h"
@@ -47,6 +48,11 @@ std::string  LuaFindAvatarName(const char* uuid)
 {
 	std::string  name;
 	LLUUID id(uuid);
+	if(!gCacheName)
+	{
+		LuaError("gCacheName is NULL");
+		return "";
+	}
 	gCacheName->getFullName(id,name);
 	return name;
 }
@@ -55,6 +61,11 @@ std::string  LuaFindAvatarKey(const char* fullname)
 {
 	std::string  name(fullname);
 	LLVOAvatar *av=gObjectList.findAvatar(name);
+	if(!av)
+	{
+		LuaError("No Avatar Found");
+		return "";
+	}
 	return av->getID().asString();
 }
 

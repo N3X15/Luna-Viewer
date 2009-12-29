@@ -45,7 +45,6 @@ import commands
 class CommandError(Exception):
     pass
 
-
 def mkdir(path):
     try:
         os.mkdir(path)
@@ -473,6 +472,12 @@ class WindowsSetup(PlatformSetup):
         super(WindowsSetup, self).__init__()
         self._generator = None
         self.incredibuild = False
+        import struct
+        if struct.calcsize("P") > 4:        
+        	print "AMD64 Python executable detected. Redirecting registry lookup"
+        	self.wow64path = 'WOW6432node\\'
+        else:
+        	self.wow64path = ''
 
     def _get_generator(self):
         if self._generator is None:
@@ -527,8 +532,8 @@ class WindowsSetup(PlatformSetup):
         gen = gen.lower()
         try:
             import _winreg
-            key_str = (r'SOFTWARE\Microsoft\VisualStudio\%s\Setup\VS' %
-                       self.gens[gen]['ver'])
+            key_str = (r'SOFTWARE\%sMicrosoft\VisualStudio\%s\Setup\VS' %
+                       (self.wow64path,self.gens[gen]['ver']))
             value_str = (r'EnvironmentDirectory')
             print ('Reading VS environment from HKEY_LOCAL_MACHINE\%s\%s' %
                    (key_str, value_str))
@@ -542,15 +547,15 @@ class WindowsSetup(PlatformSetup):
         except WindowsError, err:
             print >> sys.stderr, "Didn't find ", self.gens[gen]['gen']
             return ''
-
+        
     def find_visual_studio_express(self, gen=None):
         if gen is None:
             gen = self._generator
         gen = gen.lower()
         try:
             import _winreg
-            key_str = (r'SOFTWARE\Microsoft\VCEXpress\%s\Setup\VC' %
-                       self.gens[gen]['ver'])
+            key_str = (r'SOFTWARE\%sMicrosoft\VCEXpress\%s\Setup\VC' %
+                       (self.wow64path,self.gens[gen]['ver']))
             value_str = (r'ProductDir')
             print ('Reading VS environment from HKEY_LOCAL_MACHINE\%s\%s' %
                    (key_str, value_str))

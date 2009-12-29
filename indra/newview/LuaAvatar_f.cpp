@@ -1,6 +1,8 @@
 #include "llviewerprecompiledheaders.h"
-#include "LuaAvatar_f.h"
+
 #include "LuaBase_f.h"
+#include "LuaAvatar_f.h"
+
 #include "llagent.h"
 #include "llvoavatar.h"
 #include "llviewerobjectlist.h"
@@ -96,6 +98,13 @@ double getParamDefaultWeight(const char* avid,const char* paramname)
 	}
 	LLVOAvatar *av=(LLVOAvatar *)o;
 	LLVisualParam *p=av->getVisualParam(paramname);
+	if(!p)
+	{
+		std::string out("Invalid visual parameter: ");
+		out.append(paramname);
+		LuaError(out.c_str());
+		return 0;
+	}
 	return (double)p->getDefaultWeight();
 }
 
@@ -110,6 +119,13 @@ double getParamCurrentWeight(const char* avid,const char* paramname)
 	}
 	LLVOAvatar *av=(LLVOAvatar *)o;
 	LLVisualParam *p=av->getVisualParam(paramname);
+	if(!p)
+	{
+		std::string out("Invalid visual parameter: ");
+		out.append(paramname);
+		LuaError(out.c_str());
+		return 0;
+	}
 	return (double)p->getCurrentWeight();
 }
 
@@ -124,6 +140,13 @@ double getParamMax(const char* avid,const char* paramname)
 	}
 	LLVOAvatar *av=(LLVOAvatar *)o;
 	LLVisualParam *p=av->getVisualParam(paramname);
+	if(!p)
+	{
+		std::string out("Invalid visual parameter: ");
+		out.append(paramname);
+		LuaError(out.c_str());
+		return 0;
+	}
 	return (double)p->getMaxWeight();
 }
 
@@ -138,6 +161,13 @@ double getParamMin(const char* avid,const char* paramname)
 	}
 	LLVOAvatar *av=(LLVOAvatar *)o;
 	LLVisualParam *p=av->getVisualParam(paramname);
+	if(!p)
+	{
+		std::string out("Invalid visual parameter: ");
+		out.append(paramname);
+		LuaError(out.c_str());
+		return 0;
+	}
 	return (double)p->getMinWeight();
 }
 
@@ -148,7 +178,19 @@ double getParamMin(const char* avid,const char* paramname)
 void setParamOnSelf(const char* paramname,double weight)
 {
 	LLVOAvatar *me=gAgent.getAvatarObject();
+	if(!me)
+	{
+		LuaError("No Agent Avatar");
+		return;
+	}
 	LLVisualParam *p=me->getVisualParam(paramname);
+	if(!p)
+	{
+		std::string out("Invalid visual parameter: ");
+		out.append(paramname);
+		LuaError(out.c_str());
+		return;
+	}
 	p->setWeight((F32)weight,FALSE);
 	me->setVisualParamWeight(p,p->getCurrentWeight());
 	gAgent.setAvatarObject(me);
@@ -157,8 +199,17 @@ void setParamOnSelf(const char* paramname,double weight)
 void LuaWear(const char* assetid)
 {
 	LLWearable *wear=LuaLoadWearable(assetid);
-	
+	if(!wear)
+	{
+		LuaError("No Wearable found");
+		return;
+	}
 	LLWearable *newwear=gWearableList.createCopy(wear);
+	if(!wear)
+	{
+		LuaError("Failed creation of new wearable");
+		return;
+	}
 	newwear->saveNewAsset();
 	newwear->writeToAvatar(false);
 }
@@ -170,6 +221,8 @@ void LuaRemoveAllWearables()
 
 bool LuaSaveWearable(LLWearable *w)
 {
+	if(!w)
+		return false;
 	//Buffer to hold the char[] version of the LLUUID
 	char new_asset_id_string[UUID_STR_LENGTH];
 
@@ -259,6 +312,11 @@ LLWearable * LuaLoadWearable(const char* uuid)
 void LuaSetTEImage(int index,const char *UUID)
 {
 	LLVOAvatar *a=gAgent.getAvatarObject();
+	if(!a)
+	{
+		LuaError("No Agent Avatar");
+		return;
+	}
 	LLUUID imid;
 	imid.set(UUID);
 	a->setTEImage((U8)index,new LLViewerImage(imid));

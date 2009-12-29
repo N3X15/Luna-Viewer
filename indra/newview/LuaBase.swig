@@ -25,6 +25,7 @@
 %module SL
 %{
 #include "llviewerprecompiledheaders.h"
+
 #include "stdtypes.h"
 //#include "SLua.h"
 #include "llfloater.h"
@@ -41,6 +42,8 @@
 #include "llagent.h"
 #include "llselectmgr.h"
 %}
+
+%include <std_string.i>
 
 %import "../llcommon/stdtypes.h"
 %import "../llprimitive/llprimitive.h"
@@ -89,4 +92,3 @@
 
 extern bool gAllowWorldMap;
 extern LLAgent *gAgent;
-

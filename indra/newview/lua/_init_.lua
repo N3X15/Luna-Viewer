@@ -81,6 +81,20 @@ function string.ends(String,End)
    return End=='' or string.sub(String,-string.len(End))==End
 end
 
+--Easily check contents of _G and SL
+function DumpTable(tbl)
+      for n,v in pairs(tbl) do
+              print (n,v)
+      end
+end
+
+--Override print.
+function print(str)
+      --Need to decide if this goes to chat or if we need to
+      --create a seprate function for that.
+     SL.print(str) --Always prints to chat. Do we want this?
+end
+
 ----------------------------------------------------------------------------------
 --                                 Load libs                                    --
 ----------------------------------------------------------------------------------

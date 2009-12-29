@@ -7,6 +7,7 @@
          bottom="-122" embedded_items="false" enabled="false"
          follows="left|top|right|bottom" font="SansSerif" height="80" left="5"
          max_length="2147483647" mouse_opaque="true" name="Lua Output Editor"
+		 track_bottom="true"
          text_color="ChatHistoryTextColor"
          text_readonly_color="ChatHistoryTextColor" width="415" word_wrap="true" />
     <button bottom="-38" follows="left|top" height="20" label="Clear" left="5"

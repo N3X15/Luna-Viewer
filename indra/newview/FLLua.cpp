@@ -29,6 +29,7 @@
 *  - sInstance=FLLua() (THREAD,INTERPRETER)
 */
 #include "llviewerprecompiledheaders.h"
+
 #include <vector>
 #include <queue>
 #include <boost/tokenizer.hpp>
@@ -57,7 +58,7 @@ extern "C" {
 #include "llrender.h"
 #include "llglheaders.h"
 #include "llversionviewer.h"
-
+#include <sstream>
 
 /* Lua classes */
 #include "LuaBase.h"
@@ -75,28 +76,69 @@ extern int luaopen_SL(lua_State* L); // declare the wrapped module
 // Hook Request 
 ///////////////////////////////////////////////
 
-HookRequest::HookRequest(const char *name)
+void HookRequest::Send()
 {
-	mName=name;
+	FLLua::callLuaHook(this);
 }
-
-void HookRequest::Add(const char *arg)
+HookRequest& HookRequest::operator<<(int in)
 {
-	mArgs.push_back(arg);
+	std::ostringstream out;
+	out << in;
+	mArgs.push_back(out.str());
+	return *this;
+}
+HookRequest& HookRequest::operator<<(float in)
+{
+	std::ostringstream out;
+	out << in;
+	mArgs.push_back(out.str());
+	return *this;
+}
+HookRequest& HookRequest::operator<<(std::string &in)
+{
+	mArgs.push_back(in);
+	return *this;
+}
+HookRequest& HookRequest::operator<<(const char *in)
+{
+	mArgs.push_back(in);
+	return *this;
+}
+HookRequest& HookRequest::operator<<(LLUUID &fullid)
+{
+	mArgs.push_back(fullid.asString());
+	return *this;
 }
 
 
 ///////////////////////////////////////////////
 // Lua Interpreter
 ///////////////////////////////////////////////
-FLLua::FLLua() :
-	LLThread("Lua")
+FLLua* FLLua::sInstance = NULL;
+
+FLLua::FLLua() : 
+	LLThread("Lua"), 
+	mError(false),
+	pLuaStack(NULL),
+	listening(false)
 {
 	// Do nothing.
 }
+FLLua::~FLLua()
+{
+	while(!mQueuedHooks.empty()) //these hooks are dynamically allocated. We must delete.
+	{
+		delete mQueuedHooks.front();
+		mQueuedHooks.pop();
+	}
+	if(pLuaStack)
+		lua_close(pLuaStack);
+	pLuaStack=NULL;
+	if(sInstance==this)//Just incase
+		sInstance=NULL;
+}
 
-FLLua* FLLua::sInstance = NULL;
-// static
+// Static
 FLLua* FLLua::getInstance()
 {
 	LL_WARNS("Lua") << "Lua interpreter should not be directly accessed!" << llendl;
@@ -104,151 +146,186 @@ FLLua* FLLua::getInstance()
 }
 
 // Static
-void FLLua::init()
+bool FLLua::init()
 {
 	LL_INFOS("Lua") << "Starting Lua..." << llendl;
+	cleanupClass();
 	sInstance=new FLLua();
+	if(!sInstance->load())
+	{
+		LL_INFOS("Lua") << "Failed to load Lua." << llendl;
+		cleanupClass();
+		return false;
+	}
 	sInstance->start();
-	FLLua::callLuaHook("OnLuaInit",0);
 	LL_INFOS("Lua") << "Lua started." << llendl;
+	LUA_CALL0("OnLuaInit");
+	return true;
 }
 
-// static
+// Static
 void FLLua::cleanupClass()
 {
-	sInstance=0;
+	if(sInstance)
+	{
+		delete sInstance;
+		sInstance=NULL;
+	}
 }
+// Static
+bool FLLua::isMacro(const std::string &str)
+{
+	return(str.substr(0,6)=="/macro" || str.substr(0,2)=="/m");
+}
+// Static
+void FLLua::callMacro(const std::string &command)
+{
+	if(!sInstance || (sInstance->mError && !FLLua::init()))
+		return;
 
-/// Run the interpreter.
-void FLLua::run()
+	sInstance->lockData();
+	sInstance->mQueuedCommands.push(command);
+	sInstance->unlockData();
+}
+//Static
+void FLLua::RunString(std::string s)
+{
+	if(!sInstance || (sInstance->mError && !FLLua::init()))
+		return;
+
+	if(luaL_dostring(sInstance->pLuaStack,s.c_str()))
+	{
+		LL_INFOS("Lua") << "Run string(" << s << ") failed with" << Lua_getErrorMessage(sInstance->pLuaStack) << llendl;
+		LuaError(Lua_getErrorMessage(sInstance->pLuaStack).c_str());
+	}
+}
+//Attempt to bind with Lua
+bool FLLua::load()
 {
 	LL_INFOS("Lua") << "Thread initializing." << llendl;
-	L = lua_open();
+	pLuaStack = lua_open();
+	if(!pLuaStack)
+	{
+		LL_INFOS("Lua") << __LINE__ << ": Failed lua_open" << llendl;
+		LuaError("lua_open() Failed");
+		return false;
+	}
 
 	LL_INFOS("Lua") << __LINE__ << ": Skipping lua_atpanic" << llendl;
-	lua_atpanic(L, luaOnPanic);
-
+	lua_atpanic(pLuaStack, luaOnPanic);
 
 	LL_INFOS("Lua") << __LINE__ << ": Loading standard Lua libs" << llendl;
-	luaL_openlibs(L);
-
+	luaL_openlibs(pLuaStack);
 
 	LL_INFOS("Lua") << __LINE__ << ": *** LOADING SWIG BINDINGS ***" << llendl;
-	luaopen_SL(L);
+	luaopen_SL(pLuaStack);
 
 	std::string  version; 
 
 	LL_INFOS("Lua") << __LINE__ << ": Assigning _SLUA_VERSION" << llendl;
 	// Assign _SLUA_VERSION, which contains the version number of the host viewer.
 	version = llformat("_SLUA_VERSION=\"%d.%d.%d.%d\"",LL_VERSION_MAJOR,LL_VERSION_MINOR,LL_VERSION_PATCH,LL_VERSION_BUILD);
-	luaL_dostring(L, version.c_str());
-
+	if(luaL_dostring(pLuaStack, version.c_str()))
+	{
+		LuaError(Lua_getErrorMessage(pLuaStack).c_str());
+		return false;
+	}
 
 	LL_INFOS("Lua") << __LINE__ << ": Assigning _SLUA_CHANNEL" << llendl;	
-	// Assign _SLUA_CHANNEL, which contains the channel name of the host client.
+	// Assign _SLUA_CHANNEpLuaStack, which contains the channel name of the host client.
 	version = llformat("_SLUA_CHANNEL=\"%s\"",LL_CHANNEL);
-	luaL_dostring(L, version.c_str());
-
+	if(luaL_dostring(pLuaStack, version.c_str()))
+	{
+		LuaError(Lua_getErrorMessage(pLuaStack).c_str());
+		return false;
+	}
 
 	LL_INFOS("Lua") << __LINE__ << ": Runfile (_init_.lua)" << llendl;
 	RunFile(gDirUtilp->getExpandedFilename(FL_PATH_LUA,"_init_.lua"));
-
+	if(mError)
+		return false;
 #if 0
 	RunFile(gDirUtilp->getExpandedFilename(FL_PATH_MACROS,"unit_tests.lua"));
+	if(mError)
+		return false;
 #endif
-
-
+	return true;
+}
+/// Run the interpreter.
+void FLLua::run()
+{
 	LL_INFOS("Lua") << __LINE__ << ": *** THREAD LOOP STARTS HERE ***" << llendl;
 	while(1)
 	{
+		if (!pLuaStack || LLApp::isError() || LLApp::isStopped())
+			break;	//Broked.
+			
+
 		// Process Hooks
 		lockData();
 
-
 		//LL_INFOS("Lua") << __LINE__ << ": Checking if hooks are empty" << llendl;
-		if(!mQueuedHooks.empty())
+		while(!mQueuedHooks.empty()) //Allow multiple hooks per loop.
 		{
-			LL_INFOS("Lua") << __LINE__ << ": Hooks not empty" << llendl;
+			//LL_INFOS("Lua") << __LINE__ << ": Hooks not empty" << llendl;
 
 			// Peek at the top of the stack
-			HookRequest *hr = NULL;
-			hr = mQueuedHooks.front();
+			HookRequest *hr = mQueuedHooks.front();	
+			ExecuteHook(hr);
 			mQueuedHooks.pop();
-			this->ExecuteHook(hr);		
-		} else {
-			LL_INFOS("Lua") << __LINE__ << ": Hooks empty" << llendl;
+			delete hr; //Say no to memory leaks.
 		}
-		LL_INFOS("Lua") << __LINE__ << ": Unlocking..." << llendl;
+		//else 
+		//{
+		//	LL_INFOS("Lua") << __LINE__ << ": Hooks empty" << llendl;
+		//}
+		//LL_INFOS("Lua") << __LINE__ << ": Unlocking..." << llendl;
 		unlockData();
 
 		if(mError)
-			return;
+			break;
 
 		// Process Macros/Raw Commands
-		LL_INFOS("Lua") << __LINE__ << ": Locking again..." << llendl;
+		//LL_INFOS("Lua") << __LINE__ << ": Locking again..." << llendl;
 		lockData();
 
-		LL_INFOS("Lua") << __LINE__ << ": Checking if macro queue is empty..." << llendl;
-		if(!mQueuedCommands.empty())
+		//LL_INFOS("Lua") << __LINE__ << ": Checking if macro queue is empty..." << llendl;
+		while(!mQueuedCommands.empty())
 		{
 		
-			LL_INFOS("Lua") << __LINE__ << ": Macro queued, executing it..." << llendl;
+			//LL_INFOS("Lua") << __LINE__ << ": Macro queued, executing it..." << llendl;
 
 			// Top of stack
-			std::string hr = mQueuedCommands.front();
-			mQueuedCommands.pop();
+			std::string &hr = mQueuedCommands.front(); //byref. faster.
 
-
-			LL_INFOS("Lua") << __LINE__ << ": Processing a macro or command." << llendl;
-			LL_INFOS("Lua") << __LINE__ << hr << llendl;
+			//LL_INFOS("Lua") << __LINE__ << ": Processing a macro or command." << llendl;
+			//LL_INFOS("Lua") << __LINE__ << hr << llendl;
 
 			// Is this shit a macro?
 			if(FLLua::isMacro(hr))
-				this->RunMacro(hr); // Run macro.
+				RunMacro(hr); // Run macro.
 			else
-				this->RunString(hr); // Run command.
-		} else {			
-			//LL_INFOS("Lua") << __LINE__ << ": Macro vector empty" << llendl;
-		}
+				RunString(hr); // Run command.
+
+			mQueuedCommands.pop(); //safe to pop now.
+		} 
+		//else 
+		//{			
+		//	LL_INFOS("Lua") << __LINE__ << ": Macro vector empty" << llendl;
+		//}
 		unlockData();
 		if(mError)
-			return;
+			break;
 		ms_sleep(10);
 	}
 	LL_INFOS("Lua") << __LINE__ << ": *** THREAD EXITING ***" << llendl;
 }
 
-void FLLua::callMacro(const std::string command)
-{
-	if(sInstance->mError)
-		FLLua::init();
-
-	sInstance->mQueuedCommands.push(command);
-}
-
-void FLHooks_InitTable(lua_State *l, FLLua* lol)
-{
-	FLLua** ud = reinterpret_cast<FLLua**>(lua_newuserdata(l, sizeof(FLLua*)));
-	
-	*ud = lol;
-
-	Lua_SetClass(l, "Hooks");
-}
-FLLua::~FLLua()
-{
-	lua_close(L);
-}
-
-void FLLua::RunString(std::string s)
-{
-	luaL_dostring(L,s.c_str());
-}
-
 void FLLua::RunFile(std::string  file)
 {
-	if(luaL_loadfile(L,file.c_str()) || lua_pcall(L,0,0,0))
+	if(luaL_loadfile(pLuaStack,file.c_str()) || lua_pcall(pLuaStack,0,0,0))
 	{
-		std::string  errmsg(Lua_getErrorMessage(L));
+		std::string  errmsg(Lua_getErrorMessage(pLuaStack));
 
 		llwarns << "Unable to load " << file << ": " << errmsg << llendl;
 			
@@ -256,23 +333,24 @@ void FLLua::RunFile(std::string  file)
 		LuaError(file.c_str());
 		LuaError(errmsg.c_str());
 		LuaError("Aborting.");
-	
+		lockData();
 		mError=true;
+		unlockData();
+	}
+	if(!listening)
+	{
+		lua_getglobal(pLuaStack,"CallHook"); //checking this every 10ms proved to be unstable. Only check once on load.
+		listening = lua_isfunction(pLuaStack,-1);
+		if(!listening)
+			lua_pop(pLuaStack,1);  
 	}
 }
-
-// static
-bool FLLua::isMacro(const std::string str)
-{
-	return(str.substr(0,6)=="/macro" || str.substr(0,2)=="/m");
-}
-
 void FLLua::RunMacro(const std::string what)
 {
 	std::string  tokenized = std::string (what.c_str());
 
 	BOOL found_macro = FALSE;
-	BOOL first_token = TRUE;
+	//BOOL first_token = TRUE;
 
 	typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
 	boost::char_separator<char> sep(" ");
@@ -324,55 +402,95 @@ void FLLua::RunMacro(const std::string what)
 	std::string  arglist("MACRO_ARGS={");
 	// HACK.  Set global via luaL_dostring
 	arglist.append(args.str()).append("};");
-	luaL_dostring(L,arglist.c_str());
-	this->RunFile(macrofile);
+	luaL_dostring(pLuaStack,arglist.c_str());
+	RunFile(macrofile);
 }
-
-// Static
-void FLLua::callLuaHook(const char *EventName,int numargs,...)
+//static
+void FLLua::callLuaHook(HookRequest *hook)
 {
-	if(sInstance->mError)
-		FLLua::init();
-
-	va_list arglist;
-    	va_start(arglist,numargs);
-
-	HookRequest* hook=new HookRequest(EventName);
-	for(int i = 0;i<numargs;i++)
-        {
-		hook->Add(va_arg(arglist,const char *));
-        }
-
-	FLLua::sInstance->mQueuedHooks.push(hook);
+	if(!hook)
+		return;
+	else if(!sInstance || (sInstance->mError && !FLLua::init()))
+		delete hook;
+	else
+	{
+#ifdef LUA_HOOK_SPAM
+		LL_INFOS("Lua") << "Adding event: " << hook.getName() << llendl;
+#endif
+		sInstance->lockData(); //Fixed a very obscure crash.
+		sInstance->mQueuedHooks.push(hook);
+		sInstance->unlockData();
+	}
 }
 
 void FLLua::ExecuteHook(HookRequest *hook)
 {
-	lua_getglobal(L,"CallHook");
 #ifdef LUA_HOOK_SPAM
 	LL_INFOS("Lua") << "Firing event: " << hook->getName() << llendl;
 #endif
-	if(lua_isfunction(L,1))
+	if(listening)
 	{
-		lua_pushstring(L,hook->getName());
-		for(int i = 0;i<hook->getNumArgs();i++)
-        	{
-			lua_pushstring(L,hook->getArg(i));
-        	}
-
-		if(lua_pcall(L,hook->getNumArgs()+1,0,0)!=0)
+		lua_getglobal(pLuaStack,"CallHook");
+		lua_pushstring(pLuaStack,hook->getName());
+		int lim=hook->getNumArgs();
+		if(lim)
+		{
+#ifdef LUA_HOOK_SPAM
+			LL_INFOS("Lua") << " args:";
+#endif
+			for(int i = 0;i<lim;i++)
+			{
+#ifdef LUA_HOOK_SPAM
+				LL_CONT << " " << hook->getArg(i);
+#endif
+				lua_pushstring(pLuaStack,hook->getArg(i));
+			}
+#ifdef LUA_HOOK_SPAM
+			LL_ENDL;
+#endif
+		}
+		if(lua_pcall(pLuaStack,hook->getNumArgs()+1,1,0)!=0)
 		{
 			char errbuff[1024];
-			sprintf(errbuff,"Error executing the %s hook: %s",hook->getName(),lua_tostring(L,-1));
+			sprintf(errbuff,"Error executing the %s hook: %s",hook->getName(),lua_tostring(pLuaStack,-1));
 			LuaError(errbuff);
 		}
+#ifdef LUA_HOOK_SPAM
+		else
+		{
+			const char *str = lua_tostring(pLuaStack,-1);
+			if(atoi(str))
+				LL_INFOS("Lua") << " called " << str << " callbacks" << llendl;
+		}
+#endif
 	}
 }
 
+int luaOnPanic(lua_State *L)
+{	
+	LuaError(("Lua Error: "+Lua_getErrorMessage(L)).c_str());
+	return 0;
+}
 
+std::string  Lua_getErrorMessage(lua_State *L)
+{
+	if (lua_gettop(L) > 0)
+	{
+		if (lua_isstring(L, -1))
+			return lua_tostring(L, -1);
+	}
+	return "";
+}
 
+/*void FLHooks_InitTable(lua_State *l, FLLua* lol)
+{
+	FLLua** ud = reinterpret_cast<FLLua**>(lua_newuserdata(l, sizeof(FLLua*)));
+	
+	*ud = lol;
 
-
+	Lua_SetClass(l, "Hooks");
+}*/
+/*
 void Lua_RegisterMethod(lua_State* l, const char* name, lua_CFunction fn)
 {
 
@@ -440,22 +558,6 @@ void Lua_PushClass(lua_State* l, const char* classname)
 	lua_pushlstring(l, classname, strlen(classname));
 }
 
-int luaOnPanic(lua_State *L)
-{	
-	LuaError("Lua Error: "+Lua_getErrorMessage(L));
-	return 0;
-}
-
-std::string  Lua_getErrorMessage(lua_State *L)
-{
-	if (lua_gettop(L) > 0)
-	{
-		if (lua_isstring(L, -1))
-			return lua_tostring(L, -1);
-	}
-	return "";
-}
-
 void Lua_SetClass(lua_State *l,const char* classname)
 {
 	Lua_PushClass(l,classname);
@@ -465,6 +567,8 @@ void Lua_SetClass(lua_State *l,const char* classname)
 	if (lua_setmetatable(l, -2) == 0)
 		llwarns << "Error setting metatable for " << classname << llendl;
 }
+*/
+
 
 
 /*
