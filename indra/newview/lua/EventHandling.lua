@@ -33,10 +33,10 @@ end
 
 -- Should only be called from FlexLife's C++ code, or from a package that initialized the event called.
 function CallHook(EventName,...)
-      if(gEvents[EventName]==nil) then return 0 end -- No hooks to call, so exit.
-      val=0
-      for _,hookedfunc in pairs(gEvents[EventName]) do hookedfunc(...) val=val + 1 end
-      return val
+	if(gEvents[EventName]==nil) then return 0 end -- No hooks to call, so exit.
+	val=0
+	for _,hookedfunc in pairs(gEvents[EventName]) do hookedfunc(...) val=val + 1 end
+	return val
 end
 
 function RegisterHook(EventName,Desc)

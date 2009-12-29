@@ -83,6 +83,24 @@ end
 
 --Easily check contents of _G and SL
 function DumpTable(tbl)
+	for n,v in pairs(tbl) do
+		print (n,v)
+	end
+end
+
+--Override print.
+-- This will always print to chat, which allows the Lua subsystem to give the 
+--   user a heads-up immediately, instead of waiting for them to dick with a
+--   seperate window.  Eventually, I'd like to place hooks in the settings 
+--   system so we can allow the user to specify if they'd like to use another
+--   window, but this will suffice for now, and it conforms with the original
+--   ShoopedLife implementation (users hate change). -- n3x15
+function print(str) 
+	SL.print(str)
+end
+
+--Easily check contents of _G and SL
+function DumpTable(tbl)
       for n,v in pairs(tbl) do
               print (n,v)
       end

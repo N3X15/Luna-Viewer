@@ -26,76 +26,103 @@
 #include <string>
 #include <queue>
 #include <vector>
-#include <sstream>
 
 extern "C" {
-	#include "lua/lua.h"
-	#include "lua/lauxlib.h"
-	#include "lua/lualib.h"
+	#include "lua.h"
+	#include "lauxlib.h"
+	#include "lualib.h"
 }
 
 #include "llstring.h"
-//typedef std::string LLString; // Fixing broken LL code.
 #include "message.h"
 #include "llviewerimage.h"
 
-class HookRequest : public std::iostream
+//Macros for Lua event calls
+//No arguments. LUA_CALL0("OnSomething");
+//Arguments.	LUA_CALL("OnSomething") << arg1 << arg2 << ... << LUA_END;
+class lua_done {};
+#define LUA_CALL0(name) do{(new HookRequest(name))->Send();}while(0)
+#define LUA_CALL(name) do{(*(new HookRequest(name))) 
+#define LUA_END (lua_done*)0;}while(0)
+
+class HookRequest
 {
 public:
-	void Send();
-
+	//These overrides create a simple shift method for adding arguments painlessly.
+	//If unhandled type use add.
 	HookRequest& operator<<(int in);
 	HookRequest& operator<<(float in);
 	HookRequest& operator<<(std::string &in);
 	HookRequest& operator<<(const char *in);
-	HookRequest& operator<<(LLUUID &fullid);
+	HookRequest& operator<<(LLUUID &in);
+	HookRequest& operator<<(lua_done *in)
+		{Send(); return *this;}//Send off.
 
-	const char* getName(){ return mName; }
-	const char* getArg(unsigned idx){ return mArgs[idx]; }
-	int getNumArgs(){ return mArgs.size(); };
+	HookRequest(const char *Name) { mName=Name; }
+	HookRequest(){} //Should do nothing. may resolve compiler bug on MSVC
+	const char* getName()
+		{return mName.c_str(); }
+	void add(std::string &in)
+		{mArgs.push_back(in);}
+	const char* getArg(unsigned idx)
+		{return (idx >= 0 && idx < mArgs.size()) ? mArgs[idx].c_str() : NULL;}
+	int getNumArgs()
+		{return mArgs.size(); };
+
+	void Send();
 private:
-	std::vector<const char *> mArgs;
-	const char *mName;
+	std::vector<std::string> mArgs;
+	std::string mName;
 };
 
 class FLLua : public LLThread
 {
+friend class HookRequest;
 	//LOG_CLASS(FLLua);
 public:
 	FLLua();
 	~FLLua();
 
-	static void init();
+	static bool init();
 	static void cleanupClass();
 
 	static FLLua* getInstance();
 
-	static void callLuaHook(const char *EventName,int numargs,...);
-	void RunString(std::string s);
-	void run();
+	static bool isMacro(const std::string &what);
+	static void callMacro(const std::string &cmd);
+	static void RunString(std::string s); //static'd
 
-	void RunFile(std::string file);
-	static bool isMacro(const std::string what);
-	static void callMacro(const std::string cmd);
-
-	// Is shit broken?
-	bool mError;
 private:
-	void RunMacro(const std::string what);
-	
-	lua_State *L; // Lua stack
-	static FLLua *sInstance;
 
+	bool load(); //pulled out of run so we can determine if load failed immediately.
+
+	void run();
+	
+	void RunFile(std::string file);
+	void RunMacro(const std::string what);
+	void ExecuteHook(HookRequest *hook);
+
+	static void callLuaHook(HookRequest *hook);
+	
+	static FLLua *sInstance;
+	// Lua stack
+	lua_State *pLuaStack; 
 	// Queued hooks
 	std::queue<HookRequest*> mQueuedHooks;
 	std::queue<std::string> mQueuedCommands;
-
-
-	void ExecuteHook(HookRequest *hook);
+	// Is shit broken.
+	bool mError;
+	// Is CallHook present.
+	bool listening;
 };
+
+int luaOnPanic(lua_State *L);
+std::string Lua_getErrorMessage(lua_State *L);
 
 //extern FLLua *gLuaHooks;
 
+//Unused
+/*
 void FLHooks_CreateMetatable(lua_State *L);
 void FLHooks_InitTable(lua_State *L, FLLua* lol);
 int FLHooks_SetHook(lua_State* l);
@@ -108,9 +135,7 @@ void Lua_SetClass(lua_State *l,const char* classname);
 void Lua_CreateClassMetatable(lua_State* l, const char* name);
 void Lua_CheckArgs(lua_State* l,int minArgs, int maxArgs, const char* errorMessage);
 void Lua_PushClass(lua_State* l, const char* classname);
-
-int luaOnPanic(lua_State *L);
-std::string Lua_getErrorMessage(lua_State *L);
+*/
 
 void LuaSetAvOverlay(const char *uuid,int type);
 
