@@ -288,15 +288,14 @@ bool cmd_line_chat(std::string revised_text, EChatType type)
 			{
 				// FLEXLIFE:  Raw Lua Command from chatbar.
 				// And yes, it currently just shoves the command into the same queue as a macro.
-				FLLua::callMacro(revised_text);
+				FLLua::callCommand(revised_text);
 			}
 			else if(command == "/m" || command=="/macro")
 			{
 				// FLEXLIFE:  Macros
 				//  /m MacroName arg u ments
 
-				// HACK:  Parser needs /m.
-				FLLua::callMacro("/m "+revised_text);
+				FLLua::callCommand(revised_text); //revised_text already includes /m 
 			}
 		}
 	}

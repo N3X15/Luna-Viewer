@@ -267,7 +267,7 @@ inline LLViewerObject *LLViewerObjectList::findObject(const LLUUID &id)
 inline LLVOAvatar *LLViewerObjectList::findAvatar(const std::string &name)
 {
 	std::map<LLUUID, LLPointer<LLViewerObject> >::iterator iter = mUUIDObjectMap.begin();
-	for(;iter != mUUIDAvatarMap.end();iter++)
+	while(iter != mUUIDObjectMap.end())
 	{
 		if(iter->second->isAvatar())
 		{

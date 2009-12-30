@@ -97,7 +97,7 @@ void LLFloaterLuaConsole::onClickSend(void *data)
 		LLColor4 text_color = gSavedSettings.getColor4("llOwnerSayChatColor");
 		LLViewerTextEditor *out = self->getChild<LLViewerTextEditor>("Lua Output Editor");
 		out->appendColoredText("] "+editor->getText(), false, true, text_color); //echo command, like a proper console.
-		FLLua::RunString(editor->getText());
+		FLLua::callCommand(editor->getText());
 		editor->updateHistory();
 		editor->clear();
 	}

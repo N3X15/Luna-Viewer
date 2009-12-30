@@ -1984,7 +1984,7 @@ void LLPipeline::stateSort(LLDrawable* drawablep, LLCamera& camera)
 		LLViewerObject* pObj = drawablep->getVObj();
 		if ( (pObj) && (pObj->isSelected()) && 
 			 ((!rlv_handler_t::isEnabled()) || (!pObj->isHUDAttachment()) || (!gRlvHandler.isLockedAttachment(pObj, RLV_LOCK_REMOVE))) )
-// [/RVLa:KB]
+// [/RLVa:KB]
 		{
 			return;
 		}

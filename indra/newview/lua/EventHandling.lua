@@ -53,5 +53,4 @@ function DumpAllHooks()
 	for name,_ in pairs(gEvents) do
 		print(name)
 	end
-	return table.concat(gEvents,"\n")
 end

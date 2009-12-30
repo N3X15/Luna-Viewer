@@ -88,9 +88,7 @@ public:
 
 	static FLLua* getInstance();
 
-	static bool isMacro(const std::string &what);
-	static void callMacro(const std::string &cmd);
-	static void RunString(std::string s); //static'd
+	static void callCommand(const std::string &cmd);
 
 private:
 
@@ -100,8 +98,10 @@ private:
 	
 	void RunFile(std::string file);
 	void RunMacro(const std::string what);
+	void RunString(std::string s);
 	void ExecuteHook(HookRequest *hook);
 
+	static bool isMacro(const std::string &what);
 	static void callLuaHook(HookRequest *hook);
 	
 	static FLLua *sInstance;

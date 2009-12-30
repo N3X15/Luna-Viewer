@@ -997,6 +997,11 @@
 			<on_click function="ShowFloater" userdata="teleport history" />
 			<on_check function="FloaterVisible" userdata="teleport history" />
 		</menu_item_check>
+		<menu_item_check bottom="-206" enabled="true" height="20" label="Lua Console" left="0"
+		     mouse_opaque="true" name="Lua Console" shortcut="" width="155">
+			<on_click function="ShowFloater" userdata="lua console" />
+			<on_check function="FloaterVisible" userdata="lua console" />
+		</menu_item_check>
     <menu_item_check bottom="-120" enabled="true" height="19" label="Asset Browser" left="0"
  		     mouse_opaque="true" name="asset browser" shortcut="alt|shift|a" width="185">
       <on_click function="Phox.ToggleAssetBrowser" userdata="" />

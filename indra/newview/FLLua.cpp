@@ -154,6 +154,7 @@ bool FLLua::init()
 	if(!sInstance->load())
 	{
 		LL_INFOS("Lua") << "Failed to load Lua." << llendl;
+		LuaError("Likely a script error. Please manually restart Lua when resolved");
 		cleanupClass();
 		return false;
 	}
@@ -172,33 +173,24 @@ void FLLua::cleanupClass()
 		sInstance=NULL;
 	}
 }
-// Static
-bool FLLua::isMacro(const std::string &str)
-{
-	return(str.substr(0,6)=="/macro" || str.substr(0,2)=="/m");
-}
-// Static
-void FLLua::callMacro(const std::string &command)
-{
-	if(!sInstance || (sInstance->mError && !FLLua::init()))
-		return;
-
-	sInstance->lockData();
-	sInstance->mQueuedCommands.push(command);
-	sInstance->unlockData();
-}
-//Static
-void FLLua::RunString(std::string s)
-{
-	if(!sInstance || (sInstance->mError && !FLLua::init()))
-		return;
-
-	if(luaL_dostring(sInstance->pLuaStack,s.c_str()))
+ // Static
+void FLLua::callCommand(const std::string &command)
+ {
+	//sInstance being NULL indicates immediate error in lua loading. User intervention needed (broken script 99% time). 
+	//Not convinced an auto-restart would be appropriate. Do manual restart with Lua Console.
+	if(!sInstance)
 	{
-		LL_INFOS("Lua") << "Run string(" << s << ") failed with" << Lua_getErrorMessage(sInstance->pLuaStack) << llendl;
-		LuaError(Lua_getErrorMessage(sInstance->pLuaStack).c_str());
+		LuaError("Lua awaiting manual restart.");
+ 		return;
 	}
-}
+	else if(sInstance->mError && !FLLua::init()) //init is verbose.
+		return;
+ 
+ 	sInstance->lockData();
+ 	sInstance->mQueuedCommands.push(command);
+ 	sInstance->unlockData();
+ }
+
 //Attempt to bind with Lua
 bool FLLua::load()
 {
@@ -270,8 +262,8 @@ void FLLua::run()
 			//LL_INFOS("Lua") << __LINE__ << ": Hooks not empty" << llendl;
 
 			// Peek at the top of the stack
-			HookRequest *hr = mQueuedHooks.front();	
-			ExecuteHook(hr);
+			HookRequest *hr = mQueuedHooks.front();
+			ExecuteHook(hr); //Currently events are lost if CallHook wasn't found (not listening)
 			mQueuedHooks.pop();
 			delete hr; //Say no to memory leaks.
 		}
@@ -341,8 +333,7 @@ void FLLua::RunFile(std::string  file)
 	{
 		lua_getglobal(pLuaStack,"CallHook"); //checking this every 10ms proved to be unstable. Only check once on load.
 		listening = lua_isfunction(pLuaStack,-1);
-		if(!listening)
-			lua_pop(pLuaStack,1);  
+		lua_pop(pLuaStack,1);  
 	}
 }
 void FLLua::RunMacro(const std::string what)
@@ -405,21 +396,14 @@ void FLLua::RunMacro(const std::string what)
 	luaL_dostring(pLuaStack,arglist.c_str());
 	RunFile(macrofile);
 }
+
 //static
-void FLLua::callLuaHook(HookRequest *hook)
+void FLLua::RunString(std::string s)
 {
-	if(!hook)
-		return;
-	else if(!sInstance || (sInstance->mError && !FLLua::init()))
-		delete hook;
-	else
-	{
-#ifdef LUA_HOOK_SPAM
-		LL_INFOS("Lua") << "Adding event: " << hook.getName() << llendl;
-#endif
-		sInstance->lockData(); //Fixed a very obscure crash.
-		sInstance->mQueuedHooks.push(hook);
-		sInstance->unlockData();
+	if(luaL_dostring(sInstance->pLuaStack,s.c_str()))
+ 	{
+		LL_INFOS("Lua") << "Run string(" << s << ") failed with" << Lua_getErrorMessage(sInstance->pLuaStack) << llendl;
+		LuaError(Lua_getErrorMessage(sInstance->pLuaStack).c_str());
 	}
 }
 
@@ -463,6 +447,32 @@ void FLLua::ExecuteHook(HookRequest *hook)
 				LL_INFOS("Lua") << " called " << str << " callbacks" << llendl;
 		}
 #endif
+		lua_pop(pLuaStack,1);	// -1
+					// Current stack = 0
+ 	}
+ }
+ 
+// Static
+bool FLLua::isMacro(const std::string &str)
+{
+	return(str.substr(0,6)=="/macro" || str.substr(0,2)=="/m");
+}
+
+//static
+void FLLua::callLuaHook(HookRequest *hook)
+{
+	if(!hook)
+		return;
+	else if(!sInstance || (sInstance->mError && !FLLua::init()))
+		delete hook;
+	else
+	{
+#ifdef LUA_HOOK_SPAM
+		LL_INFOS("Lua") << "Adding event: " << hook.getName() << llendl;
+#endif
+		sInstance->lockData(); //Fixed a very obscure crash.
+		sInstance->mQueuedHooks.push(hook);
+		sInstance->unlockData();
 	}
 }
 
