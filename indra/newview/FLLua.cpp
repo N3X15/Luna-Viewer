@@ -173,9 +173,10 @@ void FLLua::cleanupClass()
 		sInstance=NULL;
 	}
 }
- // Static
+
+// Static
 void FLLua::callCommand(const std::string &command)
- {
+{
 	//sInstance being NULL indicates immediate error in lua loading. User intervention needed (broken script 99% time). 
 	//Not convinced an auto-restart would be appropriate. Do manual restart with Lua Console.
 	if(!sInstance)
@@ -185,11 +186,12 @@ void FLLua::callCommand(const std::string &command)
 	}
 	else if(sInstance->mError && !FLLua::init()) //init is verbose.
 		return;
- 
- 	sInstance->lockData();
- 	sInstance->mQueuedCommands.push(command);
- 	sInstance->unlockData();
- }
+  	
+	sInstance->lockData();
+	sInstance->mQueuedCommands.push(command);
+	sInstance->unlockData();
+}
+
 
 //Attempt to bind with Lua
 bool FLLua::load()
@@ -282,7 +284,7 @@ void FLLua::run()
 		lockData();
 
 		//LL_INFOS("Lua") << __LINE__ << ": Checking if macro queue is empty..." << llendl;
-		while(!mQueuedCommands.empty())
+		while(!mQueuedCommands.empty() && !mError)
 		{
 		
 			//LL_INFOS("Lua") << __LINE__ << ": Macro queued, executing it..." << llendl;
@@ -315,7 +317,7 @@ void FLLua::run()
 
 void FLLua::RunFile(std::string  file)
 {
-	if(luaL_loadfile(pLuaStack,file.c_str()) || lua_pcall(pLuaStack,0,0,0))
+	if(luaL_dofile(pLuaStack,file.c_str()))
 	{
 		std::string  errmsg(Lua_getErrorMessage(pLuaStack));
 
@@ -325,13 +327,13 @@ void FLLua::RunFile(std::string  file)
 		LuaError(file.c_str());
 		LuaError(errmsg.c_str());
 		LuaError("Aborting.");
-		lockData();
-		mError=true;
-		unlockData();
+		//Not locking thread here. RunFile is only ran from main loop now.
+		// Locking while already in the (already locked) threaded loop would hardlock.
+		mError=true; //Probably shouldn't do this for macros.. In fact, mError could probably be done away with.
 	}
-	if(!listening)
+	else if(!listening)
 	{
-		lua_getglobal(pLuaStack,"CallHook"); //checking this every 10ms proved to be unstable. Only check once on load.
+		lua_getglobal(pLuaStack,"CallHook"); //Would rather not issue lua functions every 10ms when we don't need to.
 		listening = lua_isfunction(pLuaStack,-1);
 		lua_pop(pLuaStack,1);  
 	}
@@ -394,7 +396,8 @@ void FLLua::RunMacro(const std::string what)
 	// HACK.  Set global via luaL_dostring
 	arglist.append(args.str()).append("};");
 	luaL_dostring(pLuaStack,arglist.c_str());
-	RunFile(macrofile);
+	if(luaL_dofile(pLuaStack,macrofile.c_str()))
+		LuaError(Lua_getErrorMessage(pLuaStack).c_str());
 }
 
 //static
