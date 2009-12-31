@@ -45,6 +45,7 @@
 
 %include <std_string.i>
 
+%import "../newview/LuaTypes.h"
 %import "../llcommon/stdtypes.h"
 %import "../llprimitive/llprimitive.h"
 %import "../newview/llagent.h"
@@ -60,6 +61,8 @@
 %import "../llui/llpanel.h"
 %import "../llui/llbutton.h"
 %import "../llui/lliconctrl.h"
+
+%import "../newview/llviewerpartsource.h"
 
 
 %rename(SendChat)		LuaSendChat(const char *msg, bool IsDebug=false);
