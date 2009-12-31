@@ -50,23 +50,22 @@ class HookRequest
 public:
 	//These overrides create a simple shift method for adding arguments painlessly.
 	//If unhandled type use add.
-	HookRequest& operator<<(int in);
-	HookRequest& operator<<(float in);
-	HookRequest& operator<<(std::string &in);
+	HookRequest& operator<<(const int &in);
+	HookRequest& operator<<(const float &in);
+	HookRequest& operator<<(const std::string &in);
 	HookRequest& operator<<(const char *in);
-	HookRequest& operator<<(LLUUID &in);
-	HookRequest& operator<<(lua_done *in)
+	HookRequest& operator<<(const LLUUID &in);
+	HookRequest& operator<<(const lua_done *in)
 		{Send(); return *this;}//Send off.
 
 	HookRequest(const char *Name) { mName=Name; }
-	HookRequest(){} //Should do nothing. may resolve compiler bug on MSVC
-	const char* getName()
-		{return mName.c_str(); }
-	void add(std::string &in)
+	void add(const std::string &in)
 		{mArgs.push_back(in);}
-	const char* getArg(unsigned idx)
+	const char* getName() const
+		{return mName.c_str(); }
+	const char* getArg(unsigned idx) const
 		{return (idx >= 0 && idx < mArgs.size()) ? mArgs[idx].c_str() : NULL;}
-	int getNumArgs()
+	int getNumArgs() const
 		{return mArgs.size(); };
 
 	void Send();

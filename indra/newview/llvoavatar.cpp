@@ -6640,8 +6640,7 @@ BOOL LLVOAvatar::attachObject(LLViewerObject *viewer_object)
 {
 	LLViewerJointAttachment* attachment = getTargetAttachmentPoint(viewer_object);
 	
-	// TODO:  Causing compile errors
-	//LUA_CALL("OnAttach") << viewer_object->getID().getString() << getFullname() << LUA_END;
+	LUA_CALL("OnAttach") << viewer_object->getID() << getFullname() << LUA_END;
 
 	if (!attachment || !attachment->addObject(viewer_object))
 	{

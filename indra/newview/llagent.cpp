@@ -458,7 +458,7 @@ void LLAgent::init()
 	// Run a lua hook
 	std::string lolname;
 	this->getName(lolname);
-	LUA_CALL("OnAgentInit") << lolname << (int)isGodlike() << LUA_END;
+	LUA_CALL("OnAgentInit") << lolname << isGodlike() << LUA_END;
 }
 
 //-----------------------------------------------------------------------------

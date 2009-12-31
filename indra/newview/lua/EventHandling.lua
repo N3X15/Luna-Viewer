@@ -23,6 +23,21 @@
 	*** DO NOT MODIFY OR YOU WILL BREAK SHIT. ***
 ]]--
 
+--[[ Coded events:	All arguments are received as strings. Types below indicate string format. 
+			Eg: With 'integer MyVar' MyVar will be a string such as "2", which is 
+			    safe to handle as an integer. Lua will even implicitly convert it in 
+			    this case. For instance statements like if(MyVar==2) are valid.
+			    
+	 EventName:		( args ):
+	 
+	OnLuaInit 		( )
+	OnAgentInit 		( string AvName,	integer GodMode	)
+	EmeraldPhantomOn	( integer Phantom )
+	OnObjectCreated 	( string ObjectID, 	string PrimCode )
+	OnAttach 		( string ObjectID, 	string AvName	)
+	
+]]--
+
 gEvents={};
 gEventDescs={};
 

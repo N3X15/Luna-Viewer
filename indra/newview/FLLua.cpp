@@ -80,21 +80,21 @@ void HookRequest::Send()
 {
 	FLLua::callLuaHook(this);
 }
-HookRequest& HookRequest::operator<<(int in)
+HookRequest& HookRequest::operator<<(const int &in)
 {
 	std::ostringstream out;
 	out << in;
 	mArgs.push_back(out.str());
 	return *this;
 }
-HookRequest& HookRequest::operator<<(float in)
+HookRequest& HookRequest::operator<<(const float &in)
 {
 	std::ostringstream out;
 	out << in;
 	mArgs.push_back(out.str());
 	return *this;
 }
-HookRequest& HookRequest::operator<<(std::string &in)
+HookRequest& HookRequest::operator<<(const std::string &in)
 {
 	mArgs.push_back(in);
 	return *this;
@@ -104,7 +104,7 @@ HookRequest& HookRequest::operator<<(const char *in)
 	mArgs.push_back(in);
 	return *this;
 }
-HookRequest& HookRequest::operator<<(LLUUID &fullid)
+HookRequest& HookRequest::operator<<(const LLUUID &fullid)
 {
 	mArgs.push_back(fullid.asString());
 	return *this;
@@ -182,7 +182,7 @@ void FLLua::callCommand(const std::string &command)
 	if(!sInstance)
 	{
 		LuaError("Lua awaiting manual restart.");
- 		return;
+		return;
 	}
 	else if(sInstance->mError && !FLLua::init()) //init is verbose.
 		return;
@@ -404,7 +404,7 @@ void FLLua::RunMacro(const std::string what)
 void FLLua::RunString(std::string s)
 {
 	if(luaL_dostring(sInstance->pLuaStack,s.c_str()))
- 	{
+	{
 		LL_INFOS("Lua") << "Run string(" << s << ") failed with" << Lua_getErrorMessage(sInstance->pLuaStack) << llendl;
 		LuaError(Lua_getErrorMessage(sInstance->pLuaStack).c_str());
 	}
