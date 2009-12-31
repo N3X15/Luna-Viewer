@@ -2555,6 +2555,22 @@ fail:
 }
 
 
+static int _wrap_LuaUpdateAppearance(lua_State* L) {
+  int SWIG_arg = 0;
+  
+  SWIG_check_num_args("LuaUpdateAppearance",0,0)
+  LuaUpdateAppearance();
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
 static int _wrap_LuaDumpVisualParams(lua_State* L) {
   int SWIG_arg = 0;
   
@@ -3107,6 +3123,7 @@ static const struct luaL_reg swig_commands[] = {
     { "exists", _wrap_exists},
     { "getLuaFolder", _wrap_getLuaFolder},
     { "toLuaString", _wrap_toLuaString},
+    { "LuaUpdateAppearance", _wrap_LuaUpdateAppearance},
     { "LuaDumpVisualParams", _wrap_LuaDumpVisualParams},
     { "LuaDumpVisualParamsToLuaCode", _wrap_LuaDumpVisualParamsToLuaCode},
     { "getParamDefaultWeight", _wrap_getParamDefaultWeight},

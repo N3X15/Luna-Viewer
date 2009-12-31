@@ -1,6 +1,7 @@
 #pragma once
 #include "llwearable.h"
 
+void LuaUpdateAppearance();
 void LuaDumpVisualParams();
 std::string LuaDumpVisualParamsToLuaCode();
 //std::string LuaDumpTargetVisParamsToLuaCode();
