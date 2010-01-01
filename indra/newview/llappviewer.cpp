@@ -1120,6 +1120,7 @@ bool LLAppViewer::mainLoop()
 					{
 						ms_sleep(llmin(io_pending/100,100)); // give the vfs some time to catch up
 					}
+					FLLua::execClientEvents();
 
 					F64 frame_time = frameTimer.getElapsedTimeF64();
 					F64 idle_time = idleTimer.getElapsedTimeF64();

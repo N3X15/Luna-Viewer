@@ -144,7 +144,30 @@ FLLua* FLLua::getInstance()
 	LL_WARNS("Lua") << "Lua interpreter should not be directly accessed!" << llendl;
 	return sInstance;
 }
-
+	//Called from lua thread
+// Static
+void FLLua::regClientEvent(CB_Base *entry)
+{
+	if(sInstance && entry)
+		sInstance->mQueuedEvents.push(entry);
+}
+	//Called from MAIN thread
+// Static
+void FLLua::execClientEvents()
+{
+	if(!sInstance)
+		return;
+	
+	sInstance->lockData();
+	while(!sInstance->mQueuedEvents.empty())
+	{
+		CB_Base *cb=sInstance->mQueuedEvents.front();
+		cb->OnCall();
+		delete cb;
+		sInstance->mQueuedEvents.pop();
+	}
+	sInstance->unlockData();
+}
 // Static
 bool FLLua::init()
 {

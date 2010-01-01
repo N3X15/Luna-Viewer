@@ -74,6 +74,7 @@ private:
 	std::string mName;
 };
 
+struct CB_Base;
 class FLLua : public LLThread
 {
 friend class HookRequest;
@@ -89,6 +90,11 @@ public:
 
 	static void callCommand(const std::string &cmd);
 
+	//Injection of events into MAIN thread. Needed for gl calls. Render context does NOT carry over threads.
+		//Called from lua thread
+	static void regClientEvent(CB_Base *entry);
+		//Called from MAIN thread
+	static void execClientEvents();
 private:
 
 	bool load(); //pulled out of run so we can determine if load failed immediately.
@@ -106,14 +112,82 @@ private:
 	static FLLua *sInstance;
 	// Lua stack
 	lua_State *pLuaStack; 
-	// Queued hooks
+	// Outbound queued hooks
 	std::queue<HookRequest*> mQueuedHooks;
+	// Outbound queued commands
 	std::queue<std::string> mQueuedCommands;
+	// Inbound queued events
+	std::queue<CB_Base*> mQueuedEvents;
 	// Is shit broken.
 	bool mError;
 	// Is CallHook present.
 	bool listening;
 };
+
+/*Ugly hacky code follows. Kludgy workaround for making SWIG (somewhat) thread-safe.
+
+	Client callback classes. Checked and executed every frame.
+	DONT USE POINTERS WITH THESE. These classes rely on static 
+	allocation of passed arguments to avoid destruction of them 
+	before next frame.
+	Make sure passed variables are NON-VOLATILE.
+
+	Usage:
+		new CB_Args2<std::string,double>(setQueuedParams,paramname,1);
+
+	Note the 'new'. It's required. These objects have to be dynamically allocated.
+
+	Now, why is this needed at all? Some functions exposed to Lua will not be able to 
+	safely be ran from the lua thread. 
+	For instance LLCharacter::setVisualParamWeight will crash. It must be called from
+	MAIN due to eventually calling glGenTextures. Opengl render context doesn't carry over
+	to the lua thread, therefore opengl will fail to assign a texture index.
+
+*/
+
+struct CB_Base
+{
+	virtual void OnCall(){}; //overridden by derived classes.
+	CB_Base(){FLLua::regClientEvent(this);}; //Always called
+};
+struct CB_Args0 : public CB_Base
+{
+	typedef void (*CB_FN)();
+	virtual void OnCall()	{fn();}
+	CB_FN fn;
+	CB_Args0(const CB_FN _fn) : CB_Base(), fn(_fn){}
+};
+template <typename T1>
+struct CB_Args1 : public CB_Base
+{
+	typedef void (*CB_FN)(T1& _t1);
+	virtual void OnCall()	{fn(t1);}
+	CB_FN fn;
+	T1 t1;
+	CB_Args1(const CB_FN _fn,const T1& _t1) : CB_Base(), fn(_fn), t1(_t1)
+	{}
+};
+template <typename T1,typename T2>
+struct CB_Args2 : public CB_Base
+{
+	typedef void (*CB_FN)(T1& _t1,T2& _t2);
+	virtual void OnCall()	{fn(t1,t2);}
+	CB_FN fn;
+	T1 t1;	T2 t2;
+	CB_Args2(const CB_FN _fn,const T1& _t1,const T2& _t2) : fn(_fn), CB_Base(), t1(_t1), t2(_t2)
+	{}
+};
+template <typename T1,typename T2,typename T3>
+struct CB_Args3 : public CB_Base
+{
+	typedef void (*CB_FN)(T1& _t1,T2& _t2,T3& _t3);
+	virtual void OnCall()	{fn(t1,t2,t3);}
+	CB_FN fn;
+	T1 t1;	T2 t2;	T2 t3;
+	CB_Args3(const CB_FN _fn,const T1& _t1,const T2& _t2,const T3& _t3) : fn(_fn), CB_Base(), t1(_t1), t2(_t2), t3(_t3)
+	{}
+};
+//etc...
 
 int luaOnPanic(lua_State *L);
 std::string Lua_getErrorMessage(lua_State *L);

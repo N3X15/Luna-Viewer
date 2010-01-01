@@ -175,6 +175,12 @@ double getParamMin(const char* avid,const char* paramname)
 // Set
 //------------------------------------------------------------------------
 
+void setParamsEvent(std::string &name, double &weight)
+{
+	LLVOAvatar *me=gAgent.getAvatarObject();
+	if(!me)return;
+	me->setVisualParamWeight(name.c_str(),weight);
+}
 void setParamOnSelf(const char* paramname,double weight)
 {
 	LLVOAvatar *me=gAgent.getAvatarObject();
@@ -183,6 +189,9 @@ void setParamOnSelf(const char* paramname,double weight)
 		LuaError("No Agent Avatar");
 		return;
 	}
+	new CB_Args2<std::string,double>(setParamsEvent,paramname,weight); //add to client event queue
+
+	/*
 	LLVisualParam *p=me->getVisualParam(paramname);
 	if(!p)
 	{
@@ -194,6 +203,7 @@ void setParamOnSelf(const char* paramname,double weight)
 	p->setWeight((F32)weight,FALSE);
 	me->setVisualParamWeight(p,p->getCurrentWeight());
 	gAgent.setAvatarObject(me);
+	*/
 }
 
 void LuaWear(const char* assetid)
