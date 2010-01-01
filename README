@@ -1,0 +1,27 @@
+FlexLife Viewer
+	Version 0.1.0 Alpha
+
+(Yes, this needs work, it's an outline for now.)
+
+---[ License ]---
+
+Read doc/flexlife.htm
+
+---[ How to install ]---
+
+Just run ./secondlife.  
+
+---[ How to fuck with Lua ]---
+
+Macros are in lua/Macros.  They can be executed from the chatbar in the form of 
+
+	/m FileNameWithoutTheExtension (Arguments as required.)
+
+Hooks are the plugins the make use of automatically-fired events fired by the viewer's lua engine.
+You can find a list of these events in lua/EventHandling.lua.
+
+
+---[ Bug reports ]---
+
+http://bugs.nexisonline.net/
+http://forums.nexisonline.net/

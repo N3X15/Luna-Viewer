@@ -94,6 +94,7 @@
 %include "LuaAvatar_f.h"
 
 %include "LuaAgent_f.h"
+%import "LuaParticles.h"
 
 extern bool gAllowWorldMap;
 extern LLAgent *gAgent;
