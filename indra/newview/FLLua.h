@@ -96,32 +96,43 @@ public:
 		//Called from MAIN thread
 	static void execClientEvents();
 private:
-
 	bool load(); //pulled out of run so we can determine if load failed immediately.
 
 	void run();
 	
-	void RunFile(std::string file);
-	void RunMacro(const std::string what);
-	void RunString(std::string s);
+	bool LoadFile(std::string &file);
+	void RunMacro(const std::string &what);
+	void RunString(std::string &s);
 	void ExecuteHook(HookRequest *hook);
 
 	static bool isMacro(const std::string &what);
-	static void callLuaHook(HookRequest *hook);
+	static void callLuaHook(HookRequest *hook); //Called via HookRequest::Send()
 	
+	//Set in init:
+	// Object instance
 	static FLLua *sInstance;
 	// Lua stack
 	lua_State *pLuaStack; 
+	// Is CallHook present.
+	bool listening;
+
+	//Must mutex to access:
 	// Outbound queued hooks
 	std::queue<HookRequest*> mQueuedHooks;
 	// Outbound queued commands
 	std::queue<std::string> mQueuedCommands;
 	// Inbound queued events
 	std::queue<CB_Base*> mQueuedEvents;
-	// Is shit broken.
-	bool mError;
-	// Is CallHook present.
-	bool listening;
+	
+	//Mutex free:
+	// Read in both loops
+	//LLAtomic32<bool> mError;	//Not used right now
+	// Read in lua loop
+	LLAtomic32<bool> mPendingHooks;		//!mQueuedHooks.isEmpty()
+	LLAtomic32<bool> mPendingCommands;	//!mQueuedCommands.isEmpty()
+	// Read in MAIN loop
+	LLAtomic32<bool> mPendingEvents;	//!mQueuedEvents.isEmpty()
+	
 };
 
 /*Ugly hacky code follows. Kludgy workaround for making SWIG (somewhat) thread-safe.

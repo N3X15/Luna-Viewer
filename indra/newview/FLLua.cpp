@@ -118,9 +118,12 @@ FLLua* FLLua::sInstance = NULL;
 
 FLLua::FLLua() : 
 	LLThread("Lua"), 
-	mError(false),
 	pLuaStack(NULL),
-	listening(false)
+	listening(false),
+	//mError(false),
+	mPendingHooks(false),
+	mPendingCommands(false),
+	mPendingEvents(false)
 {
 	// Do nothing.
 }
@@ -154,16 +157,19 @@ FLLua* FLLua::getInstance()
 void FLLua::regClientEvent(CB_Base *entry)
 {
 	if(sInstance && entry)
+	{
 		sInstance->mQueuedEvents.push(entry);
+		sInstance->mPendingEvents=true;
+	}
 }
 	//Called from MAIN thread
 // Static
 void FLLua::execClientEvents()
 {
-	if(!sInstance)
+	if(!sInstance || !sInstance->mPendingEvents)
 		return;
-	
 	sInstance->lockData();
+	sInstance->mPendingEvents=false;
 	while(!sInstance->mQueuedEvents.empty())
 	{
 		CB_Base *cb=sInstance->mQueuedEvents.front();
@@ -172,6 +178,7 @@ void FLLua::execClientEvents()
 		sInstance->mQueuedEvents.pop();
 	}
 	sInstance->unlockData();
+}
 }
 // Static
 bool FLLua::init()
@@ -201,8 +208,8 @@ void FLLua::cleanupClass()
 		sInstance=NULL;
 	}
 }
-
 // Static
+// called from MAIN thread
 void FLLua::callCommand(const std::string &command)
 {
 	//sInstance being NULL indicates immediate error in lua loading. User intervention needed (broken script 99% time). 
@@ -212,14 +219,14 @@ void FLLua::callCommand(const std::string &command)
 		LuaError("Lua awaiting manual restart.");
 		return;
 	}
-	else if(sInstance->mError && !FLLua::init()) //init is verbose.
-		return;
-  	
+	//else if(sInstance->mError && !FLLua::init()) //init is verbose.
+	//	return;
+
 	sInstance->lockData();
 	sInstance->mQueuedCommands.push(command);
+	sInstance->mPendingCommands=true;
 	sInstance->unlockData();
 }
-
 
 //Attempt to bind with Lua
 bool FLLua::load()
@@ -262,13 +269,11 @@ bool FLLua::load()
 		return false;
 	}
 
-	LL_INFOS("Lua") << __LINE__ << ": Runfile (_init_.lua)" << llendl;
-	RunFile(gDirUtilp->getExpandedFilename(FL_PATH_LUA,"_init_.lua"));
-	if(mError)
+	LL_INFOS("Lua") << __LINE__ << ": LoadFile (_init_.lua)" << llendl;
+	if(!LoadFile(gDirUtilp->getExpandedFilename(FL_PATH_LUA,"_init_.lua")))
 		return false;
 #if 0
-	RunFile(gDirUtilp->getExpandedFilename(FL_PATH_MACROS,"unit_tests.lua"));
-	if(mError)
+	if(!LoadFile(gDirUtilp->getExpandedFilename(FL_PATH_MACROS,"unit_tests.lua")))
 		return false;
 #endif
 	return true;
@@ -282,68 +287,60 @@ void FLLua::run()
 		if (!pLuaStack || LLApp::isError() || LLApp::isStopped())
 			break;	//Broked.
 			
-
-		// Process Hooks
-		lockData();
-
-		//LL_INFOS("Lua") << __LINE__ << ": Checking if hooks are empty" << llendl;
-		while(!mQueuedHooks.empty()) //Allow multiple hooks per loop.
+		//conditionals get weird here. atomic variables are expensive to access. Ensuring they are only checked once.
+		if(mPendingHooks)
 		{
-			//LL_INFOS("Lua") << __LINE__ << ": Hooks not empty" << llendl;
-
-			// Peek at the top of the stack
-			HookRequest *hr = mQueuedHooks.front();
-			ExecuteHook(hr); //Currently events are lost if CallHook wasn't found (not listening)
-			mQueuedHooks.pop();
-			delete hr; //Say no to memory leaks.
+			// Process Hooks
+			lockData();
+			mPendingHooks=false;
+			while(!mQueuedHooks.empty()) //Allow multiple hooks per loop.
+			{
+				// Peek at the top of the stack
+				HookRequest *hr = mQueuedHooks.front();	
+				ExecuteHook(hr);
+				mQueuedHooks.pop();
+				delete hr; //Say no to memory leaks.
+			}
+			/*if(mError)		//hooks, no commands. unlock and do nothing.
+			{
+				unlockData();
+				break;
+			}
+			else */if(!mPendingCommands)
+			{
+				unlockData();
+				goto done;
+			}
 		}
-		//else 
-		//{
-		//	LL_INFOS("Lua") << __LINE__ << ": Hooks empty" << llendl;
-		//}
-		//LL_INFOS("Lua") << __LINE__ << ": Unlocking..." << llendl;
-		unlockData();
-
-		if(mError)
-			break;
-
-		// Process Macros/Raw Commands
-		//LL_INFOS("Lua") << __LINE__ << ": Locking again..." << llendl;
-		lockData();
-
-		//LL_INFOS("Lua") << __LINE__ << ": Checking if macro queue is empty..." << llendl;
-		while(!mQueuedCommands.empty() && !mError)
-		{
+		else if(mPendingCommands)	//no hooks, but are commands. lock and do commands
+			lockData();
+		else						//no hooks, no commands. do nothing
+			goto done;
 		
-			//LL_INFOS("Lua") << __LINE__ << ": Macro queued, executing it..." << llendl;
-
-			// Top of stack
+		// Process Macros/Raw Commands
+		mPendingCommands=false;
+		while(!mQueuedCommands.empty())
+		{
+			// Peek at the top of the stack
 			std::string &hr = mQueuedCommands.front(); //byref. faster.
-
-			//LL_INFOS("Lua") << __LINE__ << ": Processing a macro or command." << llendl;
-			//LL_INFOS("Lua") << __LINE__ << hr << llendl;
-
-			// Is this shit a macro?
 			if(FLLua::isMacro(hr))
 				RunMacro(hr); // Run macro.
 			else
 				RunString(hr); // Run command.
-
 			mQueuedCommands.pop(); //safe to pop now.
 		} 
-		//else 
-		//{			
-		//	LL_INFOS("Lua") << __LINE__ << ": Macro vector empty" << llendl;
-		//}
 		unlockData();
-		if(mError)
-			break;
+		/*if(mError)
+			break;*/
+done:
+		yield();
 		ms_sleep(10);
+		
 	}
 	LL_INFOS("Lua") << __LINE__ << ": *** THREAD EXITING ***" << llendl;
 }
-
-void FLLua::RunFile(std::string  file)
+// called from MAIN thread.
+bool FLLua::LoadFile(std::string  &file)
 {
 	if(luaL_dofile(pLuaStack,file.c_str()))
 	{
@@ -355,9 +352,12 @@ void FLLua::RunFile(std::string  file)
 		LuaError(file.c_str());
 		LuaError(errmsg.c_str());
 		LuaError("Aborting.");
+		
 		//Not locking thread here. RunFile is only ran from main loop now.
 		// Locking while already in the (already locked) threaded loop would hardlock.
-		mError=true; //Probably shouldn't do this for macros.. In fact, mError could probably be done away with.
+		//mError=true; //Probably shouldn't do this for macros.. In fact, mError could probably be done away with.
+
+		return false;
 	}
 	else if(!listening)
 	{
@@ -365,52 +365,36 @@ void FLLua::RunFile(std::string  file)
 		listening = lua_isfunction(pLuaStack,-1);
 		lua_pop(pLuaStack,1);  
 	}
+	return true;
 }
-void FLLua::RunMacro(const std::string what)
+// called from lua thread.
+void FLLua::RunMacro(const std::string &what)
 {
-	std::string  tokenized = std::string (what.c_str());
-
-	BOOL found_macro = FALSE;
-	//BOOL first_token = TRUE;
+	std::string  macroname;
+	std::stringstream args;
 
 	typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
 	boost::char_separator<char> sep(" ");
-	tokenizer tokens(tokenized, sep);
+	tokenizer tokens(what, sep);
 	tokenizer::iterator token_iter;
-
-	std::string  macroname="";
-	std::stringstream args;
-	for( token_iter = tokens.begin(); token_iter != tokens.end(); ++token_iter)
+	for(tokenizer::iterator token_iter = tokens.begin(); token_iter != tokens.end(); ++token_iter)
 	{
-		std::string  cur_token = token_iter->c_str();
-		//llinfos << cur_token << llendl;
-		
+		const std::string  &cur_token = *token_iter;
 		if(cur_token=="/m" || cur_token=="/macro")
-		{
 			continue;
-		}
-
-		if(!found_macro)
-		{
-			macroname=std::string (cur_token);
-			found_macro=true;
-		}
+		else if(macroname.empty())
+			macroname=cur_token;
 		else
-		{
 			args << "\"" << cur_token << "\",";
-		}
 	}
 	
-	if(macroname=="")
+	if(macroname.empty())
 	{
-		LuaError("Macro Syntax: /m[acro] <MacroName>"
-			//" [args ...]"
-			);
+		LuaError("Macro Syntax: /m[acro] <MacroName> [args ...]");
 		return;
 	}
-	std::string  macrofile="";
-	
-	macrofile =  gDirUtilp->getExpandedFilename(FL_PATH_MACROS,macroname+".lua");
+
+	std::string  macrofile(gDirUtilp->getExpandedFilename(FL_PATH_MACROS,macroname+".lua"));
 
 	if(!gDirUtilp->fileExists(macrofile))
 	{
@@ -418,18 +402,15 @@ void FLLua::RunMacro(const std::string what)
 		LuaError(err.c_str());
 		return;
 	}
-
-	std::string  message("Executing Lua Macro "+macrofile);
-	std::string  arglist("MACRO_ARGS={");
+	//std::string  message("Executing Lua Macro "+macrofile);
 	// HACK.  Set global via luaL_dostring
-	arglist.append(args.str()).append("};");
+	std::string  arglist("MACRO_ARGS={" + args.str() + "};");
 	luaL_dostring(pLuaStack,arglist.c_str());
 	if(luaL_dofile(pLuaStack,macrofile.c_str()))
 		LuaError(Lua_getErrorMessage(pLuaStack).c_str());
 }
 
-//static
-void FLLua::RunString(std::string s)
+void FLLua::RunString(std::string &s)
 {
 	if(luaL_dostring(sInstance->pLuaStack,s.c_str()))
 	{
@@ -443,12 +424,10 @@ void FLLua::ExecuteHook(HookRequest *hook)
 #ifdef LUA_HOOK_SPAM
 	LL_INFOS("Lua") << "Firing event: " << hook->getName() << llendl;
 #endif
-	if(listening)
-	{
-		lua_getglobal(pLuaStack,"CallHook");
-		lua_pushstring(pLuaStack,hook->getName());
+		lua_getglobal(pLuaStack,"CallHook");		//+1
+		lua_pushstring(pLuaStack,hook->getName());	//+1
 		int lim=hook->getNumArgs();
-		if(lim)
+		if(lim)										//+args
 		{
 #ifdef LUA_HOOK_SPAM
 			LL_INFOS("Lua") << " args:";
@@ -479,10 +458,9 @@ void FLLua::ExecuteHook(HookRequest *hook)
 		}
 #endif
 		lua_pop(pLuaStack,1);	// -1
-					// Current stack = 0
- 	}
- }
- 
+								// Current stack = 0
+}
+
 // Static
 bool FLLua::isMacro(const std::string &str)
 {
@@ -490,19 +468,21 @@ bool FLLua::isMacro(const std::string &str)
 }
 
 //static
+// called from MAIN thread
 void FLLua::callLuaHook(HookRequest *hook)
 {
 	if(!hook)
 		return;
-	else if(!sInstance || (sInstance->mError && !FLLua::init()))
+	else if(!sInstance || !sInstance->listening/*|| (sInstance->mError && !FLLua::init())*/)
 		delete hook;
 	else
 	{
 #ifdef LUA_HOOK_SPAM
 		LL_INFOS("Lua") << "Adding event: " << hook.getName() << llendl;
 #endif
-		sInstance->lockData(); //Fixed a very obscure crash.
+		sInstance->lockData();
 		sInstance->mQueuedHooks.push(hook);
+		sInstance->mPendingHooks=true;
 		sInstance->unlockData();
 	}
 }

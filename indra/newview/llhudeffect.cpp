@@ -124,8 +124,9 @@ void LLHUDEffect::setColor(const LLColor4U &color)
 
 void LLHUDEffect::setDuration(const F32 duration)
 {
-	if(duration < F32(2.49))mDuration = duration;
-	else mDuration = F32(2.49);
+	mDuration = duration;
+	//if(duration < F32(2.49))mDuration = duration;
+	//else mDuration = F32(2.49);
 }
 
 void LLHUDEffect::setNeedsSendToSim(const BOOL send_to_sim)

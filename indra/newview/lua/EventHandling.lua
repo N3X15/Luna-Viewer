@@ -45,21 +45,6 @@
 	
 ]]--
 
--- Misc/Unsorted
-RegisterHook("OnLuaInit",	"Fired when the Lua engine (re)starts.")
-RegisterHook("OnAgentInit",	"Fired when YOUR agent initializes.")
-RegisterHook("EmeraldPhantomOn","Fired when you enter or leave phantom mode.")
-RegisterHook("OnObjectCreated",	"WHen an object is created, this event sends its Object UUID and PrimCode to Lua.")
-RegisterHook("OnAttach",	"This event is fired when an avatar attaches an object.")
-RegisterHook("OnAvatarLoaded",	"Fired when an avatar finishes loading.")
-
--- Bridge stuff
-RegisterHook("OnBridgeMessage",	"When Emerald's LSL bridge sends a response or command, this event is fired.")
-RegisterHook("OnBridgeReady",	"Signals that the Emerald LSL Bridge is ready.")
-RegisterHook("OnBridgeFailed",	"Signals that the Emerald LSL Bridge is broken.")
-RegisterHook("OnBridgeWorking",	"Signals that the Emerald LSL Bridge is working.")
-
-
 gEvents={};
 gEventDescs={};
 
@@ -97,3 +82,17 @@ function DumpAllHooks()
 		print(name..": "..gEventDescs[name])
 	end
 end
+
+-- Misc/Unsorted
+RegisterHook("OnLuaInit",	"Fired when the Lua engine (re)starts.")
+RegisterHook("OnAgentInit",	"Fired when YOUR agent initializes.")
+RegisterHook("EmeraldPhantomOn","Fired when you enter or leave phantom mode.")
+RegisterHook("OnObjectCreated",	"WHen an object is created, this event sends its Object UUID and PrimCode to Lua.")
+RegisterHook("OnAttach",	"This event is fired when an avatar attaches an object.")
+RegisterHook("OnAvatarLoaded",	"Fired when an avatar finishes loading.")
+
+-- Bridge stuff
+RegisterHook("OnBridgeMessage",	"When Emerald's LSL bridge sends a response or command, this event is fired.")
+RegisterHook("OnBridgeReady",	"Signals that the Emerald LSL Bridge is ready.")
+RegisterHook("OnBridgeFailed",	"Signals that the Emerald LSL Bridge is broken.")
+RegisterHook("OnBridgeWorking",	"Signals that the Emerald LSL Bridge is working.")
