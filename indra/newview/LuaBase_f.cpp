@@ -230,7 +230,7 @@ void LuaTp(const char* SimName, int x, int y, int z) //dispatchFromTextEditor ca
 	std::string name(SimName);
 	std::transform(name.begin(), name.end(), name.begin(), tolower);
 	if(name != "home")
-		name=llformat("secondlife:///app/teleport/%s/%d/%d/%d",SimName,x,y,z));
+		name=llformat("secondlife:///app/teleport/%s/%d/%d/%d",SimName,x,y,z);
 	new CB_Args1<const std::string>(&LuaTp_Event,name);
 }
 
