@@ -131,6 +131,11 @@ FLLua::~FLLua()
 		delete mQueuedHooks.front();
 		mQueuedHooks.pop();
 	}
+	while(!mQueuedEvents.empty()) //these hooks are dynamically allocated. We must delete.
+	{
+		delete mQueuedEvents.front();
+		mQueuedEvents.pop();
+	}
 	if(pLuaStack)
 		lua_close(pLuaStack);
 	pLuaStack=NULL;

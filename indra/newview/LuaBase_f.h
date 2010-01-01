@@ -43,19 +43,19 @@ LLViewerRegion* LuaGetCurrentRegion();
 
 void LuaError(const char* rawmsg);
 
-void LuaTouch(const char* uuid);
+void LuaTouch(const LLUUID& id);
 
 /*void LuaSleep(int milliseconds);*/
 
 // Chat functions
-void LuaSay(const char* rawmsg,const char* channel="0");
-void LuaShout(const char* rawmsg,const char* channel="0");
-void LuaWhisper(const char* rawmsg,const char* channel="0");
+void LuaSay(const char* rawmsg,int channel=0);
+void LuaShout(const char* rawmsg,int channel=0);
+void LuaWhisper(const char* rawmsg,int channel=0);
 
 // Not exposed to Lua (yet)
 void LuaSendRawChat(const char* rawmsg, int rawtype, bool animate, S32 channel);
 
-void Lua_tp(const char* SimName, int x=128, int y=128, int z=128);
+void LuaTp(const char* SimName, int x=128, int y=128, int z=128);
 
 bool Lua_exists(const char* Filename);
 

@@ -175,7 +175,7 @@ double getParamMin(const char* avid,const char* paramname)
 // Set
 //------------------------------------------------------------------------
 
-void setParamsEvent(std::string &name, double &weight)
+void setParams_Event(std::string &name, double &weight)
 {
 	LLVOAvatar *me=gAgent.getAvatarObject();
 	if(!me)return;
@@ -189,7 +189,7 @@ void setParamOnSelf(const char* paramname,double weight)
 		LuaError("No Agent Avatar");
 		return;
 	}
-	new CB_Args2<std::string,double>(setParamsEvent,paramname,weight); //add to client event queue
+	new CB_Args2<std::string,double>(&setParams_Event,paramname,weight); //add to client event queue
 
 	/*
 	LLVisualParam *p=me->getVisualParam(paramname);
@@ -204,11 +204,25 @@ void setParamOnSelf(const char* paramname,double weight)
 	me->setVisualParamWeight(p,p->getCurrentWeight());
 	gAgent.setAvatarObject(me);
 	*/
-}
 
-void LuaWear(const char* assetid)
+}
+void LuaWear_Event(const LLUUID& assetid)
 {
 	LLWearable *wear=LuaLoadWearable(assetid);
+	if(!wear)
+		LuaError("No Wearable found");
+	else if((wear=gWearableList.createCopy(wear))==NULL)
+		LuaError("Failed creation of new wearable");
+	else
+	{
+		wear->saveNewAsset();
+		wear->writeToAvatar(false);
+	}
+}
+void LuaWear(const LLUUID& assetid)
+{
+	new CB_Args1<const LLUUID>(&LuaWear_Event,assetid);
+	/*LLWearable *wear=LuaLoadWearable(assetid);
 	if(!wear)
 	{
 		LuaError("No Wearable found");
@@ -221,12 +235,16 @@ void LuaWear(const char* assetid)
 		return;
 	}
 	newwear->saveNewAsset();
-	newwear->writeToAvatar(false);
+	newwear->writeToAvatar(false);*/
 }
-
-void LuaRemoveAllWearables()
+void LuaRemoveAllWearables_Event()
 {
 	LLAgent::userRemoveAllClothesStep2(TRUE,NULL);
+}
+void LuaRemoveAllWearables() // calls glGenTextures
+{
+	new CB_Args0(LuaRemoveAllWearables_Event);
+	//LLAgent::userRemoveAllClothesStep2(TRUE,NULL);
 }
 
 bool LuaSaveWearable(LLWearable *w)
@@ -295,10 +313,10 @@ bool LuaSaveWearable(LLWearable *w)
 	return true;
 }
 
-LLWearable * LuaLoadWearable(const char* uuid)
+LLWearable * LuaLoadWearable(const LLUUID& uuid)
 {
 	char filename[LL_MAX_PATH];		/* Flawfinder: ignore */
-	snprintf(filename, LL_MAX_PATH, "%s.wbl", gDirUtilp->getExpandedFilename(FL_PATH_LUA,"data",uuid).c_str());		/* Flawfinder: ignore */
+	snprintf(filename, LL_MAX_PATH, "%s.wbl", gDirUtilp->getExpandedFilename(FL_PATH_LUA,"data",uuid.asString()).c_str());		/* Flawfinder: ignore */
 	LLFILE* fp = LLFile::fopen(filename, "r");		/* Flawfinder: ignore */
 	
 	if(!fp)
@@ -307,8 +325,7 @@ LLWearable * LuaLoadWearable(const char* uuid)
 		return NULL;
 	}
 
-	LLUUID id(uuid);
-	LLWearable *w=new LLWearable(id);
+	LLWearable *w=new LLWearable(uuid);
 	if(!w->importFile(fp))
 	{
 		LuaError("Cannot open wearable asset file.  Make sure lua/data exists and that it is readable (CHMOD).");
@@ -319,7 +336,7 @@ LLWearable * LuaLoadWearable(const char* uuid)
 	return w;
 }
 
-void LuaSetTEImage(int index,const char *UUID)
+void LuaSetTEImage(int index,const LLUUID& id)
 {
 	LLVOAvatar *a=gAgent.getAvatarObject();
 	if(!a)
@@ -327,12 +344,14 @@ void LuaSetTEImage(int index,const char *UUID)
 		LuaError("No Agent Avatar");
 		return;
 	}
-	LLUUID imid;
-	imid.set(UUID);
-	a->setTEImage((U8)index,new LLViewerImage(imid));
+	a->setTEImage((U8)index,new LLViewerImage(id));
 }
-
-void LuaUpdateAppearance()
+void LuaUpdateAppearance_Event()
 {
 	gAgent.saveAllWearables();
+}
+void LuaUpdateAppearance()
+{
+	new CB_Args0(&LuaUpdateAppearance_Event);
+	//gAgent.saveAllWearables();
 }

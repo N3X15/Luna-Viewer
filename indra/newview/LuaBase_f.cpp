@@ -42,27 +42,24 @@ void LuaPrint(const char *msg)
 	LuaSendChat(msg,false);
 }
 
-void LuaShout(const char* msg, const char* channel)
+void LuaShout(const char* msg, int channel)
 {
-	S32 chan = strtol(channel,NULL,10);
-	LuaSendRawChat(msg,2,false,chan);
+	LuaSendRawChat(msg,2,false,channel);
 }
 
-void LuaSay(const char* msg, const char* channel)
+void LuaSay(const char* msg, int channel)
 {
-	S32 chan = strtol(channel,NULL,10);
-	LuaSendRawChat(msg,1,false,chan);
+	LuaSendRawChat(msg,1,false,channel);
 }
 
-void LuaWhisper(const char* msg, const char* channel)
+void LuaWhisper(const char* msg, int channel)
 {
-	S32 chan = strtol(channel,NULL,10);
-	LuaSendRawChat(msg,0,false,chan);
+	LuaSendRawChat(msg,0,false,channel);
 }
 
-void LuaTouch(const char* uuid)
-{
-	LLViewerObject* object = gObjectList.findObject(LLUUID(uuid));
+void LuaTouch(const LLUUID& id)
+{	
+	LLViewerObject* object = gObjectList.findObject(id);
 	if(!object)
 	{
 		LuaError("No Object Found");
@@ -221,15 +218,20 @@ LLViewerRegion* LuaGetCurrentRegion()
 {
 	return gAgent.getRegion();
 }
-
-void Lua_tp(const char* SimName, int x, int y, int z)
+void LuaTp_Event(const std::string &val)
+{
+	if(val=="home")
+		gAgent.teleportViaLandmark(LLUUID::null);
+	else 
+		LLURLDispatcher::dispatchFromTextEditor(val);
+}
+void LuaTp(const char* SimName, int x, int y, int z) //dispatchFromTextEditor calls gl destroy
 {
 	std::string name(SimName);
 	std::transform(name.begin(), name.end(), name.begin(), tolower);
-	if(name == "home")
-		gAgent.teleportViaLandmark(LLUUID::null);
-	else
-		LLURLDispatcher::dispatchFromTextEditor(llformat("secondlife:///app/teleport/%s/%d/%d/%d",SimName,x,y,z));
+	if(name != "home")
+		name=llformat("secondlife:///app/teleport/%s/%d/%d/%d",SimName,x,y,z));
+	new CB_Args1<const std::string>(&LuaTp_Event,name);
 }
 
 bool Lua_exists(const char* Filename)

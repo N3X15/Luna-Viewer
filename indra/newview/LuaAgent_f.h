@@ -3,6 +3,7 @@
 #include "llworldmap.h"
 #include "llvoavatar.h"
 
+/*
 class LuaAgent
 {	
 public:
@@ -20,9 +21,9 @@ class LuaWorldMap
 {
 public:
 	LLSimInfo* LuaGetSimFromName(const char* name);
-};
+};*/
 
-std::string LuaFindAvatarName(const char* uuid);
+std::string LuaFindAvatarName(const LLUUID& id);
 std::string LuaFindAvatarKey(const char* fullname);
 
 // Internal

@@ -44,6 +44,7 @@
 %}
 
 %include <std_string.i>
+%include "../newview/LLUUID.i"
 
 %import "../newview/LuaTypes.h"
 %import "../llcommon/stdtypes.h"
@@ -72,22 +73,23 @@
 %rename(GetCWD)			LuaGetCWD();
 %rename(error)			LuaError(const char* msg);
 
-%rename(say)			LuaSay(const char* msg, const char* channel="0");
-%rename(shout)			LuaShout(const char* msg, const char* channel="0");
-%rename(whisper)		LuaWhisper(const char* msg, const char* channel="0");
+%rename(say)			LuaSay(const char* msg, int channel=0);
+%rename(shout)			LuaShout(const char* msg, int channel=0);
+%rename(whisper)		LuaWhisper(const char* msg, int channel=0);
 
-%rename(tp)			Lua_tp(const char* SimName, int x=128, int y=128, int z=128);
+%rename(tp)			LuaTp(const char* SimName, int x=128, int y=128, int z=128);
 %rename(exists)			Lua_exists(const char* Filename);
-%rename(touch)			Lua_touch(const char* uuid);
+%rename(touch)			LuaTouch(const LLUUID& id);
 
-%rename(wear)			LuaWear(const char* uuid);
+%rename(wear)			LuaWear(const LLUUID& assetid);
 %rename(RemoveAllWearables)	LuaRemoveAllWearables();
-%rename(setTEImage)		LuaSetTEImage(int index,const char *UUID);
+%rename(setTEImage)		LuaSetTEImage(int index,const LLUUID& id);
 
 %include "LuaBase_f.h"
 
-%rename(key2name)		LuaFindAvatarName(const char* uuid);
+%rename(key2name)		LuaFindAvatarName(const LLUUID& id);
 %rename(name2key)		LuaFindAvatarKey(const char* fullname);
+%rename(UpdateAppearance)	LuaUpdateAppearance();
 
 %include "LuaAvatar_f.h"
 

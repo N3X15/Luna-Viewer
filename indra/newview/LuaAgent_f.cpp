@@ -12,6 +12,8 @@
 // viewer project includes
 #include "llqueryflags.h"
 
+
+/* No way to get LuaAgent object in lua. These functions seem pointless until such is added.
 std::string LuaAgent::LuaGetFullName()
 {
 	std::string  name("wot");
@@ -44,10 +46,15 @@ void LuaAgent::LuaFollow(const char* name)
 	gAgent.startFollowPilot(id);
 }
 
-std::string  LuaFindAvatarName(const char* uuid)
+LLSimInfo* LuaWorldMap::LuaGetSimFromName(const char* name)
+{
+	LLSimInfo* wut = LLWorldMap::getInstance()->simInfoFromName(std::string (name));
+	return wut;
+}
+*/
+std::string  LuaFindAvatarName(const LLUUID &id)
 {
 	std::string  name;
-	LLUUID id(uuid);
 	if(!gCacheName)
 	{
 		LuaError("gCacheName is NULL");
@@ -86,10 +93,4 @@ LLVOAvatar* LuaGetAvatar(const LLUUID& id)
 	{
 		return NULL;
 	}
-}
-
-LLSimInfo* LuaWorldMap::LuaGetSimFromName(const char* name)
-{
-	LLSimInfo* wut = LLWorldMap::getInstance()->simInfoFromName(std::string (name));
-	return wut;
 }
