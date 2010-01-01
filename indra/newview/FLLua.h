@@ -100,7 +100,7 @@ private:
 
 	void run();
 	
-	bool LoadFile(std::string &file);
+	bool LoadFile(std::string file);
 	void RunMacro(const std::string &what);
 	void RunString(std::string &s);
 	void ExecuteHook(HookRequest *hook);

@@ -84,7 +84,7 @@ end
 --Easily check contents of _G and SL
 function DumpTable(tbl)
 	for n,v in pairs(tbl) do
-		print(n..": "..v)
+		print(n..": "..tostring(v))
 	end
 end
 

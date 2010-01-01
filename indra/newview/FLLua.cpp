@@ -179,7 +179,7 @@ void FLLua::execClientEvents()
 	}
 	sInstance->unlockData();
 }
-}
+
 // Static
 bool FLLua::init()
 {
@@ -270,6 +270,7 @@ bool FLLua::load()
 	}
 
 	LL_INFOS("Lua") << __LINE__ << ": LoadFile (_init_.lua)" << llendl;
+
 	if(!LoadFile(gDirUtilp->getExpandedFilename(FL_PATH_LUA,"_init_.lua")))
 		return false;
 #if 0
@@ -340,7 +341,7 @@ done:
 	LL_INFOS("Lua") << __LINE__ << ": *** THREAD EXITING ***" << llendl;
 }
 // called from MAIN thread.
-bool FLLua::LoadFile(std::string  &file)
+bool FLLua::LoadFile(std::string  file)
 {
 	if(luaL_dofile(pLuaStack,file.c_str()))
 	{
