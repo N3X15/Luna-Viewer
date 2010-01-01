@@ -1,6 +1,4 @@
-/* Copyright (c) 2009
- *
- * Modular Systems All rights reserved.
+/* Copyright (c) 2009 Modular Systems All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or
  * without modification, are permitted provided that the following
@@ -118,6 +116,7 @@ bool JCLSLBridge::lsltobridge(std::string message, std::string from_name, LLUUID
 		if(clip == "#@#@#")
 		{
 			std::string rest = message.substr(5);
+			LUA_CALL("OnBridgeMessage") << JCLSLBridge::bridge_channel(gAgent.getID()) << from_name << source_id << owner_id << rest << LUA_END;
 			LLSD arguments = JCLSLBridge::parse_string_to_list(rest, '|');
 			////cmdline_printchat(std::string(LLSD::dumpXML(arguments)));
 			U32 call = atoi(arguments[0].asString().c_str());
@@ -457,12 +456,13 @@ void JCLSLBridge::processSoundTrigger(LLMessageSystem* msg,void**)
 			if(sBridgeStatus == ACTIVE)
 			{
 				send_chat_from_viewer("emerald_bridge_rdy", CHAT_TYPE_WHISPER, JCLSLBridge::bridge_channel(gAgent.getID()));
-			}else if(sBridgeStatus == FAILED)
-			{
+				LUA_CALL("OnBridgeReady") <<  JCLSLBridge::bridge_channel(gAgent.getID()) << LUA_END;
+			} else if(sBridgeStatus == FAILED) {
 				send_chat_from_viewer("emerald_bridge_failed", CHAT_TYPE_WHISPER, JCLSLBridge::bridge_channel(gAgent.getID()));
-			}else
-			{
+				LUA_CALL0("OnBridgeFailed");
+			} else {
 				send_chat_from_viewer("emerald_bridge_working", CHAT_TYPE_WHISPER, JCLSLBridge::bridge_channel(gAgent.getID()));
+				LUA_CALL("OnBridgeWorking")  <<  JCLSLBridge::bridge_channel(gAgent.getID()) << LUA_END;
 			}
 		}
 		

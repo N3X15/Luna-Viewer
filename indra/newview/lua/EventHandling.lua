@@ -35,8 +35,30 @@
 	EmeraldPhantomOn	( integer Phantom )
 	OnObjectCreated 	( string ObjectID, 	string PrimCode )
 	OnAttach 		( string ObjectID, 	string AvName	)
+	OnAvatarLoaded		( string UUID, string FullName, string RegionID )
+
+	NOTE:  Message is delimited by "|".
+	OnBridgeMessage 	(integer Channel, string from_name, string source_id, string owner_id, string message)
+	OnBridgeReady		(integer Channel)
+	OnBridgeFailed		( )
+	OnBridgeWorking		(integer Channel)
 	
 ]]--
+
+-- Misc/Unsorted
+RegisterHook("OnLuaInit",	"Fired when the Lua engine (re)starts.")
+RegisterHook("OnAgentInit",	"Fired when YOUR agent initializes.")
+RegisterHook("EmeraldPhantomOn","Fired when you enter or leave phantom mode.")
+RegisterHook("OnObjectCreated",	"WHen an object is created, this event sends its Object UUID and PrimCode to Lua.")
+RegisterHook("OnAttach",	"This event is fired when an avatar attaches an object.")
+RegisterHook("OnAvatarLoaded",	"Fired when an avatar finishes loading.")
+
+-- Bridge stuff
+RegisterHook("OnBridgeMessage",	"When Emerald's LSL bridge sends a response or command, this event is fired.")
+RegisterHook("OnBridgeReady",	"Signals that the Emerald LSL Bridge is ready.")
+RegisterHook("OnBridgeFailed",	"Signals that the Emerald LSL Bridge is broken.")
+RegisterHook("OnBridgeWorking",	"Signals that the Emerald LSL Bridge is working.")
+
 
 gEvents={};
 gEventDescs={};
@@ -64,8 +86,14 @@ function RegisterHook(EventName,Desc)
 end
 
 function DumpAllHooks()
-	print "Activated Hooks:"
+	print "Registered Hooks:"
 	for name,_ in pairs(gEvents) do
-		print(name)
+		hookdesc=""
+		if(gEventDescs[name]==nil) then 
+			hookdesc=gEventDescs[name] 
+		else 
+			hookdesc="[EVENT LACKS A DESCRIPTION!]" 
+		end
+		print(name..": "..gEventDescs[name])
 	end
 end

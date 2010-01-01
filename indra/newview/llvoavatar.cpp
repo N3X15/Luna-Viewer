@@ -1020,9 +1020,8 @@ LLVOAvatar::LLVOAvatar(const LLUUID& id,
 	sBoobConfig.velMin           = EmeraldBoobUtils::convertVelMin(gSavedSettings.getF32("EmeraldBoobVelMin"));
 	sBoobConfig.friction         = EmeraldBoobUtils::convertFriction(gSavedSettings.getF32("EmeraldBoobFriction"));
 	sBoobConfig.enabled          = gSavedSettings.getBOOL("EmeraldBreastPhysicsToggle");
-	sBoobConfig.XYInfluence		 = gSavedSettings.getF32("EmeraldBoobXYInfluence");
-
-
+	sBoobConfig.XYInfluence		= gSavedSettings.getF32("EmeraldBoobXYInfluence");
+	
 	if (gNoRender)
 	{
 		return;
@@ -3068,6 +3067,7 @@ void LLVOAvatar::idleUpdateLoadingEffect()
 		if (isFullyLoaded())
 		{
 			deleteParticleSource();
+			LUA_CALL("OnAvatarLoaded") << getID() << getFullName() << regionp->getID() << LUA_END;
 		}
 		else
 		{
