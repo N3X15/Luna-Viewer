@@ -3067,7 +3067,7 @@ void LLVOAvatar::idleUpdateLoadingEffect()
 		if (isFullyLoaded())
 		{
 			deleteParticleSource();
-			LUA_CALL("OnAvatarLoaded") << getID() << getFullName() << regionp->getID() << LUA_END;
+			LUA_CALL("OnAvatarLoaded") << getID() << getFullname() << getRegion()->getRegionID() << LUA_END;
 		}
 		else
 		{

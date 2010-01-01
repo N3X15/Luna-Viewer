@@ -8,7 +8,7 @@
  * @brief FlexLife Viewer Lua Integration Framework
  * @author N3X15
  *
- *  Copyright (C) 2008 Patriotic Nigras
+ *  Copyright (C) 2008 FlexLife Contributors
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by

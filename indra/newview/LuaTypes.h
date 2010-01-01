@@ -22,7 +22,10 @@ public:
 	LuaVector2(float nx,float ny);		// (nx,ny)
 	LuaVector2(const LLVector2& val);	// You get the idea
 
-	const LLVector2& ToLL(){ return new LLVector2(x,y); }
+	operator LLVector2()
+	{ 
+		return new LLVector2(x,y); 
+	}
 }
 
 inline LuaVector2::LuaVector2()
@@ -61,7 +64,10 @@ public:
 	LuaVector3(float nx,float ny,float nz);		// (nx,ny,nz)
 	LuaVector3(const LLVector3& val);		// You get the idea
 
-	const LLVector3& ToLL(){ return new LLVector3(x,y,z); }
+	operator LLVector3()
+	{ 
+		return new LLVector3(x,y,z); 
+	}
 }
 inline LuaVector3::LuaVector3()
 {
@@ -103,7 +109,15 @@ public:
 	LuaVector4(float nx,float ny,float nz,float nw);		// (nx,ny,nz,nw)
 	LuaVector4(const LLVector4& val);				// You get the idea
 
-	const LLVector4& ToLL(){ return new LLVector4(x,y,z,w); }
+	operator LLVector4()
+	{ 
+		return new LLVector4(x,y,z,w); 
+	}
+
+	operator LLColor4()
+	{ 
+		return new LLVector4(x,y,z,w); 
+	}
 }
 inline LuaVector4::LuaVector4()
 {
