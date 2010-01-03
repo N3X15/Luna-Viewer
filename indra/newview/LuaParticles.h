@@ -4,6 +4,7 @@
 #include "llviewerimagelist.h"
 #include "llviewerobject.h"
 #include "llviewerobjectlist.h"
+
 /*
 --- C++ PARTICLES ---
 	LLPartSysData particle_parameters;

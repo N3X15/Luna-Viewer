@@ -27,7 +27,7 @@
 #include "llviewerprecompiledheaders.h"
 
 #include "stdtypes.h"
-//#include "SLua.h"
+#include "SLua.h"
 #include "llfloater.h"
 #include "lllineeditor.h"
 #include "llpanel.h"
@@ -54,10 +54,11 @@
 %import "../newview/llviewerobject.h"
 %import "../newview/llvovolume.h"
 %import "../newview/llselectmgr.h"
-%rename (Floater) 	LLFloater;
-%rename (Button) 	LLButton;
-%rename (LineEditor) 	LLLineEditor;
-%rename (IconCtrl)	LLIconCtrl;
+%import "../newview/LuaUI.h"
+%rename (Floater) 	LuaFloater;
+%rename (Button) 	LuaButton;
+%rename (LineEditor) 	LuaLineEditor;
+%rename (IconCtrl)	LuaIconCtrl;
 %import "../llui/llfloater.h"
 %import "../llui/llpanel.h"
 %import "../llui/llbutton.h"

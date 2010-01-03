@@ -1551,7 +1551,7 @@ typedef struct{} LANGUAGE_OBJ;
 #include "llviewerprecompiledheaders.h"
 
 #include "stdtypes.h"
-//#include "SLua.h"
+#include "SLua.h"
 #include "llfloater.h"
 #include "lllineeditor.h"
 #include "llpanel.h"

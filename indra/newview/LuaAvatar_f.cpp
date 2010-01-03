@@ -84,6 +84,7 @@ std::string  LuaDumpVisualParamsToLuaCode()
 		param_msg.append(s.str());
 	}
 */
+	param_msg.append("UpdateAppearance()\n");
 	return param_msg;
 }
 
