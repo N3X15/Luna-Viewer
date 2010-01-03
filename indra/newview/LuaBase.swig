@@ -27,7 +27,7 @@
 #include "llviewerprecompiledheaders.h"
 
 #include "stdtypes.h"
-#include "SLua.h"
+#include "LuaUI.h"
 #include "llfloater.h"
 #include "lllineeditor.h"
 #include "llpanel.h"
@@ -54,11 +54,6 @@
 %import "../newview/llviewerobject.h"
 %import "../newview/llvovolume.h"
 %import "../newview/llselectmgr.h"
-%import "../newview/LuaUI.h"
-%rename (Floater) 	LuaFloater;
-%rename (Button) 	LuaButton;
-%rename (LineEditor) 	LuaLineEditor;
-%rename (IconCtrl)	LuaIconCtrl;
 %import "../llui/llfloater.h"
 %import "../llui/llpanel.h"
 %import "../llui/llbutton.h"
@@ -96,6 +91,12 @@
 
 %include "LuaAgent_f.h"
 %import "LuaParticles.h"
+
+%include "../newview/LuaUI.h"
+%rename (Floater) 	LuaFloater;
+%rename (Button) 	LuaButton;
+%rename (LineEditor) 	LuaLineEditor;
+%rename (IconCtrl)	LuaIconCtrl;
 
 extern bool gAllowWorldMap;
 extern LLAgent *gAgent;

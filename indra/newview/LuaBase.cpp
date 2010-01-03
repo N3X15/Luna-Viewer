@@ -1492,45 +1492,67 @@ SWIG_Lua_dostring(lua_State *L, const char* str) {
 
 #define SWIGTYPE_p_EAnimate swig_types[0]
 #define SWIGTYPE_p_EVOType swig_types[1]
-#define SWIGTYPE_p_LLSafeHandleT_LLObjectSelection_t swig_types[2]
-#define SWIGTYPE_p_LLUUID swig_types[3]
-#define SWIGTYPE_p_LLVOAvatar swig_types[4]
-#define SWIGTYPE_p_LLViewerRegion swig_types[5]
-#define SWIGTYPE_p_LLWearable swig_types[6]
-#define SWIGTYPE_p_child_list_t swig_types[7]
-#define SWIGTYPE_p_const_child_list_t swig_types[8]
-#define SWIGTYPE_p_double swig_types[9]
-#define SWIGTYPE_p_eLayoutOrientation swig_types[10]
-#define SWIGTYPE_p_eObjectPartitions swig_types[11]
-#define SWIGTYPE_p_e_action_type swig_types[12]
-#define SWIGTYPE_p_e_anim_request swig_types[13]
-#define SWIGTYPE_p_e_camera_modes swig_types[14]
-#define SWIGTYPE_p_e_camera_position swig_types[15]
-#define SWIGTYPE_p_e_grid_mode swig_types[16]
-#define SWIGTYPE_p_e_object_update_type swig_types[17]
-#define SWIGTYPE_p_e_selection_type swig_types[18]
-#define SWIGTYPE_p_e_send_type swig_types[19]
-#define SWIGTYPE_p_float swig_types[20]
-#define SWIGTYPE_p_int swig_types[21]
-#define SWIGTYPE_p_iterator swig_types[22]
-#define SWIGTYPE_p_list_t swig_types[23]
-#define SWIGTYPE_p_long_long swig_types[24]
-#define SWIGTYPE_p_root_iterator swig_types[25]
-#define SWIGTYPE_p_root_object_iterator swig_types[26]
-#define SWIGTYPE_p_short swig_types[27]
-#define SWIGTYPE_p_signed_char swig_types[28]
-#define SWIGTYPE_p_skip_list_t swig_types[29]
-#define SWIGTYPE_p_std__string swig_types[30]
-#define SWIGTYPE_p_unsigned_char swig_types[31]
-#define SWIGTYPE_p_unsigned_int swig_types[32]
-#define SWIGTYPE_p_unsigned_long_long swig_types[33]
-#define SWIGTYPE_p_unsigned_short swig_types[34]
-#define SWIGTYPE_p_valid_iterator swig_types[35]
-#define SWIGTYPE_p_valid_root_iterator swig_types[36]
-#define SWIGTYPE_p_vobj_list_t swig_types[37]
-#define SWIGTYPE_p_wchar_t swig_types[38]
-static swig_type_info *swig_types[40];
-static swig_module_info swig_module = {swig_types, 39, 0, 0, 0, 0};
+#define SWIGTYPE_p_LLAgent swig_types[2]
+#define SWIGTYPE_p_LLAlphaObject swig_types[3]
+#define SWIGTYPE_p_LLButton swig_types[4]
+#define SWIGTYPE_p_LLFloater swig_types[5]
+#define SWIGTYPE_p_LLMultiFloater swig_types[6]
+#define SWIGTYPE_p_LLPanel swig_types[7]
+#define SWIGTYPE_p_LLPrimitive swig_types[8]
+#define SWIGTYPE_p_LLSafeHandleT_LLObjectSelection_t swig_types[9]
+#define SWIGTYPE_p_LLSelectMgr swig_types[10]
+#define SWIGTYPE_p_LLStaticViewerObject swig_types[11]
+#define SWIGTYPE_p_LLUUID swig_types[12]
+#define SWIGTYPE_p_LLVOAvatar swig_types[13]
+#define SWIGTYPE_p_LLVOVolume swig_types[14]
+#define SWIGTYPE_p_LLViewerObject swig_types[15]
+#define SWIGTYPE_p_LLViewerRegion swig_types[16]
+#define SWIGTYPE_p_LLWearable swig_types[17]
+#define SWIGTYPE_p_LuaAgent swig_types[18]
+#define SWIGTYPE_p_LuaButton swig_types[19]
+#define SWIGTYPE_p_LuaFloater swig_types[20]
+#define SWIGTYPE_p_LuaLineEditor swig_types[21]
+#define SWIGTYPE_p_LuaObject swig_types[22]
+#define SWIGTYPE_p_LuaObjectManager swig_types[23]
+#define SWIGTYPE_p_LuaPanel swig_types[24]
+#define SWIGTYPE_p_LuaSelectionManager swig_types[25]
+#define SWIGTYPE_p_LuaTextBox swig_types[26]
+#define SWIGTYPE_p_LuaUICtrl swig_types[27]
+#define SWIGTYPE_p_LuaUIManager swig_types[28]
+#define SWIGTYPE_p_child_list_t swig_types[29]
+#define SWIGTYPE_p_const_child_list_t swig_types[30]
+#define SWIGTYPE_p_double swig_types[31]
+#define SWIGTYPE_p_eLayoutOrientation swig_types[32]
+#define SWIGTYPE_p_eObjectPartitions swig_types[33]
+#define SWIGTYPE_p_e_action_type swig_types[34]
+#define SWIGTYPE_p_e_anim_request swig_types[35]
+#define SWIGTYPE_p_e_camera_modes swig_types[36]
+#define SWIGTYPE_p_e_camera_position swig_types[37]
+#define SWIGTYPE_p_e_grid_mode swig_types[38]
+#define SWIGTYPE_p_e_object_update_type swig_types[39]
+#define SWIGTYPE_p_e_selection_type swig_types[40]
+#define SWIGTYPE_p_e_send_type swig_types[41]
+#define SWIGTYPE_p_float swig_types[42]
+#define SWIGTYPE_p_int swig_types[43]
+#define SWIGTYPE_p_iterator swig_types[44]
+#define SWIGTYPE_p_list_t swig_types[45]
+#define SWIGTYPE_p_long_long swig_types[46]
+#define SWIGTYPE_p_root_iterator swig_types[47]
+#define SWIGTYPE_p_root_object_iterator swig_types[48]
+#define SWIGTYPE_p_short swig_types[49]
+#define SWIGTYPE_p_signed_char swig_types[50]
+#define SWIGTYPE_p_skip_list_t swig_types[51]
+#define SWIGTYPE_p_std__string swig_types[52]
+#define SWIGTYPE_p_unsigned_char swig_types[53]
+#define SWIGTYPE_p_unsigned_int swig_types[54]
+#define SWIGTYPE_p_unsigned_long_long swig_types[55]
+#define SWIGTYPE_p_unsigned_short swig_types[56]
+#define SWIGTYPE_p_valid_iterator swig_types[57]
+#define SWIGTYPE_p_valid_root_iterator swig_types[58]
+#define SWIGTYPE_p_vobj_list_t swig_types[59]
+#define SWIGTYPE_p_wchar_t swig_types[60]
+static swig_type_info *swig_types[62];
+static swig_module_info swig_module = {swig_types, 61, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -1551,7 +1573,7 @@ typedef struct{} LANGUAGE_OBJ;
 #include "llviewerprecompiledheaders.h"
 
 #include "stdtypes.h"
-#include "SLua.h"
+#include "LuaUI.h"
 #include "llfloater.h"
 #include "lllineeditor.h"
 #include "llpanel.h"
@@ -3027,6 +3049,1444 @@ fail:
 }
 
 
+static int _wrap_new_LuaUICtrl__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  std::string arg1 ;
+  LuaUICtrl *result = 0 ;
+  
+  SWIG_check_num_args("LuaUICtrl",1,1)
+  if(!lua_isstring(L,1)) SWIG_fail_arg("LuaUICtrl",1,"std::string");
+  (&arg1)->assign(lua_tostring(L,1),lua_strlen(L,1));
+  result = (LuaUICtrl *)new LuaUICtrl(arg1);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_LuaUICtrl,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_LuaUICtrl__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  std::string arg1 ;
+  int arg2 ;
+  int arg3 ;
+  int arg4 ;
+  int arg5 ;
+  LuaUICtrl *result = 0 ;
+  
+  SWIG_check_num_args("LuaUICtrl",5,5)
+  if(!lua_isstring(L,1)) SWIG_fail_arg("LuaUICtrl",1,"std::string");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("LuaUICtrl",2,"int");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("LuaUICtrl",3,"int");
+  if(!lua_isnumber(L,4)) SWIG_fail_arg("LuaUICtrl",4,"int");
+  if(!lua_isnumber(L,5)) SWIG_fail_arg("LuaUICtrl",5,"int");
+  (&arg1)->assign(lua_tostring(L,1),lua_strlen(L,1));
+  arg2 = (int)lua_tonumber(L, 2);
+  arg3 = (int)lua_tonumber(L, 3);
+  arg4 = (int)lua_tonumber(L, 4);
+  arg5 = (int)lua_tonumber(L, 5);
+  result = (LuaUICtrl *)new LuaUICtrl(arg1,arg2,arg3,arg4,arg5);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_LuaUICtrl,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_LuaUICtrl(lua_State* L) {
+  int argc;
+  int argv[6]={
+    1,2,3,4,5,6
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 1) {
+    int _v;
+    {
+      _v = lua_isstring(L,argv[0]);
+    }
+    if (_v) {
+      return _wrap_new_LuaUICtrl__SWIG_0(L);
+    }
+  }
+  if (argc == 5) {
+    int _v;
+    {
+      _v = lua_isstring(L,argv[0]);
+    }
+    if (_v) {
+      {
+        _v = lua_isnumber(L,argv[1]);
+      }
+      if (_v) {
+        {
+          _v = lua_isnumber(L,argv[2]);
+        }
+        if (_v) {
+          {
+            _v = lua_isnumber(L,argv[3]);
+          }
+          if (_v) {
+            {
+              _v = lua_isnumber(L,argv[4]);
+            }
+            if (_v) {
+              return _wrap_new_LuaUICtrl__SWIG_1(L);
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  lua_pushstring(L,"Wrong arguments for overloaded function 'new_LuaUICtrl'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    LuaUICtrl(std::string)\n"
+    "    LuaUICtrl(std::string,int,int,int,int)\n");
+  lua_error(L);return 0;
+}
+
+
+static int _wrap_LuaUICtrl_LuaSetRect(lua_State* L) {
+  int SWIG_arg = 0;
+  LuaUICtrl *arg1 = (LuaUICtrl *) 0 ;
+  int arg2 ;
+  int arg3 ;
+  int arg4 ;
+  int arg5 ;
+  
+  SWIG_check_num_args("LuaSetRect",5,5)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("LuaSetRect",1,"LuaUICtrl *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("LuaSetRect",2,"int");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("LuaSetRect",3,"int");
+  if(!lua_isnumber(L,4)) SWIG_fail_arg("LuaSetRect",4,"int");
+  if(!lua_isnumber(L,5)) SWIG_fail_arg("LuaSetRect",5,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LuaUICtrl,0))){
+    SWIG_fail_ptr("LuaUICtrl_LuaSetRect",1,SWIGTYPE_p_LuaUICtrl);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  arg3 = (int)lua_tonumber(L, 3);
+  arg4 = (int)lua_tonumber(L, 4);
+  arg5 = (int)lua_tonumber(L, 5);
+  (arg1)->LuaSetRect(arg2,arg3,arg4,arg5);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static void swig_delete_LuaUICtrl(void *obj) {
+LuaUICtrl *arg1 = (LuaUICtrl *) obj;
+delete arg1;
+}
+static swig_lua_method swig_LuaUICtrl_methods[] = {
+    {"LuaSetRect", _wrap_LuaUICtrl_LuaSetRect}, 
+    {0,0}
+};
+static swig_lua_attribute swig_LuaUICtrl_attributes[] = {
+    {0,0,0}
+};
+static swig_lua_class *swig_LuaUICtrl_bases[] = {0};
+static const char *swig_LuaUICtrl_base_names[] = {0};
+static swig_lua_class _wrap_class_LuaUICtrl = { "LuaUICtrl", &SWIGTYPE_p_LuaUICtrl,_wrap_new_LuaUICtrl, swig_delete_LuaUICtrl, swig_LuaUICtrl_methods, swig_LuaUICtrl_attributes, swig_LuaUICtrl_bases, swig_LuaUICtrl_base_names };
+
+static int _wrap_new_LuaAgent(lua_State* L) {
+  int SWIG_arg = 0;
+  LuaAgent *result = 0 ;
+  
+  SWIG_check_num_args("LuaAgent::LuaAgent",0,0)
+  result = (LuaAgent *)new LuaAgent();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_LuaAgent,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static void swig_delete_LuaAgent(void *obj) {
+LuaAgent *arg1 = (LuaAgent *) obj;
+delete arg1;
+}
+static swig_lua_method swig_LuaAgent_methods[] = {
+    {0,0}
+};
+static swig_lua_attribute swig_LuaAgent_attributes[] = {
+    {0,0,0}
+};
+static swig_lua_class *swig_LuaAgent_bases[] = {0};
+static const char *swig_LuaAgent_base_names[] = {0};
+static swig_lua_class _wrap_class_LuaAgent = { "LuaAgent", &SWIGTYPE_p_LuaAgent,_wrap_new_LuaAgent, swig_delete_LuaAgent, swig_LuaAgent_methods, swig_LuaAgent_attributes, swig_LuaAgent_bases, swig_LuaAgent_base_names };
+
+static int _wrap_new_LuaObjectManager(lua_State* L) {
+  int SWIG_arg = 0;
+  LuaObjectManager *result = 0 ;
+  
+  SWIG_check_num_args("LuaObjectManager::LuaObjectManager",0,0)
+  result = (LuaObjectManager *)new LuaObjectManager();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_LuaObjectManager,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static void swig_delete_LuaObjectManager(void *obj) {
+LuaObjectManager *arg1 = (LuaObjectManager *) obj;
+delete arg1;
+}
+static swig_lua_method swig_LuaObjectManager_methods[] = {
+    {0,0}
+};
+static swig_lua_attribute swig_LuaObjectManager_attributes[] = {
+    {0,0,0}
+};
+static swig_lua_class *swig_LuaObjectManager_bases[] = {0};
+static const char *swig_LuaObjectManager_base_names[] = {0};
+static swig_lua_class _wrap_class_LuaObjectManager = { "LuaObjectManager", &SWIGTYPE_p_LuaObjectManager,_wrap_new_LuaObjectManager, swig_delete_LuaObjectManager, swig_LuaObjectManager_methods, swig_LuaObjectManager_attributes, swig_LuaObjectManager_bases, swig_LuaObjectManager_base_names };
+
+static int _wrap_new_LuaSelectionManager(lua_State* L) {
+  int SWIG_arg = 0;
+  LuaSelectionManager *result = 0 ;
+  
+  SWIG_check_num_args("LuaSelectionManager::LuaSelectionManager",0,0)
+  result = (LuaSelectionManager *)new LuaSelectionManager();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_LuaSelectionManager,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static void swig_delete_LuaSelectionManager(void *obj) {
+LuaSelectionManager *arg1 = (LuaSelectionManager *) obj;
+delete arg1;
+}
+static swig_lua_method swig_LuaSelectionManager_methods[] = {
+    {0,0}
+};
+static swig_lua_attribute swig_LuaSelectionManager_attributes[] = {
+    {0,0,0}
+};
+static swig_lua_class *swig_LuaSelectionManager_bases[] = {0};
+static const char *swig_LuaSelectionManager_base_names[] = {0};
+static swig_lua_class _wrap_class_LuaSelectionManager = { "LuaSelectionManager", &SWIGTYPE_p_LuaSelectionManager,_wrap_new_LuaSelectionManager, swig_delete_LuaSelectionManager, swig_LuaSelectionManager_methods, swig_LuaSelectionManager_attributes, swig_LuaSelectionManager_bases, swig_LuaSelectionManager_base_names };
+
+static void swig_delete_LuaObject(void *obj) {
+LuaObject *arg1 = (LuaObject *) obj;
+delete arg1;
+}
+static swig_lua_method swig_LuaObject_methods[] = {
+    {0,0}
+};
+static swig_lua_attribute swig_LuaObject_attributes[] = {
+    {0,0,0}
+};
+static swig_lua_class *swig_LuaObject_bases[] = {0};
+static const char *swig_LuaObject_base_names[] = {0};
+static swig_lua_class _wrap_class_LuaObject = { "LuaObject", &SWIGTYPE_p_LuaObject,0, swig_delete_LuaObject, swig_LuaObject_methods, swig_LuaObject_attributes, swig_LuaObject_bases, swig_LuaObject_base_names };
+
+static int _wrap_new_LuaPanel__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  std::string arg1 ;
+  LuaPanel *result = 0 ;
+  
+  SWIG_check_num_args("LuaPanel",1,1)
+  if(!lua_isstring(L,1)) SWIG_fail_arg("LuaPanel",1,"std::string");
+  (&arg1)->assign(lua_tostring(L,1),lua_strlen(L,1));
+  result = (LuaPanel *)new LuaPanel(arg1);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_LuaPanel,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_LuaPanel__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  std::string arg1 ;
+  int arg2 ;
+  int arg3 ;
+  int arg4 ;
+  int arg5 ;
+  LuaPanel *result = 0 ;
+  
+  SWIG_check_num_args("LuaPanel",5,5)
+  if(!lua_isstring(L,1)) SWIG_fail_arg("LuaPanel",1,"std::string");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("LuaPanel",2,"int");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("LuaPanel",3,"int");
+  if(!lua_isnumber(L,4)) SWIG_fail_arg("LuaPanel",4,"int");
+  if(!lua_isnumber(L,5)) SWIG_fail_arg("LuaPanel",5,"int");
+  (&arg1)->assign(lua_tostring(L,1),lua_strlen(L,1));
+  arg2 = (int)lua_tonumber(L, 2);
+  arg3 = (int)lua_tonumber(L, 3);
+  arg4 = (int)lua_tonumber(L, 4);
+  arg5 = (int)lua_tonumber(L, 5);
+  result = (LuaPanel *)new LuaPanel(arg1,arg2,arg3,arg4,arg5);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_LuaPanel,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_LuaPanel__SWIG_2(lua_State* L) {
+  int SWIG_arg = 0;
+  std::string arg1 ;
+  int arg2 ;
+  int arg3 ;
+  int arg4 ;
+  int arg5 ;
+  bool arg6 ;
+  LuaPanel *result = 0 ;
+  
+  SWIG_check_num_args("LuaPanel",6,6)
+  if(!lua_isstring(L,1)) SWIG_fail_arg("LuaPanel",1,"std::string");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("LuaPanel",2,"int");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("LuaPanel",3,"int");
+  if(!lua_isnumber(L,4)) SWIG_fail_arg("LuaPanel",4,"int");
+  if(!lua_isnumber(L,5)) SWIG_fail_arg("LuaPanel",5,"int");
+  if(!lua_isboolean(L,6)) SWIG_fail_arg("LuaPanel",6,"bool");
+  (&arg1)->assign(lua_tostring(L,1),lua_strlen(L,1));
+  arg2 = (int)lua_tonumber(L, 2);
+  arg3 = (int)lua_tonumber(L, 3);
+  arg4 = (int)lua_tonumber(L, 4);
+  arg5 = (int)lua_tonumber(L, 5);
+  arg6 = (lua_toboolean(L, 6)!=0);
+  result = (LuaPanel *)new LuaPanel(arg1,arg2,arg3,arg4,arg5,arg6);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_LuaPanel,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_LuaPanel(lua_State* L) {
+  int argc;
+  int argv[7]={
+    1,2,3,4,5,6,7
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 1) {
+    int _v;
+    {
+      _v = lua_isstring(L,argv[0]);
+    }
+    if (_v) {
+      return _wrap_new_LuaPanel__SWIG_0(L);
+    }
+  }
+  if (argc == 5) {
+    int _v;
+    {
+      _v = lua_isstring(L,argv[0]);
+    }
+    if (_v) {
+      {
+        _v = lua_isnumber(L,argv[1]);
+      }
+      if (_v) {
+        {
+          _v = lua_isnumber(L,argv[2]);
+        }
+        if (_v) {
+          {
+            _v = lua_isnumber(L,argv[3]);
+          }
+          if (_v) {
+            {
+              _v = lua_isnumber(L,argv[4]);
+            }
+            if (_v) {
+              return _wrap_new_LuaPanel__SWIG_1(L);
+            }
+          }
+        }
+      }
+    }
+  }
+  if (argc == 6) {
+    int _v;
+    {
+      _v = lua_isstring(L,argv[0]);
+    }
+    if (_v) {
+      {
+        _v = lua_isnumber(L,argv[1]);
+      }
+      if (_v) {
+        {
+          _v = lua_isnumber(L,argv[2]);
+        }
+        if (_v) {
+          {
+            _v = lua_isnumber(L,argv[3]);
+          }
+          if (_v) {
+            {
+              _v = lua_isnumber(L,argv[4]);
+            }
+            if (_v) {
+              {
+                _v = lua_isboolean(L,argv[5]);
+              }
+              if (_v) {
+                return _wrap_new_LuaPanel__SWIG_2(L);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  lua_pushstring(L,"Wrong arguments for overloaded function 'new_LuaPanel'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    LuaPanel(std::string)\n"
+    "    LuaPanel(std::string,int,int,int,int)\n"
+    "    LuaPanel(std::string,int,int,int,int,bool)\n");
+  lua_error(L);return 0;
+}
+
+
+static void swig_delete_LuaPanel(void *obj) {
+LuaPanel *arg1 = (LuaPanel *) obj;
+delete arg1;
+}
+static swig_lua_method swig_LuaPanel_methods[] = {
+    {0,0}
+};
+static swig_lua_attribute swig_LuaPanel_attributes[] = {
+    {0,0,0}
+};
+static swig_lua_class *swig_LuaPanel_bases[] = {0,0};
+static const char *swig_LuaPanel_base_names[] = {"LuaUICtrl *",0};
+static swig_lua_class _wrap_class_LuaPanel = { "LuaPanel", &SWIGTYPE_p_LuaPanel,_wrap_new_LuaPanel, swig_delete_LuaPanel, swig_LuaPanel_methods, swig_LuaPanel_attributes, swig_LuaPanel_bases, swig_LuaPanel_base_names };
+
+static int _wrap_new_LuaButton(lua_State* L) {
+  int SWIG_arg = 0;
+  std::string arg1 ;
+  int arg2 ;
+  int arg3 ;
+  int arg4 ;
+  int arg5 ;
+  std::string arg6 ;
+  LuaButton *result = 0 ;
+  
+  SWIG_check_num_args("LuaButton",6,6)
+  if(!lua_isstring(L,1)) SWIG_fail_arg("LuaButton",1,"std::string");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("LuaButton",2,"int");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("LuaButton",3,"int");
+  if(!lua_isnumber(L,4)) SWIG_fail_arg("LuaButton",4,"int");
+  if(!lua_isnumber(L,5)) SWIG_fail_arg("LuaButton",5,"int");
+  if(!lua_isstring(L,6)) SWIG_fail_arg("LuaButton",6,"std::string");
+  (&arg1)->assign(lua_tostring(L,1),lua_strlen(L,1));
+  arg2 = (int)lua_tonumber(L, 2);
+  arg3 = (int)lua_tonumber(L, 3);
+  arg4 = (int)lua_tonumber(L, 4);
+  arg5 = (int)lua_tonumber(L, 5);
+  (&arg6)->assign(lua_tostring(L,6),lua_strlen(L,6));
+  result = (LuaButton *)new LuaButton(arg1,arg2,arg3,arg4,arg5,arg6);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_LuaButton,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LuaButton_LuaSetImages(lua_State* L) {
+  int SWIG_arg = 0;
+  LuaButton *arg1 = (LuaButton *) 0 ;
+  std::string arg2 ;
+  std::string arg3 ;
+  
+  SWIG_check_num_args("LuaSetImages",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("LuaSetImages",1,"LuaButton *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("LuaSetImages",2,"std::string");
+  if(!lua_isstring(L,3)) SWIG_fail_arg("LuaSetImages",3,"std::string");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LuaButton,0))){
+    SWIG_fail_ptr("LuaButton_LuaSetImages",1,SWIGTYPE_p_LuaButton);
+  }
+  
+  (&arg2)->assign(lua_tostring(L,2),lua_strlen(L,2));
+  (&arg3)->assign(lua_tostring(L,3),lua_strlen(L,3));
+  (arg1)->LuaSetImages(arg2,arg3);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LuaButton_LuaSetLabel(lua_State* L) {
+  int SWIG_arg = 0;
+  LuaButton *arg1 = (LuaButton *) 0 ;
+  std::string arg2 ;
+  
+  SWIG_check_num_args("LuaSetLabel",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("LuaSetLabel",1,"LuaButton *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("LuaSetLabel",2,"std::string");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LuaButton,0))){
+    SWIG_fail_ptr("LuaButton_LuaSetLabel",1,SWIGTYPE_p_LuaButton);
+  }
+  
+  (&arg2)->assign(lua_tostring(L,2),lua_strlen(L,2));
+  (arg1)->LuaSetLabel(arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LuaButton_LuaSetLabels(lua_State* L) {
+  int SWIG_arg = 0;
+  LuaButton *arg1 = (LuaButton *) 0 ;
+  std::string arg2 ;
+  std::string arg3 ;
+  
+  SWIG_check_num_args("LuaSetLabels",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("LuaSetLabels",1,"LuaButton *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("LuaSetLabels",2,"std::string");
+  if(!lua_isstring(L,3)) SWIG_fail_arg("LuaSetLabels",3,"std::string");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LuaButton,0))){
+    SWIG_fail_ptr("LuaButton_LuaSetLabels",1,SWIGTYPE_p_LuaButton);
+  }
+  
+  (&arg2)->assign(lua_tostring(L,2),lua_strlen(L,2));
+  (&arg3)->assign(lua_tostring(L,3),lua_strlen(L,3));
+  (arg1)->LuaSetLabels(arg2,arg3);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LuaButton_onHeldDown(lua_State* L) {
+  int SWIG_arg = 0;
+  LuaButton *arg1 = (LuaButton *) 0 ;
+  void *arg2 = (void *) 0 ;
+  
+  SWIG_check_num_args("onHeldDown",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("onHeldDown",1,"LuaButton *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("onHeldDown",2,"void *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LuaButton,0))){
+    SWIG_fail_ptr("LuaButton_onHeldDown",1,SWIGTYPE_p_LuaButton);
+  }
+  
+  arg2=(void *)SWIG_MustGetPtr(L,2,0,0,2,"LuaButton_onHeldDown");
+  (arg1)->onHeldDown(arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static void swig_delete_LuaButton(void *obj) {
+LuaButton *arg1 = (LuaButton *) obj;
+delete arg1;
+}
+static swig_lua_method swig_LuaButton_methods[] = {
+    {"LuaSetImages", _wrap_LuaButton_LuaSetImages}, 
+    {"LuaSetLabel", _wrap_LuaButton_LuaSetLabel}, 
+    {"LuaSetLabels", _wrap_LuaButton_LuaSetLabels}, 
+    {"onHeldDown", _wrap_LuaButton_onHeldDown}, 
+    {0,0}
+};
+static swig_lua_attribute swig_LuaButton_attributes[] = {
+    {0,0,0}
+};
+static swig_lua_class *swig_LuaButton_bases[] = {0,0};
+static const char *swig_LuaButton_base_names[] = {"LuaUICtrl *",0};
+static swig_lua_class _wrap_class_LuaButton = { "LuaButton", &SWIGTYPE_p_LuaButton,_wrap_new_LuaButton, swig_delete_LuaButton, swig_LuaButton_methods, swig_LuaButton_attributes, swig_LuaButton_bases, swig_LuaButton_base_names };
+
+static int _wrap_new_LuaFloater__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  std::string arg1 ;
+  LuaFloater *result = 0 ;
+  
+  SWIG_check_num_args("LuaFloater",1,1)
+  if(!lua_isstring(L,1)) SWIG_fail_arg("LuaFloater",1,"std::string");
+  (&arg1)->assign(lua_tostring(L,1),lua_strlen(L,1));
+  result = (LuaFloater *)new LuaFloater(arg1);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_LuaFloater,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_LuaFloater__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  std::string arg1 ;
+  std::string arg2 ;
+  LuaFloater *result = 0 ;
+  
+  SWIG_check_num_args("LuaFloater",2,2)
+  if(!lua_isstring(L,1)) SWIG_fail_arg("LuaFloater",1,"std::string");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("LuaFloater",2,"std::string");
+  (&arg1)->assign(lua_tostring(L,1),lua_strlen(L,1));
+  (&arg2)->assign(lua_tostring(L,2),lua_strlen(L,2));
+  result = (LuaFloater *)new LuaFloater(arg1,arg2);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_LuaFloater,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_LuaFloater__SWIG_2(lua_State* L) {
+  int SWIG_arg = 0;
+  std::string arg1 ;
+  std::string arg2 ;
+  int arg3 ;
+  int arg4 ;
+  int arg5 ;
+  int arg6 ;
+  LuaFloater *result = 0 ;
+  
+  SWIG_check_num_args("LuaFloater",6,6)
+  if(!lua_isstring(L,1)) SWIG_fail_arg("LuaFloater",1,"std::string");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("LuaFloater",2,"std::string");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("LuaFloater",3,"int");
+  if(!lua_isnumber(L,4)) SWIG_fail_arg("LuaFloater",4,"int");
+  if(!lua_isnumber(L,5)) SWIG_fail_arg("LuaFloater",5,"int");
+  if(!lua_isnumber(L,6)) SWIG_fail_arg("LuaFloater",6,"int");
+  (&arg1)->assign(lua_tostring(L,1),lua_strlen(L,1));
+  (&arg2)->assign(lua_tostring(L,2),lua_strlen(L,2));
+  arg3 = (int)lua_tonumber(L, 3);
+  arg4 = (int)lua_tonumber(L, 4);
+  arg5 = (int)lua_tonumber(L, 5);
+  arg6 = (int)lua_tonumber(L, 6);
+  result = (LuaFloater *)new LuaFloater(arg1,arg2,arg3,arg4,arg5,arg6);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_LuaFloater,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_LuaFloater(lua_State* L) {
+  int argc;
+  int argv[7]={
+    1,2,3,4,5,6,7
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 1) {
+    int _v;
+    {
+      _v = lua_isstring(L,argv[0]);
+    }
+    if (_v) {
+      return _wrap_new_LuaFloater__SWIG_0(L);
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    {
+      _v = lua_isstring(L,argv[0]);
+    }
+    if (_v) {
+      {
+        _v = lua_isstring(L,argv[1]);
+      }
+      if (_v) {
+        return _wrap_new_LuaFloater__SWIG_1(L);
+      }
+    }
+  }
+  if (argc == 6) {
+    int _v;
+    {
+      _v = lua_isstring(L,argv[0]);
+    }
+    if (_v) {
+      {
+        _v = lua_isstring(L,argv[1]);
+      }
+      if (_v) {
+        {
+          _v = lua_isnumber(L,argv[2]);
+        }
+        if (_v) {
+          {
+            _v = lua_isnumber(L,argv[3]);
+          }
+          if (_v) {
+            {
+              _v = lua_isnumber(L,argv[4]);
+            }
+            if (_v) {
+              {
+                _v = lua_isnumber(L,argv[5]);
+              }
+              if (_v) {
+                return _wrap_new_LuaFloater__SWIG_2(L);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  lua_pushstring(L,"Wrong arguments for overloaded function 'new_LuaFloater'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    LuaFloater(std::string)\n"
+    "    LuaFloater(std::string,std::string)\n"
+    "    LuaFloater(std::string,std::string,int,int,int,int)\n");
+  lua_error(L);return 0;
+}
+
+
+static int _wrap_LuaFloater_LuaSetTitle(lua_State* L) {
+  int SWIG_arg = 0;
+  LuaFloater *arg1 = (LuaFloater *) 0 ;
+  std::string arg2 ;
+  
+  SWIG_check_num_args("LuaSetTitle",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("LuaSetTitle",1,"LuaFloater *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("LuaSetTitle",2,"std::string");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LuaFloater,0))){
+    SWIG_fail_ptr("LuaFloater_LuaSetTitle",1,SWIGTYPE_p_LuaFloater);
+  }
+  
+  (&arg2)->assign(lua_tostring(L,2),lua_strlen(L,2));
+  (arg1)->LuaSetTitle(arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LuaFloater_LuaAddChild(lua_State* L) {
+  int SWIG_arg = 0;
+  LuaFloater *arg1 = (LuaFloater *) 0 ;
+  LuaUICtrl *arg2 = (LuaUICtrl *) 0 ;
+  
+  SWIG_check_num_args("LuaAddChild",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("LuaAddChild",1,"LuaFloater *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("LuaAddChild",2,"LuaUICtrl *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LuaFloater,0))){
+    SWIG_fail_ptr("LuaFloater_LuaAddChild",1,SWIGTYPE_p_LuaFloater);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_LuaUICtrl,0))){
+    SWIG_fail_ptr("LuaFloater_LuaAddChild",2,SWIGTYPE_p_LuaUICtrl);
+  }
+  
+  (arg1)->LuaAddChild(arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LuaFloater_LuaAddButton(lua_State* L) {
+  int SWIG_arg = 0;
+  LuaFloater *arg1 = (LuaFloater *) 0 ;
+  LuaButton *arg2 = (LuaButton *) 0 ;
+  
+  SWIG_check_num_args("LuaAddButton",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("LuaAddButton",1,"LuaFloater *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("LuaAddButton",2,"LuaButton *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LuaFloater,0))){
+    SWIG_fail_ptr("LuaFloater_LuaAddButton",1,SWIGTYPE_p_LuaFloater);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_LuaButton,0))){
+    SWIG_fail_ptr("LuaFloater_LuaAddButton",2,SWIGTYPE_p_LuaButton);
+  }
+  
+  (arg1)->LuaAddButton(arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LuaFloater_onFocusLost(lua_State* L) {
+  int SWIG_arg = 0;
+  LuaFloater *arg1 = (LuaFloater *) 0 ;
+  
+  SWIG_check_num_args("onFocusLost",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("onFocusLost",1,"LuaFloater *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LuaFloater,0))){
+    SWIG_fail_ptr("LuaFloater_onFocusLost",1,SWIGTYPE_p_LuaFloater);
+  }
+  
+  (arg1)->onFocusLost();
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LuaFloater_onFocusReceived(lua_State* L) {
+  int SWIG_arg = 0;
+  LuaFloater *arg1 = (LuaFloater *) 0 ;
+  
+  SWIG_check_num_args("onFocusReceived",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("onFocusReceived",1,"LuaFloater *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LuaFloater,0))){
+    SWIG_fail_ptr("LuaFloater_onFocusReceived",1,SWIGTYPE_p_LuaFloater);
+  }
+  
+  (arg1)->onFocusReceived();
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LuaFloater_onClose(lua_State* L) {
+  int SWIG_arg = 0;
+  LuaFloater *arg1 = (LuaFloater *) 0 ;
+  
+  SWIG_check_num_args("onClose",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("onClose",1,"LuaFloater *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LuaFloater,0))){
+    SWIG_fail_ptr("LuaFloater_onClose",1,SWIGTYPE_p_LuaFloater);
+  }
+  
+  (arg1)->onClose();
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LuaFloater_onClickClose(lua_State* L) {
+  int SWIG_arg = 0;
+  LuaFloater *arg1 = (LuaFloater *) 0 ;
+  
+  SWIG_check_num_args("onClickClose",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("onClickClose",1,"LuaFloater *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LuaFloater,0))){
+    SWIG_fail_ptr("LuaFloater_onClickClose",1,SWIGTYPE_p_LuaFloater);
+  }
+  
+  (arg1)->onClickClose();
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LuaFloater_onClickMinimize(lua_State* L) {
+  int SWIG_arg = 0;
+  LuaFloater *arg1 = (LuaFloater *) 0 ;
+  
+  SWIG_check_num_args("onClickMinimize",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("onClickMinimize",1,"LuaFloater *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LuaFloater,0))){
+    SWIG_fail_ptr("LuaFloater_onClickMinimize",1,SWIGTYPE_p_LuaFloater);
+  }
+  
+  (arg1)->onClickMinimize();
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static void swig_delete_LuaFloater(void *obj) {
+LuaFloater *arg1 = (LuaFloater *) obj;
+delete arg1;
+}
+static swig_lua_method swig_LuaFloater_methods[] = {
+    {"LuaSetTitle", _wrap_LuaFloater_LuaSetTitle}, 
+    {"LuaAddChild", _wrap_LuaFloater_LuaAddChild}, 
+    {"LuaAddButton", _wrap_LuaFloater_LuaAddButton}, 
+    {"onFocusLost", _wrap_LuaFloater_onFocusLost}, 
+    {"onFocusReceived", _wrap_LuaFloater_onFocusReceived}, 
+    {"onClose", _wrap_LuaFloater_onClose}, 
+    {"onClickClose", _wrap_LuaFloater_onClickClose}, 
+    {"onClickMinimize", _wrap_LuaFloater_onClickMinimize}, 
+    {0,0}
+};
+static swig_lua_attribute swig_LuaFloater_attributes[] = {
+    {0,0,0}
+};
+static swig_lua_class *swig_LuaFloater_bases[] = {0,0};
+static const char *swig_LuaFloater_base_names[] = {"LuaPanel *",0};
+static swig_lua_class _wrap_class_LuaFloater = { "LuaFloater", &SWIGTYPE_p_LuaFloater,_wrap_new_LuaFloater, swig_delete_LuaFloater, swig_LuaFloater_methods, swig_LuaFloater_attributes, swig_LuaFloater_bases, swig_LuaFloater_base_names };
+
+static int _wrap_new_LuaLineEditor__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  std::string arg1 ;
+  int arg2 ;
+  int arg3 ;
+  int arg4 ;
+  int arg5 ;
+  std::string arg6 ;
+  LuaLineEditor *result = 0 ;
+  
+  SWIG_check_num_args("LuaLineEditor",6,6)
+  if(!lua_isstring(L,1)) SWIG_fail_arg("LuaLineEditor",1,"std::string");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("LuaLineEditor",2,"int");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("LuaLineEditor",3,"int");
+  if(!lua_isnumber(L,4)) SWIG_fail_arg("LuaLineEditor",4,"int");
+  if(!lua_isnumber(L,5)) SWIG_fail_arg("LuaLineEditor",5,"int");
+  if(!lua_isstring(L,6)) SWIG_fail_arg("LuaLineEditor",6,"std::string");
+  (&arg1)->assign(lua_tostring(L,1),lua_strlen(L,1));
+  arg2 = (int)lua_tonumber(L, 2);
+  arg3 = (int)lua_tonumber(L, 3);
+  arg4 = (int)lua_tonumber(L, 4);
+  arg5 = (int)lua_tonumber(L, 5);
+  (&arg6)->assign(lua_tostring(L,6),lua_strlen(L,6));
+  result = (LuaLineEditor *)new LuaLineEditor(arg1,arg2,arg3,arg4,arg5,arg6);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_LuaLineEditor,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_LuaLineEditor__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  std::string arg1 ;
+  int arg2 ;
+  int arg3 ;
+  int arg4 ;
+  int arg5 ;
+  LuaLineEditor *result = 0 ;
+  
+  SWIG_check_num_args("LuaLineEditor",5,5)
+  if(!lua_isstring(L,1)) SWIG_fail_arg("LuaLineEditor",1,"std::string");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("LuaLineEditor",2,"int");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("LuaLineEditor",3,"int");
+  if(!lua_isnumber(L,4)) SWIG_fail_arg("LuaLineEditor",4,"int");
+  if(!lua_isnumber(L,5)) SWIG_fail_arg("LuaLineEditor",5,"int");
+  (&arg1)->assign(lua_tostring(L,1),lua_strlen(L,1));
+  arg2 = (int)lua_tonumber(L, 2);
+  arg3 = (int)lua_tonumber(L, 3);
+  arg4 = (int)lua_tonumber(L, 4);
+  arg5 = (int)lua_tonumber(L, 5);
+  result = (LuaLineEditor *)new LuaLineEditor(arg1,arg2,arg3,arg4,arg5);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_LuaLineEditor,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_LuaLineEditor(lua_State* L) {
+  int argc;
+  int argv[7]={
+    1,2,3,4,5,6,7
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 5) {
+    int _v;
+    {
+      _v = lua_isstring(L,argv[0]);
+    }
+    if (_v) {
+      {
+        _v = lua_isnumber(L,argv[1]);
+      }
+      if (_v) {
+        {
+          _v = lua_isnumber(L,argv[2]);
+        }
+        if (_v) {
+          {
+            _v = lua_isnumber(L,argv[3]);
+          }
+          if (_v) {
+            {
+              _v = lua_isnumber(L,argv[4]);
+            }
+            if (_v) {
+              return _wrap_new_LuaLineEditor__SWIG_1(L);
+            }
+          }
+        }
+      }
+    }
+  }
+  if (argc == 6) {
+    int _v;
+    {
+      _v = lua_isstring(L,argv[0]);
+    }
+    if (_v) {
+      {
+        _v = lua_isnumber(L,argv[1]);
+      }
+      if (_v) {
+        {
+          _v = lua_isnumber(L,argv[2]);
+        }
+        if (_v) {
+          {
+            _v = lua_isnumber(L,argv[3]);
+          }
+          if (_v) {
+            {
+              _v = lua_isnumber(L,argv[4]);
+            }
+            if (_v) {
+              {
+                _v = lua_isstring(L,argv[5]);
+              }
+              if (_v) {
+                return _wrap_new_LuaLineEditor__SWIG_0(L);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  lua_pushstring(L,"Wrong arguments for overloaded function 'new_LuaLineEditor'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    LuaLineEditor(std::string,int,int,int,int,std::string)\n"
+    "    LuaLineEditor(std::string,int,int,int,int)\n");
+  lua_error(L);return 0;
+}
+
+
+static int _wrap_LuaLineEditor_LuaSetText(lua_State* L) {
+  int SWIG_arg = 0;
+  LuaLineEditor *arg1 = (LuaLineEditor *) 0 ;
+  std::string arg2 ;
+  
+  SWIG_check_num_args("LuaSetText",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("LuaSetText",1,"LuaLineEditor *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("LuaSetText",2,"std::string");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LuaLineEditor,0))){
+    SWIG_fail_ptr("LuaLineEditor_LuaSetText",1,SWIGTYPE_p_LuaLineEditor);
+  }
+  
+  (&arg2)->assign(lua_tostring(L,2),lua_strlen(L,2));
+  (arg1)->LuaSetText(arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LuaLineEditor_LuaGetText(lua_State* L) {
+  int SWIG_arg = 0;
+  LuaLineEditor *arg1 = (LuaLineEditor *) 0 ;
+  std::string result;
+  
+  SWIG_check_num_args("LuaGetText",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("LuaGetText",1,"LuaLineEditor *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LuaLineEditor,0))){
+    SWIG_fail_ptr("LuaLineEditor_LuaGetText",1,SWIGTYPE_p_LuaLineEditor);
+  }
+  
+  result = (arg1)->LuaGetText();
+  lua_pushlstring(L,(&result)->data(),(&result)->size()); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LuaLineEditor_onCommit(lua_State* L) {
+  int SWIG_arg = 0;
+  LuaLineEditor *arg1 = (LuaLineEditor *) 0 ;
+  
+  SWIG_check_num_args("onCommit",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("onCommit",1,"LuaLineEditor *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LuaLineEditor,0))){
+    SWIG_fail_ptr("LuaLineEditor_onCommit",1,SWIGTYPE_p_LuaLineEditor);
+  }
+  
+  (arg1)->onCommit();
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static void swig_delete_LuaLineEditor(void *obj) {
+LuaLineEditor *arg1 = (LuaLineEditor *) obj;
+delete arg1;
+}
+static swig_lua_method swig_LuaLineEditor_methods[] = {
+    {"LuaSetText", _wrap_LuaLineEditor_LuaSetText}, 
+    {"LuaGetText", _wrap_LuaLineEditor_LuaGetText}, 
+    {"onCommit", _wrap_LuaLineEditor_onCommit}, 
+    {0,0}
+};
+static swig_lua_attribute swig_LuaLineEditor_attributes[] = {
+    {0,0,0}
+};
+static swig_lua_class *swig_LuaLineEditor_bases[] = {0,0};
+static const char *swig_LuaLineEditor_base_names[] = {"LuaUICtrl *",0};
+static swig_lua_class _wrap_class_LuaLineEditor = { "LuaLineEditor", &SWIGTYPE_p_LuaLineEditor,_wrap_new_LuaLineEditor, swig_delete_LuaLineEditor, swig_LuaLineEditor_methods, swig_LuaLineEditor_attributes, swig_LuaLineEditor_bases, swig_LuaLineEditor_base_names };
+
+static int _wrap_new_LuaTextBox(lua_State* L) {
+  int SWIG_arg = 0;
+  std::string arg1 ;
+  int arg2 ;
+  int arg3 ;
+  int arg4 ;
+  int arg5 ;
+  std::string arg6 ;
+  LuaTextBox *result = 0 ;
+  
+  SWIG_check_num_args("LuaTextBox",6,6)
+  if(!lua_isstring(L,1)) SWIG_fail_arg("LuaTextBox",1,"std::string");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("LuaTextBox",2,"int");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("LuaTextBox",3,"int");
+  if(!lua_isnumber(L,4)) SWIG_fail_arg("LuaTextBox",4,"int");
+  if(!lua_isnumber(L,5)) SWIG_fail_arg("LuaTextBox",5,"int");
+  if(!lua_isstring(L,6)) SWIG_fail_arg("LuaTextBox",6,"std::string");
+  (&arg1)->assign(lua_tostring(L,1),lua_strlen(L,1));
+  arg2 = (int)lua_tonumber(L, 2);
+  arg3 = (int)lua_tonumber(L, 3);
+  arg4 = (int)lua_tonumber(L, 4);
+  arg5 = (int)lua_tonumber(L, 5);
+  (&arg6)->assign(lua_tostring(L,6),lua_strlen(L,6));
+  result = (LuaTextBox *)new LuaTextBox(arg1,arg2,arg3,arg4,arg5,arg6);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_LuaTextBox,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LuaTextBox_LuaSetMaxWidth(lua_State* L) {
+  int SWIG_arg = 0;
+  LuaTextBox *arg1 = (LuaTextBox *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_num_args("LuaSetMaxWidth",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("LuaSetMaxWidth",1,"LuaTextBox *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("LuaSetMaxWidth",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LuaTextBox,0))){
+    SWIG_fail_ptr("LuaTextBox_LuaSetMaxWidth",1,SWIGTYPE_p_LuaTextBox);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  (arg1)->LuaSetMaxWidth(arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LuaTextBox_LuaGetText(lua_State* L) {
+  int SWIG_arg = 0;
+  LuaTextBox *arg1 = (LuaTextBox *) 0 ;
+  std::string result;
+  
+  SWIG_check_num_args("LuaGetText",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("LuaGetText",1,"LuaTextBox *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LuaTextBox,0))){
+    SWIG_fail_ptr("LuaTextBox_LuaGetText",1,SWIGTYPE_p_LuaTextBox);
+  }
+  
+  result = (arg1)->LuaGetText();
+  lua_pushlstring(L,(&result)->data(),(&result)->size()); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LuaTextBox_LuaSetText(lua_State* L) {
+  int SWIG_arg = 0;
+  LuaTextBox *arg1 = (LuaTextBox *) 0 ;
+  std::string arg2 ;
+  
+  SWIG_check_num_args("LuaSetText",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("LuaSetText",1,"LuaTextBox *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("LuaSetText",2,"std::string");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LuaTextBox,0))){
+    SWIG_fail_ptr("LuaTextBox_LuaSetText",1,SWIGTYPE_p_LuaTextBox);
+  }
+  
+  (&arg2)->assign(lua_tostring(L,2),lua_strlen(L,2));
+  (arg1)->LuaSetText(arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LuaTextBox_onCommit(lua_State* L) {
+  int SWIG_arg = 0;
+  LuaTextBox *arg1 = (LuaTextBox *) 0 ;
+  
+  SWIG_check_num_args("onCommit",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("onCommit",1,"LuaTextBox *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LuaTextBox,0))){
+    SWIG_fail_ptr("LuaTextBox_onCommit",1,SWIGTYPE_p_LuaTextBox);
+  }
+  
+  (arg1)->onCommit();
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static void swig_delete_LuaTextBox(void *obj) {
+LuaTextBox *arg1 = (LuaTextBox *) obj;
+delete arg1;
+}
+static swig_lua_method swig_LuaTextBox_methods[] = {
+    {"LuaSetMaxWidth", _wrap_LuaTextBox_LuaSetMaxWidth}, 
+    {"LuaGetText", _wrap_LuaTextBox_LuaGetText}, 
+    {"LuaSetText", _wrap_LuaTextBox_LuaSetText}, 
+    {"onCommit", _wrap_LuaTextBox_onCommit}, 
+    {0,0}
+};
+static swig_lua_attribute swig_LuaTextBox_attributes[] = {
+    {0,0,0}
+};
+static swig_lua_class *swig_LuaTextBox_bases[] = {0,0};
+static const char *swig_LuaTextBox_base_names[] = {"LuaUICtrl *",0};
+static swig_lua_class _wrap_class_LuaTextBox = { "LuaTextBox", &SWIGTYPE_p_LuaTextBox,_wrap_new_LuaTextBox, swig_delete_LuaTextBox, swig_LuaTextBox_methods, swig_LuaTextBox_attributes, swig_LuaTextBox_bases, swig_LuaTextBox_base_names };
+
+static int _wrap_LuaUIManager_getFloater(lua_State* L) {
+  int SWIG_arg = 0;
+  LuaUIManager *arg1 = (LuaUIManager *) 0 ;
+  std::string arg2 ;
+  LuaFloater *result = 0 ;
+  
+  SWIG_check_num_args("getFloater",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getFloater",1,"LuaUIManager *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("getFloater",2,"std::string");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LuaUIManager,0))){
+    SWIG_fail_ptr("LuaUIManager_getFloater",1,SWIGTYPE_p_LuaUIManager);
+  }
+  
+  (&arg2)->assign(lua_tostring(L,2),lua_strlen(L,2));
+  result = (LuaFloater *)(arg1)->getFloater(arg2);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_LuaFloater,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_LuaUIManager(lua_State* L) {
+  int SWIG_arg = 0;
+  LuaUIManager *result = 0 ;
+  
+  SWIG_check_num_args("LuaUIManager::LuaUIManager",0,0)
+  result = (LuaUIManager *)new LuaUIManager();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_LuaUIManager,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static void swig_delete_LuaUIManager(void *obj) {
+LuaUIManager *arg1 = (LuaUIManager *) obj;
+delete arg1;
+}
+static swig_lua_method swig_LuaUIManager_methods[] = {
+    {"getFloater", _wrap_LuaUIManager_getFloater}, 
+    {0,0}
+};
+static swig_lua_attribute swig_LuaUIManager_attributes[] = {
+    {0,0,0}
+};
+static swig_lua_class *swig_LuaUIManager_bases[] = {0};
+static const char *swig_LuaUIManager_base_names[] = {0};
+static swig_lua_class _wrap_class_LuaUIManager = { "LuaUIManager", &SWIGTYPE_p_LuaUIManager,_wrap_new_LuaUIManager, swig_delete_LuaUIManager, swig_LuaUIManager_methods, swig_LuaUIManager_attributes, swig_LuaUIManager_bases, swig_LuaUIManager_base_names };
+
 #ifdef __cplusplus
 }
 #endif
@@ -3078,13 +4538,104 @@ static swig_lua_const_info swig_constants[] = {
 
 /* -------- TYPE CONVERSION AND EQUIVALENCE RULES (BEGIN) -------- */
 
+static void *_p_LuaAgentTo_p_LLAgent(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((LLAgent *)  ((LuaAgent *) x));
+}
+static void *_p_LuaFloaterTo_p_LuaUICtrl(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((LuaUICtrl *) (LuaPanel *) ((LuaFloater *) x));
+}
+static void *_p_LuaTextBoxTo_p_LuaUICtrl(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((LuaUICtrl *)  ((LuaTextBox *) x));
+}
+static void *_p_LuaPanelTo_p_LuaUICtrl(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((LuaUICtrl *)  ((LuaPanel *) x));
+}
+static void *_p_LuaButtonTo_p_LuaUICtrl(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((LuaUICtrl *)  ((LuaButton *) x));
+}
+static void *_p_LuaLineEditorTo_p_LuaUICtrl(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((LuaUICtrl *)  ((LuaLineEditor *) x));
+}
+static void *_p_LuaObjectTo_p_LLVOVolume(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((LLVOVolume *)  ((LuaObject *) x));
+}
+static void *_p_LLStaticViewerObjectTo_p_LLViewerObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((LLViewerObject *)  ((LLStaticViewerObject *) x));
+}
+static void *_p_LLVOVolumeTo_p_LLViewerObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((LLViewerObject *)  ((LLVOVolume *) x));
+}
+static void *_p_LLAlphaObjectTo_p_LLViewerObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((LLViewerObject *)  ((LLAlphaObject *) x));
+}
+static void *_p_LuaObjectTo_p_LLViewerObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((LLViewerObject *) (LLVOVolume *) ((LuaObject *) x));
+}
+static void *_p_LLViewerObjectTo_p_LLPrimitive(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((LLPrimitive *)  ((LLViewerObject *) x));
+}
+static void *_p_LLStaticViewerObjectTo_p_LLPrimitive(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((LLPrimitive *) (LLViewerObject *) ((LLStaticViewerObject *) x));
+}
+static void *_p_LLVOVolumeTo_p_LLPrimitive(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((LLPrimitive *) (LLViewerObject *) ((LLVOVolume *) x));
+}
+static void *_p_LLAlphaObjectTo_p_LLPrimitive(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((LLPrimitive *) (LLViewerObject *) ((LLAlphaObject *) x));
+}
+static void *_p_LuaObjectTo_p_LLPrimitive(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((LLPrimitive *) (LLViewerObject *)(LLVOVolume *) ((LuaObject *) x));
+}
+static void *_p_LuaSelectionManagerTo_p_LLSelectMgr(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((LLSelectMgr *)  ((LuaSelectionManager *) x));
+}
+static void *_p_LuaFloaterTo_p_LLPanel(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((LLPanel *) (LLFloater *) ((LuaFloater *) x));
+}
+static void *_p_LuaPanelTo_p_LLPanel(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((LLPanel *)  ((LuaPanel *) x));
+}
+static void *_p_LuaFloaterTo_p_LuaPanel(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((LuaPanel *)  ((LuaFloater *) x));
+}
+static void *_p_LuaButtonTo_p_LLButton(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((LLButton *)  ((LuaButton *) x));
+}
+static void *_p_LLMultiFloaterTo_p_LLFloater(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((LLFloater *)  ((LLMultiFloater *) x));
+}
+static void *_p_LuaFloaterTo_p_LLFloater(void *x, int *SWIGUNUSEDPARM(newmemory)) {
+    return (void *)((LLFloater *)  ((LuaFloater *) x));
+}
 static swig_type_info _swigt__p_EAnimate = {"_p_EAnimate", "EAnimate *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_EVOType = {"_p_EVOType", "EVOType *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_LLAgent = {"_p_LLAgent", "LLAgent *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_LLButton = {"_p_LLButton", "LLButton *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_LLFloater = {"_p_LLFloater", "LLFloater *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_LLMultiFloater = {"_p_LLMultiFloater", 0, 0, 0, 0, 0};
+static swig_type_info _swigt__p_LLPanel = {"_p_LLPanel", "LLPanel *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_LLPrimitive = {"_p_LLPrimitive", "LLPrimitive *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_LLStaticViewerObject = {"_p_LLStaticViewerObject", 0, 0, 0, 0, 0};
+static swig_type_info _swigt__p_LLAlphaObject = {"_p_LLAlphaObject", 0, 0, 0, 0, 0};
 static swig_type_info _swigt__p_LLSafeHandleT_LLObjectSelection_t = {"_p_LLSafeHandleT_LLObjectSelection_t", "LLSafeHandle< LLObjectSelection > *|LLObjectSelectionHandle *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_LLSelectMgr = {"_p_LLSelectMgr", "LLSelectMgr *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_LLUUID = {"_p_LLUUID", "LLUUID *", 0, 0, (void*)&_wrap_class_LLUUID, 0};
 static swig_type_info _swigt__p_LLVOAvatar = {"_p_LLVOAvatar", "LLVOAvatar *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_LLVOVolume = {"_p_LLVOVolume", "LLVOVolume *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_LLViewerObject = {"_p_LLViewerObject", "LLViewerObject *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_LLViewerRegion = {"_p_LLViewerRegion", "LLViewerRegion *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_LLWearable = {"_p_LLWearable", "LLWearable *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_LuaAgent = {"_p_LuaAgent", "LuaAgent *", 0, 0, (void*)&_wrap_class_LuaAgent, 0};
+static swig_type_info _swigt__p_LuaButton = {"_p_LuaButton", "LuaButton *", 0, 0, (void*)&_wrap_class_LuaButton, 0};
+static swig_type_info _swigt__p_LuaFloater = {"_p_LuaFloater", "LuaFloater *", 0, 0, (void*)&_wrap_class_LuaFloater, 0};
+static swig_type_info _swigt__p_LuaLineEditor = {"_p_LuaLineEditor", "LuaLineEditor *", 0, 0, (void*)&_wrap_class_LuaLineEditor, 0};
+static swig_type_info _swigt__p_LuaObject = {"_p_LuaObject", "LuaObject *", 0, 0, (void*)&_wrap_class_LuaObject, 0};
+static swig_type_info _swigt__p_LuaObjectManager = {"_p_LuaObjectManager", "LuaObjectManager *", 0, 0, (void*)&_wrap_class_LuaObjectManager, 0};
+static swig_type_info _swigt__p_LuaPanel = {"_p_LuaPanel", "LuaPanel *", 0, 0, (void*)&_wrap_class_LuaPanel, 0};
+static swig_type_info _swigt__p_LuaSelectionManager = {"_p_LuaSelectionManager", "LuaSelectionManager *", 0, 0, (void*)&_wrap_class_LuaSelectionManager, 0};
+static swig_type_info _swigt__p_LuaTextBox = {"_p_LuaTextBox", "LuaTextBox *", 0, 0, (void*)&_wrap_class_LuaTextBox, 0};
+static swig_type_info _swigt__p_LuaUICtrl = {"_p_LuaUICtrl", "LuaUICtrl *", 0, 0, (void*)&_wrap_class_LuaUICtrl, 0};
+static swig_type_info _swigt__p_LuaUIManager = {"_p_LuaUIManager", "LuaUIManager *", 0, 0, (void*)&_wrap_class_LuaUIManager, 0};
 static swig_type_info _swigt__p_child_list_t = {"_p_child_list_t", "child_list_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_const_child_list_t = {"_p_const_child_list_t", "const_child_list_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_double = {"_p_double", "double *|F64 *", 0, 0, (void*)0, 0};
@@ -3121,11 +4672,33 @@ static swig_type_info _swigt__p_wchar_t = {"_p_wchar_t", "llwchar *|wchar_t *", 
 static swig_type_info *swig_type_initial[] = {
   &_swigt__p_EAnimate,
   &_swigt__p_EVOType,
+  &_swigt__p_LLAgent,
+  &_swigt__p_LLAlphaObject,
+  &_swigt__p_LLButton,
+  &_swigt__p_LLFloater,
+  &_swigt__p_LLMultiFloater,
+  &_swigt__p_LLPanel,
+  &_swigt__p_LLPrimitive,
   &_swigt__p_LLSafeHandleT_LLObjectSelection_t,
+  &_swigt__p_LLSelectMgr,
+  &_swigt__p_LLStaticViewerObject,
   &_swigt__p_LLUUID,
   &_swigt__p_LLVOAvatar,
+  &_swigt__p_LLVOVolume,
+  &_swigt__p_LLViewerObject,
   &_swigt__p_LLViewerRegion,
   &_swigt__p_LLWearable,
+  &_swigt__p_LuaAgent,
+  &_swigt__p_LuaButton,
+  &_swigt__p_LuaFloater,
+  &_swigt__p_LuaLineEditor,
+  &_swigt__p_LuaObject,
+  &_swigt__p_LuaObjectManager,
+  &_swigt__p_LuaPanel,
+  &_swigt__p_LuaSelectionManager,
+  &_swigt__p_LuaTextBox,
+  &_swigt__p_LuaUICtrl,
+  &_swigt__p_LuaUIManager,
   &_swigt__p_child_list_t,
   &_swigt__p_const_child_list_t,
   &_swigt__p_double,
@@ -3162,11 +4735,33 @@ static swig_type_info *swig_type_initial[] = {
 
 static swig_cast_info _swigc__p_EAnimate[] = {  {&_swigt__p_EAnimate, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_EVOType[] = {  {&_swigt__p_EVOType, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_LLAgent[] = {  {&_swigt__p_LuaAgent, _p_LuaAgentTo_p_LLAgent, 0, 0},  {&_swigt__p_LLAgent, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_LLButton[] = {  {&_swigt__p_LLButton, 0, 0, 0},  {&_swigt__p_LuaButton, _p_LuaButtonTo_p_LLButton, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_LLMultiFloater[] = {{&_swigt__p_LLMultiFloater, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_LLFloater[] = {  {&_swigt__p_LLFloater, 0, 0, 0},  {&_swigt__p_LLMultiFloater, _p_LLMultiFloaterTo_p_LLFloater, 0, 0},  {&_swigt__p_LuaFloater, _p_LuaFloaterTo_p_LLFloater, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_LLPanel[] = {  {&_swigt__p_LuaFloater, _p_LuaFloaterTo_p_LLPanel, 0, 0},  {&_swigt__p_LuaPanel, _p_LuaPanelTo_p_LLPanel, 0, 0},  {&_swigt__p_LLPanel, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_LLStaticViewerObject[] = {{&_swigt__p_LLStaticViewerObject, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_LLAlphaObject[] = {{&_swigt__p_LLAlphaObject, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_LLPrimitive[] = {  {&_swigt__p_LLPrimitive, 0, 0, 0},  {&_swigt__p_LLViewerObject, _p_LLViewerObjectTo_p_LLPrimitive, 0, 0},  {&_swigt__p_LLStaticViewerObject, _p_LLStaticViewerObjectTo_p_LLPrimitive, 0, 0},  {&_swigt__p_LLVOVolume, _p_LLVOVolumeTo_p_LLPrimitive, 0, 0},  {&_swigt__p_LuaObject, _p_LuaObjectTo_p_LLPrimitive, 0, 0},  {&_swigt__p_LLAlphaObject, _p_LLAlphaObjectTo_p_LLPrimitive, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_LLSafeHandleT_LLObjectSelection_t[] = {  {&_swigt__p_LLSafeHandleT_LLObjectSelection_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_LLSelectMgr[] = {  {&_swigt__p_LuaSelectionManager, _p_LuaSelectionManagerTo_p_LLSelectMgr, 0, 0},  {&_swigt__p_LLSelectMgr, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_LLUUID[] = {  {&_swigt__p_LLUUID, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_LLVOAvatar[] = {  {&_swigt__p_LLVOAvatar, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_LLVOVolume[] = {  {&_swigt__p_LLVOVolume, 0, 0, 0},  {&_swigt__p_LuaObject, _p_LuaObjectTo_p_LLVOVolume, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_LLViewerObject[] = {  {&_swigt__p_LLViewerObject, 0, 0, 0},  {&_swigt__p_LLStaticViewerObject, _p_LLStaticViewerObjectTo_p_LLViewerObject, 0, 0},  {&_swigt__p_LLVOVolume, _p_LLVOVolumeTo_p_LLViewerObject, 0, 0},  {&_swigt__p_LuaObject, _p_LuaObjectTo_p_LLViewerObject, 0, 0},  {&_swigt__p_LLAlphaObject, _p_LLAlphaObjectTo_p_LLViewerObject, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_LLViewerRegion[] = {  {&_swigt__p_LLViewerRegion, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_LLWearable[] = {  {&_swigt__p_LLWearable, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_LuaAgent[] = {  {&_swigt__p_LuaAgent, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_LuaButton[] = {  {&_swigt__p_LuaButton, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_LuaFloater[] = {  {&_swigt__p_LuaFloater, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_LuaLineEditor[] = {  {&_swigt__p_LuaLineEditor, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_LuaObject[] = {  {&_swigt__p_LuaObject, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_LuaObjectManager[] = {  {&_swigt__p_LuaObjectManager, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_LuaPanel[] = {  {&_swigt__p_LuaFloater, _p_LuaFloaterTo_p_LuaPanel, 0, 0},  {&_swigt__p_LuaPanel, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_LuaSelectionManager[] = {  {&_swigt__p_LuaSelectionManager, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_LuaTextBox[] = {  {&_swigt__p_LuaTextBox, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_LuaUICtrl[] = {  {&_swigt__p_LuaFloater, _p_LuaFloaterTo_p_LuaUICtrl, 0, 0},  {&_swigt__p_LuaUICtrl, 0, 0, 0},  {&_swigt__p_LuaTextBox, _p_LuaTextBoxTo_p_LuaUICtrl, 0, 0},  {&_swigt__p_LuaPanel, _p_LuaPanelTo_p_LuaUICtrl, 0, 0},  {&_swigt__p_LuaButton, _p_LuaButtonTo_p_LuaUICtrl, 0, 0},  {&_swigt__p_LuaLineEditor, _p_LuaLineEditorTo_p_LuaUICtrl, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_LuaUIManager[] = {  {&_swigt__p_LuaUIManager, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_child_list_t[] = {  {&_swigt__p_child_list_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_const_child_list_t[] = {  {&_swigt__p_const_child_list_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_double[] = {  {&_swigt__p_double, 0, 0, 0},{0, 0, 0, 0}};
@@ -3203,11 +4798,33 @@ static swig_cast_info _swigc__p_wchar_t[] = {  {&_swigt__p_wchar_t, 0, 0, 0},{0,
 static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_EAnimate,
   _swigc__p_EVOType,
+  _swigc__p_LLAgent,
+  _swigc__p_LLAlphaObject,
+  _swigc__p_LLButton,
+  _swigc__p_LLFloater,
+  _swigc__p_LLMultiFloater,
+  _swigc__p_LLPanel,
+  _swigc__p_LLPrimitive,
   _swigc__p_LLSafeHandleT_LLObjectSelection_t,
+  _swigc__p_LLSelectMgr,
+  _swigc__p_LLStaticViewerObject,
   _swigc__p_LLUUID,
   _swigc__p_LLVOAvatar,
+  _swigc__p_LLVOVolume,
+  _swigc__p_LLViewerObject,
   _swigc__p_LLViewerRegion,
   _swigc__p_LLWearable,
+  _swigc__p_LuaAgent,
+  _swigc__p_LuaButton,
+  _swigc__p_LuaFloater,
+  _swigc__p_LuaLineEditor,
+  _swigc__p_LuaObject,
+  _swigc__p_LuaObjectManager,
+  _swigc__p_LuaPanel,
+  _swigc__p_LuaSelectionManager,
+  _swigc__p_LuaTextBox,
+  _swigc__p_LuaUICtrl,
+  _swigc__p_LuaUIManager,
   _swigc__p_child_list_t,
   _swigc__p_const_child_list_t,
   _swigc__p_double,

@@ -512,7 +512,7 @@ set(viewer_SOURCE_FILES
     LuaAvatar_f.cpp
     LuaBase_f.cpp
     LuaBuild_f.cpp
-    LuaUI_f.cpp
+    LuaUI.cpp
 #   SLua.cpp
     LuaBase.cpp
     FLLua.cpp
@@ -976,7 +976,7 @@ set(viewer_HEADER_FILES
 	LuaBase.h
 	LuaBase_f.h
 	LuaBuild_f.h
-	LuaUI_f.h
+	LuaUI.h
 	LuaBase.h
 	flexconsole.h
     rlvdefines.h

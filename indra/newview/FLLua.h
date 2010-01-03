@@ -59,6 +59,8 @@ public:
 		{Send(); return *this;}//Send off.
 
 	HookRequest(const char *Name) { mName=Name; }
+	HookRequest(const std::string& Name) { mName=Name; }
+
 	void add(const std::string &in)
 		{mArgs.push_back(in);}
 	const char* getName() const
