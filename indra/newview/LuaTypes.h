@@ -16,7 +16,7 @@ public:
 	{
 		x=in.mV[VX];
 		y=in.mV[VY];
-		if ( *this == &in ) return *this;
+		return *this;
 	}
 
 	LuaVector2();				// (0,0)
@@ -60,7 +60,7 @@ public:
 		x=in.mV[VX];
 		y=in.mV[VY];
 		z=in.mV[VX];
-		if ( *this == &in ) return *this;
+		return *this;
 	}
 
 	LuaVector3();					// (0, 0, 0)
