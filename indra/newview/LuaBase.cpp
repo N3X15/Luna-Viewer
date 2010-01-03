@@ -1519,40 +1519,44 @@ SWIG_Lua_dostring(lua_State *L, const char* str) {
 #define SWIGTYPE_p_LuaTextBox swig_types[26]
 #define SWIGTYPE_p_LuaUICtrl swig_types[27]
 #define SWIGTYPE_p_LuaUIManager swig_types[28]
-#define SWIGTYPE_p_child_list_t swig_types[29]
-#define SWIGTYPE_p_const_child_list_t swig_types[30]
-#define SWIGTYPE_p_double swig_types[31]
-#define SWIGTYPE_p_eLayoutOrientation swig_types[32]
-#define SWIGTYPE_p_eObjectPartitions swig_types[33]
-#define SWIGTYPE_p_e_action_type swig_types[34]
-#define SWIGTYPE_p_e_anim_request swig_types[35]
-#define SWIGTYPE_p_e_camera_modes swig_types[36]
-#define SWIGTYPE_p_e_camera_position swig_types[37]
-#define SWIGTYPE_p_e_grid_mode swig_types[38]
-#define SWIGTYPE_p_e_object_update_type swig_types[39]
-#define SWIGTYPE_p_e_selection_type swig_types[40]
-#define SWIGTYPE_p_e_send_type swig_types[41]
-#define SWIGTYPE_p_float swig_types[42]
-#define SWIGTYPE_p_int swig_types[43]
-#define SWIGTYPE_p_iterator swig_types[44]
-#define SWIGTYPE_p_list_t swig_types[45]
-#define SWIGTYPE_p_long_long swig_types[46]
-#define SWIGTYPE_p_root_iterator swig_types[47]
-#define SWIGTYPE_p_root_object_iterator swig_types[48]
-#define SWIGTYPE_p_short swig_types[49]
-#define SWIGTYPE_p_signed_char swig_types[50]
-#define SWIGTYPE_p_skip_list_t swig_types[51]
-#define SWIGTYPE_p_std__string swig_types[52]
-#define SWIGTYPE_p_unsigned_char swig_types[53]
-#define SWIGTYPE_p_unsigned_int swig_types[54]
-#define SWIGTYPE_p_unsigned_long_long swig_types[55]
-#define SWIGTYPE_p_unsigned_short swig_types[56]
-#define SWIGTYPE_p_valid_iterator swig_types[57]
-#define SWIGTYPE_p_valid_root_iterator swig_types[58]
-#define SWIGTYPE_p_vobj_list_t swig_types[59]
-#define SWIGTYPE_p_wchar_t swig_types[60]
-static swig_type_info *swig_types[62];
-static swig_module_info swig_module = {swig_types, 61, 0, 0, 0, 0};
+#define SWIGTYPE_p_LuaVector2 swig_types[29]
+#define SWIGTYPE_p_LuaVector3 swig_types[30]
+#define SWIGTYPE_p_LuaVector4 swig_types[31]
+#define SWIGTYPE_p_ParticleSystem swig_types[32]
+#define SWIGTYPE_p_child_list_t swig_types[33]
+#define SWIGTYPE_p_const_child_list_t swig_types[34]
+#define SWIGTYPE_p_double swig_types[35]
+#define SWIGTYPE_p_eLayoutOrientation swig_types[36]
+#define SWIGTYPE_p_eObjectPartitions swig_types[37]
+#define SWIGTYPE_p_e_action_type swig_types[38]
+#define SWIGTYPE_p_e_anim_request swig_types[39]
+#define SWIGTYPE_p_e_camera_modes swig_types[40]
+#define SWIGTYPE_p_e_camera_position swig_types[41]
+#define SWIGTYPE_p_e_grid_mode swig_types[42]
+#define SWIGTYPE_p_e_object_update_type swig_types[43]
+#define SWIGTYPE_p_e_selection_type swig_types[44]
+#define SWIGTYPE_p_e_send_type swig_types[45]
+#define SWIGTYPE_p_float swig_types[46]
+#define SWIGTYPE_p_int swig_types[47]
+#define SWIGTYPE_p_iterator swig_types[48]
+#define SWIGTYPE_p_list_t swig_types[49]
+#define SWIGTYPE_p_long_long swig_types[50]
+#define SWIGTYPE_p_root_iterator swig_types[51]
+#define SWIGTYPE_p_root_object_iterator swig_types[52]
+#define SWIGTYPE_p_short swig_types[53]
+#define SWIGTYPE_p_signed_char swig_types[54]
+#define SWIGTYPE_p_skip_list_t swig_types[55]
+#define SWIGTYPE_p_std__string swig_types[56]
+#define SWIGTYPE_p_unsigned_char swig_types[57]
+#define SWIGTYPE_p_unsigned_int swig_types[58]
+#define SWIGTYPE_p_unsigned_long_long swig_types[59]
+#define SWIGTYPE_p_unsigned_short swig_types[60]
+#define SWIGTYPE_p_valid_iterator swig_types[61]
+#define SWIGTYPE_p_valid_root_iterator swig_types[62]
+#define SWIGTYPE_p_vobj_list_t swig_types[63]
+#define SWIGTYPE_p_wchar_t swig_types[64]
+static swig_type_info *swig_types[66];
+static swig_module_info swig_module = {swig_types, 65, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -1582,6 +1586,8 @@ typedef struct{} LANGUAGE_OBJ;
 #include "LuaBase_f.h"
 #include "LuaAvatar_f.h"
 #include "LuaAgent_f.h"
+#include "LuaParticles.h"
+#include "LuaTypes.h"
 #include "llprimitive.h"
 #include "llviewerobject.h"
 #include "llvovolume.h"
@@ -3048,6 +3054,1294 @@ fail:
   return SWIG_arg;
 }
 
+
+static int _wrap_ParticleSystem_ParticleFlags_set(lua_State* L) {
+  int SWIG_arg = 0;
+  ParticleSystem *arg1 = (ParticleSystem *) 0 ;
+  unsigned int arg2 ;
+  
+  SWIG_check_num_args("ParticleFlags",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("ParticleFlags",1,"ParticleSystem *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("ParticleFlags",2,"unsigned int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ParticleSystem,0))){
+    SWIG_fail_ptr("ParticleSystem_ParticleFlags_set",1,SWIGTYPE_p_ParticleSystem);
+  }
+  
+  arg2 = (unsigned int)lua_tonumber(L, 2);
+  if (arg1) (arg1)->ParticleFlags = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ParticleSystem_ParticleFlags_get(lua_State* L) {
+  int SWIG_arg = 0;
+  ParticleSystem *arg1 = (ParticleSystem *) 0 ;
+  unsigned int result;
+  
+  SWIG_check_num_args("ParticleFlags",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("ParticleFlags",1,"ParticleSystem *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ParticleSystem,0))){
+    SWIG_fail_ptr("ParticleSystem_ParticleFlags_get",1,SWIGTYPE_p_ParticleSystem);
+  }
+  
+  result = (unsigned int) ((arg1)->ParticleFlags);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ParticleSystem_ParticleMaxAge_set(lua_State* L) {
+  int SWIG_arg = 0;
+  ParticleSystem *arg1 = (ParticleSystem *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("ParticleMaxAge",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("ParticleMaxAge",1,"ParticleSystem *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("ParticleMaxAge",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ParticleSystem,0))){
+    SWIG_fail_ptr("ParticleSystem_ParticleMaxAge_set",1,SWIGTYPE_p_ParticleSystem);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->ParticleMaxAge = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ParticleSystem_ParticleMaxAge_get(lua_State* L) {
+  int SWIG_arg = 0;
+  ParticleSystem *arg1 = (ParticleSystem *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("ParticleMaxAge",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("ParticleMaxAge",1,"ParticleSystem *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ParticleSystem,0))){
+    SWIG_fail_ptr("ParticleSystem_ParticleMaxAge_get",1,SWIGTYPE_p_ParticleSystem);
+  }
+  
+  result = (float) ((arg1)->ParticleMaxAge);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ParticleSystem_StartColor_set(lua_State* L) {
+  int SWIG_arg = 0;
+  ParticleSystem *arg1 = (ParticleSystem *) 0 ;
+  LuaVector4 *arg2 = (LuaVector4 *) 0 ;
+  
+  SWIG_check_num_args("StartColor",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("StartColor",1,"ParticleSystem *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("StartColor",2,"LuaVector4 *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ParticleSystem,0))){
+    SWIG_fail_ptr("ParticleSystem_StartColor_set",1,SWIGTYPE_p_ParticleSystem);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_LuaVector4,0))){
+    SWIG_fail_ptr("ParticleSystem_StartColor_set",2,SWIGTYPE_p_LuaVector4);
+  }
+  
+  if (arg1) (arg1)->StartColor = *arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ParticleSystem_StartColor_get(lua_State* L) {
+  int SWIG_arg = 0;
+  ParticleSystem *arg1 = (ParticleSystem *) 0 ;
+  LuaVector4 *result = 0 ;
+  
+  SWIG_check_num_args("StartColor",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("StartColor",1,"ParticleSystem *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ParticleSystem,0))){
+    SWIG_fail_ptr("ParticleSystem_StartColor_get",1,SWIGTYPE_p_ParticleSystem);
+  }
+  
+  result = (LuaVector4 *)& ((arg1)->StartColor);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_LuaVector4,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ParticleSystem_EndColor_set(lua_State* L) {
+  int SWIG_arg = 0;
+  ParticleSystem *arg1 = (ParticleSystem *) 0 ;
+  LuaVector4 *arg2 = (LuaVector4 *) 0 ;
+  
+  SWIG_check_num_args("EndColor",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("EndColor",1,"ParticleSystem *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("EndColor",2,"LuaVector4 *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ParticleSystem,0))){
+    SWIG_fail_ptr("ParticleSystem_EndColor_set",1,SWIGTYPE_p_ParticleSystem);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_LuaVector4,0))){
+    SWIG_fail_ptr("ParticleSystem_EndColor_set",2,SWIGTYPE_p_LuaVector4);
+  }
+  
+  if (arg1) (arg1)->EndColor = *arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ParticleSystem_EndColor_get(lua_State* L) {
+  int SWIG_arg = 0;
+  ParticleSystem *arg1 = (ParticleSystem *) 0 ;
+  LuaVector4 *result = 0 ;
+  
+  SWIG_check_num_args("EndColor",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("EndColor",1,"ParticleSystem *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ParticleSystem,0))){
+    SWIG_fail_ptr("ParticleSystem_EndColor_get",1,SWIGTYPE_p_ParticleSystem);
+  }
+  
+  result = (LuaVector4 *)& ((arg1)->EndColor);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_LuaVector4,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ParticleSystem_StartScale_set(lua_State* L) {
+  int SWIG_arg = 0;
+  ParticleSystem *arg1 = (ParticleSystem *) 0 ;
+  LuaVector2 *arg2 = (LuaVector2 *) 0 ;
+  
+  SWIG_check_num_args("StartScale",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("StartScale",1,"ParticleSystem *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("StartScale",2,"LuaVector2 *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ParticleSystem,0))){
+    SWIG_fail_ptr("ParticleSystem_StartScale_set",1,SWIGTYPE_p_ParticleSystem);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_LuaVector2,0))){
+    SWIG_fail_ptr("ParticleSystem_StartScale_set",2,SWIGTYPE_p_LuaVector2);
+  }
+  
+  if (arg1) (arg1)->StartScale = *arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ParticleSystem_StartScale_get(lua_State* L) {
+  int SWIG_arg = 0;
+  ParticleSystem *arg1 = (ParticleSystem *) 0 ;
+  LuaVector2 *result = 0 ;
+  
+  SWIG_check_num_args("StartScale",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("StartScale",1,"ParticleSystem *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ParticleSystem,0))){
+    SWIG_fail_ptr("ParticleSystem_StartScale_get",1,SWIGTYPE_p_ParticleSystem);
+  }
+  
+  result = (LuaVector2 *)& ((arg1)->StartScale);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_LuaVector2,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ParticleSystem_EndScale_set(lua_State* L) {
+  int SWIG_arg = 0;
+  ParticleSystem *arg1 = (ParticleSystem *) 0 ;
+  LuaVector2 *arg2 = (LuaVector2 *) 0 ;
+  
+  SWIG_check_num_args("EndScale",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("EndScale",1,"ParticleSystem *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("EndScale",2,"LuaVector2 *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ParticleSystem,0))){
+    SWIG_fail_ptr("ParticleSystem_EndScale_set",1,SWIGTYPE_p_ParticleSystem);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_LuaVector2,0))){
+    SWIG_fail_ptr("ParticleSystem_EndScale_set",2,SWIGTYPE_p_LuaVector2);
+  }
+  
+  if (arg1) (arg1)->EndScale = *arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ParticleSystem_EndScale_get(lua_State* L) {
+  int SWIG_arg = 0;
+  ParticleSystem *arg1 = (ParticleSystem *) 0 ;
+  LuaVector2 *result = 0 ;
+  
+  SWIG_check_num_args("EndScale",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("EndScale",1,"ParticleSystem *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ParticleSystem,0))){
+    SWIG_fail_ptr("ParticleSystem_EndScale_get",1,SWIGTYPE_p_ParticleSystem);
+  }
+  
+  result = (LuaVector2 *)& ((arg1)->EndScale);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_LuaVector2,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ParticleSystem_PosOffset_set(lua_State* L) {
+  int SWIG_arg = 0;
+  ParticleSystem *arg1 = (ParticleSystem *) 0 ;
+  LuaVector3 *arg2 = (LuaVector3 *) 0 ;
+  
+  SWIG_check_num_args("PosOffset",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PosOffset",1,"ParticleSystem *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("PosOffset",2,"LuaVector3 *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ParticleSystem,0))){
+    SWIG_fail_ptr("ParticleSystem_PosOffset_set",1,SWIGTYPE_p_ParticleSystem);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_LuaVector3,0))){
+    SWIG_fail_ptr("ParticleSystem_PosOffset_set",2,SWIGTYPE_p_LuaVector3);
+  }
+  
+  if (arg1) (arg1)->PosOffset = *arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ParticleSystem_PosOffset_get(lua_State* L) {
+  int SWIG_arg = 0;
+  ParticleSystem *arg1 = (ParticleSystem *) 0 ;
+  LuaVector3 *result = 0 ;
+  
+  SWIG_check_num_args("PosOffset",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PosOffset",1,"ParticleSystem *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ParticleSystem,0))){
+    SWIG_fail_ptr("ParticleSystem_PosOffset_get",1,SWIGTYPE_p_ParticleSystem);
+  }
+  
+  result = (LuaVector3 *)& ((arg1)->PosOffset);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_LuaVector3,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ParticleSystem_Parameter_set(lua_State* L) {
+  int SWIG_arg = 0;
+  ParticleSystem *arg1 = (ParticleSystem *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("Parameter",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("Parameter",1,"ParticleSystem *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("Parameter",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ParticleSystem,0))){
+    SWIG_fail_ptr("ParticleSystem_Parameter_set",1,SWIGTYPE_p_ParticleSystem);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->Parameter = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ParticleSystem_Parameter_get(lua_State* L) {
+  int SWIG_arg = 0;
+  ParticleSystem *arg1 = (ParticleSystem *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("Parameter",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("Parameter",1,"ParticleSystem *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ParticleSystem,0))){
+    SWIG_fail_ptr("ParticleSystem_Parameter_get",1,SWIGTYPE_p_ParticleSystem);
+  }
+  
+  result = (float) ((arg1)->Parameter);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ParticleSystem_SystemFlags_set(lua_State* L) {
+  int SWIG_arg = 0;
+  ParticleSystem *arg1 = (ParticleSystem *) 0 ;
+  unsigned int arg2 ;
+  
+  SWIG_check_num_args("SystemFlags",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("SystemFlags",1,"ParticleSystem *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("SystemFlags",2,"unsigned int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ParticleSystem,0))){
+    SWIG_fail_ptr("ParticleSystem_SystemFlags_set",1,SWIGTYPE_p_ParticleSystem);
+  }
+  
+  arg2 = (unsigned int)lua_tonumber(L, 2);
+  if (arg1) (arg1)->SystemFlags = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ParticleSystem_SystemFlags_get(lua_State* L) {
+  int SWIG_arg = 0;
+  ParticleSystem *arg1 = (ParticleSystem *) 0 ;
+  unsigned int result;
+  
+  SWIG_check_num_args("SystemFlags",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("SystemFlags",1,"ParticleSystem *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ParticleSystem,0))){
+    SWIG_fail_ptr("ParticleSystem_SystemFlags_get",1,SWIGTYPE_p_ParticleSystem);
+  }
+  
+  result = (unsigned int) ((arg1)->SystemFlags);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ParticleSystem_Pattern_set(lua_State* L) {
+  int SWIG_arg = 0;
+  ParticleSystem *arg1 = (ParticleSystem *) 0 ;
+  U8 arg2 ;
+  
+  SWIG_check_num_args("Pattern",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("Pattern",1,"ParticleSystem *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("Pattern",2,"U8");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ParticleSystem,0))){
+    SWIG_fail_ptr("ParticleSystem_Pattern_set",1,SWIGTYPE_p_ParticleSystem);
+  }
+  
+  arg2 = (U8)lua_tonumber(L, 2);
+  if (arg1) (arg1)->Pattern = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ParticleSystem_Pattern_get(lua_State* L) {
+  int SWIG_arg = 0;
+  ParticleSystem *arg1 = (ParticleSystem *) 0 ;
+  U8 result;
+  
+  SWIG_check_num_args("Pattern",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("Pattern",1,"ParticleSystem *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ParticleSystem,0))){
+    SWIG_fail_ptr("ParticleSystem_Pattern_get",1,SWIGTYPE_p_ParticleSystem);
+  }
+  
+  result = (U8) ((arg1)->Pattern);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ParticleSystem_InnerAngle_set(lua_State* L) {
+  int SWIG_arg = 0;
+  ParticleSystem *arg1 = (ParticleSystem *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("InnerAngle",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("InnerAngle",1,"ParticleSystem *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("InnerAngle",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ParticleSystem,0))){
+    SWIG_fail_ptr("ParticleSystem_InnerAngle_set",1,SWIGTYPE_p_ParticleSystem);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->InnerAngle = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ParticleSystem_InnerAngle_get(lua_State* L) {
+  int SWIG_arg = 0;
+  ParticleSystem *arg1 = (ParticleSystem *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("InnerAngle",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("InnerAngle",1,"ParticleSystem *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ParticleSystem,0))){
+    SWIG_fail_ptr("ParticleSystem_InnerAngle_get",1,SWIGTYPE_p_ParticleSystem);
+  }
+  
+  result = (float) ((arg1)->InnerAngle);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ParticleSystem_OuterAngle_set(lua_State* L) {
+  int SWIG_arg = 0;
+  ParticleSystem *arg1 = (ParticleSystem *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("OuterAngle",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("OuterAngle",1,"ParticleSystem *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("OuterAngle",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ParticleSystem,0))){
+    SWIG_fail_ptr("ParticleSystem_OuterAngle_set",1,SWIGTYPE_p_ParticleSystem);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->OuterAngle = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ParticleSystem_OuterAngle_get(lua_State* L) {
+  int SWIG_arg = 0;
+  ParticleSystem *arg1 = (ParticleSystem *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("OuterAngle",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("OuterAngle",1,"ParticleSystem *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ParticleSystem,0))){
+    SWIG_fail_ptr("ParticleSystem_OuterAngle_get",1,SWIGTYPE_p_ParticleSystem);
+  }
+  
+  result = (float) ((arg1)->OuterAngle);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ParticleSystem_AngularVelocity_set(lua_State* L) {
+  int SWIG_arg = 0;
+  ParticleSystem *arg1 = (ParticleSystem *) 0 ;
+  LuaVector3 *arg2 = (LuaVector3 *) 0 ;
+  
+  SWIG_check_num_args("AngularVelocity",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("AngularVelocity",1,"ParticleSystem *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("AngularVelocity",2,"LuaVector3 *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ParticleSystem,0))){
+    SWIG_fail_ptr("ParticleSystem_AngularVelocity_set",1,SWIGTYPE_p_ParticleSystem);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_LuaVector3,0))){
+    SWIG_fail_ptr("ParticleSystem_AngularVelocity_set",2,SWIGTYPE_p_LuaVector3);
+  }
+  
+  if (arg1) (arg1)->AngularVelocity = *arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ParticleSystem_AngularVelocity_get(lua_State* L) {
+  int SWIG_arg = 0;
+  ParticleSystem *arg1 = (ParticleSystem *) 0 ;
+  LuaVector3 *result = 0 ;
+  
+  SWIG_check_num_args("AngularVelocity",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("AngularVelocity",1,"ParticleSystem *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ParticleSystem,0))){
+    SWIG_fail_ptr("ParticleSystem_AngularVelocity_get",1,SWIGTYPE_p_ParticleSystem);
+  }
+  
+  result = (LuaVector3 *)& ((arg1)->AngularVelocity);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_LuaVector3,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ParticleSystem_BurstRate_set(lua_State* L) {
+  int SWIG_arg = 0;
+  ParticleSystem *arg1 = (ParticleSystem *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("BurstRate",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("BurstRate",1,"ParticleSystem *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("BurstRate",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ParticleSystem,0))){
+    SWIG_fail_ptr("ParticleSystem_BurstRate_set",1,SWIGTYPE_p_ParticleSystem);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->BurstRate = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ParticleSystem_BurstRate_get(lua_State* L) {
+  int SWIG_arg = 0;
+  ParticleSystem *arg1 = (ParticleSystem *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("BurstRate",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("BurstRate",1,"ParticleSystem *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ParticleSystem,0))){
+    SWIG_fail_ptr("ParticleSystem_BurstRate_get",1,SWIGTYPE_p_ParticleSystem);
+  }
+  
+  result = (float) ((arg1)->BurstRate);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ParticleSystem_BurstPartCount_set(lua_State* L) {
+  int SWIG_arg = 0;
+  ParticleSystem *arg1 = (ParticleSystem *) 0 ;
+  U8 arg2 ;
+  
+  SWIG_check_num_args("BurstPartCount",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("BurstPartCount",1,"ParticleSystem *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("BurstPartCount",2,"U8");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ParticleSystem,0))){
+    SWIG_fail_ptr("ParticleSystem_BurstPartCount_set",1,SWIGTYPE_p_ParticleSystem);
+  }
+  
+  arg2 = (U8)lua_tonumber(L, 2);
+  if (arg1) (arg1)->BurstPartCount = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ParticleSystem_BurstPartCount_get(lua_State* L) {
+  int SWIG_arg = 0;
+  ParticleSystem *arg1 = (ParticleSystem *) 0 ;
+  U8 result;
+  
+  SWIG_check_num_args("BurstPartCount",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("BurstPartCount",1,"ParticleSystem *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ParticleSystem,0))){
+    SWIG_fail_ptr("ParticleSystem_BurstPartCount_get",1,SWIGTYPE_p_ParticleSystem);
+  }
+  
+  result = (U8) ((arg1)->BurstPartCount);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ParticleSystem_BurstRadius_set(lua_State* L) {
+  int SWIG_arg = 0;
+  ParticleSystem *arg1 = (ParticleSystem *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("BurstRadius",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("BurstRadius",1,"ParticleSystem *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("BurstRadius",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ParticleSystem,0))){
+    SWIG_fail_ptr("ParticleSystem_BurstRadius_set",1,SWIGTYPE_p_ParticleSystem);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->BurstRadius = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ParticleSystem_BurstRadius_get(lua_State* L) {
+  int SWIG_arg = 0;
+  ParticleSystem *arg1 = (ParticleSystem *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("BurstRadius",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("BurstRadius",1,"ParticleSystem *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ParticleSystem,0))){
+    SWIG_fail_ptr("ParticleSystem_BurstRadius_get",1,SWIGTYPE_p_ParticleSystem);
+  }
+  
+  result = (float) ((arg1)->BurstRadius);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ParticleSystem_BurstSpeedMin_set(lua_State* L) {
+  int SWIG_arg = 0;
+  ParticleSystem *arg1 = (ParticleSystem *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("BurstSpeedMin",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("BurstSpeedMin",1,"ParticleSystem *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("BurstSpeedMin",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ParticleSystem,0))){
+    SWIG_fail_ptr("ParticleSystem_BurstSpeedMin_set",1,SWIGTYPE_p_ParticleSystem);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->BurstSpeedMin = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ParticleSystem_BurstSpeedMin_get(lua_State* L) {
+  int SWIG_arg = 0;
+  ParticleSystem *arg1 = (ParticleSystem *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("BurstSpeedMin",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("BurstSpeedMin",1,"ParticleSystem *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ParticleSystem,0))){
+    SWIG_fail_ptr("ParticleSystem_BurstSpeedMin_get",1,SWIGTYPE_p_ParticleSystem);
+  }
+  
+  result = (float) ((arg1)->BurstSpeedMin);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ParticleSystem_BurstSpeedMax_set(lua_State* L) {
+  int SWIG_arg = 0;
+  ParticleSystem *arg1 = (ParticleSystem *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("BurstSpeedMax",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("BurstSpeedMax",1,"ParticleSystem *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("BurstSpeedMax",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ParticleSystem,0))){
+    SWIG_fail_ptr("ParticleSystem_BurstSpeedMax_set",1,SWIGTYPE_p_ParticleSystem);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->BurstSpeedMax = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ParticleSystem_BurstSpeedMax_get(lua_State* L) {
+  int SWIG_arg = 0;
+  ParticleSystem *arg1 = (ParticleSystem *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("BurstSpeedMax",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("BurstSpeedMax",1,"ParticleSystem *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ParticleSystem,0))){
+    SWIG_fail_ptr("ParticleSystem_BurstSpeedMax_get",1,SWIGTYPE_p_ParticleSystem);
+  }
+  
+  result = (float) ((arg1)->BurstSpeedMax);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ParticleSystem_MaxAge_set(lua_State* L) {
+  int SWIG_arg = 0;
+  ParticleSystem *arg1 = (ParticleSystem *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("MaxAge",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("MaxAge",1,"ParticleSystem *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("MaxAge",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ParticleSystem,0))){
+    SWIG_fail_ptr("ParticleSystem_MaxAge_set",1,SWIGTYPE_p_ParticleSystem);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->MaxAge = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ParticleSystem_MaxAge_get(lua_State* L) {
+  int SWIG_arg = 0;
+  ParticleSystem *arg1 = (ParticleSystem *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("MaxAge",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("MaxAge",1,"ParticleSystem *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ParticleSystem,0))){
+    SWIG_fail_ptr("ParticleSystem_MaxAge_get",1,SWIGTYPE_p_ParticleSystem);
+  }
+  
+  result = (float) ((arg1)->MaxAge);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ParticleSystem_StartAge_set(lua_State* L) {
+  int SWIG_arg = 0;
+  ParticleSystem *arg1 = (ParticleSystem *) 0 ;
+  float arg2 ;
+  
+  SWIG_check_num_args("StartAge",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("StartAge",1,"ParticleSystem *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("StartAge",2,"float");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ParticleSystem,0))){
+    SWIG_fail_ptr("ParticleSystem_StartAge_set",1,SWIGTYPE_p_ParticleSystem);
+  }
+  
+  arg2 = (float)lua_tonumber(L, 2);
+  if (arg1) (arg1)->StartAge = arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ParticleSystem_StartAge_get(lua_State* L) {
+  int SWIG_arg = 0;
+  ParticleSystem *arg1 = (ParticleSystem *) 0 ;
+  float result;
+  
+  SWIG_check_num_args("StartAge",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("StartAge",1,"ParticleSystem *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ParticleSystem,0))){
+    SWIG_fail_ptr("ParticleSystem_StartAge_get",1,SWIGTYPE_p_ParticleSystem);
+  }
+  
+  result = (float) ((arg1)->StartAge);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ParticleSystem_PartAccel_set(lua_State* L) {
+  int SWIG_arg = 0;
+  ParticleSystem *arg1 = (ParticleSystem *) 0 ;
+  LuaVector3 *arg2 = (LuaVector3 *) 0 ;
+  
+  SWIG_check_num_args("PartAccel",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PartAccel",1,"ParticleSystem *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("PartAccel",2,"LuaVector3 *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ParticleSystem,0))){
+    SWIG_fail_ptr("ParticleSystem_PartAccel_set",1,SWIGTYPE_p_ParticleSystem);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_LuaVector3,0))){
+    SWIG_fail_ptr("ParticleSystem_PartAccel_set",2,SWIGTYPE_p_LuaVector3);
+  }
+  
+  if (arg1) (arg1)->PartAccel = *arg2;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ParticleSystem_PartAccel_get(lua_State* L) {
+  int SWIG_arg = 0;
+  ParticleSystem *arg1 = (ParticleSystem *) 0 ;
+  LuaVector3 *result = 0 ;
+  
+  SWIG_check_num_args("PartAccel",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("PartAccel",1,"ParticleSystem *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ParticleSystem,0))){
+    SWIG_fail_ptr("ParticleSystem_PartAccel_get",1,SWIGTYPE_p_ParticleSystem);
+  }
+  
+  result = (LuaVector3 *)& ((arg1)->PartAccel);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_LuaVector3,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_ParticleSystem(lua_State* L) {
+  int SWIG_arg = 0;
+  ParticleSystem *result = 0 ;
+  
+  SWIG_check_num_args("ParticleSystem",0,0)
+  result = (ParticleSystem *)new ParticleSystem();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_ParticleSystem,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ParticleSystem_SetImageFromFile(lua_State* L) {
+  int SWIG_arg = 0;
+  ParticleSystem *arg1 = (ParticleSystem *) 0 ;
+  std::string arg2 ;
+  
+  SWIG_check_num_args("SetImageFromFile",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("SetImageFromFile",1,"ParticleSystem *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("SetImageFromFile",2,"std::string");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ParticleSystem,0))){
+    SWIG_fail_ptr("ParticleSystem_SetImageFromFile",1,SWIGTYPE_p_ParticleSystem);
+  }
+  
+  (&arg2)->assign(lua_tostring(L,2),lua_strlen(L,2));
+  (arg1)->SetImageFromFile(arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ParticleSystem_SetImageFromUUID(lua_State* L) {
+  int SWIG_arg = 0;
+  ParticleSystem *arg1 = (ParticleSystem *) 0 ;
+  std::string arg2 ;
+  
+  SWIG_check_num_args("SetImageFromUUID",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("SetImageFromUUID",1,"ParticleSystem *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("SetImageFromUUID",2,"std::string");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ParticleSystem,0))){
+    SWIG_fail_ptr("ParticleSystem_SetImageFromUUID",1,SWIGTYPE_p_ParticleSystem);
+  }
+  
+  (&arg2)->assign(lua_tostring(L,2),lua_strlen(L,2));
+  (arg1)->SetImageFromUUID(arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ParticleSystem_GetImageUUID(lua_State* L) {
+  int SWIG_arg = 0;
+  ParticleSystem *arg1 = (ParticleSystem *) 0 ;
+  std::string result;
+  
+  SWIG_check_num_args("GetImageUUID",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("GetImageUUID",1,"ParticleSystem *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ParticleSystem,0))){
+    SWIG_fail_ptr("ParticleSystem_GetImageUUID",1,SWIGTYPE_p_ParticleSystem);
+  }
+  
+  result = (arg1)->GetImageUUID();
+  lua_pushlstring(L,(&result)->data(),(&result)->size()); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ParticleSystem_GetTargetUUID(lua_State* L) {
+  int SWIG_arg = 0;
+  ParticleSystem *arg1 = (ParticleSystem *) 0 ;
+  std::string result;
+  
+  SWIG_check_num_args("GetTargetUUID",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("GetTargetUUID",1,"ParticleSystem *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ParticleSystem,0))){
+    SWIG_fail_ptr("ParticleSystem_GetTargetUUID",1,SWIGTYPE_p_ParticleSystem);
+  }
+  
+  result = (arg1)->GetTargetUUID();
+  lua_pushlstring(L,(&result)->data(),(&result)->size()); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ParticleSystem_SetTargetUUID(lua_State* L) {
+  int SWIG_arg = 0;
+  ParticleSystem *arg1 = (ParticleSystem *) 0 ;
+  std::string arg2 ;
+  
+  SWIG_check_num_args("SetTargetUUID",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("SetTargetUUID",1,"ParticleSystem *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("SetTargetUUID",2,"std::string");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ParticleSystem,0))){
+    SWIG_fail_ptr("ParticleSystem_SetTargetUUID",1,SWIGTYPE_p_ParticleSystem);
+  }
+  
+  (&arg2)->assign(lua_tostring(L,2),lua_strlen(L,2));
+  (arg1)->SetTargetUUID(arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ParticleSystem_AttachToObject(lua_State* L) {
+  int SWIG_arg = 0;
+  ParticleSystem *arg1 = (ParticleSystem *) 0 ;
+  std::string arg2 ;
+  
+  SWIG_check_num_args("AttachToObject",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("AttachToObject",1,"ParticleSystem *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("AttachToObject",2,"std::string");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ParticleSystem,0))){
+    SWIG_fail_ptr("ParticleSystem_AttachToObject",1,SWIGTYPE_p_ParticleSystem);
+  }
+  
+  (&arg2)->assign(lua_tostring(L,2),lua_strlen(L,2));
+  (arg1)->AttachToObject(arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static void swig_delete_ParticleSystem(void *obj) {
+ParticleSystem *arg1 = (ParticleSystem *) obj;
+delete arg1;
+}
+static swig_lua_method swig_ParticleSystem_methods[] = {
+    {"SetImageFromFile", _wrap_ParticleSystem_SetImageFromFile}, 
+    {"SetImageFromUUID", _wrap_ParticleSystem_SetImageFromUUID}, 
+    {"GetImageUUID", _wrap_ParticleSystem_GetImageUUID}, 
+    {"GetTargetUUID", _wrap_ParticleSystem_GetTargetUUID}, 
+    {"SetTargetUUID", _wrap_ParticleSystem_SetTargetUUID}, 
+    {"AttachToObject", _wrap_ParticleSystem_AttachToObject}, 
+    {0,0}
+};
+static swig_lua_attribute swig_ParticleSystem_attributes[] = {
+    { "ParticleFlags", _wrap_ParticleSystem_ParticleFlags_get, _wrap_ParticleSystem_ParticleFlags_set},
+    { "ParticleMaxAge", _wrap_ParticleSystem_ParticleMaxAge_get, _wrap_ParticleSystem_ParticleMaxAge_set},
+    { "StartColor", _wrap_ParticleSystem_StartColor_get, _wrap_ParticleSystem_StartColor_set},
+    { "EndColor", _wrap_ParticleSystem_EndColor_get, _wrap_ParticleSystem_EndColor_set},
+    { "StartScale", _wrap_ParticleSystem_StartScale_get, _wrap_ParticleSystem_StartScale_set},
+    { "EndScale", _wrap_ParticleSystem_EndScale_get, _wrap_ParticleSystem_EndScale_set},
+    { "PosOffset", _wrap_ParticleSystem_PosOffset_get, _wrap_ParticleSystem_PosOffset_set},
+    { "Parameter", _wrap_ParticleSystem_Parameter_get, _wrap_ParticleSystem_Parameter_set},
+    { "SystemFlags", _wrap_ParticleSystem_SystemFlags_get, _wrap_ParticleSystem_SystemFlags_set},
+    { "Pattern", _wrap_ParticleSystem_Pattern_get, _wrap_ParticleSystem_Pattern_set},
+    { "InnerAngle", _wrap_ParticleSystem_InnerAngle_get, _wrap_ParticleSystem_InnerAngle_set},
+    { "OuterAngle", _wrap_ParticleSystem_OuterAngle_get, _wrap_ParticleSystem_OuterAngle_set},
+    { "AngularVelocity", _wrap_ParticleSystem_AngularVelocity_get, _wrap_ParticleSystem_AngularVelocity_set},
+    { "BurstRate", _wrap_ParticleSystem_BurstRate_get, _wrap_ParticleSystem_BurstRate_set},
+    { "BurstPartCount", _wrap_ParticleSystem_BurstPartCount_get, _wrap_ParticleSystem_BurstPartCount_set},
+    { "BurstRadius", _wrap_ParticleSystem_BurstRadius_get, _wrap_ParticleSystem_BurstRadius_set},
+    { "BurstSpeedMin", _wrap_ParticleSystem_BurstSpeedMin_get, _wrap_ParticleSystem_BurstSpeedMin_set},
+    { "BurstSpeedMax", _wrap_ParticleSystem_BurstSpeedMax_get, _wrap_ParticleSystem_BurstSpeedMax_set},
+    { "MaxAge", _wrap_ParticleSystem_MaxAge_get, _wrap_ParticleSystem_MaxAge_set},
+    { "StartAge", _wrap_ParticleSystem_StartAge_get, _wrap_ParticleSystem_StartAge_set},
+    { "PartAccel", _wrap_ParticleSystem_PartAccel_get, _wrap_ParticleSystem_PartAccel_set},
+    {0,0,0}
+};
+static swig_lua_class *swig_ParticleSystem_bases[] = {0};
+static const char *swig_ParticleSystem_base_names[] = {0};
+static swig_lua_class _wrap_class_ParticleSystem = { "ParticleSystem", &SWIGTYPE_p_ParticleSystem,_wrap_new_ParticleSystem, swig_delete_ParticleSystem, swig_ParticleSystem_methods, swig_ParticleSystem_attributes, swig_ParticleSystem_bases, swig_ParticleSystem_base_names };
 
 static int _wrap_new_LuaUICtrl__SWIG_0(lua_State* L) {
   int SWIG_arg = 0;
@@ -4533,6 +5827,21 @@ static swig_lua_var_info swig_variables[] = {
 };
 
 static swig_lua_const_info swig_constants[] = {
+{ SWIG_LUA_INT,     (char *)"DROP", (long) DROP, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"EXPLODE", (long) EXPLODE, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"ANGLE", (long) ANGLE, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"ANGLE_CONE", (long) ANGLE_CONE, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"CONE_EMPTY", (long) CONE_EMPTY, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"INTERP_COLOR_MASK", (long) INTERP_COLOR_MASK, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"INTERP_SCALE_MASK", (long) INTERP_SCALE_MASK, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"BOUNCE_MASK", (long) BOUNCE_MASK, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"WIND_MASK", (long) WIND_MASK, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"FOLLOW_SRC_MASK", (long) FOLLOW_SRC_MASK, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"FOLLOW_VELOCITY_MASK", (long) FOLLOW_VELOCITY_MASK, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"TARGET_POS_MASK", (long) TARGET_POS_MASK, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"TARGET_LINEAR_MASK", (long) TARGET_LINEAR_MASK, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"EMISSIVE_MASK", (long) EMISSIVE_MASK, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"BEAM_MASK", (long) BEAM_MASK, 0, 0, 0},
     {0,0,0,0,0,0}
 };
 
@@ -4636,6 +5945,10 @@ static swig_type_info _swigt__p_LuaSelectionManager = {"_p_LuaSelectionManager",
 static swig_type_info _swigt__p_LuaTextBox = {"_p_LuaTextBox", "LuaTextBox *", 0, 0, (void*)&_wrap_class_LuaTextBox, 0};
 static swig_type_info _swigt__p_LuaUICtrl = {"_p_LuaUICtrl", "LuaUICtrl *", 0, 0, (void*)&_wrap_class_LuaUICtrl, 0};
 static swig_type_info _swigt__p_LuaUIManager = {"_p_LuaUIManager", "LuaUIManager *", 0, 0, (void*)&_wrap_class_LuaUIManager, 0};
+static swig_type_info _swigt__p_LuaVector2 = {"_p_LuaVector2", "LuaVector2 *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_LuaVector3 = {"_p_LuaVector3", "LuaVector3 *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_LuaVector4 = {"_p_LuaVector4", "LuaVector4 *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_ParticleSystem = {"_p_ParticleSystem", "ParticleSystem *", 0, 0, (void*)&_wrap_class_ParticleSystem, 0};
 static swig_type_info _swigt__p_child_list_t = {"_p_child_list_t", "child_list_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_const_child_list_t = {"_p_const_child_list_t", "const_child_list_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_double = {"_p_double", "double *|F64 *", 0, 0, (void*)0, 0};
@@ -4699,6 +6012,10 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_LuaTextBox,
   &_swigt__p_LuaUICtrl,
   &_swigt__p_LuaUIManager,
+  &_swigt__p_LuaVector2,
+  &_swigt__p_LuaVector3,
+  &_swigt__p_LuaVector4,
+  &_swigt__p_ParticleSystem,
   &_swigt__p_child_list_t,
   &_swigt__p_const_child_list_t,
   &_swigt__p_double,
@@ -4762,6 +6079,10 @@ static swig_cast_info _swigc__p_LuaSelectionManager[] = {  {&_swigt__p_LuaSelect
 static swig_cast_info _swigc__p_LuaTextBox[] = {  {&_swigt__p_LuaTextBox, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_LuaUICtrl[] = {  {&_swigt__p_LuaFloater, _p_LuaFloaterTo_p_LuaUICtrl, 0, 0},  {&_swigt__p_LuaUICtrl, 0, 0, 0},  {&_swigt__p_LuaTextBox, _p_LuaTextBoxTo_p_LuaUICtrl, 0, 0},  {&_swigt__p_LuaPanel, _p_LuaPanelTo_p_LuaUICtrl, 0, 0},  {&_swigt__p_LuaButton, _p_LuaButtonTo_p_LuaUICtrl, 0, 0},  {&_swigt__p_LuaLineEditor, _p_LuaLineEditorTo_p_LuaUICtrl, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_LuaUIManager[] = {  {&_swigt__p_LuaUIManager, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_LuaVector2[] = {  {&_swigt__p_LuaVector2, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_LuaVector3[] = {  {&_swigt__p_LuaVector3, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_LuaVector4[] = {  {&_swigt__p_LuaVector4, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_ParticleSystem[] = {  {&_swigt__p_ParticleSystem, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_child_list_t[] = {  {&_swigt__p_child_list_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_const_child_list_t[] = {  {&_swigt__p_const_child_list_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_double[] = {  {&_swigt__p_double, 0, 0, 0},{0, 0, 0, 0}};
@@ -4825,6 +6146,10 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_LuaTextBox,
   _swigc__p_LuaUICtrl,
   _swigc__p_LuaUIManager,
+  _swigc__p_LuaVector2,
+  _swigc__p_LuaVector3,
+  _swigc__p_LuaVector4,
+  _swigc__p_ParticleSystem,
   _swigc__p_child_list_t,
   _swigc__p_const_child_list_t,
   _swigc__p_double,

@@ -4,6 +4,7 @@
 #include "llviewerimagelist.h"
 #include "llviewerobject.h"
 #include "llviewerobjectlist.h"
+#include "LuaTypes.h"
 
 /*
 --- C++ PARTICLES ---
@@ -71,29 +72,28 @@
 	particle_parameters.AttachToObject(AvatarUUID);
 */
 
-class ParticlePattern
+enum ParticlePattern
 {
-public:
-	const U8 DROP 		= 0x01; 
-	const U8 EXPLODE 	= 0x02; 
-	const U8 ANGLE 		= 0x04; 
-	const U8 ANGLE_CONE 	= 0x08;
-	const U8 CONE_EMPTY 	= 0x10;
+	DROP 		= 0x01, 
+	EXPLODE 	= 0x02, 
+	ANGLE 		= 0x04, 
+	ANGLE_CONE 	= 0x08,
+	CONE_EMPTY 	= 0x10
 };
 
-class ParticleFlags
+enum ParticleFlags
 {
- 	const U8 INTERP_COLOR_MASK	= 0x01; 
-	const U8 INTERP_SCALE_MASK	= 0x02;
-	const U8 BOUNCE_MASK		= 0x04;
-	const U8 WIND_MASK 		= 0x08;
-	const U8 FOLLOW_SRC_MASK 	= 0x10;
-	const U8 FOLLOW_VELOCITY_MASK	= 0x20;
-	const U8 TARGET_POS_MASK 	= 0x40;
-	const U8 TARGET_LINEAR_MASK 	= 0x80;
-	const U8 EMISSIVE_MASK 		= 0x100;
-	const U8 BEAM_MASK 		= 0x200;
-	//const U8 DEAD_MASK = 0x80000000; // DON'T FUCKING USE THIS
+ 	INTERP_COLOR_MASK	= 0x01,
+	INTERP_SCALE_MASK	= 0x02,
+	BOUNCE_MASK		= 0x04,
+	WIND_MASK 		= 0x08,
+	FOLLOW_SRC_MASK 	= 0x10,
+	FOLLOW_VELOCITY_MASK	= 0x20,
+	TARGET_POS_MASK 	= 0x40,
+	TARGET_LINEAR_MASK 	= 0x80,
+	EMISSIVE_MASK 		= 0x100,
+	BEAM_MASK 		= 0x200
+	//DEAD_MASK = 0x80000000; // DON'T FUCKING USE THIS
 };
 
 class ParticleSystem

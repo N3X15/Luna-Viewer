@@ -2,9 +2,9 @@
 #define LUATYPES_H
 
 #include "llviewerprecompiledheaders.h"
-#include "v2math.h";
-#include "v3math.h";
-#include "v4math.h";
+#include "v2math.h"
+#include "v3math.h"
+#include "v4math.h"
 
 class LuaVector2
 {
@@ -12,10 +12,11 @@ public:
 	float x;
 	float y;
 	
-	LuaVector2& operator=(const LLVector2& in)
+	const LuaVector2& operator=(const LLVector2& in)
 	{
 		x=in.mV[VX];
 		y=in.mV[VY];
+		if ( *this == &in ) return *this;
 	}
 
 	LuaVector2();				// (0,0)
@@ -24,17 +25,18 @@ public:
 
 	operator LLVector2()
 	{ 
-		return new LLVector2(x,y); 
+		return LLVector2(x,y); 
 	}
-}
+};
+
 
 inline LuaVector2::LuaVector2()
 {
-	x=0f;
-	y=0f;
+	x=0.f;
+	y=0.f;
 }
 
-inline LuaVector2::LuaVector2(float nx,float nz)
+inline LuaVector2::LuaVector2(float nx,float ny)
 {
 	x=nx;
 	y=ny;
@@ -53,11 +55,12 @@ public:
 	float y;
 	float z;
 
-	LuaVector3& operator=(const LLVector3& in)
+	const LuaVector3& operator=(const LLVector3& in)
 	{
 		x=in.mV[VX];
 		y=in.mV[VY];
-		z=in.mV[VZ];
+		z=in.mV[VX];
+		if ( *this == &in ) return *this;
 	}
 
 	LuaVector3();					// (0, 0, 0)
@@ -66,14 +69,15 @@ public:
 
 	operator LLVector3()
 	{ 
-		return new LLVector3(x,y,z); 
+		return LLVector3(x,y,z); 
 	}
-}
+};
+
 inline LuaVector3::LuaVector3()
 {
-	x=0f;
-	y=0f;
-	z=0f;
+	x=0.f;
+	y=0.f;
+	z=0.f;
 }
 
 inline LuaVector3::LuaVector3(float nx,float ny,float nz)
@@ -97,12 +101,13 @@ public:
 	float y;
 	float z;
 	float w;
-	LuaVector4& operator=(const LLVector4& in)
+	const LuaVector4& operator=(const LLVector4& in)
 	{
 		x=in.mV[VX];
 		y=in.mV[VY];
 		z=in.mV[VZ];
 		w=in.mV[VW];
+		if ( *this == &in ) return *this;
 	}
 
 	LuaVector4();							// (0, 0, 0, 0)
@@ -121,10 +126,10 @@ public:
 }
 inline LuaVector4::LuaVector4()
 {
-	x=0f;
-	y=0f;
-	z=0f;
-	w=0f;
+	x=0.f;
+	y=0.f;
+	z=0.f;
+	w=0.f;
 }
 
 inline LuaVector4::LuaVector4(float nx,float ny,float nz,float nw)

@@ -36,6 +36,8 @@
 #include "LuaBase_f.h"
 #include "LuaAvatar_f.h"
 #include "LuaAgent_f.h"
+#include "LuaParticles.h"
+#include "LuaTypes.h"
 #include "llprimitive.h"
 #include "llviewerobject.h"
 #include "llvovolume.h"
@@ -90,7 +92,7 @@
 %include "LuaAvatar_f.h"
 
 %include "LuaAgent_f.h"
-%import "LuaParticles.h"
+%include "LuaParticles.h"
 
 %include "../newview/LuaUI.h"
 %rename (Floater) 	LuaFloater;
