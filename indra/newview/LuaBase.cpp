@@ -1498,65 +1498,66 @@ SWIG_Lua_dostring(lua_State *L, const char* str) {
 #define SWIGTYPE_p_LLFloater swig_types[5]
 #define SWIGTYPE_p_LLMultiFloater swig_types[6]
 #define SWIGTYPE_p_LLPanel swig_types[7]
-#define SWIGTYPE_p_LLPrimitive swig_types[8]
-#define SWIGTYPE_p_LLSafeHandleT_LLObjectSelection_t swig_types[9]
-#define SWIGTYPE_p_LLSelectMgr swig_types[10]
-#define SWIGTYPE_p_LLStaticViewerObject swig_types[11]
-#define SWIGTYPE_p_LLUUID swig_types[12]
-#define SWIGTYPE_p_LLVOAvatar swig_types[13]
-#define SWIGTYPE_p_LLVOVolume swig_types[14]
-#define SWIGTYPE_p_LLViewerObject swig_types[15]
-#define SWIGTYPE_p_LLViewerRegion swig_types[16]
-#define SWIGTYPE_p_LLWearable swig_types[17]
-#define SWIGTYPE_p_LuaAgent swig_types[18]
-#define SWIGTYPE_p_LuaButton swig_types[19]
-#define SWIGTYPE_p_LuaFloater swig_types[20]
-#define SWIGTYPE_p_LuaLineEditor swig_types[21]
-#define SWIGTYPE_p_LuaObject swig_types[22]
-#define SWIGTYPE_p_LuaObjectManager swig_types[23]
-#define SWIGTYPE_p_LuaPanel swig_types[24]
-#define SWIGTYPE_p_LuaSelectionManager swig_types[25]
-#define SWIGTYPE_p_LuaTextBox swig_types[26]
-#define SWIGTYPE_p_LuaUICtrl swig_types[27]
-#define SWIGTYPE_p_LuaUIManager swig_types[28]
-#define SWIGTYPE_p_LuaVector2 swig_types[29]
-#define SWIGTYPE_p_LuaVector3 swig_types[30]
-#define SWIGTYPE_p_LuaVector4 swig_types[31]
-#define SWIGTYPE_p_ParticleSystem swig_types[32]
-#define SWIGTYPE_p_child_list_t swig_types[33]
-#define SWIGTYPE_p_const_child_list_t swig_types[34]
-#define SWIGTYPE_p_double swig_types[35]
-#define SWIGTYPE_p_eLayoutOrientation swig_types[36]
-#define SWIGTYPE_p_eObjectPartitions swig_types[37]
-#define SWIGTYPE_p_e_action_type swig_types[38]
-#define SWIGTYPE_p_e_anim_request swig_types[39]
-#define SWIGTYPE_p_e_camera_modes swig_types[40]
-#define SWIGTYPE_p_e_camera_position swig_types[41]
-#define SWIGTYPE_p_e_grid_mode swig_types[42]
-#define SWIGTYPE_p_e_object_update_type swig_types[43]
-#define SWIGTYPE_p_e_selection_type swig_types[44]
-#define SWIGTYPE_p_e_send_type swig_types[45]
-#define SWIGTYPE_p_float swig_types[46]
-#define SWIGTYPE_p_int swig_types[47]
-#define SWIGTYPE_p_iterator swig_types[48]
-#define SWIGTYPE_p_list_t swig_types[49]
-#define SWIGTYPE_p_long_long swig_types[50]
-#define SWIGTYPE_p_root_iterator swig_types[51]
-#define SWIGTYPE_p_root_object_iterator swig_types[52]
-#define SWIGTYPE_p_short swig_types[53]
-#define SWIGTYPE_p_signed_char swig_types[54]
-#define SWIGTYPE_p_skip_list_t swig_types[55]
-#define SWIGTYPE_p_std__string swig_types[56]
-#define SWIGTYPE_p_unsigned_char swig_types[57]
-#define SWIGTYPE_p_unsigned_int swig_types[58]
-#define SWIGTYPE_p_unsigned_long_long swig_types[59]
-#define SWIGTYPE_p_unsigned_short swig_types[60]
-#define SWIGTYPE_p_valid_iterator swig_types[61]
-#define SWIGTYPE_p_valid_root_iterator swig_types[62]
-#define SWIGTYPE_p_vobj_list_t swig_types[63]
-#define SWIGTYPE_p_wchar_t swig_types[64]
-static swig_type_info *swig_types[66];
-static swig_module_info swig_module = {swig_types, 65, 0, 0, 0, 0};
+#define SWIGTYPE_p_LLPartSysData swig_types[8]
+#define SWIGTYPE_p_LLPrimitive swig_types[9]
+#define SWIGTYPE_p_LLSafeHandleT_LLObjectSelection_t swig_types[10]
+#define SWIGTYPE_p_LLSelectMgr swig_types[11]
+#define SWIGTYPE_p_LLStaticViewerObject swig_types[12]
+#define SWIGTYPE_p_LLUUID swig_types[13]
+#define SWIGTYPE_p_LLVOAvatar swig_types[14]
+#define SWIGTYPE_p_LLVOVolume swig_types[15]
+#define SWIGTYPE_p_LLViewerObject swig_types[16]
+#define SWIGTYPE_p_LLViewerRegion swig_types[17]
+#define SWIGTYPE_p_LLWearable swig_types[18]
+#define SWIGTYPE_p_LuaAgent swig_types[19]
+#define SWIGTYPE_p_LuaButton swig_types[20]
+#define SWIGTYPE_p_LuaFloater swig_types[21]
+#define SWIGTYPE_p_LuaLineEditor swig_types[22]
+#define SWIGTYPE_p_LuaObject swig_types[23]
+#define SWIGTYPE_p_LuaObjectManager swig_types[24]
+#define SWIGTYPE_p_LuaPanel swig_types[25]
+#define SWIGTYPE_p_LuaSelectionManager swig_types[26]
+#define SWIGTYPE_p_LuaTextBox swig_types[27]
+#define SWIGTYPE_p_LuaUICtrl swig_types[28]
+#define SWIGTYPE_p_LuaUIManager swig_types[29]
+#define SWIGTYPE_p_LuaVector2 swig_types[30]
+#define SWIGTYPE_p_LuaVector3 swig_types[31]
+#define SWIGTYPE_p_LuaVector4 swig_types[32]
+#define SWIGTYPE_p_ParticleSystem swig_types[33]
+#define SWIGTYPE_p_child_list_t swig_types[34]
+#define SWIGTYPE_p_const_child_list_t swig_types[35]
+#define SWIGTYPE_p_double swig_types[36]
+#define SWIGTYPE_p_eLayoutOrientation swig_types[37]
+#define SWIGTYPE_p_eObjectPartitions swig_types[38]
+#define SWIGTYPE_p_e_action_type swig_types[39]
+#define SWIGTYPE_p_e_anim_request swig_types[40]
+#define SWIGTYPE_p_e_camera_modes swig_types[41]
+#define SWIGTYPE_p_e_camera_position swig_types[42]
+#define SWIGTYPE_p_e_grid_mode swig_types[43]
+#define SWIGTYPE_p_e_object_update_type swig_types[44]
+#define SWIGTYPE_p_e_selection_type swig_types[45]
+#define SWIGTYPE_p_e_send_type swig_types[46]
+#define SWIGTYPE_p_float swig_types[47]
+#define SWIGTYPE_p_int swig_types[48]
+#define SWIGTYPE_p_iterator swig_types[49]
+#define SWIGTYPE_p_list_t swig_types[50]
+#define SWIGTYPE_p_long_long swig_types[51]
+#define SWIGTYPE_p_root_iterator swig_types[52]
+#define SWIGTYPE_p_root_object_iterator swig_types[53]
+#define SWIGTYPE_p_short swig_types[54]
+#define SWIGTYPE_p_signed_char swig_types[55]
+#define SWIGTYPE_p_skip_list_t swig_types[56]
+#define SWIGTYPE_p_std__string swig_types[57]
+#define SWIGTYPE_p_unsigned_char swig_types[58]
+#define SWIGTYPE_p_unsigned_int swig_types[59]
+#define SWIGTYPE_p_unsigned_long_long swig_types[60]
+#define SWIGTYPE_p_unsigned_short swig_types[61]
+#define SWIGTYPE_p_valid_iterator swig_types[62]
+#define SWIGTYPE_p_valid_root_iterator swig_types[63]
+#define SWIGTYPE_p_vobj_list_t swig_types[64]
+#define SWIGTYPE_p_wchar_t swig_types[65]
+static swig_type_info *swig_types[67];
+static swig_module_info swig_module = {swig_types, 66, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -1593,6 +1594,10 @@ typedef struct{} LANGUAGE_OBJ;
 #include "llvovolume.h"
 #include "llagent.h"
 #include "llselectmgr.h"
+#include "v2math.h"
+#include "v3math.h"
+#include "v4math.h"
+#include "v4color.h"
 
 
 	#include <string>
@@ -3055,56 +3060,6 @@ fail:
 }
 
 
-static int _wrap_ParticleSystem_ParticleFlags_set(lua_State* L) {
-  int SWIG_arg = 0;
-  ParticleSystem *arg1 = (ParticleSystem *) 0 ;
-  unsigned int arg2 ;
-  
-  SWIG_check_num_args("ParticleFlags",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("ParticleFlags",1,"ParticleSystem *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("ParticleFlags",2,"unsigned int");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ParticleSystem,0))){
-    SWIG_fail_ptr("ParticleSystem_ParticleFlags_set",1,SWIGTYPE_p_ParticleSystem);
-  }
-  
-  arg2 = (unsigned int)lua_tonumber(L, 2);
-  if (arg1) (arg1)->ParticleFlags = arg2;
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_ParticleSystem_ParticleFlags_get(lua_State* L) {
-  int SWIG_arg = 0;
-  ParticleSystem *arg1 = (ParticleSystem *) 0 ;
-  unsigned int result;
-  
-  SWIG_check_num_args("ParticleFlags",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("ParticleFlags",1,"ParticleSystem *");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ParticleSystem,0))){
-    SWIG_fail_ptr("ParticleSystem_ParticleFlags_get",1,SWIGTYPE_p_ParticleSystem);
-  }
-  
-  result = (unsigned int) ((arg1)->ParticleFlags);
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
 static int _wrap_ParticleSystem_ParticleMaxAge_set(lua_State* L) {
   int SWIG_arg = 0;
   ParticleSystem *arg1 = (ParticleSystem *) 0 ;
@@ -3979,21 +3934,21 @@ fail:
 }
 
 
-static int _wrap_ParticleSystem_MaxAge_set(lua_State* L) {
+static int _wrap_ParticleSystem_SystemMaxAge_set(lua_State* L) {
   int SWIG_arg = 0;
   ParticleSystem *arg1 = (ParticleSystem *) 0 ;
   float arg2 ;
   
-  SWIG_check_num_args("MaxAge",2,2)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("MaxAge",1,"ParticleSystem *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("MaxAge",2,"float");
+  SWIG_check_num_args("SystemMaxAge",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("SystemMaxAge",1,"ParticleSystem *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("SystemMaxAge",2,"float");
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ParticleSystem,0))){
-    SWIG_fail_ptr("ParticleSystem_MaxAge_set",1,SWIGTYPE_p_ParticleSystem);
+    SWIG_fail_ptr("ParticleSystem_SystemMaxAge_set",1,SWIGTYPE_p_ParticleSystem);
   }
   
   arg2 = (float)lua_tonumber(L, 2);
-  if (arg1) (arg1)->MaxAge = arg2;
+  if (arg1) (arg1)->SystemMaxAge = arg2;
   
   return SWIG_arg;
   
@@ -4005,19 +3960,19 @@ fail:
 }
 
 
-static int _wrap_ParticleSystem_MaxAge_get(lua_State* L) {
+static int _wrap_ParticleSystem_SystemMaxAge_get(lua_State* L) {
   int SWIG_arg = 0;
   ParticleSystem *arg1 = (ParticleSystem *) 0 ;
   float result;
   
-  SWIG_check_num_args("MaxAge",1,1)
-  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("MaxAge",1,"ParticleSystem *");
+  SWIG_check_num_args("SystemMaxAge",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("SystemMaxAge",1,"ParticleSystem *");
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ParticleSystem,0))){
-    SWIG_fail_ptr("ParticleSystem_MaxAge_get",1,SWIGTYPE_p_ParticleSystem);
+    SWIG_fail_ptr("ParticleSystem_SystemMaxAge_get",1,SWIGTYPE_p_ParticleSystem);
   }
   
-  result = (float) ((arg1)->MaxAge);
+  result = (float) ((arg1)->SystemMaxAge);
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -4280,18 +4235,48 @@ static int _wrap_ParticleSystem_AttachToObject(lua_State* L) {
   int SWIG_arg = 0;
   ParticleSystem *arg1 = (ParticleSystem *) 0 ;
   std::string arg2 ;
+  std::string arg3 ;
   
-  SWIG_check_num_args("AttachToObject",2,2)
+  SWIG_check_num_args("AttachToObject",3,3)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("AttachToObject",1,"ParticleSystem *");
   if(!lua_isstring(L,2)) SWIG_fail_arg("AttachToObject",2,"std::string");
+  if(!lua_isstring(L,3)) SWIG_fail_arg("AttachToObject",3,"std::string");
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ParticleSystem,0))){
     SWIG_fail_ptr("ParticleSystem_AttachToObject",1,SWIGTYPE_p_ParticleSystem);
   }
   
   (&arg2)->assign(lua_tostring(L,2),lua_strlen(L,2));
-  (arg1)->AttachToObject(arg2);
+  (&arg3)->assign(lua_tostring(L,3),lua_strlen(L,3));
+  (arg1)->AttachToObject(arg2,arg3);
   
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ParticleSystem_asParticleSystem(lua_State* L) {
+  int SWIG_arg = 0;
+  ParticleSystem *arg1 = (ParticleSystem *) 0 ;
+  LLPartSysData *result = 0 ;
+  
+  SWIG_check_num_args("asParticleSystem",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("asParticleSystem",1,"ParticleSystem *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ParticleSystem,0))){
+    SWIG_fail_ptr("ParticleSystem_asParticleSystem",1,SWIGTYPE_p_ParticleSystem);
+  }
+  
+  {
+    LLPartSysData const &_result_ref = (arg1)->asParticleSystem();
+    result = (LLPartSysData *) &_result_ref;
+  }
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_LLPartSysData,0); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -4313,10 +4298,10 @@ static swig_lua_method swig_ParticleSystem_methods[] = {
     {"GetTargetUUID", _wrap_ParticleSystem_GetTargetUUID}, 
     {"SetTargetUUID", _wrap_ParticleSystem_SetTargetUUID}, 
     {"AttachToObject", _wrap_ParticleSystem_AttachToObject}, 
+    {"asParticleSystem", _wrap_ParticleSystem_asParticleSystem}, 
     {0,0}
 };
 static swig_lua_attribute swig_ParticleSystem_attributes[] = {
-    { "ParticleFlags", _wrap_ParticleSystem_ParticleFlags_get, _wrap_ParticleSystem_ParticleFlags_set},
     { "ParticleMaxAge", _wrap_ParticleSystem_ParticleMaxAge_get, _wrap_ParticleSystem_ParticleMaxAge_set},
     { "StartColor", _wrap_ParticleSystem_StartColor_get, _wrap_ParticleSystem_StartColor_set},
     { "EndColor", _wrap_ParticleSystem_EndColor_get, _wrap_ParticleSystem_EndColor_set},
@@ -4334,7 +4319,7 @@ static swig_lua_attribute swig_ParticleSystem_attributes[] = {
     { "BurstRadius", _wrap_ParticleSystem_BurstRadius_get, _wrap_ParticleSystem_BurstRadius_set},
     { "BurstSpeedMin", _wrap_ParticleSystem_BurstSpeedMin_get, _wrap_ParticleSystem_BurstSpeedMin_set},
     { "BurstSpeedMax", _wrap_ParticleSystem_BurstSpeedMax_get, _wrap_ParticleSystem_BurstSpeedMax_set},
-    { "MaxAge", _wrap_ParticleSystem_MaxAge_get, _wrap_ParticleSystem_MaxAge_set},
+    { "SystemMaxAge", _wrap_ParticleSystem_SystemMaxAge_get, _wrap_ParticleSystem_SystemMaxAge_set},
     { "StartAge", _wrap_ParticleSystem_StartAge_get, _wrap_ParticleSystem_StartAge_set},
     { "PartAccel", _wrap_ParticleSystem_PartAccel_get, _wrap_ParticleSystem_PartAccel_set},
     {0,0,0}
@@ -5827,21 +5812,21 @@ static swig_lua_var_info swig_variables[] = {
 };
 
 static swig_lua_const_info swig_constants[] = {
-{ SWIG_LUA_INT,     (char *)"DROP", (long) DROP, 0, 0, 0},
-{ SWIG_LUA_INT,     (char *)"EXPLODE", (long) EXPLODE, 0, 0, 0},
-{ SWIG_LUA_INT,     (char *)"ANGLE", (long) ANGLE, 0, 0, 0},
-{ SWIG_LUA_INT,     (char *)"ANGLE_CONE", (long) ANGLE_CONE, 0, 0, 0},
-{ SWIG_LUA_INT,     (char *)"CONE_EMPTY", (long) CONE_EMPTY, 0, 0, 0},
-{ SWIG_LUA_INT,     (char *)"INTERP_COLOR_MASK", (long) INTERP_COLOR_MASK, 0, 0, 0},
-{ SWIG_LUA_INT,     (char *)"INTERP_SCALE_MASK", (long) INTERP_SCALE_MASK, 0, 0, 0},
-{ SWIG_LUA_INT,     (char *)"BOUNCE_MASK", (long) BOUNCE_MASK, 0, 0, 0},
-{ SWIG_LUA_INT,     (char *)"WIND_MASK", (long) WIND_MASK, 0, 0, 0},
-{ SWIG_LUA_INT,     (char *)"FOLLOW_SRC_MASK", (long) FOLLOW_SRC_MASK, 0, 0, 0},
-{ SWIG_LUA_INT,     (char *)"FOLLOW_VELOCITY_MASK", (long) FOLLOW_VELOCITY_MASK, 0, 0, 0},
-{ SWIG_LUA_INT,     (char *)"TARGET_POS_MASK", (long) TARGET_POS_MASK, 0, 0, 0},
-{ SWIG_LUA_INT,     (char *)"TARGET_LINEAR_MASK", (long) TARGET_LINEAR_MASK, 0, 0, 0},
-{ SWIG_LUA_INT,     (char *)"EMISSIVE_MASK", (long) EMISSIVE_MASK, 0, 0, 0},
-{ SWIG_LUA_INT,     (char *)"BEAM_MASK", (long) BEAM_MASK, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"ParticleSystem_DROP", (long) ParticleSystem::DROP, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"ParticleSystem_EXPLODE", (long) ParticleSystem::EXPLODE, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"ParticleSystem_ANGLE", (long) ParticleSystem::ANGLE, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"ParticleSystem_ANGLE_CONE", (long) ParticleSystem::ANGLE_CONE, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"ParticleSystem_CONE_EMPTY", (long) ParticleSystem::CONE_EMPTY, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"ParticleSystem_INTERP_COLOR_MASK", (long) ParticleSystem::INTERP_COLOR_MASK, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"ParticleSystem_INTERP_SCALE_MASK", (long) ParticleSystem::INTERP_SCALE_MASK, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"ParticleSystem_BOUNCE_MASK", (long) ParticleSystem::BOUNCE_MASK, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"ParticleSystem_WIND_MASK", (long) ParticleSystem::WIND_MASK, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"ParticleSystem_FOLLOW_SRC_MASK", (long) ParticleSystem::FOLLOW_SRC_MASK, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"ParticleSystem_FOLLOW_VELOCITY_MASK", (long) ParticleSystem::FOLLOW_VELOCITY_MASK, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"ParticleSystem_TARGET_POS_MASK", (long) ParticleSystem::TARGET_POS_MASK, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"ParticleSystem_TARGET_LINEAR_MASK", (long) ParticleSystem::TARGET_LINEAR_MASK, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"ParticleSystem_EMISSIVE_MASK", (long) ParticleSystem::EMISSIVE_MASK, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"ParticleSystem_BEAM_MASK", (long) ParticleSystem::BEAM_MASK, 0, 0, 0},
     {0,0,0,0,0,0}
 };
 
@@ -5923,6 +5908,7 @@ static swig_type_info _swigt__p_LLButton = {"_p_LLButton", "LLButton *", 0, 0, (
 static swig_type_info _swigt__p_LLFloater = {"_p_LLFloater", "LLFloater *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_LLMultiFloater = {"_p_LLMultiFloater", 0, 0, 0, 0, 0};
 static swig_type_info _swigt__p_LLPanel = {"_p_LLPanel", "LLPanel *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_LLPartSysData = {"_p_LLPartSysData", "LLPartSysData *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_LLPrimitive = {"_p_LLPrimitive", "LLPrimitive *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_LLStaticViewerObject = {"_p_LLStaticViewerObject", 0, 0, 0, 0, 0};
 static swig_type_info _swigt__p_LLAlphaObject = {"_p_LLAlphaObject", 0, 0, 0, 0, 0};
@@ -5991,6 +5977,7 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_LLFloater,
   &_swigt__p_LLMultiFloater,
   &_swigt__p_LLPanel,
+  &_swigt__p_LLPartSysData,
   &_swigt__p_LLPrimitive,
   &_swigt__p_LLSafeHandleT_LLObjectSelection_t,
   &_swigt__p_LLSelectMgr,
@@ -6057,6 +6044,7 @@ static swig_cast_info _swigc__p_LLButton[] = {  {&_swigt__p_LLButton, 0, 0, 0}, 
 static swig_cast_info _swigc__p_LLMultiFloater[] = {{&_swigt__p_LLMultiFloater, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_LLFloater[] = {  {&_swigt__p_LLFloater, 0, 0, 0},  {&_swigt__p_LLMultiFloater, _p_LLMultiFloaterTo_p_LLFloater, 0, 0},  {&_swigt__p_LuaFloater, _p_LuaFloaterTo_p_LLFloater, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_LLPanel[] = {  {&_swigt__p_LuaFloater, _p_LuaFloaterTo_p_LLPanel, 0, 0},  {&_swigt__p_LuaPanel, _p_LuaPanelTo_p_LLPanel, 0, 0},  {&_swigt__p_LLPanel, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_LLPartSysData[] = {  {&_swigt__p_LLPartSysData, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_LLStaticViewerObject[] = {{&_swigt__p_LLStaticViewerObject, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_LLAlphaObject[] = {{&_swigt__p_LLAlphaObject, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_LLPrimitive[] = {  {&_swigt__p_LLPrimitive, 0, 0, 0},  {&_swigt__p_LLViewerObject, _p_LLViewerObjectTo_p_LLPrimitive, 0, 0},  {&_swigt__p_LLStaticViewerObject, _p_LLStaticViewerObjectTo_p_LLPrimitive, 0, 0},  {&_swigt__p_LLVOVolume, _p_LLVOVolumeTo_p_LLPrimitive, 0, 0},  {&_swigt__p_LuaObject, _p_LuaObjectTo_p_LLPrimitive, 0, 0},  {&_swigt__p_LLAlphaObject, _p_LLAlphaObjectTo_p_LLPrimitive, 0, 0},{0, 0, 0, 0}};
@@ -6125,6 +6113,7 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_LLFloater,
   _swigc__p_LLMultiFloater,
   _swigc__p_LLPanel,
+  _swigc__p_LLPartSysData,
   _swigc__p_LLPrimitive,
   _swigc__p_LLSafeHandleT_LLObjectSelection_t,
   _swigc__p_LLSelectMgr,

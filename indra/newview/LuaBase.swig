@@ -43,6 +43,10 @@
 #include "llvovolume.h"
 #include "llagent.h"
 #include "llselectmgr.h"
+#include "v2math.h"
+#include "v3math.h"
+#include "v4math.h"
+#include "v4color.h"
 %}
 
 %include <std_string.i>

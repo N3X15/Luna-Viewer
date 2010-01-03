@@ -5,6 +5,10 @@
 #include "llviewerobject.h"
 #include "llviewerobjectlist.h"
 #include "LuaTypes.h"
+#include "v2math.h"
+#include "v3math.h"
+#include "v4math.h"
+#include "v4color.h"
 
 /*
 --- C++ PARTICLES ---
@@ -72,33 +76,33 @@
 	particle_parameters.AttachToObject(AvatarUUID);
 */
 
-enum ParticlePattern
-{
-	DROP 		= 0x01, 
-	EXPLODE 	= 0x02, 
-	ANGLE 		= 0x04, 
-	ANGLE_CONE 	= 0x08,
-	CONE_EMPTY 	= 0x10
-};
-
-enum ParticleFlags
-{
- 	INTERP_COLOR_MASK	= 0x01,
-	INTERP_SCALE_MASK	= 0x02,
-	BOUNCE_MASK		= 0x04,
-	WIND_MASK 		= 0x08,
-	FOLLOW_SRC_MASK 	= 0x10,
-	FOLLOW_VELOCITY_MASK	= 0x20,
-	TARGET_POS_MASK 	= 0x40,
-	TARGET_LINEAR_MASK 	= 0x80,
-	EMISSIVE_MASK 		= 0x100,
-	BEAM_MASK 		= 0x200
-	//DEAD_MASK = 0x80000000; // DON'T FUCKING USE THIS
-};
-
 class ParticleSystem
 {
 public:
+	enum ParticlePattern
+	{
+		DROP 		= 0x01, 
+		EXPLODE 	= 0x02, 
+		ANGLE 		= 0x04, 
+		ANGLE_CONE 	= 0x08,
+		CONE_EMPTY 	= 0x10
+	};
+
+	enum ParticleFlags
+	{
+	 	INTERP_COLOR_MASK	= 0x01,
+		INTERP_SCALE_MASK	= 0x02,
+		BOUNCE_MASK		= 0x04,
+		WIND_MASK 		= 0x08,
+		FOLLOW_SRC_MASK 	= 0x10,
+		FOLLOW_VELOCITY_MASK	= 0x20,
+		TARGET_POS_MASK 	= 0x40,
+		TARGET_LINEAR_MASK 	= 0x80,
+		EMISSIVE_MASK 		= 0x100,
+		BEAM_MASK 		= 0x200
+		//DEAD_MASK = 0x80000000; // DON'T FUCKING USE THIS
+	};
+
 	unsigned int	ParticleFlags;	// mPartData.mFlags
 	float		ParticleMaxAge;	// mPartData.mMaxAge
 	LuaVector4 	StartColor;	// mPartData.mStartColor
@@ -118,41 +122,42 @@ public:
 	float 		BurstRadius;
 	float 		BurstSpeedMin;
 	float 		BurstSpeedMax;
-	float 		MaxAge;
+	float 		SystemMaxAge;
 	
 	float 		StartAge;
 	LuaVector3 	PartAccel;
 
 	ParticleSystem():
 		ParticleFlags(0),
-		MaxAge(0.f),
+		SystemMaxAge(0.f),
 		Parameter(0.f)
 	{
 		SystemFlags 	= 0;
-		Flags 		= 0;
+		ParticleFlags	= 0;
 		StartColor 	= LuaVector4(1.f, 1.f, 1.f, 1.f);
 		EndColor 	= LuaVector4(1.f, 1.f, 1.f, 1.f);
 		StartScale 	= LuaVector2(1.f, 1.f);
 		EndScale 	= LuaVector2(1.f, 1.f);
 		ParticleMaxAge 	= 10.f;
 		SystemMaxAge 	= 0.f;
-		StartAge = 0.f;
-		Pattern = LL_PART_SRC_PATTERN_DROP;                    // Pattern for particle velocity
-		InnerAngle = 0.f;                                                              // Inner angle of PATTERN_ANGLE_*
-		OuterAngle = 0.f;                                                              // Outer angle of PATTERN_ANGLE_*
-		BurstRate = 0.1f;                                                              // How often to do a burst of particles
-		BurstPartCount = 1;                                                    // How many particles in a burst
+		StartAge 	= 0.f;
+		Pattern 	= DROP;               // Pattern for particle velocity
+		InnerAngle = 0.f;                                              // Inner angle of PATTERN_ANGLE_*
+		OuterAngle = 0.f;                                              // Outer angle of PATTERN_ANGLE_*
+		BurstRate = 0.1f;                                              // How often to do a burst of particles
+		BurstPartCount = 1;                                            // How many particles in a burst
 		BurstSpeedMin = 1.f;                                           // Minimum particle velocity
 		BurstSpeedMax = 1.f;                                           // Maximum particle velocity
 		BurstRadius = 0.f;
 	}
 	
-	void 		SetImageFromFile(std::string Filename){
+	void SetImageFromFile(std::string FileName)
+	{
 		LLViewerImage* cloud = gImageList.getImageFromFile(FileName);
-		mPartImageID                 = cloud->getID();
+		mPartImageID = cloud->getID();
 	}
 
-	void 		SetImageFromUUID(std::string UUID)
+	void SetImageFromUUID(std::string UUID)
 	{
 		mPartImageID=LLUUID(UUID);
 	}
@@ -161,51 +166,49 @@ public:
 	std::string 	GetTargetUUID(){ return mTargetID.asString();}
 	void		SetTargetUUID(std::string target){ mTargetID=LLUUID(target);}
 
-	void AttachToObject(std::string UUID);
+	void AttachToObject(std::string ObjectUUID,std::string OwnerUUID);
 
-	ParticleSystem&	operator=(const LLPartSysData& psys)
+	const ParticleSystem&	operator=(const LLPartSysData& psys)
 	{
-		ParticleSystem lpsys;
-
-		lpsys.ParticleFlag	= psys.mPartData.mFlags;
-		lpsys.ParticleMaxAge	= psys.mPartData.mMaxAge;
-		lpsys.StartColor	= psys.mPartData.mStartColor;
-		lpsys.EndColor		= psys.mPartData.mEndColor;
-		lpsys.StartScale	= psys.mPartData.mStartScale;
-		lpsys.EndScale		= psys.mPartData.mEndScale;
-		lpsys.PosOffset		= psys.mPartData.mPosOffset;
-		lpsys.Parameter		= psys.mPartData.mParameter;
+		ParticleFlags	= psys.mPartData.mFlags;
+		ParticleMaxAge	= psys.mPartData.mMaxAge;
+		StartColor	= psys.mPartData.mStartColor;
+		EndColor	= psys.mPartData.mEndColor;
+		StartScale	= psys.mPartData.mStartScale;
+		EndScale	= psys.mPartData.mEndScale;
+		PosOffset	= psys.mPartData.mPosOffset;
+		Parameter	= psys.mPartData.mParameter;
 		
-		lpsys.SystemFlags	= psys.mFlags;
-		lpsys.Pattern		= psys.mPattern;
-		lpsys.InnerAngle	= psys.mInnerAngle;
-		lpsys.OuterAngle	= psys.mOuterAngle;
-		lpsys.AngularVelocity	= psys.mAngularVelocity;
-		lpsys.BurstRate		= psys.mBurstRate;
-		lpsys.BurstPartCount	= psys.mBurstPartCount;
-		lpsys.BurstRadius	= psys.mBurstRadius;
-		lpsys.BurstSpeedMin	= psys.mBurstSpeedMin;
-		lpsys.BurstSpeedMax	= psys.mBurstSpeedMax;
-		lpsys.MaxAge		= psys.mMaxAge;
-		lpsys.StartAge		= psys.mStartAge;
-		lpsys.PartAccel		= psys.mPartAccel;
+		SystemFlags	= psys.mFlags;
+		Pattern		= psys.mPattern;
+		InnerAngle	= psys.mInnerAngle;
+		OuterAngle	= psys.mOuterAngle;
+		AngularVelocity	= psys.mAngularVelocity;
+		BurstRate	= psys.mBurstRate;
+		BurstPartCount	= psys.mBurstPartCount;
+		BurstRadius	= psys.mBurstRadius;
+		BurstSpeedMin	= psys.mBurstSpeedMin;
+		BurstSpeedMax	= psys.mBurstSpeedMax;
+		SystemMaxAge	= psys.mMaxAge;
+		StartAge	= psys.mStartAge;
+		PartAccel	= psys.mPartAccel;
 
-		lpsys.SetImageUUID(psys.mPartImageID);
-		lpsys.SetTargetUUID(psys.mTargetID);
+		SetImageFromUUID(psys.mPartImageID.asString());
+		SetTargetUUID(psys.mTargetUUID.asString());
 
-		return lpsys;
+		return *this;
 	}
 	
-	operator LLPartSysData()
+	const LLPartSysData& asParticleSystem()
 	{
 		LLPartSysData psys;
 		
-		psys.mPartData.mFlags		= ParticleFlags
+		psys.mPartData.mFlags		= ParticleFlags;
 		psys.mPartData.mMaxAge		= ParticleMaxAge;
-		psys.mPartData.mStartColor	= (LLColor4)StartColor;
-		psys.mPartData.mEndColor	= (LLColor4)EndColor;
-		psys.mPartData.mStartScale	= (LLVector3)StartScale;
-		psys.mPartData.mEndScale	= (LLVector3)EndScale;
+		psys.mPartData.mStartColor	= (LLColor4)((LLVector4)StartColor);
+		psys.mPartData.mEndColor	= (LLColor4)((LLVector4)EndColor);
+		psys.mPartData.mStartScale	= (LLVector2)StartScale;
+		psys.mPartData.mEndScale	= (LLVector2)EndScale;
 		psys.mPartData.mPosOffset	= (LLVector3)PosOffset;
 		psys.mPartData.mParameter	= Parameter;
 
@@ -215,18 +218,21 @@ public:
 		psys.mOuterAngle		= OuterAngle;
 		psys.mAngularVelocity		= AngularVelocity;
 		psys.mBurstRate			= BurstRate;
-		psys.mBurstPartCount		= BurstCount;
+		psys.mBurstPartCount		= BurstPartCount;
 		psys.mBurstRadius		= BurstRadius;
 		psys.mBurstSpeedMin		= BurstSpeedMin;
 		psys.mBurstSpeedMax		= BurstSpeedMax;
-		psys.mMaxAge			= MaxAge;
+		psys.mMaxAge			= SystemMaxAge;
 		psys.mStartAge			= StartAge;
-		psys.mPartAccel;		= (LLVector3)PartAccel;
+		psys.mPartAccel			= (LLVector3)PartAccel;
 
 		psys.mPartImageID		= mPartImageID;
-		psys.mTargetID			= mTargetID;
+		psys.mTargetUUID		= mTargetID;
+
 		return psys;
 	}
+
+	operator LLPartSysData() { return asParticleSystem(); }
 private:
 	LLUUID 		mPartImageID;
 	LLUUID		mTargetID;
@@ -241,7 +247,7 @@ inline void ParticleSystem::AttachToObject(std::string ObjUUID,std::string Owner
 	{
 		return;
 	}
-	o->setParticleSource((LLPartSysData)this,ownid);
+	o->setParticleSource(asParticleSystem(),ownid);
 }
 #endif
 

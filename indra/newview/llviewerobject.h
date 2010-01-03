@@ -482,7 +482,7 @@ public:
 	
 	friend class LLViewerObjectList;
 	friend class LLViewerMediaList;
-
+//	friend class LuaViewerObject;
 public:
 	//counter-translation
 	void resetChildrenPosition(const LLVector3& offset, BOOL simplified = FALSE) ;
@@ -554,6 +554,8 @@ public:
 
 	static			BOOL		sUseSharedDrawables;
 
+	void setParticleSource(const LLPartSysData& particle_parameters, const LLUUID& owner_id);
+	void deleteParticleSource();
 protected:
 	// delete an item in the inventory, but don't tell the
 	// server. This is used internally by remove, update, and
@@ -585,8 +587,6 @@ protected:
 
 	void unpackParticleSource(const S32 block_num, const LLUUID& owner_id);
 	void unpackParticleSource(LLDataPacker &dp, const LLUUID& owner_id);
-	void deleteParticleSource();
-	void setParticleSource(const LLPartSysData& particle_parameters, const LLUUID& owner_id);
 
 private:
 	void setNameValueList(const std::string& list);		// clears nv pairs and then individually adds \n separated NV pairs from \0 terminated string

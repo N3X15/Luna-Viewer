@@ -1,10 +1,14 @@
 #ifndef LUATYPES_H
 #define LUATYPES_H
 
+/**
+*  Lua(Swig) <-> LuaVector* <-> LLLVector*
+*/
 #include "llviewerprecompiledheaders.h"
 #include "v2math.h"
 #include "v3math.h"
 #include "v4math.h"
+#include "v4color.h"
 
 class LuaVector2
 {
@@ -87,7 +91,7 @@ inline LuaVector3::LuaVector3(float nx,float ny,float nz)
 	z=nz;
 }
 
-inline LuaVector2::LuaVector3(const LLVector3& val)
+inline LuaVector3::LuaVector3(const LLVector3& val)
 {
 	x=val.mV[VX];
 	y=val.mV[VY];
@@ -101,13 +105,23 @@ public:
 	float y;
 	float z;
 	float w;
+	
 	const LuaVector4& operator=(const LLVector4& in)
 	{
 		x=in.mV[VX];
 		y=in.mV[VY];
 		z=in.mV[VZ];
 		w=in.mV[VW];
-		if ( *this == &in ) return *this;
+		return *this;
+	}
+
+	const LuaVector4& operator=(const LLColor4& in)
+	{
+		x=in.mV[VX];
+		y=in.mV[VY];
+		z=in.mV[VZ];
+		w=in.mV[VW];
+		return *this;
 	}
 
 	LuaVector4();							// (0, 0, 0, 0)
@@ -116,14 +130,15 @@ public:
 
 	operator LLVector4()
 	{ 
-		return new LLVector4(x,y,z,w); 
+		return LLVector4(x,y,z,w); 
 	}
 
 	operator LLColor4()
 	{ 
-		return new LLVector4(x,y,z,w); 
+		return LLColor4(x,y,z,w); 
 	}
-}
+};
+
 inline LuaVector4::LuaVector4()
 {
 	x=0.f;
