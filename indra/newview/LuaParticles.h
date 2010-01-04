@@ -168,6 +168,16 @@ public:
 
 	void AttachToObject(std::string ObjectUUID,std::string OwnerUUID);
 
+	void AddFlag(int flag)
+	{
+		ParticleFlags|=flag;
+	}
+
+	void RemoveFlag(int flag)
+	{
+		ParticleFlags&=~flag;
+	}
+
 	const ParticleSystem&	operator=(const LLPartSysData& psys)
 	{
 		ParticleFlags	= psys.mPartData.mFlags;

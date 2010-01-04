@@ -1598,6 +1598,7 @@ typedef struct{} LANGUAGE_OBJ;
 #include "v3math.h"
 #include "v4math.h"
 #include "v4color.h"
+#include "llagent.h"
 
 
 	#include <string>
@@ -4260,6 +4261,58 @@ fail:
 }
 
 
+static int _wrap_ParticleSystem_AddFlag(lua_State* L) {
+  int SWIG_arg = 0;
+  ParticleSystem *arg1 = (ParticleSystem *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_num_args("AddFlag",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("AddFlag",1,"ParticleSystem *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("AddFlag",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ParticleSystem,0))){
+    SWIG_fail_ptr("ParticleSystem_AddFlag",1,SWIGTYPE_p_ParticleSystem);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  (arg1)->AddFlag(arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_ParticleSystem_RemoveFlag(lua_State* L) {
+  int SWIG_arg = 0;
+  ParticleSystem *arg1 = (ParticleSystem *) 0 ;
+  int arg2 ;
+  
+  SWIG_check_num_args("RemoveFlag",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("RemoveFlag",1,"ParticleSystem *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("RemoveFlag",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ParticleSystem,0))){
+    SWIG_fail_ptr("ParticleSystem_RemoveFlag",1,SWIGTYPE_p_ParticleSystem);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  (arg1)->RemoveFlag(arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
 static int _wrap_ParticleSystem_asParticleSystem(lua_State* L) {
   int SWIG_arg = 0;
   ParticleSystem *arg1 = (ParticleSystem *) 0 ;
@@ -4298,6 +4351,8 @@ static swig_lua_method swig_ParticleSystem_methods[] = {
     {"GetTargetUUID", _wrap_ParticleSystem_GetTargetUUID}, 
     {"SetTargetUUID", _wrap_ParticleSystem_SetTargetUUID}, 
     {"AttachToObject", _wrap_ParticleSystem_AttachToObject}, 
+    {"AddFlag", _wrap_ParticleSystem_AddFlag}, 
+    {"RemoveFlag", _wrap_ParticleSystem_RemoveFlag}, 
     {"asParticleSystem", _wrap_ParticleSystem_asParticleSystem}, 
     {0,0}
 };

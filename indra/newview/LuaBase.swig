@@ -47,6 +47,7 @@
 #include "v3math.h"
 #include "v4math.h"
 #include "v4color.h"
+#include "llagent.h"
 %}
 
 %include <std_string.i>
@@ -103,6 +104,11 @@
 %rename (Button) 	LuaButton;
 %rename (LineEditor) 	LuaLineEditor;
 %rename (IconCtrl)	LuaIconCtrl;
+
+class LuaAgent: public LLAgent
+{
+public:
+};
 
 extern bool gAllowWorldMap;
 extern LLAgent *gAgent;
