@@ -231,6 +231,11 @@ void LLVisualParam::setWeight(F32 weight, BOOL set_by_user)
 	}
 }
 
+void LLVisualParam::setWeightNoClamp(F32 weight)
+{
+	mCurWeight=weight;
+}
+
 //-----------------------------------------------------------------------------
 // setAnimationTarget()
 //-----------------------------------------------------------------------------

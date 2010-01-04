@@ -205,6 +205,7 @@ public:
 
 	BOOL setVisualParamWeight(LLVisualParam *which_param, F32 weight, BOOL set_by_user = FALSE );
 	BOOL setVisualParamWeight(const char* param_name, F32 weight, BOOL set_by_user = FALSE );
+	BOOL setVisualParamWeightNoClamp(const char* param_name, F32 weight, BOOL set_by_user = FALSE );
 	BOOL setVisualParamWeight(S32 index, F32 weight, BOOL set_by_user = FALSE );
 
 	// get visual param weight by param or name

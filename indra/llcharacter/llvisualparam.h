@@ -107,6 +107,7 @@ public:
 	virtual void			apply( ESex avatar_sex ) = 0;
 	//  Default functions
 	virtual void			setWeight(F32 weight, BOOL set_by_user);
+	virtual void			setWeightNoClamp(F32 weight);
 	virtual void			setAnimationTarget( F32 target_value, BOOL set_by_user );
 	virtual void			animate(F32 delta, BOOL set_by_user);
 	virtual void			stopAnimating(BOOL set_by_user);
@@ -136,20 +137,20 @@ public:
 	BOOL					isAnimating() 	{ return mIsAnimating; }
 
 	LLVisualParam*			getNextParam()		{ return mNext; }
-	void					setNextParam( LLVisualParam *next );
+	void				setNextParam( LLVisualParam *next );
 	
 	virtual void			setAnimating(BOOL is_animating) { mIsAnimating = is_animating; }
-	BOOL					getAnimating() { return mIsAnimating; }
+	BOOL				getAnimating() { return mIsAnimating; }
 
 protected:
-	F32					mCurWeight;			// current weight
-	F32					mLastWeight;		// last weight
-	LLVisualParam*		mNext;				// next param in a shared chain
-	F32					mTargetWeight;		// interpolation target
+	F32				mCurWeight;			// current weight
+	F32				mLastWeight;		// last weight
+	LLVisualParam*			mNext;				// next param in a shared chain
+	F32				mTargetWeight;		// interpolation target
 	BOOL				mIsAnimating;	// this value has been given an interpolation target
 
-	S32					mID;				// id for storing weight/morphtarget compares compactly
-	LLVisualParamInfo	*mInfo;
+	S32				mID;				// id for storing weight/morphtarget compares compactly
+	LLVisualParamInfo		*mInfo;
 };
 
 #endif // LL_LLVisualParam_H

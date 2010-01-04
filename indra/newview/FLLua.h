@@ -205,36 +205,5 @@ struct CB_Args3 : public CB_Base
 int luaOnPanic(lua_State *L);
 std::string Lua_getErrorMessage(lua_State *L);
 
-//extern FLLua *gLuaHooks;
 
-//Unused
-/*
-void FLHooks_CreateMetatable(lua_State *L);
-void FLHooks_InitTable(lua_State *L, FLLua* lol);
-int FLHooks_SetHook(lua_State* l);
-
-int LuaBase_SendChat(lua_State *L);
-void LuaBase_CreateMetatable(lua_State *L);
-
-void Lua_RegisterMethod(lua_State* l, const char* name, lua_CFunction fn);
-void Lua_SetClass(lua_State *l,const char* classname);
-void Lua_CreateClassMetatable(lua_State* l, const char* name);
-void Lua_CheckArgs(lua_State* l,int minArgs, int maxArgs, const char* errorMessage);
-void Lua_PushClass(lua_State* l, const char* classname);
-*/
-
-void LuaSetAvOverlay(const char *uuid,int type);
-
-class LuaAvatarOverlay
-{
-public:
-	LuaAvatarOverlay(LLViewerImage *ViewerImage);
-	~LuaAvatarOverlay();
-	void render(void);
-
-	void setParentPos( const LLVector3 p );
-	LLVector3		mParentPos;
-private:
-	LLViewerImage	*mImage;
-};
 #endif

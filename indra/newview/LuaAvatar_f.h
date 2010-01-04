@@ -11,6 +11,8 @@ double getParamMax(const char* avid,const char* paramname);
 double getParamMin(const char* avid,const char* paramname);
 
 void setParamOnSelf(const char* paramname,double weight);
+void setParamOnTarget(const char* target,const char* paramname,double weight);
+
 void LuaWear(const LLUUID& assetid);
 void LuaRemoveAllWearables();
 
@@ -18,3 +20,4 @@ void LuaRemoveAllWearables();
 bool LuaSaveWearable(LLWearable *w);
 LLWearable * LuaLoadWearable(const LLUUID& uuid);
 void LuaSetTEImage(int index,const LLUUID& id);
+bool HasPermissions(LLViewerInventoryItem* item);

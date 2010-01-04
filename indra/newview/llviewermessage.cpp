@@ -4267,6 +4267,9 @@ void process_sound_trigger(LLMessageSystem *msg, void **)
 	}
 		
 	gAudiop->triggerSound(sound_id, owner_id, gain, LLAudioEngine::AUDIO_TYPE_SFX, pos_global);
+	// Snapshot sound: 3d09f582-3851-c0e0-f5ba-277ac5c73fb4
+
+	LUA_CALL("OnSoundTriggered") << sound_id << owner_id << gain << object_id << parent_id << LUA_END;
 }
 
 void process_preload_sound(LLMessageSystem *msg, void **user_data)
@@ -4342,6 +4345,7 @@ void process_attached_sound(LLMessageSystem *msg, void **user_data)
 	}
 
 	objectp->setAttachedSound(sound_id, owner_id, gain, flags);
+	LUA_CALL("OnSoundAttached") << sound_id << owner_id << gain << object_id << owner_id << LUA_END;
 }
 
 

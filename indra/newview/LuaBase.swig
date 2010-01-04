@@ -97,6 +97,14 @@
 %include "LuaAvatar_f.h"
 
 %include "LuaAgent_f.h"
+
+%include "LuaTypes.h"
+
+%rename (Vector2)	LuaVector2;
+%rename (Vector3)	LuaVector3;
+%rename (Vector4)	LuaVector4;
+%rename (Color4)	LuaColor4;
+
 %include "LuaParticles.h"
 
 %include "../newview/LuaUI.h"
@@ -104,11 +112,6 @@
 %rename (Button) 	LuaButton;
 %rename (LineEditor) 	LuaLineEditor;
 %rename (IconCtrl)	LuaIconCtrl;
-
-class LuaAgent: public LLAgent
-{
-public:
-};
 
 extern bool gAllowWorldMap;
 extern LLAgent *gAgent;

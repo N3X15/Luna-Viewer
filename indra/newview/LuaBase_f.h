@@ -33,7 +33,8 @@ void LuaPrint(const char *msg);
 
 // Pop up an alert window.
 void LuaAlert(const char* msg);
- 
+
+// Current working directory
 const char* LuaGetCWD();
 
 // Retrieve the region handle of this sim

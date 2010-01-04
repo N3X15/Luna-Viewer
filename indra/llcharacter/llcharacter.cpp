@@ -303,6 +303,26 @@ BOOL LLCharacter::setVisualParamWeight(const char* param_name, F32 weight, BOOL 
 }
 
 //-----------------------------------------------------------------------------
+// setVisualParamWeightNoClamp()
+//
+//  Allows FlexLife to distort the avatar without having to worry about clamping.  
+//  Want overly-huge boobs on your screen?  YES YOU CAN.
+//-----------------------------------------------------------------------------
+BOOL LLCharacter::setVisualParamWeightNoClamp(const char* param_name, F32 weight, BOOL set_by_user)
+{
+	std::string tname(param_name);
+	LLStringUtil::toLower(tname);
+	char *tableptr = sVisualParamNames.checkString(tname);
+	VisualParamNameMap_t::iterator name_iter = mVisualParamNameMap.find(tableptr);
+	if (name_iter != mVisualParamNameMap.end())
+	{
+		name_iter->second->setWeightNoClamp(weight);
+		return TRUE;
+	}
+	llwarns << "LLCharacter::setVisualParamWeight() Invalid visual parameter: " << param_name << llendl;
+	return FALSE;
+}
+//-----------------------------------------------------------------------------
 // setVisualParamWeight()
 //-----------------------------------------------------------------------------
 BOOL LLCharacter::setVisualParamWeight(S32 index, F32 weight, BOOL set_by_user)

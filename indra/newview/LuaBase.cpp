@@ -1506,58 +1506,59 @@ SWIG_Lua_dostring(lua_State *L, const char* str) {
 #define SWIGTYPE_p_LLUUID swig_types[13]
 #define SWIGTYPE_p_LLVOAvatar swig_types[14]
 #define SWIGTYPE_p_LLVOVolume swig_types[15]
-#define SWIGTYPE_p_LLViewerObject swig_types[16]
-#define SWIGTYPE_p_LLViewerRegion swig_types[17]
-#define SWIGTYPE_p_LLWearable swig_types[18]
-#define SWIGTYPE_p_LuaAgent swig_types[19]
-#define SWIGTYPE_p_LuaButton swig_types[20]
-#define SWIGTYPE_p_LuaFloater swig_types[21]
-#define SWIGTYPE_p_LuaLineEditor swig_types[22]
-#define SWIGTYPE_p_LuaObject swig_types[23]
-#define SWIGTYPE_p_LuaObjectManager swig_types[24]
-#define SWIGTYPE_p_LuaPanel swig_types[25]
-#define SWIGTYPE_p_LuaSelectionManager swig_types[26]
-#define SWIGTYPE_p_LuaTextBox swig_types[27]
-#define SWIGTYPE_p_LuaUICtrl swig_types[28]
-#define SWIGTYPE_p_LuaUIManager swig_types[29]
-#define SWIGTYPE_p_LuaVector2 swig_types[30]
-#define SWIGTYPE_p_LuaVector3 swig_types[31]
-#define SWIGTYPE_p_LuaVector4 swig_types[32]
-#define SWIGTYPE_p_ParticleSystem swig_types[33]
-#define SWIGTYPE_p_child_list_t swig_types[34]
-#define SWIGTYPE_p_const_child_list_t swig_types[35]
-#define SWIGTYPE_p_double swig_types[36]
-#define SWIGTYPE_p_eLayoutOrientation swig_types[37]
-#define SWIGTYPE_p_eObjectPartitions swig_types[38]
-#define SWIGTYPE_p_e_action_type swig_types[39]
-#define SWIGTYPE_p_e_anim_request swig_types[40]
-#define SWIGTYPE_p_e_camera_modes swig_types[41]
-#define SWIGTYPE_p_e_camera_position swig_types[42]
-#define SWIGTYPE_p_e_grid_mode swig_types[43]
-#define SWIGTYPE_p_e_object_update_type swig_types[44]
-#define SWIGTYPE_p_e_selection_type swig_types[45]
-#define SWIGTYPE_p_e_send_type swig_types[46]
-#define SWIGTYPE_p_float swig_types[47]
-#define SWIGTYPE_p_int swig_types[48]
-#define SWIGTYPE_p_iterator swig_types[49]
-#define SWIGTYPE_p_list_t swig_types[50]
-#define SWIGTYPE_p_long_long swig_types[51]
-#define SWIGTYPE_p_root_iterator swig_types[52]
-#define SWIGTYPE_p_root_object_iterator swig_types[53]
-#define SWIGTYPE_p_short swig_types[54]
-#define SWIGTYPE_p_signed_char swig_types[55]
-#define SWIGTYPE_p_skip_list_t swig_types[56]
-#define SWIGTYPE_p_std__string swig_types[57]
-#define SWIGTYPE_p_unsigned_char swig_types[58]
-#define SWIGTYPE_p_unsigned_int swig_types[59]
-#define SWIGTYPE_p_unsigned_long_long swig_types[60]
-#define SWIGTYPE_p_unsigned_short swig_types[61]
-#define SWIGTYPE_p_valid_iterator swig_types[62]
-#define SWIGTYPE_p_valid_root_iterator swig_types[63]
-#define SWIGTYPE_p_vobj_list_t swig_types[64]
-#define SWIGTYPE_p_wchar_t swig_types[65]
-static swig_type_info *swig_types[67];
-static swig_module_info swig_module = {swig_types, 66, 0, 0, 0, 0};
+#define SWIGTYPE_p_LLViewerInventoryItem swig_types[16]
+#define SWIGTYPE_p_LLViewerObject swig_types[17]
+#define SWIGTYPE_p_LLViewerRegion swig_types[18]
+#define SWIGTYPE_p_LLWearable swig_types[19]
+#define SWIGTYPE_p_LuaAgent swig_types[20]
+#define SWIGTYPE_p_LuaButton swig_types[21]
+#define SWIGTYPE_p_LuaFloater swig_types[22]
+#define SWIGTYPE_p_LuaLineEditor swig_types[23]
+#define SWIGTYPE_p_LuaObject swig_types[24]
+#define SWIGTYPE_p_LuaObjectManager swig_types[25]
+#define SWIGTYPE_p_LuaPanel swig_types[26]
+#define SWIGTYPE_p_LuaSelectionManager swig_types[27]
+#define SWIGTYPE_p_LuaTextBox swig_types[28]
+#define SWIGTYPE_p_LuaUICtrl swig_types[29]
+#define SWIGTYPE_p_LuaUIManager swig_types[30]
+#define SWIGTYPE_p_LuaVector2 swig_types[31]
+#define SWIGTYPE_p_LuaVector3 swig_types[32]
+#define SWIGTYPE_p_LuaVector4 swig_types[33]
+#define SWIGTYPE_p_ParticleSystem swig_types[34]
+#define SWIGTYPE_p_child_list_t swig_types[35]
+#define SWIGTYPE_p_const_child_list_t swig_types[36]
+#define SWIGTYPE_p_double swig_types[37]
+#define SWIGTYPE_p_eLayoutOrientation swig_types[38]
+#define SWIGTYPE_p_eObjectPartitions swig_types[39]
+#define SWIGTYPE_p_e_action_type swig_types[40]
+#define SWIGTYPE_p_e_anim_request swig_types[41]
+#define SWIGTYPE_p_e_camera_modes swig_types[42]
+#define SWIGTYPE_p_e_camera_position swig_types[43]
+#define SWIGTYPE_p_e_grid_mode swig_types[44]
+#define SWIGTYPE_p_e_object_update_type swig_types[45]
+#define SWIGTYPE_p_e_selection_type swig_types[46]
+#define SWIGTYPE_p_e_send_type swig_types[47]
+#define SWIGTYPE_p_float swig_types[48]
+#define SWIGTYPE_p_int swig_types[49]
+#define SWIGTYPE_p_iterator swig_types[50]
+#define SWIGTYPE_p_list_t swig_types[51]
+#define SWIGTYPE_p_long_long swig_types[52]
+#define SWIGTYPE_p_root_iterator swig_types[53]
+#define SWIGTYPE_p_root_object_iterator swig_types[54]
+#define SWIGTYPE_p_short swig_types[55]
+#define SWIGTYPE_p_signed_char swig_types[56]
+#define SWIGTYPE_p_skip_list_t swig_types[57]
+#define SWIGTYPE_p_std__string swig_types[58]
+#define SWIGTYPE_p_unsigned_char swig_types[59]
+#define SWIGTYPE_p_unsigned_int swig_types[60]
+#define SWIGTYPE_p_unsigned_long_long swig_types[61]
+#define SWIGTYPE_p_unsigned_short swig_types[62]
+#define SWIGTYPE_p_valid_iterator swig_types[63]
+#define SWIGTYPE_p_valid_root_iterator swig_types[64]
+#define SWIGTYPE_p_vobj_list_t swig_types[65]
+#define SWIGTYPE_p_wchar_t swig_types[66]
+static swig_type_info *swig_types[68];
+static swig_module_info swig_module = {swig_types, 67, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -2890,6 +2891,31 @@ fail:
 }
 
 
+static int _wrap_setParamOnTarget(lua_State* L) {
+  int SWIG_arg = 0;
+  char *arg1 = (char *) 0 ;
+  char *arg2 = (char *) 0 ;
+  double arg3 ;
+  
+  SWIG_check_num_args("setParamOnTarget",3,3)
+  if(!lua_isstring(L,1)) SWIG_fail_arg("setParamOnTarget",1,"char const *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("setParamOnTarget",2,"char const *");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("setParamOnTarget",3,"double");
+  arg1 = (char *)lua_tostring(L, 1);
+  arg2 = (char *)lua_tostring(L, 2);
+  arg3 = (double)lua_tonumber(L, 3);
+  setParamOnTarget((char const *)arg1,(char const *)arg2,arg3);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
 static int _wrap_wear(lua_State* L) {
   int SWIG_arg = 0;
   LLUUID *arg1 = 0 ;
@@ -2987,6 +3013,30 @@ static int _wrap_setTEImage(lua_State* L) {
   arg2=&temp2;
   LuaSetTEImage(arg1,(LLUUID const &)*arg2);
   
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_HasPermissions(lua_State* L) {
+  int SWIG_arg = 0;
+  LLViewerInventoryItem *arg1 = (LLViewerInventoryItem *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("HasPermissions",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("HasPermissions",1,"LLViewerInventoryItem *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLViewerInventoryItem,0))){
+    SWIG_fail_ptr("HasPermissions",1,SWIGTYPE_p_LLViewerInventoryItem);
+  }
+  
+  result = (bool)HasPermissions(arg1);
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -5872,11 +5922,13 @@ static const struct luaL_reg swig_commands[] = {
     { "getParamMax", _wrap_getParamMax},
     { "getParamMin", _wrap_getParamMin},
     { "setParamOnSelf", _wrap_setParamOnSelf},
+    { "setParamOnTarget", _wrap_setParamOnTarget},
     { "wear", _wrap_wear},
     { "RemoveAllWearables", _wrap_RemoveAllWearables},
     { "LuaSaveWearable", _wrap_LuaSaveWearable},
     { "LuaLoadWearable", _wrap_LuaLoadWearable},
     { "setTEImage", _wrap_setTEImage},
+    { "HasPermissions", _wrap_HasPermissions},
     { "key2name", _wrap_key2name},
     { "name2key", _wrap_name2key},
     { "LuaGetAvatar", _wrap_LuaGetAvatar},
@@ -5995,6 +6047,7 @@ static swig_type_info _swigt__p_LLSelectMgr = {"_p_LLSelectMgr", "LLSelectMgr *"
 static swig_type_info _swigt__p_LLUUID = {"_p_LLUUID", "LLUUID *", 0, 0, (void*)&_wrap_class_LLUUID, 0};
 static swig_type_info _swigt__p_LLVOAvatar = {"_p_LLVOAvatar", "LLVOAvatar *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_LLVOVolume = {"_p_LLVOVolume", "LLVOVolume *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_LLViewerInventoryItem = {"_p_LLViewerInventoryItem", "LLViewerInventoryItem *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_LLViewerObject = {"_p_LLViewerObject", "LLViewerObject *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_LLViewerRegion = {"_p_LLViewerRegion", "LLViewerRegion *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_LLWearable = {"_p_LLWearable", "LLWearable *", 0, 0, (void*)0, 0};
@@ -6063,6 +6116,7 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_LLUUID,
   &_swigt__p_LLVOAvatar,
   &_swigt__p_LLVOVolume,
+  &_swigt__p_LLViewerInventoryItem,
   &_swigt__p_LLViewerObject,
   &_swigt__p_LLViewerRegion,
   &_swigt__p_LLWearable,
@@ -6131,6 +6185,7 @@ static swig_cast_info _swigc__p_LLSelectMgr[] = {  {&_swigt__p_LuaSelectionManag
 static swig_cast_info _swigc__p_LLUUID[] = {  {&_swigt__p_LLUUID, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_LLVOAvatar[] = {  {&_swigt__p_LLVOAvatar, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_LLVOVolume[] = {  {&_swigt__p_LLVOVolume, 0, 0, 0},  {&_swigt__p_LuaObject, _p_LuaObjectTo_p_LLVOVolume, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_LLViewerInventoryItem[] = {  {&_swigt__p_LLViewerInventoryItem, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_LLViewerObject[] = {  {&_swigt__p_LLViewerObject, 0, 0, 0},  {&_swigt__p_LLStaticViewerObject, _p_LLStaticViewerObjectTo_p_LLViewerObject, 0, 0},  {&_swigt__p_LLVOVolume, _p_LLVOVolumeTo_p_LLViewerObject, 0, 0},  {&_swigt__p_LuaObject, _p_LuaObjectTo_p_LLViewerObject, 0, 0},  {&_swigt__p_LLAlphaObject, _p_LLAlphaObjectTo_p_LLViewerObject, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_LLViewerRegion[] = {  {&_swigt__p_LLViewerRegion, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_LLWearable[] = {  {&_swigt__p_LLWearable, 0, 0, 0},{0, 0, 0, 0}};
@@ -6199,6 +6254,7 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_LLUUID,
   _swigc__p_LLVOAvatar,
   _swigc__p_LLVOVolume,
+  _swigc__p_LLViewerInventoryItem,
   _swigc__p_LLViewerObject,
   _swigc__p_LLViewerRegion,
   _swigc__p_LLWearable,
