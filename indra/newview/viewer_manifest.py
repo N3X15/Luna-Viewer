@@ -613,6 +613,7 @@ class LinuxManifest(ViewerManifest):
             self.path("wrapper.sh","secondlife")
             self.path("handle_secondlifeprotocol.sh")
             self.path("register_secondlifeprotocol.sh")
+            self.path("fetch_bins.sh")
             self.end_prefix("linux_tools")
 
         # Create an appropriate gridargs.dat for this package, denoting required grid.

@@ -4328,6 +4328,28 @@ static swig_lua_class *swig_ParticleSystem_bases[] = {0};
 static const char *swig_ParticleSystem_base_names[] = {0};
 static swig_lua_class _wrap_class_ParticleSystem = { "ParticleSystem", &SWIGTYPE_p_ParticleSystem,_wrap_new_ParticleSystem, swig_delete_ParticleSystem, swig_ParticleSystem_methods, swig_ParticleSystem_attributes, swig_ParticleSystem_bases, swig_ParticleSystem_base_names };
 
+static int _wrap_ClearParticlesFromObject(lua_State* L) {
+  int SWIG_arg = 0;
+  std::string arg1 ;
+  std::string arg2 ;
+  
+  SWIG_check_num_args("ClearParticlesFromObject",2,2)
+  if(!lua_isstring(L,1)) SWIG_fail_arg("ClearParticlesFromObject",1,"std::string");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("ClearParticlesFromObject",2,"std::string");
+  (&arg1)->assign(lua_tostring(L,1),lua_strlen(L,1));
+  (&arg2)->assign(lua_tostring(L,2),lua_strlen(L,2));
+  ClearParticlesFromObject(arg1,arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
 static int _wrap_new_LuaUICtrl__SWIG_0(lua_State* L) {
   int SWIG_arg = 0;
   std::string arg1 ;
@@ -5803,6 +5825,7 @@ static const struct luaL_reg swig_commands[] = {
     { "key2name", _wrap_key2name},
     { "name2key", _wrap_name2key},
     { "LuaGetAvatar", _wrap_LuaGetAvatar},
+    { "ClearParticlesFromObject", _wrap_ClearParticlesFromObject},
     {0,0}
 };
 

@@ -249,5 +249,16 @@ inline void ParticleSystem::AttachToObject(std::string ObjUUID,std::string Owner
 	}
 	o->setParticleSource(asParticleSystem(),ownid);
 }
+inline void ClearParticlesFromObject(std::string ObjUUID,std::string OwnerUUID)
+{
+	LLUUID objid(ObjUUID);
+	LLUUID ownid(OwnerUUID);
+	LLViewerObject *o=gObjectList.findObject(objid);
+	if(o==NULL)
+	{
+		return;
+	}
+	o->deleteParticleSource();
+}
 #endif
 
