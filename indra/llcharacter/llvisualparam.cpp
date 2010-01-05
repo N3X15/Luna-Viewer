@@ -218,7 +218,7 @@ void LLVisualParam::setWeight(F32 weight, BOOL set_by_user)
 	}
 	else if (mInfo)
 	{
-		mCurWeight = llclamp(weight, mInfo->mMinWeight, mInfo->mMaxWeight);
+		mCurWeight = /*llclamp(*/weight/*, mInfo->mMinWeight, mInfo->mMaxWeight)*/;
 	}
 	else
 	{
@@ -234,6 +234,11 @@ void LLVisualParam::setWeight(F32 weight, BOOL set_by_user)
 void LLVisualParam::setWeightNoClamp(F32 weight)
 {
 	mCurWeight=weight;
+	
+	if (mNext)
+	{
+		mNext->setWeightNoClamp(weight);
+	}
 }
 
 //-----------------------------------------------------------------------------

@@ -317,6 +317,7 @@ BOOL LLCharacter::setVisualParamWeightNoClamp(const char* param_name, F32 weight
 	if (name_iter != mVisualParamNameMap.end())
 	{
 		name_iter->second->setWeightNoClamp(weight);
+		llinfos << "LLCharacter::setVisualParamWeightNoClamp() called." << llendl;
 		return TRUE;
 	}
 	llwarns << "LLCharacter::setVisualParamWeight() Invalid visual parameter: " << param_name << llendl;

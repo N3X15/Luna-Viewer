@@ -198,7 +198,9 @@ void setParams_Event(/*std::string &target,*/ std::string &name, double &weight)
 	LLVOAvatar *av=gAgent.getAvatarObject();//(LLVOAvatar *)gObjectList.findObject(LLUUID(target));
 	if(!av)
 		return;
-	av->setVisualParamWeightNoClamp(name.c_str(),weight);
+//	This fails on a lot of parameters, don't know why
+//	av->setVisualParamWeightNoClamp(name.c_str(),weight);
+	av->setVisualParamWeight(name.c_str(),weight);
 }
 
 void setParamOnTarget(const char* target,const char* paramname,double weight)
@@ -376,6 +378,15 @@ void LuaSetTEImage(int index,const LLUUID& id)
 void LuaUpdateAppearance_Event()
 {
 	gAgent.saveAllWearables();
+
+	// May fix llFloaterCustomize crash due to WT_SHAPE becoming dirty.
+	LLVOAvatar* avatar = gAgent.getAvatarObject();
+	if ( avatar )
+	{
+		avatar->invalidateAll();
+		avatar->requestLayerSetUploads();
+		gAgent.sendAgentSetAppearance();
+	}
 }
 void LuaUpdateAppearance()
 {

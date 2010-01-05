@@ -2370,7 +2370,7 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 			info->mDesc = message;
 			info->mHost = msg->getSender();
 			//if (((is_busy && !is_owned_by_me) || is_muted))
-			if ( is_muted )
+			if ( is_muted || gAgent.getBusy() )
 			{
 				// Same as closing window
 				info->forceResponse(IOR_DECLINE);
