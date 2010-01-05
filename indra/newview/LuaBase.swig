@@ -113,5 +113,22 @@
 %rename (LineEditor) 	LuaLineEditor;
 %rename (IconCtrl)	LuaIconCtrl;
 
+%rename (Agent) 		LuaAgent;
+%rename (alert) 		LuaAlert;
+%rename (dumpVisualParams) 	LuaDumpVisualParams;
+%rename (dumpVisualParamsToLuaCode) LuaDumpVisualParamsToLuaCode;
+%rename (Floater) 		LuaFloater;
+%rename (getAvatar) 		LuaGetAvatar;
+%rename (LineEditor) 		LuaLineEditor;
+%rename (loadWearable) 		LuaLoadWearable;
+%rename (ObjectManager) 	LuaObjectManager;
+%rename (Panel) 		LuaPanel;
+%rename (saveWearable) 		LuaSaveWearable;
+%rename (SelectionManager) 	LuaSelectionManager;
+%rename (sendRawChat) 		LuaSendRawChat;
+%rename (TextBox) 		LuaTextBox;
+%rename (UICtrl) 		LuaUICtrl;
+%rename (UIManager)		LuaUIManager;
+
 extern bool gAllowWorldMap;
 extern LLAgent *gAgent;

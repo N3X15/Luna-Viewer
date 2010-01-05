@@ -83,6 +83,22 @@ function DumpAllHooks()
 	end
 end
 
+function DumpAllHooks2Wiki()
+	local txt = "Registered hooks in FlexLife ".._SLUA_VERSION..":"
+	local h=gEvents
+	table.sort(h)
+	for name,_ in pairs(h) do
+		hookdesc=""
+		if(gEventDescs[name]==nil) then 
+			hookdesc=gEventDescs[name] 
+		else 
+			hookdesc="''EVENT LACKS A DESCRIPTION!''" 
+		end
+		txt=txt.."\n;[["..name.."]]\n:"..gEventDescs[name].."\n"
+	end
+	return txt
+end
+
 -- Misc/Unsorted
 RegisterHook("OnLuaInit",	"Fired when the Lua engine (re)starts.")
 RegisterHook("OnAgentInit",	"Fired when YOUR agent initializes.")

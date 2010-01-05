@@ -4611,7 +4611,7 @@ static swig_lua_class *swig_LuaUICtrl_bases[] = {0};
 static const char *swig_LuaUICtrl_base_names[] = {0};
 static swig_lua_class _wrap_class_LuaUICtrl = { "LuaUICtrl", &SWIGTYPE_p_LuaUICtrl,_wrap_new_LuaUICtrl, swig_delete_LuaUICtrl, swig_LuaUICtrl_methods, swig_LuaUICtrl_attributes, swig_LuaUICtrl_bases, swig_LuaUICtrl_base_names };
 
-static int _wrap_new_LuaAgent(lua_State* L) {
+static int _wrap_new_Agent(lua_State* L) {
   int SWIG_arg = 0;
   LuaAgent *result = 0 ;
   
@@ -4640,9 +4640,9 @@ static swig_lua_attribute swig_LuaAgent_attributes[] = {
 };
 static swig_lua_class *swig_LuaAgent_bases[] = {0};
 static const char *swig_LuaAgent_base_names[] = {0};
-static swig_lua_class _wrap_class_LuaAgent = { "LuaAgent", &SWIGTYPE_p_LuaAgent,_wrap_new_LuaAgent, swig_delete_LuaAgent, swig_LuaAgent_methods, swig_LuaAgent_attributes, swig_LuaAgent_bases, swig_LuaAgent_base_names };
+static swig_lua_class _wrap_class_LuaAgent = { "LuaAgent", &SWIGTYPE_p_LuaAgent,_wrap_new_Agent, swig_delete_LuaAgent, swig_LuaAgent_methods, swig_LuaAgent_attributes, swig_LuaAgent_bases, swig_LuaAgent_base_names };
 
-static int _wrap_new_LuaObjectManager(lua_State* L) {
+static int _wrap_new_ObjectManager(lua_State* L) {
   int SWIG_arg = 0;
   LuaObjectManager *result = 0 ;
   
@@ -4671,9 +4671,9 @@ static swig_lua_attribute swig_LuaObjectManager_attributes[] = {
 };
 static swig_lua_class *swig_LuaObjectManager_bases[] = {0};
 static const char *swig_LuaObjectManager_base_names[] = {0};
-static swig_lua_class _wrap_class_LuaObjectManager = { "LuaObjectManager", &SWIGTYPE_p_LuaObjectManager,_wrap_new_LuaObjectManager, swig_delete_LuaObjectManager, swig_LuaObjectManager_methods, swig_LuaObjectManager_attributes, swig_LuaObjectManager_bases, swig_LuaObjectManager_base_names };
+static swig_lua_class _wrap_class_LuaObjectManager = { "LuaObjectManager", &SWIGTYPE_p_LuaObjectManager,_wrap_new_ObjectManager, swig_delete_LuaObjectManager, swig_LuaObjectManager_methods, swig_LuaObjectManager_attributes, swig_LuaObjectManager_bases, swig_LuaObjectManager_base_names };
 
-static int _wrap_new_LuaSelectionManager(lua_State* L) {
+static int _wrap_new_SelectionManager(lua_State* L) {
   int SWIG_arg = 0;
   LuaSelectionManager *result = 0 ;
   
@@ -4702,7 +4702,7 @@ static swig_lua_attribute swig_LuaSelectionManager_attributes[] = {
 };
 static swig_lua_class *swig_LuaSelectionManager_bases[] = {0};
 static const char *swig_LuaSelectionManager_base_names[] = {0};
-static swig_lua_class _wrap_class_LuaSelectionManager = { "LuaSelectionManager", &SWIGTYPE_p_LuaSelectionManager,_wrap_new_LuaSelectionManager, swig_delete_LuaSelectionManager, swig_LuaSelectionManager_methods, swig_LuaSelectionManager_attributes, swig_LuaSelectionManager_bases, swig_LuaSelectionManager_base_names };
+static swig_lua_class _wrap_class_LuaSelectionManager = { "LuaSelectionManager", &SWIGTYPE_p_LuaSelectionManager,_wrap_new_SelectionManager, swig_delete_LuaSelectionManager, swig_LuaSelectionManager_methods, swig_LuaSelectionManager_attributes, swig_LuaSelectionManager_bases, swig_LuaSelectionManager_base_names };
 
 static void swig_delete_LuaObject(void *obj) {
 LuaObject *arg1 = (LuaObject *) obj;
@@ -5861,7 +5861,7 @@ fail:
 }
 
 
-static int _wrap_new_LuaUIManager(lua_State* L) {
+static int _wrap_new_UIManager(lua_State* L) {
   int SWIG_arg = 0;
   LuaUIManager *result = 0 ;
   
@@ -5891,7 +5891,7 @@ static swig_lua_attribute swig_LuaUIManager_attributes[] = {
 };
 static swig_lua_class *swig_LuaUIManager_bases[] = {0};
 static const char *swig_LuaUIManager_base_names[] = {0};
-static swig_lua_class _wrap_class_LuaUIManager = { "LuaUIManager", &SWIGTYPE_p_LuaUIManager,_wrap_new_LuaUIManager, swig_delete_LuaUIManager, swig_LuaUIManager_methods, swig_LuaUIManager_attributes, swig_LuaUIManager_bases, swig_LuaUIManager_base_names };
+static swig_lua_class _wrap_class_LuaUIManager = { "LuaUIManager", &SWIGTYPE_p_LuaUIManager,_wrap_new_UIManager, swig_delete_LuaUIManager, swig_LuaUIManager_methods, swig_LuaUIManager_attributes, swig_LuaUIManager_bases, swig_LuaUIManager_base_names };
 
 #ifdef __cplusplus
 }

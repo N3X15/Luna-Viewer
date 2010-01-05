@@ -105,4 +105,4 @@ dofile("lua/Hooks/HelloWorld/_init_.lua")
 dofile("lua/Hooks/InitLuaAgent/_init_.lua")
 dofile("lua/Hooks/LogAvs/_init_.lua")
 
-DumpAllHooks();
+--DumpAllHooks();

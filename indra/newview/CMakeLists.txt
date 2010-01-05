@@ -978,6 +978,7 @@ set(viewer_HEADER_FILES
 	LuaBuild_f.h
 	LuaUI.h
 	LuaBase.h
+	LuaTypes.h
 	flexconsole.h
     rlvdefines.h
     rlvevent.h
