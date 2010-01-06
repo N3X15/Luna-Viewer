@@ -2692,6 +2692,52 @@ fail:
 }
 
 
+static int _wrap_muteAvatar(lua_State* L) {
+  int SWIG_arg = 0;
+  LLUUID *arg1 = 0 ;
+  LLUUID temp1 ;
+  
+  SWIG_check_num_args("muteAvatar",1,1)
+  if(!lua_isstring(L,1)) SWIG_fail_arg("muteAvatar",1,"LLUUID const &");
+  SWIG_contract_assert(temp1.set(lua_tostring(L,1),false),"Must be of UUID format.")
+  arg1=&temp1;
+  muteAvatar((LLUUID const &)*arg1);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_isMuted(lua_State* L) {
+  int SWIG_arg = 0;
+  LLUUID *arg1 = 0 ;
+  std::string arg2 ;
+  LLUUID temp1 ;
+  bool result;
+  
+  SWIG_check_num_args("isMuted",2,2)
+  if(!lua_isstring(L,1)) SWIG_fail_arg("isMuted",1,"LLUUID const &");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("isMuted",2,"std::string");
+  SWIG_contract_assert(temp1.set(lua_tostring(L,1),false),"Must be of UUID format.")
+  arg1=&temp1;
+  (&arg2)->assign(lua_tostring(L,2),lua_strlen(L,2));
+  result = (bool)isMuted((LLUUID const &)*arg1,arg2);
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
 static int _wrap_gAllowWorldMap_set(lua_State* L) {
   int SWIG_arg = 0;
   bool arg1 ;
@@ -5914,6 +5960,8 @@ static const struct luaL_reg swig_commands[] = {
     { "exists", _wrap_exists},
     { "getLuaFolder", _wrap_getLuaFolder},
     { "toLuaString", _wrap_toLuaString},
+    { "muteAvatar", _wrap_muteAvatar},
+    { "isMuted", _wrap_isMuted},
     { "UpdateAppearance", _wrap_UpdateAppearance},
     { "LuaDumpVisualParams", _wrap_LuaDumpVisualParams},
     { "LuaDumpVisualParamsToLuaCode", _wrap_LuaDumpVisualParamsToLuaCode},

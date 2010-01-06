@@ -2661,8 +2661,6 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 			LLNotifications::instance().forceResponse(LLNotification::Params("TeleportOffered").payload(payload), 0);
 		}
 		break;
-
-				LUA_CALL("OnChatWhisper") << from_id << from_id << owner_id << mesg << LUA_END;
 	case IM_GOTO_URL:
 		{
 			LLSD args;

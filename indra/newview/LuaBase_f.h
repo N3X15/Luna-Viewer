@@ -64,6 +64,10 @@ std::string  getLuaFolder();
 
 std::string  toLuaString(F32 t);
 
+void muteAvatar(const LLUUID& derp);
+
+bool isMuted(const LLUUID& avid,std::string name);
+
 extern bool gAllowWorldMap;
 
 #endif

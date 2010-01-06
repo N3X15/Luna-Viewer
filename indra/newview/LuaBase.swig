@@ -108,6 +108,7 @@
 %include "LuaParticles.h"
 
 %include "../newview/LuaUI.h"
+
 %rename (Floater) 	LuaFloater;
 %rename (Button) 	LuaButton;
 %rename (LineEditor) 	LuaLineEditor;

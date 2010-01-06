@@ -18,6 +18,7 @@
 #include "llviewerregion.h"
 #include "llurldispatcher.h"
 #include "flexconsole.h"
+#include "llmutelist.h"
 
 //#include <direct.h>
 #include <errno.h>
@@ -252,4 +253,14 @@ std::string toLuaString(F32 t)
 	out << t;
 	std::string o=out.str();
 	return o;
+}
+
+void muteAvatar(const LLUUID& derp)
+{
+	LLMuteList::getInstance()->add(LLMute(derp,"",LLMute::AGENT,0));
+}
+
+bool isMuted(const LLUUID& avid,std::string name)
+{
+	return (LLMuteList::getInstance()->isMuted(avid,name)==TRUE);
 }
