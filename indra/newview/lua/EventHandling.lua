@@ -117,3 +117,9 @@ RegisterHook("OnBridgeWorking",	"Signals that the Emerald LSL Bridge is working.
 RegisterHook("OnSoundTriggered","Triggered when a sound plays.")
 RegisterHook("OnSoundAttachment","Triggered when an attachment plays a sound.");
 
+-- CHat 
+RegisterHook("OnChatWhisper",	"Triggered when someone whispers something.")
+RegisterHook("OnOwnerSay",	"Triggered when you get an llOwnerSay event.")
+RegisterHook("OnChatSay",	"Triggered when someone says something.")
+RegisterHook("OnChatShout",	"Triggered when someone shouts something")
+
