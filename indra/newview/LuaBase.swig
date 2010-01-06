@@ -50,7 +50,7 @@
 #include "llagent.h"
 %}
 
-//%include <std_string.i>
+%include <std_string.i>
 %include "../newview/LLUUID.i"
 
 %import "../newview/LuaTypes.h"

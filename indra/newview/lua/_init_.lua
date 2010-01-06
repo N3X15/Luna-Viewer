@@ -30,24 +30,10 @@ require "lfs"
 --               IMPORTANT FUNCTIONS NEEDED TO LOAD LIBS, ETC                   --
 ----------------------------------------------------------------------------------
 
--- Load scripts in directory.
-function flLoadDir(dir)
-	local dirlist = dirtree(dir)
-	if(dirlist==nil) then
-		error ("Dirlist = null ("..dir..")")
-		return
-	end
-	for ent in dirlist do
-		if(string.ends(ent,".lua")) then
-			print("Loading "..ent)
-			dofile(ent)
-		end
-	end
-end
 
 -- Locate files in directory
 function dirtree(dir)
-	if(dir and dir ~= "") then
+	if(dir and dir == "") then
 		error("directory parameter is missing or empty")
 		return
 	end
@@ -63,10 +49,10 @@ function dirtree(dir)
 				local attr=lfs.attributes(entry)
 				coroutine.yield(entry,attr)
 				if attr.mode == "directory" then
-				  yieldtree(entry)
+					yieldtree(entry)
 				end
 			end
-	    end
+	   	end
 	end
 
 	return coroutine.wrap(function() yieldtree(dir) end)
@@ -88,21 +74,45 @@ function DumpTable(tbl)
 	end
 end
 
+
+-- Load scripts in directory.
+function flLoadDir(dir,silent)
+	local dirlist = dirtree(dir)
+	if(dirlist==nil) then
+		error ("Dirlist = null ("..dir..")")
+		return
+	end
+	for ent in dirlist do
+		-- _init_.lua
+		local ext=string.sub(ent,-10)
+		--print(ext)
+		if ext=="_init_.lua" then
+			if silent==false then
+				local hookname=string.sub(ent,string.len(dir)+1,-12)
+				print(" * Loading plugin: "..hookname)
+			end
+			dofile(ent)
+		end
+	end
+end
+
 ----------------------------------------------------------------------------------
 --                                 Load libs                                    --
 ----------------------------------------------------------------------------------
 
 --flLoadDir(getCWD().."lib/") -- FlexLife Libraries
---flLoadDir(getCWD().."/lua/Hooks/") -- User Hooks
 
 -- Copy SL functions into the global table
 --  This is so one doesn't have to use SL.print to print to the window.
-for k,v in pairs(SL) do _G[k]=v end
+for k,v in pairs(SL) do
+	-- Do not overwrite string table!
+	if (k~="string") then
+		_G[k]=v 
+	end
+end
 
 dofile("lua/EventHandling.lua")
 
-dofile("lua/Hooks/HelloWorld/_init_.lua")
-dofile("lua/Hooks/InitLuaAgent/_init_.lua")
-dofile("lua/Hooks/LogAvs/_init_.lua")
+flLoadDir("lua/Hooks/",false) -- User Hooks
 
 --DumpAllHooks();
