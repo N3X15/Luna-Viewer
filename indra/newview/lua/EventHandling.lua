@@ -113,3 +113,7 @@ RegisterHook("OnBridgeReady",	"Signals that the Emerald LSL Bridge is ready.")
 RegisterHook("OnBridgeFailed",	"Signals that the Emerald LSL Bridge is broken.")
 RegisterHook("OnBridgeWorking",	"Signals that the Emerald LSL Bridge is working.")
 
+-- Sounds
+RegisterHook("OnSoundTriggered","Triggered when a sound plays.")
+RegisterHook("OnSoundAttachment","Triggered when an attachment plays a sound.");
+

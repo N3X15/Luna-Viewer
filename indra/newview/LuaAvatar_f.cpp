@@ -159,7 +159,7 @@ double getParamMax(const char* avid,const char* paramname)
 	LLVOAvatar *av=(LLVOAvatar *)o;
 	LLVisualParam *p=av->getVisualParam(paramname);
 	if(!p)
-	{
+	{		gAgent.saveWearable(WT_SHAPE,TRUE);
 		std::string out("Invalid visual parameter: ");
 		out.append(paramname);
 		LuaError(out.c_str());
@@ -386,6 +386,9 @@ void LuaUpdateAppearance_Event()
 		avatar->invalidateAll();
 		avatar->requestLayerSetUploads();
 		gAgent.sendAgentSetAppearance();
+		// Thanks to Zwagoth
+		gAgent.saveWearable(WT_SHAPE,	TRUE);
+		gAgent.saveWearable(WT_SKIN,	TRUE);
 	}
 }
 void LuaUpdateAppearance()
