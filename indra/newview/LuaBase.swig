@@ -37,7 +37,6 @@
 #include "LuaAvatar_f.h"
 #include "LuaAgent_f.h"
 #include "LuaParticles.h"
-#include "LuaTypes.h"
 #include "llprimitive.h"
 #include "llviewerobject.h"
 #include "llvovolume.h"
@@ -98,12 +97,12 @@
 
 %include "LuaAgent_f.h"
 
-%include "LuaTypes.h"
+%include "LLVector.i"
 
-%rename (Vector2)	LuaVector2;
-%rename (Vector3)	LuaVector3;
-%rename (Vector4)	LuaVector4;
-%rename (Color4)	LuaColor4;
+%rename (Vector2)	LLVector2;
+%rename (Vector3)	LLVector3;
+%rename (Vector4)	LLVector4;
+//%rename (Color4)	LLColor4;
 
 %include "LuaParticles.h"
 

@@ -4,7 +4,6 @@
 #include "llviewerimagelist.h"
 #include "llviewerobject.h"
 #include "llviewerobjectlist.h"
-#include "LuaTypes.h"
 #include "v2math.h"
 #include "v3math.h"
 #include "v4math.h"
@@ -76,6 +75,24 @@
 	particle_parameters.AttachToObject(AvatarUUID);
 */
 
+inline LLColor4 Vector42LLColor4(const LLVector4& a)
+{
+	LLColor4 b;
+	b.mV[VX]=a.mV[VX];
+	b.mV[VY]=a.mV[VY];
+	b.mV[VZ]=a.mV[VZ];
+	b.mV[VW]=a.mV[VW];
+	return b;
+}
+inline LLVector4 LLColor42Vector4(const LLColor4& a)
+{
+	LLVector4 b;
+	b.mV[VX]=a.mV[VX];
+	b.mV[VY]=a.mV[VY];
+	b.mV[VZ]=a.mV[VZ];
+	b.mV[VW]=a.mV[VW];
+	return b;
+}
 class ParticleSystem
 {
 public:
@@ -105,18 +122,18 @@ public:
 
 	unsigned int	ParticleFlags;	// mPartData.mFlags
 	float		ParticleMaxAge;	// mPartData.mMaxAge
-	LuaVector4 	StartColor;	// mPartData.mStartColor
-	LuaVector4 	EndColor;	// mPartData.mEndColor
-	LuaVector2 	StartScale;	// mPartData.mStartScale
-	LuaVector2 	EndScale;	// mPartData.mEndScale
-	LuaVector3 	PosOffset;	// mPartData.mPosOffset
+	LLVector4 	StartColor;	// mPartData.mStartColor
+	LLVector4 	EndColor;	// mPartData.mEndColor
+	LLVector2 	StartScale;	// mPartData.mStartScale
+	LLVector2 	EndScale;	// mPartData.mEndScale
+	LLVector3 	PosOffset;	// mPartData.mPosOffset
 	float 		Parameter;	// mPartData.mParameter
 
 	unsigned int 	SystemFlags;
 	U8 		Pattern;
 	float	 	InnerAngle;
 	float	 	OuterAngle;
-	LuaVector3 	AngularVelocity;
+	LLVector3 	AngularVelocity;
 	float 		BurstRate;
 	U8 		BurstPartCount;
 	float 		BurstRadius;
@@ -125,7 +142,7 @@ public:
 	float 		SystemMaxAge;
 	
 	float 		StartAge;
-	LuaVector3 	PartAccel;
+	LLVector3 	PartAccel;
 
 	ParticleSystem():
 		ParticleFlags(0),
@@ -134,10 +151,10 @@ public:
 	{
 		SystemFlags 	= 0;
 		ParticleFlags	= 0;
-		StartColor 	= LuaVector4(1.f, 1.f, 1.f, 1.f);
-		EndColor 	= LuaVector4(1.f, 1.f, 1.f, 1.f);
-		StartScale 	= LuaVector2(1.f, 1.f);
-		EndScale 	= LuaVector2(1.f, 1.f);
+		StartColor 	= LLVector4(1.f, 1.f, 1.f, 1.f);
+		EndColor 	= LLVector4(1.f, 1.f, 1.f, 1.f);
+		StartScale 	= LLVector2(1.f, 1.f);
+		EndScale 	= LLVector2(1.f, 1.f);
 		ParticleMaxAge 	= 10.f;
 		SystemMaxAge 	= 0.f;
 		StartAge 	= 0.f;
@@ -182,8 +199,8 @@ public:
 	{
 		ParticleFlags	= psys.mPartData.mFlags;
 		ParticleMaxAge	= psys.mPartData.mMaxAge;
-		StartColor	= psys.mPartData.mStartColor;
-		EndColor	= psys.mPartData.mEndColor;
+		StartColor	= LLColor42Vector4(psys.mPartData.mStartColor);
+		EndColor	= LLColor42Vector4(psys.mPartData.mEndColor);
 		StartScale	= psys.mPartData.mStartScale;
 		EndScale	= psys.mPartData.mEndScale;
 		PosOffset	= psys.mPartData.mPosOffset;
@@ -215,11 +232,11 @@ public:
 		
 		psys.mPartData.mFlags		= ParticleFlags;
 		psys.mPartData.mMaxAge		= ParticleMaxAge;
-		psys.mPartData.mStartColor	= (LLColor4)((LLVector4)StartColor);
-		psys.mPartData.mEndColor	= (LLColor4)((LLVector4)EndColor);
-		psys.mPartData.mStartScale	= (LLVector2)StartScale;
-		psys.mPartData.mEndScale	= (LLVector2)EndScale;
-		psys.mPartData.mPosOffset	= (LLVector3)PosOffset;
+		psys.mPartData.mStartColor	= Vector42LLColor4(StartColor);
+		psys.mPartData.mEndColor	= Vector42LLColor4(EndColor);
+		psys.mPartData.mStartScale	= StartScale;
+		psys.mPartData.mEndScale	= EndScale;
+		psys.mPartData.mPosOffset	= PosOffset;
 		psys.mPartData.mParameter	= Parameter;
 
 		psys.mFlags			= SystemFlags;
@@ -234,7 +251,7 @@ public:
 		psys.mBurstSpeedMax		= BurstSpeedMax;
 		psys.mMaxAge			= SystemMaxAge;
 		psys.mStartAge			= StartAge;
-		psys.mPartAccel			= (LLVector3)PartAccel;
+		psys.mPartAccel			= PartAccel;
 
 		psys.mPartImageID		= mPartImageID;
 		psys.mTargetUUID		= mTargetID;
@@ -270,5 +287,8 @@ inline void ClearParticlesFromObject(std::string ObjUUID,std::string OwnerUUID)
 	}
 	o->deleteParticleSource();
 }
+
+
+
 #endif
 

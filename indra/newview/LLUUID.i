@@ -13,10 +13,13 @@
 
 %naturalvar LLUUID;
 %typemap(in,checkfn="lua_isstring") LLUUID
-%{SWIG_contract_assert($1.set(lua_tostring(L,$input),false),"Must be of UUID format.")
-;%}
+%{
+	SWIG_contract_assert($1.set(lua_tostring(L,$input),false),"Must be of UUID format.");
+%}
 %typemap(out) LLUUID
-%{ lua_pushlstring(L,$1.asString().data(),$1.asString().size()); SWIG_arg++;%}
+%{ 
+	lua_pushlstring(L,$1.asString().data(),$1.asString().size()); SWIG_arg++;
+%}
 
 %typemap(in,checkfn="lua_isstring")	const LLUUID& (LLUUID temp)
 %{SWIG_contract_assert(temp.set(lua_tostring(L,$input),false),"Must be of UUID format.")
