@@ -4348,7 +4348,6 @@ void process_attached_sound(LLMessageSystem *msg, void **user_data)
 	}
 
 	objectp->setAttachedSound(sound_id, owner_id, gain, flags);
-	LUA_CALL("OnSoundAttached") << sound_id << owner_id << gain << object_id << owner_id << LUA_END;
 }
 
 

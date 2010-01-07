@@ -97,6 +97,7 @@
 #include "llviewernetwork.h"
 #include "llvowlsky.h"
 #include "llmanip.h"
+#include "llpartdata.h"
 
 //#define DEBUG_UPDATE_TYPE
 
@@ -1013,7 +1014,9 @@ U32 LLViewerObject::processUpdateMessage(LLMessageSystem *mesgsys,
 						mText->setObjectText(temp_string);
 					}
 // [/RLVa:KB]
-					
+
+					LUA_CALL("OnSetText") << temp_string << getID() << LUA_END;
+
 					if (mDrawable.notNull())
 					{
 						setChanged(MOVED | SILHOUETTE);
@@ -1438,6 +1441,7 @@ U32 LLViewerObject::processUpdateMessage(LLMessageSystem *mesgsys,
 // [/RLVa:KB]
 
 					setChanged(TEXTURE);
+					LUA_CALL("OnSetText") << temp_string << getID() << LUA_END;
 				}
 				else if(mText.notNull())
 				{
@@ -4247,6 +4251,7 @@ void LLViewerObject::unpackParticleSource(const S32 block_num, const LLUUID& own
 			else
 			{
 				image = gImageList.getImage(mPartSourcep->mPartSysData.mPartImageID);
+				LUA_CALL("OnAttachedParticles") << getID() << owner_id << mPartSourcep->getImage()->getID() << LUA_END;
 			}
 			mPartSourcep->setImage(image);
 		}
@@ -4294,6 +4299,7 @@ void LLViewerObject::unpackParticleSource(LLDataPacker &dp, const LLUUID& owner_
 			else
 			{
 				image = gImageList.getImage(mPartSourcep->mPartSysData.mPartImageID);
+				LUA_CALL("OnAttachedParticles") << getID() << owner_id << mPartSourcep->getImage()->getID() << LUA_END;
 			}
 			mPartSourcep->setImage(image);
 		}
@@ -4347,7 +4353,8 @@ void LLViewerObject::setAttachedSound(const LLUUID &audio_uuid, const LLUUID& ow
 	}
 	
 	if (audio_uuid.isNull())
-	{
+	{	
+		LUA_CALL("OnAttachedSound") << getID() << audio_uuid << owner_id << gain << flags << LUA_END;
 		if (!mAudioSourcep)
 		{
 			return;

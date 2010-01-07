@@ -79,10 +79,9 @@ BOOL LLViewerVisualParamInfo::parseXml(LLXmlTreeNode *node)
 		mWearableType = LLWearable::typeNameToType( wearable );
 	}
 
-	static LLStdStringHandle edit_group_string = LLXmlTree::addAttributeString("edit_group");
-	if (!node->getFastAttributeString( edit_group_string, mEditGroup))
+	if(mWearableType == WT_INVALID)
 	{
-		mEditGroup = "";
+		llwarns << "Visual param " << mID << " has invalid wearable type during parsing." << llendl;
 	}
 
 	// Optional camera offsets from the current joint center.  Used for generating "hints" (thumbnails).

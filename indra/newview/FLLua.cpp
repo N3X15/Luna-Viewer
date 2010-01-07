@@ -58,6 +58,7 @@ extern "C" {
 #include "llrender.h"
 #include "llglheaders.h"
 #include "llversionviewer.h"
+#include "llpartdata.h"
 #include <sstream>
 
 /* Lua classes */

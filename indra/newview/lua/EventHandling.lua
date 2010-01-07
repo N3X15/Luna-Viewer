@@ -2,16 +2,16 @@
 	FlexLife Lua Event Handler
 		by N3X15
 	
-	 Copyright (C) 2008-2009 FlexLife Contributors
-	 
-	 This program is free software; you can redistribute it and/or modify
-	 it under the terms of the GNU General Public License as published by
-	 the Free Software Foundation; either version 2 of the License, or
-	 (at your option) any later version.
-	 
-	 This program is distributed in the hope that it will be useful,
-	 but WITHOUT ANY WARRANTY; without even the implied warranty of
-	 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	Copyright (C) 2008-2009 FlexLife Contributors
+
+	This program is free software; you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation; either version 2 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 	 
 	You should have received a copy of the GNU General Public License along
@@ -42,6 +42,9 @@
 	OnBridgeReady		(integer Channel)
 	OnBridgeFailed		( )
 	OnBridgeWorking		(integer Channel)
+
+	OnSoundAttached		(LLUUID object_id, LLUUID audio_uuid, LLUUID owner_id, float gain, integer flags)
+	OnAttachedParticles	(LLUUID object_id, LLUUID owner_id, LLUUID image_id, string ParticleSystemInfo)
 	
 ]]--
 
@@ -106,6 +109,7 @@ RegisterHook("EmeraldPhantomOn","Fired when you enter or leave phantom mode.")
 RegisterHook("OnObjectCreated",	"When an object is created, this event sends its Object UUID and PrimCode to Lua.")
 RegisterHook("OnAttach",	"This event is fired when an avatar attaches an object.")
 RegisterHook("OnAvatarLoaded",	"Fired when an avatar finishes loading.")
+RegisterHook("OnAttachedParticles","Fired by an object's particle system being set.")
 
 -- Bridge stuff
 RegisterHook("OnBridgeMessage",	"When Emerald's LSL bridge sends a response or command, this event is fired.")
@@ -115,7 +119,8 @@ RegisterHook("OnBridgeWorking",	"Signals that the Emerald LSL Bridge is working.
 
 -- Sounds
 RegisterHook("OnSoundTriggered","Triggered when a sound plays.")
-RegisterHook("OnSoundAttachment","Triggered when an attachment plays a sound.");
+RegisterHook("OnSoundAttachment","Triggered when an attachment plays a sound.")
+RegisterHook("OnAttachedSound",	"When an object's sound system is set, this event is called.")
 
 -- CHat 
 RegisterHook("OnChatWhisper",	"Triggered when someone whispers something.")
