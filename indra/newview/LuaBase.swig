@@ -23,8 +23,13 @@
  */
 
 %module SL
-%{
+
+//Fixed for Visual Studio
+%begin %{
 #include "llviewerprecompiledheaders.h"
+%}
+%{
+
 
 #include "stdtypes.h"
 #include "LuaUI.h"
@@ -68,7 +73,7 @@
 
 
 %rename(SendChat)		LuaSendChat(const char *msg, bool IsDebug=false);
-%rename(print)			LuaPrint(const char *msg);
+%rename(print)			LuaPrint(const char *msg, const char *arg1=0,const char *arg2=0,const char *arg3=0,const char *arg4=0,const char *arg5=0);
 %rename(RegionFromName)		LuaRegionFromName(const char *msg);
 %rename(GetCurrentRegion)	LuaGetCurrentRegion();
 %rename(GetCWD)			LuaGetCWD();

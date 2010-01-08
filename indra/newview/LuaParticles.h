@@ -226,7 +226,7 @@ public:
 		return *this;
 	}
 	
-	const LLPartSysData& asParticleSystem()
+	const LLPartSysData asParticleSystem()
 	{
 		LLPartSysData psys;
 		
@@ -291,4 +291,3 @@ inline void ClearParticlesFromObject(std::string ObjUUID,std::string OwnerUUID)
 
 
 #endif
-

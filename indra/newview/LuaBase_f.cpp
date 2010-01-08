@@ -27,6 +27,11 @@
 
 bool gAllowWorldMap = true;
 
+bool isUUID(const std::string &str)
+{
+	return LLUUID::validate(str);
+}
+
 // Send something to the chat window.
 void LuaSendChat(const char *msg,bool IsDebug)
 {
@@ -38,9 +43,21 @@ void LuaSendChat(const char *msg,bool IsDebug)
 	LLFloaterLuaConsole::addOutput(mesg,false); //no debug exception yet.
 }
 
-void LuaPrint(const char *msg)
+void LuaPrint(const char *msg, const char *arg1,const char *arg2,const char *arg3,const char *arg4,const char *arg5)
 {
-	LuaSendChat(msg,false);
+	std::string out(msg);
+	if(arg1)
+		(out+="    ")+=arg1;
+	if(arg2)
+		(out+="    ")+=arg2;
+	if(arg3)
+		(out+="    ")+=arg3;
+	if(arg4)
+		(out+="    ")+=arg4;
+	if(arg5)
+		(out+="    ")+=arg5;
+
+	LuaSendChat(out.c_str(),false);
 }
 
 void LuaShout(const char* msg, int channel)
@@ -232,7 +249,7 @@ void LuaTp(const char* SimName, int x, int y, int z) //dispatchFromTextEditor ca
 	std::transform(name.begin(), name.end(), name.begin(), tolower);
 	if(name != "home")
 		name=llformat("secondlife:///app/teleport/%s/%d/%d/%d",SimName,x,y,z);
-	new CB_Args1<const std::string>(&LuaTp_Event,name);
+	CB_Args1<const std::string>(&LuaTp_Event,name);
 }
 
 bool Lua_exists(const char* Filename)

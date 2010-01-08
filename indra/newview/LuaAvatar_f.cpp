@@ -105,10 +105,9 @@ std::string  LuaDumpVisualParamsToLuaCode()
 	return param_msg;
 }
 
-double getParamDefaultWeight(const char* avid,const char* paramname)
+double getParamDefaultWeight(const LLUUID &avid,const char* paramname)
 {
-	LLUUID uuid(avid);
-	LLViewerObject *o=gObjectList.findObject(uuid);
+	LLViewerObject *o=gObjectList.findObject(avid);
 	if(!o->isAvatar())
 	{
 		LuaError("Object is not an avatar.");
@@ -126,10 +125,9 @@ double getParamDefaultWeight(const char* avid,const char* paramname)
 	return (double)p->getDefaultWeight();
 }
 
-double getParamCurrentWeight(const char* avid,const char* paramname)
+double getParamCurrentWeight(const LLUUID &avid,const char* paramname)
 {
-	LLUUID uuid(avid);
-	LLViewerObject *o=gObjectList.findObject(uuid);
+	LLViewerObject *o=gObjectList.findObject(avid);
 	if(!o->isAvatar())
 	{
 		LuaError("Object is not an avatar.");
@@ -147,10 +145,9 @@ double getParamCurrentWeight(const char* avid,const char* paramname)
 	return (double)p->getCurrentWeight();
 }
 
-double getParamMax(const char* avid,const char* paramname)
+double getParamMax(const LLUUID &avid,const char* paramname)
 {
-	LLUUID uuid(avid);
-	LLViewerObject *o=gObjectList.findObject(uuid);
+	LLViewerObject *o=gObjectList.findObject(avid);
 	if(!o->isAvatar())
 	{
 		LuaError("Object is not an avatar.");
@@ -168,10 +165,9 @@ double getParamMax(const char* avid,const char* paramname)
 	return (double)p->getMaxWeight();
 }
 
-double getParamMin(const char* avid,const char* paramname)
+double getParamMin(const LLUUID &avid,const char* paramname)
 {
-	LLUUID uuid(avid);
-	LLViewerObject *o=gObjectList.findObject(uuid);
+	LLViewerObject *o=gObjectList.findObject(avid);
 	if(!o->isAvatar())
 	{
 		LuaError("Object is not an avatar.");
@@ -192,49 +188,48 @@ double getParamMin(const char* avid,const char* paramname)
 //------------------------------------------------------------------------
 // Set
 //------------------------------------------------------------------------
-
-void setParams_Event(/*std::string &target,*/ std::string &name, double &weight)
+void setParamsInternal(LLVOAvatar *pAvatar, const std::string &name, double &weight)
 {
-	LLVOAvatar *av=gAgent.getAvatarObject();//(LLVOAvatar *)gObjectList.findObject(LLUUID(target));
-	if(!av)
+	if(!pAvatar)
 		return;
-//	This fails on a lot of parameters, don't know why
-//	av->setVisualParamWeightNoClamp(name.c_str(),weight);
-	av->setVisualParamWeight(name.c_str(),weight);
+	LLVisualParam *p=pAvatar->getVisualParam(name.c_str());
+	if(!p)
+	{
+		std::string out("Invalid visual parameter: ");
+		out.append(name);
+		LuaError(out.c_str());
+		return;
+	}
+	p->setWeight((F32)weight,FALSE);
 }
-
-void setParamOnTarget(const char* target,const char* paramname,double weight)
-{
-	// Why the hell is this not working?
-	/*
-/root/FlexLife/trunk/indra/newview/FLLua.h: In constructor ‘CB_Args3<T1, T2, T3>::CB_Args3(void (*)(T1&, T2&, T3&), const T1&, const T2&, const T3&) [with T1 = std::basic_string<char, std::char_traits<char>, std::allocator<char> >, T2 = std::basic_string<char, std::char_traits<char>, std::allocator<char> >, T3 = double]’:
-/root/FlexLife/trunk/indra/newview/LuaAvatar_f.cpp:206:   instantiated from here
-/root/FlexLife/trunk/indra/newview/FLLua.h:200: error: no matching function for call to ‘std::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string(const double&)’
-/usr/include/c++/4.3/bits/basic_string.tcc:226: note: candidates are: std::basic_string<_CharT, _Traits, _Alloc>::basic_string(typename _Alloc::rebind<_CharT>::other::size_type, _CharT, const _Alloc&) [with _CharT = char, _Traits = std::char_traits<char>, _Alloc = std::allocator<char>]
-/usr/include/c++/4.3/bits/basic_string.tcc:219: note:                 std::basic_string<_CharT, _Traits, _Alloc>::basic_string(const _CharT*, const _Alloc&) [with _CharT = char, _Traits = std::char_traits<char>, _Alloc = std::allocator<char>]
-/usr/include/c++/4.3/bits/basic_string.tcc:212: note:                 std::basic_string<_CharT, _Traits, _Alloc>::basic_string(const _CharT*, typename _Alloc::rebind<_CharT>::other::size_type, const _Alloc&) [with _CharT = char, _Traits = std::char_traits<char>, _Alloc = std::allocator<char>]
-/usr/include/c++/4.3/bits/basic_string.tcc:201: note:                 std::basic_string<_CharT, _Traits, _Alloc>::basic_string(const std::basic_string<_CharT, _Traits, _Alloc>&, typename _Alloc::rebind<_CharT>::other::size_type, typename _Alloc::rebind<_CharT>::other::size_type, const _Alloc&) [with _CharT = char, _Traits = std::char_traits<char>, _Alloc = std::allocator<char>]
-/usr/include/c++/4.3/bits/basic_string.tcc:190: note:                 std::basic_string<_CharT, _Traits, _Alloc>::basic_string(const std::basic_string<_CharT, _Traits, _Alloc>&, typename _Alloc::rebind<_CharT>::other::size_type, typename _Alloc::rebind<_CharT>::other::size_type) [with _CharT = char, _Traits = std::char_traits<char>, _Alloc = std::allocator<char>]
-/usr/include/c++/4.3/bits/basic_string.tcc:176: note:                 std::basic_string<_CharT, _Traits, _Alloc>::basic_string(const std::basic_string<_CharT, _Traits, _Alloc>&) [with _CharT = char, _Traits = std::char_traits<char>, _Alloc = std::allocator<char>]
-/usr/include/c++/4.3/bits/basic_string.tcc:184: note:                 std::basic_string<_CharT, _Traits, _Alloc>::basic_string(const _Alloc&) [with _CharT = char, _Traits = std::char_traits<char>, _Alloc = std::allocator<char>]
-/usr/include/c++/4.3/bits/basic_string.h:2067: note:                 std::basic_string<_CharT, _Traits, _Alloc>::basic_string() [with _CharT = char, _Traits = std::char_traits<char>, _Alloc = std::allocator<char>]
-	*/
-
-	//new CB_Args3<std::string,std::string,double>(&setParams_Event,target,paramname,weight); //add to client event queue
-}
-
-void setParamOnSelf(const char* paramname,double weight)
+void setParamsSelf_Event(std::string &paramname, double &weight)
 {
 	LLVOAvatar *me=gAgent.getAvatarObject();
 	if(!me)
-	{
 		LuaError("No Agent Avatar");
-		return;
-	}
-
-	//new CB_Args3<std::string,std::string,double>(&setParams_Event,me->getID().asString(),paramname,weight); //add to client event queue
-	new CB_Args2<std::string,double>(&setParams_Event,paramname,weight); //add to client event queue
+	else
+		setParamsInternal(me,paramname,weight);
 }
+void setParamOnSelf(const std::string &paramname, double weight)
+{
+	CB_Args2<std::string,double>(&setParamsSelf_Event,paramname,weight); //add to client event queue
+}
+void setParamsTarget_Event(LLUUID &avid,std::string &paramname,double &weight)
+{
+	LLViewerObject *obj=gObjectList.findObject(avid);
+	if(!obj)
+		LuaError("No target found");
+	else if(!obj->isAvatar())
+		LuaError("Target is not an avatar");
+	else
+		setParamsInternal((LLVOAvatar*)obj,paramname,weight);
+}
+
+void setParamOnTarget(const LLUUID &avid, const std::string &paramname,double weight)
+{
+	CB_Args3<LLUUID,std::string,double>(&setParamsTarget_Event,avid,paramname,weight); //add to client event queue
+}
+
 void LuaWear_Event(const LLUUID& assetid)
 {
 	LLWearable *wear=LuaLoadWearable(assetid);
@@ -250,21 +245,7 @@ void LuaWear_Event(const LLUUID& assetid)
 }
 void LuaWear(const LLUUID& assetid)
 {
-	new CB_Args1<const LLUUID>(&LuaWear_Event,assetid);
-	/*LLWearable *wear=LuaLoadWearable(assetid);
-	if(!wear)
-	{
-		LuaError("No Wearable found");
-		return;
-	}
-	LLWearable *newwear=gWearableList.createCopy(wear);
-	if(!wear)
-	{
-		LuaError("Failed creation of new wearable");
-		return;
-	}
-	newwear->saveNewAsset();
-	newwear->writeToAvatar(false);*/
+	CB_Args1<const LLUUID>(&LuaWear_Event,assetid);
 }
 void LuaRemoveAllWearables_Event()
 {
@@ -272,8 +253,7 @@ void LuaRemoveAllWearables_Event()
 }
 void LuaRemoveAllWearables() // calls glGenTextures
 {
-	new CB_Args0(LuaRemoveAllWearables_Event);
-	//LLAgent::userRemoveAllClothesStep2(TRUE,NULL);
+	CB_Args0(&LuaRemoveAllWearables_Event);
 }
 
 bool LuaSaveWearable(LLWearable *w)
@@ -393,7 +373,7 @@ void LuaUpdateAppearance_Event()
 }
 void LuaUpdateAppearance()
 {
-	new CB_Args0(&LuaUpdateAppearance_Event);
+	CB_Args0(&LuaUpdateAppearance_Event);
 	//gAgent.saveAllWearables();
 }
 

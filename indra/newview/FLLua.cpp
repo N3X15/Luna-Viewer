@@ -111,12 +111,14 @@ HookRequest& HookRequest::operator<<(const LLUUID &fullid)
 	return *this;
 }
 
+CB_Base *CB_Base::sent=NULL;//prevent perpetual loop
 
 ///////////////////////////////////////////////
 // Lua Interpreter
 ///////////////////////////////////////////////
 FLLua* FLLua::sInstance = NULL;
 
+//Constructor
 FLLua::FLLua() : 
 	LLThread("Lua"), 
 	pLuaStack(NULL),
@@ -124,10 +126,13 @@ FLLua::FLLua() :
 	//mError(false),
 	mPendingHooks(false),
 	mPendingCommands(false),
-	mPendingEvents(false)
+	mAllowPause(false),
+	mPendingEvents(false),
+	mCriticalSections(0)
 {
 	// Do nothing.
 }
+//Destructor
 FLLua::~FLLua()
 {
 	while(!mQueuedHooks.empty()) //these hooks are dynamically allocated. We must delete.
@@ -135,9 +140,13 @@ FLLua::~FLLua()
 		delete mQueuedHooks.front();
 		mQueuedHooks.pop();
 	}
-	while(!mQueuedEvents.empty()) //these hooks are dynamically allocated. We must delete.
+	while(!mQueuedEvents.empty()) 
 	{
+#ifdef FL_PRI_EVENTS //Not using yet
+		delete mQueuedEvents.top();
+#else
 		delete mQueuedEvents.front();
+#endif
 		mQueuedEvents.pop();
 	}
 	if(pLuaStack)
@@ -145,40 +154,6 @@ FLLua::~FLLua()
 	pLuaStack=NULL;
 	if(sInstance==this)//Just incase
 		sInstance=NULL;
-}
-
-// Static
-FLLua* FLLua::getInstance()
-{
-	LL_WARNS("Lua") << "Lua interpreter should not be directly accessed!" << llendl;
-	return sInstance;
-}
-	//Called from lua thread
-// Static
-void FLLua::regClientEvent(CB_Base *entry)
-{
-	if(sInstance && entry)
-	{
-		sInstance->mQueuedEvents.push(entry);
-		sInstance->mPendingEvents=true;
-	}
-}
-	//Called from MAIN thread
-// Static
-void FLLua::execClientEvents()
-{
-	if(!sInstance || !sInstance->mPendingEvents)
-		return;
-	sInstance->lockData();
-	sInstance->mPendingEvents=false;
-	while(!sInstance->mQueuedEvents.empty())
-	{
-		CB_Base *cb=sInstance->mQueuedEvents.front();
-		cb->OnCall();
-		delete cb;
-		sInstance->mQueuedEvents.pop();
-	}
-	sInstance->unlockData();
 }
 
 // Static
@@ -210,7 +185,13 @@ void FLLua::cleanupClass()
 	}
 }
 // Static
-// called from MAIN thread
+FLLua* FLLua::getInstance()
+{
+	LL_WARNS("Lua") << "Lua interpreter should not be directly accessed!" << llendl;
+	return sInstance;
+}
+// Static
+//	Called from MAIN thread
 void FLLua::callCommand(const std::string &command)
 {
 	//sInstance being NULL indicates immediate error in lua loading. User intervention needed (broken script 99% time). 
@@ -227,6 +208,107 @@ void FLLua::callCommand(const std::string &command)
 	sInstance->mQueuedCommands.push(command);
 	sInstance->mPendingCommands=true;
 	sInstance->unlockData();
+}
+
+// Static
+//	Called from lua thread. Already mutex locked.
+void FLLua::regClientEvent(CB_Base *entry)
+{
+	if(sInstance && entry)
+	{
+		sInstance->mQueuedEvents.push(entry);
+		sInstance->mPendingEvents=true;
+	}
+}
+#ifdef FL_PRI_EVENTS
+bool operator< (const CB_Base& entry1, const CB_Base& entry2)
+{
+	return entry1.pri > entry2.pri;	
+}
+bool operator> (const CB_Base& entry1, const CB_Base& entry2)
+{
+	return entry1.pri < entry2.pri;	
+}
+#endif
+// Static
+//	Called from MAIN thread
+void FLLua::execClientEvents()
+{
+	if(!sInstance)
+		return;
+	if(sInstance->mPendingEvents)
+	{
+		sInstance->mPendingEvents=false;
+		sInstance->lockData();
+		while(!sInstance->mQueuedEvents.empty())
+		{
+#ifdef FL_PRI_EVENTS
+			CB_Base *cb=sInstance->mQueuedEvents.top();
+#else
+			CB_Base *cb=sInstance->mQueuedEvents.front();
+#endif
+			cb->OnCall();
+			delete cb;
+			sInstance->mQueuedEvents.pop();
+		}
+		sInstance->unlockData();
+	}
+	if(sInstance->isPaused())
+	{
+		if(sInstance->mAllowPause) //shouldn't ever happen.
+		{
+			sInstance->unpause();
+			return;
+		}
+		int yields=0;
+		LLTimer timer;
+		timer.setTimerExpirySec(.25);
+		while(!sInstance->mAllowPause)//mAllowPause == true when Lua thread finishes loop.
+		{
+			sInstance->unpause();
+			yield(); //Hopefully let the Lua thread resume
+			yields++;
+			if(timer.hasExpired())
+			{
+				LL_WARNS("Lua") << "Aborting critical section after " 
+					<< timer.getElapsedTimeF64()*(F64)1000.f << "ms " << llendl;
+				sInstance->mAllowPause=true; // NOTE: Lua taking too much time. Force new critical requests
+											 // to next frame.
+				break;
+			}
+		}
+		int sec=sInstance->mCriticalSections;
+		if(sec)	//Main has resumed with Lua in a critical section. Not thread safe.
+			LL_WARNS("Lua") << sec << " critical sections active. Unsafe resume!" << llendl;
+		LL_INFOS("Lua") << "Finished critical section after " 
+			<< timer.getElapsedTimeF64()*(F64)1000.f << "ms. Yields=" << yields << llendl;
+	}	
+}
+// Static
+//	Called from lua thread
+bool FLLua::setCriticalSection(bool enter)
+{
+	if(!sInstance || sInstance->isStopped())
+		return false;
+	if(enter)
+	{
+		if(!sInstance->mAllowPause) //nested critical section
+		{
+			sInstance->mCriticalSections++;
+			return true;
+		}
+		LL_INFOS("Lua") << "Lua thread requesting critical section."  << llendl;
+		sInstance->mAllowPause=false;
+		sInstance->pause();
+		
+		while(sInstance->shouldSleep())
+			sInstance->mRunCondition->wait();
+		sInstance->mCriticalSections++;
+		LL_INFOS("Lua") << "Entering critical section."  << llendl;
+	}
+	else
+		sInstance->mCriticalSections--;
+	return true;
 }
 
 //Attempt to bind with Lua
@@ -262,7 +344,7 @@ bool FLLua::load()
 	}
 
 	LL_INFOS("Lua") << __LINE__ << ": Assigning _SLUA_CHANNEL" << llendl;	
-	// Assign _SLUA_CHANNEpLuaStack, which contains the channel name of the host client.
+	// Assign _SLUA_CHANNEL, which contains the channel name of the host client.
 	version = llformat("_SLUA_CHANNEL=\"%s\"",LL_CHANNEL);
 	if(luaL_dostring(pLuaStack, version.c_str()))
 	{
@@ -286,14 +368,16 @@ void FLLua::run()
 	LL_INFOS("Lua") << __LINE__ << ": *** THREAD LOOP STARTS HERE ***" << llendl;
 	while(1)
 	{
-		if (!pLuaStack || LLApp::isError() || LLApp::isStopped())
+		if (!pLuaStack /*|| mError*/ || LLApp::isError() || LLApp::isStopped())
 			break;	//Broked.
-			
-		//conditionals get weird here. atomic variables are expensive to access. Ensuring they are only checked once.
+
+		bool locked=false;
+		mAllowPause=true; //Let FLLUa::CriticalSection() sync with MAIN on first call.
+		// Process Hooks
 		if(mPendingHooks)
 		{
-			// Process Hooks
 			lockData();
+			locked=true;
 			mPendingHooks=false;
 			while(!mQueuedHooks.empty()) //Allow multiple hooks per loop.
 			{
@@ -303,45 +387,38 @@ void FLLua::run()
 				mQueuedHooks.pop();
 				delete hr; //Say no to memory leaks.
 			}
-			/*if(mError)		//hooks, no commands. unlock and do nothing.
-			{
-				unlockData();
-				break;
-			}
-			else */if(!mPendingCommands)
-			{
-				unlockData();
-				goto done;
-			}
+			//if(mError)goto endloop;
 		}
-		else if(mPendingCommands)	//no hooks, but are commands. lock and do commands
-			lockData();
-		else						//no hooks, no commands. do nothing
-			goto done;
-		
 		// Process Macros/Raw Commands
-		mPendingCommands=false;
-		while(!mQueuedCommands.empty())
+		if(mPendingCommands)
 		{
-			// Peek at the top of the stack
-			std::string &hr = mQueuedCommands.front(); //byref. faster.
-			if(FLLua::isMacro(hr))
-				RunMacro(hr); // Run macro.
-			else
-				RunString(hr); // Run command.
-			mQueuedCommands.pop(); //safe to pop now.
-		} 
-		unlockData();
-		/*if(mError)
-			break;*/
-done:
+			if(!locked)
+				lockData();
+			locked=true;
+			mPendingCommands=false;
+			while(!mQueuedCommands.empty())
+			{
+				// Peek at the top of the stack
+				std::string &hr = mQueuedCommands.front(); //byref. faster.
+				if(FLLua::isMacro(hr))
+					RunMacro(hr); // Run macro.
+				else
+					RunString(hr); // Run command.
+				mQueuedCommands.pop(); //safe to pop now.
+				//if(mError)goto endloop;
+			} 
+		}
+		mAllowPause=true;
+//endloop:
+		if(locked) 
+			unlockData(); //Always.
+		//if(mError)break;
 		yield();
 		ms_sleep(10);
-		
 	}
 	LL_INFOS("Lua") << __LINE__ << ": *** THREAD EXITING ***" << llendl;
 }
-// called from MAIN thread.
+//	Called from MAIN thread.
 bool FLLua::LoadFile(std::string  file)
 {
 	if(luaL_dofile(pLuaStack,file.c_str()))
@@ -369,7 +446,7 @@ bool FLLua::LoadFile(std::string  file)
 	}
 	return true;
 }
-// called from lua thread.
+//	Called from lua thread.
 void FLLua::RunMacro(const std::string &what)
 {
 	std::string  macroname;
@@ -412,6 +489,7 @@ void FLLua::RunMacro(const std::string &what)
 		LuaError(Lua_getErrorMessage(pLuaStack).c_str());
 }
 
+//	Called from lua thread.
 void FLLua::RunString(std::string &s)
 {
 	if(luaL_dostring(sInstance->pLuaStack,s.c_str()))
@@ -420,7 +498,7 @@ void FLLua::RunString(std::string &s)
 		LuaError(Lua_getErrorMessage(sInstance->pLuaStack).c_str());
 	}
 }
-
+//	Called from lua thread.
 void FLLua::ExecuteHook(HookRequest *hook)
 {
 #ifdef LUA_HOOK_SPAM
@@ -445,7 +523,7 @@ void FLLua::ExecuteHook(HookRequest *hook)
 			LL_ENDL;
 #endif
 		}
-		if(lua_pcall(pLuaStack,hook->getNumArgs()+1,1,0)!=0)
+		if(lua_pcall(pLuaStack,hook->getNumArgs()+1,1,0)!=0) //-1 -(args+1) +1   Current stack = +1
 		{
 			char errbuff[1024];
 			sprintf(errbuff,"Error executing the %s hook: %s",hook->getName(),lua_tostring(pLuaStack,-1));

@@ -188,7 +188,7 @@ void LLFloaterTeleportHistory::setButtonsEnabled(BOOL on)
 			on = FALSE;
 		}
 	}
-// [/RLVa:K]
+// [/RLVa:KB]
 
 	// enable or disable buttons
 	childSetEnabled("teleport", on);

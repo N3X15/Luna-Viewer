@@ -5,13 +5,13 @@ void LuaUpdateAppearance();
 void LuaDumpVisualParams();
 std::string LuaDumpVisualParamsToLuaCode();
 //std::string LuaDumpTargetVisParamsToLuaCode();
-double getParamDefaultWeight(const char* avid,const char* paramname);
-double getParamCurrentWeight(const char* avid,const char* paramname);
-double getParamMax(const char* avid,const char* paramname);
-double getParamMin(const char* avid,const char* paramname);
+double getParamDefaultWeight(const LLUUID &avid,const char*paramname);
+double getParamCurrentWeight(const LLUUID &avid,const char*paramname);
+double getParamMax(const LLUUID &avid,const char*paramname);
+double getParamMin(const LLUUID &avid,const char*paramname);
 
-void setParamOnSelf(const char* paramname,double weight);
-void setParamOnTarget(const char* target,const char* paramname,double weight);
+void setParamOnSelf(const std::string &paramname,double weight);
+void setParamOnTarget(const LLUUID &avid,const std::string &paramname,double weight);
 
 void LuaWear(const LLUUID& assetid);
 void LuaRemoveAllWearables();

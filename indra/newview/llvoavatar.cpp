@@ -3524,7 +3524,7 @@ void LLVOAvatar::idleUpdateNameTag(const LLVector3& root_pos_last)
 			}
 		}
 		else if (sRenderGroupTitles != mRenderGroupTitles)
-// [/RLVa]
+// [/RLVa:KB]
 		//if (sRenderGroupTitles != mRenderGroupTitles)
 		{
 			mRenderGroupTitles = sRenderGroupTitles;

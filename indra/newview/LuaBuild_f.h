@@ -1,4 +1,5 @@
-#pragma once
+#ifndef LUABUILD_F_H
+#define LUABUILD_F_H
 #include "llprimitive.h"
 
 //Determines the shape of the prim.
@@ -41,3 +42,4 @@ private:
 	//Physics?
 	bool mPhysx;
 };
+#endif //LUABUILD_F_H

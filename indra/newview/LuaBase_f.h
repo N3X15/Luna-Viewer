@@ -27,9 +27,13 @@
  * $Id$
  */
 
+
+bool isUUID(const std::string &str);
+
 void LuaSendChat(const char *msg,bool IsDebug=false);
 
-void LuaPrint(const char *msg);
+//LUA allows variable arguments for print. 
+void LuaPrint(const char *msg, const char *arg1=0,const char *arg2=0,const char *arg3=0,const char *arg4=0,const char *arg5=0); 
 
 // Pop up an alert window.
 void LuaAlert(const char* msg);

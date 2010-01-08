@@ -658,7 +658,8 @@ BOOL LLKeyframeMotion::onActivate()
 	// If the keyframe anim has an associated emote, trigger it. 
 	if( mJointMotionList->mEmoteName.length() > 0 )
 	{
-		if(LLUUID(mJointMotionList->mEmoteName) != mID) //phox
+		LLUUID id;
+		if(!id.set(mJointMotionList->mEmoteName,false) || id != mID) //phox
 		mCharacter->startMotion( gAnimLibrary.stringToAnimState(mJointMotionList->mEmoteName) );
 	}
 

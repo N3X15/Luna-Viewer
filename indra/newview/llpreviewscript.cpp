@@ -1992,7 +1992,7 @@ void LLLiveLSLEditor::onReset(void *userdata)
 	{
 		return;
 	}
-// [/RLV:KB]
+// [/RLVA:KB]
 	if(object)
 	{
 		LLMessageSystem* msg = gMessageSystem;
@@ -2420,7 +2420,7 @@ void LLLiveLSLEditor::onSave(void* userdata, BOOL close_after_save)
 	{
 		return;
 	}
-// [/RLV:KB]
+// [/RLVA:KB]
 
 	self->mCloseAfterSave = close_after_save;
 	self->saveIfNeeded();

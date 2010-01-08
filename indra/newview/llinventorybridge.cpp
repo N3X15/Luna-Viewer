@@ -4541,7 +4541,7 @@ void remove_inventory_category_from_avatar_step2( BOOL proceed, void* userdata)
 						continue;
 					}
 				}
-// [/RVLa:KB]
+// [/RLVa:KB]
 				gMessageSystem->newMessageFast(_PREHASH_DetachAttachmentIntoInv);
 				gMessageSystem->nextBlockFast(_PREHASH_ObjectData );
 				gMessageSystem->addUUIDFast(_PREHASH_AgentID, gAgent.getID() );

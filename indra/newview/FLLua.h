@@ -80,6 +80,7 @@ struct CB_Base;
 class FLLua : public LLThread
 {
 friend class HookRequest;
+friend struct CriticalSection;
 	//LOG_CLASS(FLLua);
 public:
 	FLLua();
@@ -97,7 +98,32 @@ public:
 	static void regClientEvent(CB_Base *entry);
 		//Called from MAIN thread
 	static void execClientEvents();
+	
+	/*
+	The concept of CriticalSections in this implementation is to ensure thread safe shared memory accessing.
+	When a CriticalSection() object is created it will pause the lua thread until the MAIN thread signals it's
+	safe to access this memory. The MAIN thread allows a 'safe' window of up to 25ms for lua to access shared
+	memory while it tries to finish its loop.
+	If lua exceeds this window the MAIN thread will force itself to resume and the next CriticalSection request
+	by the lua thread will make the lua thread pause itself until MAIN signals once more.
+	
+	The CriticalSection structure simply facilitates keeping an accurate tally on CriticalSection accesses.
+	This tally is useful in determining if the MAIN thread is resuming while lua is still accessing shared
+	memory, which is not a thread safe condition. 
+	This scenario only happens when the lua thread exceeds the 'safe' window.
+	*/
+
+	struct CriticalSection
+	{
+		bool entered;
+		CriticalSection(){entered=FLLua::setCriticalSection(true);}
+		~CriticalSection(){if(entered)FLLua::setCriticalSection(false);}
+	};
+	LLAtomic32<int> mCriticalSections;
 private:
+	//	Called from lua thread
+	static bool setCriticalSection(bool enter); //use FLLua::CriticalSection() instead.
+
 	bool load(); //pulled out of run so we can determine if load failed immediately.
 
 	void run();
@@ -124,10 +150,14 @@ private:
 	// Outbound queued commands
 	std::queue<std::string> mQueuedCommands;
 	// Inbound queued events
+#ifdef FL_PRI_EVENTS
+	std::priority_queue<CB_Base*, std::vector<CB_Base*>,std::greater<std::vector<CB_Base*>::value_type> > mQueuedEvents;
+#else
 	std::queue<CB_Base*> mQueuedEvents;
-	
+#endif
 	//Mutex free:
 	// Read in both loops
+	bool mAllowPause;	
 	//LLAtomic32<bool> mError;	//Not used right now
 	// Read in lua loop
 	LLAtomic32<bool> mPendingHooks;		//!mQueuedHooks.isEmpty()
@@ -146,9 +176,7 @@ private:
 	Make sure passed variables are NON-VOLATILE.
 
 	Usage:
-		new CB_Args2<std::string,double>(setQueuedParams,paramname,1);
-
-	Note the 'new'. It's required. These objects have to be dynamically allocated.
+		CB_Args2<std::string,double>(setQueuedParams,paramname,1);
 
 	Now, why is this needed at all? Some functions exposed to Lua will not be able to 
 	safely be ran from the lua thread. 
@@ -158,47 +186,63 @@ private:
 
 */
 
-struct CB_Base
+struct CB_Base //If you don't want to bother with the odd templates below, just derive from this manually.
 {
-	virtual void OnCall(){}; //overridden by derived classes.
-	CB_Base(){FLLua::regClientEvent(this);}; //Always called
+	static CB_Base *sent;
+	int pri;
+	virtual void OnCall(){}; //overridden by derived classes. Called by main thread on next frame.
+	virtual CB_Base *clone(){return this;}//overridden by derived classes. Default must be dynamic.
+	CB_Base(int _pri=5){pri=_pri;if(sent!=this)FLLua::regClientEvent(sent=clone());}; //Always called
 };
-struct CB_Args0 : public CB_Base
+struct CB_Dummy_Args0 : public CB_Base
 {
 	typedef void (*CB_FN)();
 	virtual void OnCall()	{fn();}
+	virtual CB_Base *clone(){return new CB_Dummy_Args0(*this);} //Pass a dynamically allocated copy to the queue
 	CB_FN fn;
-	CB_Args0(const CB_FN _fn) : CB_Base(), fn(_fn){}
+	CB_Dummy_Args0(CB_FN _fn, int _pri=5) : fn(_fn),CB_Base(_pri){}
 };
+// Compiler error C2530: refrences must be initialized. Hurf durf.
+inline void CB_Args0(void (*CB_FN)(),int _pri=5){CB_Dummy_Args0(CB_FN,_pri);}
 template <typename T1>
 struct CB_Args1 : public CB_Base
 {
 	typedef void (*CB_FN)(T1& _t1);
 	virtual void OnCall()	{fn(t1);}
+	virtual CB_Base *clone(){return new CB_Args1(*this);}
 	CB_FN fn;
 	T1 t1;
-	CB_Args1(const CB_FN _fn,const T1& _t1) : CB_Base(), fn(_fn), t1(_t1)
-	{}
+	CB_Args1(CB_FN _fn,const T1 &_t1, int _pri=5) : fn(_fn), t1(_t1), CB_Base(_pri){}
 };
 template <typename T1,typename T2>
 struct CB_Args2 : public CB_Base
 {
-	typedef void (*CB_FN)(T1& _t1,T2& _t2);
+	typedef void (*CB_FN)(T1 &_t1,T2 &_t2);
 	virtual void OnCall()	{fn(t1,t2);}
+	virtual CB_Base *clone(){return new CB_Args2(*this);}
 	CB_FN fn;
 	T1 t1;	T2 t2;
-	CB_Args2(const CB_FN _fn,const T1& _t1,const T2& _t2) : fn(_fn), CB_Base(), t1(_t1), t2(_t2)
-	{}
+	CB_Args2(CB_FN _fn,const T1 &_t1,const T2 &_t2, int _pri=5) : fn(_fn), t1(_t1), t2(_t2), CB_Base(_pri){}
 };
 template <typename T1,typename T2,typename T3>
 struct CB_Args3 : public CB_Base
 {
-	typedef void (*CB_FN)(T1& _t1,T2& _t2,T3& _t3);
+	typedef void (*CB_FN)(T1 &_t1,T2 &_t2,T3 &_t3);
 	virtual void OnCall()	{fn(t1,t2,t3);}
+	virtual CB_Base *clone(){return new CB_Args3(*this);}
 	CB_FN fn;
-	T1 t1;	T2 t2;	T2 t3;
-	CB_Args3(const CB_FN _fn,const T1& _t1,const T2& _t2,const T3& _t3) : fn(_fn), CB_Base(), t1(_t1), t2(_t2), t3(_t3)
-	{}
+	T1 t1;	T2 t2;	T3 t3;
+	CB_Args3(CB_FN _fn,const T1 &_t1,const T2 &_t2,const T3 &_t3, int _pri=5) : fn(_fn), t1(_t1), t2(_t2), t3(_t3), CB_Base(_pri){}
+};
+template <typename T1,typename T2,typename T3,typename T4>
+struct CB_Args4 : public CB_Base
+{
+	typedef void (*CB_FN)(T1 &_t1,T2 &_t2,T3 &_t3,T4 &_t4);
+	virtual void OnCall()	{fn(t1,t2,t3,t3,t4);}
+	virtual CB_Base *clone(){return new CB_Args4(*this);}
+	CB_FN fn;
+	T1 t1;	T2 t2;	T3 t3;  T4 t4;
+	CB_Args4(CB_FN _fn,const T1 &_t1,const T2 &_t2,const T3 &_t3, int _pri=5) : fn(_fn), t1(_t1), t2(_t2), t3(_t3), t4(_t4), CB_Base(_pri){}
 };
 //etc...
 

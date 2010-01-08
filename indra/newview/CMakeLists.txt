@@ -45,6 +45,7 @@ include(ViewerMiscLibs)
 
 #SET_SOURCE_FILES_PROPERTIES(LuaBase.swig PROPERTIES CPLUSPLUS ON)
 #SET_SOURCE_FILES_PROPERTIES(LuaBase.swig PROPERTIES SWIG_FLAGS "-includeall")
+#SET(CMAKE_SWIG_FLAGS "-c++")
 #SWIG_ADD_MODULE(LuaBase lua LuaBase.swig LuaBase.cpp)
 
 #find_package(Cg)
