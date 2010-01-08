@@ -23,8 +23,6 @@
 
 local PluginName="AutoMute";
 
-dofile(getLuaFolder().."/Hooks/"..PluginName.."/AutoMuteSounds.lua")
-
 function isInTable(items,snd)
 	for _,v in pairs(items) do
 		if v == snd then
@@ -32,12 +30,6 @@ function isInTable(items,snd)
 		end
 	end
 	return false
-end
-
-function tbllen(items)
-	i=0
-	for _,v in pairs(items) do i=i+1 end
-	return i
 end
 	
 
@@ -62,7 +54,37 @@ local AMCheckSoundTrigger = function (sound_id, owner_id, gain, object_id, paren
 	end
 end
 
+--getID() << audio_uuid << owner_id << gain << flags
+local AMCheckAttachedSound = function (object_id,audio_uuid,owner_id,gain,flags)
+	if owner_id=="00000000-0000-0000-0000-000000000000" then return end
 
-print("[AutoMute] Loaded "..tbllen(gAutoMuteSounds).." sounds for automuting.")
+	if isInTable(gAutoMuteSounds,tostring(audio_uuid))==true then
+		muteAvatar(owner_id)
+		if isMuted(owner_id,key2name(owner_id)) then
+			error(key2name(owner_id).." is playing really damn loud noises.")
+			say("This user has automatically muted "..key2name(owner_id).." for playing a sound on FlexLife's automute list.")
+		end
+	else
+		print("[OBJECT] "..key2name(owner_id).." is playing "..audio_uuid)
+	end
+end
 
-SetHook("OnSoundTriggered",AMCheckSoundTrigger)
+local AMCheckAttachedParticles = function(object_id,owner_id,texture_id,particle_data)
+	if owner_id=="00000000-0000-0000-0000-000000000000" or texture_id=="00000000-0000-0000-0000-000000000000" then return end
+
+	if isInTable(gAutoMuteTextures,tostring(texture_id))==true then
+		ClearParticlesFromObject(object_id)
+	end	
+end
+
+gAutoMuteSounds={}
+gAutoMuteTextures={}
+
+flLoadDir("lua/Hooks/"..PluginName.."/DB/",true)
+
+print("[AutoMute] Loaded "..tostring(#gAutoMuteSounds).." sounds for automuting.")
+print("[AutoMute] Loaded "..tostring(#gAutoMuteTextures).." textures for automuting.")
+
+SetHook("OnSoundTriggered",	AMCheckSoundTrigger)
+SetHook("OnAttachedSound",	AMCheckAttachedSound)
+SetHook("OnAttachedParticles",	AMCheckAttachedParticles)

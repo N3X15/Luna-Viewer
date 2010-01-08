@@ -1,12 +1,14 @@
 #ifndef LUAWINDLIGHT_H
 #define LUAWINDLIGHT_H
 
-#include "LuaTypes.h"
+#include "v3math.h"
+#include "v4math.h"
+#include "v2math.h"
 
 class WLWater
 {
-	static void SetFogColor(LuaVector3 rgb, float glow);
-	static void GetFogColor(LuaVector3 *rgb,float *glow);
+	static void SetFogColor(LLVector3 rgb, float glow);
+	static void GetFogColor(LLVector3 *rgb,float *glow);
 
 	static void SetFogDensity(float density);
 	static float GetFogDensity();
@@ -14,8 +16,8 @@ class WLWater
 	static void SetUnderwaterFogMod(float density);
 	static float GetUnderwaterFogMod();	
 
-	static void SetNormalScale(LuaVector3 scale);
-	static LuaVector3 GetNormalScale();
+	static void SetNormalScale(LLVector3 scale);
+	static LLVector3 GetNormalScale();
 
 	static void SetFresnelScale(float Scale);
 	static float GetFresnelScale();

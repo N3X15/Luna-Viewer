@@ -43,7 +43,7 @@
 	OnBridgeFailed		( )
 	OnBridgeWorking		(integer Channel)
 
-	OnSoundAttached		(LLUUID object_id, LLUUID audio_uuid, LLUUID owner_id, float gain, integer flags)
+	OnAttachedSound		(LLUUID object_id, LLUUID audio_uuid, LLUUID owner_id, float gain, integer flags)
 	OnAttachedParticles	(LLUUID object_id, LLUUID owner_id, LLUUID image_id, string ParticleSystemInfo)
 	
 ]]--

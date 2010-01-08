@@ -67,6 +67,30 @@ function string.ends(String,End)
    return End=='' or string.sub(String,-string.len(End))==End
 end
 
+-- return a new array containing the concatenation of all of its 
+-- parameters. Scaler parameters are included in place, and array 
+-- parameters have their values shallow-copied to the final array.
+-- Note that userdata and function values are treated as scalar.
+--[[
+function array_concat(...) 
+    local t = {}
+    for arg = 1,select("#",...) do
+        if type(arg)=="table" then
+            for _,v in ipairs(arg) do
+                t[#t+1] = v
+            end
+        else
+            t[#t+1] = arg
+        end
+    end
+    return t
+end
+]]--
+
+function array_concat(a,b)
+	for k,v in pairs(a) do b[#b+1] = v end
+	return b;
+end
 --Easily check contents of _G and SL
 function DumpTable(tbl)
 	for n,v in pairs(tbl) do
@@ -87,11 +111,13 @@ function flLoadDir(dir,silent)
 		local ext=string.sub(ent,-10)
 		--print(ext)
 		if ext=="_init_.lua" then
-			if silent==false then
-				local hookname=string.sub(ent,string.len(dir)+1,-12)
-				print(" * Loading plugin: "..hookname)
+			local hookname=string.sub(ent,string.len(dir)+1,-12)
+			if not string.find(hookname,"/") then 
+				if not silent then
+					print(" * Loading plugin: "..hookname)
+				end
+				dofile(ent)
 			end
-			dofile(ent)
 		end
 	end
 end

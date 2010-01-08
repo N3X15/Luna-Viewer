@@ -8,6 +8,7 @@
 #include "v3math.h"
 #include "v4math.h"
 #include "v4color.h"
+#include "FLLua.h"
 
 /*
 --- C++ PARTICLES ---
@@ -93,6 +94,18 @@ inline LLVector4 LLColor42Vector4(const LLColor4& a)
 	b.mV[VW]=a.mV[VW];
 	return b;
 }
+
+
+inline void ParticleSystem_AttachToObject_Event(LLPartSysData &psys,LLUUID &objID,LLUUID &ownerID)
+{
+	LLViewerObject *o=gObjectList.findObject(objID);
+	if(o==NULL)
+	{
+		return;
+	}
+	o->setParticleSource(psys,ownerID);
+}
+
 class ParticleSystem
 {
 public:
@@ -183,7 +196,7 @@ public:
 	std::string 	GetTargetUUID(){ return mTargetID.asString();}
 	void		SetTargetUUID(std::string target){ mTargetID=LLUUID(target);}
 
-	void AttachToObject(std::string ObjectUUID,std::string OwnerUUID);
+	void AttachToObject(LLUUID ObjectUUID,LLUUID OwnerUUID);
 
 	void AddFlag(int flag)
 	{
@@ -265,18 +278,17 @@ private:
 	LLUUID		mTargetID;
 };
 
-inline void ParticleSystem::AttachToObject(std::string ObjUUID,std::string OwnerUUID)
+inline void ParticleSystem::AttachToObject(LLUUID ObjUUID,LLUUID OwnerUUID)
 {
-	LLUUID objid(ObjUUID);
-	LLUUID ownid(OwnerUUID);
-	LLViewerObject *o=gObjectList.findObject(objid);
-	if(o==NULL)
-	{
-		return;
-	}
-	o->setParticleSource(asParticleSystem(),ownid);
+	new CB_Args3<LLPartSysData,LLUUID,LLUUID>(&ParticleSystem_AttachToObject_Event,asParticleSystem(),ObjUUID,OwnerUUID);
 }
-inline void ClearParticlesFromObject(std::string ObjUUID,std::string OwnerUUID)
+
+#ifdef SWIG
+%ignore ClearParticlesFromObject_Event(std::string,std::string);
+%ignore ParticleSystem_AttachToObject_Event(LLPartSysData,LLUUID,LLUUID);
+#endif
+
+inline void ClearParticlesFromObject_Event(std::string &ObjUUID,std::string &OwnerUUID)
 {
 	LLUUID objid(ObjUUID);
 	LLUUID ownid(OwnerUUID);
@@ -287,6 +299,12 @@ inline void ClearParticlesFromObject(std::string ObjUUID,std::string OwnerUUID)
 	}
 	o->deleteParticleSource();
 }
+
+inline void ClearParticlesFromObject(std::string ObjUUID,std::string OwnerUUID)
+{
+	new CB_Args2<std::string,std::string>(&ClearParticlesFromObject_Event,ObjUUID,OwnerUUID);
+}
+
 
 
 

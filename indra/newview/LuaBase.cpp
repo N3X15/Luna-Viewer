@@ -3922,6 +3922,43 @@ fail:
 }
 
 
+static int _wrap_ParticleSystem_AttachToObject_Event(lua_State* L) {
+  int SWIG_arg = 0;
+  LLPartSysData *arg1 = 0 ;
+  LLUUID *arg2 = 0 ;
+  LLUUID *arg3 = 0 ;
+  
+  SWIG_check_num_args("ParticleSystem_AttachToObject_Event",3,3)
+  if(!lua_isuserdata(L,1)) SWIG_fail_arg("ParticleSystem_AttachToObject_Event",1,"LLPartSysData &");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("ParticleSystem_AttachToObject_Event",2,"LLUUID &");
+  if(!lua_isuserdata(L,3)) SWIG_fail_arg("ParticleSystem_AttachToObject_Event",3,"LLUUID &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLPartSysData,0))){
+    SWIG_fail_ptr("ParticleSystem_AttachToObject_Event",1,SWIGTYPE_p_LLPartSysData);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_LLUUID,0))){
+    SWIG_fail_ptr("ParticleSystem_AttachToObject_Event",2,SWIGTYPE_p_LLUUID);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&arg3,SWIGTYPE_p_LLUUID,0))){
+    SWIG_fail_ptr("ParticleSystem_AttachToObject_Event",3,SWIGTYPE_p_LLUUID);
+  }
+  
+  ParticleSystem_AttachToObject_Event(*arg1,*arg2,*arg3);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
 static int _wrap_ParticleSystem_ParticleMaxAge_set(lua_State* L) {
   int SWIG_arg = 0;
   ParticleSystem *arg1 = (ParticleSystem *) 0 ;
@@ -5099,20 +5136,24 @@ fail:
 static int _wrap_ParticleSystem_AttachToObject(lua_State* L) {
   int SWIG_arg = 0;
   ParticleSystem *arg1 = (ParticleSystem *) 0 ;
-  std::string arg2 ;
-  std::string arg3 ;
+  LLUUID arg2 ;
+  LLUUID arg3 ;
   
   SWIG_check_num_args("AttachToObject",3,3)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("AttachToObject",1,"ParticleSystem *");
-  if(!lua_isstring(L,2)) SWIG_fail_arg("AttachToObject",2,"std::string");
-  if(!lua_isstring(L,3)) SWIG_fail_arg("AttachToObject",3,"std::string");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("AttachToObject",2,"LLUUID");
+  if(!lua_isstring(L,3)) SWIG_fail_arg("AttachToObject",3,"LLUUID");
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ParticleSystem,0))){
     SWIG_fail_ptr("ParticleSystem_AttachToObject",1,SWIGTYPE_p_ParticleSystem);
   }
   
-  (&arg2)->assign(lua_tostring(L,2),lua_strlen(L,2));
-  (&arg3)->assign(lua_tostring(L,3),lua_strlen(L,3));
+  
+  SWIG_contract_assert((&arg2)->set(lua_tostring(L,2),false),"Must be of UUID format.");
+  
+  
+  SWIG_contract_assert((&arg3)->set(lua_tostring(L,3),false),"Must be of UUID format.");
+  
   (arg1)->AttachToObject(arg2,arg3);
   
   return SWIG_arg;
@@ -5246,6 +5287,36 @@ static swig_lua_attribute swig_ParticleSystem_attributes[] = {
 static swig_lua_class *swig_ParticleSystem_bases[] = {0};
 static const char *swig_ParticleSystem_base_names[] = {0};
 static swig_lua_class _wrap_class_ParticleSystem = { "ParticleSystem", &SWIGTYPE_p_ParticleSystem,_wrap_new_ParticleSystem, swig_delete_ParticleSystem, swig_ParticleSystem_methods, swig_ParticleSystem_attributes, swig_ParticleSystem_bases, swig_ParticleSystem_base_names };
+
+static int _wrap_ClearParticlesFromObject_Event(lua_State* L) {
+  int SWIG_arg = 0;
+  std::string *arg1 = 0 ;
+  std::string *arg2 = 0 ;
+  
+  SWIG_check_num_args("ClearParticlesFromObject_Event",2,2)
+  if(!lua_isuserdata(L,1)) SWIG_fail_arg("ClearParticlesFromObject_Event",1,"std::string &");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("ClearParticlesFromObject_Event",2,"std::string &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_std__string,0))){
+    SWIG_fail_ptr("ClearParticlesFromObject_Event",1,SWIGTYPE_p_std__string);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_std__string,0))){
+    SWIG_fail_ptr("ClearParticlesFromObject_Event",2,SWIGTYPE_p_std__string);
+  }
+  
+  ClearParticlesFromObject_Event(*arg1,*arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
 
 static int _wrap_ClearParticlesFromObject(lua_State* L) {
   int SWIG_arg = 0;
@@ -6752,6 +6823,8 @@ static const struct luaL_reg swig_commands[] = {
     { "LuaGetAvatar", _wrap_LuaGetAvatar},
     { "Vector42LLColor4", _wrap_Vector42LLColor4},
     { "LLColor42Vector4", _wrap_LLColor42Vector4},
+    { "ParticleSystem_AttachToObject_Event", _wrap_ParticleSystem_AttachToObject_Event},
+    { "ClearParticlesFromObject_Event", _wrap_ClearParticlesFromObject_Event},
     { "ClearParticlesFromObject", _wrap_ClearParticlesFromObject},
     {0,0}
 };

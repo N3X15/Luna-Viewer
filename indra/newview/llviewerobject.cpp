@@ -4353,8 +4353,7 @@ void LLViewerObject::setAttachedSound(const LLUUID &audio_uuid, const LLUUID& ow
 	}
 	
 	if (audio_uuid.isNull())
-	{	
-		LUA_CALL("OnAttachedSound") << getID() << audio_uuid << owner_id << gain << flags << LUA_END;
+	{
 		if (!mAudioSourcep)
 		{
 			return;
@@ -4370,12 +4369,14 @@ void LLViewerObject::setAttachedSound(const LLUUID &audio_uuid, const LLUUID& ow
 			mAudioSourcep = NULL;
 		}
 		else if (flags & LL_SOUND_FLAG_STOP)
-        {
+        	{	
 			// Just shut off the sound
 			mAudioSourcep->play(LLUUID::null);
 		}
 		return;
 	}
+
+	LUA_CALL("OnAttachedSound") << getID() << audio_uuid << owner_id << gain << flags << LUA_END;
 	if (flags & LL_SOUND_FLAG_LOOP
 		&& mAudioSourcep && mAudioSourcep->isLoop() && mAudioSourcep->getCurrentData()
 		&& mAudioSourcep->getCurrentData()->getID() == audio_uuid)
