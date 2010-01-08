@@ -25,11 +25,8 @@
 %module SL
 
 //Fixed for Visual Studio
-%begin %{
-#include "llviewerprecompiledheaders.h"
-%}
 %{
-
+#include "llviewerprecompiledheaders.h"
 
 #include "stdtypes.h"
 #include "LuaUI.h"

@@ -41,15 +41,21 @@ static float GetUnderwaterFogMod()
 
 static void SetNormalScale(LLVector3 scale)
 {
-	LLWaterParamManager::instance()->mNormalScale;
+	LLWaterParamManager::instance()->mNormalScale=scale;
 }
 static LLVector3 GetNormalScale()
 {
 	return LLWaterParamManager::instance()->mNormalScale;
 }
 
-static void SetFresnelScale(float Scale);
-static float GetFresnelScale();
+static void SetFresnelScale(float Scale)
+{
+	LLWaterParamManager::instance()->mFresnelScale=Scale;
+}
+static float GetFresnelScale()
+{
+	return LLWaterParamManager::instance()->mFresnelScale;
+}
 
 static void SetFresnelOffset(float offset);
 static float GetFresnelOffset();
@@ -61,7 +67,7 @@ static void SetScaleBelow(float scale);
 static float GetScaleBelow();
 
 static void SetBlurMultiplier(float scale);
-static float GetBluMultiplier();
+static float GetBlurMultiplier();
 
 static void SetWave1Dir(float  x,float  y);
 static void GetWave1Dir(float *x,float *y);

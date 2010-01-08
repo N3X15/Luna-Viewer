@@ -1,3 +1,25 @@
+/**
+ * @file LuaAvatar_f.cpp
+ * @brief FlexLife Viewer Lua Framework:  Appearance bindings
+ * @author N3X15
+ *
+ *  Copyright (C) 2008-2009 FlexLife Contributors
+ *
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
 #include "llviewerprecompiledheaders.h"
 
 #include "LuaBase_f.h"
@@ -105,10 +127,9 @@ std::string  LuaDumpVisualParamsToLuaCode()
 	return param_msg;
 }
 
-double getParamDefaultWeight(const char* avid,const char* paramname)
+double getParamDefaultWeight(const LLUUID &avid,const char* paramname)
 {
-	LLUUID uuid(avid);
-	LLViewerObject *o=gObjectList.findObject(uuid);
+	LLViewerObject *o=gObjectList.findObject(avid);
 	if(!o->isAvatar())
 	{
 		LuaError("Object is not an avatar.");
@@ -126,10 +147,9 @@ double getParamDefaultWeight(const char* avid,const char* paramname)
 	return (double)p->getDefaultWeight();
 }
 
-double getParamCurrentWeight(const char* avid,const char* paramname)
+double getParamCurrentWeight(const LLUUID &avid,const char* paramname)
 {
-	LLUUID uuid(avid);
-	LLViewerObject *o=gObjectList.findObject(uuid);
+	LLViewerObject *o=gObjectList.findObject(avid);
 	if(!o->isAvatar())
 	{
 		LuaError("Object is not an avatar.");
@@ -147,10 +167,9 @@ double getParamCurrentWeight(const char* avid,const char* paramname)
 	return (double)p->getCurrentWeight();
 }
 
-double getParamMax(const char* avid,const char* paramname)
+double getParamMax(const LLUUID &avid,const char* paramname)
 {
-	LLUUID uuid(avid);
-	LLViewerObject *o=gObjectList.findObject(uuid);
+	LLViewerObject *o=gObjectList.findObject(avid);
 	if(!o->isAvatar())
 	{
 		LuaError("Object is not an avatar.");
@@ -168,10 +187,9 @@ double getParamMax(const char* avid,const char* paramname)
 	return (double)p->getMaxWeight();
 }
 
-double getParamMin(const char* avid,const char* paramname)
+double getParamMin(const LLUUID &avid,const char* paramname)
 {
-	LLUUID uuid(avid);
-	LLViewerObject *o=gObjectList.findObject(uuid);
+	LLViewerObject *o=gObjectList.findObject(avid);
 	if(!o->isAvatar())
 	{
 		LuaError("Object is not an avatar.");
@@ -193,33 +211,47 @@ double getParamMin(const char* avid,const char* paramname)
 // Set
 //------------------------------------------------------------------------
 
-void setParams_Event(std::string &target, std::string &name, double &weight)
+void setParams_Event(LLUUID &avid, std::string &name, double &weight)
 {
-	LLVOAvatar *av=(LLVOAvatar *)gObjectList.findObject(LLUUID(target));
-	if(!av)
-		return;
-//	This fails on a lot of parameters, don't know why
-//	av->setVisualParamWeightNoClamp(name.c_str(),weight);
-	av->setVisualParamWeight(name.c_str(),weight);
-}
-
-void setParamOnTarget(const char* target,const char* paramname,double weight)
-{
-	new CB_Args3<std::string,std::string,double>(&setParams_Event,target,paramname,weight); //add to client event queue
-}
-
-void setParamOnSelf(const char* paramname,double weight)
-{
-	LLVOAvatar *me=gAgent.getAvatarObject();
-	if(!me)
+	LLViewerObject *obj=gObjectList.findObject(avid);
+	if(!obj)
 	{
-		LuaError("No Agent Avatar");
+		LuaError("No target found");
+		return;
+	}
+	else if(!obj->isAvatar())
+	{
+		LuaError("Target is not an avatar");
 		return;
 	}
 
-	new CB_Args3<std::string,std::string,double>(&setParams_Event,me->getID().asString(),paramname,weight); //add to client event queue
-	//new CB_Args2<std::string,double>(&setParams_Event,paramname,weight); //add to client event queue
+	LLVOAvatar *av=(LLVOAvatar*)obj;
+
+	LLVisualParam *p=av->getVisualParam(name.c_str());
+	if(!p)
+	{
+		std::string out("Invalid visual parameter: ");
+		out.append(name);
+		LuaError(out.c_str());
+		return;
+	}
+	p->setWeight((F32)weight,FALSE);
 }
+
+void setParamOnTarget(const LLUUID &target,std::string &paramname,double weight)
+{
+	CB_Args3<LLUUID,std::string,double>(&setParams_Event,target,paramname,weight); //add to client event queue
+}
+
+void setParamOnSelf(std::string &paramname,double weight)
+{
+	LLVOAvatar *me=gAgent.getAvatarObject();
+	if(!me)
+		LuaError("No Agent Avatar");
+	else
+		CB_Args3<LLUUID,std::string,double>(&setParams_Event,me->getID(),paramname,weight); //add to client event queue
+}
+
 void LuaWear_Event(const LLUUID& assetid)
 {
 	LLWearable *wear=LuaLoadWearable(assetid);
@@ -233,36 +265,25 @@ void LuaWear_Event(const LLUUID& assetid)
 		wear->writeToAvatar(false);
 	}
 }
+
 void LuaWear(const LLUUID& assetid)
 {
-	new CB_Args1<const LLUUID>(&LuaWear_Event,assetid);
-	/*LLWearable *wear=LuaLoadWearable(assetid);
-	if(!wear)
-	{
-		LuaError("No Wearable found");
-		return;
-	}
-	LLWearable *newwear=gWearableList.createCopy(wear);
-	if(!wear)
-	{
-		LuaError("Failed creation of new wearable");
-		return;
-	}
-	newwear->saveNewAsset();
-	newwear->writeToAvatar(false);*/
+	CB_Args1<const LLUUID>(&LuaWear_Event,assetid);
 }
+
 void LuaRemoveAllWearables_Event()
 {
 	LLAgent::userRemoveAllClothesStep2(TRUE,NULL);
 }
 void LuaRemoveAllWearables() // calls glGenTextures
 {
-	new CB_Args0(LuaRemoveAllWearables_Event);
-	//LLAgent::userRemoveAllClothesStep2(TRUE,NULL);
+	CB_Args0(LuaRemoveAllWearables_Event);
 }
 
 bool LuaSaveWearable(LLWearable *w)
 {
+	// TODO:  Add check for permissions here.
+
 	if(!w)
 		return false;
 	//Buffer to hold the char[] version of the LLUUID
@@ -350,6 +371,7 @@ LLWearable * LuaLoadWearable(const LLUUID& uuid)
 	return w;
 }
 
+// TE 0 = lol viewer tag.
 void LuaSetTEImage(int index,const LLUUID& id)
 {
 	LLVOAvatar *a=gAgent.getAvatarObject();
@@ -378,8 +400,7 @@ void LuaUpdateAppearance_Event()
 }
 void LuaUpdateAppearance()
 {
-	new CB_Args0(&LuaUpdateAppearance_Event);
-	//gAgent.saveAllWearables();
+	CB_Args0(&LuaUpdateAppearance_Event);
 }
 
 bool HasPermissions(LLViewerInventoryItem* item)

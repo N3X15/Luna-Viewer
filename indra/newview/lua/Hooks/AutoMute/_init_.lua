@@ -47,7 +47,7 @@ local AMCheckSoundTrigger = function (sound_id, owner_id, gain, object_id, paren
 		muteAvatar(owner_id)
 		if isMuted(owner_id,key2name(owner_id)) then
 			error(key2name(owner_id).." is playing really damn loud noises.")
-			say("This user has automatically muted "..key2name(owner_id).." for playing a sound on FlexLife's automute list.")
+			say("This user has automatically muted "..key2name(owner_id).." for playing a sound on FlexLife's automute list ("..audio_uuid..").")
 		end
 	else
 		print(key2name(owner_id).." is playing "..sound_id.."")
@@ -58,11 +58,11 @@ end
 local AMCheckAttachedSound = function (object_id,audio_uuid,owner_id,gain,flags)
 	if owner_id=="00000000-0000-0000-0000-000000000000" then return end
 
-	if isInTable(gAutoMuteSounds,tostring(audio_uuid))==true then
+	if isInTable(gAutoMuteSounds,tostring(audio_uuid)) then
 		muteAvatar(owner_id)
 		if isMuted(owner_id,key2name(owner_id)) then
 			error(key2name(owner_id).." is playing really damn loud noises.")
-			say("This user has automatically muted "..key2name(owner_id).." for playing a sound on FlexLife's automute list.")
+			say("This user has automatically muted "..key2name(owner_id).." for playing a sound on FlexLife's automute list ("..audio_uuid..").")
 		end
 	else
 		print("[OBJECT] "..key2name(owner_id).." is playing "..audio_uuid)
@@ -77,6 +77,17 @@ local AMCheckAttachedParticles = function(object_id,owner_id,texture_id,particle
 	end	
 end
 
+local AMCheckSetText = function(text,object_id)
+	if(object_id=="00000000-0000-0000-0000-000000000000" or text=="") then return end
+	
+	if isInTable(gAutoMuteText,text)==true then
+		muteAvatar(owner_id)
+		if isMuted(owner_id,key2name(owner_id)) then
+			error(key2name(owner_id).." is playing really damn loud noises.")
+			say("This user has automatically muted "..key2name(owner_id).." for playing a sound on FlexLife's automute list.")
+		end
+	end	
+end
 gAutoMuteSounds={}
 gAutoMuteTextures={}
 
@@ -88,3 +99,4 @@ print("[AutoMute] Loaded "..tostring(#gAutoMuteTextures).." textures for automut
 SetHook("OnSoundTriggered",	AMCheckSoundTrigger)
 SetHook("OnAttachedSound",	AMCheckAttachedSound)
 SetHook("OnAttachedParticles",	AMCheckAttachedParticles)
+--SetHook("OnSetText",		AMCheckSetText)
