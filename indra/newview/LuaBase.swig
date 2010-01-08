@@ -52,7 +52,6 @@
 %include <std_string.i>
 %include "../newview/LLUUID.i"
 
-%import "../newview/LuaTypes.h"
 %import "../llcommon/stdtypes.h"
 %import "../llprimitive/llprimitive.h"
 %import "../newview/llagent.h"

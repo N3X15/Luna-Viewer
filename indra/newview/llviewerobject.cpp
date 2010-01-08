@@ -4251,7 +4251,7 @@ void LLViewerObject::unpackParticleSource(const S32 block_num, const LLUUID& own
 			else
 			{
 				image = gImageList.getImage(mPartSourcep->mPartSysData.mPartImageID);
-				LUA_CALL("OnAttachedParticles") << getID() << owner_id << mPartSourcep->getImage()->getID() << LUA_END;
+				LUA_CALL("OnAttachedParticles") << getID() << owner_id << mPartSourcep->getImage()->getID() << mPartSourcep->mPartSysData.serialize() << LUA_END;
 			}
 			mPartSourcep->setImage(image);
 		}
@@ -4299,7 +4299,7 @@ void LLViewerObject::unpackParticleSource(LLDataPacker &dp, const LLUUID& owner_
 			else
 			{
 				image = gImageList.getImage(mPartSourcep->mPartSysData.mPartImageID);
-				LUA_CALL("OnAttachedParticles") << getID() << owner_id << mPartSourcep->getImage()->getID() << LUA_END;
+				LUA_CALL("OnAttachedParticles") << getID() << owner_id << mPartSourcep->getImage()->getID() << mPartSourcep->mPartSysData.serialize()  << LUA_END;
 			}
 			mPartSourcep->setImage(image);
 		}

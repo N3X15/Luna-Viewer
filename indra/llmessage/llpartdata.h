@@ -39,6 +39,10 @@
 #include "v2math.h"
 #include "v4color.h"
 
+#include <vector>
+#include <queue>
+#include <boost/tokenizer.hpp>
+
 class LLMessageSystem;
 class LLDataPacker;
 
@@ -193,6 +197,116 @@ public:
 	void clampSourceParticleRate();
 	
 	friend std::ostream&	 operator<<(std::ostream& s, const LLPartSysData &data);		// Stream a
+
+	std::string serialize()
+	{
+		std::ostringstream os;
+		os << "\nLLPartSysData";
+		os << ":" << mCRC;
+		os << ":" << mFlags;
+		os << ":" << mPattern;
+		os << ":" << mInnerAngle;					// Inner angle for PATTERN_ANGLE
+		os << ":" << mOuterAngle;					// Outer angle for PATTERN_ANGLE
+		os << ":" << mAngularVelocity.mV[VX];				// Angular velocity for emission axis (for PATTERN_ANGLE)
+		os << ":" << mAngularVelocity.mV[VY];
+		os << ":" << mAngularVelocity.mV[VZ];
+		os << ":" << mBurstRate;						// How often to do a burst of particles
+		os << ":" << mBurstPartCount;				// How many particles in a burst
+		os << ":" << mBurstRadius;
+		os << ":" << mBurstSpeedMin;					// Minimum particle velocity
+		os << ":" << mBurstSpeedMax;	
+		os << ":" << mMaxAge;						// Maximum lifetime of this particle source
+		os << ":" << mTargetUUID;					// Target UUID for the particle system
+		os << ":" << mStartAge;
+		os << ":" << mPartAccel.mV[VX];
+		os << ":" << mPartAccel.mV[VY];
+		os << ":" << mPartAccel.mV[VZ];
+		os << ":" << mPartImageID;
+
+		os << ":" << mPartData.mFlags;					// Particle state/interpolators in effect
+		os << ":" << mPartData.mMaxAge;					// Maximum age of the particle
+		os << ":" << mPartData.mStartColor.mV[VX];				// Start color
+		os << ":" << mPartData.mStartColor.mV[VY];
+		os << ":" << mPartData.mStartColor.mV[VZ];
+		os << ":" << mPartData.mStartColor.mV[VW];
+		os << ":" << mPartData.mEndColor.mV[VX];				// End color
+		os << ":" << mPartData.mEndColor.mV[VY];
+		os << ":" << mPartData.mEndColor.mV[VZ];
+		os << ":" << mPartData.mEndColor.mV[VW];
+		os << ":" << mPartData.mStartScale.mV[VX];				// Start scale
+		os << ":" << mPartData.mStartScale.mV[VY];
+		os << ":" << mPartData.mEndScale.mV[VX];				// End scale
+		os << ":" << mPartData.mEndScale.mV[VY];
+		os << ":" << mPartData.mPosOffset.mV[VX];				// Offset from source if using FOLLOW_SOURCE
+		os << ":" << mPartData.mPosOffset.mV[VY];
+		os << ":" << mPartData.mPosOffset.mV[VZ];
+		os << ":" << mPartData.mParameter;				// A single floating point parameter	
+		return os.str();
+	}
+
+	// This horrible code brought to you by N3X15.  Needed to serialize this structure prior to handing it off to Lua.
+	void deserialize(std::string data)
+	{
+		int i = 0;
+		typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
+		boost::char_separator<char> sep(":");
+		tokenizer tokens(data, sep);
+		tokenizer::iterator token_iter;
+		for(tokenizer::iterator token_iter = tokens.begin(); token_iter != tokens.end(); ++token_iter)
+		{
+			const std::string  &cur_token = *token_iter;
+			std::stringstream is(cur_token);
+
+			// IF-TREE FROM HELL
+			int idx=1; // idx=0 has the class tag.
+			if     (i==idx++) 	is >> mCRC;
+			else if(i==idx++)	is >> mFlags;
+			else if(i==idx++)	is >> mPattern;
+			else if(i==idx++)	is >> mInnerAngle;
+			else if(i==idx++)	is >> mOuterAngle;
+			else if(i==idx++)	is >> mAngularVelocity.mV[VX];
+			else if(i==idx++)	is >> mAngularVelocity.mV[VY];
+			else if(i==idx++)	is >> mAngularVelocity.mV[VZ];
+			else if(i==idx++)	is >> mBurstRate;
+			else if(i==idx++)	is >> mBurstPartCount;
+			else if(i==idx++)	is >> mBurstRadius;
+			else if(i==idx++)	is >> mBurstSpeedMin;
+			else if(i==idx++)	is >> mBurstSpeedMax;
+			else if(i==idx++)	is >> mOuterAngle;
+			else if(i==idx++)	is >> mMaxAge;
+			else if(i==idx++)	mTargetUUID	= LLUUID(cur_token);
+			else if(i==idx++)	is >> mStartAge;
+			else if(i==idx++)	is >> mPartAccel.mV[VX];
+			else if(i==idx++)	is >> mPartAccel.mV[VY];
+			else if(i==idx++)	is >> mPartAccel.mV[VZ];
+			else if(i==idx++)	mPartImageID	= LLUUID(cur_token);
+
+			else if(i==idx++)	is >> mPartData.mFlags;			// Particle state/interpolators in effect
+			else if(i==idx++)	is >> mPartData.mMaxAge;		// Maximum age of the particle
+
+			else if(i==idx++)	is >> mPartData.mStartColor.mV[VX];	// Start color
+			else if(i==idx++)	is >> mPartData.mStartColor.mV[VY];
+			else if(i==idx++)	is >> mPartData.mStartColor.mV[VZ];
+			else if(i==idx++)	is >> mPartData.mStartColor.mV[VW];
+	
+			else if(i==idx++)	is >> mPartData.mEndColor.mV[VX];				// End color
+			else if(i==idx++)	is >> mPartData.mEndColor.mV[VY];
+			else if(i==idx++)	is >> mPartData.mEndColor.mV[VZ];
+			else if(i==idx++)	is >> mPartData.mEndColor.mV[VW];
+
+			else if(i==idx++)	is >> mPartData.mStartScale.mV[VX];				// Start scale
+			else if(i==idx++)	is >> mPartData.mStartScale.mV[VY];
+
+			else if(i==idx++)	is >> mPartData.mEndScale.mV[VX];	// End scale
+			else if(i==idx++)	is >> mPartData.mEndScale.mV[VY];
+			
+			else if(i==idx++)	is >> mPartData.mPosOffset.mV[VX];				// Offset from source if using FOLLOW_SOURCE
+			else if(i==idx++)	is >> mPartData.mPosOffset.mV[VY];
+			else if(i==idx++)	is >> mPartData.mPosOffset.mV[VZ];
+		
+			else if(i==idx++)	is >> mPartData.mParameter;
+		}
+	}
 	
 public:
 	// Public because I'm lazy....

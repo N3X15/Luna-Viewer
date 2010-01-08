@@ -127,7 +127,6 @@ public:
 	LLPartSysData				mPartSysData;
 
 	void setTargetObject(LLViewerObject *objp);
-
 protected:
 	LLQuaternion				mRotation;			// Current rotation for particle source
 	LLPointer<LLViewerObject>	mTargetObjectp;		// Target object for the particle source
