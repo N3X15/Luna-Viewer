@@ -25,7 +25,7 @@
 
 #ifdef SWIG
 // Don't bind internal events to Lua.
-%ignore setParams_Event(std::string,std::string,double);
+%ignore setParams_Event(LLUUID,std::string,double);
 %ignore LuaWear_Event(LLUUID);
 %ignore LuaRemoveAllWearables_Event();
 %ignore LuaUpdateAppearance_Event();
@@ -45,8 +45,8 @@ double getParamCurrentWeight(const LLUUID &avid,const char*paramname);
 double getParamMax(const LLUUID &avid,const char*paramname);
 double getParamMin(const LLUUID &avid,const char*paramname);
 
-void setParamOnSelf(std::string &paramname,double weight);
-void setParamOnTarget(const LLUUID &target,std::string &paramname,double weight);
+void setParamOnSelf(std::string paramname,double weight);
+void setParamOnTarget(std::string target,std::string paramname,double weight);
 
 void LuaWear(const LLUUID& assetid);
 void LuaRemoveAllWearables();

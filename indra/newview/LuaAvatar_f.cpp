@@ -178,7 +178,7 @@ double getParamMax(const LLUUID &avid,const char* paramname)
 	LLVOAvatar *av=(LLVOAvatar *)o;
 	LLVisualParam *p=av->getVisualParam(paramname);
 	if(!p)
-	{		gAgent.saveWearable(WT_SHAPE,TRUE);
+	{	gAgent.saveWearable(WT_SHAPE,TRUE);
 		std::string out("Invalid visual parameter: ");
 		out.append(paramname);
 		LuaError(out.c_str());
@@ -211,22 +211,20 @@ double getParamMin(const LLUUID &avid,const char* paramname)
 // Set
 //------------------------------------------------------------------------
 
-void setParams_Event(LLUUID &avid, std::string &name, double &weight)
+void setParams_Event(std::string &avid, std::string &name, double &weight)
 {
-	LLViewerObject *obj=gObjectList.findObject(avid);
-	if(!obj)
+	LLViewerObject *o=gObjectList.findObject(LLUUID(avid));
+	if(!o)
 	{
-		LuaError("No target found");
+		LuaError("Can't find avatar.");
 		return;
 	}
-	else if(!obj->isAvatar())
+	if(!o->isAvatar())
 	{
-		LuaError("Target is not an avatar");
+		LuaError("Object is not an avatar.");
 		return;
 	}
-
-	LLVOAvatar *av=(LLVOAvatar*)obj;
-
+	LLVOAvatar *av=(LLVOAvatar *)o;
 	LLVisualParam *p=av->getVisualParam(name.c_str());
 	if(!p)
 	{
@@ -235,21 +233,24 @@ void setParams_Event(LLUUID &avid, std::string &name, double &weight)
 		LuaError(out.c_str());
 		return;
 	}
+	llinfos << "setParams_Event:  SetWeight." << llendl;
 	p->setWeight((F32)weight,FALSE);
+	llinfos << "setParams_Event:  END!" << llendl;
 }
 
-void setParamOnTarget(const LLUUID &target,std::string &paramname,double weight)
+void setParamOnTarget(std::string target,std::string paramname,double weight)
 {
-	CB_Args3<LLUUID,std::string,double>(&setParams_Event,target,paramname,weight); //add to client event queue
+	CB_Args3<std::string,std::string,double>(&setParams_Event,target,paramname,weight); //add to client event queue
 }
 
-void setParamOnSelf(std::string &paramname,double weight)
+void setParamOnSelf(std::string paramname,double weight)
 {
 	LLVOAvatar *me=gAgent.getAvatarObject();
 	if(!me)
 		LuaError("No Agent Avatar");
 	else
-		CB_Args3<LLUUID,std::string,double>(&setParams_Event,me->getID(),paramname,weight); //add to client event queue
+		CB_Args3<std::string,std::string,double>(&setParams_Event,me->getID().asString(),paramname,weight); //add to client event queue
+	llinfos << "setParamOnSelf: Queued." << llendl;
 }
 
 void LuaWear_Event(const LLUUID& assetid)

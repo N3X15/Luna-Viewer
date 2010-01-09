@@ -77,7 +77,7 @@
 
 #include "llfilepicker.h"
 
-#define FL2_DEBUG
+//#define FL2_DEBUG
 
 using namespace LLVOAvatarDefines;
 
@@ -1516,10 +1516,10 @@ void LLFloaterCustomize::open()
 void LLFloaterCustomize::setCurrentWearableType( EWearableType type )
 {
 #ifdef FL2_DEBUG
-    if( type == WT_INVALID)
-    {
-        llerrs << "Tried to set WT_INVALID as currentWearableType!" << llendl;
-    }
+	if( type == WT_INVALID)
+	{
+		llerrs << "Tried to set WT_INVALID as currentWearableType!" << llendl;
+	}
 #endif
 	if( LLFloaterCustomize::sCurrentWearableType != type )
 	{
@@ -1987,6 +1987,7 @@ void LLFloaterCustomize::switchToDefaultSubpart()
     if(sCurrentWearableType == WT_INVALID)
         setCurrentWearableType(WT_SHAPE);
 #endif
+
     getCurrentWearablePanel()->switchToDefaultSubpart();
 }
 

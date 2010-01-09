@@ -3609,19 +3609,15 @@ fail:
 
 static int _wrap_setParamOnSelf(lua_State* L) {
   int SWIG_arg = 0;
-  std::string *arg1 = 0 ;
+  std::string arg1 ;
   double arg2 ;
   
   SWIG_check_num_args("setParamOnSelf",2,2)
-  if(!lua_isuserdata(L,1)) SWIG_fail_arg("setParamOnSelf",1,"std::string &");
+  if(!lua_isstring(L,1)) SWIG_fail_arg("setParamOnSelf",1,"std::string");
   if(!lua_isnumber(L,2)) SWIG_fail_arg("setParamOnSelf",2,"double");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_std__string,0))){
-    SWIG_fail_ptr("setParamOnSelf",1,SWIGTYPE_p_std__string);
-  }
-  
+  (&arg1)->assign(lua_tostring(L,1),lua_strlen(L,1));
   arg2 = (double)lua_tonumber(L, 2);
-  setParamOnSelf(*arg1,arg2);
+  setParamOnSelf(arg1,arg2);
   
   return SWIG_arg;
   
@@ -3635,24 +3631,18 @@ fail:
 
 static int _wrap_setParamOnTarget(lua_State* L) {
   int SWIG_arg = 0;
-  LLUUID *arg1 = 0 ;
-  std::string *arg2 = 0 ;
+  std::string arg1 ;
+  std::string arg2 ;
   double arg3 ;
-  LLUUID temp1 ;
   
   SWIG_check_num_args("setParamOnTarget",3,3)
-  if(!lua_isstring(L,1)) SWIG_fail_arg("setParamOnTarget",1,"LLUUID const &");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("setParamOnTarget",2,"std::string &");
+  if(!lua_isstring(L,1)) SWIG_fail_arg("setParamOnTarget",1,"std::string");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("setParamOnTarget",2,"std::string");
   if(!lua_isnumber(L,3)) SWIG_fail_arg("setParamOnTarget",3,"double");
-  SWIG_contract_assert(temp1.set(lua_tostring(L,1),false),"Must be of UUID format.")
-  arg1=&temp1;
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_std__string,0))){
-    SWIG_fail_ptr("setParamOnTarget",2,SWIGTYPE_p_std__string);
-  }
-  
+  (&arg1)->assign(lua_tostring(L,1),lua_strlen(L,1));
+  (&arg2)->assign(lua_tostring(L,2),lua_strlen(L,2));
   arg3 = (double)lua_tonumber(L, 3);
-  setParamOnTarget((LLUUID const &)*arg1,*arg2,arg3);
+  setParamOnTarget(arg1,arg2,arg3);
   
   return SWIG_arg;
   

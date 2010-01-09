@@ -50,7 +50,7 @@ local AMCheckSoundTrigger = function (sound_id, owner_id, gain, object_id, paren
 			say("This user has automatically muted "..key2name(owner_id).." for playing a sound on FlexLife's automute list ("..audio_uuid..").")
 		end
 	else
-		print(key2name(owner_id).." is playing "..sound_id.."")
+		--print(key2name(owner_id).." is playing "..sound_id.."")
 	end
 end
 
@@ -65,7 +65,7 @@ local AMCheckAttachedSound = function (object_id,audio_uuid,owner_id,gain,flags)
 			say("This user has automatically muted "..key2name(owner_id).." for playing a sound on FlexLife's automute list ("..audio_uuid..").")
 		end
 	else
-		print("[OBJECT] "..key2name(owner_id).." is playing "..audio_uuid)
+		--print("[OBJECT] "..key2name(owner_id).." is playing "..audio_uuid)
 	end
 end
 
