@@ -77,6 +77,8 @@
 
 #include "llfilepicker.h"
 
+#define FL2_DEBUG
+
 using namespace LLVOAvatarDefines;
 
 //*TODO:translate : The ui xml for this really needs to be integrated with the appearance paramaters
@@ -1513,6 +1515,12 @@ void LLFloaterCustomize::open()
 // static
 void LLFloaterCustomize::setCurrentWearableType( EWearableType type )
 {
+#ifdef FL2_DEBUG
+    if( type == WT_INVALID)
+    {
+        llerrs << "Tried to set WT_INVALID as currentWearableType!" << llendl;
+    }
+#endif
 	if( LLFloaterCustomize::sCurrentWearableType != type )
 	{
 		LLFloaterCustomize::sCurrentWearableType = type; 
@@ -1971,9 +1979,15 @@ LLFloaterCustomize::~LLFloaterCustomize()
 	delete mInventoryObserver;
 }
 
+// TODO: Figure out why we get WT_INVALID from the XML parser...
+// Fixes FL-2, but it's a workaround.
 void LLFloaterCustomize::switchToDefaultSubpart()
 {
-	getCurrentWearablePanel()->switchToDefaultSubpart();
+#ifndef FL2_DEBUG
+    if(sCurrentWearableType == WT_INVALID)
+        setCurrentWearableType(WT_SHAPE);
+#endif
+    getCurrentWearablePanel()->switchToDefaultSubpart();
 }
 
 void LLFloaterCustomize::draw()
