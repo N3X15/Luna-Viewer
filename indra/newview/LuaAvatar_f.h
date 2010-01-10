@@ -46,7 +46,7 @@ double getParamMax(const LLUUID &avid,const char*paramname);
 double getParamMin(const LLUUID &avid,const char*paramname);
 
 void setParamOnSelf(std::string paramname,double weight);
-void setParamOnTarget(std::string target,std::string paramname,double weight);
+void setParamOnTarget(LLUUID target,std::string paramname,double weight);
 
 void LuaWear(const LLUUID& assetid);
 void LuaRemoveAllWearables();
