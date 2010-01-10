@@ -39,6 +39,7 @@
 #include "LuaAvatar_f.h"
 #include "LuaAgent_f.h"
 #include "LuaParticles.h"
+#include "LuaWindlight.h"
 #include "llprimitive.h"
 #include "llviewerobject.h"
 #include "llvovolume.h"
@@ -131,6 +132,10 @@ static int LuaBase_print (lua_State *L) {
 %include "../llcharacter/llcharacter.h"
 %include "../newview/llagent.h"
 
+
+extern bool gAllowWorldMap;
+extern LLAgent *gAgent;
+
 %include "LLVector.i"
 
 %rename (Vector2)	LLVector2;
@@ -139,6 +144,7 @@ static int LuaBase_print (lua_State *L) {
 //%rename (Color4)	LLColor4;
 
 %include "LuaParticles.h"
+%include "LuaWindlight.h"
 
 %include "../newview/LuaUI.h"
 
@@ -164,5 +170,3 @@ static int LuaBase_print (lua_State *L) {
 %rename (UICtrl) 		LuaUICtrl;
 %rename (UIManager)		LuaUIManager;
 
-extern bool gAllowWorldMap;
-extern LLAgent *gAgent;

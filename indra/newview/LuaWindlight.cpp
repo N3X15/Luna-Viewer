@@ -57,23 +57,59 @@ static float GetFresnelScale()
 	return LLWaterParamManager::instance()->mFresnelScale;
 }
 
-static void SetFresnelOffset(float offset);
-static float GetFresnelOffset();
+static void SetFresnelOffset(float offset)
+{
+	LLWaterParamManager::instance()->mFresnelOffset=offset;
+}
+static float GetFresnelOffset()
+{
+	return LLWaterParamManager::instance()->mFresnelOffset;
+}
 
-static void SetScaleAbove(float scale);
-static float GetScaleAbove();
+static void SetScaleAbove(float scale)
+{
+	LLWaterParamManager::instance()->mScaleAbove=scale;
+}
+static float GetScaleAbove()
+{
+	return LLWaterParamManager::instance()->mScaleAbove;
+}
 
-static void SetScaleBelow(float scale);
-static float GetScaleBelow();
+static void SetScaleBelow(float scale)
+{
+	LLWaterParamManager::instance()->mScaleBelow=scale;
+}
+static float GetScaleBelow()
+{
+	return LLWaterParamManager::instance()->mScaleBelow;
+}
 
-static void SetBlurMultiplier(float scale);
-static float GetBlurMultiplier();
+static void SetBlurMultiplier(float scale)
+{
+	LLWaterParamManager::instance()->mBlurMultiplier=scale;
+}
+static float GetBlurMultiplier()
+{
+	return LLWaterParamManager::instance()->mBlurMultiplier;
+}
 
-static void SetWave1Dir(float  x,float  y);
-static void GetWave1Dir(float *x,float *y);
+static void SetWave1Dir(LLVector2 dir)
+{
+	LLWaterParamManager::instance()->mWave1Dir=dir;
+}
+static LLVector2 GetWave1Dir()
+{
+	return LLWaterParamManager::instance()->mWave1Dir;
+}
 
-static void SetWave2Dir(float  x,float  y);
-static void GetWave2Dir(float *x,float *y);
+static void SetWave1Dir(LLVector2 dir)
+{
+	LLWaterParamManager::instance()->mWave2Dir=dir;
+}
+static LLVector2 GetWave2Dir()
+{
+	return LLWaterParamManager::instance()->mWave2Dir;
+}
 
 /*
 	childSetCommitCallback("WaterUnderWaterFogMod", onFloatControlMoved, &param_mgr->mUnderWaterFogMod);

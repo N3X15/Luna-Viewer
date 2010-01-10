@@ -1543,42 +1543,43 @@ SWIG_Lua_dostring(lua_State *L, const char* str) {
 #define SWIGTYPE_p_LuaUICtrl swig_types[50]
 #define SWIGTYPE_p_LuaUIManager swig_types[51]
 #define SWIGTYPE_p_ParticleSystem swig_types[52]
-#define SWIGTYPE_p_child_list_t swig_types[53]
-#define SWIGTYPE_p_const_child_list_t swig_types[54]
-#define SWIGTYPE_p_double swig_types[55]
-#define SWIGTYPE_p_eLayoutOrientation swig_types[56]
-#define SWIGTYPE_p_eObjectPartitions swig_types[57]
-#define SWIGTYPE_p_e_action_type swig_types[58]
-#define SWIGTYPE_p_e_anim_request swig_types[59]
-#define SWIGTYPE_p_e_camera_modes swig_types[60]
-#define SWIGTYPE_p_e_camera_position swig_types[61]
-#define SWIGTYPE_p_e_grid_mode swig_types[62]
-#define SWIGTYPE_p_e_object_update_type swig_types[63]
-#define SWIGTYPE_p_e_selection_type swig_types[64]
-#define SWIGTYPE_p_e_send_type swig_types[65]
-#define SWIGTYPE_p_float swig_types[66]
-#define SWIGTYPE_p_int swig_types[67]
-#define SWIGTYPE_p_iterator swig_types[68]
-#define SWIGTYPE_p_list_t swig_types[69]
-#define SWIGTYPE_p_long_long swig_types[70]
-#define SWIGTYPE_p_root_iterator swig_types[71]
-#define SWIGTYPE_p_root_object_iterator swig_types[72]
-#define SWIGTYPE_p_short swig_types[73]
-#define SWIGTYPE_p_signed_char swig_types[74]
-#define SWIGTYPE_p_skip_list_t swig_types[75]
-#define SWIGTYPE_p_std__string swig_types[76]
-#define SWIGTYPE_p_std__vectorT_LLCharacter_p_t swig_types[77]
-#define SWIGTYPE_p_unsigned_char swig_types[78]
-#define SWIGTYPE_p_unsigned_int swig_types[79]
-#define SWIGTYPE_p_unsigned_long_long swig_types[80]
-#define SWIGTYPE_p_unsigned_short swig_types[81]
-#define SWIGTYPE_p_valid_iterator swig_types[82]
-#define SWIGTYPE_p_valid_root_iterator swig_types[83]
-#define SWIGTYPE_p_vobj_list_t swig_types[84]
-#define SWIGTYPE_p_void swig_types[85]
-#define SWIGTYPE_p_wchar_t swig_types[86]
-static swig_type_info *swig_types[88];
-static swig_module_info swig_module = {swig_types, 87, 0, 0, 0, 0};
+#define SWIGTYPE_p_WLWater swig_types[53]
+#define SWIGTYPE_p_child_list_t swig_types[54]
+#define SWIGTYPE_p_const_child_list_t swig_types[55]
+#define SWIGTYPE_p_double swig_types[56]
+#define SWIGTYPE_p_eLayoutOrientation swig_types[57]
+#define SWIGTYPE_p_eObjectPartitions swig_types[58]
+#define SWIGTYPE_p_e_action_type swig_types[59]
+#define SWIGTYPE_p_e_anim_request swig_types[60]
+#define SWIGTYPE_p_e_camera_modes swig_types[61]
+#define SWIGTYPE_p_e_camera_position swig_types[62]
+#define SWIGTYPE_p_e_grid_mode swig_types[63]
+#define SWIGTYPE_p_e_object_update_type swig_types[64]
+#define SWIGTYPE_p_e_selection_type swig_types[65]
+#define SWIGTYPE_p_e_send_type swig_types[66]
+#define SWIGTYPE_p_float swig_types[67]
+#define SWIGTYPE_p_int swig_types[68]
+#define SWIGTYPE_p_iterator swig_types[69]
+#define SWIGTYPE_p_list_t swig_types[70]
+#define SWIGTYPE_p_long_long swig_types[71]
+#define SWIGTYPE_p_root_iterator swig_types[72]
+#define SWIGTYPE_p_root_object_iterator swig_types[73]
+#define SWIGTYPE_p_short swig_types[74]
+#define SWIGTYPE_p_signed_char swig_types[75]
+#define SWIGTYPE_p_skip_list_t swig_types[76]
+#define SWIGTYPE_p_std__string swig_types[77]
+#define SWIGTYPE_p_std__vectorT_LLCharacter_p_t swig_types[78]
+#define SWIGTYPE_p_unsigned_char swig_types[79]
+#define SWIGTYPE_p_unsigned_int swig_types[80]
+#define SWIGTYPE_p_unsigned_long_long swig_types[81]
+#define SWIGTYPE_p_unsigned_short swig_types[82]
+#define SWIGTYPE_p_valid_iterator swig_types[83]
+#define SWIGTYPE_p_valid_root_iterator swig_types[84]
+#define SWIGTYPE_p_vobj_list_t swig_types[85]
+#define SWIGTYPE_p_void swig_types[86]
+#define SWIGTYPE_p_wchar_t swig_types[87]
+static swig_type_info *swig_types[89];
+static swig_module_info swig_module = {swig_types, 88, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -1609,6 +1610,7 @@ typedef struct{} LANGUAGE_OBJ;
 #include "LuaAvatar_f.h"
 #include "LuaAgent_f.h"
 #include "LuaParticles.h"
+#include "LuaWindlight.h"
 #include "llprimitive.h"
 #include "llviewerobject.h"
 #include "llvovolume.h"
@@ -19785,6 +19787,37 @@ fail:
 }
 
 
+static int _wrap_new_WLWater(lua_State* L) {
+  int SWIG_arg = 0;
+  WLWater *result = 0 ;
+  
+  SWIG_check_num_args("WLWater::WLWater",0,0)
+  result = (WLWater *)new WLWater();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_WLWater,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static void swig_delete_WLWater(void *obj) {
+WLWater *arg1 = (WLWater *) obj;
+delete arg1;
+}
+static swig_lua_method swig_WLWater_methods[] = {
+    {0,0}
+};
+static swig_lua_attribute swig_WLWater_attributes[] = {
+    {0,0,0}
+};
+static swig_lua_class *swig_WLWater_bases[] = {0};
+static const char *swig_WLWater_base_names[] = {0};
+static swig_lua_class _wrap_class_WLWater = { "WLWater", &SWIGTYPE_p_WLWater,_wrap_new_WLWater, swig_delete_WLWater, swig_WLWater_methods, swig_WLWater_attributes, swig_WLWater_bases, swig_WLWater_base_names };
+
 static int _wrap_new_LuaUICtrl__SWIG_0(lua_State* L) {
   int SWIG_arg = 0;
   std::string arg1 ;
@@ -21524,6 +21557,7 @@ static swig_type_info _swigt__p_LuaTextBox = {"_p_LuaTextBox", "LuaTextBox *", 0
 static swig_type_info _swigt__p_LuaUICtrl = {"_p_LuaUICtrl", "LuaUICtrl *", 0, 0, (void*)&_wrap_class_LuaUICtrl, 0};
 static swig_type_info _swigt__p_LuaUIManager = {"_p_LuaUIManager", "LuaUIManager *", 0, 0, (void*)&_wrap_class_LuaUIManager, 0};
 static swig_type_info _swigt__p_ParticleSystem = {"_p_ParticleSystem", "ParticleSystem *", 0, 0, (void*)&_wrap_class_ParticleSystem, 0};
+static swig_type_info _swigt__p_WLWater = {"_p_WLWater", "WLWater *", 0, 0, (void*)&_wrap_class_WLWater, 0};
 static swig_type_info _swigt__p_child_list_t = {"_p_child_list_t", "child_list_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_const_child_list_t = {"_p_const_child_list_t", "const_child_list_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_double = {"_p_double", "double *|F64 *", 0, 0, (void*)0, 0};
@@ -21613,6 +21647,7 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_LuaUICtrl,
   &_swigt__p_LuaUIManager,
   &_swigt__p_ParticleSystem,
+  &_swigt__p_WLWater,
   &_swigt__p_child_list_t,
   &_swigt__p_const_child_list_t,
   &_swigt__p_double,
@@ -21702,6 +21737,7 @@ static swig_cast_info _swigc__p_LuaTextBox[] = {  {&_swigt__p_LuaTextBox, 0, 0, 
 static swig_cast_info _swigc__p_LuaUICtrl[] = {  {&_swigt__p_LuaFloater, _p_LuaFloaterTo_p_LuaUICtrl, 0, 0},  {&_swigt__p_LuaUICtrl, 0, 0, 0},  {&_swigt__p_LuaTextBox, _p_LuaTextBoxTo_p_LuaUICtrl, 0, 0},  {&_swigt__p_LuaPanel, _p_LuaPanelTo_p_LuaUICtrl, 0, 0},  {&_swigt__p_LuaButton, _p_LuaButtonTo_p_LuaUICtrl, 0, 0},  {&_swigt__p_LuaLineEditor, _p_LuaLineEditorTo_p_LuaUICtrl, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_LuaUIManager[] = {  {&_swigt__p_LuaUIManager, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_ParticleSystem[] = {  {&_swigt__p_ParticleSystem, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_WLWater[] = {  {&_swigt__p_WLWater, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_child_list_t[] = {  {&_swigt__p_child_list_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_const_child_list_t[] = {  {&_swigt__p_const_child_list_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_double[] = {  {&_swigt__p_double, 0, 0, 0},{0, 0, 0, 0}};
@@ -21791,6 +21827,7 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_LuaUICtrl,
   _swigc__p_LuaUIManager,
   _swigc__p_ParticleSystem,
+  _swigc__p_WLWater,
   _swigc__p_child_list_t,
   _swigc__p_const_child_list_t,
   _swigc__p_double,

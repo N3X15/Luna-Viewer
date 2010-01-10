@@ -7,8 +7,8 @@
 
 class WLWater
 {
-	static void SetFogColor(LLVector3 rgb, float glow);
-	static void GetFogColor(LLVector3 *rgb,float *glow);
+	static void SetFogColor(LLVector4 rgba);
+	static LLVector4 GetFogColor();
 
 	static void SetFogDensity(float density);
 	static float GetFogDensity();
@@ -34,51 +34,11 @@ class WLWater
 	static void SetBlurMultiplier(float scale);
 	static float GetBluMultiplier();
 
-	static void SetWave1Dir(float  x,float  y);
-	static void GetWave1Dir(float *x,float *y);
+	static void SetWave1Dir(LLVector2 dir);
+	static LLVector2 GetWave1Dir();
 
-	static void SetWave2Dir(float  x,float  y);
-	static void GetWave2Dir(float *x,float *y);
-
-/*
-	childSetCommitCallback("WaterFogColor", onWaterFogColorMoved, &param_mgr->mFogColor);
-
-	// 
-	childSetCommitCallback("WaterGlow", onColorControlAMoved, &param_mgr->mFogColor);
-
-	// fog density
-	childSetCommitCallback("WaterFogDensity", onExpFloatControlMoved, &param_mgr->mFogDensity);
-	childSetCommitCallback("WaterUnderWaterFogMod", onFloatControlMoved, &param_mgr->mUnderWaterFogMod);
-
-	// blue density
-	childSetCommitCallback("WaterNormalScaleX", onVector3ControlXMoved, &param_mgr->mNormalScale);
-	childSetCommitCallback("WaterNormalScaleY", onVector3ControlYMoved, &param_mgr->mNormalScale);
-	childSetCommitCallback("WaterNormalScaleZ", onVector3ControlZMoved, &param_mgr->mNormalScale);
-
-	// fresnel
-	childSetCommitCallback("WaterFresnelScale", onFloatControlMoved, &param_mgr->mFresnelScale);
-	childSetCommitCallback("WaterFresnelOffset", onFloatControlMoved, &param_mgr->mFresnelOffset);
-
-	// scale above/below
-	childSetCommitCallback("WaterScaleAbove", onFloatControlMoved, &param_mgr->mScaleAbove);
-	childSetCommitCallback("WaterScaleBelow", onFloatControlMoved, &param_mgr->mScaleBelow);
-
-	// blur mult
-	childSetCommitCallback("WaterBlurMult", onFloatControlMoved, &param_mgr->mBlurMultiplier);
-
-	// Load/save
-	LLComboBox* comboBox = getChild<LLComboBox>("WaterPresetsCombo");
-
-	//childSetAction("WaterLoadPreset", onLoadPreset, comboBox);
-	childSetAction("WaterNewPreset", onNewPreset, comboBox);
-	childSetAction("WaterSavePreset", onSavePreset, comboBox);
-	childSetAction("WaterDeletePreset", onDeletePreset, comboBox);
-
-	// wave direction
-	childSetCommitCallback("WaterWave1DirX", onVector2ControlXMoved, &param_mgr->mWave1Dir);
-	childSetCommitCallback("WaterWave1DirY", onVector2ControlYMoved, &param_mgr->mWave1Dir);
-	childSetCommitCallback("WaterWave2DirX", onVector2ControlXMoved, &param_mgr->mWave2Dir);
-	childSetCommitCallback("WaterWave2DirY", onVector2ControlYMoved, &param_mgr->mWave2Dir);*/
-}
+	static void SetWave2Dir(LLVector2 dir);
+	static LLVector2 GetWave2Dir();
+};
 
 #endif
