@@ -1491,82 +1491,94 @@ SWIG_Lua_dostring(lua_State *L, const char* str) {
 /* -------- TYPES TABLE (BEGIN) -------- */
 
 #define SWIGTYPE_p_EAnimate swig_types[0]
-#define SWIGTYPE_p_EVOType swig_types[1]
-#define SWIGTYPE_p_LLAgent swig_types[2]
-#define SWIGTYPE_p_LLAlphaObject swig_types[3]
-#define SWIGTYPE_p_LLButton swig_types[4]
-#define SWIGTYPE_p_LLColor3 swig_types[5]
-#define SWIGTYPE_p_LLColor4 swig_types[6]
-#define SWIGTYPE_p_LLColor4U swig_types[7]
-#define SWIGTYPE_p_LLFloater swig_types[8]
-#define SWIGTYPE_p_LLMatrix3 swig_types[9]
-#define SWIGTYPE_p_LLMatrix4 swig_types[10]
-#define SWIGTYPE_p_LLMultiFloater swig_types[11]
-#define SWIGTYPE_p_LLPanel swig_types[12]
-#define SWIGTYPE_p_LLPartSysData swig_types[13]
-#define SWIGTYPE_p_LLPrimitive swig_types[14]
-#define SWIGTYPE_p_LLQuaternion swig_types[15]
-#define SWIGTYPE_p_LLSD swig_types[16]
-#define SWIGTYPE_p_LLSafeHandleT_LLObjectSelection_t swig_types[17]
-#define SWIGTYPE_p_LLSelectMgr swig_types[18]
-#define SWIGTYPE_p_LLStaticViewerObject swig_types[19]
-#define SWIGTYPE_p_LLUUID swig_types[20]
-#define SWIGTYPE_p_LLVOAvatar swig_types[21]
-#define SWIGTYPE_p_LLVOVolume swig_types[22]
-#define SWIGTYPE_p_LLVector2 swig_types[23]
-#define SWIGTYPE_p_LLVector3 swig_types[24]
-#define SWIGTYPE_p_LLVector3d swig_types[25]
-#define SWIGTYPE_p_LLVector4 swig_types[26]
-#define SWIGTYPE_p_LLViewerInventoryItem swig_types[27]
-#define SWIGTYPE_p_LLViewerObject swig_types[28]
-#define SWIGTYPE_p_LLViewerRegion swig_types[29]
-#define SWIGTYPE_p_LLWearable swig_types[30]
-#define SWIGTYPE_p_LuaAgent swig_types[31]
-#define SWIGTYPE_p_LuaButton swig_types[32]
-#define SWIGTYPE_p_LuaFloater swig_types[33]
-#define SWIGTYPE_p_LuaLineEditor swig_types[34]
-#define SWIGTYPE_p_LuaObject swig_types[35]
-#define SWIGTYPE_p_LuaObjectManager swig_types[36]
-#define SWIGTYPE_p_LuaPanel swig_types[37]
-#define SWIGTYPE_p_LuaSelectionManager swig_types[38]
-#define SWIGTYPE_p_LuaTextBox swig_types[39]
-#define SWIGTYPE_p_LuaUICtrl swig_types[40]
-#define SWIGTYPE_p_LuaUIManager swig_types[41]
-#define SWIGTYPE_p_ParticleSystem swig_types[42]
-#define SWIGTYPE_p_child_list_t swig_types[43]
-#define SWIGTYPE_p_const_child_list_t swig_types[44]
-#define SWIGTYPE_p_double swig_types[45]
-#define SWIGTYPE_p_eLayoutOrientation swig_types[46]
-#define SWIGTYPE_p_eObjectPartitions swig_types[47]
-#define SWIGTYPE_p_e_action_type swig_types[48]
-#define SWIGTYPE_p_e_anim_request swig_types[49]
-#define SWIGTYPE_p_e_camera_modes swig_types[50]
-#define SWIGTYPE_p_e_camera_position swig_types[51]
-#define SWIGTYPE_p_e_grid_mode swig_types[52]
-#define SWIGTYPE_p_e_object_update_type swig_types[53]
-#define SWIGTYPE_p_e_selection_type swig_types[54]
-#define SWIGTYPE_p_e_send_type swig_types[55]
-#define SWIGTYPE_p_float swig_types[56]
-#define SWIGTYPE_p_int swig_types[57]
-#define SWIGTYPE_p_iterator swig_types[58]
-#define SWIGTYPE_p_list_t swig_types[59]
-#define SWIGTYPE_p_long_long swig_types[60]
-#define SWIGTYPE_p_root_iterator swig_types[61]
-#define SWIGTYPE_p_root_object_iterator swig_types[62]
-#define SWIGTYPE_p_short swig_types[63]
-#define SWIGTYPE_p_signed_char swig_types[64]
-#define SWIGTYPE_p_skip_list_t swig_types[65]
-#define SWIGTYPE_p_std__string swig_types[66]
-#define SWIGTYPE_p_unsigned_char swig_types[67]
-#define SWIGTYPE_p_unsigned_int swig_types[68]
-#define SWIGTYPE_p_unsigned_long_long swig_types[69]
-#define SWIGTYPE_p_unsigned_short swig_types[70]
-#define SWIGTYPE_p_valid_iterator swig_types[71]
-#define SWIGTYPE_p_valid_root_iterator swig_types[72]
-#define SWIGTYPE_p_vobj_list_t swig_types[73]
-#define SWIGTYPE_p_wchar_t swig_types[74]
-static swig_type_info *swig_types[76];
-static swig_module_info swig_module = {swig_types, 75, 0, 0, 0, 0};
+#define SWIGTYPE_p_ESex swig_types[1]
+#define SWIGTYPE_p_EVOType swig_types[2]
+#define SWIGTYPE_p_LLAgent swig_types[3]
+#define SWIGTYPE_p_LLAlphaObject swig_types[4]
+#define SWIGTYPE_p_LLButton swig_types[5]
+#define SWIGTYPE_p_LLCharacter swig_types[6]
+#define SWIGTYPE_p_LLColor3 swig_types[7]
+#define SWIGTYPE_p_LLColor4 swig_types[8]
+#define SWIGTYPE_p_LLColor4U swig_types[9]
+#define SWIGTYPE_p_LLFloater swig_types[10]
+#define SWIGTYPE_p_LLJoint swig_types[11]
+#define SWIGTYPE_p_LLMatrix3 swig_types[12]
+#define SWIGTYPE_p_LLMatrix4 swig_types[13]
+#define SWIGTYPE_p_LLMotion swig_types[14]
+#define SWIGTYPE_p_LLMotionConstructor swig_types[15]
+#define SWIGTYPE_p_LLMotionController swig_types[16]
+#define SWIGTYPE_p_LLMultiFloater swig_types[17]
+#define SWIGTYPE_p_LLPanel swig_types[18]
+#define SWIGTYPE_p_LLPartSysData swig_types[19]
+#define SWIGTYPE_p_LLPauseRequestHandle swig_types[20]
+#define SWIGTYPE_p_LLPointerT_LLPauseRequestHandle_t swig_types[21]
+#define SWIGTYPE_p_LLPolyMesh swig_types[22]
+#define SWIGTYPE_p_LLPrimitive swig_types[23]
+#define SWIGTYPE_p_LLQuaternion swig_types[24]
+#define SWIGTYPE_p_LLSD swig_types[25]
+#define SWIGTYPE_p_LLSafeHandleT_LLObjectSelection_t swig_types[26]
+#define SWIGTYPE_p_LLSelectMgr swig_types[27]
+#define SWIGTYPE_p_LLStaticViewerObject swig_types[28]
+#define SWIGTYPE_p_LLUUID swig_types[29]
+#define SWIGTYPE_p_LLVOAvatar swig_types[30]
+#define SWIGTYPE_p_LLVOVolume swig_types[31]
+#define SWIGTYPE_p_LLVector2 swig_types[32]
+#define SWIGTYPE_p_LLVector3 swig_types[33]
+#define SWIGTYPE_p_LLVector3d swig_types[34]
+#define SWIGTYPE_p_LLVector4 swig_types[35]
+#define SWIGTYPE_p_LLViewerInventoryItem swig_types[36]
+#define SWIGTYPE_p_LLViewerObject swig_types[37]
+#define SWIGTYPE_p_LLViewerRegion swig_types[38]
+#define SWIGTYPE_p_LLVisualParam swig_types[39]
+#define SWIGTYPE_p_LLWearable swig_types[40]
+#define SWIGTYPE_p_LuaAgent swig_types[41]
+#define SWIGTYPE_p_LuaButton swig_types[42]
+#define SWIGTYPE_p_LuaFloater swig_types[43]
+#define SWIGTYPE_p_LuaLineEditor swig_types[44]
+#define SWIGTYPE_p_LuaObject swig_types[45]
+#define SWIGTYPE_p_LuaObjectManager swig_types[46]
+#define SWIGTYPE_p_LuaPanel swig_types[47]
+#define SWIGTYPE_p_LuaSelectionManager swig_types[48]
+#define SWIGTYPE_p_LuaTextBox swig_types[49]
+#define SWIGTYPE_p_LuaUICtrl swig_types[50]
+#define SWIGTYPE_p_LuaUIManager swig_types[51]
+#define SWIGTYPE_p_ParticleSystem swig_types[52]
+#define SWIGTYPE_p_child_list_t swig_types[53]
+#define SWIGTYPE_p_const_child_list_t swig_types[54]
+#define SWIGTYPE_p_double swig_types[55]
+#define SWIGTYPE_p_eLayoutOrientation swig_types[56]
+#define SWIGTYPE_p_eObjectPartitions swig_types[57]
+#define SWIGTYPE_p_e_action_type swig_types[58]
+#define SWIGTYPE_p_e_anim_request swig_types[59]
+#define SWIGTYPE_p_e_camera_modes swig_types[60]
+#define SWIGTYPE_p_e_camera_position swig_types[61]
+#define SWIGTYPE_p_e_grid_mode swig_types[62]
+#define SWIGTYPE_p_e_object_update_type swig_types[63]
+#define SWIGTYPE_p_e_selection_type swig_types[64]
+#define SWIGTYPE_p_e_send_type swig_types[65]
+#define SWIGTYPE_p_float swig_types[66]
+#define SWIGTYPE_p_int swig_types[67]
+#define SWIGTYPE_p_iterator swig_types[68]
+#define SWIGTYPE_p_list_t swig_types[69]
+#define SWIGTYPE_p_long_long swig_types[70]
+#define SWIGTYPE_p_root_iterator swig_types[71]
+#define SWIGTYPE_p_root_object_iterator swig_types[72]
+#define SWIGTYPE_p_short swig_types[73]
+#define SWIGTYPE_p_signed_char swig_types[74]
+#define SWIGTYPE_p_skip_list_t swig_types[75]
+#define SWIGTYPE_p_std__string swig_types[76]
+#define SWIGTYPE_p_std__vectorT_LLCharacter_p_t swig_types[77]
+#define SWIGTYPE_p_unsigned_char swig_types[78]
+#define SWIGTYPE_p_unsigned_int swig_types[79]
+#define SWIGTYPE_p_unsigned_long_long swig_types[80]
+#define SWIGTYPE_p_unsigned_short swig_types[81]
+#define SWIGTYPE_p_valid_iterator swig_types[82]
+#define SWIGTYPE_p_valid_root_iterator swig_types[83]
+#define SWIGTYPE_p_vobj_list_t swig_types[84]
+#define SWIGTYPE_p_void swig_types[85]
+#define SWIGTYPE_p_wchar_t swig_types[86]
+static swig_type_info *swig_types[88];
+static swig_module_info swig_module = {swig_types, 87, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -1606,6 +1618,7 @@ typedef struct{} LANGUAGE_OBJ;
 #include "v3math.h"
 #include "v4math.h"
 #include "v4color.h"
+#include "llcharacter.h"
 #include "llagent.h"
 
 
@@ -1628,7 +1641,8 @@ static int LuaBase_print (lua_State *L) {
 		s = lua_tolstring(L, -1, &l);  /* get result */
 		if (s == NULL)
 			return luaL_error(L, "tostring must return a string to print");
-		if (i>1) out.append("\t");
+		if (i>1) 
+			out.append("     ");
 		out.append(s);
 		lua_pop(L, 1);  /* pop result */
 	}
@@ -3568,6 +3582,2819 @@ fail:
   return SWIG_arg;
 }
 
+
+static int _wrap_new_LLPauseRequestHandle(lua_State* L) {
+  int SWIG_arg = 0;
+  LLPauseRequestHandle *result = 0 ;
+  
+  SWIG_check_num_args("LLPauseRequestHandle",0,0)
+  result = (LLPauseRequestHandle *)new LLPauseRequestHandle();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_LLPauseRequestHandle,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static void swig_delete_LLPauseRequestHandle(void *obj) {
+LLPauseRequestHandle *arg1 = (LLPauseRequestHandle *) obj;
+delete arg1;
+}
+static swig_lua_method swig_LLPauseRequestHandle_methods[] = {
+    {0,0}
+};
+static swig_lua_attribute swig_LLPauseRequestHandle_attributes[] = {
+    {0,0,0}
+};
+static swig_lua_class *swig_LLPauseRequestHandle_bases[] = {0};
+static const char *swig_LLPauseRequestHandle_base_names[] = {0};
+static swig_lua_class _wrap_class_LLPauseRequestHandle = { "LLPauseRequestHandle", &SWIGTYPE_p_LLPauseRequestHandle,_wrap_new_LLPauseRequestHandle, swig_delete_LLPauseRequestHandle, swig_LLPauseRequestHandle_methods, swig_LLPauseRequestHandle_attributes, swig_LLPauseRequestHandle_bases, swig_LLPauseRequestHandle_base_names };
+
+static int _wrap_LLCharacter_getAnimationPrefix(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  char *result = 0 ;
+  
+  SWIG_check_num_args("getAnimationPrefix",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getAnimationPrefix",1,"LLCharacter *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_getAnimationPrefix",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  result = (char *)(arg1)->getAnimationPrefix();
+  lua_pushstring(L,(const char*)result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_getRootJoint(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  LLJoint *result = 0 ;
+  
+  SWIG_check_num_args("getRootJoint",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getRootJoint",1,"LLCharacter *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_getRootJoint",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  result = (LLJoint *)(arg1)->getRootJoint();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_LLJoint,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_getJoint(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  std::string *arg2 = 0 ;
+  std::string temp2 ;
+  LLJoint *result = 0 ;
+  
+  SWIG_check_num_args("getJoint",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getJoint",1,"LLCharacter *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("getJoint",2,"std::string const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_getJoint",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  temp2.assign(lua_tostring(L,2),lua_strlen(L,2)); arg2=&temp2;
+  result = (LLJoint *)(arg1)->getJoint((std::string const &)*arg2);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_LLJoint,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_getCharacterPosition(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  LLVector3 result;
+  
+  SWIG_check_num_args("getCharacterPosition",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getCharacterPosition",1,"LLCharacter *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_getCharacterPosition",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  result = (arg1)->getCharacterPosition();
+  {
+    LLVector3 * resultptr = new LLVector3((const LLVector3 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_LLVector3,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_getCharacterRotation(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  LLQuaternion result;
+  
+  SWIG_check_num_args("getCharacterRotation",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getCharacterRotation",1,"LLCharacter *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_getCharacterRotation",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  result = (arg1)->getCharacterRotation();
+  {
+    LLQuaternion * resultptr = new LLQuaternion((const LLQuaternion &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_LLQuaternion,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_getCharacterVelocity(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  LLVector3 result;
+  
+  SWIG_check_num_args("getCharacterVelocity",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getCharacterVelocity",1,"LLCharacter *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_getCharacterVelocity",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  result = (arg1)->getCharacterVelocity();
+  {
+    LLVector3 * resultptr = new LLVector3((const LLVector3 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_LLVector3,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_getCharacterAngularVelocity(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  LLVector3 result;
+  
+  SWIG_check_num_args("getCharacterAngularVelocity",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getCharacterAngularVelocity",1,"LLCharacter *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_getCharacterAngularVelocity",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  result = (arg1)->getCharacterAngularVelocity();
+  {
+    LLVector3 * resultptr = new LLVector3((const LLVector3 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_LLVector3,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_getGround(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  LLVector3 *arg2 = 0 ;
+  LLVector3 *arg3 = 0 ;
+  LLVector3 *arg4 = 0 ;
+  
+  SWIG_check_num_args("getGround",4,4)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getGround",1,"LLCharacter *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("getGround",2,"LLVector3 const &");
+  if(!lua_isuserdata(L,3)) SWIG_fail_arg("getGround",3,"LLVector3 &");
+  if(!lua_isuserdata(L,4)) SWIG_fail_arg("getGround",4,"LLVector3 &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_getGround",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_LLVector3,0))){
+    SWIG_fail_ptr("LLCharacter_getGround",2,SWIGTYPE_p_LLVector3);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&arg3,SWIGTYPE_p_LLVector3,0))){
+    SWIG_fail_ptr("LLCharacter_getGround",3,SWIGTYPE_p_LLVector3);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,4,(void**)&arg4,SWIGTYPE_p_LLVector3,0))){
+    SWIG_fail_ptr("LLCharacter_getGround",4,SWIGTYPE_p_LLVector3);
+  }
+  
+  (arg1)->getGround((LLVector3 const &)*arg2,*arg3,*arg4);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_allocateCharacterJoints(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  U32 arg2 ;
+  BOOL result;
+  
+  SWIG_check_num_args("allocateCharacterJoints",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("allocateCharacterJoints",1,"LLCharacter *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("allocateCharacterJoints",2,"U32");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_allocateCharacterJoints",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  arg2 = (U32)lua_tonumber(L, 2);
+  result = (BOOL)(arg1)->allocateCharacterJoints(arg2);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_getCharacterJoint(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  U32 arg2 ;
+  LLJoint *result = 0 ;
+  
+  SWIG_check_num_args("getCharacterJoint",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getCharacterJoint",1,"LLCharacter *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("getCharacterJoint",2,"U32");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_getCharacterJoint",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  arg2 = (U32)lua_tonumber(L, 2);
+  result = (LLJoint *)(arg1)->getCharacterJoint(arg2);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_LLJoint,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_getTimeDilation(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  F32 result;
+  
+  SWIG_check_num_args("getTimeDilation",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getTimeDilation",1,"LLCharacter *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_getTimeDilation",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  result = (F32)(arg1)->getTimeDilation();
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_getPixelArea(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  F32 result;
+  
+  SWIG_check_num_args("getPixelArea",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getPixelArea",1,"LLCharacter const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_getPixelArea",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  result = (F32)((LLCharacter const *)arg1)->getPixelArea();
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_getHeadMesh(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  LLPolyMesh *result = 0 ;
+  
+  SWIG_check_num_args("getHeadMesh",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getHeadMesh",1,"LLCharacter *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_getHeadMesh",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  result = (LLPolyMesh *)(arg1)->getHeadMesh();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_LLPolyMesh,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_getUpperBodyMesh(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  LLPolyMesh *result = 0 ;
+  
+  SWIG_check_num_args("getUpperBodyMesh",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getUpperBodyMesh",1,"LLCharacter *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_getUpperBodyMesh",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  result = (LLPolyMesh *)(arg1)->getUpperBodyMesh();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_LLPolyMesh,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_getPosGlobalFromAgent(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  LLVector3 *arg2 = 0 ;
+  LLVector3d result;
+  
+  SWIG_check_num_args("getPosGlobalFromAgent",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getPosGlobalFromAgent",1,"LLCharacter *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("getPosGlobalFromAgent",2,"LLVector3 const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_getPosGlobalFromAgent",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_LLVector3,0))){
+    SWIG_fail_ptr("LLCharacter_getPosGlobalFromAgent",2,SWIGTYPE_p_LLVector3);
+  }
+  
+  result = (arg1)->getPosGlobalFromAgent((LLVector3 const &)*arg2);
+  {
+    LLVector3d * resultptr = new LLVector3d((const LLVector3d &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_LLVector3d,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_getPosAgentFromGlobal(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  LLVector3d *arg2 = 0 ;
+  LLVector3 result;
+  
+  SWIG_check_num_args("getPosAgentFromGlobal",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getPosAgentFromGlobal",1,"LLCharacter *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("getPosAgentFromGlobal",2,"LLVector3d const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_getPosAgentFromGlobal",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_LLVector3d,0))){
+    SWIG_fail_ptr("LLCharacter_getPosAgentFromGlobal",2,SWIGTYPE_p_LLVector3d);
+  }
+  
+  result = (arg1)->getPosAgentFromGlobal((LLVector3d const &)*arg2);
+  {
+    LLVector3 * resultptr = new LLVector3((const LLVector3 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_LLVector3,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_updateVisualParams(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  
+  SWIG_check_num_args("updateVisualParams",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("updateVisualParams",1,"LLCharacter *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_updateVisualParams",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  (arg1)->updateVisualParams();
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_addDebugText(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  std::string *arg2 = 0 ;
+  std::string temp2 ;
+  
+  SWIG_check_num_args("addDebugText",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("addDebugText",1,"LLCharacter *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("addDebugText",2,"std::string const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_addDebugText",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  temp2.assign(lua_tostring(L,2),lua_strlen(L,2)); arg2=&temp2;
+  (arg1)->addDebugText((std::string const &)*arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_getID(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  LLUUID *result = 0 ;
+  
+  SWIG_check_num_args("getID",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getID",1,"LLCharacter *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_getID",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  {
+    LLUUID const &_result_ref = (arg1)->getID();
+    result = (LLUUID *) &_result_ref;
+  }
+  lua_pushlstring(L,result->asString().data(),result->asString().size()); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_registerMotion(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  LLUUID *arg2 = 0 ;
+  LLMotionConstructor arg3 ;
+  LLUUID temp2 ;
+  LLMotionConstructor *argp3 ;
+  BOOL result;
+  
+  SWIG_check_num_args("registerMotion",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("registerMotion",1,"LLCharacter *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("registerMotion",2,"LLUUID const &");
+  if(!lua_isuserdata(L,3)) SWIG_fail_arg("registerMotion",3,"LLMotionConstructor");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_registerMotion",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  SWIG_contract_assert(temp2.set(lua_tostring(L,2),false),"Must be of UUID format.")
+  arg2=&temp2;
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&argp3,SWIGTYPE_p_LLMotionConstructor,0))){
+    SWIG_fail_ptr("LLCharacter_registerMotion",3,SWIGTYPE_p_LLMotionConstructor);
+  }
+  arg3 = *argp3;
+  
+  result = (BOOL)(arg1)->registerMotion((LLUUID const &)*arg2,arg3);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_removeMotion(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  LLUUID *arg2 = 0 ;
+  LLUUID temp2 ;
+  
+  SWIG_check_num_args("removeMotion",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("removeMotion",1,"LLCharacter *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("removeMotion",2,"LLUUID const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_removeMotion",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  SWIG_contract_assert(temp2.set(lua_tostring(L,2),false),"Must be of UUID format.")
+  arg2=&temp2;
+  (arg1)->removeMotion((LLUUID const &)*arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_createMotion(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  LLUUID *arg2 = 0 ;
+  LLUUID temp2 ;
+  LLMotion *result = 0 ;
+  
+  SWIG_check_num_args("createMotion",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("createMotion",1,"LLCharacter *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("createMotion",2,"LLUUID const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_createMotion",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  SWIG_contract_assert(temp2.set(lua_tostring(L,2),false),"Must be of UUID format.")
+  arg2=&temp2;
+  result = (LLMotion *)(arg1)->createMotion((LLUUID const &)*arg2);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_LLMotion,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_findMotion(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  LLUUID *arg2 = 0 ;
+  LLUUID temp2 ;
+  LLMotion *result = 0 ;
+  
+  SWIG_check_num_args("findMotion",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("findMotion",1,"LLCharacter *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("findMotion",2,"LLUUID const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_findMotion",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  SWIG_contract_assert(temp2.set(lua_tostring(L,2),false),"Must be of UUID format.")
+  arg2=&temp2;
+  result = (LLMotion *)(arg1)->findMotion((LLUUID const &)*arg2);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_LLMotion,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_startMotion__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  LLUUID *arg2 = 0 ;
+  F32 arg3 ;
+  LLUUID temp2 ;
+  BOOL result;
+  
+  SWIG_check_num_args("startMotion",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("startMotion",1,"LLCharacter *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("startMotion",2,"LLUUID const &");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("startMotion",3,"F32");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_startMotion",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  SWIG_contract_assert(temp2.set(lua_tostring(L,2),false),"Must be of UUID format.")
+  arg2=&temp2;
+  arg3 = (F32)lua_tonumber(L, 3);
+  result = (BOOL)(arg1)->startMotion((LLUUID const &)*arg2,arg3);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_startMotion__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  LLUUID *arg2 = 0 ;
+  LLUUID temp2 ;
+  BOOL result;
+  
+  SWIG_check_num_args("startMotion",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("startMotion",1,"LLCharacter *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("startMotion",2,"LLUUID const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_startMotion",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  SWIG_contract_assert(temp2.set(lua_tostring(L,2),false),"Must be of UUID format.")
+  arg2=&temp2;
+  result = (BOOL)(arg1)->startMotion((LLUUID const &)*arg2);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_startMotion(lua_State* L) {
+  int argc;
+  int argv[4]={
+    1,2,3,4
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_LLCharacter, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isstring(L,argv[1]);
+      }
+      if (_v) {
+        return _wrap_LLCharacter_startMotion__SWIG_1(L);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_LLCharacter, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isstring(L,argv[1]);
+      }
+      if (_v) {
+        {
+          _v = lua_isnumber(L,argv[2]);
+        }
+        if (_v) {
+          return _wrap_LLCharacter_startMotion__SWIG_0(L);
+        }
+      }
+    }
+  }
+  
+  lua_pushstring(L,"Wrong arguments for overloaded function 'LLCharacter_startMotion'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    startMotion(LLCharacter *,LLUUID const &,F32)\n"
+    "    startMotion(LLCharacter *,LLUUID const &)\n");
+  lua_error(L);return 0;
+}
+
+
+static int _wrap_LLCharacter_stopMotion__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  LLUUID *arg2 = 0 ;
+  BOOL arg3 ;
+  LLUUID temp2 ;
+  BOOL result;
+  
+  SWIG_check_num_args("stopMotion",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("stopMotion",1,"LLCharacter *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("stopMotion",2,"LLUUID const &");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("stopMotion",3,"BOOL");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_stopMotion",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  SWIG_contract_assert(temp2.set(lua_tostring(L,2),false),"Must be of UUID format.")
+  arg2=&temp2;
+  arg3 = (BOOL)lua_tonumber(L, 3);
+  result = (BOOL)(arg1)->stopMotion((LLUUID const &)*arg2,arg3);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_stopMotion__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  LLUUID *arg2 = 0 ;
+  LLUUID temp2 ;
+  BOOL result;
+  
+  SWIG_check_num_args("stopMotion",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("stopMotion",1,"LLCharacter *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("stopMotion",2,"LLUUID const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_stopMotion",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  SWIG_contract_assert(temp2.set(lua_tostring(L,2),false),"Must be of UUID format.")
+  arg2=&temp2;
+  result = (BOOL)(arg1)->stopMotion((LLUUID const &)*arg2);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_stopMotion(lua_State* L) {
+  int argc;
+  int argv[4]={
+    1,2,3,4
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_LLCharacter, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isstring(L,argv[1]);
+      }
+      if (_v) {
+        return _wrap_LLCharacter_stopMotion__SWIG_1(L);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_LLCharacter, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isstring(L,argv[1]);
+      }
+      if (_v) {
+        {
+          _v = lua_isnumber(L,argv[2]);
+        }
+        if (_v) {
+          return _wrap_LLCharacter_stopMotion__SWIG_0(L);
+        }
+      }
+    }
+  }
+  
+  lua_pushstring(L,"Wrong arguments for overloaded function 'LLCharacter_stopMotion'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    stopMotion(LLCharacter *,LLUUID const &,BOOL)\n"
+    "    stopMotion(LLCharacter *,LLUUID const &)\n");
+  lua_error(L);return 0;
+}
+
+
+static int _wrap_LLCharacter_isMotionActive(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  LLUUID *arg2 = 0 ;
+  LLUUID temp2 ;
+  BOOL result;
+  
+  SWIG_check_num_args("isMotionActive",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("isMotionActive",1,"LLCharacter *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("isMotionActive",2,"LLUUID const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_isMotionActive",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  SWIG_contract_assert(temp2.set(lua_tostring(L,2),false),"Must be of UUID format.")
+  arg2=&temp2;
+  result = (BOOL)(arg1)->isMotionActive((LLUUID const &)*arg2);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_requestStopMotion(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  LLMotion *arg2 = (LLMotion *) 0 ;
+  
+  SWIG_check_num_args("requestStopMotion",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("requestStopMotion",1,"LLCharacter *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("requestStopMotion",2,"LLMotion *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_requestStopMotion",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_LLMotion,0))){
+    SWIG_fail_ptr("LLCharacter_requestStopMotion",2,SWIGTYPE_p_LLMotion);
+  }
+  
+  (arg1)->requestStopMotion(arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_updateMotions(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  LLCharacter::e_update_t arg2 ;
+  
+  SWIG_check_num_args("updateMotions",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("updateMotions",1,"LLCharacter *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("updateMotions",2,"LLCharacter::e_update_t");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_updateMotions",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  arg2 = (LLCharacter::e_update_t)(int)lua_tonumber(L, 2);
+  (arg1)->updateMotions(arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_requestPause(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  SwigValueWrapper< LLPointer< LLPauseRequestHandle > > result;
+  
+  SWIG_check_num_args("requestPause",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("requestPause",1,"LLCharacter *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_requestPause",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  result = (arg1)->requestPause();
+  {
+    LLAnimPauseRequest * resultptr = new LLAnimPauseRequest((const LLAnimPauseRequest &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_LLPointerT_LLPauseRequestHandle_t,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_areAnimationsPaused(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  BOOL result;
+  
+  SWIG_check_num_args("areAnimationsPaused",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("areAnimationsPaused",1,"LLCharacter *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_areAnimationsPaused",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  result = (BOOL)(arg1)->areAnimationsPaused();
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_setAnimTimeFactor(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  F32 arg2 ;
+  
+  SWIG_check_num_args("setAnimTimeFactor",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setAnimTimeFactor",1,"LLCharacter *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("setAnimTimeFactor",2,"F32");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_setAnimTimeFactor",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  arg2 = (F32)lua_tonumber(L, 2);
+  (arg1)->setAnimTimeFactor(arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_setTimeStep(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  F32 arg2 ;
+  
+  SWIG_check_num_args("setTimeStep",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setTimeStep",1,"LLCharacter *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("setTimeStep",2,"F32");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_setTimeStep",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  arg2 = (F32)lua_tonumber(L, 2);
+  (arg1)->setTimeStep(arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_getMotionController(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  LLMotionController *result = 0 ;
+  
+  SWIG_check_num_args("getMotionController",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getMotionController",1,"LLCharacter *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_getMotionController",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  {
+    LLMotionController &_result_ref = (arg1)->getMotionController();
+    result = (LLMotionController *) &_result_ref;
+  }
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_LLMotionController,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_flushAllMotions(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  
+  SWIG_check_num_args("flushAllMotions",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("flushAllMotions",1,"LLCharacter *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_flushAllMotions",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  (arg1)->flushAllMotions();
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_deactivateAllMotions(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  
+  SWIG_check_num_args("deactivateAllMotions",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("deactivateAllMotions",1,"LLCharacter *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_deactivateAllMotions",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  (arg1)->deactivateAllMotions();
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_dumpCharacter__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  LLJoint *arg2 = (LLJoint *) 0 ;
+  
+  SWIG_check_num_args("dumpCharacter",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("dumpCharacter",1,"LLCharacter *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("dumpCharacter",2,"LLJoint *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_dumpCharacter",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_LLJoint,0))){
+    SWIG_fail_ptr("LLCharacter_dumpCharacter",2,SWIGTYPE_p_LLJoint);
+  }
+  
+  (arg1)->dumpCharacter(arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_dumpCharacter__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  
+  SWIG_check_num_args("dumpCharacter",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("dumpCharacter",1,"LLCharacter *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_dumpCharacter",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  (arg1)->dumpCharacter();
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_dumpCharacter(lua_State* L) {
+  int argc;
+  int argv[3]={
+    1,2,3
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 1) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_LLCharacter, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      return _wrap_LLCharacter_dumpCharacter__SWIG_1(L);
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_LLCharacter, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        void *ptr;
+        if (SWIG_isptrtype(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_LLJoint, 0)) {
+          _v = 0;
+        } else {
+          _v = 1;
+        }
+      }
+      if (_v) {
+        return _wrap_LLCharacter_dumpCharacter__SWIG_0(L);
+      }
+    }
+  }
+  
+  lua_pushstring(L,"Wrong arguments for overloaded function 'LLCharacter_dumpCharacter'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    dumpCharacter(LLCharacter *,LLJoint *)\n"
+    "    dumpCharacter(LLCharacter *)\n");
+  lua_error(L);return 0;
+}
+
+
+static int _wrap_LLCharacter_getPreferredPelvisHeight(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  F32 result;
+  
+  SWIG_check_num_args("getPreferredPelvisHeight",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getPreferredPelvisHeight",1,"LLCharacter *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_getPreferredPelvisHeight",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  result = (F32)(arg1)->getPreferredPelvisHeight();
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_getVolumePos(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  S32 arg2 ;
+  LLVector3 *arg3 = 0 ;
+  LLVector3 result;
+  
+  SWIG_check_num_args("getVolumePos",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getVolumePos",1,"LLCharacter *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("getVolumePos",2,"S32");
+  if(!lua_isuserdata(L,3)) SWIG_fail_arg("getVolumePos",3,"LLVector3 &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_getVolumePos",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  arg2 = (S32)lua_tonumber(L, 2);
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&arg3,SWIGTYPE_p_LLVector3,0))){
+    SWIG_fail_ptr("LLCharacter_getVolumePos",3,SWIGTYPE_p_LLVector3);
+  }
+  
+  result = (arg1)->getVolumePos(arg2,*arg3);
+  {
+    LLVector3 * resultptr = new LLVector3((const LLVector3 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_LLVector3,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_findCollisionVolume(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  U32 arg2 ;
+  LLJoint *result = 0 ;
+  
+  SWIG_check_num_args("findCollisionVolume",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("findCollisionVolume",1,"LLCharacter *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("findCollisionVolume",2,"U32");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_findCollisionVolume",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  arg2 = (U32)lua_tonumber(L, 2);
+  result = (LLJoint *)(arg1)->findCollisionVolume(arg2);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_LLJoint,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_getCollisionVolumeID(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  std::string *arg2 = 0 ;
+  S32 result;
+  
+  SWIG_check_num_args("getCollisionVolumeID",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getCollisionVolumeID",1,"LLCharacter *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("getCollisionVolumeID",2,"std::string &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_getCollisionVolumeID",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_std__string,0))){
+    SWIG_fail_ptr("LLCharacter_getCollisionVolumeID",2,SWIGTYPE_p_std__string);
+  }
+  
+  result = (S32)(arg1)->getCollisionVolumeID(*arg2);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_setAnimationData(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  std::string arg2 ;
+  void *arg3 = (void *) 0 ;
+  
+  SWIG_check_num_args("setAnimationData",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setAnimationData",1,"LLCharacter *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("setAnimationData",2,"std::string");
+  if(!SWIG_isptrtype(L,3)) SWIG_fail_arg("setAnimationData",3,"void *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_setAnimationData",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  (&arg2)->assign(lua_tostring(L,2),lua_strlen(L,2));
+  arg3=(void *)SWIG_MustGetPtr(L,3,0,0,3,"LLCharacter_setAnimationData");
+  (arg1)->setAnimationData(arg2,arg3);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_getAnimationData(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  std::string arg2 ;
+  void *result = 0 ;
+  
+  SWIG_check_num_args("getAnimationData",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getAnimationData",1,"LLCharacter *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("getAnimationData",2,"std::string");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_getAnimationData",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  (&arg2)->assign(lua_tostring(L,2),lua_strlen(L,2));
+  result = (void *)(arg1)->getAnimationData(arg2);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_void,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_removeAnimationData(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  std::string arg2 ;
+  
+  SWIG_check_num_args("removeAnimationData",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("removeAnimationData",1,"LLCharacter *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("removeAnimationData",2,"std::string");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_removeAnimationData",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  (&arg2)->assign(lua_tostring(L,2),lua_strlen(L,2));
+  (arg1)->removeAnimationData(arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_addVisualParam(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  LLVisualParam *arg2 = (LLVisualParam *) 0 ;
+  
+  SWIG_check_num_args("addVisualParam",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("addVisualParam",1,"LLCharacter *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("addVisualParam",2,"LLVisualParam *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_addVisualParam",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_LLVisualParam,0))){
+    SWIG_fail_ptr("LLCharacter_addVisualParam",2,SWIGTYPE_p_LLVisualParam);
+  }
+  
+  (arg1)->addVisualParam(arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_addSharedVisualParam(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  LLVisualParam *arg2 = (LLVisualParam *) 0 ;
+  
+  SWIG_check_num_args("addSharedVisualParam",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("addSharedVisualParam",1,"LLCharacter *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("addSharedVisualParam",2,"LLVisualParam *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_addSharedVisualParam",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_LLVisualParam,0))){
+    SWIG_fail_ptr("LLCharacter_addSharedVisualParam",2,SWIGTYPE_p_LLVisualParam);
+  }
+  
+  (arg1)->addSharedVisualParam(arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_setVisualParamWeight__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  LLVisualParam *arg2 = (LLVisualParam *) 0 ;
+  F32 arg3 ;
+  BOOL arg4 ;
+  BOOL result;
+  
+  SWIG_check_num_args("setVisualParamWeight",4,4)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setVisualParamWeight",1,"LLCharacter *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("setVisualParamWeight",2,"LLVisualParam *");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("setVisualParamWeight",3,"F32");
+  if(!lua_isnumber(L,4)) SWIG_fail_arg("setVisualParamWeight",4,"BOOL");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_setVisualParamWeight",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_LLVisualParam,0))){
+    SWIG_fail_ptr("LLCharacter_setVisualParamWeight",2,SWIGTYPE_p_LLVisualParam);
+  }
+  
+  arg3 = (F32)lua_tonumber(L, 3);
+  arg4 = (BOOL)lua_tonumber(L, 4);
+  result = (BOOL)(arg1)->setVisualParamWeight(arg2,arg3,arg4);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_setVisualParamWeight__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  LLVisualParam *arg2 = (LLVisualParam *) 0 ;
+  F32 arg3 ;
+  BOOL result;
+  
+  SWIG_check_num_args("setVisualParamWeight",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setVisualParamWeight",1,"LLCharacter *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("setVisualParamWeight",2,"LLVisualParam *");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("setVisualParamWeight",3,"F32");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_setVisualParamWeight",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_LLVisualParam,0))){
+    SWIG_fail_ptr("LLCharacter_setVisualParamWeight",2,SWIGTYPE_p_LLVisualParam);
+  }
+  
+  arg3 = (F32)lua_tonumber(L, 3);
+  result = (BOOL)(arg1)->setVisualParamWeight(arg2,arg3);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_setVisualParamWeight__SWIG_2(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  char *arg2 = (char *) 0 ;
+  F32 arg3 ;
+  BOOL arg4 ;
+  BOOL result;
+  
+  SWIG_check_num_args("setVisualParamWeight",4,4)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setVisualParamWeight",1,"LLCharacter *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("setVisualParamWeight",2,"char const *");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("setVisualParamWeight",3,"F32");
+  if(!lua_isnumber(L,4)) SWIG_fail_arg("setVisualParamWeight",4,"BOOL");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_setVisualParamWeight",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  arg2 = (char *)lua_tostring(L, 2);
+  arg3 = (F32)lua_tonumber(L, 3);
+  arg4 = (BOOL)lua_tonumber(L, 4);
+  result = (BOOL)(arg1)->setVisualParamWeight((char const *)arg2,arg3,arg4);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_setVisualParamWeight__SWIG_3(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  char *arg2 = (char *) 0 ;
+  F32 arg3 ;
+  BOOL result;
+  
+  SWIG_check_num_args("setVisualParamWeight",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setVisualParamWeight",1,"LLCharacter *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("setVisualParamWeight",2,"char const *");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("setVisualParamWeight",3,"F32");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_setVisualParamWeight",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  arg2 = (char *)lua_tostring(L, 2);
+  arg3 = (F32)lua_tonumber(L, 3);
+  result = (BOOL)(arg1)->setVisualParamWeight((char const *)arg2,arg3);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_setVisualParamWeightNoClamp__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  char *arg2 = (char *) 0 ;
+  F32 arg3 ;
+  BOOL arg4 ;
+  BOOL result;
+  
+  SWIG_check_num_args("setVisualParamWeightNoClamp",4,4)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setVisualParamWeightNoClamp",1,"LLCharacter *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("setVisualParamWeightNoClamp",2,"char const *");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("setVisualParamWeightNoClamp",3,"F32");
+  if(!lua_isnumber(L,4)) SWIG_fail_arg("setVisualParamWeightNoClamp",4,"BOOL");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_setVisualParamWeightNoClamp",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  arg2 = (char *)lua_tostring(L, 2);
+  arg3 = (F32)lua_tonumber(L, 3);
+  arg4 = (BOOL)lua_tonumber(L, 4);
+  result = (BOOL)(arg1)->setVisualParamWeightNoClamp((char const *)arg2,arg3,arg4);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_setVisualParamWeightNoClamp__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  char *arg2 = (char *) 0 ;
+  F32 arg3 ;
+  BOOL result;
+  
+  SWIG_check_num_args("setVisualParamWeightNoClamp",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setVisualParamWeightNoClamp",1,"LLCharacter *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("setVisualParamWeightNoClamp",2,"char const *");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("setVisualParamWeightNoClamp",3,"F32");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_setVisualParamWeightNoClamp",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  arg2 = (char *)lua_tostring(L, 2);
+  arg3 = (F32)lua_tonumber(L, 3);
+  result = (BOOL)(arg1)->setVisualParamWeightNoClamp((char const *)arg2,arg3);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_setVisualParamWeightNoClamp(lua_State* L) {
+  int argc;
+  int argv[5]={
+    1,2,3,4,5
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 3) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_LLCharacter, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isstring(L,argv[1]);
+      }
+      if (_v) {
+        {
+          _v = lua_isnumber(L,argv[2]);
+        }
+        if (_v) {
+          return _wrap_LLCharacter_setVisualParamWeightNoClamp__SWIG_1(L);
+        }
+      }
+    }
+  }
+  if (argc == 4) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_LLCharacter, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isstring(L,argv[1]);
+      }
+      if (_v) {
+        {
+          _v = lua_isnumber(L,argv[2]);
+        }
+        if (_v) {
+          {
+            _v = lua_isnumber(L,argv[3]);
+          }
+          if (_v) {
+            return _wrap_LLCharacter_setVisualParamWeightNoClamp__SWIG_0(L);
+          }
+        }
+      }
+    }
+  }
+  
+  lua_pushstring(L,"Wrong arguments for overloaded function 'LLCharacter_setVisualParamWeightNoClamp'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    setVisualParamWeightNoClamp(LLCharacter *,char const *,F32,BOOL)\n"
+    "    setVisualParamWeightNoClamp(LLCharacter *,char const *,F32)\n");
+  lua_error(L);return 0;
+}
+
+
+static int _wrap_LLCharacter_setVisualParamWeight__SWIG_4(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  S32 arg2 ;
+  F32 arg3 ;
+  BOOL arg4 ;
+  BOOL result;
+  
+  SWIG_check_num_args("setVisualParamWeight",4,4)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setVisualParamWeight",1,"LLCharacter *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("setVisualParamWeight",2,"S32");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("setVisualParamWeight",3,"F32");
+  if(!lua_isnumber(L,4)) SWIG_fail_arg("setVisualParamWeight",4,"BOOL");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_setVisualParamWeight",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  arg2 = (S32)lua_tonumber(L, 2);
+  arg3 = (F32)lua_tonumber(L, 3);
+  arg4 = (BOOL)lua_tonumber(L, 4);
+  result = (BOOL)(arg1)->setVisualParamWeight(arg2,arg3,arg4);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_setVisualParamWeight__SWIG_5(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  S32 arg2 ;
+  F32 arg3 ;
+  BOOL result;
+  
+  SWIG_check_num_args("setVisualParamWeight",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setVisualParamWeight",1,"LLCharacter *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("setVisualParamWeight",2,"S32");
+  if(!lua_isnumber(L,3)) SWIG_fail_arg("setVisualParamWeight",3,"F32");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_setVisualParamWeight",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  arg2 = (S32)lua_tonumber(L, 2);
+  arg3 = (F32)lua_tonumber(L, 3);
+  result = (BOOL)(arg1)->setVisualParamWeight(arg2,arg3);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_setVisualParamWeight(lua_State* L) {
+  int argc;
+  int argv[5]={
+    1,2,3,4,5
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 3) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_LLCharacter, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        void *ptr;
+        if (SWIG_isptrtype(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_LLVisualParam, 0)) {
+          _v = 0;
+        } else {
+          _v = 1;
+        }
+      }
+      if (_v) {
+        {
+          _v = lua_isnumber(L,argv[2]);
+        }
+        if (_v) {
+          return _wrap_LLCharacter_setVisualParamWeight__SWIG_1(L);
+        }
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_LLCharacter, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isnumber(L,argv[1]);
+      }
+      if (_v) {
+        {
+          _v = lua_isnumber(L,argv[2]);
+        }
+        if (_v) {
+          return _wrap_LLCharacter_setVisualParamWeight__SWIG_5(L);
+        }
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_LLCharacter, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isstring(L,argv[1]);
+      }
+      if (_v) {
+        {
+          _v = lua_isnumber(L,argv[2]);
+        }
+        if (_v) {
+          return _wrap_LLCharacter_setVisualParamWeight__SWIG_3(L);
+        }
+      }
+    }
+  }
+  if (argc == 4) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_LLCharacter, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        void *ptr;
+        if (SWIG_isptrtype(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_LLVisualParam, 0)) {
+          _v = 0;
+        } else {
+          _v = 1;
+        }
+      }
+      if (_v) {
+        {
+          _v = lua_isnumber(L,argv[2]);
+        }
+        if (_v) {
+          {
+            _v = lua_isnumber(L,argv[3]);
+          }
+          if (_v) {
+            return _wrap_LLCharacter_setVisualParamWeight__SWIG_0(L);
+          }
+        }
+      }
+    }
+  }
+  if (argc == 4) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_LLCharacter, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isnumber(L,argv[1]);
+      }
+      if (_v) {
+        {
+          _v = lua_isnumber(L,argv[2]);
+        }
+        if (_v) {
+          {
+            _v = lua_isnumber(L,argv[3]);
+          }
+          if (_v) {
+            return _wrap_LLCharacter_setVisualParamWeight__SWIG_4(L);
+          }
+        }
+      }
+    }
+  }
+  if (argc == 4) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_LLCharacter, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isstring(L,argv[1]);
+      }
+      if (_v) {
+        {
+          _v = lua_isnumber(L,argv[2]);
+        }
+        if (_v) {
+          {
+            _v = lua_isnumber(L,argv[3]);
+          }
+          if (_v) {
+            return _wrap_LLCharacter_setVisualParamWeight__SWIG_2(L);
+          }
+        }
+      }
+    }
+  }
+  
+  lua_pushstring(L,"Wrong arguments for overloaded function 'LLCharacter_setVisualParamWeight'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    setVisualParamWeight(LLCharacter *,LLVisualParam *,F32,BOOL)\n"
+    "    setVisualParamWeight(LLCharacter *,LLVisualParam *,F32)\n"
+    "    setVisualParamWeight(LLCharacter *,char const *,F32,BOOL)\n"
+    "    setVisualParamWeight(LLCharacter *,char const *,F32)\n"
+    "    setVisualParamWeight(LLCharacter *,S32,F32,BOOL)\n"
+    "    setVisualParamWeight(LLCharacter *,S32,F32)\n");
+  lua_error(L);return 0;
+}
+
+
+static int _wrap_LLCharacter_getVisualParamWeight__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  LLVisualParam *arg2 = (LLVisualParam *) 0 ;
+  F32 result;
+  
+  SWIG_check_num_args("getVisualParamWeight",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getVisualParamWeight",1,"LLCharacter *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("getVisualParamWeight",2,"LLVisualParam *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_getVisualParamWeight",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_LLVisualParam,0))){
+    SWIG_fail_ptr("LLCharacter_getVisualParamWeight",2,SWIGTYPE_p_LLVisualParam);
+  }
+  
+  result = (F32)(arg1)->getVisualParamWeight(arg2);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_getVisualParamWeight__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  char *arg2 = (char *) 0 ;
+  F32 result;
+  
+  SWIG_check_num_args("getVisualParamWeight",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getVisualParamWeight",1,"LLCharacter *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("getVisualParamWeight",2,"char const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_getVisualParamWeight",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  arg2 = (char *)lua_tostring(L, 2);
+  result = (F32)(arg1)->getVisualParamWeight((char const *)arg2);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_getVisualParamWeight__SWIG_2(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  S32 arg2 ;
+  F32 result;
+  
+  SWIG_check_num_args("getVisualParamWeight",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getVisualParamWeight",1,"LLCharacter *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("getVisualParamWeight",2,"S32");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_getVisualParamWeight",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  arg2 = (S32)lua_tonumber(L, 2);
+  result = (F32)(arg1)->getVisualParamWeight(arg2);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_getVisualParamWeight(lua_State* L) {
+  int argc;
+  int argv[3]={
+    1,2,3
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_LLCharacter, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        void *ptr;
+        if (SWIG_isptrtype(L,argv[1])==0 || SWIG_ConvertPtr(L,argv[1], (void **) &ptr, SWIGTYPE_p_LLVisualParam, 0)) {
+          _v = 0;
+        } else {
+          _v = 1;
+        }
+      }
+      if (_v) {
+        return _wrap_LLCharacter_getVisualParamWeight__SWIG_0(L);
+      }
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_LLCharacter, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isnumber(L,argv[1]);
+      }
+      if (_v) {
+        return _wrap_LLCharacter_getVisualParamWeight__SWIG_2(L);
+      }
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_LLCharacter, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isstring(L,argv[1]);
+      }
+      if (_v) {
+        return _wrap_LLCharacter_getVisualParamWeight__SWIG_1(L);
+      }
+    }
+  }
+  
+  lua_pushstring(L,"Wrong arguments for overloaded function 'LLCharacter_getVisualParamWeight'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    getVisualParamWeight(LLCharacter *,LLVisualParam *)\n"
+    "    getVisualParamWeight(LLCharacter *,char const *)\n"
+    "    getVisualParamWeight(LLCharacter *,S32)\n");
+  lua_error(L);return 0;
+}
+
+
+static int _wrap_LLCharacter_clearVisualParamWeights(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  
+  SWIG_check_num_args("clearVisualParamWeights",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("clearVisualParamWeights",1,"LLCharacter *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_clearVisualParamWeights",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  (arg1)->clearVisualParamWeights();
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_visualParamWeightsAreDefault(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  BOOL result;
+  
+  SWIG_check_num_args("visualParamWeightsAreDefault",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("visualParamWeightsAreDefault",1,"LLCharacter *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_visualParamWeightsAreDefault",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  result = (BOOL)(arg1)->visualParamWeightsAreDefault();
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_getFirstVisualParam(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  LLVisualParam *result = 0 ;
+  
+  SWIG_check_num_args("getFirstVisualParam",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getFirstVisualParam",1,"LLCharacter *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_getFirstVisualParam",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  result = (LLVisualParam *)(arg1)->getFirstVisualParam();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_LLVisualParam,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_getNextVisualParam(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  LLVisualParam *result = 0 ;
+  
+  SWIG_check_num_args("getNextVisualParam",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getNextVisualParam",1,"LLCharacter *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_getNextVisualParam",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  result = (LLVisualParam *)(arg1)->getNextVisualParam();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_LLVisualParam,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_getVisualParam__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  S32 arg2 ;
+  LLVisualParam *result = 0 ;
+  
+  SWIG_check_num_args("getVisualParam",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getVisualParam",1,"LLCharacter *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("getVisualParam",2,"S32");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_getVisualParam",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  arg2 = (S32)lua_tonumber(L, 2);
+  result = (LLVisualParam *)(arg1)->getVisualParam(arg2);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_LLVisualParam,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_getVisualParamID(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  LLVisualParam *arg2 = (LLVisualParam *) 0 ;
+  S32 result;
+  
+  SWIG_check_num_args("getVisualParamID",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getVisualParamID",1,"LLCharacter *");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("getVisualParamID",2,"LLVisualParam *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_getVisualParamID",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_LLVisualParam,0))){
+    SWIG_fail_ptr("LLCharacter_getVisualParamID",2,SWIGTYPE_p_LLVisualParam);
+  }
+  
+  result = (S32)(arg1)->getVisualParamID(arg2);
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_getVisualParamCount(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  S32 result;
+  
+  SWIG_check_num_args("getVisualParamCount",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getVisualParamCount",1,"LLCharacter *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_getVisualParamCount",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  result = (S32)(arg1)->getVisualParamCount();
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_getVisualParam__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  char *arg2 = (char *) 0 ;
+  LLVisualParam *result = 0 ;
+  
+  SWIG_check_num_args("getVisualParam",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getVisualParam",1,"LLCharacter *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("getVisualParam",2,"char const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_getVisualParam",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  arg2 = (char *)lua_tostring(L, 2);
+  result = (LLVisualParam *)(arg1)->getVisualParam((char const *)arg2);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_LLVisualParam,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_getVisualParam(lua_State* L) {
+  int argc;
+  int argv[3]={
+    1,2,3
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_LLCharacter, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isnumber(L,argv[1]);
+      }
+      if (_v) {
+        return _wrap_LLCharacter_getVisualParam__SWIG_0(L);
+      }
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_LLCharacter, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isstring(L,argv[1]);
+      }
+      if (_v) {
+        return _wrap_LLCharacter_getVisualParam__SWIG_1(L);
+      }
+    }
+  }
+  
+  lua_pushstring(L,"Wrong arguments for overloaded function 'LLCharacter_getVisualParam'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    getVisualParam(LLCharacter *,S32)\n"
+    "    getVisualParam(LLCharacter *,char const *)\n");
+  lua_error(L);return 0;
+}
+
+
+static int _wrap_LLCharacter_getSex(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  ESex result;
+  
+  SWIG_check_num_args("getSex",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getSex",1,"LLCharacter *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_getSex",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  result = (arg1)->getSex();
+  {
+    ESex * resultptr = new ESex((const ESex &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_ESex,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_setSex(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  ESex arg2 ;
+  ESex *argp2 ;
+  
+  SWIG_check_num_args("setSex",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setSex",1,"LLCharacter *");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("setSex",2,"ESex");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_setSex",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&argp2,SWIGTYPE_p_ESex,0))){
+    SWIG_fail_ptr("LLCharacter_setSex",2,SWIGTYPE_p_ESex);
+  }
+  arg2 = *argp2;
+  
+  (arg1)->setSex(arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_setAppearanceFlag(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  bool arg2 ;
+  
+  SWIG_check_num_args("setAppearanceFlag",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setAppearanceFlag",1,"LLCharacter *");
+  if(!lua_isboolean(L,2)) SWIG_fail_arg("setAppearanceFlag",2,"bool");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_setAppearanceFlag",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  arg2 = (lua_toboolean(L, 2)!=0);
+  (arg1)->setAppearanceFlag(arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_getAppearanceFlag(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("getAppearanceFlag",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getAppearanceFlag",1,"LLCharacter *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_getAppearanceFlag",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  result = (bool)(arg1)->getAppearanceFlag();
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_getAppearanceSerialNum(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  U32 result;
+  
+  SWIG_check_num_args("getAppearanceSerialNum",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getAppearanceSerialNum",1,"LLCharacter const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_getAppearanceSerialNum",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  result = (U32)((LLCharacter const *)arg1)->getAppearanceSerialNum();
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_setAppearanceSerialNum(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  U32 arg2 ;
+  
+  SWIG_check_num_args("setAppearanceSerialNum",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setAppearanceSerialNum",1,"LLCharacter *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("setAppearanceSerialNum",2,"U32");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_setAppearanceSerialNum",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  arg2 = (U32)lua_tonumber(L, 2);
+  (arg1)->setAppearanceSerialNum(arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_getSkeletonSerialNum(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  U32 result;
+  
+  SWIG_check_num_args("getSkeletonSerialNum",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getSkeletonSerialNum",1,"LLCharacter const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_getSkeletonSerialNum",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  result = (U32)((LLCharacter const *)arg1)->getSkeletonSerialNum();
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_setSkeletonSerialNum(lua_State* L) {
+  int SWIG_arg = 0;
+  LLCharacter *arg1 = (LLCharacter *) 0 ;
+  U32 arg2 ;
+  
+  SWIG_check_num_args("setSkeletonSerialNum",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setSkeletonSerialNum",1,"LLCharacter *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("setSkeletonSerialNum",2,"U32");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
+    SWIG_fail_ptr("LLCharacter_setSkeletonSerialNum",1,SWIGTYPE_p_LLCharacter);
+  }
+  
+  arg2 = (U32)lua_tonumber(L, 2);
+  (arg1)->setSkeletonSerialNum(arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_sInstances_set(lua_State* L) {
+  int SWIG_arg = 0;
+  std::vector< LLCharacter * > *arg1 = (std::vector< LLCharacter * > *) 0 ;
+  
+  SWIG_check_num_args("LLCharacter::sInstances",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("LLCharacter::sInstances",1,"std::vector< LLCharacter * > *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_std__vectorT_LLCharacter_p_t,0))){
+    SWIG_fail_ptr("LLCharacter_sInstances_set",1,SWIGTYPE_p_std__vectorT_LLCharacter_p_t);
+  }
+  
+  LLCharacter::sInstances = *arg1;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_LLCharacter_sInstances_get(lua_State* L) {
+  int SWIG_arg = 0;
+  std::vector< LLCharacter * > *result = 0 ;
+  
+  SWIG_check_num_args("LLCharacter::sInstances",0,0)
+  result = (std::vector< LLCharacter * > *)&LLCharacter::sInstances;
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_std__vectorT_LLCharacter_p_t,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static void swig_delete_LLCharacter(void *obj) {
+LLCharacter *arg1 = (LLCharacter *) obj;
+delete arg1;
+}
+static swig_lua_method swig_LLCharacter_methods[] = {
+    {"getAnimationPrefix", _wrap_LLCharacter_getAnimationPrefix}, 
+    {"getRootJoint", _wrap_LLCharacter_getRootJoint}, 
+    {"getJoint", _wrap_LLCharacter_getJoint}, 
+    {"getCharacterPosition", _wrap_LLCharacter_getCharacterPosition}, 
+    {"getCharacterRotation", _wrap_LLCharacter_getCharacterRotation}, 
+    {"getCharacterVelocity", _wrap_LLCharacter_getCharacterVelocity}, 
+    {"getCharacterAngularVelocity", _wrap_LLCharacter_getCharacterAngularVelocity}, 
+    {"getGround", _wrap_LLCharacter_getGround}, 
+    {"allocateCharacterJoints", _wrap_LLCharacter_allocateCharacterJoints}, 
+    {"getCharacterJoint", _wrap_LLCharacter_getCharacterJoint}, 
+    {"getTimeDilation", _wrap_LLCharacter_getTimeDilation}, 
+    {"getPixelArea", _wrap_LLCharacter_getPixelArea}, 
+    {"getHeadMesh", _wrap_LLCharacter_getHeadMesh}, 
+    {"getUpperBodyMesh", _wrap_LLCharacter_getUpperBodyMesh}, 
+    {"getPosGlobalFromAgent", _wrap_LLCharacter_getPosGlobalFromAgent}, 
+    {"getPosAgentFromGlobal", _wrap_LLCharacter_getPosAgentFromGlobal}, 
+    {"updateVisualParams", _wrap_LLCharacter_updateVisualParams}, 
+    {"addDebugText", _wrap_LLCharacter_addDebugText}, 
+    {"getID", _wrap_LLCharacter_getID}, 
+    {"registerMotion", _wrap_LLCharacter_registerMotion}, 
+    {"removeMotion", _wrap_LLCharacter_removeMotion}, 
+    {"createMotion", _wrap_LLCharacter_createMotion}, 
+    {"findMotion", _wrap_LLCharacter_findMotion}, 
+    {"startMotion", _wrap_LLCharacter_startMotion}, 
+    {"stopMotion", _wrap_LLCharacter_stopMotion}, 
+    {"isMotionActive", _wrap_LLCharacter_isMotionActive}, 
+    {"requestStopMotion", _wrap_LLCharacter_requestStopMotion}, 
+    {"updateMotions", _wrap_LLCharacter_updateMotions}, 
+    {"requestPause", _wrap_LLCharacter_requestPause}, 
+    {"areAnimationsPaused", _wrap_LLCharacter_areAnimationsPaused}, 
+    {"setAnimTimeFactor", _wrap_LLCharacter_setAnimTimeFactor}, 
+    {"setTimeStep", _wrap_LLCharacter_setTimeStep}, 
+    {"getMotionController", _wrap_LLCharacter_getMotionController}, 
+    {"flushAllMotions", _wrap_LLCharacter_flushAllMotions}, 
+    {"deactivateAllMotions", _wrap_LLCharacter_deactivateAllMotions}, 
+    {"dumpCharacter", _wrap_LLCharacter_dumpCharacter}, 
+    {"getPreferredPelvisHeight", _wrap_LLCharacter_getPreferredPelvisHeight}, 
+    {"getVolumePos", _wrap_LLCharacter_getVolumePos}, 
+    {"findCollisionVolume", _wrap_LLCharacter_findCollisionVolume}, 
+    {"getCollisionVolumeID", _wrap_LLCharacter_getCollisionVolumeID}, 
+    {"setAnimationData", _wrap_LLCharacter_setAnimationData}, 
+    {"getAnimationData", _wrap_LLCharacter_getAnimationData}, 
+    {"removeAnimationData", _wrap_LLCharacter_removeAnimationData}, 
+    {"addVisualParam", _wrap_LLCharacter_addVisualParam}, 
+    {"addSharedVisualParam", _wrap_LLCharacter_addSharedVisualParam}, 
+    {"setVisualParamWeightNoClamp", _wrap_LLCharacter_setVisualParamWeightNoClamp}, 
+    {"setVisualParamWeight", _wrap_LLCharacter_setVisualParamWeight}, 
+    {"getVisualParamWeight", _wrap_LLCharacter_getVisualParamWeight}, 
+    {"clearVisualParamWeights", _wrap_LLCharacter_clearVisualParamWeights}, 
+    {"visualParamWeightsAreDefault", _wrap_LLCharacter_visualParamWeightsAreDefault}, 
+    {"getFirstVisualParam", _wrap_LLCharacter_getFirstVisualParam}, 
+    {"getNextVisualParam", _wrap_LLCharacter_getNextVisualParam}, 
+    {"getVisualParamID", _wrap_LLCharacter_getVisualParamID}, 
+    {"getVisualParamCount", _wrap_LLCharacter_getVisualParamCount}, 
+    {"getVisualParam", _wrap_LLCharacter_getVisualParam}, 
+    {"getSex", _wrap_LLCharacter_getSex}, 
+    {"setSex", _wrap_LLCharacter_setSex}, 
+    {"setAppearanceFlag", _wrap_LLCharacter_setAppearanceFlag}, 
+    {"getAppearanceFlag", _wrap_LLCharacter_getAppearanceFlag}, 
+    {"getAppearanceSerialNum", _wrap_LLCharacter_getAppearanceSerialNum}, 
+    {"setAppearanceSerialNum", _wrap_LLCharacter_setAppearanceSerialNum}, 
+    {"getSkeletonSerialNum", _wrap_LLCharacter_getSkeletonSerialNum}, 
+    {"setSkeletonSerialNum", _wrap_LLCharacter_setSkeletonSerialNum}, 
+    {0,0}
+};
+static swig_lua_attribute swig_LLCharacter_attributes[] = {
+    {0,0,0}
+};
+static swig_lua_class *swig_LLCharacter_bases[] = {0};
+static const char *swig_LLCharacter_base_names[] = {0};
+static swig_lua_class _wrap_class_LLCharacter = { "LLCharacter", &SWIGTYPE_p_LLCharacter,0, swig_delete_LLCharacter, swig_LLCharacter_methods, swig_LLCharacter_attributes, swig_LLCharacter_bases, swig_LLCharacter_base_names };
 
 static int _wrap_LENGTHOFVECTOR2_get(lua_State* L) {
   int SWIG_arg = 0;
@@ -18464,6 +21291,7 @@ static const struct luaL_reg swig_commands[] = {
 
 static swig_lua_var_info swig_variables[] = {
     { "gAllowWorldMap", _wrap_gAllowWorldMap_get, _wrap_gAllowWorldMap_set },
+    { "LLCharacter_sInstances", _wrap_LLCharacter_sInstances_get, _wrap_LLCharacter_sInstances_set },
     { "LENGTHOFVECTOR2", _wrap_LENGTHOFVECTOR2_get, SWIG_Lua_set_immutable },
     { "LLVector2_zero", _wrap_LLVector2_zero_get, _wrap_LLVector2_zero_set },
     { "LENGTHOFVECTOR3", _wrap_LENGTHOFVECTOR3_get, SWIG_Lua_set_immutable },
@@ -18551,6 +21379,9 @@ static swig_lua_var_info swig_variables[] = {
 
 static swig_lua_const_info swig_constants[] = {
 { SWIG_LUA_STRING,  (char *)"UUID_null", 0, 0, (void *)"00000000-0000-0000-0000-000000000000", 0},
+{ SWIG_LUA_INT,     (char *)"LLCharacter_NORMAL_UPDATE", (long) LLCharacter::NORMAL_UPDATE, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"LLCharacter_HIDDEN_UPDATE", (long) LLCharacter::HIDDEN_UPDATE, 0, 0, 0},
+{ SWIG_LUA_INT,     (char *)"LLCharacter_FORCE_UPDATE", (long) LLCharacter::FORCE_UPDATE, 0, 0, 0},
 { SWIG_LUA_INT,     (char *)"ParticleSystem_DROP", (long) ParticleSystem::DROP, 0, 0, 0},
 { SWIG_LUA_INT,     (char *)"ParticleSystem_EXPLODE", (long) ParticleSystem::EXPLODE, 0, 0, 0},
 { SWIG_LUA_INT,     (char *)"ParticleSystem_ANGLE", (long) ParticleSystem::ANGLE, 0, 0, 0},
@@ -18641,18 +21472,27 @@ static void *_p_LuaFloaterTo_p_LuaPanel(void *x, int *SWIGUNUSEDPARM(newmemory))
     return (void *)((LuaPanel *)  ((LuaFloater *) x));
 }
 static swig_type_info _swigt__p_EAnimate = {"_p_EAnimate", "EAnimate *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_ESex = {"_p_ESex", "ESex *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_EVOType = {"_p_EVOType", "EVOType *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_LLAgent = {"_p_LLAgent", "LLAgent *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_LLButton = {"_p_LLButton", "LLButton *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_LLCharacter = {"_p_LLCharacter", "LLCharacter *", 0, 0, (void*)&_wrap_class_LLCharacter, 0};
 static swig_type_info _swigt__p_LLColor3 = {"_p_LLColor3", "LLColor3 *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_LLColor4 = {"_p_LLColor4", "LLColor4 *", 0, 0, (void*)&_wrap_class_LLColor4, 0};
 static swig_type_info _swigt__p_LLColor4U = {"_p_LLColor4U", "LLColor4U *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_LLFloater = {"_p_LLFloater", "LLFloater *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_LLMultiFloater = {"_p_LLMultiFloater", 0, 0, 0, 0, 0};
+static swig_type_info _swigt__p_LLJoint = {"_p_LLJoint", "LLJoint *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_LLMatrix3 = {"_p_LLMatrix3", "LLMatrix3 *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_LLMatrix4 = {"_p_LLMatrix4", "LLMatrix4 *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_LLMotion = {"_p_LLMotion", "LLMotion *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_LLMotionConstructor = {"_p_LLMotionConstructor", "LLMotionConstructor *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_LLMotionController = {"_p_LLMotionController", "LLMotionController *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_LLPanel = {"_p_LLPanel", "LLPanel *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_LLPartSysData = {"_p_LLPartSysData", "LLPartSysData *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_LLPauseRequestHandle = {"_p_LLPauseRequestHandle", "LLPauseRequestHandle *", 0, 0, (void*)&_wrap_class_LLPauseRequestHandle, 0};
+static swig_type_info _swigt__p_LLPointerT_LLPauseRequestHandle_t = {"_p_LLPointerT_LLPauseRequestHandle_t", "LLAnimPauseRequest *|LLPointer< LLPauseRequestHandle > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_LLPolyMesh = {"_p_LLPolyMesh", "LLPolyMesh *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_LLPrimitive = {"_p_LLPrimitive", "LLPrimitive *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_LLStaticViewerObject = {"_p_LLStaticViewerObject", 0, 0, 0, 0, 0};
 static swig_type_info _swigt__p_LLAlphaObject = {"_p_LLAlphaObject", 0, 0, 0, 0, 0};
@@ -18670,6 +21510,7 @@ static swig_type_info _swigt__p_LLVector4 = {"_p_LLVector4", "LLVector4 *", 0, 0
 static swig_type_info _swigt__p_LLViewerInventoryItem = {"_p_LLViewerInventoryItem", "LLViewerInventoryItem *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_LLViewerObject = {"_p_LLViewerObject", "LLViewerObject *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_LLViewerRegion = {"_p_LLViewerRegion", "LLViewerRegion *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_LLVisualParam = {"_p_LLVisualParam", "LLVisualParam *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_LLWearable = {"_p_LLWearable", "LLWearable *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_LuaAgent = {"_p_LuaAgent", "LuaAgent *", 0, 0, (void*)&_wrap_class_LuaAgent, 0};
 static swig_type_info _swigt__p_LuaButton = {"_p_LuaButton", "LuaButton *", 0, 0, (void*)&_wrap_class_LuaButton, 0};
@@ -18707,6 +21548,7 @@ static swig_type_info _swigt__p_short = {"_p_short", "S16 *|short *", 0, 0, (voi
 static swig_type_info _swigt__p_signed_char = {"_p_signed_char", "signed char *|S8 *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_skip_list_t = {"_p_skip_list_t", "skip_list_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__string = {"_p_std__string", "std::string *", 0, 0, (void*)&_wrap_class_std_string, 0};
+static swig_type_info _swigt__p_std__vectorT_LLCharacter_p_t = {"_p_std__vectorT_LLCharacter_p_t", "std::vector< LLCharacter * > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_unsigned_char = {"_p_unsigned_char", "unsigned char *|KEY *|U8 *|LLPCode *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_unsigned_int = {"_p_unsigned_int", "unsigned int *|U32 *|MASK *|TPACKETID *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_unsigned_long_long = {"_p_unsigned_long_long", "unsigned long long *|U64 *", 0, 0, (void*)0, 0};
@@ -18714,23 +21556,33 @@ static swig_type_info _swigt__p_unsigned_short = {"_p_unsigned_short", "U16 *|un
 static swig_type_info _swigt__p_valid_iterator = {"_p_valid_iterator", "valid_iterator *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_valid_root_iterator = {"_p_valid_root_iterator", "valid_root_iterator *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_vobj_list_t = {"_p_vobj_list_t", "vobj_list_t *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_void = {"_p_void", "void *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_wchar_t = {"_p_wchar_t", "llwchar *|wchar_t *", 0, 0, (void*)0, 0};
 
 static swig_type_info *swig_type_initial[] = {
   &_swigt__p_EAnimate,
+  &_swigt__p_ESex,
   &_swigt__p_EVOType,
   &_swigt__p_LLAgent,
   &_swigt__p_LLAlphaObject,
   &_swigt__p_LLButton,
+  &_swigt__p_LLCharacter,
   &_swigt__p_LLColor3,
   &_swigt__p_LLColor4,
   &_swigt__p_LLColor4U,
   &_swigt__p_LLFloater,
+  &_swigt__p_LLJoint,
   &_swigt__p_LLMatrix3,
   &_swigt__p_LLMatrix4,
+  &_swigt__p_LLMotion,
+  &_swigt__p_LLMotionConstructor,
+  &_swigt__p_LLMotionController,
   &_swigt__p_LLMultiFloater,
   &_swigt__p_LLPanel,
   &_swigt__p_LLPartSysData,
+  &_swigt__p_LLPauseRequestHandle,
+  &_swigt__p_LLPointerT_LLPauseRequestHandle_t,
+  &_swigt__p_LLPolyMesh,
   &_swigt__p_LLPrimitive,
   &_swigt__p_LLQuaternion,
   &_swigt__p_LLSD,
@@ -18747,6 +21599,7 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_LLViewerInventoryItem,
   &_swigt__p_LLViewerObject,
   &_swigt__p_LLViewerRegion,
+  &_swigt__p_LLVisualParam,
   &_swigt__p_LLWearable,
   &_swigt__p_LuaAgent,
   &_swigt__p_LuaButton,
@@ -18784,6 +21637,7 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_signed_char,
   &_swigt__p_skip_list_t,
   &_swigt__p_std__string,
+  &_swigt__p_std__vectorT_LLCharacter_p_t,
   &_swigt__p_unsigned_char,
   &_swigt__p_unsigned_int,
   &_swigt__p_unsigned_long_long,
@@ -18791,22 +21645,32 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_valid_iterator,
   &_swigt__p_valid_root_iterator,
   &_swigt__p_vobj_list_t,
+  &_swigt__p_void,
   &_swigt__p_wchar_t,
 };
 
 static swig_cast_info _swigc__p_EAnimate[] = {  {&_swigt__p_EAnimate, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_ESex[] = {  {&_swigt__p_ESex, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_EVOType[] = {  {&_swigt__p_EVOType, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_LLAgent[] = {  {&_swigt__p_LuaAgent, _p_LuaAgentTo_p_LLAgent, 0, 0},  {&_swigt__p_LLAgent, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_LLButton[] = {  {&_swigt__p_LLButton, 0, 0, 0},  {&_swigt__p_LuaButton, _p_LuaButtonTo_p_LLButton, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_LLCharacter[] = {  {&_swigt__p_LLCharacter, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_LLColor3[] = {  {&_swigt__p_LLColor3, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_LLColor4[] = {  {&_swigt__p_LLColor4, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_LLColor4U[] = {  {&_swigt__p_LLColor4U, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_LLMultiFloater[] = {{&_swigt__p_LLMultiFloater, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_LLFloater[] = {  {&_swigt__p_LLFloater, 0, 0, 0},  {&_swigt__p_LLMultiFloater, _p_LLMultiFloaterTo_p_LLFloater, 0, 0},  {&_swigt__p_LuaFloater, _p_LuaFloaterTo_p_LLFloater, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_LLJoint[] = {  {&_swigt__p_LLJoint, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_LLMatrix3[] = {  {&_swigt__p_LLMatrix3, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_LLMatrix4[] = {  {&_swigt__p_LLMatrix4, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_LLMotion[] = {  {&_swigt__p_LLMotion, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_LLMotionConstructor[] = {  {&_swigt__p_LLMotionConstructor, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_LLMotionController[] = {  {&_swigt__p_LLMotionController, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_LLPanel[] = {  {&_swigt__p_LuaFloater, _p_LuaFloaterTo_p_LLPanel, 0, 0},  {&_swigt__p_LuaPanel, _p_LuaPanelTo_p_LLPanel, 0, 0},  {&_swigt__p_LLPanel, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_LLPartSysData[] = {  {&_swigt__p_LLPartSysData, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_LLPauseRequestHandle[] = {  {&_swigt__p_LLPauseRequestHandle, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_LLPointerT_LLPauseRequestHandle_t[] = {  {&_swigt__p_LLPointerT_LLPauseRequestHandle_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_LLPolyMesh[] = {  {&_swigt__p_LLPolyMesh, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_LLStaticViewerObject[] = {{&_swigt__p_LLStaticViewerObject, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_LLAlphaObject[] = {{&_swigt__p_LLAlphaObject, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_LLPrimitive[] = {  {&_swigt__p_LLPrimitive, 0, 0, 0},  {&_swigt__p_LLViewerObject, _p_LLViewerObjectTo_p_LLPrimitive, 0, 0},  {&_swigt__p_LLStaticViewerObject, _p_LLStaticViewerObjectTo_p_LLPrimitive, 0, 0},  {&_swigt__p_LLVOVolume, _p_LLVOVolumeTo_p_LLPrimitive, 0, 0},  {&_swigt__p_LuaObject, _p_LuaObjectTo_p_LLPrimitive, 0, 0},  {&_swigt__p_LLAlphaObject, _p_LLAlphaObjectTo_p_LLPrimitive, 0, 0},{0, 0, 0, 0}};
@@ -18824,6 +21688,7 @@ static swig_cast_info _swigc__p_LLVector4[] = {  {&_swigt__p_LLVector4, 0, 0, 0}
 static swig_cast_info _swigc__p_LLViewerInventoryItem[] = {  {&_swigt__p_LLViewerInventoryItem, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_LLViewerObject[] = {  {&_swigt__p_LLViewerObject, 0, 0, 0},  {&_swigt__p_LLStaticViewerObject, _p_LLStaticViewerObjectTo_p_LLViewerObject, 0, 0},  {&_swigt__p_LLVOVolume, _p_LLVOVolumeTo_p_LLViewerObject, 0, 0},  {&_swigt__p_LuaObject, _p_LuaObjectTo_p_LLViewerObject, 0, 0},  {&_swigt__p_LLAlphaObject, _p_LLAlphaObjectTo_p_LLViewerObject, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_LLViewerRegion[] = {  {&_swigt__p_LLViewerRegion, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_LLVisualParam[] = {  {&_swigt__p_LLVisualParam, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_LLWearable[] = {  {&_swigt__p_LLWearable, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_LuaAgent[] = {  {&_swigt__p_LuaAgent, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_LuaButton[] = {  {&_swigt__p_LuaButton, 0, 0, 0},{0, 0, 0, 0}};
@@ -18861,6 +21726,7 @@ static swig_cast_info _swigc__p_short[] = {  {&_swigt__p_short, 0, 0, 0},{0, 0, 
 static swig_cast_info _swigc__p_signed_char[] = {  {&_swigt__p_signed_char, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_skip_list_t[] = {  {&_swigt__p_skip_list_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__string[] = {  {&_swigt__p_std__string, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_std__vectorT_LLCharacter_p_t[] = {  {&_swigt__p_std__vectorT_LLCharacter_p_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_unsigned_char[] = {  {&_swigt__p_unsigned_char, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_unsigned_int[] = {  {&_swigt__p_unsigned_int, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_unsigned_long_long[] = {  {&_swigt__p_unsigned_long_long, 0, 0, 0},{0, 0, 0, 0}};
@@ -18868,23 +21734,33 @@ static swig_cast_info _swigc__p_unsigned_short[] = {  {&_swigt__p_unsigned_short
 static swig_cast_info _swigc__p_valid_iterator[] = {  {&_swigt__p_valid_iterator, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_valid_root_iterator[] = {  {&_swigt__p_valid_root_iterator, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_vobj_list_t[] = {  {&_swigt__p_vobj_list_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_void[] = {  {&_swigt__p_void, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_wchar_t[] = {  {&_swigt__p_wchar_t, 0, 0, 0},{0, 0, 0, 0}};
 
 static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_EAnimate,
+  _swigc__p_ESex,
   _swigc__p_EVOType,
   _swigc__p_LLAgent,
   _swigc__p_LLAlphaObject,
   _swigc__p_LLButton,
+  _swigc__p_LLCharacter,
   _swigc__p_LLColor3,
   _swigc__p_LLColor4,
   _swigc__p_LLColor4U,
   _swigc__p_LLFloater,
+  _swigc__p_LLJoint,
   _swigc__p_LLMatrix3,
   _swigc__p_LLMatrix4,
+  _swigc__p_LLMotion,
+  _swigc__p_LLMotionConstructor,
+  _swigc__p_LLMotionController,
   _swigc__p_LLMultiFloater,
   _swigc__p_LLPanel,
   _swigc__p_LLPartSysData,
+  _swigc__p_LLPauseRequestHandle,
+  _swigc__p_LLPointerT_LLPauseRequestHandle_t,
+  _swigc__p_LLPolyMesh,
   _swigc__p_LLPrimitive,
   _swigc__p_LLQuaternion,
   _swigc__p_LLSD,
@@ -18901,6 +21777,7 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_LLViewerInventoryItem,
   _swigc__p_LLViewerObject,
   _swigc__p_LLViewerRegion,
+  _swigc__p_LLVisualParam,
   _swigc__p_LLWearable,
   _swigc__p_LuaAgent,
   _swigc__p_LuaButton,
@@ -18938,6 +21815,7 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_signed_char,
   _swigc__p_skip_list_t,
   _swigc__p_std__string,
+  _swigc__p_std__vectorT_LLCharacter_p_t,
   _swigc__p_unsigned_char,
   _swigc__p_unsigned_int,
   _swigc__p_unsigned_long_long,
@@ -18945,6 +21823,7 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_valid_iterator,
   _swigc__p_valid_root_iterator,
   _swigc__p_vobj_list_t,
+  _swigc__p_void,
   _swigc__p_wchar_t,
 };
 

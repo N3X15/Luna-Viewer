@@ -21,6 +21,8 @@
 	$Id$
 ]]--
 
+gAutoMuted={}
+
 local PluginName="AutoMute";
 
 function isInTable(items,snd)
@@ -42,10 +44,11 @@ local AMCheckSoundTrigger = function (sound_id, owner_id, gain, object_id, paren
 		sound_id=="063c97d3-033a-4e9b-98d8-05c8074922cb" then return end
 
 	if(sound_id=="3d09f582-3851-c0e0-f5ba-277ac5c73fb4") then
-		error(key2name(owner_id).." took a snapshot.")
+		--error(key2name(owner_id).." took a snapshot.")
 	elseif isInTable(gAutoMuteSounds,tostring(sound_id))==true then
-		muteAvatar(owner_id)
-		if isMuted(owner_id,key2name(owner_id)) then
+		if gAutoMuted[owner_id] then return end
+		gAutoMuted[owner_id]=true
+		if muteAvatar(owner_id) then
 			error(key2name(owner_id).." is playing really damn loud noises.")
 			say("This user has automatically muted "..key2name(owner_id).." for playing a sound on FlexLife's automute list ("..audio_uuid..").")
 		end
@@ -59,8 +62,9 @@ local AMCheckAttachedSound = function (object_id,audio_uuid,owner_id,gain,flags)
 	if owner_id=="00000000-0000-0000-0000-000000000000" then return end
 
 	if isInTable(gAutoMuteSounds,tostring(audio_uuid)) then
-		muteAvatar(owner_id)
-		if isMuted(owner_id,key2name(owner_id)) then
+		if gAutoMuted[owner_id] then return end
+		gAutoMuted[owner_id]=true
+		if muteAvatar(owner_id) then
 			error(key2name(owner_id).." is playing really damn loud noises.")
 			say("This user has automatically muted "..key2name(owner_id).." for playing a sound on FlexLife's automute list ("..audio_uuid..").")
 		end
@@ -71,9 +75,9 @@ end
 
 local AMCheckAttachedParticles = function(object_id,owner_id,texture_id,particle_data)
 	if owner_id=="00000000-0000-0000-0000-000000000000" or texture_id=="00000000-0000-0000-0000-000000000000" then return end
-
 	if isInTable(gAutoMuteTextures,tostring(texture_id))==true then
-		ClearParticlesFromObject(object_id)
+		print("Particle: ",object_id,key2name(owner_id),texture_id)
+		ClearParticlesFromObject(object_id,owner_id)
 	end	
 end
 
@@ -81,8 +85,8 @@ local AMCheckSetText = function(text,object_id)
 	if(object_id=="00000000-0000-0000-0000-000000000000" or text=="") then return end
 	
 	if isInTable(gAutoMuteText,text)==true then
-		muteAvatar(owner_id)
-		if isMuted(owner_id,key2name(owner_id)) then
+		if isInTable(gAutoMuted,owner_id) then return end
+		if muteAvatar(owner_id) then
 			error(key2name(owner_id).." is playing really damn loud noises.")
 			say("This user has automatically muted "..key2name(owner_id).." for playing a sound on FlexLife's automute list.")
 		end

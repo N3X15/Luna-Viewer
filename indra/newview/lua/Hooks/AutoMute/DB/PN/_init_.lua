@@ -204,6 +204,7 @@ local PNTextures={
 	"d5bc626c-7df3-8953-8e30-8e922a678561", -- Mama Luigi
 	"0cb4d40c-00ff-87ea-3af9-fbc69b1c56bc", -- MAH BOI
 	"6c9ff7a0-2fe2-5306-4f66-03f8b7b2e66d", -- Mario Mongler
+	--"739abaa2-f5c8-4592-4366-8bca75e234b6", -- Mario Moshpit (Acq'd by N3X15)
 	"822adea8-b77b-5ddc-150f-5d0dd8845f11", -- Mario Moshpit Original (Paper Mario)
 	"31f10b37-7eb4-e2a8-9562-f2dafe81ba9b", -- Mario Flight cap (T)
 	"6630bf3c-ea8d-d384-be35-7c36c7db413e", -- Meme collection black & white flag

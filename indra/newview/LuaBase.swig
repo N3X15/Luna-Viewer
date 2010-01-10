@@ -48,6 +48,7 @@
 #include "v3math.h"
 #include "v4math.h"
 #include "v4color.h"
+#include "llcharacter.h"
 #include "llagent.h"
 %}
 
@@ -90,7 +91,8 @@ static int LuaBase_print (lua_State *L) {
 		s = lua_tolstring(L, -1, &l);  /* get result */
 		if (s == NULL)
 			return luaL_error(L, "tostring must return a string to print");
-		if (i>1) out.append("\t");
+		if (i>1) 
+			out.append("     ");
 		out.append(s);
 		lua_pop(L, 1);  /* pop result */
 	}
@@ -125,6 +127,9 @@ static int LuaBase_print (lua_State *L) {
 %include "LuaAvatar_f.h"
 
 %include "LuaAgent_f.h"
+
+%include "../llcharacter/llcharacter.h"
+%include "../newview/llagent.h"
 
 %include "LLVector.i"
 

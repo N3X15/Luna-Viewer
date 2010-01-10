@@ -1,6 +1,6 @@
-#BUILDTYPE="Release"
+BUILDTYPE="Release"
 #BUILDTYPE="RelWithDebInfo"
-BUILDTYPE="Debug"
+#BUILDTYPE="Debug"
 
 export DISTCC_HOSTS="localhost/2 192.168.9.5/2 192.168.9.203/4"
 
