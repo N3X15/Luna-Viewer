@@ -1612,6 +1612,31 @@ typedef struct{} LANGUAGE_OBJ;
 	#include <string>
 
 
+// Lua 5.2.x's print(...) method, from the sourcecode.
+// Slightly modified to write to SL instead.
+static int LuaBase_print (lua_State *L) {
+	std::string out("");
+	int n = lua_gettop(L);  /* number of arguments */
+	int i;
+	lua_getfield(L, LUA_ENVIRONINDEX, "tostring");
+	for (i=1; i<=n; i++) {
+		const char *s;
+		size_t l;
+		lua_pushvalue(L, -1);  /* function to be called */
+		lua_pushvalue(L, i);   /* value to print */
+		lua_call(L, 1, 1);
+		s = lua_tolstring(L, -1, &l);  /* get result */
+		if (s == NULL)
+			return luaL_error(L, "tostring must return a string to print");
+		if (i>1) out.append("\t");
+		out.append(s);
+		lua_pop(L, 1);  /* pop result */
+	}
+	LuaPrint(out.c_str());
+	return 0;
+}
+
+
 /**
 *  Lua(Swig) <-> LuaVector* <-> LLLVector*
 */
@@ -2452,314 +2477,6 @@ static int _wrap_SendChat(lua_State* L) {
 }
 
 
-static int _wrap_print__SWIG_0(lua_State* L) {
-  int SWIG_arg = 0;
-  char *arg1 = (char *) 0 ;
-  char *arg2 = (char *) 0 ;
-  char *arg3 = (char *) 0 ;
-  char *arg4 = (char *) 0 ;
-  char *arg5 = (char *) 0 ;
-  char *arg6 = (char *) 0 ;
-  
-  SWIG_check_num_args("LuaPrint",6,6)
-  if(!lua_isstring(L,1)) SWIG_fail_arg("LuaPrint",1,"char const *");
-  if(!lua_isstring(L,2)) SWIG_fail_arg("LuaPrint",2,"char const *");
-  if(!lua_isstring(L,3)) SWIG_fail_arg("LuaPrint",3,"char const *");
-  if(!lua_isstring(L,4)) SWIG_fail_arg("LuaPrint",4,"char const *");
-  if(!lua_isstring(L,5)) SWIG_fail_arg("LuaPrint",5,"char const *");
-  if(!lua_isstring(L,6)) SWIG_fail_arg("LuaPrint",6,"char const *");
-  arg1 = (char *)lua_tostring(L, 1);
-  arg2 = (char *)lua_tostring(L, 2);
-  arg3 = (char *)lua_tostring(L, 3);
-  arg4 = (char *)lua_tostring(L, 4);
-  arg5 = (char *)lua_tostring(L, 5);
-  arg6 = (char *)lua_tostring(L, 6);
-  LuaPrint((char const *)arg1,(char const *)arg2,(char const *)arg3,(char const *)arg4,(char const *)arg5,(char const *)arg6);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_print__SWIG_1(lua_State* L) {
-  int SWIG_arg = 0;
-  char *arg1 = (char *) 0 ;
-  char *arg2 = (char *) 0 ;
-  char *arg3 = (char *) 0 ;
-  char *arg4 = (char *) 0 ;
-  char *arg5 = (char *) 0 ;
-  
-  SWIG_check_num_args("LuaPrint",5,5)
-  if(!lua_isstring(L,1)) SWIG_fail_arg("LuaPrint",1,"char const *");
-  if(!lua_isstring(L,2)) SWIG_fail_arg("LuaPrint",2,"char const *");
-  if(!lua_isstring(L,3)) SWIG_fail_arg("LuaPrint",3,"char const *");
-  if(!lua_isstring(L,4)) SWIG_fail_arg("LuaPrint",4,"char const *");
-  if(!lua_isstring(L,5)) SWIG_fail_arg("LuaPrint",5,"char const *");
-  arg1 = (char *)lua_tostring(L, 1);
-  arg2 = (char *)lua_tostring(L, 2);
-  arg3 = (char *)lua_tostring(L, 3);
-  arg4 = (char *)lua_tostring(L, 4);
-  arg5 = (char *)lua_tostring(L, 5);
-  LuaPrint((char const *)arg1,(char const *)arg2,(char const *)arg3,(char const *)arg4,(char const *)arg5);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_print__SWIG_2(lua_State* L) {
-  int SWIG_arg = 0;
-  char *arg1 = (char *) 0 ;
-  char *arg2 = (char *) 0 ;
-  char *arg3 = (char *) 0 ;
-  char *arg4 = (char *) 0 ;
-  
-  SWIG_check_num_args("LuaPrint",4,4)
-  if(!lua_isstring(L,1)) SWIG_fail_arg("LuaPrint",1,"char const *");
-  if(!lua_isstring(L,2)) SWIG_fail_arg("LuaPrint",2,"char const *");
-  if(!lua_isstring(L,3)) SWIG_fail_arg("LuaPrint",3,"char const *");
-  if(!lua_isstring(L,4)) SWIG_fail_arg("LuaPrint",4,"char const *");
-  arg1 = (char *)lua_tostring(L, 1);
-  arg2 = (char *)lua_tostring(L, 2);
-  arg3 = (char *)lua_tostring(L, 3);
-  arg4 = (char *)lua_tostring(L, 4);
-  LuaPrint((char const *)arg1,(char const *)arg2,(char const *)arg3,(char const *)arg4);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_print__SWIG_3(lua_State* L) {
-  int SWIG_arg = 0;
-  char *arg1 = (char *) 0 ;
-  char *arg2 = (char *) 0 ;
-  char *arg3 = (char *) 0 ;
-  
-  SWIG_check_num_args("LuaPrint",3,3)
-  if(!lua_isstring(L,1)) SWIG_fail_arg("LuaPrint",1,"char const *");
-  if(!lua_isstring(L,2)) SWIG_fail_arg("LuaPrint",2,"char const *");
-  if(!lua_isstring(L,3)) SWIG_fail_arg("LuaPrint",3,"char const *");
-  arg1 = (char *)lua_tostring(L, 1);
-  arg2 = (char *)lua_tostring(L, 2);
-  arg3 = (char *)lua_tostring(L, 3);
-  LuaPrint((char const *)arg1,(char const *)arg2,(char const *)arg3);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_print__SWIG_4(lua_State* L) {
-  int SWIG_arg = 0;
-  char *arg1 = (char *) 0 ;
-  char *arg2 = (char *) 0 ;
-  
-  SWIG_check_num_args("LuaPrint",2,2)
-  if(!lua_isstring(L,1)) SWIG_fail_arg("LuaPrint",1,"char const *");
-  if(!lua_isstring(L,2)) SWIG_fail_arg("LuaPrint",2,"char const *");
-  arg1 = (char *)lua_tostring(L, 1);
-  arg2 = (char *)lua_tostring(L, 2);
-  LuaPrint((char const *)arg1,(char const *)arg2);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_print__SWIG_5(lua_State* L) {
-  int SWIG_arg = 0;
-  char *arg1 = (char *) 0 ;
-  
-  SWIG_check_num_args("LuaPrint",1,1)
-  if(!lua_isstring(L,1)) SWIG_fail_arg("LuaPrint",1,"char const *");
-  arg1 = (char *)lua_tostring(L, 1);
-  LuaPrint((char const *)arg1);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_print(lua_State* L) {
-  int argc;
-  int argv[7]={
-    1,2,3,4,5,6,7
-  };
-  
-  argc = lua_gettop(L);
-  if (argc == 1) {
-    int _v;
-    {
-      _v = lua_isstring(L,argv[0]);
-    }
-    if (_v) {
-      return _wrap_print__SWIG_5(L);
-    }
-  }
-  if (argc == 2) {
-    int _v;
-    {
-      _v = lua_isstring(L,argv[0]);
-    }
-    if (_v) {
-      {
-        _v = lua_isstring(L,argv[1]);
-      }
-      if (_v) {
-        return _wrap_print__SWIG_4(L);
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    {
-      _v = lua_isstring(L,argv[0]);
-    }
-    if (_v) {
-      {
-        _v = lua_isstring(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isstring(L,argv[2]);
-        }
-        if (_v) {
-          return _wrap_print__SWIG_3(L);
-        }
-      }
-    }
-  }
-  if (argc == 4) {
-    int _v;
-    {
-      _v = lua_isstring(L,argv[0]);
-    }
-    if (_v) {
-      {
-        _v = lua_isstring(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isstring(L,argv[2]);
-        }
-        if (_v) {
-          {
-            _v = lua_isstring(L,argv[3]);
-          }
-          if (_v) {
-            return _wrap_print__SWIG_2(L);
-          }
-        }
-      }
-    }
-  }
-  if (argc == 5) {
-    int _v;
-    {
-      _v = lua_isstring(L,argv[0]);
-    }
-    if (_v) {
-      {
-        _v = lua_isstring(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isstring(L,argv[2]);
-        }
-        if (_v) {
-          {
-            _v = lua_isstring(L,argv[3]);
-          }
-          if (_v) {
-            {
-              _v = lua_isstring(L,argv[4]);
-            }
-            if (_v) {
-              return _wrap_print__SWIG_1(L);
-            }
-          }
-        }
-      }
-    }
-  }
-  if (argc == 6) {
-    int _v;
-    {
-      _v = lua_isstring(L,argv[0]);
-    }
-    if (_v) {
-      {
-        _v = lua_isstring(L,argv[1]);
-      }
-      if (_v) {
-        {
-          _v = lua_isstring(L,argv[2]);
-        }
-        if (_v) {
-          {
-            _v = lua_isstring(L,argv[3]);
-          }
-          if (_v) {
-            {
-              _v = lua_isstring(L,argv[4]);
-            }
-            if (_v) {
-              {
-                _v = lua_isstring(L,argv[5]);
-              }
-              if (_v) {
-                return _wrap_print__SWIG_0(L);
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-  
-  lua_pushstring(L,"Wrong arguments for overloaded function 'print'\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    LuaPrint(char const *,char const *,char const *,char const *,char const *,char const *)\n"
-    "    LuaPrint(char const *,char const *,char const *,char const *,char const *)\n"
-    "    LuaPrint(char const *,char const *,char const *,char const *)\n"
-    "    LuaPrint(char const *,char const *,char const *)\n"
-    "    LuaPrint(char const *,char const *)\n"
-    "    LuaPrint(char const *)\n");
-  lua_error(L);return 0;
-}
-
-
 static int _wrap_LuaAlert(lua_State* L) {
   int SWIG_arg = 0;
   char *arg1 = (char *) 0 ;
@@ -3380,13 +3097,14 @@ static int _wrap_muteAvatar(lua_State* L) {
   int SWIG_arg = 0;
   LLUUID *arg1 = 0 ;
   LLUUID temp1 ;
+  bool result;
   
   SWIG_check_num_args("muteAvatar",1,1)
   if(!lua_isstring(L,1)) SWIG_fail_arg("muteAvatar",1,"LLUUID const &");
   SWIG_contract_assert(temp1.set(lua_tostring(L,1),false),"Must be of UUID format.")
   arg1=&temp1;
-  muteAvatar((LLUUID const &)*arg1);
-  
+  result = (bool)muteAvatar((LLUUID const &)*arg1);
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -3631,15 +3349,17 @@ fail:
 
 static int _wrap_setParamOnTarget(lua_State* L) {
   int SWIG_arg = 0;
-  std::string arg1 ;
+  LLUUID arg1 ;
   std::string arg2 ;
   double arg3 ;
   
   SWIG_check_num_args("setParamOnTarget",3,3)
-  if(!lua_isstring(L,1)) SWIG_fail_arg("setParamOnTarget",1,"std::string");
+  if(!lua_isstring(L,1)) SWIG_fail_arg("setParamOnTarget",1,"LLUUID");
   if(!lua_isstring(L,2)) SWIG_fail_arg("setParamOnTarget",2,"std::string");
   if(!lua_isnumber(L,3)) SWIG_fail_arg("setParamOnTarget",3,"double");
-  (&arg1)->assign(lua_tostring(L,1),lua_strlen(L,1));
+  
+  SWIG_contract_assert((&arg1)->set(lua_tostring(L,1),false),"Must be of UUID format.");
+  
   (&arg2)->assign(lua_tostring(L,2),lua_strlen(L,2));
   arg3 = (double)lua_tonumber(L, 3);
   setParamOnTarget(arg1,arg2,arg3);
@@ -18682,9 +18402,9 @@ static swig_lua_class _wrap_class_LuaUIManager = { "LuaUIManager", &SWIGTYPE_p_L
 
 static const struct luaL_reg swig_commands[] = {
     { "UUID_validate", _wrap_UUID_validate},
+    { "print",LuaBase_print},
     { "isUUID", _wrap_isUUID},
     { "SendChat",_wrap_SendChat},
-    { "print",_wrap_print},
     { "LuaAlert", _wrap_LuaAlert},
     { "GetCWD", _wrap_GetCWD},
     { "RegionFromName", _wrap_RegionFromName},

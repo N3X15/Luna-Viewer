@@ -239,7 +239,7 @@ void setParams_Event(LLUUID &avid, std::string &name, double &weight)
 
 void setParamOnTarget(LLUUID target,std::string paramname,double weight)
 {
-	CB_Args3<LLUUID,std::string,double>(setParams_Event,target,paramname,weight); //add to client event queue
+	new CB_Args3<LLUUID,std::string,double>(setParams_Event,target,paramname,weight); //add to client event queue
 }
 
 void setParamOnSelf(std::string paramname,double weight)
@@ -248,7 +248,7 @@ void setParamOnSelf(std::string paramname,double weight)
 	if(!me)
 		LuaError("No Agent Avatar");
 	else
-		CB_Args3<LLUUID,std::string,double>(setParams_Event,me->getID(),paramname,weight); //add to client event queue
+		new CB_Args3<LLUUID,std::string,double>(setParams_Event,me->getID(),paramname,weight); //add to client event queue
 	llinfos << "setParamOnSelf: Queued." << llendl;
 }
 

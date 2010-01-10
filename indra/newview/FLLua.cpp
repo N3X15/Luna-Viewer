@@ -238,17 +238,26 @@ void FLLua::execClientEvents()
 		return;
 	if(sInstance->mPendingEvents)
 	{
+		lldebugs << __LINE__ << ": Events pending.  Iterating through events." << llendl;
 		sInstance->mPendingEvents=false;
 		sInstance->lockData();
 		while(!sInstance->mQueuedEvents.empty())
 		{
 #ifdef FL_PRI_EVENTS
+			lldebugs << __LINE__ << ": Acquiring highest-priority event." << llendl;
 			CB_Base *cb=sInstance->mQueuedEvents.top();
 #else
+			lldebugs << __LINE__ << ": Acquiring first event in queue." << llendl;
 			CB_Base *cb=sInstance->mQueuedEvents.front();
 #endif
-			cb->OnCall();
-			delete cb;
+			if(!cb)
+			{
+				llwarns << "Invalid pointer to event!" << llendl;
+			} else {
+				lldebugs << __LINE__ << ": Calling event." << llendl;
+				cb->OnCall();
+				delete cb;
+			}
 			sInstance->mQueuedEvents.pop();
 		}
 		sInstance->unlockData();

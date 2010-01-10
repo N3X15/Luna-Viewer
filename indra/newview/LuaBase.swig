@@ -70,7 +70,35 @@
 
 
 %rename(SendChat)		LuaSendChat(const char *msg, bool IsDebug=false);
-%rename(print)			LuaPrint(const char *msg, const char *arg1=0,const char *arg2=0,const char *arg3=0,const char *arg4=0,const char *arg5=0);
+
+%ignore				LuaPrint(const char *msg, const char *arg1=0,const char *arg2=0,const char *arg3=0,const char *arg4=0,const char *arg5=0);
+%native(print) int LuaBase_print(lua_State *L); 
+%{
+// Lua 5.2.x's print(...) method, from the sourcecode.
+// Slightly modified to write to SL instead.
+static int LuaBase_print (lua_State *L) {
+	std::string out("");
+	int n = lua_gettop(L);  /* number of arguments */
+	int i;
+	lua_getfield(L, LUA_ENVIRONINDEX, "tostring");
+	for (i=1; i<=n; i++) {
+		const char *s;
+		size_t l;
+		lua_pushvalue(L, -1);  /* function to be called */
+		lua_pushvalue(L, i);   /* value to print */
+		lua_call(L, 1, 1);
+		s = lua_tolstring(L, -1, &l);  /* get result */
+		if (s == NULL)
+			return luaL_error(L, "tostring must return a string to print");
+		if (i>1) out.append("\t");
+		out.append(s);
+		lua_pop(L, 1);  /* pop result */
+	}
+	LuaPrint(out.c_str());
+	return 0;
+}
+%}
+
 %rename(RegionFromName)		LuaRegionFromName(const char *msg);
 %rename(GetCurrentRegion)	LuaGetCurrentRegion();
 %rename(GetCWD)			LuaGetCWD();

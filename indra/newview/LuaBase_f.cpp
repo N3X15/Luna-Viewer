@@ -272,9 +272,17 @@ std::string toLuaString(F32 t)
 	return o;
 }
 
-void muteAvatar(const LLUUID& derp)
+/*
+2010-01-10T01:04:21Z INFO: add: Muting  id d1360af3-98cc-40fd-aa6f-5e4041025115 flags 0
+
+Program received signal SIGSEGV, Segmentation fault.
+[Switching to Thread 0x881f3b70 (LWP 10962)]
+0x084e28c9 in LLUUID (this=0x881f2920, rhs=...)
+    at /root/FlexLife/trunk/indra/llcommon/lluuid.h:210
+*/
+bool muteAvatar(const LLUUID& derp)
 {
-	LLMuteList::getInstance()->add(LLMute(derp,"",LLMute::AGENT,0));
+	return LLMuteList::getInstance()->add(LLMute(derp,"",LLMute::AGENT,0))==TRUE;
 }
 
 bool isMuted(const LLUUID& avid,std::string name)
