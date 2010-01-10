@@ -211,9 +211,9 @@ double getParamMin(const LLUUID &avid,const char* paramname)
 // Set
 //------------------------------------------------------------------------
 
-void setParams_Event(std::string &avid, std::string &name, double &weight)
+void setParams_Event(LLUUID &avid, std::string &name, double &weight)
 {
-	LLViewerObject *o=gObjectList.findObject(LLUUID(avid));
+	LLViewerObject *o=gObjectList.findObject(avid);
 	if(!o)
 	{
 		LuaError("Can't find avatar.");
@@ -225,6 +225,7 @@ void setParams_Event(std::string &avid, std::string &name, double &weight)
 		return;
 	}
 	LLVOAvatar *av=(LLVOAvatar *)o;
+
 	LLVisualParam *p=av->getVisualParam(name.c_str());
 	if(!p)
 	{
@@ -233,14 +234,12 @@ void setParams_Event(std::string &avid, std::string &name, double &weight)
 		LuaError(out.c_str());
 		return;
 	}
-	llinfos << "setParams_Event:  SetWeight." << llendl;
 	p->setWeight((F32)weight,FALSE);
-	llinfos << "setParams_Event:  END!" << llendl;
 }
 
-void setParamOnTarget(std::string target,std::string paramname,double weight)
+void setParamOnTarget(LLUUID target,std::string paramname,double weight)
 {
-	CB_Args3<std::string,std::string,double>(&setParams_Event,target,paramname,weight); //add to client event queue
+	CB_Args3<LLUUID,std::string,double>(setParams_Event,target,paramname,weight); //add to client event queue
 }
 
 void setParamOnSelf(std::string paramname,double weight)
@@ -249,7 +248,7 @@ void setParamOnSelf(std::string paramname,double weight)
 	if(!me)
 		LuaError("No Agent Avatar");
 	else
-		CB_Args3<std::string,std::string,double>(&setParams_Event,me->getID().asString(),paramname,weight); //add to client event queue
+		CB_Args3<LLUUID,std::string,double>(setParams_Event,me->getID(),paramname,weight); //add to client event queue
 	llinfos << "setParamOnSelf: Queued." << llendl;
 }
 
@@ -401,7 +400,7 @@ void LuaUpdateAppearance_Event()
 }
 void LuaUpdateAppearance()
 {
-	CB_Args0(&LuaUpdateAppearance_Event);
+	CB_Args0(LuaUpdateAppearance_Event);
 }
 
 bool HasPermissions(LLViewerInventoryItem* item)
