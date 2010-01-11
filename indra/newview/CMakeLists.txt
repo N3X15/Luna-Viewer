@@ -513,6 +513,7 @@ set(viewer_SOURCE_FILES
     LuaAvatar_f.cpp
     LuaBase_f.cpp
     LuaBuild_f.cpp
+    LuaWindlight.cpp
     LuaUI.cpp
 #   SLua.cpp
     LuaBase.cpp
@@ -980,6 +981,7 @@ set(viewer_HEADER_FILES
 	LuaUI.h
 	LuaBase.h
 #	LuaTypes.h
+    LuaWindlight.h
 	flexconsole.h
     rlvdefines.h
     rlvevent.h

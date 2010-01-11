@@ -411,6 +411,7 @@ BOOL LLWearable::importFile( LLFILE* file )
 
 	// parameters
 	S32 i;
+	LLVOAvatar *av = gAgent.getAvatarObject();
 	for( i = 0; i < num_parameters; i++ )
 	{
 		S32 param_id = 0;
@@ -421,6 +422,20 @@ BOOL LLWearable::importFile( LLFILE* file )
 			llwarns << "Bad Wearable asset: bad parameter, #" << i << llendl;
 			return FALSE;
 		}
+		// Attempt to workaround FL-2.
+		//	Force clamping when loading wearables.
+		LLVisualParam* p = av->getVisualParam(param_id);
+		F32 clamped_param_weight=llclamp(param_weight,p->getMinWeight(),p->getMaxWeight());
+
+		// Force to U8 to check for "bad" values since F32 comparisons are too accurate.
+		if(llround(clamped_param_weight) != llround(param_weight))
+		{
+			llwarns << "Clamped visual parameter #" << param_id << " while loading LLWearable." << llendl;
+			lldebugs << "(" << param_weight << "!=" << clamped_param_weight << ") " << llendl;
+
+			param_weight = clamped_param_weight;
+		}
+
 		mVisualParamMap[param_id] = param_weight;
 	}
 

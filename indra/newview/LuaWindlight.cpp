@@ -9,138 +9,157 @@
 #include "llwaterparamset.h"
 #include "llwaterparammanager.h"
 
-// Red Green Blue **GLOW**
-void WLWater::SetFogColor(LLVector4 rgba)
+//	LLUUID getNormalMapID(void);
+//	LLVector2 getWave1Dir(void);
+//	LLVector2 getWave2Dir(void);
+//	F32 getScaleAbove(void);
+//	F32 getScaleBelow(void);
+//	LLVector3 getNormalScale(void);
+//	F32 getFresnelScale(void);
+//	F32 getFresnelOffset(void);
+//	F32 getBlurMultiplier(void);
+//	F32 getFogDensity(void);
+//	LLColor4 getFogColor(void);
+
+
+////////////////////////////////////////////////////////////////////
+//Fog Density
+////////////////////////////////////////////////////////////////////
+void WLWater::SetFogColor(const LLVector4& rgba)
 {
-	LLWaterParamManager::instance()->mFogColor=rgba;
+	LLWaterParamManager::instance()->mCurParams.set("waterFogColor",rgba);
+}
+LLVector4 WLWater::GetFogColor()
+{
+	bool err;
+	return LLWaterParamManager::instance()->mCurParams.getVector4("waterFogColor",err);
 }
 
-void WLWater::GetFogColor()
-{
-	return LLWaterParamManager::instance()->mFogColor;
-}
-
+////////////////////////////////////////////////////////////////////
+// Fog Density
+////////////////////////////////////////////////////////////////////
 void WLWater::SetFogDensity(float density)
 {
-	LLWaterParamManager::instance()->mFogDensity=density;
+	LLWaterParamManager::instance()->mCurParams.set("waterFogDensity",(F32)density);
 }
-
 float WLWater::GetFogDensity()
 {
-	return LLWaterParamManager::instance()->mFogDensity;
+	bool err;
+	return (float)LLWaterParamManager::instance()->mCurParams.getFloat("waterFogDensity",err);
 }
 
-static void SetUnderwaterFogMod(float density)
+////////////////////////////////////////////////////////////////////
+// UnderWater Fog Modifier
+////////////////////////////////////////////////////////////////////
+void WLWater::SetUnderwaterFogMod(float density)
 {
-	LLWaterParamManager::instance()->mUnderWaterFogMod=density;
+	LLWaterParamManager::instance()->mCurParams.set("underWaterFogMod",(F32)density);
 }
-static float GetUnderwaterFogMod()
+float WLWater::GetUnderwaterFogMod()
 {
-	return LLWaterParamManager::instance()->mUnderWaterFogMod;
-}
-
-static void SetNormalScale(LLVector3 scale)
-{
-	LLWaterParamManager::instance()->mNormalScale=scale;
-}
-static LLVector3 GetNormalScale()
-{
-	return LLWaterParamManager::instance()->mNormalScale;
+	bool err;
+	return 	LLWaterParamManager::instance()->mCurParams.getFloat("underWaterFogMod",err);
 }
 
-static void SetFresnelScale(float Scale)
+////////////////////////////////////////////////////////////////////
+// Normal Scale
+////////////////////////////////////////////////////////////////////
+void WLWater::SetNormalScale(const LLVector3& scale)
 {
-	LLWaterParamManager::instance()->mFresnelScale=Scale;
+	LLWaterParamManager::instance()->mCurParams.set("normScale",scale.mV[0],scale.mV[1],scale.mV[2]);
 }
-static float GetFresnelScale()
+LLVector3 WLWater::GetNormalScale()
 {
-	return LLWaterParamManager::instance()->mFresnelScale;
-}
-
-static void SetFresnelOffset(float offset)
-{
-	LLWaterParamManager::instance()->mFresnelOffset=offset;
-}
-static float GetFresnelOffset()
-{
-	return LLWaterParamManager::instance()->mFresnelOffset;
+	bool err;
+	return LLWaterParamManager::instance()->mCurParams.getVector3("normScale",err);
 }
 
-static void SetScaleAbove(float scale)
+////////////////////////////////////////////////////////////////////
+// Fresnel Scale
+////////////////////////////////////////////////////////////////////
+void WLWater::SetFresnelScale(float Scale)
 {
-	LLWaterParamManager::instance()->mScaleAbove=scale;
+	LLWaterParamManager::instance()->mCurParams.set("fresnelScale",(F32)Scale);
 }
-static float GetScaleAbove()
+float WLWater::GetFresnelScale()
 {
-	return LLWaterParamManager::instance()->mScaleAbove;
-}
-
-static void SetScaleBelow(float scale)
-{
-	LLWaterParamManager::instance()->mScaleBelow=scale;
-}
-static float GetScaleBelow()
-{
-	return LLWaterParamManager::instance()->mScaleBelow;
+	bool err;
+	return LLWaterParamManager::instance()->mCurParams.getFloat("fresnelScale",err);
 }
 
-static void SetBlurMultiplier(float scale)
+////////////////////////////////////////////////////////////////////
+// Fresnel Offset
+////////////////////////////////////////////////////////////////////
+void WLWater::SetFresnelOffset(float offset)
 {
-	LLWaterParamManager::instance()->mBlurMultiplier=scale;
+	LLWaterParamManager::instance()->mCurParams.set("fresnelOffset",(F32)offset);
 }
-static float GetBlurMultiplier()
+float WLWater::GetFresnelOffset()
 {
-	return LLWaterParamManager::instance()->mBlurMultiplier;
+	bool err;
+	return LLWaterParamManager::instance()->mCurParams.getFloat("fresnelOffset",err);
 }
 
-static void SetWave1Dir(LLVector2 dir)
+////////////////////////////////////////////////////////////////////
+// Scale Above
+////////////////////////////////////////////////////////////////////
+void WLWater::SetScaleAbove(float scale)
+{
+	LLWaterParamManager::instance()->mCurParams.set("scaleAbove",(F32)scale);
+}
+float WLWater::GetScaleAbove()
+{
+	bool err;
+	return LLWaterParamManager::instance()->mCurParams.getFloat("scaleAbove",err);
+}
+
+////////////////////////////////////////////////////////////////////
+// Scale Below
+////////////////////////////////////////////////////////////////////
+void WLWater::SetScaleBelow(float scale)
+{
+	LLWaterParamManager::instance()->mCurParams.set("scaleBelow",(F32)scale);
+}
+float WLWater::GetScaleBelow()
+{
+	bool err;
+	return LLWaterParamManager::instance()->mCurParams.getFloat("scaleBelow",err);
+}
+
+////////////////////////////////////////////////////////////////////
+// Blur Multiplier
+////////////////////////////////////////////////////////////////////
+void WLWater::SetBlurMultiplier(float scale)
+{
+	LLWaterParamManager::instance()->mCurParams.set("blurMultiplier",(F32)scale);
+}
+float WLWater::GetBlurMultiplier()
+{
+	bool err;
+	return LLWaterParamManager::instance()->mCurParams.getFloat("blurMultiplier",err);
+}
+
+////////////////////////////////////////////////////////////////////
+// Wave1 Direction
+////////////////////////////////////////////////////////////////////
+void WLWater::SetWave1Dir(LLVector2 dir)
 {
 	LLWaterParamManager::instance()->mWave1Dir=dir;
 }
-static LLVector2 GetWave1Dir()
+LLVector2 WLWater::GetWave1Dir()
 {
-	return LLWaterParamManager::instance()->mWave1Dir;
+	return LLWaterParamManager::instance()->getWave1Dir();
 }
 
-static void SetWave1Dir(LLVector2 dir)
+////////////////////////////////////////////////////////////////////
+// Wave2 Direction
+////////////////////////////////////////////////////////////////////
+void WLWater::SetWave2Dir(LLVector2 dir)
 {
 	LLWaterParamManager::instance()->mWave2Dir=dir;
 }
-static LLVector2 GetWave2Dir()
+LLVector2 WLWater::GetWave2Dir()
 {
-	return LLWaterParamManager::instance()->mWave2Dir;
+	return LLWaterParamManager::instance()->getWave2Dir();
 }
 
-/*
-	childSetCommitCallback("WaterUnderWaterFogMod", onFloatControlMoved, &param_mgr->mUnderWaterFogMod);
-
-	// blue density
-	childSetCommitCallback("WaterNormalScaleX", onVector3ControlXMoved, &param_mgr->mNormalScale);
-	childSetCommitCallback("WaterNormalScaleY", onVector3ControlYMoved, &param_mgr->mNormalScale);
-	childSetCommitCallback("WaterNormalScaleZ", onVector3ControlZMoved, &param_mgr->mNormalScale);
-
-	// fresnel
-	childSetCommitCallback("WaterFresnelScale", onFloatControlMoved, &param_mgr->mFresnelScale);
-	childSetCommitCallback("WaterFresnelOffset", onFloatControlMoved, &param_mgr->mFresnelOffset);
-
-	// scale above/below
-	childSetCommitCallback("WaterScaleAbove", onFloatControlMoved, &param_mgr->mScaleAbove);
-	childSetCommitCallback("WaterScaleBelow", onFloatControlMoved, &param_mgr->mScaleBelow);
-
-	// blur mult
-	childSetCommitCallback("WaterBlurMult", onFloatControlMoved, &param_mgr->mBlurMultiplier);
-
-	// Load/save
-	LLComboBox* comboBox = getChild<LLComboBox>("WaterPresetsCombo");
-
-	//childSetAction("WaterLoadPreset", onLoadPreset, comboBox);
-	childSetAction("WaterNewPreset", onNewPreset, comboBox);
-	childSetAction("WaterSavePreset", onSavePreset, comboBox);
-	childSetAction("WaterDeletePreset", onDeletePreset, comboBox);
-
-	// wave direction
-	childSetCommitCallback("WaterWave1DirX", onVector2ControlXMoved, &param_mgr->mWave1Dir);
-	childSetCommitCallback("WaterWave1DirY", onVector2ControlYMoved, &param_mgr->mWave1Dir);
-	childSetCommitCallback("WaterWave2DirX", onVector2ControlXMoved, &param_mgr->mWave2Dir);
-	childSetCommitCallback("WaterWave2DirY", onVector2ControlYMoved, &param_mgr->mWave2Dir);
-*/

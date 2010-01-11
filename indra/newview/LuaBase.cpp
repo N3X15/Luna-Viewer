@@ -19787,6 +19787,434 @@ fail:
 }
 
 
+static int _wrap_WLWater_SetFogColor(lua_State* L) {
+  int SWIG_arg = 0;
+  LLVector4 *arg1 = 0 ;
+  
+  SWIG_check_num_args("WLWater::SetFogColor",1,1)
+  if(!lua_isuserdata(L,1)) SWIG_fail_arg("WLWater::SetFogColor",1,"LLVector4 const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLVector4,0))){
+    SWIG_fail_ptr("WLWater_SetFogColor",1,SWIGTYPE_p_LLVector4);
+  }
+  
+  WLWater::SetFogColor((LLVector4 const &)*arg1);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_WLWater_GetFogColor(lua_State* L) {
+  int SWIG_arg = 0;
+  LLVector4 result;
+  
+  SWIG_check_num_args("WLWater::GetFogColor",0,0)
+  result = WLWater::GetFogColor();
+  {
+    LLVector4 * resultptr = new LLVector4((const LLVector4 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_LLVector4,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_WLWater_SetFogDensity(lua_State* L) {
+  int SWIG_arg = 0;
+  float arg1 ;
+  
+  SWIG_check_num_args("WLWater::SetFogDensity",1,1)
+  if(!lua_isnumber(L,1)) SWIG_fail_arg("WLWater::SetFogDensity",1,"float");
+  arg1 = (float)lua_tonumber(L, 1);
+  WLWater::SetFogDensity(arg1);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_WLWater_GetFogDensity(lua_State* L) {
+  int SWIG_arg = 0;
+  float result;
+  
+  SWIG_check_num_args("WLWater::GetFogDensity",0,0)
+  result = (float)WLWater::GetFogDensity();
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_WLWater_SetUnderwaterFogMod(lua_State* L) {
+  int SWIG_arg = 0;
+  float arg1 ;
+  
+  SWIG_check_num_args("WLWater::SetUnderwaterFogMod",1,1)
+  if(!lua_isnumber(L,1)) SWIG_fail_arg("WLWater::SetUnderwaterFogMod",1,"float");
+  arg1 = (float)lua_tonumber(L, 1);
+  WLWater::SetUnderwaterFogMod(arg1);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_WLWater_GetUnderwaterFogMod(lua_State* L) {
+  int SWIG_arg = 0;
+  float result;
+  
+  SWIG_check_num_args("WLWater::GetUnderwaterFogMod",0,0)
+  result = (float)WLWater::GetUnderwaterFogMod();
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_WLWater_SetNormalScale(lua_State* L) {
+  int SWIG_arg = 0;
+  LLVector3 *arg1 = 0 ;
+  
+  SWIG_check_num_args("WLWater::SetNormalScale",1,1)
+  if(!lua_isuserdata(L,1)) SWIG_fail_arg("WLWater::SetNormalScale",1,"LLVector3 const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLVector3,0))){
+    SWIG_fail_ptr("WLWater_SetNormalScale",1,SWIGTYPE_p_LLVector3);
+  }
+  
+  WLWater::SetNormalScale((LLVector3 const &)*arg1);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_WLWater_GetNormalScale(lua_State* L) {
+  int SWIG_arg = 0;
+  LLVector3 result;
+  
+  SWIG_check_num_args("WLWater::GetNormalScale",0,0)
+  result = WLWater::GetNormalScale();
+  {
+    LLVector3 * resultptr = new LLVector3((const LLVector3 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_LLVector3,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_WLWater_SetFresnelScale(lua_State* L) {
+  int SWIG_arg = 0;
+  float arg1 ;
+  
+  SWIG_check_num_args("WLWater::SetFresnelScale",1,1)
+  if(!lua_isnumber(L,1)) SWIG_fail_arg("WLWater::SetFresnelScale",1,"float");
+  arg1 = (float)lua_tonumber(L, 1);
+  WLWater::SetFresnelScale(arg1);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_WLWater_GetFresnelScale(lua_State* L) {
+  int SWIG_arg = 0;
+  float result;
+  
+  SWIG_check_num_args("WLWater::GetFresnelScale",0,0)
+  result = (float)WLWater::GetFresnelScale();
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_WLWater_SetFresnelOffset(lua_State* L) {
+  int SWIG_arg = 0;
+  float arg1 ;
+  
+  SWIG_check_num_args("WLWater::SetFresnelOffset",1,1)
+  if(!lua_isnumber(L,1)) SWIG_fail_arg("WLWater::SetFresnelOffset",1,"float");
+  arg1 = (float)lua_tonumber(L, 1);
+  WLWater::SetFresnelOffset(arg1);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_WLWater_GetFresnelOffset(lua_State* L) {
+  int SWIG_arg = 0;
+  float result;
+  
+  SWIG_check_num_args("WLWater::GetFresnelOffset",0,0)
+  result = (float)WLWater::GetFresnelOffset();
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_WLWater_SetScaleAbove(lua_State* L) {
+  int SWIG_arg = 0;
+  float arg1 ;
+  
+  SWIG_check_num_args("WLWater::SetScaleAbove",1,1)
+  if(!lua_isnumber(L,1)) SWIG_fail_arg("WLWater::SetScaleAbove",1,"float");
+  arg1 = (float)lua_tonumber(L, 1);
+  WLWater::SetScaleAbove(arg1);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_WLWater_GetScaleAbove(lua_State* L) {
+  int SWIG_arg = 0;
+  float result;
+  
+  SWIG_check_num_args("WLWater::GetScaleAbove",0,0)
+  result = (float)WLWater::GetScaleAbove();
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_WLWater_SetScaleBelow(lua_State* L) {
+  int SWIG_arg = 0;
+  float arg1 ;
+  
+  SWIG_check_num_args("WLWater::SetScaleBelow",1,1)
+  if(!lua_isnumber(L,1)) SWIG_fail_arg("WLWater::SetScaleBelow",1,"float");
+  arg1 = (float)lua_tonumber(L, 1);
+  WLWater::SetScaleBelow(arg1);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_WLWater_GetScaleBelow(lua_State* L) {
+  int SWIG_arg = 0;
+  float result;
+  
+  SWIG_check_num_args("WLWater::GetScaleBelow",0,0)
+  result = (float)WLWater::GetScaleBelow();
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_WLWater_SetBlurMultiplier(lua_State* L) {
+  int SWIG_arg = 0;
+  float arg1 ;
+  
+  SWIG_check_num_args("WLWater::SetBlurMultiplier",1,1)
+  if(!lua_isnumber(L,1)) SWIG_fail_arg("WLWater::SetBlurMultiplier",1,"float");
+  arg1 = (float)lua_tonumber(L, 1);
+  WLWater::SetBlurMultiplier(arg1);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_WLWater_GetBlurMultiplier(lua_State* L) {
+  int SWIG_arg = 0;
+  float result;
+  
+  SWIG_check_num_args("WLWater::GetBlurMultiplier",0,0)
+  result = (float)WLWater::GetBlurMultiplier();
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_WLWater_SetWave1Dir(lua_State* L) {
+  int SWIG_arg = 0;
+  LLVector2 arg1 ;
+  LLVector2 *argp1 ;
+  
+  SWIG_check_num_args("WLWater::SetWave1Dir",1,1)
+  if(!lua_isuserdata(L,1)) SWIG_fail_arg("WLWater::SetWave1Dir",1,"LLVector2");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&argp1,SWIGTYPE_p_LLVector2,0))){
+    SWIG_fail_ptr("WLWater_SetWave1Dir",1,SWIGTYPE_p_LLVector2);
+  }
+  arg1 = *argp1;
+  
+  WLWater::SetWave1Dir(arg1);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_WLWater_GetWave1Dir(lua_State* L) {
+  int SWIG_arg = 0;
+  LLVector2 result;
+  
+  SWIG_check_num_args("WLWater::GetWave1Dir",0,0)
+  result = WLWater::GetWave1Dir();
+  {
+    LLVector2 * resultptr = new LLVector2((const LLVector2 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_LLVector2,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_WLWater_SetWave2Dir(lua_State* L) {
+  int SWIG_arg = 0;
+  LLVector2 arg1 ;
+  LLVector2 *argp1 ;
+  
+  SWIG_check_num_args("WLWater::SetWave2Dir",1,1)
+  if(!lua_isuserdata(L,1)) SWIG_fail_arg("WLWater::SetWave2Dir",1,"LLVector2");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&argp1,SWIGTYPE_p_LLVector2,0))){
+    SWIG_fail_ptr("WLWater_SetWave2Dir",1,SWIGTYPE_p_LLVector2);
+  }
+  arg1 = *argp1;
+  
+  WLWater::SetWave2Dir(arg1);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_WLWater_GetWave2Dir(lua_State* L) {
+  int SWIG_arg = 0;
+  LLVector2 result;
+  
+  SWIG_check_num_args("WLWater::GetWave2Dir",0,0)
+  result = WLWater::GetWave2Dir();
+  {
+    LLVector2 * resultptr = new LLVector2((const LLVector2 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_LLVector2,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
 static int _wrap_new_WLWater(lua_State* L) {
   int SWIG_arg = 0;
   WLWater *result = 0 ;
@@ -21319,6 +21747,28 @@ static const struct luaL_reg swig_commands[] = {
     { "ParticleSystem_AttachToObject_Event", _wrap_ParticleSystem_AttachToObject_Event},
     { "ClearParticlesFromObject_Event", _wrap_ClearParticlesFromObject_Event},
     { "ClearParticlesFromObject", _wrap_ClearParticlesFromObject},
+    { "WLWater_SetFogColor", _wrap_WLWater_SetFogColor},
+    { "WLWater_GetFogColor", _wrap_WLWater_GetFogColor},
+    { "WLWater_SetFogDensity", _wrap_WLWater_SetFogDensity},
+    { "WLWater_GetFogDensity", _wrap_WLWater_GetFogDensity},
+    { "WLWater_SetUnderwaterFogMod", _wrap_WLWater_SetUnderwaterFogMod},
+    { "WLWater_GetUnderwaterFogMod", _wrap_WLWater_GetUnderwaterFogMod},
+    { "WLWater_SetNormalScale", _wrap_WLWater_SetNormalScale},
+    { "WLWater_GetNormalScale", _wrap_WLWater_GetNormalScale},
+    { "WLWater_SetFresnelScale", _wrap_WLWater_SetFresnelScale},
+    { "WLWater_GetFresnelScale", _wrap_WLWater_GetFresnelScale},
+    { "WLWater_SetFresnelOffset", _wrap_WLWater_SetFresnelOffset},
+    { "WLWater_GetFresnelOffset", _wrap_WLWater_GetFresnelOffset},
+    { "WLWater_SetScaleAbove", _wrap_WLWater_SetScaleAbove},
+    { "WLWater_GetScaleAbove", _wrap_WLWater_GetScaleAbove},
+    { "WLWater_SetScaleBelow", _wrap_WLWater_SetScaleBelow},
+    { "WLWater_GetScaleBelow", _wrap_WLWater_GetScaleBelow},
+    { "WLWater_SetBlurMultiplier", _wrap_WLWater_SetBlurMultiplier},
+    { "WLWater_GetBlurMultiplier", _wrap_WLWater_GetBlurMultiplier},
+    { "WLWater_SetWave1Dir", _wrap_WLWater_SetWave1Dir},
+    { "WLWater_GetWave1Dir", _wrap_WLWater_GetWave1Dir},
+    { "WLWater_SetWave2Dir", _wrap_WLWater_SetWave2Dir},
+    { "WLWater_GetWave2Dir", _wrap_WLWater_GetWave2Dir},
     {0,0}
 };
 

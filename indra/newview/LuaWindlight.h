@@ -7,7 +7,8 @@
 
 class WLWater
 {
-	static void SetFogColor(LLVector4 rgba);
+public:
+	static void SetFogColor(const LLVector4& rgba);
 	static LLVector4 GetFogColor();
 
 	static void SetFogDensity(float density);
@@ -16,7 +17,7 @@ class WLWater
 	static void SetUnderwaterFogMod(float density);
 	static float GetUnderwaterFogMod();	
 
-	static void SetNormalScale(LLVector3 scale);
+	static void SetNormalScale(const LLVector3& scale);
 	static LLVector3 GetNormalScale();
 
 	static void SetFresnelScale(float Scale);
@@ -32,7 +33,7 @@ class WLWater
 	static float GetScaleBelow();
 
 	static void SetBlurMultiplier(float scale);
-	static float GetBluMultiplier();
+	static float GetBlurMultiplier();
 
 	static void SetWave1Dir(LLVector2 dir);
 	static LLVector2 GetWave1Dir();

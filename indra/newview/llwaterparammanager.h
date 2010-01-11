@@ -175,6 +175,13 @@ struct WaterFloatControl
 		return *this;
 	}
 
+	inline WaterFloatControl & operator = (float const & val) 
+	{
+		mX = val;
+
+		return *this;
+	}
+
 	inline operator F32 (void) const 
 	{
 		return mX;

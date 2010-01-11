@@ -9413,6 +9413,7 @@ BOOL LLVOAvatarSkeletonInfo::parseXml(LLXmlTreeNode* node)
 //-----------------------------------------------------------------------------
 // parseXmlSkeletonNode(): parses <skeleton> nodes from XML tree
 //-----------------------------------------------------------------------------
+// NOTE:  This is where shit's failing in loading.
 BOOL LLVOAvatarXmlInfo::parseXmlSkeletonNode(LLXmlTreeNode* root)
 {
 	LLXmlTreeNode* node = root->getChildByName( "skeleton" );
