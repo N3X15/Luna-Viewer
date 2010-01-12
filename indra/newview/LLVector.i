@@ -28,7 +28,13 @@
 	float x;
 	float y;
 
-	std::string __str__();
+	std::string __str__()
+	{
+		std::ostringstream s;
+		s << "( " << $self->mV[0] << ", " << $self->mV[1] << " )";
+		return s.str();
+	}
+
 };
 
 %{
@@ -51,14 +57,7 @@ void LLVector2_y_set(LLVector2 *v,float val)
 {
 	v->mV[VY]=val;
 }
-
-std::string __str__()
-{
-	std::ostringstream s;
-	return s.str();
-}
 %}
-
 /////////////////////////////////////////////////////////
 // LLVector3 Extensions
 /////////////////////////////////////////////////////////
@@ -73,7 +72,13 @@ std::string __str__()
 	float g;
 	float b;
 
-	std::string __str__();
+	std::string __str__()
+	{
+		std::ostringstream s;
+		s << "< " << $self->mV[0] << ", " << $self->mV[1] << ", " << $self->mV[2] << " >";
+		return s.str();
+	}
+
 };
 
 %{
@@ -142,14 +147,6 @@ void LLVector3_b_set(LLVector3 *v,float val)
 {
 	v->mV[VZ]=val;
 }
-
-// Converts to string when necessary (tostring, for example)
-std::string __str__()
-{
-	std::ostringstream s;
-	s << "< " << a.mV[VX] << ", " << a.mV[VY] << ", " << a.mV[VZ] << " >";
-	return s.str();
-}
 %}
 
 /////////////////////////////////////////////////////////
@@ -167,6 +164,13 @@ std::string __str__()
 	float g;
 	float b;
 	float a;
+
+	std::string __str__()
+	{
+		std::ostringstream s;
+		s << "< " << $self->mV[0] << ", " << $self->mV[1] << ", " << $self->mV[2] << ", " << $self->mV[3] << " >";
+		return s.str();
+	}
 };
 
 %{
@@ -256,15 +260,6 @@ float LLVector4_a_get(LLVector4 *v)
 void LLVector4_a_set(LLVector4 *v,float val)
 {
 	v->mV[VW]=val;
-}
-
-
-
-std::string __str__()
-{
-	std::ostringstream s;
-	s << "< " << a.mV[VX] << ", " << a.mV[VY] << ", " << a.mV[VZ] << ", " << a.mV[VW] << " >";
-	return s.str();
 }
 %}
 

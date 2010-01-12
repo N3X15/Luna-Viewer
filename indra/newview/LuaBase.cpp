@@ -1509,77 +1509,78 @@ SWIG_Lua_dostring(lua_State *L, const char* str) {
 #define SWIGTYPE_p_LLMotionController swig_types[16]
 #define SWIGTYPE_p_LLMultiFloater swig_types[17]
 #define SWIGTYPE_p_LLPanel swig_types[18]
-#define SWIGTYPE_p_LLPartSysData swig_types[19]
-#define SWIGTYPE_p_LLPauseRequestHandle swig_types[20]
-#define SWIGTYPE_p_LLPointerT_LLPauseRequestHandle_t swig_types[21]
-#define SWIGTYPE_p_LLPolyMesh swig_types[22]
-#define SWIGTYPE_p_LLPrimitive swig_types[23]
-#define SWIGTYPE_p_LLQuaternion swig_types[24]
-#define SWIGTYPE_p_LLSD swig_types[25]
-#define SWIGTYPE_p_LLSafeHandleT_LLObjectSelection_t swig_types[26]
-#define SWIGTYPE_p_LLSelectMgr swig_types[27]
-#define SWIGTYPE_p_LLStaticViewerObject swig_types[28]
-#define SWIGTYPE_p_LLUUID swig_types[29]
-#define SWIGTYPE_p_LLVOAvatar swig_types[30]
-#define SWIGTYPE_p_LLVOVolume swig_types[31]
-#define SWIGTYPE_p_LLVector2 swig_types[32]
-#define SWIGTYPE_p_LLVector3 swig_types[33]
-#define SWIGTYPE_p_LLVector3d swig_types[34]
-#define SWIGTYPE_p_LLVector4 swig_types[35]
-#define SWIGTYPE_p_LLViewerInventoryItem swig_types[36]
-#define SWIGTYPE_p_LLViewerObject swig_types[37]
-#define SWIGTYPE_p_LLViewerRegion swig_types[38]
-#define SWIGTYPE_p_LLVisualParam swig_types[39]
-#define SWIGTYPE_p_LLWearable swig_types[40]
-#define SWIGTYPE_p_LuaAgent swig_types[41]
-#define SWIGTYPE_p_LuaButton swig_types[42]
-#define SWIGTYPE_p_LuaFloater swig_types[43]
-#define SWIGTYPE_p_LuaLineEditor swig_types[44]
-#define SWIGTYPE_p_LuaObject swig_types[45]
-#define SWIGTYPE_p_LuaObjectManager swig_types[46]
-#define SWIGTYPE_p_LuaPanel swig_types[47]
-#define SWIGTYPE_p_LuaSelectionManager swig_types[48]
-#define SWIGTYPE_p_LuaTextBox swig_types[49]
-#define SWIGTYPE_p_LuaUICtrl swig_types[50]
-#define SWIGTYPE_p_LuaUIManager swig_types[51]
-#define SWIGTYPE_p_ParticleSystem swig_types[52]
-#define SWIGTYPE_p_WLWater swig_types[53]
-#define SWIGTYPE_p_child_list_t swig_types[54]
-#define SWIGTYPE_p_const_child_list_t swig_types[55]
-#define SWIGTYPE_p_double swig_types[56]
-#define SWIGTYPE_p_eLayoutOrientation swig_types[57]
-#define SWIGTYPE_p_eObjectPartitions swig_types[58]
-#define SWIGTYPE_p_e_action_type swig_types[59]
-#define SWIGTYPE_p_e_anim_request swig_types[60]
-#define SWIGTYPE_p_e_camera_modes swig_types[61]
-#define SWIGTYPE_p_e_camera_position swig_types[62]
-#define SWIGTYPE_p_e_grid_mode swig_types[63]
-#define SWIGTYPE_p_e_object_update_type swig_types[64]
-#define SWIGTYPE_p_e_selection_type swig_types[65]
-#define SWIGTYPE_p_e_send_type swig_types[66]
-#define SWIGTYPE_p_float swig_types[67]
-#define SWIGTYPE_p_int swig_types[68]
-#define SWIGTYPE_p_iterator swig_types[69]
-#define SWIGTYPE_p_list_t swig_types[70]
-#define SWIGTYPE_p_long_long swig_types[71]
-#define SWIGTYPE_p_root_iterator swig_types[72]
-#define SWIGTYPE_p_root_object_iterator swig_types[73]
-#define SWIGTYPE_p_short swig_types[74]
-#define SWIGTYPE_p_signed_char swig_types[75]
-#define SWIGTYPE_p_skip_list_t swig_types[76]
-#define SWIGTYPE_p_std__string swig_types[77]
-#define SWIGTYPE_p_std__vectorT_LLCharacter_p_t swig_types[78]
-#define SWIGTYPE_p_unsigned_char swig_types[79]
-#define SWIGTYPE_p_unsigned_int swig_types[80]
-#define SWIGTYPE_p_unsigned_long_long swig_types[81]
-#define SWIGTYPE_p_unsigned_short swig_types[82]
-#define SWIGTYPE_p_valid_iterator swig_types[83]
-#define SWIGTYPE_p_valid_root_iterator swig_types[84]
-#define SWIGTYPE_p_vobj_list_t swig_types[85]
-#define SWIGTYPE_p_void swig_types[86]
-#define SWIGTYPE_p_wchar_t swig_types[87]
-static swig_type_info *swig_types[89];
-static swig_module_info swig_module = {swig_types, 88, 0, 0, 0, 0};
+#define SWIGTYPE_p_LLParcel swig_types[19]
+#define SWIGTYPE_p_LLPartSysData swig_types[20]
+#define SWIGTYPE_p_LLPauseRequestHandle swig_types[21]
+#define SWIGTYPE_p_LLPointerT_LLPauseRequestHandle_t swig_types[22]
+#define SWIGTYPE_p_LLPolyMesh swig_types[23]
+#define SWIGTYPE_p_LLPrimitive swig_types[24]
+#define SWIGTYPE_p_LLQuaternion swig_types[25]
+#define SWIGTYPE_p_LLSD swig_types[26]
+#define SWIGTYPE_p_LLSafeHandleT_LLObjectSelection_t swig_types[27]
+#define SWIGTYPE_p_LLSelectMgr swig_types[28]
+#define SWIGTYPE_p_LLStaticViewerObject swig_types[29]
+#define SWIGTYPE_p_LLUUID swig_types[30]
+#define SWIGTYPE_p_LLVOAvatar swig_types[31]
+#define SWIGTYPE_p_LLVOVolume swig_types[32]
+#define SWIGTYPE_p_LLVector2 swig_types[33]
+#define SWIGTYPE_p_LLVector3 swig_types[34]
+#define SWIGTYPE_p_LLVector3d swig_types[35]
+#define SWIGTYPE_p_LLVector4 swig_types[36]
+#define SWIGTYPE_p_LLViewerInventoryItem swig_types[37]
+#define SWIGTYPE_p_LLViewerObject swig_types[38]
+#define SWIGTYPE_p_LLViewerRegion swig_types[39]
+#define SWIGTYPE_p_LLVisualParam swig_types[40]
+#define SWIGTYPE_p_LLWearable swig_types[41]
+#define SWIGTYPE_p_LuaAgent swig_types[42]
+#define SWIGTYPE_p_LuaButton swig_types[43]
+#define SWIGTYPE_p_LuaFloater swig_types[44]
+#define SWIGTYPE_p_LuaLineEditor swig_types[45]
+#define SWIGTYPE_p_LuaObject swig_types[46]
+#define SWIGTYPE_p_LuaObjectManager swig_types[47]
+#define SWIGTYPE_p_LuaPanel swig_types[48]
+#define SWIGTYPE_p_LuaSelectionManager swig_types[49]
+#define SWIGTYPE_p_LuaTextBox swig_types[50]
+#define SWIGTYPE_p_LuaUICtrl swig_types[51]
+#define SWIGTYPE_p_LuaUIManager swig_types[52]
+#define SWIGTYPE_p_ParticleSystem swig_types[53]
+#define SWIGTYPE_p_WLWater swig_types[54]
+#define SWIGTYPE_p_child_list_t swig_types[55]
+#define SWIGTYPE_p_const_child_list_t swig_types[56]
+#define SWIGTYPE_p_double swig_types[57]
+#define SWIGTYPE_p_eLayoutOrientation swig_types[58]
+#define SWIGTYPE_p_eObjectPartitions swig_types[59]
+#define SWIGTYPE_p_e_action_type swig_types[60]
+#define SWIGTYPE_p_e_anim_request swig_types[61]
+#define SWIGTYPE_p_e_camera_modes swig_types[62]
+#define SWIGTYPE_p_e_camera_position swig_types[63]
+#define SWIGTYPE_p_e_grid_mode swig_types[64]
+#define SWIGTYPE_p_e_object_update_type swig_types[65]
+#define SWIGTYPE_p_e_selection_type swig_types[66]
+#define SWIGTYPE_p_e_send_type swig_types[67]
+#define SWIGTYPE_p_float swig_types[68]
+#define SWIGTYPE_p_int swig_types[69]
+#define SWIGTYPE_p_iterator swig_types[70]
+#define SWIGTYPE_p_list_t swig_types[71]
+#define SWIGTYPE_p_long_long swig_types[72]
+#define SWIGTYPE_p_root_iterator swig_types[73]
+#define SWIGTYPE_p_root_object_iterator swig_types[74]
+#define SWIGTYPE_p_short swig_types[75]
+#define SWIGTYPE_p_signed_char swig_types[76]
+#define SWIGTYPE_p_skip_list_t swig_types[77]
+#define SWIGTYPE_p_std__string swig_types[78]
+#define SWIGTYPE_p_std__vectorT_LLCharacter_p_t swig_types[79]
+#define SWIGTYPE_p_unsigned_char swig_types[80]
+#define SWIGTYPE_p_unsigned_int swig_types[81]
+#define SWIGTYPE_p_unsigned_long_long swig_types[82]
+#define SWIGTYPE_p_unsigned_short swig_types[83]
+#define SWIGTYPE_p_valid_iterator swig_types[84]
+#define SWIGTYPE_p_valid_root_iterator swig_types[85]
+#define SWIGTYPE_p_vobj_list_t swig_types[86]
+#define SWIGTYPE_p_void swig_types[87]
+#define SWIGTYPE_p_wchar_t swig_types[88]
+static swig_type_info *swig_types[90];
+static swig_module_info swig_module = {swig_types, 89, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -1662,6 +1663,21 @@ static int LuaBase_print (lua_State *L) {
 #include "v4math.h"
 #include "v4color.h"
 
+SWIGINTERN std::string LLVector2___str__(LLVector2 *self){
+		std::ostringstream s;
+		s << "( " << self->mV[0] << ", " << self->mV[1] << " )";
+		return s.str();
+	}
+SWIGINTERN std::string LLVector3___str__(LLVector3 *self){
+		std::ostringstream s;
+		s << "< " << self->mV[0] << ", " << self->mV[1] << ", " << self->mV[2] << " >";
+		return s.str();
+	}
+SWIGINTERN std::string LLVector4___str__(LLVector4 *self){
+		std::ostringstream s;
+		s << "< " << self->mV[0] << ", " << self->mV[1] << ", " << self->mV[2] << ", " << self->mV[3] << " >";
+		return s.str();
+	}
 
 float LLVector2_x_get(LLVector2 *v)
 {
@@ -1749,7 +1765,6 @@ void LLVector3_b_set(LLVector3 *v,float val)
 {
 	v->mV[VZ]=val;
 }
-
 
 
 // Accessors for LLVector4::x
@@ -3553,6 +3568,49 @@ static int _wrap_name2key(lua_State* L) {
   arg1 = (char *)lua_tostring(L, 1);
   result = LuaFindAvatarKey((char const *)arg1);
   lua_pushlstring(L,(&result)->data(),(&result)->size()); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_getCurrentParcel(lua_State* L) {
+  int SWIG_arg = 0;
+  LLParcel *result = 0 ;
+  
+  SWIG_check_num_args("Lua_getCurrentParcel",0,0)
+  result = (LLParcel *)Lua_getCurrentParcel();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_LLParcel,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_getParcelOwner(lua_State* L) {
+  int SWIG_arg = 0;
+  LLParcel *arg1 = (LLParcel *) 0 ;
+  LLUUID result;
+  
+  SWIG_check_num_args("getParcelOwner",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getParcelOwner",1,"LLParcel *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLParcel,0))){
+    SWIG_fail_ptr("getParcelOwner",1,SWIGTYPE_p_LLParcel);
+  }
+  
+  result = getParcelOwner(arg1);
+  
+  lua_pushlstring(L,(&result)->asString().data(),(&result)->asString().size()); SWIG_arg++;
+  
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -7462,6 +7520,30 @@ fail:
 }
 
 
+static int _wrap_LLVector2___tostring(lua_State* L) {
+  int SWIG_arg = 0;
+  LLVector2 *arg1 = (LLVector2 *) 0 ;
+  std::string result;
+  
+  SWIG_check_num_args("__str__",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("__str__",1,"LLVector2 *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLVector2,0))){
+    SWIG_fail_ptr("LLVector2___tostring",1,SWIGTYPE_p_LLVector2);
+  }
+  
+  result = LLVector2___str__(arg1);
+  lua_pushlstring(L,(&result)->data(),(&result)->size()); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
 static void swig_delete_LLVector2(void *obj) {
 LLVector2 *arg1 = (LLVector2 *) obj;
 delete arg1;
@@ -7483,6 +7565,7 @@ static swig_lua_method swig_LLVector2_methods[] = {
     {"scaleVec", _wrap_LLVector2_scaleVec}, 
     {"isNull", _wrap_LLVector2_isNull}, 
     {"isExactlyZero", _wrap_LLVector2_isExactlyZero}, 
+    {"__tostring", _wrap_LLVector2___tostring}, 
     {0,0}
 };
 static swig_lua_attribute swig_LLVector2_attributes[] = {
@@ -10094,6 +10177,30 @@ fail:
 }
 
 
+static int _wrap_LLVector3___tostring(lua_State* L) {
+  int SWIG_arg = 0;
+  LLVector3 *arg1 = (LLVector3 *) 0 ;
+  std::string result;
+  
+  SWIG_check_num_args("__str__",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("__str__",1,"LLVector3 *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLVector3,0))){
+    SWIG_fail_ptr("LLVector3___tostring",1,SWIGTYPE_p_LLVector3);
+  }
+  
+  result = LLVector3___str__(arg1);
+  lua_pushlstring(L,(&result)->data(),(&result)->size()); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
 static void swig_delete_LLVector3(void *obj) {
 LLVector3 *arg1 = (LLVector3 *) obj;
 delete arg1;
@@ -10126,6 +10233,7 @@ static swig_lua_method swig_LLVector3_methods[] = {
     {"scaledVec", _wrap_LLVector3_scaledVec}, 
     {"isNull", _wrap_LLVector3_isNull}, 
     {"isExactlyZero", _wrap_LLVector3_isExactlyZero}, 
+    {"__tostring", _wrap_LLVector3___tostring}, 
     {0,0}
 };
 static swig_lua_attribute swig_LLVector3_attributes[] = {
@@ -12611,6 +12719,30 @@ fail:
 }
 
 
+static int _wrap_LLVector4___tostring(lua_State* L) {
+  int SWIG_arg = 0;
+  LLVector4 *arg1 = (LLVector4 *) 0 ;
+  std::string result;
+  
+  SWIG_check_num_args("__str__",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("__str__",1,"LLVector4 *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLVector4,0))){
+    SWIG_fail_ptr("LLVector4___tostring",1,SWIGTYPE_p_LLVector4);
+  }
+  
+  result = LLVector4___str__(arg1);
+  lua_pushlstring(L,(&result)->data(),(&result)->size()); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
 static void swig_delete_LLVector4(void *obj) {
 LLVector4 *arg1 = (LLVector4 *) obj;
 delete arg1;
@@ -12634,6 +12766,7 @@ static swig_lua_method swig_LLVector4_methods[] = {
     {"isExactlyZero", _wrap_LLVector4_isExactlyZero}, 
     {"rotVec", _wrap_LLVector4_rotVec}, 
     {"scaleVec", _wrap_LLVector4_scaleVec}, 
+    {"__tostring", _wrap_LLVector4___tostring}, 
     {0,0}
 };
 static swig_lua_attribute swig_LLVector4_attributes[] = {
@@ -21726,6 +21859,8 @@ static const struct luaL_reg swig_commands[] = {
     { "HasPermissions", _wrap_HasPermissions},
     { "key2name", _wrap_key2name},
     { "name2key", _wrap_name2key},
+    { "getCurrentParcel", _wrap_getCurrentParcel},
+    { "getParcelOwner", _wrap_getParcelOwner},
     { "LuaGetAvatar", _wrap_LuaGetAvatar},
     { "LLVector3_parseVector3", _wrap_LLVector3_parseVector3},
     { "dist_vec_squared2D",_wrap_dist_vec_squared2D},
@@ -21972,6 +22107,7 @@ static swig_type_info _swigt__p_LLMotion = {"_p_LLMotion", "LLMotion *", 0, 0, (
 static swig_type_info _swigt__p_LLMotionConstructor = {"_p_LLMotionConstructor", "LLMotionConstructor *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_LLMotionController = {"_p_LLMotionController", "LLMotionController *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_LLPanel = {"_p_LLPanel", "LLPanel *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_LLParcel = {"_p_LLParcel", "LLParcel *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_LLPartSysData = {"_p_LLPartSysData", "LLPartSysData *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_LLPauseRequestHandle = {"_p_LLPauseRequestHandle", "LLPauseRequestHandle *", 0, 0, (void*)&_wrap_class_LLPauseRequestHandle, 0};
 static swig_type_info _swigt__p_LLPointerT_LLPauseRequestHandle_t = {"_p_LLPointerT_LLPauseRequestHandle_t", "LLAnimPauseRequest *|LLPointer< LLPauseRequestHandle > *", 0, 0, (void*)0, 0};
@@ -22063,6 +22199,7 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_LLMotionController,
   &_swigt__p_LLMultiFloater,
   &_swigt__p_LLPanel,
+  &_swigt__p_LLParcel,
   &_swigt__p_LLPartSysData,
   &_swigt__p_LLPauseRequestHandle,
   &_swigt__p_LLPointerT_LLPauseRequestHandle_t,
@@ -22152,6 +22289,7 @@ static swig_cast_info _swigc__p_LLMotion[] = {  {&_swigt__p_LLMotion, 0, 0, 0},{
 static swig_cast_info _swigc__p_LLMotionConstructor[] = {  {&_swigt__p_LLMotionConstructor, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_LLMotionController[] = {  {&_swigt__p_LLMotionController, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_LLPanel[] = {  {&_swigt__p_LuaFloater, _p_LuaFloaterTo_p_LLPanel, 0, 0},  {&_swigt__p_LuaPanel, _p_LuaPanelTo_p_LLPanel, 0, 0},  {&_swigt__p_LLPanel, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_LLParcel[] = {  {&_swigt__p_LLParcel, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_LLPartSysData[] = {  {&_swigt__p_LLPartSysData, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_LLPauseRequestHandle[] = {  {&_swigt__p_LLPauseRequestHandle, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_LLPointerT_LLPauseRequestHandle_t[] = {  {&_swigt__p_LLPointerT_LLPauseRequestHandle_t, 0, 0, 0},{0, 0, 0, 0}};
@@ -22243,6 +22381,7 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_LLMotionController,
   _swigc__p_LLMultiFloater,
   _swigc__p_LLPanel,
+  _swigc__p_LLParcel,
   _swigc__p_LLPartSysData,
   _swigc__p_LLPauseRequestHandle,
   _swigc__p_LLPointerT_LLPauseRequestHandle_t,

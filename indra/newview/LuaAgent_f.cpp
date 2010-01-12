@@ -6,6 +6,7 @@
 #include "llviewerobjectlist.h"
 
 #include "llagent.h"
+#include "llviewerparcelmgr.h"
 // linden library includes
 #include "message.h"
 
@@ -74,6 +75,37 @@ std::string  LuaFindAvatarKey(const char* fullname)
 		return "";
 	}
 	return av->getID().asString();
+}
+
+LLParcel* Lua_getCurrentParcel()
+{
+	LLParcel* parcel = LLViewerParcelMgr::getInstance()->getAgentParcel();
+	if (!parcel)
+	{
+		LuaError("Not standing on a parcel...");
+		return FALSE;
+	}
+	return parcel;
+}
+
+/**
+bool getParcelPermFlight(LLParcel* parcel)
+{
+	if (!parcel) return FALSE;
+
+	// Allow owners to fly on their own land.
+	if (LLViewerParcelMgr::isParcelOwnedByAgent(parcel, GP_LAND_ALLOW_FLY))
+	{
+		return TRUE;
+	}
+
+	return parcel->getAllowFly();
+}
+**/
+
+LLUUID getParcelOwner(LLParcel* parcel)
+{
+	return parcel->getOwnerID();
 }
 
 // Internal

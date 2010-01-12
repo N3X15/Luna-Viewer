@@ -924,6 +924,7 @@ void LLAgent::setRegion(LLViewerRegion *regionp)
 				gSky.mVOGroundp->setRegion(regionp);
 			}
 
+			LUA_CALL("OnRegionChanged") << regionp->getName() << ip << LUA_END;
 		}
 		else
 		{
