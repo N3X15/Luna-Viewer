@@ -50,7 +50,7 @@ local AMCheckSoundTrigger = function (sound_id, owner_id, gain, object_id, paren
 		gAutoMuted[owner_id]=true
 		if muteAvatar(owner_id) then
 			error(key2name(owner_id).." is playing really damn loud noises.")
-			say("This user has automatically muted "..key2name(owner_id).." for playing a sound on FlexLife's automute list ("..audio_uuid..").")
+			say("This user has automatically muted "..key2name(owner_id).." for playing a sound on FlexLife's automute list ("..sound_id..").")
 		end
 	else
 		--print(key2name(owner_id).." is playing "..sound_id.."")
