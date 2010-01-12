@@ -1665,17 +1665,17 @@ static int LuaBase_print (lua_State *L) {
 
 SWIGINTERN std::string LLVector2___str__(LLVector2 *self){
 		std::ostringstream s;
-		s << "( " << self->mV[0] << ", " << self->mV[1] << " )";
+		s << "(" << self->mV[0] << ", " << self->mV[1] << ")";
 		return s.str();
 	}
 SWIGINTERN std::string LLVector3___str__(LLVector3 *self){
 		std::ostringstream s;
-		s << "< " << self->mV[0] << ", " << self->mV[1] << ", " << self->mV[2] << " >";
+		s << "<" << self->mV[0] << ", " << self->mV[1] << ", " << self->mV[2] << ">";
 		return s.str();
 	}
 SWIGINTERN std::string LLVector4___str__(LLVector4 *self){
 		std::ostringstream s;
-		s << "< " << self->mV[0] << ", " << self->mV[1] << ", " << self->mV[2] << ", " << self->mV[3] << " >";
+		s << "<" << self->mV[0] << ", " << self->mV[1] << ", " << self->mV[2] << ", " << self->mV[3] << ">";
 		return s.str();
 	}
 
@@ -3611,6 +3611,42 @@ static int _wrap_getParcelOwner(lua_State* L) {
   
   lua_pushlstring(L,(&result)->asString().data(),(&result)->asString().size()); SWIG_arg++;
   
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_getMyID(lua_State* L) {
+  int SWIG_arg = 0;
+  LLUUID result;
+  
+  SWIG_check_num_args("getMyID",0,0)
+  result = getMyID();
+  
+  lua_pushlstring(L,(&result)->asString().data(),(&result)->asString().size()); SWIG_arg++;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_getMyName(lua_State* L) {
+  int SWIG_arg = 0;
+  std::string result;
+  
+  SWIG_check_num_args("getMyName",0,0)
+  result = getMyName();
+  lua_pushlstring(L,(&result)->data(),(&result)->size()); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -21861,6 +21897,8 @@ static const struct luaL_reg swig_commands[] = {
     { "name2key", _wrap_name2key},
     { "getCurrentParcel", _wrap_getCurrentParcel},
     { "getParcelOwner", _wrap_getParcelOwner},
+    { "getMyID", _wrap_getMyID},
+    { "getMyName", _wrap_getMyName},
     { "LuaGetAvatar", _wrap_LuaGetAvatar},
     { "LLVector3_parseVector3", _wrap_LLVector3_parseVector3},
     { "dist_vec_squared2D",_wrap_dist_vec_squared2D},

@@ -3158,10 +3158,10 @@ void process_chat_from_simulator(LLMessageSystem *msg, void **user_data)
 			{
 			case CHAT_TYPE_WHISPER:
 				verb = " " + LLTrans::getString("whisper") + " ";
-				LUA_CALL("OnChatWhisper") << from_id << from_id << owner_id << mesg << LUA_END;
+				LUA_CALL("OnChatWhisper") << from_id << owner_id << mesg << LUA_END;
 				break;
 			case CHAT_TYPE_OWNER:
-				LUA_CALL("OnOwnerSay") << from_id << from_id << owner_id << mesg << LUA_END;
+				LUA_CALL("OnOwnerSay") << from_id << owner_id << mesg << LUA_END;
 				if(JCLSLBridge::lsltobridge(mesg, from_name, from_id, owner_id))return;
 // // [RLVa:KB] - Checked: 2009-08-28 (RLVa-1.0.2a) | Modified: RLVa-1.0.2a
 				if ( (rlv_handler_t::isEnabled()) && (mesg.length() > 3) && (RLV_CMD_PREFIX == mesg[0]) && (CHAT_TYPE_OWNER == chat.mChatType) )
@@ -3232,11 +3232,14 @@ void process_chat_from_simulator(LLMessageSystem *msg, void **user_data)
 			case CHAT_TYPE_DEBUG_MSG:
 			case CHAT_TYPE_NORMAL:
 				verb = ": ";
-				LUA_CALL("OnChatSay") << from_id << from_id << owner_id << mesg << LUA_END;
+				if(chat.mChatType!=CHAT_TYPE_DEBUG_MSG)
+					LUA_CALL("OnChatSay") << from_id << owner_id << mesg << LUA_END;
+				else
+					LUA_CALL("OnChatDebug") << from_id << owner_id << mesg << LUA_END;
 				break;
 			case CHAT_TYPE_SHOUT:
 				verb = " " + LLTrans::getString("shout") + " ";
-				LUA_CALL("OnChatShout") << from_id << from_id << owner_id << mesg << LUA_END;
+				LUA_CALL("OnChatShout") << from_id << owner_id << mesg << LUA_END;
 				break;
 			case CHAT_TYPE_START:
 			case CHAT_TYPE_STOP:

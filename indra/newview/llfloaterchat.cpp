@@ -404,6 +404,7 @@ void LLFloaterChat::addChat(const LLChat& chat,
 			chat.mChatType == CHAT_TYPE_DEBUG_MSG
 			&& !gSavedSettings.getBOOL("ScriptErrorsAsChat");
 
+	
 // [RLVa:KB] - Checked: 2009-07-08 (RLVa-1.0.0e)
 	if (rlv_handler_t::isEnabled())
 	{

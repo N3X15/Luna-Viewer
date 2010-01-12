@@ -31,7 +31,7 @@
 	std::string __str__()
 	{
 		std::ostringstream s;
-		s << "( " << $self->mV[0] << ", " << $self->mV[1] << " )";
+		s << "(" << $self->mV[0] << ", " << $self->mV[1] << ")";
 		return s.str();
 	}
 
@@ -75,7 +75,7 @@ void LLVector2_y_set(LLVector2 *v,float val)
 	std::string __str__()
 	{
 		std::ostringstream s;
-		s << "< " << $self->mV[0] << ", " << $self->mV[1] << ", " << $self->mV[2] << " >";
+		s << "<" << $self->mV[0] << ", " << $self->mV[1] << ", " << $self->mV[2] << ">";
 		return s.str();
 	}
 
@@ -168,7 +168,7 @@ void LLVector3_b_set(LLVector3 *v,float val)
 	std::string __str__()
 	{
 		std::ostringstream s;
-		s << "< " << $self->mV[0] << ", " << $self->mV[1] << ", " << $self->mV[2] << ", " << $self->mV[3] << " >";
+		s << "<" << $self->mV[0] << ", " << $self->mV[1] << ", " << $self->mV[2] << ", " << $self->mV[3] << ">";
 		return s.str();
 	}
 };

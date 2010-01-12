@@ -22,11 +22,6 @@ std::string LuaAgent::LuaGetFullName()
 	return std::string (name.c_str());
 }
 
-std::string  LuaAgent::LuaGetID()
-{
-	return gAgent.getID().asString();
-}
-
 bool LuaAgent::LuaGetTyping()
 {
 	return (gAgent.getRenderState() & AGENT_STATE_TYPING);
@@ -106,6 +101,18 @@ bool getParcelPermFlight(LLParcel* parcel)
 LLUUID getParcelOwner(LLParcel* parcel)
 {
 	return parcel->getOwnerID();
+}
+
+LLUUID getMyID()
+{
+	return gAgent.getID();
+}
+
+std::string getMyName()
+{
+	std::string name;
+	gAgent.getName(name);
+	return name;
 }
 
 // Internal
