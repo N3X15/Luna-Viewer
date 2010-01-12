@@ -27,6 +27,8 @@
 			Eg: With 'integer MyVar' MyVar will be a string such as "2", which is 
 			    safe to handle as an integer. Lua will even implicitly convert it in 
 			    this case. For instance statements like if(MyVar==2) are valid.
+
+			LLUUIDs and Vectors are also automatically converted to native types.
 			    
 	 EventName:		( args ):
 	 
@@ -45,6 +47,19 @@
 
 	OnAttachedSound		(LLUUID object_id, LLUUID audio_uuid, LLUUID owner_id, float gain, integer flags)
 	OnAttachedParticles	(LLUUID object_id, LLUUID owner_id, LLUUID image_id, string ParticleSystemInfo)
+
+	OnRegionChanged		(string Name, string ip)
+	
+	OnChatWhisper		(UUID from_id, UUID owner_id, string mesg)
+	OnChatSay		(UUID from_id, UUID owner_id, string mesg)
+	OnChatShout		(UUID from_id, UUID owner_id, string mesg)
+	OnOwnerSay		(UUID from_id, UUID owner_id, string mesg)
+	OnChatDebug		(UUID from_id, UUID owner_id, string mesg)
+
+	OnSoundTriggered	(sound_id, owner_id, gain, object_id, parent_id)
+
+// This is going to change next revision
+	LUA_CALL("OnSetText") << temp_string << getID() << LUA_END;
 	
 ]]--
 
@@ -127,4 +142,5 @@ RegisterHook("OnChatWhisper",	"Triggered when someone whispers something.")
 RegisterHook("OnOwnerSay",	"Triggered when you get an llOwnerSay event.")
 RegisterHook("OnChatSay",	"Triggered when someone says something.")
 RegisterHook("OnChatShout",	"Triggered when someone shouts something")
+RegisterHook("OnChatDebug",	"Triggered when an object says something on the debug channel. (Used to communicate with scripts)")
 
