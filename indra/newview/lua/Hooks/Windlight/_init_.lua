@@ -19,38 +19,76 @@ function explode(d,p)
   return t
 end
 
+function DumpEnv()
+	local env = tostring(UUID_null).."^"
+	env = env.. tostring(WLWater_GetWave1Dir()).."^"
+	env = env.. tostring(WLWater_GetWave2Dir()).."^"
+	env = env.. tostring(WLWater_GetScaleAbove()).."^"
+	env = env.. tostring(WLWater_GetScaleBelow()).."^"
+	env = env.. tostring(WLWater_GetNormalScale()).."^"
+	env = env.. tostring(WLWater_GetFresnelScale()).."^"
+	env = env.. tostring(WLWater_GetFresnelOffset()).."^"
+	env = env.. tostring(WLWater_GetBlurMultiplier()).."^"
+	env = env.. tostring(WLWater_GetFogDensity()).."^"
+	env = env.. tostring(WLWater_GetFogColor())
+	print("WLWater:",env)
+end
 
 local function WLChatListener(from_id, owner_id, mesg)
-	print("[WINDLIGHT]",from_id,key2name(owner_id),mesg)
+	--print("[WINDLIGHT]",from_id,key2name(owner_id),mesg)
 
 	if string.starts(mesg,"&FLEXLIFE;WLWater^"..getMyID()) then
 		local t = explode("^",mesg)
+		--DumpTable(t)
 		local p = getCurrentParcel()
-		if getParcelOwner(p)==owner_id and t[1]==tostring(getMyID()) then
+		--print(getParcelOwner(p),owner_id.."\n",getMyID(),t[2])
+		-- If I am the owner or the landowner is the owner, and I am being addressed, then
+		if (tostring(getMyID())==owner_id or getParcelOwner(p)==owner_id) and t[2]==tostring(getMyID()) then
+--[[
+1: &FLEXLIFE;WLWater
+2: a556e37a-6c2f-486b-8ab9-d08a55ff9301
+3: 00000000-0000-0000-0000-000000000000
+4: (1.05, -0.42)
+5: (1.11, -1.16)
+6: 0.029999999329448
+7: 0.20000000298023
+8: <2, 2, 2>
+9: 0.39999997615814
+10: 0.5
+11: 0.040000002831221
+12: 16
+13: <0.0156863, 0.14902, 0.25098, 1>
+]]--
 			-- Set normalmap (unimplemented)
-			--WLWater_SetNormalMapID		t[2]
+			--WLWater_SetNormalMapID		t[3]
 
 			-- Set wave directions.
-			WLWater_SetWave1Dir(LLVector2_parse(t[3]))
-			WLWater_SetWave2Dir(LLVector2_parse(t[4]))
+			WLWater_SetWave1Dir(parseVector2(t[4]))
+			WLWater_SetWave2Dir(parseVector2(t[5]))
 			
 			-- Idk
-			WLWater_SetScaleAbove(t[5])
-			WLWater_SetScaleBelow(t[6])
+			WLWater_SetScaleAbove(t[6])
+			WLWater_SetScaleBelow(t[7])
 
 			-- Normal texture scale.
-			WLWater_SetNormalScale(LLVector3_parse(t[7]))
+			WLWater_SetNormalScale(parseVector3(t[8]))
 
-			WLWater_SetFresnelScale(t[8])
-			WLWater_SetFresnelOffset(t[9])
+			WLWater_SetFresnelScale(t[9])
+			WLWater_SetFresnelOffset(t[10])
 
-			WLWater_SetBlurMultiplier(t[10])
+			WLWater_SetBlurMultiplier(t[11])
 		
-			WLWater_SetFogDensity(t[11])
-        		WLWater_SetFogColor(t[12])
+			WLWater_SetFogDensity(t[12])
+        		WLWater_SetFogColor(parseVector4(t[13]))
+
+			print("Windlight water settings have been set by the landowner.")
 		end
 	end
 end
 
+local function WLBridgeListener(Channel, from_name,source_id,owner_id,message)
+	print(message)
+end
 -- Equivalent to llListen(CHANNEL_DEBUG,"","","")
-SetHook("OnChatDebug",	WLChatListener)
+SetHook("OnChatDebug",		WLChatListener)
+SetHook("OnBridgeMessage",	WLBridgeTranslator)

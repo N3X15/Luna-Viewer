@@ -139,6 +139,7 @@ end
 
 dofile("lua/EventHandling.lua")
 
+flLoadDir("lua/lib/",true)  -- User Libraries
 flLoadDir("lua/Hooks/",false) -- User Hooks
 
 --DumpAllHooks();

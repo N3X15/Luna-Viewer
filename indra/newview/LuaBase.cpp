@@ -1544,43 +1544,44 @@ SWIG_Lua_dostring(lua_State *L, const char* str) {
 #define SWIGTYPE_p_LuaUICtrl swig_types[51]
 #define SWIGTYPE_p_LuaUIManager swig_types[52]
 #define SWIGTYPE_p_ParticleSystem swig_types[53]
-#define SWIGTYPE_p_WLWater swig_types[54]
-#define SWIGTYPE_p_child_list_t swig_types[55]
-#define SWIGTYPE_p_const_child_list_t swig_types[56]
-#define SWIGTYPE_p_double swig_types[57]
-#define SWIGTYPE_p_eLayoutOrientation swig_types[58]
-#define SWIGTYPE_p_eObjectPartitions swig_types[59]
-#define SWIGTYPE_p_e_action_type swig_types[60]
-#define SWIGTYPE_p_e_anim_request swig_types[61]
-#define SWIGTYPE_p_e_camera_modes swig_types[62]
-#define SWIGTYPE_p_e_camera_position swig_types[63]
-#define SWIGTYPE_p_e_grid_mode swig_types[64]
-#define SWIGTYPE_p_e_object_update_type swig_types[65]
-#define SWIGTYPE_p_e_selection_type swig_types[66]
-#define SWIGTYPE_p_e_send_type swig_types[67]
-#define SWIGTYPE_p_float swig_types[68]
-#define SWIGTYPE_p_int swig_types[69]
-#define SWIGTYPE_p_iterator swig_types[70]
-#define SWIGTYPE_p_list_t swig_types[71]
-#define SWIGTYPE_p_long_long swig_types[72]
-#define SWIGTYPE_p_root_iterator swig_types[73]
-#define SWIGTYPE_p_root_object_iterator swig_types[74]
-#define SWIGTYPE_p_short swig_types[75]
-#define SWIGTYPE_p_signed_char swig_types[76]
-#define SWIGTYPE_p_skip_list_t swig_types[77]
-#define SWIGTYPE_p_std__string swig_types[78]
-#define SWIGTYPE_p_std__vectorT_LLCharacter_p_t swig_types[79]
-#define SWIGTYPE_p_unsigned_char swig_types[80]
-#define SWIGTYPE_p_unsigned_int swig_types[81]
-#define SWIGTYPE_p_unsigned_long_long swig_types[82]
-#define SWIGTYPE_p_unsigned_short swig_types[83]
-#define SWIGTYPE_p_valid_iterator swig_types[84]
-#define SWIGTYPE_p_valid_root_iterator swig_types[85]
-#define SWIGTYPE_p_vobj_list_t swig_types[86]
-#define SWIGTYPE_p_void swig_types[87]
-#define SWIGTYPE_p_wchar_t swig_types[88]
-static swig_type_info *swig_types[90];
-static swig_module_info swig_module = {swig_types, 89, 0, 0, 0, 0};
+#define SWIGTYPE_p_WLSky swig_types[54]
+#define SWIGTYPE_p_WLWater swig_types[55]
+#define SWIGTYPE_p_child_list_t swig_types[56]
+#define SWIGTYPE_p_const_child_list_t swig_types[57]
+#define SWIGTYPE_p_double swig_types[58]
+#define SWIGTYPE_p_eLayoutOrientation swig_types[59]
+#define SWIGTYPE_p_eObjectPartitions swig_types[60]
+#define SWIGTYPE_p_e_action_type swig_types[61]
+#define SWIGTYPE_p_e_anim_request swig_types[62]
+#define SWIGTYPE_p_e_camera_modes swig_types[63]
+#define SWIGTYPE_p_e_camera_position swig_types[64]
+#define SWIGTYPE_p_e_grid_mode swig_types[65]
+#define SWIGTYPE_p_e_object_update_type swig_types[66]
+#define SWIGTYPE_p_e_selection_type swig_types[67]
+#define SWIGTYPE_p_e_send_type swig_types[68]
+#define SWIGTYPE_p_float swig_types[69]
+#define SWIGTYPE_p_int swig_types[70]
+#define SWIGTYPE_p_iterator swig_types[71]
+#define SWIGTYPE_p_list_t swig_types[72]
+#define SWIGTYPE_p_long_long swig_types[73]
+#define SWIGTYPE_p_root_iterator swig_types[74]
+#define SWIGTYPE_p_root_object_iterator swig_types[75]
+#define SWIGTYPE_p_short swig_types[76]
+#define SWIGTYPE_p_signed_char swig_types[77]
+#define SWIGTYPE_p_skip_list_t swig_types[78]
+#define SWIGTYPE_p_std__string swig_types[79]
+#define SWIGTYPE_p_std__vectorT_LLCharacter_p_t swig_types[80]
+#define SWIGTYPE_p_unsigned_char swig_types[81]
+#define SWIGTYPE_p_unsigned_int swig_types[82]
+#define SWIGTYPE_p_unsigned_long_long swig_types[83]
+#define SWIGTYPE_p_unsigned_short swig_types[84]
+#define SWIGTYPE_p_valid_iterator swig_types[85]
+#define SWIGTYPE_p_valid_root_iterator swig_types[86]
+#define SWIGTYPE_p_vobj_list_t swig_types[87]
+#define SWIGTYPE_p_void swig_types[88]
+#define SWIGTYPE_p_wchar_t swig_types[89]
+static swig_type_info *swig_types[91];
+static swig_module_info swig_module = {swig_types, 90, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -9874,34 +9875,6 @@ static int _wrap_LLVector3_isExactlyZero(lua_State* L) {
   }
   
   result = (BOOL)((LLVector3 const *)arg1)->isExactlyZero();
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
-static int _wrap_LLVector3_parseVector3(lua_State* L) {
-  int SWIG_arg = 0;
-  std::string *arg1 = 0 ;
-  LLVector3 *arg2 = (LLVector3 *) 0 ;
-  std::string temp1 ;
-  BOOL result;
-  
-  SWIG_check_num_args("LLVector3::parseVector3",2,2)
-  if(!lua_isstring(L,1)) SWIG_fail_arg("LLVector3::parseVector3",1,"std::string const &");
-  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("LLVector3::parseVector3",2,"LLVector3 *");
-  temp1.assign(lua_tostring(L,1),lua_strlen(L,1)); arg1=&temp1;
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_LLVector3,0))){
-    SWIG_fail_ptr("LLVector3_parseVector3",2,SWIGTYPE_p_LLVector3);
-  }
-  
-  result = (BOOL)LLVector3::parseVector3((std::string const &)*arg1,arg2);
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -20415,6 +20388,798 @@ static swig_lua_class *swig_WLWater_bases[] = {0};
 static const char *swig_WLWater_base_names[] = {0};
 static swig_lua_class _wrap_class_WLWater = { "WLWater", &SWIGTYPE_p_WLWater,_wrap_new_WLWater, swig_delete_WLWater, swig_WLWater_methods, swig_WLWater_attributes, swig_WLWater_bases, swig_WLWater_base_names };
 
+static int _wrap_WLSky_SetSunDeltaYaw(lua_State* L) {
+  int SWIG_arg = 0;
+  float arg1 ;
+  
+  SWIG_check_num_args("WLSky::SetSunDeltaYaw",1,1)
+  if(!lua_isnumber(L,1)) SWIG_fail_arg("WLSky::SetSunDeltaYaw",1,"float");
+  arg1 = (float)lua_tonumber(L, 1);
+  WLSky::SetSunDeltaYaw(arg1);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_WLSky_GetSunDeltaYaw(lua_State* L) {
+  int SWIG_arg = 0;
+  float result;
+  
+  SWIG_check_num_args("WLSky::GetSunDeltaYaw",0,0)
+  result = (float)WLSky::GetSunDeltaYaw();
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_WLSky_SetSceneLightStrength(lua_State* L) {
+  int SWIG_arg = 0;
+  float arg1 ;
+  
+  SWIG_check_num_args("WLSky::SetSceneLightStrength",1,1)
+  if(!lua_isnumber(L,1)) SWIG_fail_arg("WLSky::SetSceneLightStrength",1,"float");
+  arg1 = (float)lua_tonumber(L, 1);
+  WLSky::SetSceneLightStrength(arg1);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_WLSky_GetSceneLightStrength(lua_State* L) {
+  int SWIG_arg = 0;
+  float result;
+  
+  SWIG_check_num_args("WLSky::GetSceneLightStrength",0,0)
+  result = (float)WLSky::GetSceneLightStrength();
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_WLSky_SetGamma(lua_State* L) {
+  int SWIG_arg = 0;
+  float arg1 ;
+  
+  SWIG_check_num_args("WLSky::SetGamma",1,1)
+  if(!lua_isnumber(L,1)) SWIG_fail_arg("WLSky::SetGamma",1,"float");
+  arg1 = (float)lua_tonumber(L, 1);
+  WLSky::SetGamma(arg1);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_WLSky_GetGamma(lua_State* L) {
+  int SWIG_arg = 0;
+  float result;
+  
+  SWIG_check_num_args("WLSky::GetGamma",0,0)
+  result = (float)WLSky::GetGamma();
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_WLSky_SetBlueHorizon(lua_State* L) {
+  int SWIG_arg = 0;
+  LLVector4 *arg1 = 0 ;
+  
+  SWIG_check_num_args("WLSky::SetBlueHorizon",1,1)
+  if(!lua_isuserdata(L,1)) SWIG_fail_arg("WLSky::SetBlueHorizon",1,"LLVector4 const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLVector4,0))){
+    SWIG_fail_ptr("WLSky_SetBlueHorizon",1,SWIGTYPE_p_LLVector4);
+  }
+  
+  WLSky::SetBlueHorizon((LLVector4 const &)*arg1);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_WLSky_GetBlueHorizon(lua_State* L) {
+  int SWIG_arg = 0;
+  LLVector4 result;
+  
+  SWIG_check_num_args("WLSky::GetBlueHorizon",0,0)
+  result = WLSky::GetBlueHorizon();
+  {
+    LLVector4 * resultptr = new LLVector4((const LLVector4 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_LLVector4,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_WLSky_SetHazeDensity(lua_State* L) {
+  int SWIG_arg = 0;
+  LLVector4 *arg1 = 0 ;
+  
+  SWIG_check_num_args("WLSky::SetHazeDensity",1,1)
+  if(!lua_isuserdata(L,1)) SWIG_fail_arg("WLSky::SetHazeDensity",1,"LLVector4 const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLVector4,0))){
+    SWIG_fail_ptr("WLSky_SetHazeDensity",1,SWIGTYPE_p_LLVector4);
+  }
+  
+  WLSky::SetHazeDensity((LLVector4 const &)*arg1);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_WLSky_GetHazeDensity(lua_State* L) {
+  int SWIG_arg = 0;
+  LLVector4 result;
+  
+  SWIG_check_num_args("WLSky::GetHazeDensity",0,0)
+  result = WLSky::GetHazeDensity();
+  {
+    LLVector4 * resultptr = new LLVector4((const LLVector4 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_LLVector4,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_WLSky_SetBlueDensity(lua_State* L) {
+  int SWIG_arg = 0;
+  LLVector4 *arg1 = 0 ;
+  
+  SWIG_check_num_args("WLSky::SetBlueDensity",1,1)
+  if(!lua_isuserdata(L,1)) SWIG_fail_arg("WLSky::SetBlueDensity",1,"LLVector4 const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLVector4,0))){
+    SWIG_fail_ptr("WLSky_SetBlueDensity",1,SWIGTYPE_p_LLVector4);
+  }
+  
+  WLSky::SetBlueDensity((LLVector4 const &)*arg1);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_WLSky_GetBlueDensity(lua_State* L) {
+  int SWIG_arg = 0;
+  LLVector4 result;
+  
+  SWIG_check_num_args("WLSky::GetBlueDensity",0,0)
+  result = WLSky::GetBlueDensity();
+  {
+    LLVector4 * resultptr = new LLVector4((const LLVector4 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_LLVector4,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_WLSky_SetDensityMultiplier(lua_State* L) {
+  int SWIG_arg = 0;
+  float arg1 ;
+  
+  SWIG_check_num_args("WLSky::SetDensityMultiplier",1,1)
+  if(!lua_isnumber(L,1)) SWIG_fail_arg("WLSky::SetDensityMultiplier",1,"float");
+  arg1 = (float)lua_tonumber(L, 1);
+  WLSky::SetDensityMultiplier(arg1);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_WLSky_GetDensityMultiplier(lua_State* L) {
+  int SWIG_arg = 0;
+  float result;
+  
+  SWIG_check_num_args("WLSky::GetDensityMultiplier",0,0)
+  result = (float)WLSky::GetDensityMultiplier();
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_WLSky_SetHazeHorizon(lua_State* L) {
+  int SWIG_arg = 0;
+  LLVector4 *arg1 = 0 ;
+  
+  SWIG_check_num_args("WLSky::SetHazeHorizon",1,1)
+  if(!lua_isuserdata(L,1)) SWIG_fail_arg("WLSky::SetHazeHorizon",1,"LLVector4 const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLVector4,0))){
+    SWIG_fail_ptr("WLSky_SetHazeHorizon",1,SWIGTYPE_p_LLVector4);
+  }
+  
+  WLSky::SetHazeHorizon((LLVector4 const &)*arg1);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_WLSky_GetHazeHorizon(lua_State* L) {
+  int SWIG_arg = 0;
+  LLVector4 result;
+  
+  SWIG_check_num_args("WLSky::GetHazeHorizon",0,0)
+  result = WLSky::GetHazeHorizon();
+  {
+    LLVector4 * resultptr = new LLVector4((const LLVector4 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_LLVector4,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_WLSky_SetMaxAltitude(lua_State* L) {
+  int SWIG_arg = 0;
+  float arg1 ;
+  
+  SWIG_check_num_args("WLSky::SetMaxAltitude",1,1)
+  if(!lua_isnumber(L,1)) SWIG_fail_arg("WLSky::SetMaxAltitude",1,"float");
+  arg1 = (float)lua_tonumber(L, 1);
+  WLSky::SetMaxAltitude(arg1);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_WLSky_GetMaxAltitude(lua_State* L) {
+  int SWIG_arg = 0;
+  float result;
+  
+  SWIG_check_num_args("WLSky::GetMaxAltitude",0,0)
+  result = (float)WLSky::GetMaxAltitude();
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_WLSky_SetLightNorm(lua_State* L) {
+  int SWIG_arg = 0;
+  LLVector4 *arg1 = 0 ;
+  
+  SWIG_check_num_args("WLSky::SetLightNorm",1,1)
+  if(!lua_isuserdata(L,1)) SWIG_fail_arg("WLSky::SetLightNorm",1,"LLVector4 const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLVector4,0))){
+    SWIG_fail_ptr("WLSky_SetLightNorm",1,SWIGTYPE_p_LLVector4);
+  }
+  
+  WLSky::SetLightNorm((LLVector4 const &)*arg1);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_WLSky_GetLightNorm(lua_State* L) {
+  int SWIG_arg = 0;
+  LLVector4 result;
+  
+  SWIG_check_num_args("WLSky::GetLightNorm",0,0)
+  result = WLSky::GetLightNorm();
+  {
+    LLVector4 * resultptr = new LLVector4((const LLVector4 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_LLVector4,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_WLSky_SetSunlight(lua_State* L) {
+  int SWIG_arg = 0;
+  LLVector4 *arg1 = 0 ;
+  
+  SWIG_check_num_args("WLSky::SetSunlight",1,1)
+  if(!lua_isuserdata(L,1)) SWIG_fail_arg("WLSky::SetSunlight",1,"LLVector4 const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLVector4,0))){
+    SWIG_fail_ptr("WLSky_SetSunlight",1,SWIGTYPE_p_LLVector4);
+  }
+  
+  WLSky::SetSunlight((LLVector4 const &)*arg1);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_WLSky_GetSunlight(lua_State* L) {
+  int SWIG_arg = 0;
+  LLVector4 result;
+  
+  SWIG_check_num_args("WLSky::GetSunlight",0,0)
+  result = WLSky::GetSunlight();
+  {
+    LLVector4 * resultptr = new LLVector4((const LLVector4 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_LLVector4,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_WLSky_SetAmbient(lua_State* L) {
+  int SWIG_arg = 0;
+  LLVector4 *arg1 = 0 ;
+  
+  SWIG_check_num_args("WLSky::SetAmbient",1,1)
+  if(!lua_isuserdata(L,1)) SWIG_fail_arg("WLSky::SetAmbient",1,"LLVector4 const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLVector4,0))){
+    SWIG_fail_ptr("WLSky_SetAmbient",1,SWIGTYPE_p_LLVector4);
+  }
+  
+  WLSky::SetAmbient((LLVector4 const &)*arg1);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_WLSky_GetAmbient(lua_State* L) {
+  int SWIG_arg = 0;
+  LLVector4 result;
+  
+  SWIG_check_num_args("WLSky::GetAmbient",0,0)
+  result = WLSky::GetAmbient();
+  {
+    LLVector4 * resultptr = new LLVector4((const LLVector4 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_LLVector4,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_WLSky_SetGlow(lua_State* L) {
+  int SWIG_arg = 0;
+  LLVector4 *arg1 = 0 ;
+  
+  SWIG_check_num_args("WLSky::SetGlow",1,1)
+  if(!lua_isuserdata(L,1)) SWIG_fail_arg("WLSky::SetGlow",1,"LLVector4 const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLVector4,0))){
+    SWIG_fail_ptr("WLSky_SetGlow",1,SWIGTYPE_p_LLVector4);
+  }
+  
+  WLSky::SetGlow((LLVector4 const &)*arg1);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_WLSky_GetGlow(lua_State* L) {
+  int SWIG_arg = 0;
+  LLVector4 result;
+  
+  SWIG_check_num_args("WLSky::GetGlow",0,0)
+  result = WLSky::GetGlow();
+  {
+    LLVector4 * resultptr = new LLVector4((const LLVector4 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_LLVector4,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_WLSky_SetCloudColor(lua_State* L) {
+  int SWIG_arg = 0;
+  LLVector4 *arg1 = 0 ;
+  
+  SWIG_check_num_args("WLSky::SetCloudColor",1,1)
+  if(!lua_isuserdata(L,1)) SWIG_fail_arg("WLSky::SetCloudColor",1,"LLVector4 const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLVector4,0))){
+    SWIG_fail_ptr("WLSky_SetCloudColor",1,SWIGTYPE_p_LLVector4);
+  }
+  
+  WLSky::SetCloudColor((LLVector4 const &)*arg1);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_WLSky_GetCloudColor(lua_State* L) {
+  int SWIG_arg = 0;
+  LLVector4 result;
+  
+  SWIG_check_num_args("WLSky::GetCloudColor",0,0)
+  result = WLSky::GetCloudColor();
+  {
+    LLVector4 * resultptr = new LLVector4((const LLVector4 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_LLVector4,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_WLSky_SetCloudDensity1(lua_State* L) {
+  int SWIG_arg = 0;
+  LLVector4 *arg1 = 0 ;
+  
+  SWIG_check_num_args("WLSky::SetCloudDensity1",1,1)
+  if(!lua_isuserdata(L,1)) SWIG_fail_arg("WLSky::SetCloudDensity1",1,"LLVector4 const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLVector4,0))){
+    SWIG_fail_ptr("WLSky_SetCloudDensity1",1,SWIGTYPE_p_LLVector4);
+  }
+  
+  WLSky::SetCloudDensity1((LLVector4 const &)*arg1);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_WLSky_GetCloudDensity1(lua_State* L) {
+  int SWIG_arg = 0;
+  LLVector4 result;
+  
+  SWIG_check_num_args("WLSky::GetCloudDensity1",0,0)
+  result = WLSky::GetCloudDensity1();
+  {
+    LLVector4 * resultptr = new LLVector4((const LLVector4 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_LLVector4,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_WLSky_SetCloudCoverage(lua_State* L) {
+  int SWIG_arg = 0;
+  float arg1 ;
+  
+  SWIG_check_num_args("WLSky::SetCloudCoverage",1,1)
+  if(!lua_isnumber(L,1)) SWIG_fail_arg("WLSky::SetCloudCoverage",1,"float");
+  arg1 = (float)lua_tonumber(L, 1);
+  WLSky::SetCloudCoverage(arg1);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_WLSky_GetCloudCoverage(lua_State* L) {
+  int SWIG_arg = 0;
+  float result;
+  
+  SWIG_check_num_args("WLSky::GetCloudCoverage",0,0)
+  result = (float)WLSky::GetCloudCoverage();
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_WLSky_SetCloudDensity2(lua_State* L) {
+  int SWIG_arg = 0;
+  LLVector4 *arg1 = 0 ;
+  
+  SWIG_check_num_args("WLSky::SetCloudDensity2",1,1)
+  if(!lua_isuserdata(L,1)) SWIG_fail_arg("WLSky::SetCloudDensity2",1,"LLVector4 const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLVector4,0))){
+    SWIG_fail_ptr("WLSky_SetCloudDensity2",1,SWIGTYPE_p_LLVector4);
+  }
+  
+  WLSky::SetCloudDensity2((LLVector4 const &)*arg1);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_WLSky_GetCloudDensity2(lua_State* L) {
+  int SWIG_arg = 0;
+  LLVector4 result;
+  
+  SWIG_check_num_args("WLSky::GetCloudDensity2",0,0)
+  result = WLSky::GetCloudDensity2();
+  {
+    LLVector4 * resultptr = new LLVector4((const LLVector4 &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_LLVector4,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_WLSky_SetDistanceMult(lua_State* L) {
+  int SWIG_arg = 0;
+  float arg1 ;
+  
+  SWIG_check_num_args("WLSky::SetDistanceMult",1,1)
+  if(!lua_isnumber(L,1)) SWIG_fail_arg("WLSky::SetDistanceMult",1,"float");
+  arg1 = (float)lua_tonumber(L, 1);
+  WLSky::SetDistanceMult(arg1);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_WLSky_GetDistanceMult(lua_State* L) {
+  int SWIG_arg = 0;
+  float result;
+  
+  SWIG_check_num_args("WLSky::GetDistanceMult",0,0)
+  result = (float)WLSky::GetDistanceMult();
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_WLSky_SetCloudScale(lua_State* L) {
+  int SWIG_arg = 0;
+  float arg1 ;
+  
+  SWIG_check_num_args("WLSky::SetCloudScale",1,1)
+  if(!lua_isnumber(L,1)) SWIG_fail_arg("WLSky::SetCloudScale",1,"float");
+  arg1 = (float)lua_tonumber(L, 1);
+  WLSky::SetCloudScale(arg1);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_WLSky_GetCloudScale(lua_State* L) {
+  int SWIG_arg = 0;
+  float result;
+  
+  SWIG_check_num_args("WLSky::GetCloudScale",0,0)
+  result = (float)WLSky::GetCloudScale();
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_WLSky(lua_State* L) {
+  int SWIG_arg = 0;
+  WLSky *result = 0 ;
+  
+  SWIG_check_num_args("WLSky::WLSky",0,0)
+  result = (WLSky *)new WLSky();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_WLSky,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static void swig_delete_WLSky(void *obj) {
+WLSky *arg1 = (WLSky *) obj;
+delete arg1;
+}
+static swig_lua_method swig_WLSky_methods[] = {
+    {0,0}
+};
+static swig_lua_attribute swig_WLSky_attributes[] = {
+    {0,0,0}
+};
+static swig_lua_class *swig_WLSky_bases[] = {0};
+static const char *swig_WLSky_base_names[] = {0};
+static swig_lua_class _wrap_class_WLSky = { "WLSky", &SWIGTYPE_p_WLSky,_wrap_new_WLSky, swig_delete_WLSky, swig_WLSky_methods, swig_WLSky_attributes, swig_WLSky_bases, swig_WLSky_base_names };
+
 static int _wrap_new_LuaUICtrl__SWIG_0(lua_State* L) {
   int SWIG_arg = 0;
   std::string arg1 ;
@@ -21900,7 +22665,6 @@ static const struct luaL_reg swig_commands[] = {
     { "getMyID", _wrap_getMyID},
     { "getMyName", _wrap_getMyName},
     { "LuaGetAvatar", _wrap_LuaGetAvatar},
-    { "LLVector3_parseVector3", _wrap_LLVector3_parseVector3},
     { "dist_vec_squared2D",_wrap_dist_vec_squared2D},
     { "projected_vec", _wrap_projected_vec},
     { "update_min_max",_wrap_update_min_max},
@@ -21942,6 +22706,44 @@ static const struct luaL_reg swig_commands[] = {
     { "WLWater_GetWave1Dir", _wrap_WLWater_GetWave1Dir},
     { "WLWater_SetWave2Dir", _wrap_WLWater_SetWave2Dir},
     { "WLWater_GetWave2Dir", _wrap_WLWater_GetWave2Dir},
+    { "WLSky_SetSunDeltaYaw", _wrap_WLSky_SetSunDeltaYaw},
+    { "WLSky_GetSunDeltaYaw", _wrap_WLSky_GetSunDeltaYaw},
+    { "WLSky_SetSceneLightStrength", _wrap_WLSky_SetSceneLightStrength},
+    { "WLSky_GetSceneLightStrength", _wrap_WLSky_GetSceneLightStrength},
+    { "WLSky_SetGamma", _wrap_WLSky_SetGamma},
+    { "WLSky_GetGamma", _wrap_WLSky_GetGamma},
+    { "WLSky_SetBlueHorizon", _wrap_WLSky_SetBlueHorizon},
+    { "WLSky_GetBlueHorizon", _wrap_WLSky_GetBlueHorizon},
+    { "WLSky_SetHazeDensity", _wrap_WLSky_SetHazeDensity},
+    { "WLSky_GetHazeDensity", _wrap_WLSky_GetHazeDensity},
+    { "WLSky_SetBlueDensity", _wrap_WLSky_SetBlueDensity},
+    { "WLSky_GetBlueDensity", _wrap_WLSky_GetBlueDensity},
+    { "WLSky_SetDensityMultiplier", _wrap_WLSky_SetDensityMultiplier},
+    { "WLSky_GetDensityMultiplier", _wrap_WLSky_GetDensityMultiplier},
+    { "WLSky_SetHazeHorizon", _wrap_WLSky_SetHazeHorizon},
+    { "WLSky_GetHazeHorizon", _wrap_WLSky_GetHazeHorizon},
+    { "WLSky_SetMaxAltitude", _wrap_WLSky_SetMaxAltitude},
+    { "WLSky_GetMaxAltitude", _wrap_WLSky_GetMaxAltitude},
+    { "WLSky_SetLightNorm", _wrap_WLSky_SetLightNorm},
+    { "WLSky_GetLightNorm", _wrap_WLSky_GetLightNorm},
+    { "WLSky_SetSunlight", _wrap_WLSky_SetSunlight},
+    { "WLSky_GetSunlight", _wrap_WLSky_GetSunlight},
+    { "WLSky_SetAmbient", _wrap_WLSky_SetAmbient},
+    { "WLSky_GetAmbient", _wrap_WLSky_GetAmbient},
+    { "WLSky_SetGlow", _wrap_WLSky_SetGlow},
+    { "WLSky_GetGlow", _wrap_WLSky_GetGlow},
+    { "WLSky_SetCloudColor", _wrap_WLSky_SetCloudColor},
+    { "WLSky_GetCloudColor", _wrap_WLSky_GetCloudColor},
+    { "WLSky_SetCloudDensity1", _wrap_WLSky_SetCloudDensity1},
+    { "WLSky_GetCloudDensity1", _wrap_WLSky_GetCloudDensity1},
+    { "WLSky_SetCloudCoverage", _wrap_WLSky_SetCloudCoverage},
+    { "WLSky_GetCloudCoverage", _wrap_WLSky_GetCloudCoverage},
+    { "WLSky_SetCloudDensity2", _wrap_WLSky_SetCloudDensity2},
+    { "WLSky_GetCloudDensity2", _wrap_WLSky_GetCloudDensity2},
+    { "WLSky_SetDistanceMult", _wrap_WLSky_SetDistanceMult},
+    { "WLSky_GetDistanceMult", _wrap_WLSky_GetDistanceMult},
+    { "WLSky_SetCloudScale", _wrap_WLSky_SetCloudScale},
+    { "WLSky_GetCloudScale", _wrap_WLSky_GetCloudScale},
     {0,0}
 };
 
@@ -22181,6 +22983,7 @@ static swig_type_info _swigt__p_LuaTextBox = {"_p_LuaTextBox", "LuaTextBox *", 0
 static swig_type_info _swigt__p_LuaUICtrl = {"_p_LuaUICtrl", "LuaUICtrl *", 0, 0, (void*)&_wrap_class_LuaUICtrl, 0};
 static swig_type_info _swigt__p_LuaUIManager = {"_p_LuaUIManager", "LuaUIManager *", 0, 0, (void*)&_wrap_class_LuaUIManager, 0};
 static swig_type_info _swigt__p_ParticleSystem = {"_p_ParticleSystem", "ParticleSystem *", 0, 0, (void*)&_wrap_class_ParticleSystem, 0};
+static swig_type_info _swigt__p_WLSky = {"_p_WLSky", "WLSky *", 0, 0, (void*)&_wrap_class_WLSky, 0};
 static swig_type_info _swigt__p_WLWater = {"_p_WLWater", "WLWater *", 0, 0, (void*)&_wrap_class_WLWater, 0};
 static swig_type_info _swigt__p_child_list_t = {"_p_child_list_t", "child_list_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_const_child_list_t = {"_p_const_child_list_t", "const_child_list_t *", 0, 0, (void*)0, 0};
@@ -22272,6 +23075,7 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_LuaUICtrl,
   &_swigt__p_LuaUIManager,
   &_swigt__p_ParticleSystem,
+  &_swigt__p_WLSky,
   &_swigt__p_WLWater,
   &_swigt__p_child_list_t,
   &_swigt__p_const_child_list_t,
@@ -22363,6 +23167,7 @@ static swig_cast_info _swigc__p_LuaTextBox[] = {  {&_swigt__p_LuaTextBox, 0, 0, 
 static swig_cast_info _swigc__p_LuaUICtrl[] = {  {&_swigt__p_LuaFloater, _p_LuaFloaterTo_p_LuaUICtrl, 0, 0},  {&_swigt__p_LuaUICtrl, 0, 0, 0},  {&_swigt__p_LuaTextBox, _p_LuaTextBoxTo_p_LuaUICtrl, 0, 0},  {&_swigt__p_LuaPanel, _p_LuaPanelTo_p_LuaUICtrl, 0, 0},  {&_swigt__p_LuaButton, _p_LuaButtonTo_p_LuaUICtrl, 0, 0},  {&_swigt__p_LuaLineEditor, _p_LuaLineEditorTo_p_LuaUICtrl, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_LuaUIManager[] = {  {&_swigt__p_LuaUIManager, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_ParticleSystem[] = {  {&_swigt__p_ParticleSystem, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_WLSky[] = {  {&_swigt__p_WLSky, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_WLWater[] = {  {&_swigt__p_WLWater, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_child_list_t[] = {  {&_swigt__p_child_list_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_const_child_list_t[] = {  {&_swigt__p_const_child_list_t, 0, 0, 0},{0, 0, 0, 0}};
@@ -22454,6 +23259,7 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_LuaUICtrl,
   _swigc__p_LuaUIManager,
   _swigc__p_ParticleSystem,
+  _swigc__p_WLSky,
   _swigc__p_WLWater,
   _swigc__p_child_list_t,
   _swigc__p_const_child_list_t,
