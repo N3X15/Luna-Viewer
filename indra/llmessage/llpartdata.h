@@ -201,52 +201,41 @@ public:
 	std::string serialize()
 	{
 		std::ostringstream os;
-		os << "\nLLPartSysData";
-		os << ":" << mCRC;
-		os << ":" << mFlags;
-		os << ":" << mPattern;
+		os << "\nLLPartSysData"; //1
+		os << ":" << mCRC;//2
+		os << ":" << mFlags;//3
+		os << ":" << (int)mPattern;//4
 		os << ":" << mInnerAngle;					// Inner angle for PATTERN_ANGLE
 		os << ":" << mOuterAngle;					// Outer angle for PATTERN_ANGLE
-		os << ":" << mAngularVelocity.mV[VX];				// Angular velocity for emission axis (for PATTERN_ANGLE)
-		os << ":" << mAngularVelocity.mV[VY];
-		os << ":" << mAngularVelocity.mV[VZ];
-		os << ":" << mBurstRate;						// How often to do a burst of particles
-		os << ":" << mBurstPartCount;				// How many particles in a burst
+		os << ":" << mAngularVelocity;
+		os << ":" << mBurstRate;					// How often to do a burst of particles
+		os << ":" << (int)mBurstPartCount;					// How many particles in a burst
 		os << ":" << mBurstRadius;
 		os << ":" << mBurstSpeedMin;					// Minimum particle velocity
 		os << ":" << mBurstSpeedMax;	
 		os << ":" << mMaxAge;						// Maximum lifetime of this particle source
 		os << ":" << mTargetUUID;					// Target UUID for the particle system
 		os << ":" << mStartAge;
-		os << ":" << mPartAccel.mV[VX];
-		os << ":" << mPartAccel.mV[VY];
-		os << ":" << mPartAccel.mV[VZ];
+		os << ":" << mPartAccel;
 		os << ":" << mPartImageID;
 
-		os << ":" << mPartData.mFlags;					// Particle state/interpolators in effect
+		os << ":" << (int)mPartData.mFlags;					// Particle state/interpolators in effect
 		os << ":" << mPartData.mMaxAge;					// Maximum age of the particle
-		os << ":" << mPartData.mStartColor.mV[VX];				// Start color
-		os << ":" << mPartData.mStartColor.mV[VY];
-		os << ":" << mPartData.mStartColor.mV[VZ];
-		os << ":" << mPartData.mStartColor.mV[VW];
-		os << ":" << mPartData.mEndColor.mV[VX];				// End color
-		os << ":" << mPartData.mEndColor.mV[VY];
-		os << ":" << mPartData.mEndColor.mV[VZ];
-		os << ":" << mPartData.mEndColor.mV[VW];
-		os << ":" << mPartData.mStartScale.mV[VX];				// Start scale
-		os << ":" << mPartData.mStartScale.mV[VY];
-		os << ":" << mPartData.mEndScale.mV[VX];				// End scale
-		os << ":" << mPartData.mEndScale.mV[VY];
-		os << ":" << mPartData.mPosOffset.mV[VX];				// Offset from source if using FOLLOW_SOURCE
-		os << ":" << mPartData.mPosOffset.mV[VY];
-		os << ":" << mPartData.mPosOffset.mV[VZ];
+		os << ":" << mPartData.mStartColor;
+		os << ":" << mPartData.mEndColor;
+		os << ":" << mPartData.mStartScale;
+		os << ":" << mPartData.mEndScale;
+		os << ":" << mPartData.mPosOffset;
 		os << ":" << mPartData.mParameter;				// A single floating point parameter	
 		return os.str();
 	}
 
 	// This horrible code brought to you by N3X15.  Needed to serialize this structure prior to handing it off to Lua.
+	// TODO: Handled by Lua natively now, also out of date
 	void deserialize(std::string data)
 	{
+		return;
+
 		int i = 0;
 		typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
 		boost::char_separator<char> sep(":");

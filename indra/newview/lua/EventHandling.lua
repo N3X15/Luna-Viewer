@@ -75,7 +75,10 @@ end
 function CallHook(EventName,...)
 	if(gEvents[EventName]==nil) then return 0 end -- No hooks to call, so exit.
 	val=0
-	for _,hookedfunc in pairs(gEvents[EventName]) do hookedfunc(...) val=val + 1 end
+	for _,hookedfunc in pairs(gEvents[EventName]) do 
+		hookedfunc(...) 
+		val=val + 1 
+	end
 	return val
 end
 

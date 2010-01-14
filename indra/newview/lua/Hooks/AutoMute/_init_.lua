@@ -74,9 +74,16 @@ local AMCheckAttachedSound = function (object_id,audio_uuid,owner_id,gain,flags)
 end
 
 local AMCheckAttachedParticles = function(object_id,owner_id,texture_id,particle_data)
-	if owner_id=="00000000-0000-0000-0000-000000000000" or texture_id=="00000000-0000-0000-0000-000000000000" then return end
+	-- Deserialize particle data
+	psys = parseParticleSystem(particle_data)
+
+	texture_id=psys:GetImageUUID()
+
+	if owner_id=="00000000-0000-0000-0000-000000000000" or texture_id==UUID_null then return end
+	
+	--print("PARTICLE:",key2name(owner_id),texture_id,particle_data)
 	if isInTable(gAutoMuteTextures,tostring(texture_id))==true then
-		print("Particle: ",object_id,key2name(owner_id),texture_id)
+		error("Muting particlesystem in object "..object_id.." owned by "..key2name(owner_id).." for using the texture "..texture_id..".")
 		ClearParticlesFromObject(object_id,owner_id)
 	end	
 end

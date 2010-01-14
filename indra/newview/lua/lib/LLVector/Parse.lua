@@ -17,7 +17,7 @@ function parseVector2(inp)
 	-- Sanity check: Ensure there are at least two items in f.
 	if #f<2 then
 		error("parseVector2(): "..inp.." is not a valid input.")
-		return
+		return LLVector2(0,0)
 	end
 
 	-- Create LLVector2.
@@ -50,8 +50,8 @@ function parseVector3(inp)
 	
 	-- Sanity check: Ensure there are at least two items in f.
 	if #f<3 then
-		error("parseVector3(): "..inp.." is not a valid input.")
-		return
+		debug.stacktrace("parseVector3(): "..inp.." is not a valid input.")
+		return LLVector3(0,0,0)
 	end
 
 	-- Create LLVector3.
@@ -87,7 +87,7 @@ function parseVector4(inp)
 	-- Sanity check: Ensure there are at least two items in f.
 	if #f<4 then
 		error("parseVector4(): "..inp.." is not a valid input.")
-		return
+		return LLVector4(0,0,0,0)
 	end
 
 	-- Create LLVector3.

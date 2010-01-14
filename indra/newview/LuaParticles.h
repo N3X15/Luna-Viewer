@@ -143,12 +143,12 @@ public:
 	float 		Parameter;	// mPartData.mParameter
 
 	unsigned int 	SystemFlags;
-	U8 		Pattern;
+	int		Pattern;
 	float	 	InnerAngle;
 	float	 	OuterAngle;
 	LLVector3 	AngularVelocity;
 	float 		BurstRate;
-	U8 		BurstPartCount;
+	int		BurstPartCount;
 	float 		BurstRadius;
 	float 		BurstSpeedMin;
 	float 		BurstSpeedMax;
@@ -158,6 +158,30 @@ public:
 	LLVector3 	PartAccel;
 
 	ParticleSystem():
+		ParticleFlags(0),
+		SystemMaxAge(0.f),
+		Parameter(0.f)
+	{
+		SystemFlags 	= 0;
+		ParticleFlags	= 0;
+		StartColor 	= LLVector4(1.f, 1.f, 1.f, 1.f);
+		EndColor 	= LLVector4(1.f, 1.f, 1.f, 1.f);
+		StartScale 	= LLVector2(1.f, 1.f);
+		EndScale 	= LLVector2(1.f, 1.f);
+		ParticleMaxAge 	= 10.f;
+		SystemMaxAge 	= 0.f;
+		StartAge 	= 0.f;
+		Pattern 	= DROP;               // Pattern for particle velocity
+		InnerAngle = 0.f;                                              // Inner angle of PATTERN_ANGLE_*
+		OuterAngle = 0.f;                                              // Outer angle of PATTERN_ANGLE_*
+		BurstRate = 0.1f;                                              // How often to do a burst of particles
+		BurstPartCount = 1;                                            // How many particles in a burst
+		BurstSpeedMin = 1.f;                                           // Minimum particle velocity
+		BurstSpeedMax = 1.f;                                           // Maximum particle velocity
+		BurstRadius = 0.f;
+	}
+
+	ParticleSystem(std::string in):
 		ParticleFlags(0),
 		SystemMaxAge(0.f),
 		Parameter(0.f)
@@ -210,7 +234,7 @@ public:
 
 	const ParticleSystem&	operator=(const LLPartSysData& psys)
 	{
-		ParticleFlags	= psys.mPartData.mFlags;
+		ParticleFlags	= (int)psys.mPartData.mFlags;
 		ParticleMaxAge	= psys.mPartData.mMaxAge;
 		StartColor	= LLColor42Vector4(psys.mPartData.mStartColor);
 		EndColor	= LLColor42Vector4(psys.mPartData.mEndColor);
@@ -219,8 +243,8 @@ public:
 		PosOffset	= psys.mPartData.mPosOffset;
 		Parameter	= psys.mPartData.mParameter;
 		
-		SystemFlags	= psys.mFlags;
-		Pattern		= psys.mPattern;
+		SystemFlags	= (int)psys.mFlags;
+		Pattern		= (int)psys.mPattern;
 		InnerAngle	= psys.mInnerAngle;
 		OuterAngle	= psys.mOuterAngle;
 		AngularVelocity	= psys.mAngularVelocity;
@@ -243,7 +267,7 @@ public:
 	{
 		LLPartSysData psys;
 		
-		psys.mPartData.mFlags		= ParticleFlags;
+		psys.mPartData.mFlags		= (U8)ParticleFlags;
 		psys.mPartData.mMaxAge		= ParticleMaxAge;
 		psys.mPartData.mStartColor	= Vector42LLColor4(StartColor);
 		psys.mPartData.mEndColor	= Vector42LLColor4(EndColor);
@@ -252,8 +276,8 @@ public:
 		psys.mPartData.mPosOffset	= PosOffset;
 		psys.mPartData.mParameter	= Parameter;
 
-		psys.mFlags			= SystemFlags;
-		psys.mPattern			= Pattern;
+		psys.mFlags			= (U8)SystemFlags;
+		psys.mPattern			= (U8)Pattern;
 		psys.mInnerAngle		= InnerAngle;
 		psys.mOuterAngle		= OuterAngle;
 		psys.mAngularVelocity		= AngularVelocity;

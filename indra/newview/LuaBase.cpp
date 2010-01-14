@@ -1666,17 +1666,17 @@ static int LuaBase_print (lua_State *L) {
 
 SWIGINTERN std::string LLVector2___str__(LLVector2 *self){
 		std::ostringstream s;
-		s << "(" << self->mV[0] << ", " << self->mV[1] << ")";
+		s << "(" << self->mV[0] << "," << self->mV[1] << ")";
 		return s.str();
 	}
 SWIGINTERN std::string LLVector3___str__(LLVector3 *self){
 		std::ostringstream s;
-		s << "<" << self->mV[0] << ", " << self->mV[1] << ", " << self->mV[2] << ">";
+		s << "<" << self->mV[0] << "," << self->mV[1] << "," << self->mV[2] << ">";
 		return s.str();
 	}
 SWIGINTERN std::string LLVector4___str__(LLVector4 *self){
 		std::ostringstream s;
-		s << "<" << self->mV[0] << ", " << self->mV[1] << ", " << self->mV[2] << ", " << self->mV[3] << ">";
+		s << "<" << self->mV[0] << "," << self->mV[1] << "," << self->mV[2] << "," << self->mV[3] << ">";
 		return s.str();
 	}
 
@@ -18974,17 +18974,17 @@ fail:
 static int _wrap_ParticleSystem_Pattern_set(lua_State* L) {
   int SWIG_arg = 0;
   ParticleSystem *arg1 = (ParticleSystem *) 0 ;
-  U8 arg2 ;
+  int arg2 ;
   
   SWIG_check_num_args("Pattern",2,2)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("Pattern",1,"ParticleSystem *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("Pattern",2,"U8");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("Pattern",2,"int");
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ParticleSystem,0))){
     SWIG_fail_ptr("ParticleSystem_Pattern_set",1,SWIGTYPE_p_ParticleSystem);
   }
   
-  arg2 = (U8)lua_tonumber(L, 2);
+  arg2 = (int)lua_tonumber(L, 2);
   if (arg1) (arg1)->Pattern = arg2;
   
   return SWIG_arg;
@@ -19000,7 +19000,7 @@ fail:
 static int _wrap_ParticleSystem_Pattern_get(lua_State* L) {
   int SWIG_arg = 0;
   ParticleSystem *arg1 = (ParticleSystem *) 0 ;
-  U8 result;
+  int result;
   
   SWIG_check_num_args("Pattern",1,1)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("Pattern",1,"ParticleSystem *");
@@ -19009,7 +19009,7 @@ static int _wrap_ParticleSystem_Pattern_get(lua_State* L) {
     SWIG_fail_ptr("ParticleSystem_Pattern_get",1,SWIGTYPE_p_ParticleSystem);
   }
   
-  result = (U8) ((arg1)->Pattern);
+  result = (int) ((arg1)->Pattern);
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -19228,17 +19228,17 @@ fail:
 static int _wrap_ParticleSystem_BurstPartCount_set(lua_State* L) {
   int SWIG_arg = 0;
   ParticleSystem *arg1 = (ParticleSystem *) 0 ;
-  U8 arg2 ;
+  int arg2 ;
   
   SWIG_check_num_args("BurstPartCount",2,2)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("BurstPartCount",1,"ParticleSystem *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("BurstPartCount",2,"U8");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("BurstPartCount",2,"int");
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_ParticleSystem,0))){
     SWIG_fail_ptr("ParticleSystem_BurstPartCount_set",1,SWIGTYPE_p_ParticleSystem);
   }
   
-  arg2 = (U8)lua_tonumber(L, 2);
+  arg2 = (int)lua_tonumber(L, 2);
   if (arg1) (arg1)->BurstPartCount = arg2;
   
   return SWIG_arg;
@@ -19254,7 +19254,7 @@ fail:
 static int _wrap_ParticleSystem_BurstPartCount_get(lua_State* L) {
   int SWIG_arg = 0;
   ParticleSystem *arg1 = (ParticleSystem *) 0 ;
-  U8 result;
+  int result;
   
   SWIG_check_num_args("BurstPartCount",1,1)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("BurstPartCount",1,"ParticleSystem *");
@@ -19263,7 +19263,7 @@ static int _wrap_ParticleSystem_BurstPartCount_get(lua_State* L) {
     SWIG_fail_ptr("ParticleSystem_BurstPartCount_get",1,SWIGTYPE_p_ParticleSystem);
   }
   
-  result = (U8) ((arg1)->BurstPartCount);
+  result = (int) ((arg1)->BurstPartCount);
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -19579,7 +19579,7 @@ fail:
 }
 
 
-static int _wrap_new_ParticleSystem(lua_State* L) {
+static int _wrap_new_ParticleSystem__SWIG_0(lua_State* L) {
   int SWIG_arg = 0;
   ParticleSystem *result = 0 ;
   
@@ -19593,6 +19593,54 @@ static int _wrap_new_ParticleSystem(lua_State* L) {
 fail:
   lua_error(L);
   return SWIG_arg;
+}
+
+
+static int _wrap_new_ParticleSystem__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  std::string arg1 ;
+  ParticleSystem *result = 0 ;
+  
+  SWIG_check_num_args("ParticleSystem",1,1)
+  if(!lua_isstring(L,1)) SWIG_fail_arg("ParticleSystem",1,"std::string");
+  (&arg1)->assign(lua_tostring(L,1),lua_strlen(L,1));
+  result = (ParticleSystem *)new ParticleSystem(arg1);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_ParticleSystem,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_ParticleSystem(lua_State* L) {
+  int argc;
+  int argv[2]={
+    1,2
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 0) {
+    return _wrap_new_ParticleSystem__SWIG_0(L);
+  }
+  if (argc == 1) {
+    int _v;
+    {
+      _v = lua_isstring(L,argv[0]);
+    }
+    if (_v) {
+      return _wrap_new_ParticleSystem__SWIG_1(L);
+    }
+  }
+  
+  lua_pushstring(L,"Wrong arguments for overloaded function 'new_ParticleSystem'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    ParticleSystem()\n"
+    "    ParticleSystem(std::string)\n");
+  lua_error(L);return 0;
 }
 
 
