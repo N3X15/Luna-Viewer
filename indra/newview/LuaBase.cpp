@@ -19929,6 +19929,46 @@ fail:
 }
 
 
+static int _wrap_WLWater_SetNormalMap(lua_State* L) {
+  int SWIG_arg = 0;
+  LLUUID *arg1 = 0 ;
+  LLUUID temp1 ;
+  
+  SWIG_check_num_args("WLWater::SetNormalMap",1,1)
+  if(!lua_isstring(L,1)) SWIG_fail_arg("WLWater::SetNormalMap",1,"LLUUID const &");
+  SWIG_contract_assert(temp1.set(lua_tostring(L,1),false),"Must be of UUID format.")
+  arg1=&temp1;
+  WLWater::SetNormalMap((LLUUID const &)*arg1);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_WLWater_GetNormalMap(lua_State* L) {
+  int SWIG_arg = 0;
+  LLUUID result;
+  
+  SWIG_check_num_args("WLWater::GetNormalMap",0,0)
+  result = WLWater::GetNormalMap();
+  
+  lua_pushlstring(L,(&result)->asString().data(),(&result)->asString().size()); SWIG_arg++;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
 static int _wrap_WLWater_SetFogColor(lua_State* L) {
   int SWIG_arg = 0;
   LLVector4 *arg1 = 0 ;
@@ -22684,6 +22724,8 @@ static const struct luaL_reg swig_commands[] = {
     { "ParticleSystem_AttachToObject_Event", _wrap_ParticleSystem_AttachToObject_Event},
     { "ClearParticlesFromObject_Event", _wrap_ClearParticlesFromObject_Event},
     { "ClearParticlesFromObject", _wrap_ClearParticlesFromObject},
+    { "WLWater_SetNormalMap", _wrap_WLWater_SetNormalMap},
+    { "WLWater_GetNormalMap", _wrap_WLWater_GetNormalMap},
     { "WLWater_SetFogColor", _wrap_WLWater_SetFogColor},
     { "WLWater_GetFogColor", _wrap_WLWater_GetFogColor},
     { "WLWater_SetFogDensity", _wrap_WLWater_SetFogDensity},

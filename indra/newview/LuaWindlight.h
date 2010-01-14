@@ -1,6 +1,7 @@
 #ifndef LUAWINDLIGHT_H
 #define LUAWINDLIGHT_H
 
+#include "lluuid.h"
 #include "v3math.h"
 #include "v4math.h"
 #include "v2math.h"
@@ -8,6 +9,9 @@
 class WLWater
 {
 public:
+	static void SetNormalMap(const LLUUID& map);
+	static LLUUID GetNormalMap();
+
 	static void SetFogColor(const LLVector4& rgba);
 	static LLVector4 GetFogColor();
 
