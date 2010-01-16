@@ -153,6 +153,8 @@ extern LLAgent *gAgent;
 %include "LuaParticles.h"
 %include "LuaWindlight.h"
 
+%include "swig/LuaObject.i"
+
 %include "../newview/LuaUI.h"
 
 %rename (Floater) 	LuaFloater;

@@ -120,11 +120,17 @@ public:
 		~CriticalSection(){if(entered)FLLua::setCriticalSection(false);}
 	};
 	LLAtomic32<int> mCriticalSections;
-private:
 	//	Called from lua thread
 	static bool setCriticalSection(bool enter); //use FLLua::CriticalSection() instead.
+private:
+	//	Called from lua thread
+//	static bool setCriticalSection(bool enter); //use FLLua::CriticalSection() instead.
 
 	bool load(); //pulled out of run so we can determine if load failed immediately.
+
+	// UI STUFF BEGINS HERE (Separating it from this class fails miserably for some reason)
+	void initUI(lua_State *L);
+	static void render();
 
 	void run();
 	

@@ -39,6 +39,7 @@ include(UnixInstall)
 include(LLKDU)
 include(Emerald)
 include(LUA)
+include(FindCEGUI)
 include(ViewerMiscLibs)
 
 #FIND_PACKAGE(SWIG REQUIRED)
@@ -50,6 +51,7 @@ include(ViewerMiscLibs)
 
 #find_package(Cg)
 #find_package(GLUT)
+#find_package(CEGUI)
 
 if (WINDOWS)
     include(CopyWinLibs)
@@ -83,6 +85,7 @@ include_directories(
     ${LSCRIPT_INCLUDE_DIRS}
     ${LSCRIPT_INCLUDE_DIRS}/lscript_compile
     ${EMERALD_INCLUDE_DIRS}
+    ${CEGUI_INCLUDE_DIR}
 )
 
 if (WINDOWS)
@@ -514,6 +517,7 @@ set(viewer_SOURCE_FILES
     LuaBase_f.cpp
     LuaBuild_f.cpp
     LuaWindlight.cpp
+    FlexUI.cpp
     LuaUI.cpp
 #   SLua.cpp
     LuaBase.cpp
@@ -978,6 +982,7 @@ set(viewer_HEADER_FILES
 	LuaBase.h
 	LuaBase_f.h
 	LuaBuild_f.h
+    FlexUI.cpp
 	LuaUI.h
 	LuaBase.h
 #	LuaTypes.h
@@ -1411,6 +1416,7 @@ if (WINDOWS)
 		${ELFIO_LIBRARIES}
 		${EMERALD_LIBRARIES}
 		${LUA_LIBRARY}
+		${CEGUI_LIBRARY}
 		)
 else (WINDOWS)
 target_link_libraries(${VIEWER_BINARY_NAME}
@@ -1450,6 +1456,7 @@ target_link_libraries(${VIEWER_BINARY_NAME}
     ${EMERALD_LIBRARIES}
     ${LUA_LIBRARY}
     ${OTR_LIBRARY}
+    ${CEGUI_LIBRARY}
     )
 endif (WINDOWS)
 

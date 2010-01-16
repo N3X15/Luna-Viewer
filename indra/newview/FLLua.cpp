@@ -65,6 +65,12 @@ extern "C" {
 #include "LuaBase.h"
 #include "LuaBase_f.h"
 
+/* CEGUI UI Bindings*/
+#include "CEGUI.h"
+#include "CEGUILua.h"
+#include "CEGUIPropertyHelper.h"	
+#include "RendererModules/OpenGLGUIRenderer/openglrenderer.h"
+
 //#define LUA_HOOK_SPAM 
 
 extern LLAgent gAgent;
@@ -341,6 +347,9 @@ bool FLLua::load()
 	LL_INFOS("Lua") << __LINE__ << ": *** LOADING SWIG BINDINGS ***" << llendl;
 	luaopen_SL(pLuaStack);
 
+	LL_INFOS("Lua") << __LINE__ << ": *** LOADING Crazy Eddie's GUI BINDINGS ***" << llendl;
+	initUI(pLuaStack);
+
 	std::string  version; 
 
 	LL_INFOS("Lua") << __LINE__ << ": Assigning _SLUA_VERSION" << llendl;
@@ -355,6 +364,16 @@ bool FLLua::load()
 	LL_INFOS("Lua") << __LINE__ << ": Assigning _SLUA_CHANNEL" << llendl;	
 	// Assign _SLUA_CHANNEL, which contains the channel name of the host client.
 	version = llformat("_SLUA_CHANNEL=\"%s\"",LL_CHANNEL);
+	if(luaL_dostring(pLuaStack, version.c_str()))
+	{
+		LuaError(Lua_getErrorMessage(pLuaStack).c_str());
+		return false;
+	}
+
+
+	LL_INFOS("Lua") << __LINE__ << ": Assigning _SLUA_REVISION" << llendl;	
+	// Assign _SLUA_CHANNEL, which contains the channel name of the host client.
+	version = "_SLUA_REVISION=\"$Rev$\"";
 	if(luaL_dostring(pLuaStack, version.c_str()))
 	{
 		LuaError(Lua_getErrorMessage(pLuaStack).c_str());
@@ -590,4 +609,24 @@ std::string  Lua_getErrorMessage(lua_State *L)
 			return lua_tostring(L, -1);
 	}
 	return "";
+}
+
+void FLLua::initUI(lua_State *L)
+{
+	CEGUI::OpenGLRenderer& mRenderer=CEGUI::OpenGLRenderer::create();
+	CEGUI::LuaScriptModule& mLuaModule=new CEGUI::LuaScriptModule(L);
+
+	// (Pass 0 for the second argument, which is the xml parser to use. 0 means the default one)
+	new CEGUI::System(mRenderer, 0, mLuaModule );
+}
+
+// static
+void FLLua::render()
+{
+	LUA_CALL0("PreUIRender");
+
+	// draw GUI (should not be between glBegin/glEnd pair)
+	CEGUI::System::getSingleton().renderGUI();
+
+	LUA_CALL0("PostUIRender");
 }

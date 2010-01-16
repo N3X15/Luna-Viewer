@@ -13,106 +13,15 @@
 #define LUAUI_H
 
 #include "FLLua.h"
-#include "llfloater.h"
-#include "lluictrl.h"
-#include "llagent.h"
-#include "llvovolume.h"
-#include "llbutton.h"
-#include "lllineeditor.h"
-#include "lltextbox.h"
-#include "llpanel.h"
-#include "llselectmgr.h"
+#include "CEGUI/CEGUILua.h"
 
-class LuaUICtrl : public LLUICtrl
+
+
+class UI
 {
 public:
-//	LuaUICtrl();
-	LuaUICtrl(std::string name);
-	LuaUICtrl(std::string name, int left, int top, int height, int width);
-	void LuaSetRect(int left, int top, int height, int width);
+//	static bool RequestFloater(std::string name);
+//	static bool RequestTextbox(std::string name);
 };
 
-class LuaAgent : public LLAgent
-{
-public:
-};
-
-class LuaObjectManager : public LLVolumeMgr
-{
-public:
-};
-
-class LuaSelectionManager : public LLSelectMgr
-{
-public:
-};
-
-class LuaObject : public LLVOVolume
-{
-public:
-};
-
-class LuaPanel : public LLPanel, public LuaUICtrl
-{
-public:
-//	LuaPanel();
-	LuaPanel(std::string name);
-	LuaPanel(std::string name, int left, int top, int height, int width);
-	LuaPanel(std::string name, int left, int top, int height, int width, bool border);
-};
-
-class LuaButton : public LLButton, public LuaUICtrl
-{
-public:
-//	LuaButton();
-	LuaButton(std::string name, int left, int top, int height, int width, std::string label);
-	void LuaSetImages(std::string unselected_image, std::string selected_image);
-	void LuaSetLabel(std::string label);
-	void LuaSetLabels(std::string unselected_label, std::string selected_label);
-	virtual void onHeldDown(void *usedata);
-};
-
-class LuaFloater : public LLFloater, public LuaPanel
-{
-public:
-//	LuaFloater();
-	LuaFloater(std::string xml);
-	LuaFloater(std::string name, std::string title);
-	LuaFloater(std::string name, std::string title, int left, int top, int height, int width);
-	void LuaSetTitle(std::string new_title);
-	void LuaAddChild(LuaUICtrl* new_child);
-	void LuaAddButton(LuaButton* new_button);
-	virtual void onFocusLost();
-	virtual void onFocusReceived();
-	virtual void onClose();
-	virtual void onClickClose();
-	virtual void onClickMinimize();
-};
-
-class LuaLineEditor : public LLLineEditor, public LuaUICtrl
-{
-public:
-//	LuaLineEditor();
-	LuaLineEditor(std::string name, int left, int top, int height, int width, std::string default_text = "");
-	void LuaSetText(std::string new_text);
-	std::string LuaGetText();
-	virtual void onCommit();
-};
-
-class LuaTextBox : public LLTextBox, public LuaUICtrl
-{
-public:
-//	LuaTextBox();
-	LuaTextBox(std::string name, int left, int top, int height, int width, std::string default_text);
-	void LuaSetMaxWidth(int max_width);
-	std::string LuaGetText();
-	void LuaSetText(std::string new_text);
-	virtual void onCommit();
-};
-
-class LuaUIManager
-{
-public:
-	LuaFloater* getFloater(std::string name);
-};
 #endif //Lua_H
