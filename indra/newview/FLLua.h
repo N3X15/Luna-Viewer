@@ -128,10 +128,11 @@ private:
 
 	bool load(); //pulled out of run so we can determine if load failed immediately.
 
+#ifdef _WITH_CEGUI
 	// UI STUFF BEGINS HERE (Separating it from this class fails miserably for some reason)
 	void initUI(lua_State *L);
 	static void render();
-
+#endif
 	void run();
 	
 	bool LoadFile(std::string file);

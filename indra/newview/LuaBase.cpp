@@ -1578,7 +1578,7 @@ typedef struct{} LANGUAGE_OBJ;
 }
 
 
-#include "llviewerprecompiledheaders.h"
+
 
 #include "stdtypes.h"
 #include "LuaUI.h"

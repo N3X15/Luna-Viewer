@@ -13,7 +13,7 @@
 #define LUAUI_H
 
 #include "FLLua.h"
-#include "CEGUI/CEGUILua.h"
+#include "FlexUI.h"
 
 
 

@@ -65,11 +65,9 @@ extern "C" {
 #include "LuaBase.h"
 #include "LuaBase_f.h"
 
-/* CEGUI UI Bindings*/
-#include "CEGUI.h"
-#include "CEGUILua.h"
-#include "CEGUIPropertyHelper.h"	
-#include "RendererModules/OpenGLGUIRenderer/openglrenderer.h"
+#ifdef _WITH_CEGUI
+	#include "FlexUI.h"
+#endif
 
 //#define LUA_HOOK_SPAM 
 
@@ -347,8 +345,10 @@ bool FLLua::load()
 	LL_INFOS("Lua") << __LINE__ << ": *** LOADING SWIG BINDINGS ***" << llendl;
 	luaopen_SL(pLuaStack);
 
+#ifdef _WITH_CEGUI
 	LL_INFOS("Lua") << __LINE__ << ": *** LOADING Crazy Eddie's GUI BINDINGS ***" << llendl;
 	initUI(pLuaStack);
+#endif
 
 	std::string  version; 
 
@@ -611,6 +611,7 @@ std::string  Lua_getErrorMessage(lua_State *L)
 	return "";
 }
 
+#ifdef _WITH_CEGUI
 void FLLua::initUI(lua_State *L)
 {
 	CEGUI::OpenGLRenderer& mRenderer=CEGUI::OpenGLRenderer::create();
@@ -630,3 +631,4 @@ void FLLua::render()
 
 	LUA_CALL0("PostUIRender");
 }
+#endif

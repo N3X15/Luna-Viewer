@@ -1,13 +1,10 @@
+#ifdef _WITH_CEGUI
 #include "llviewerprecompiledheaders.h"
 
 #include "LuaUI.h"
 
-/* CEGUI UI Bindings*/
-#include "CEGUI.h"
-#include "CEGUILua.h"
-#include "CEGUIPropertyHelper.h"	
-
 // FlexLife UI management.
+
 #include "FlexUI.h"
 
 /** 
@@ -29,4 +26,4 @@ LuaUI.{h,cpp}  = UI bindings.
 */
 
 
-
+#endif

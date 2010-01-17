@@ -7,9 +7,9 @@
 
 FIND_PATH(CEGUI_INCLUDE_DIR CEGUI.h
 /usr/local/include/CEGUI/
-#/usr/local/include
+/usr/local/include/
 /usr/include/CEGUI/
-#/usr/include
+/usr/include/
 )
 
 #set(CEGUI_INCLUDE_DIR ${CEGUI_INCLUDE_DIR}/CEGUI)

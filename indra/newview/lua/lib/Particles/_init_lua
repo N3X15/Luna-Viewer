@@ -1,0 +1,66 @@
+
+		os << "\nLLPartSysData";
+		os << ":" << mCRC;
+		os << ":" << mFlags;
+		os << ":" << mPattern;
+		os << ":" << mInnerAngle;					// Inner angle for PATTERN_ANGLE
+		os << ":" << mOuterAngle;					// Outer angle for PATTERN_ANGLE
+		os << ":" << mAngularVelocity;
+		os << ":" << mBurstRate;					// How often to do a burst of particles
+		os << ":" << mBurstPartCount;					// How many particles in a burst
+		os << ":" << mBurstRadius;
+		os << ":" << mBurstSpeedMin;					// Minimum particle velocity
+		os << ":" << mBurstSpeedMax;	
+		os << ":" << mMaxAge;						// Maximum lifetime of this particle source
+		os << ":" << mTargetUUID;					// Target UUID for the particle system
+		os << ":" << mStartAge;
+		os << ":" << mPartAccel;
+		os << ":" << mPartImageID;
+
+		os << ":" << mPartData.mFlags;					// Particle state/interpolators in effect
+		os << ":" << mPartData.mMaxAge;					// Maximum age of the particle
+		os << ":" << mPartData.mStartColor;
+		os << ":" << mPartData.mEndColor;
+		os << ":" << mPartData.mStartScale;
+		os << ":" << mPartData.mEndScale;
+		os << ":" << mPartData.mPosOffset;
+		os << ":" << mPartData.mParameter;				// A single floating point parameter	
+
+
+
+function parseParticles(serialized)
+{
+	if string.starts(serialized,"\nLLPartSysData:" then
+		error("Invalid LLPartSysData.")
+		return nil
+	end
+
+	local t = explode("^",serialized)
+
+	psys=ParticleSystem()
+	psys.CRC		= t[2]
+	psys.SystemFlags	= t[3]
+	psys.Pattern		= t[4]
+	psys.InnerAngle		= t[5]
+	psys.OuterAngle		= t[6]
+	psys.AngularVelocity=parseVector3(t[7])
+	psys.BurstRate		= t[8]
+	psys.BurstPartCount	= t[9]
+	psys.BurstRadius	= t[10]
+	psys.BurstSpeedMin	= t[11]
+	psys.BurstSpeedMax	= t[12]
+	psys.SystemMaxAge	= t[13]
+	psys.SetTargetUUID(	  t[14])
+	psys.StartAge		= t[15]
+	psys.PartAccel=parseVector3(t[16])
+	psys.SetImageUUID(	  t[17])
+
+	psys.StartColor=parseVector4(t[18]);
+	psys.EndColor=parseVector4(t[19]);
+
+	psys.StartScale=parseVector2(t[20]);
+	psys.EndScale=parseVector4(t[21]);
+			
+	psys.PosOffset=parseVector4(t[22]);
+	psys.Parameter		= t[23];
+}
