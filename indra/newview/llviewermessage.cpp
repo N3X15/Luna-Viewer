@@ -2398,7 +2398,10 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 		args["NAME"] = (!fRlvObfuscate) ? name : gRlvHandler.getAnonym(name);
 // [/RLVa:KB]
 		//args["NAME"] = name;
-		LLNotifications::instance().add("InventoryAccepted", args);
+
+		// Anti-neillife spam patch, lol
+		if(!is_busy)
+			LLNotifications::instance().add("InventoryAccepted", args);
 		break;
 	}
 	case IM_INVENTORY_DECLINED:
@@ -2409,7 +2412,10 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 		args["NAME"] = (!fRlvObfuscate) ? name : gRlvHandler.getAnonym(name);
 // [/RLVa:KB]
 		//args["NAME"] = name;
-		LLNotifications::instance().add("InventoryDeclined", args);
+
+		// Anti-neillife spam patch, lol
+		if(!is_busy)
+			LLNotifications::instance().add("InventoryDeclined", args);
 		break;
 	}
 	case IM_GROUP_VOTE:
