@@ -39,7 +39,7 @@ include(UnixInstall)
 include(LLKDU)
 include(Emerald)
 include(LUA)
-include(FindCEGUI)
+#include(FindCEGUI) # Broken on Linux
 include(ViewerMiscLibs)
 
 #FIND_PACKAGE(SWIG REQUIRED)
@@ -85,7 +85,7 @@ include_directories(
     ${LSCRIPT_INCLUDE_DIRS}
     ${LSCRIPT_INCLUDE_DIRS}/lscript_compile
     ${EMERALD_INCLUDE_DIRS}
-    ${CEGUI_INCLUDE_DIR}
+#    ${CEGUI_INCLUDE_DIR}
 )
 
 if (WINDOWS)
