@@ -791,6 +791,8 @@ void LLVOVolume::sculpt()
 			sculpt_data = raw_image->getData();
 		}
 		getVolume()->sculpt(sculpt_width, sculpt_height, sculpt_components, sculpt_data, discard_level);
+// FLEXLIFE DEBUGGING CRAP
+		setDebugText(llformat("[LLVOVolume.cpp:%d]\nTris: %d\nArea: %f", __LINE__,getVolume()->getNumTriangleIndices(),getVolume()->sculptGetSurfaceArea() ));
 	}
 }
 
