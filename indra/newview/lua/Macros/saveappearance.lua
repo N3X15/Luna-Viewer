@@ -29,7 +29,11 @@ while( true ) do
 end
 print ("Dumping all params to "..fname.."...")
 local code = LuaDumpVisualParamsToLuaCode()
-local f = io.open(fname,"w")
-f:write(code)
-f:close()
-print "Done."
+if code  == "" then
+	error "Error; Aborting!"
+else
+	local f = io.open(fname,"w")
+	f:write(code)
+	f:close()
+	print "Done."
+end

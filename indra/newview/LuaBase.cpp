@@ -1835,9 +1835,6 @@ void LLVector4_a_set(LLVector4 *v,float val)
 	v->mV[VW]=val;
 }
 
-
-#include "llviewerobject.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif

@@ -155,7 +155,7 @@ extern LLAgent *gAgent;
 %include "LuaParticles.h"
 %include "LuaWindlight.h"
 
-%include "swig/LuaObject.i"
+%include "../newview/llviewerobject.h"
 
 %include "../newview/LuaUI.h"
 
@@ -180,4 +180,5 @@ extern LLAgent *gAgent;
 %rename (TextBox) 		LuaTextBox;
 %rename (UICtrl) 		LuaUICtrl;
 %rename (UIManager)		LuaUIManager;
+%rename (Object)		LLViewerObject;
 
