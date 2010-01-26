@@ -143,6 +143,7 @@ if (LINUX)
       -g
       -pthread
       -DLINUX
+      -static-libgcc
       )
   #if (COMPILE_OTR)
     add_definitions(
