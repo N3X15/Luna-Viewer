@@ -5585,6 +5585,11 @@ void LLVOAvatar::stopMotionFromSource(const LLUUID& source_id)
 //-----------------------------------------------------------------------------
 LLVector3 LLVOAvatar::getVolumePos(S32 joint_index, LLVector3& volume_offset)
 {
+	if(joint_index < 0)
+	{
+		return LLVector3::zero;
+	}
+
 	if (joint_index > mNumCollisionVolumes)
 	{
 		return LLVector3::zero;
@@ -5598,7 +5603,7 @@ LLVector3 LLVOAvatar::getVolumePos(S32 joint_index, LLVector3& volume_offset)
 //-----------------------------------------------------------------------------
 LLJoint* LLVOAvatar::findCollisionVolume(U32 volume_id)
 {
-	if ((S32)volume_id > mNumCollisionVolumes)
+	if (volume_id > (U32)mNumCollisionVolumes)
 	{
 		return NULL;
 	}

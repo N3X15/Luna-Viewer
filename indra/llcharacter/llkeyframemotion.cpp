@@ -658,9 +658,9 @@ BOOL LLKeyframeMotion::onActivate()
 	// If the keyframe anim has an associated emote, trigger it. 
 	if( mJointMotionList->mEmoteName.length() > 0 )
 	{
-		LLUUID id;
-		if(!id.set(mJointMotionList->mEmoteName,false) || id != mID) //phox
-		mCharacter->startMotion( gAnimLibrary.stringToAnimState(mJointMotionList->mEmoteName) );
+		if((mJointMotionList->mEmoteName.length() == 36) && (LLUUID(mJointMotionList->mEmoteName) == mID))
+			return TRUE;
+ 		mCharacter->startMotion( gAnimLibrary.stringToAnimState(mJointMotionList->mEmoteName) );
 	}
 
 	mLastLoopedTime = 0.f;
@@ -1358,7 +1358,9 @@ BOOL LLKeyframeMotion::deserialize(LLDataPacker& dp)
 		else
 		{
 			llwarns << "joint not found: " << joint_name << llendl;
-			//return FALSE;
+			// Uncommented commented to handle buffer overflow exploit.
+			llwarns << "WORKAROUND FOR CRASH EXPLOIT: Abort deserialization of animation." << llendl;
+			return FALSE;
 		}
 
 		joint_motion->mJointName = joint_name;
@@ -1643,6 +1645,17 @@ BOOL LLKeyframeMotion::deserialize(LLDataPacker& dp)
 			str = (char*)bin_data;
 			constraintp->mSourceConstraintVolume = mCharacter->getCollisionVolumeID(str);
 
+			if(constraintp->mSourceConstraintVolume == -1)
+			{
+				/*It's like a jungle in this habitat
+				But all you savage cats
+				Knew that I was strapped wit gats
+				When you were cuddled wit cabbage patch*/
+				llwarns << "can't find a valid source collision volume." << llendl;
+				delete constraintp;
+				return FALSE;
+			}
+
 			if (!dp.unpackVector3(constraintp->mSourceConstraintOffset, "source_offset"))
 			{
 				llwarns << "can't read constraint source offset" << llendl;
@@ -1675,6 +1688,12 @@ BOOL LLKeyframeMotion::deserialize(LLDataPacker& dp)
 			{
 				constraintp->mConstraintTargetType = CONSTRAINT_TARGET_TYPE_BODY;
 				constraintp->mTargetConstraintVolume = mCharacter->getCollisionVolumeID(str);
+				if(constraintp->mTargetConstraintVolume == -1)
+				{
+					llwarns << "can't find a valid target collision volume." << llendl;
+					delete constraintp;
+					return FALSE;
+				}
 			}
 
 			if (!dp.unpackVector3(constraintp->mTargetConstraintOffset, "target_offset"))
