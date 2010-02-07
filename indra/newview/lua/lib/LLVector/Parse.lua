@@ -7,7 +7,7 @@ function parseVector2(inp)
 	local f={}
 	
 	-- Parse all digits (0-9) and periods from the string
-	for n in string.gmatch(inp, "[.%d]+") do
+	for n in string.gmatch(inp, "[-.%d]+") do
 		-- Add to f table
 		f[#f+1]=tonumber(n)
 	end
@@ -41,7 +41,7 @@ function parseVector3(inp)
 	local f={}
 	
 	-- Parse all digits (0-9) and periods from the string
-	for n in string.gmatch(inp, "[.%d]+") do
+	for n in string.gmatch(inp, "[-.%d]+") do
 		-- Add to f table
 		f[#f+1]=tonumber(n)
 	end
@@ -77,7 +77,7 @@ function parseVector4(inp)
 	local f={}
 	
 	-- Parse all digits (0-9) and periods from the string
-	for n in string.gmatch(inp, "[.%d]+") do
+	for n in string.gmatch(inp, "[-.%d]+") do
 		-- Add to f table
 		f[#f+1]=tonumber(n)
 	end

@@ -42,24 +42,24 @@ LLVector4 WLWater::GetFogColor()
 ////////////////////////////////////////////////////////////////////
 // Fog Density
 ////////////////////////////////////////////////////////////////////
-void WLWater::SetFogDensity(float density)
+void WLWater::SetFogDensity(double density)
 {
 	LLWaterParamManager::instance()->mCurParams.set("waterFogDensity",(F32)density);
 }
-float WLWater::GetFogDensity()
+double WLWater::GetFogDensity()
 {
 	bool err;
-	return (float)LLWaterParamManager::instance()->mCurParams.getFloat("waterFogDensity",err);
+	return (double)LLWaterParamManager::instance()->mCurParams.getFloat("waterFogDensity",err);
 }
 
 ////////////////////////////////////////////////////////////////////
 // UnderWater Fog Modifier
 ////////////////////////////////////////////////////////////////////
-void WLWater::SetUnderwaterFogMod(float density)
+void WLWater::SetUnderwaterFogMod(double density)
 {
 	LLWaterParamManager::instance()->mCurParams.set("underWaterFogMod",(F32)density);
 }
-float WLWater::GetUnderwaterFogMod()
+double WLWater::GetUnderwaterFogMod()
 {
 	bool err;
 	return 	LLWaterParamManager::instance()->mCurParams.getFloat("underWaterFogMod",err);
@@ -81,11 +81,11 @@ LLVector3 WLWater::GetNormalScale()
 ////////////////////////////////////////////////////////////////////
 // Fresnel Scale
 ////////////////////////////////////////////////////////////////////
-void WLWater::SetFresnelScale(float Scale)
+void WLWater::SetFresnelScale(double Scale)
 {
 	LLWaterParamManager::instance()->mCurParams.set("fresnelScale",(F32)Scale);
 }
-float WLWater::GetFresnelScale()
+double WLWater::GetFresnelScale()
 {
 	bool err;
 	return LLWaterParamManager::instance()->mCurParams.getFloat("fresnelScale",err);
@@ -94,11 +94,11 @@ float WLWater::GetFresnelScale()
 ////////////////////////////////////////////////////////////////////
 // Fresnel Offset
 ////////////////////////////////////////////////////////////////////
-void WLWater::SetFresnelOffset(float offset)
+void WLWater::SetFresnelOffset(double offset)
 {
 	LLWaterParamManager::instance()->mCurParams.set("fresnelOffset",(F32)offset);
 }
-float WLWater::GetFresnelOffset()
+double WLWater::GetFresnelOffset()
 {
 	bool err;
 	return LLWaterParamManager::instance()->mCurParams.getFloat("fresnelOffset",err);
@@ -107,11 +107,11 @@ float WLWater::GetFresnelOffset()
 ////////////////////////////////////////////////////////////////////
 // Scale Above
 ////////////////////////////////////////////////////////////////////
-void WLWater::SetScaleAbove(float scale)
+void WLWater::SetScaleAbove(double scale)
 {
 	LLWaterParamManager::instance()->mCurParams.set("scaleAbove",(F32)scale);
 }
-float WLWater::GetScaleAbove()
+double WLWater::GetScaleAbove()
 {
 	bool err;
 	return LLWaterParamManager::instance()->mCurParams.getFloat("scaleAbove",err);
@@ -120,11 +120,11 @@ float WLWater::GetScaleAbove()
 ////////////////////////////////////////////////////////////////////
 // Scale Below
 ////////////////////////////////////////////////////////////////////
-void WLWater::SetScaleBelow(float scale)
+void WLWater::SetScaleBelow(double scale)
 {
 	LLWaterParamManager::instance()->mCurParams.set("scaleBelow",(F32)scale);
 }
-float WLWater::GetScaleBelow()
+double WLWater::GetScaleBelow()
 {
 	bool err;
 	return LLWaterParamManager::instance()->mCurParams.getFloat("scaleBelow",err);
@@ -133,11 +133,11 @@ float WLWater::GetScaleBelow()
 ////////////////////////////////////////////////////////////////////
 // Blur Multiplier
 ////////////////////////////////////////////////////////////////////
-void WLWater::SetBlurMultiplier(float scale)
+void WLWater::SetBlurMultiplier(double scale)
 {
 	LLWaterParamManager::instance()->mCurParams.set("blurMultiplier",(F32)scale);
 }
-float WLWater::GetBlurMultiplier()
+double WLWater::GetBlurMultiplier()
 {
 	bool err;
 	return LLWaterParamManager::instance()->mCurParams.getFloat("blurMultiplier",err);
@@ -171,32 +171,32 @@ LLVector2 WLWater::GetWave2Dir()
 /// Sun Delta Terrain tweak variables.
 	// mSunDeltaYaw
 //Static
-void WLSky::SetSunDeltaYaw(float in)
+void WLSky::SetSunDeltaYaw(double in)
 {
 	LLWLParamManager::instance()->mSunDeltaYaw=in;
 }
-float WLSky::GetSunDeltaYaw()
+double WLSky::GetSunDeltaYaw()
 {
 	return LLWLParamManager::instance()->mSunDeltaYaw;
 }
 
 	// mSceneLightStrength
-void WLSky::SetSceneLightStrength(float in)
+void WLSky::SetSceneLightStrength(double in)
 {
 	LLWLParamManager::instance()->mSceneLightStrength=in;
 }
 
-float WLSky::GetSceneLightStrength()
+double WLSky::GetSceneLightStrength()
 {
 	return LLWLParamManager::instance()->mSceneLightStrength;
 }
 	
 	// mWLGamma(1.0f, "gamma"),
-void WLSky::SetGamma(float in)
+void WLSky::SetGamma(double in)
 {
 	LLWLParamManager::instance()->mCurParams.set("gamma",(F32)in);
 }
-float WLSky::GetGamma()
+double WLSky::GetGamma()
 {
 	bool err;
 	return LLWLParamManager::instance()->mCurParams.getFloat("gamma",err);
@@ -239,11 +239,11 @@ LLVector4 WLSky::GetBlueDensity()
 }
 
 	//mDensityMult(1.0f, "density_multiplier", 1000),
-void WLSky::SetDensityMultiplier(float in)
+void WLSky::SetDensityMultiplier(double in)
 {
 	LLWLParamManager::instance()->mCurParams.set("density_multiplier",(F32)in);
 }
-float WLSky::GetDensityMultiplier()
+double WLSky::GetDensityMultiplier()
 {
 	bool err;
 	return LLWaterParamManager::instance()->mCurParams.getFloat("density_multiplier",err);
@@ -262,11 +262,11 @@ LLVector4 WLSky::GetHazeHorizon()
 }
 
 	//mMaxAlt(4000.0f, "max_y"),
-void WLSky::SetMaxAltitude(float in)
+void WLSky::SetMaxAltitude(double in)
 {
 	LLWLParamManager::instance()->mCurParams.set("max_y",(F32)in);
 }
-float WLSky::GetMaxAltitude()
+double WLSky::GetMaxAltitude()
 {
 	bool err;
 	return LLWLParamManager::instance()->mCurParams.getFloat("max_y",err);
@@ -347,11 +347,11 @@ LLVector4 WLSky::GetCloudDensity1()
 }
 
 	//mCloudCoverage(0.0f, "cloud_shadow"),
-void WLSky::SetCloudCoverage(float in)
+void WLSky::SetCloudCoverage(double in)
 {
 	LLWLParamManager::instance()->mCurParams.set("cloud_shadow",(F32)in);
 }
-float WLSky::GetCloudCoverage()
+double WLSky::GetCloudCoverage()
 {
 	bool err;
 	return LLWLParamManager::instance()->mCurParams.getFloat("cloud_shadow",err);
@@ -370,22 +370,22 @@ LLVector4 WLSky::GetCloudDensity2()
 }
 
 	//mDistanceMult(1.0f, "distance_multiplier"),
-void WLSky::SetDistanceMult(float in)
+void WLSky::SetDistanceMult(double in)
 {
 	LLWLParamManager::instance()->mCurParams.set("distance_multiplier",(F32)in);
 }
-float WLSky::GetDistanceMult()
+double WLSky::GetDistanceMult()
 {
 	bool err;
 	return LLWLParamManager::instance()->mCurParams.getFloat("distance_multiplier",err);
 }
 
 	//mCloudScale(0.42f, "cloud_scale"),
-void WLSky::SetCloudScale(float in)
+void WLSky::SetCloudScale(double in)
 {
 	LLWLParamManager::instance()->mCurParams.set("cloud_scale",(F32)in);
 }
-float WLSky::GetCloudScale()
+double WLSky::GetCloudScale()
 {
 	bool err;
 	return LLWLParamManager::instance()->mCurParams.getFloat("cloud_scale",err);

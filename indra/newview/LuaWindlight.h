@@ -15,29 +15,29 @@ public:
 	static void SetFogColor(const LLVector4& rgba);
 	static LLVector4 GetFogColor();
 
-	static void SetFogDensity(float density);
-	static float GetFogDensity();
+	static void SetFogDensity(double density);
+	static double GetFogDensity();
 
-	static void SetUnderwaterFogMod(float density);
-	static float GetUnderwaterFogMod();	
+	static void SetUnderwaterFogMod(double density);
+	static double GetUnderwaterFogMod();	
 
 	static void SetNormalScale(const LLVector3& scale);
 	static LLVector3 GetNormalScale();
 
-	static void SetFresnelScale(float Scale);
-	static float GetFresnelScale();
+	static void SetFresnelScale(double Scale);
+	static double GetFresnelScale();
 
-	static void SetFresnelOffset(float offset);
-	static float GetFresnelOffset();
+	static void SetFresnelOffset(double offset);
+	static double GetFresnelOffset();
 
-	static void SetScaleAbove(float scale);
-	static float GetScaleAbove();
+	static void SetScaleAbove(double scale);
+	static double GetScaleAbove();
 
-	static void SetScaleBelow(float scale);
-	static float GetScaleBelow();
+	static void SetScaleBelow(double scale);
+	static double GetScaleBelow();
 
-	static void SetBlurMultiplier(float scale);
-	static float GetBlurMultiplier();
+	static void SetBlurMultiplier(double scale);
+	static double GetBlurMultiplier();
 
 	static void SetWave1Dir(LLVector2 dir);
 	static LLVector2 GetWave1Dir();
@@ -52,16 +52,16 @@ public:
 
 	/// Sun Delta Terrain tweak variables.
 	// mSunDeltaYaw
-	static void  SetSunDeltaYaw(float in);
-	static float GetSunDeltaYaw();
+	static void  SetSunDeltaYaw(double in);
+	static double GetSunDeltaYaw();
 
 	// mSceneLightStrength
-	static void  SetSceneLightStrength(float in);
-	static float GetSceneLightStrength();
+	static void  SetSceneLightStrength(double in);
+	static double GetSceneLightStrength();
 	
 	// mWLGamma(1.0f, "gamma"),
-	static void  SetGamma(float in);
-	static float GetGamma();
+	static void  SetGamma(double in);
+	static double GetGamma();
 
 	//mBlueHorizon(0.25f, 0.25f, 1.0f, 1.0f, "blue_horizon", "WLBlueHorizon"),
 	static void  		SetBlueHorizon(const LLVector4& in);
@@ -76,16 +76,16 @@ public:
 	static LLVector4	GetBlueDensity();
 
 	//mDensityMult(1.0f, "density_multiplier", 1000),
-	static void		SetDensityMultiplier(float in);
-	static float		GetDensityMultiplier();
+	static void		SetDensityMultiplier(double in);
+	static double		GetDensityMultiplier();
 
 	//mHazeHorizon(1.0f, 1.0f, 1.0f, 0.5f, "haze_horizon"),
 	static void		SetHazeHorizon(const LLVector4& in);
 	static LLVector4	GetHazeHorizon();
 
 	//mMaxAlt(4000.0f, "max_y"),
-	static void		SetMaxAltitude(float in);
-	static float		GetMaxAltitude();
+	static void		SetMaxAltitude(double in);
+	static double		GetMaxAltitude();
 
 	// Lighting
 	//mLightnorm(0.f, 0.707f, -0.707f, 1.f, "lightnorm"),
@@ -114,20 +114,20 @@ public:
 	static LLVector4	GetCloudDensity1();
 
 	//mCloudCoverage(0.0f, "cloud_shadow"),
-	static void		SetCloudCoverage(float in);
-	static float		GetCloudCoverage();
+	static void		SetCloudCoverage(double in);
+	static double		GetCloudCoverage();
 
 	//mCloudDetail(0.0f, 0.0f, 0.0f, 1.0f, "cloud_pos_density2"),
 	static void		SetCloudDensity2(const LLVector4& in);
 	static LLVector4	GetCloudDensity2();
 
 	//mDistanceMult(1.0f, "distance_multiplier"),
-	static void		SetDistanceMult(float in);
-	static float		GetDistanceMult();
+	static void		SetDistanceMult(double in);
+	static double		GetDistanceMult();
 
 	//mCloudScale(0.42f, "cloud_scale"),
-	static void		SetCloudScale(float in);
-	static float		GetCloudScale();
+	static void		SetCloudScale(double in);
+	static double		GetCloudScale();
 };
 
 #endif

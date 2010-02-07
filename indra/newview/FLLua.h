@@ -212,7 +212,7 @@ struct CB_Dummy_Args0 : public CB_Base
 	CB_Dummy_Args0(CB_FN _fn, int _pri=5) : fn(_fn),CB_Base(_pri){}
 };
 // Compiler error C2530: refrences must be initialized. Hurf durf.
-inline void CB_Args0(void (*CB_FN)(),int _pri=5){CB_Dummy_Args0(CB_FN,_pri);}
+inline void CB_Args0(void (*CB_FN)(),int _pri=5){new CB_Dummy_Args0(CB_FN,_pri);}
 
 template <typename T1>
 struct CB_Args1 : public CB_Base

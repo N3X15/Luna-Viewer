@@ -20041,11 +20041,11 @@ fail:
 
 static int _wrap_WLWater_SetFogDensity(lua_State* L) {
   int SWIG_arg = 0;
-  float arg1 ;
+  double arg1 ;
   
   SWIG_check_num_args("WLWater::SetFogDensity",1,1)
-  if(!lua_isnumber(L,1)) SWIG_fail_arg("WLWater::SetFogDensity",1,"float");
-  arg1 = (float)lua_tonumber(L, 1);
+  if(!lua_isnumber(L,1)) SWIG_fail_arg("WLWater::SetFogDensity",1,"double");
+  arg1 = (double)lua_tonumber(L, 1);
   WLWater::SetFogDensity(arg1);
   
   return SWIG_arg;
@@ -20060,10 +20060,10 @@ fail:
 
 static int _wrap_WLWater_GetFogDensity(lua_State* L) {
   int SWIG_arg = 0;
-  float result;
+  double result;
   
   SWIG_check_num_args("WLWater::GetFogDensity",0,0)
-  result = (float)WLWater::GetFogDensity();
+  result = (double)WLWater::GetFogDensity();
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -20077,11 +20077,11 @@ fail:
 
 static int _wrap_WLWater_SetUnderwaterFogMod(lua_State* L) {
   int SWIG_arg = 0;
-  float arg1 ;
+  double arg1 ;
   
   SWIG_check_num_args("WLWater::SetUnderwaterFogMod",1,1)
-  if(!lua_isnumber(L,1)) SWIG_fail_arg("WLWater::SetUnderwaterFogMod",1,"float");
-  arg1 = (float)lua_tonumber(L, 1);
+  if(!lua_isnumber(L,1)) SWIG_fail_arg("WLWater::SetUnderwaterFogMod",1,"double");
+  arg1 = (double)lua_tonumber(L, 1);
   WLWater::SetUnderwaterFogMod(arg1);
   
   return SWIG_arg;
@@ -20096,10 +20096,10 @@ fail:
 
 static int _wrap_WLWater_GetUnderwaterFogMod(lua_State* L) {
   int SWIG_arg = 0;
-  float result;
+  double result;
   
   SWIG_check_num_args("WLWater::GetUnderwaterFogMod",0,0)
-  result = (float)WLWater::GetUnderwaterFogMod();
+  result = (double)WLWater::GetUnderwaterFogMod();
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -20156,11 +20156,11 @@ fail:
 
 static int _wrap_WLWater_SetFresnelScale(lua_State* L) {
   int SWIG_arg = 0;
-  float arg1 ;
+  double arg1 ;
   
   SWIG_check_num_args("WLWater::SetFresnelScale",1,1)
-  if(!lua_isnumber(L,1)) SWIG_fail_arg("WLWater::SetFresnelScale",1,"float");
-  arg1 = (float)lua_tonumber(L, 1);
+  if(!lua_isnumber(L,1)) SWIG_fail_arg("WLWater::SetFresnelScale",1,"double");
+  arg1 = (double)lua_tonumber(L, 1);
   WLWater::SetFresnelScale(arg1);
   
   return SWIG_arg;
@@ -20175,10 +20175,10 @@ fail:
 
 static int _wrap_WLWater_GetFresnelScale(lua_State* L) {
   int SWIG_arg = 0;
-  float result;
+  double result;
   
   SWIG_check_num_args("WLWater::GetFresnelScale",0,0)
-  result = (float)WLWater::GetFresnelScale();
+  result = (double)WLWater::GetFresnelScale();
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -20192,11 +20192,11 @@ fail:
 
 static int _wrap_WLWater_SetFresnelOffset(lua_State* L) {
   int SWIG_arg = 0;
-  float arg1 ;
+  double arg1 ;
   
   SWIG_check_num_args("WLWater::SetFresnelOffset",1,1)
-  if(!lua_isnumber(L,1)) SWIG_fail_arg("WLWater::SetFresnelOffset",1,"float");
-  arg1 = (float)lua_tonumber(L, 1);
+  if(!lua_isnumber(L,1)) SWIG_fail_arg("WLWater::SetFresnelOffset",1,"double");
+  arg1 = (double)lua_tonumber(L, 1);
   WLWater::SetFresnelOffset(arg1);
   
   return SWIG_arg;
@@ -20211,10 +20211,10 @@ fail:
 
 static int _wrap_WLWater_GetFresnelOffset(lua_State* L) {
   int SWIG_arg = 0;
-  float result;
+  double result;
   
   SWIG_check_num_args("WLWater::GetFresnelOffset",0,0)
-  result = (float)WLWater::GetFresnelOffset();
+  result = (double)WLWater::GetFresnelOffset();
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -20228,11 +20228,11 @@ fail:
 
 static int _wrap_WLWater_SetScaleAbove(lua_State* L) {
   int SWIG_arg = 0;
-  float arg1 ;
+  double arg1 ;
   
   SWIG_check_num_args("WLWater::SetScaleAbove",1,1)
-  if(!lua_isnumber(L,1)) SWIG_fail_arg("WLWater::SetScaleAbove",1,"float");
-  arg1 = (float)lua_tonumber(L, 1);
+  if(!lua_isnumber(L,1)) SWIG_fail_arg("WLWater::SetScaleAbove",1,"double");
+  arg1 = (double)lua_tonumber(L, 1);
   WLWater::SetScaleAbove(arg1);
   
   return SWIG_arg;
@@ -20247,10 +20247,10 @@ fail:
 
 static int _wrap_WLWater_GetScaleAbove(lua_State* L) {
   int SWIG_arg = 0;
-  float result;
+  double result;
   
   SWIG_check_num_args("WLWater::GetScaleAbove",0,0)
-  result = (float)WLWater::GetScaleAbove();
+  result = (double)WLWater::GetScaleAbove();
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -20264,11 +20264,11 @@ fail:
 
 static int _wrap_WLWater_SetScaleBelow(lua_State* L) {
   int SWIG_arg = 0;
-  float arg1 ;
+  double arg1 ;
   
   SWIG_check_num_args("WLWater::SetScaleBelow",1,1)
-  if(!lua_isnumber(L,1)) SWIG_fail_arg("WLWater::SetScaleBelow",1,"float");
-  arg1 = (float)lua_tonumber(L, 1);
+  if(!lua_isnumber(L,1)) SWIG_fail_arg("WLWater::SetScaleBelow",1,"double");
+  arg1 = (double)lua_tonumber(L, 1);
   WLWater::SetScaleBelow(arg1);
   
   return SWIG_arg;
@@ -20283,10 +20283,10 @@ fail:
 
 static int _wrap_WLWater_GetScaleBelow(lua_State* L) {
   int SWIG_arg = 0;
-  float result;
+  double result;
   
   SWIG_check_num_args("WLWater::GetScaleBelow",0,0)
-  result = (float)WLWater::GetScaleBelow();
+  result = (double)WLWater::GetScaleBelow();
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -20300,11 +20300,11 @@ fail:
 
 static int _wrap_WLWater_SetBlurMultiplier(lua_State* L) {
   int SWIG_arg = 0;
-  float arg1 ;
+  double arg1 ;
   
   SWIG_check_num_args("WLWater::SetBlurMultiplier",1,1)
-  if(!lua_isnumber(L,1)) SWIG_fail_arg("WLWater::SetBlurMultiplier",1,"float");
-  arg1 = (float)lua_tonumber(L, 1);
+  if(!lua_isnumber(L,1)) SWIG_fail_arg("WLWater::SetBlurMultiplier",1,"double");
+  arg1 = (double)lua_tonumber(L, 1);
   WLWater::SetBlurMultiplier(arg1);
   
   return SWIG_arg;
@@ -20319,10 +20319,10 @@ fail:
 
 static int _wrap_WLWater_GetBlurMultiplier(lua_State* L) {
   int SWIG_arg = 0;
-  float result;
+  double result;
   
   SWIG_check_num_args("WLWater::GetBlurMultiplier",0,0)
-  result = (float)WLWater::GetBlurMultiplier();
+  result = (double)WLWater::GetBlurMultiplier();
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -20457,11 +20457,11 @@ static swig_lua_class _wrap_class_WLWater = { "WLWater", &SWIGTYPE_p_WLWater,_wr
 
 static int _wrap_WLSky_SetSunDeltaYaw(lua_State* L) {
   int SWIG_arg = 0;
-  float arg1 ;
+  double arg1 ;
   
   SWIG_check_num_args("WLSky::SetSunDeltaYaw",1,1)
-  if(!lua_isnumber(L,1)) SWIG_fail_arg("WLSky::SetSunDeltaYaw",1,"float");
-  arg1 = (float)lua_tonumber(L, 1);
+  if(!lua_isnumber(L,1)) SWIG_fail_arg("WLSky::SetSunDeltaYaw",1,"double");
+  arg1 = (double)lua_tonumber(L, 1);
   WLSky::SetSunDeltaYaw(arg1);
   
   return SWIG_arg;
@@ -20476,10 +20476,10 @@ fail:
 
 static int _wrap_WLSky_GetSunDeltaYaw(lua_State* L) {
   int SWIG_arg = 0;
-  float result;
+  double result;
   
   SWIG_check_num_args("WLSky::GetSunDeltaYaw",0,0)
-  result = (float)WLSky::GetSunDeltaYaw();
+  result = (double)WLSky::GetSunDeltaYaw();
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -20493,11 +20493,11 @@ fail:
 
 static int _wrap_WLSky_SetSceneLightStrength(lua_State* L) {
   int SWIG_arg = 0;
-  float arg1 ;
+  double arg1 ;
   
   SWIG_check_num_args("WLSky::SetSceneLightStrength",1,1)
-  if(!lua_isnumber(L,1)) SWIG_fail_arg("WLSky::SetSceneLightStrength",1,"float");
-  arg1 = (float)lua_tonumber(L, 1);
+  if(!lua_isnumber(L,1)) SWIG_fail_arg("WLSky::SetSceneLightStrength",1,"double");
+  arg1 = (double)lua_tonumber(L, 1);
   WLSky::SetSceneLightStrength(arg1);
   
   return SWIG_arg;
@@ -20512,10 +20512,10 @@ fail:
 
 static int _wrap_WLSky_GetSceneLightStrength(lua_State* L) {
   int SWIG_arg = 0;
-  float result;
+  double result;
   
   SWIG_check_num_args("WLSky::GetSceneLightStrength",0,0)
-  result = (float)WLSky::GetSceneLightStrength();
+  result = (double)WLSky::GetSceneLightStrength();
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -20529,11 +20529,11 @@ fail:
 
 static int _wrap_WLSky_SetGamma(lua_State* L) {
   int SWIG_arg = 0;
-  float arg1 ;
+  double arg1 ;
   
   SWIG_check_num_args("WLSky::SetGamma",1,1)
-  if(!lua_isnumber(L,1)) SWIG_fail_arg("WLSky::SetGamma",1,"float");
-  arg1 = (float)lua_tonumber(L, 1);
+  if(!lua_isnumber(L,1)) SWIG_fail_arg("WLSky::SetGamma",1,"double");
+  arg1 = (double)lua_tonumber(L, 1);
   WLSky::SetGamma(arg1);
   
   return SWIG_arg;
@@ -20548,10 +20548,10 @@ fail:
 
 static int _wrap_WLSky_GetGamma(lua_State* L) {
   int SWIG_arg = 0;
-  float result;
+  double result;
   
   SWIG_check_num_args("WLSky::GetGamma",0,0)
-  result = (float)WLSky::GetGamma();
+  result = (double)WLSky::GetGamma();
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -20694,11 +20694,11 @@ fail:
 
 static int _wrap_WLSky_SetDensityMultiplier(lua_State* L) {
   int SWIG_arg = 0;
-  float arg1 ;
+  double arg1 ;
   
   SWIG_check_num_args("WLSky::SetDensityMultiplier",1,1)
-  if(!lua_isnumber(L,1)) SWIG_fail_arg("WLSky::SetDensityMultiplier",1,"float");
-  arg1 = (float)lua_tonumber(L, 1);
+  if(!lua_isnumber(L,1)) SWIG_fail_arg("WLSky::SetDensityMultiplier",1,"double");
+  arg1 = (double)lua_tonumber(L, 1);
   WLSky::SetDensityMultiplier(arg1);
   
   return SWIG_arg;
@@ -20713,10 +20713,10 @@ fail:
 
 static int _wrap_WLSky_GetDensityMultiplier(lua_State* L) {
   int SWIG_arg = 0;
-  float result;
+  double result;
   
   SWIG_check_num_args("WLSky::GetDensityMultiplier",0,0)
-  result = (float)WLSky::GetDensityMultiplier();
+  result = (double)WLSky::GetDensityMultiplier();
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -20773,11 +20773,11 @@ fail:
 
 static int _wrap_WLSky_SetMaxAltitude(lua_State* L) {
   int SWIG_arg = 0;
-  float arg1 ;
+  double arg1 ;
   
   SWIG_check_num_args("WLSky::SetMaxAltitude",1,1)
-  if(!lua_isnumber(L,1)) SWIG_fail_arg("WLSky::SetMaxAltitude",1,"float");
-  arg1 = (float)lua_tonumber(L, 1);
+  if(!lua_isnumber(L,1)) SWIG_fail_arg("WLSky::SetMaxAltitude",1,"double");
+  arg1 = (double)lua_tonumber(L, 1);
   WLSky::SetMaxAltitude(arg1);
   
   return SWIG_arg;
@@ -20792,10 +20792,10 @@ fail:
 
 static int _wrap_WLSky_GetMaxAltitude(lua_State* L) {
   int SWIG_arg = 0;
-  float result;
+  double result;
   
   SWIG_check_num_args("WLSky::GetMaxAltitude",0,0)
-  result = (float)WLSky::GetMaxAltitude();
+  result = (double)WLSky::GetMaxAltitude();
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -21067,11 +21067,11 @@ fail:
 
 static int _wrap_WLSky_SetCloudCoverage(lua_State* L) {
   int SWIG_arg = 0;
-  float arg1 ;
+  double arg1 ;
   
   SWIG_check_num_args("WLSky::SetCloudCoverage",1,1)
-  if(!lua_isnumber(L,1)) SWIG_fail_arg("WLSky::SetCloudCoverage",1,"float");
-  arg1 = (float)lua_tonumber(L, 1);
+  if(!lua_isnumber(L,1)) SWIG_fail_arg("WLSky::SetCloudCoverage",1,"double");
+  arg1 = (double)lua_tonumber(L, 1);
   WLSky::SetCloudCoverage(arg1);
   
   return SWIG_arg;
@@ -21086,10 +21086,10 @@ fail:
 
 static int _wrap_WLSky_GetCloudCoverage(lua_State* L) {
   int SWIG_arg = 0;
-  float result;
+  double result;
   
   SWIG_check_num_args("WLSky::GetCloudCoverage",0,0)
-  result = (float)WLSky::GetCloudCoverage();
+  result = (double)WLSky::GetCloudCoverage();
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -21146,11 +21146,11 @@ fail:
 
 static int _wrap_WLSky_SetDistanceMult(lua_State* L) {
   int SWIG_arg = 0;
-  float arg1 ;
+  double arg1 ;
   
   SWIG_check_num_args("WLSky::SetDistanceMult",1,1)
-  if(!lua_isnumber(L,1)) SWIG_fail_arg("WLSky::SetDistanceMult",1,"float");
-  arg1 = (float)lua_tonumber(L, 1);
+  if(!lua_isnumber(L,1)) SWIG_fail_arg("WLSky::SetDistanceMult",1,"double");
+  arg1 = (double)lua_tonumber(L, 1);
   WLSky::SetDistanceMult(arg1);
   
   return SWIG_arg;
@@ -21165,10 +21165,10 @@ fail:
 
 static int _wrap_WLSky_GetDistanceMult(lua_State* L) {
   int SWIG_arg = 0;
-  float result;
+  double result;
   
   SWIG_check_num_args("WLSky::GetDistanceMult",0,0)
-  result = (float)WLSky::GetDistanceMult();
+  result = (double)WLSky::GetDistanceMult();
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   
@@ -21182,11 +21182,11 @@ fail:
 
 static int _wrap_WLSky_SetCloudScale(lua_State* L) {
   int SWIG_arg = 0;
-  float arg1 ;
+  double arg1 ;
   
   SWIG_check_num_args("WLSky::SetCloudScale",1,1)
-  if(!lua_isnumber(L,1)) SWIG_fail_arg("WLSky::SetCloudScale",1,"float");
-  arg1 = (float)lua_tonumber(L, 1);
+  if(!lua_isnumber(L,1)) SWIG_fail_arg("WLSky::SetCloudScale",1,"double");
+  arg1 = (double)lua_tonumber(L, 1);
   WLSky::SetCloudScale(arg1);
   
   return SWIG_arg;
@@ -21201,10 +21201,10 @@ fail:
 
 static int _wrap_WLSky_GetCloudScale(lua_State* L) {
   int SWIG_arg = 0;
-  float result;
+  double result;
   
   SWIG_check_num_args("WLSky::GetCloudScale",0,0)
-  result = (float)WLSky::GetCloudScale();
+  result = (double)WLSky::GetCloudScale();
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
   

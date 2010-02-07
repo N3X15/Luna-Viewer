@@ -49,8 +49,14 @@ class ViewerManifest(LLManifest):
 	
 	if self.prefix(src="lua"):
             self.path("*.lua")
+            # Plugins
             self.path("Hooks")
+            # Macros
             self.path("Macros")
+            # Libraries
+            self.path("lib")
+            # Plugin data
+            self.path("data")
             self.end_prefix("lua")
 
         if self.prefix(src="app_settings"):
@@ -624,7 +630,7 @@ class LinuxManifest(ViewerManifest):
         if 'installer_name' in self.args:
             installer_name = self.args['installer_name']
         else:
-            installer_name_components = ['GreenLife_', self.args.get('arch')]
+            installer_name_components = ['FlexLife_', self.args.get('arch')]
             installer_name_components.extend(self.args['version'])
             installer_name = "_".join(installer_name_components)
             if self.default_channel():

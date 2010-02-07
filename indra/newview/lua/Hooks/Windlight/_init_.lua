@@ -53,7 +53,7 @@ function DumpEnv()
 	env = env.. tostring(WLSky_GetSceneLightStrength()).."^"
 	env = env.. tostring(WLSky_GetSunDeltaYaw()).."^"
 	env = env.. tostring(WLSky_GetSunlight())
-	print("string WLSky=\""..env.."\";")
+	print("string WLSky=\""..env.."\"; //"..env:len())
 end
 
 local function WLChatListener(from_id, owner_id, mesg)
@@ -107,53 +107,62 @@ local function WLChatListener(from_id, owner_id, mesg)
 		end
 	elseif string.starts(mesg,"&FLEXLIFE;WLSky^"..getMyID()) then
 		local t = explode("^",mesg)
-		DumpTable(t)
+		--DumpTable(t)
 		local p = getCurrentParcel()
 		--print(getParcelOwner(p),owner_id.."\n",getMyID(),t[2])
 		-- If I am the owner or the landowner is the owner, and I am being addressed, then
 		if (tostring(getMyID())==owner_id or getParcelOwner(p)==owner_id) and t[2]==tostring(getMyID()) then
 --[[
-1: &FLEXLIFE;WLSky
-2: a556e37a-6c2f-486b-8ab9-d08a55ff9301
-3: <0.204047, 0.242463, 0.330004, 0.110012>
-4: <0.449991, 0.449999, 0.45001, 1>
-5: <0.239996, 0.239999, 0.24, 1>
-6: <0.226154, 0.226154, 0.226154, 1>
-7: 0.26999998092651
-8: <1.68841, 0.526097, 0.88, 1>
-9: <1.68841, 0.526097, 0.125, 1>
-10: 0.41999998688698
-11: 0
-12: 7.7576471085194e-05
-13: 1
-14: <5, 0.001, -0.48, 1>
-15: <3.99991, 0, 0, 1>
-16: <4.59712e-06, 0.199156, 0.199156, 1>
-17: <-0, 0.711613, 0.702571, 1>
-18: 906.19012451172
-19: 2
-20: 180
-21: <0.34879, 0.355765, 0.660036, 0.220012>
+  1: &FLEXLIFE;WLSky
+  2: a556e37a-6c2f-486b-8ab9-d08a55ff9301
+  3: <1.05,1.05,1.05,0.35>
+  4: <0.244758,0.448723,0.76,0.38>
+  5: <0.495484,0.495484,0.64,0.32>
+  6: <0.41,0.41,0.41,0.41>
+  7: 0.26999998092651
+  8: <1.68841,0.526097,1,1>
+  9: <1.68841,0.526097,0.125,1>
+  10: 0.41999998688698
+  11: 0
+  12: 0.80000001192093
+  13: 1
+  14: <5,0.001,-0.48,1>
+  15: <0.7,0,0,1>
+  16: <0.19,0.199156,0.199156,1>
+  17: <0,0.912692,-0.408649,0>
+  18: 1605
+  19: 3.8253831863403
+  20: 180
+  21: <0.734211,0.781579,0.9,0.3>
 ]]--
-			WLSky_SetAmbient(		parseVector4(t[3]))
-			WLSky_SetBlueDensity(		parseVector4(t[4]))
-			WLSky_SetBlueHorizon(		parseVector4(t[5]))
-			WLSky_SetCloudColor(		parseVector4(t[6]))
-			WLSky_SetCloudCoverage(		t[7])
-			WLSky_SetCloudDensity1(		parseVector4(t[8]))
-			WLSky_SetCloudDensity2(		parseVector4(t[9]))
-			WLSky_SetCloudScale(		t[10])
-			WLSky_SetDensityMultiplier(	t[11])
-			WLSky_SetDistanceMult(		t[12])
-			WLSky_SetGamma(			t[13])
-			WLSky_SetGlow(			parseVector4(t[14]))
-			WLSky_SetHazeDensity(		parseVector4(t[15]))
-			WLSky_SetHazeHorizon(		parseVector4(t[16]))
-			WLSky_SetLightNorm(		parseVector4(t[17]))
-			WLSky_SetMaxAltitude(		t[18])
-			WLSky_SetSceneLightStrength(	t[19])
-			WLSky_SetSunDeltaYaw(		t[20])
-			WLSky_SetSunlight(		parseVector4(t[21]))
+			for k,v in pairs(t) do 
+				if(string.starts(t[k],"<")) then
+					print (k..": "..t[k].."    "..tostring(parseVector4(t[k])))
+					if not v==tostring(parseVector4(t[k])) then
+						error("Index "..k.." was not parsed correctly.\n"..t[k].."\n"..tostring(parseVector4(t[k])))
+						return
+					end
+				end
+			end
+			WLSky_SetAmbient(		parseVector4(	t[ 3]))
+			WLSky_SetBlueDensity(		parseVector4(	t[ 4]))
+			WLSky_SetBlueHorizon(		parseVector4(	t[ 5]))
+			WLSky_SetCloudColor(		parseVector4(	t[ 6]))
+			WLSky_SetCloudCoverage(		tonumber(	t[ 7]))
+			WLSky_SetCloudDensity1(		parseVector4(	t[ 8]))
+			WLSky_SetCloudDensity2(		parseVector4(	t[ 9]))
+			WLSky_SetCloudScale(		tonumber(	t[10]))
+			WLSky_SetDensityMultiplier(	tonumber(	t[11]))
+			WLSky_SetDistanceMult(		tonumber(	t[12]))
+			WLSky_SetGamma(			tonumber(	t[13]))
+			WLSky_SetGlow(			parseVector4(	t[14]))
+			WLSky_SetHazeDensity(		parseVector4(	t[15]))
+			WLSky_SetHazeHorizon(		parseVector4(	t[16]))
+			WLSky_SetLightNorm(		parseVector4(	t[17]))
+			WLSky_SetMaxAltitude(		tonumber(	t[18]))
+			WLSky_SetSceneLightStrength(	tonumber(	t[19]))
+			WLSky_SetSunDeltaYaw(		tonumber(	t[20]))
+			WLSky_SetSunlight(		parseVector4(	t[21]))
 			print("Windlight sky settings have been set by the landowner.")
 		end
 	end
