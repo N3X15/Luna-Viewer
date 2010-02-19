@@ -11,7 +11,7 @@
 <slider bottom_delta="-20" left_delta="-0" control_name="ThrottleBandwidthKBPS"
 	     decimal_digits="0" enabled="true" follows="left|bottom" height="20"
 	     increment="50" label="Bandwidth:" can_edit_text="true"
-	     label_width="60" max_val="8000" min_val="50" mouse_opaque="true"
+	     label_width="60" max_val="5000" min_val="50" mouse_opaque="true"
 	     name="max_bandwidth" show_text="true" width="195" tool_tip="Set your Network bandwidth in kbps (kilobits per second)"/>
 <slider bottom_delta="-20" left_delta="-0" control_name="RenderMaxPartCount"
 	     decimal_digits="0" enabled="true" follows="left|bottom" height="20"

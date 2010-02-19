@@ -1,17 +1,18 @@
 #!/bin/bash
 
 # Necessary files
-BINS="bin/libllkdu.so bin/SLVoice lib/libkdu.so lib/libortp.so lib/libvivoxsdk.so"
+BINS="bin/SLVoice bin/libemkdu.so lib/libortp.so lib/libvivoxsdk.so lib/libfmod-3.75.so"
 
 # Locations of client to use
-URL="http://download.cloud.secondlife.com/SecondLife-i686-1.23.5.136262.tar.bz2"
+#URL="http://download.cloud.secondlife.com/SecondLife-i686-1.23.5.136262.tar.bz2"
+URL="http://www.modularsystems.sl/box/fmod-vivox-kdu.tar.bz2"
 ARCHIVE="${URL##*/}"
-FOLDER="${ARCHIVE%.*.*}"
+#FOLDER="${ARCHIVE%.*.*}"
 
 missing_bins() {
 	for file in $BINS; do
-		if [[ ! -f $file ]]; then
-			echo "INFO: Missing binary ./$file"
+		if [[ ! -f "$file" ]]; then
+			echo "Missing binary: ./$file."
 			return 0
 		fi
 	done
@@ -20,15 +21,16 @@ missing_bins() {
 }
 
 
-echo "INFO: Looking for missing binaries.."
+echo "Looking for missing binaries."
 if missing_bins; then
-	echo "INFO: Fetching Linden Lab client for missing files.."
+	echo "Fetching binary package."
 	if wget -nc --random-wait $URL; then
-		echo "INFO: Extracting binaries.."
-		if tar -xjv --strip-components=1 -f $ARCHIVE $FOLDER/${BINS// / $FOLDER/}; then
-			echo "INFO: All binaries accounted for, launching.."
+		echo "Extracting."
+#		if tar -xjv --strip-components=1 -f $ARCHIVE $FOLDER/${BINS// / $FOLDER/}; then
+		if tar -xjvf $ARCHIVE; then
+			echo "Binaries successfully obtained."
 		fi
 	fi
 else
-	echo "INFO: All binaries found"
+	echo "All binaries found."
 fi

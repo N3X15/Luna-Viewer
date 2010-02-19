@@ -10,8 +10,6 @@
 #ifndef LL_CALCPARSER_H
 #define LL_CALCPARSER_H
 
-#include <boost/version.hpp>
-#if BOOST_VERSION >= 103600
 #include <boost/spirit/include/classic_attribute.hpp>
 #include <boost/spirit/include/classic_core.hpp>
 #include <boost/spirit/include/classic_error_handling.hpp>
@@ -19,18 +17,6 @@
 #include <boost/spirit/include/phoenix1_binders.hpp>
 #include <boost/spirit/include/classic_symbols.hpp>
 using namespace boost::spirit::classic;
-#else
-#include <boost/spirit/attribute.hpp>
-#include <boost/spirit/core.hpp>
-#include <boost/spirit/error_handling.hpp>
-#include <boost/spirit/iterator/position_iterator.hpp>
-#include <boost/spirit/phoenix/binders.hpp>
-#include <boost/spirit/symbols/symbols.hpp>
-using namespace boost::spirit;
-#endif
-
-#include <map>
-#include <string>
 
 #include "llcalc.h"
 #include "llmath.h"
@@ -95,9 +81,9 @@ struct LLCalcParser : grammar<LLCalcParser>
 				((str_p("ATAN2") >> '(' >> expression[binary_func.value = arg1] >> ',' >>
 				  expression[binary_func.value = bind(&LLCalcParser::_atan2)(self, binary_func.value, arg1)]) |
 				 (str_p("MIN") >> '(' >> expression[binary_func.value = arg1] >> ',' >> 
-				  expression[binary_func.value = bind(&LLCalcParser::min)(self, binary_func.value, arg1)]) |
+				  expression[binary_func.value = bind(&LLCalcParser::_min)(self, binary_func.value, arg1)]) |
 				 (str_p("MAX") >> '(' >> expression[binary_func.value = arg1] >> ',' >> 
-				  expression[binary_func.value = bind(&LLCalcParser::max)(self, binary_func.value, arg1)])
+				  expression[binary_func.value = bind(&LLCalcParser::_max)(self, binary_func.value, arg1)])
 				) >> assert_syntax(ch_p(')'))
 			;
 			
@@ -152,8 +138,8 @@ struct LLCalcParser : grammar<LLCalcParser>
 private:
 	// Member functions for semantic actions
 	F32	lookup(const std::string::iterator&, const std::string::iterator&) const;
-	F32 min(const F32& a, const F32& b) const { return llmin(a, b); }
-	F32 max(const F32& a, const F32& b) const { return llmax(a, b); }
+	F32 _min(const F32& a, const F32& b) const { return llmin(a, b); }
+	F32 _max(const F32& a, const F32& b) const { return llmax(a, b); }
 	
 	bool checkNaN(const F32& a) const { return !llisnan(a); }
 	

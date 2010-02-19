@@ -75,7 +75,11 @@
 #include "llfloaterhtml.h"
 #include "llweb.h"
 #include "llstylemap.h"
-#include "mfdKeywordFloater.h"
+#include "mfdkeywordfloater.h"
+
+// [RLVa:KB]
+#include "rlvhandler.h"
+// [/RLVa:KB]
 
 // Used for LCD display
 extern void AddNewIMToLCD(const std::string &newLine);
@@ -108,9 +112,29 @@ LLFloaterChat::LLFloaterChat(const LLSD& seed)
 	LLUICtrlFactory::getInstance()->buildFloater(this,"floater_chat_history.xml",&getFactoryMap(),no_open);
 
 	childSetCommitCallback("show mutes",onClickToggleShowMute,this); //show mutes
+	childSetCommitCallback("translate chat",onClickToggleTranslateChat,this); 
+	childSetValue("translate chat", gSavedSettings.getBOOL("TranslateChat")); 
 	childSetVisible("Chat History Editor with mute",FALSE);
 	childSetAction("toggle_active_speakers_btn", onClickToggleActiveSpeakers, this);
 	setDefaultBtn("Chat");
+}
+// Update the "TranslateChat" pref after "translate chat" checkbox is toggled in 
+// the "Local Chat" floater. 
+//static 
+void LLFloaterChat::onClickToggleTranslateChat(LLUICtrl* caller, void *data) 
+{
+	LLFloaterChat* floater = (LLFloaterChat*)data;
+	BOOL translate_chat = floater->getChild<LLCheckBoxCtrl>("translate chat")->get();
+	gSavedSettings.setBOOL("TranslateChat", translate_chat);
+}
+
+// Update the "translate chat" checkbox after the "TranslateChat" pref is set in 
+// some other place (e.g. prefs dialog). 
+//static 
+void LLFloaterChat::updateSettings() 
+{
+	BOOL translate_chat = gSavedSettings.getBOOL("TranslateChat");
+	LLFloaterChat::getInstance(LLSD())->getChild<LLCheckBoxCtrl>("translate chat")->set(translate_chat); 
 }
 
 LLFloaterChat::~LLFloaterChat()
@@ -404,7 +428,6 @@ void LLFloaterChat::addChat(const LLChat& chat,
 			chat.mChatType == CHAT_TYPE_DEBUG_MSG
 			&& !gSavedSettings.getBOOL("ScriptErrorsAsChat");
 
-	
 // [RLVa:KB] - Checked: 2009-07-08 (RLVa-1.0.0e)
 	if (rlv_handler_t::isEnabled())
 	{

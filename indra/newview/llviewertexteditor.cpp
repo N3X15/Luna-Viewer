@@ -62,6 +62,10 @@
 
 #include "llappviewer.h" // for gPacificDaylightTime
 
+// [RLVa:KB]
+#include "rlvhandler.h"
+// [/RLVa:KB]
+
 static LLRegisterWidget<LLViewerTextEditor> r("text_editor");
 
 ///----------------------------------------------------------------------------
@@ -96,9 +100,10 @@ public:
 		}
 		else
 		{
-// [RLVa:KB] - Checked: 2009-07-06 (RLVa-1.0.0c)
-			if ( (rlv_handler_t::isEnabled()) && (gRlvHandler.hasBehaviour(RLV_BHVR_VIEWNOTE)) )
+// [RLVa:KB] - Checked: 2009-11-11 (RLVa-1.1.0a) | Modified: RLVa-1.1.0a
+			if (gRlvHandler.hasBehaviour(RLV_BHVR_VIEWNOTE))
 			{
+				RlvNotifications::notifyBlockedViewNote();
 				return;
 			}
 // [/RLVa:KB]
@@ -396,51 +401,11 @@ void LLEmbeddedItems::bindEmbeddedChars( const LLFontGL* font ) const
 		{
 			continue;
 		}
-		const char* img_name;
-		switch( item->getType() )
-		{
-		  case LLAssetType::AT_TEXTURE:
-			if(item->getInventoryType() == LLInventoryType::IT_SNAPSHOT)
-			{
-				img_name = "inv_item_snapshot.tga";
-			}
-			else
-			{
-				img_name = "inv_item_texture.tga";
-			}
 
-			break;
-		  case LLAssetType::AT_SOUND:			img_name = "inv_item_sound.tga";	break;
-		  case LLAssetType::AT_LANDMARK:		
-			if (item->getFlags() & LLInventoryItem::II_FLAGS_LANDMARK_VISITED)
-			{
-				img_name = "inv_item_landmark_visited.tga";	
-			}
-			else
-			{
-				img_name = "inv_item_landmark.tga";	
-			}
-			break;
-		  case LLAssetType::AT_CLOTHING:		img_name = "inv_item_clothing.tga";	break;
-		  case LLAssetType::AT_OBJECT:			
-			if (item->getFlags() & LLInventoryItem::II_FLAGS_OBJECT_HAS_MULTIPLE_ITEMS)
-			{
-				img_name = "inv_item_object_multi.tga";	
-			}
-			else
-			{
-				img_name = "inv_item_object.tga";	
-			}
-			break;
-		  case LLAssetType::AT_NOTECARD:		img_name = "inv_item_notecard.tga";	break;
-		  case LLAssetType::AT_LSL_TEXT:		img_name = "inv_item_script.tga";	break;
-		  case LLAssetType::AT_BODYPART:		img_name = "inv_item_skin.tga";	break;
-		  case LLAssetType::AT_ANIMATION:		img_name = "inv_item_animation.tga";break;
-		  case LLAssetType::AT_GESTURE:			img_name = "inv_item_gesture.tga";	break;
-		  default: llassert(0); continue;
-		}
-
-		LLUIImagePtr image = LLUI::getUIImage(img_name);
+		LLUIImagePtr image = get_item_icon(item->getType(),
+							 item->getInventoryType(),
+							 0, 
+							 item->getFlags() & LLInventoryItem::II_FLAGS_OBJECT_HAS_MULTIPLE_ITEMS);//LLUI::getUIImage(img_name);
 
 		font->addEmbeddedChar( wch, image->getImage(), item->getName() );
 	}
@@ -977,7 +942,7 @@ BOOL LLViewerTextEditor::handleMouseUp(S32 x, S32 y, MASK mask)
 BOOL LLViewerTextEditor::handleRightMouseDown(S32 x, S32 y, MASK mask)
 {
 	BOOL handled = childrenHandleRightMouseDown(x, y, mask) != NULL;
-
+	if(!handled)LLTextEditor::handleRightMouseDown(x, y, mask);
 	// *TODO: Add right click menus for SLURLs
 // 	if(! handled)
 // 	{
@@ -1397,9 +1362,10 @@ BOOL LLViewerTextEditor::openEmbeddedItem(LLInventoryItem* item, llwchar wc)
 
 void LLViewerTextEditor::openEmbeddedTexture( LLInventoryItem* item, llwchar wc )
 {
-// [RLVa:KB] - Version: 1.23.4 | Checked: 2009-10-13 (RLVa-1.0.5c) | Added: RLVa-1.0.5c
+// [RLVa:KB] - Checked: 2009-11-11 (RLVa-1.1.0a) | Modified: RLVa-1.1.0a
 	if (gRlvHandler.hasBehaviour(RLV_BHVR_VIEWTEXTURE))
 	{
+		RlvNotifications::notifyBlockedViewTexture();
 		return;
 	}
 // [/RLVa:KB]

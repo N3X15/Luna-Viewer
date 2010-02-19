@@ -45,12 +45,16 @@
 #include "llviewerwindow.h"
 #include "llrendersphere.h"
 #include "llselectmgr.h"
+#include "llviewercontrol.h"
 #include "llglheaders.h"
 #include "llresmgr.h"
 
 
 #include "llxmltree.h"
 
+// [RLVa:KB] - Emerald specific
+#include "rlvhandler.h"
+// [/RLVa:KB]
 
 BOOL LLHUDEffectLookAt::sDebugLookAt = FALSE;
 
@@ -337,27 +341,14 @@ void LLHUDEffectLookAt::unpackData(LLMessageSystem *mesgsys, S32 blocknum)
 	
 	htonmemcpy(source_id.mData, &(packed_data[SOURCE_AVATAR]), MVT_LLUUID, 16);
 
-	/*if(mDuration > 2.5)
-	{
-		cancellate();
-		markDead();
-		return;
-	}*/
-
 	LLViewerObject *objp = gObjectList.findObject(source_id);
-	if (objp && objp->isAvatar() && source_id == mSenderID)
+	if (objp && objp->isAvatar())
 	{
 		setSourceObject(objp);
 	}
 	else
 	{
-		/*if(source_id != mSenderID)
-		{
-			llinfos << "cancelling effect source_id" << llendl;	
-			cancellate();
-		}*/
 		//llwarns << "Could not find source avatar for lookat effect" << llendl;
-		markDead();
 		return;
 	}
 
@@ -514,6 +505,8 @@ void LLHUDEffectLookAt::setSourceObject(LLViewerObject* objectp)
 //-----------------------------------------------------------------------------
 void LLHUDEffectLookAt::render()
 {
+    if (gSavedSettings.getBOOL("EmeraldDontShowMyLookAt") &&
+        (gAgent.getAvatarObject() == ((LLVOAvatar*)(LLViewerObject*)mSourceObject))) return;
 	if (sDebugLookAt && mSourceObject.notNull())
 	{
 		gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
@@ -562,7 +555,7 @@ void LLHUDEffectLookAt::render()
 			// Show anonyms in place of actual names when @shownames=n restricted
 			if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES))
 			{
-				text = gRlvHandler.getAnonym(text);
+				text = RlvStrings::getAnonym(text);
 			}
 // [/RLVa:KB]
 

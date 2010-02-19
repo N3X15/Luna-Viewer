@@ -9,6 +9,8 @@
 #include "llagent.h"
 #include "llframetimer.h"
 #include "llprimitive.h"
+#include "llviewercontrol.h"
+#include "llviewerobjectlist.h"
 #include "llviewerregion.h"
 #include "llvolumemessage.h"
 #include "llchat.h"
@@ -22,6 +24,8 @@
 
 
 #include "llviewertexteditor.h"
+
+#include "jclslpreproc.h"
 
 ImportTracker gImportTracker;
 
@@ -199,8 +203,29 @@ void ImportTracker::get_update(S32 newid, BOOL justCreated, BOOL createSelected)
 				msg->addBOOL("IsTemporary", gSavedSettings.getBOOL("EmeraldBuildPrefs_Temporary"));
 				msg->addBOOL("IsPhantom", gSavedSettings.getBOOL("EmeraldBuildPrefs_Phantom") );
 				msg->addBOOL("CastsShadows", true );
-				msg->sendReliable(gAgent.getRegion()->getHost());				
+				msg->sendReliable(gAgent.getRegion()->getHost());
 
+				if(gSavedSettings.getBOOL("EmeraldBuildPrefs_EmbedItem"))
+				{
+					LLViewerInventoryItem* item = (LLViewerInventoryItem*)gInventory.getItem((LLUUID)gSavedSettings.getString("EmeraldBuildPrefs_Item"));
+					LLViewerObject* objectp = find((U32)newid);
+					if(objectp)
+						if(item)
+						{
+							if(item->getType()==LLAssetType::AT_LSL_TEXT)
+							{
+								LLToolDragAndDrop::dropScript(objectp,
+									item,
+									TRUE,
+									LLToolDragAndDrop::SOURCE_AGENT,
+									gAgent.getID());
+							}else
+							{
+								LLToolDragAndDrop::dropInventory(objectp,item,LLToolDragAndDrop::SOURCE_AGENT,gAgent.getID());
+							}
+						}
+				}
+				
 				//llinfos << "LGG SENDING CUBE TEXTURE.." << llendl;
 			}
 		break;
@@ -433,14 +458,14 @@ public:
 					U8* buffer = new U8[size];
 					gVFS->getData(data->assetid, data->type, buffer, 0, size);
 					std::string script((char*)buffer);
-					BOOL domono = TRUE;
-					if(script.find("//mono\n") != -1)
+					BOOL domono = JCLSLPreprocessor::mono_directive(script);
+					/*if(script.find("//mono\n") != -1)
 					{
 						domono = TRUE;
 					}else if(script.find("//lsl2\n") != -1)
 					{
 						domono = FALSE;
-					}
+					}*/
 					delete buffer;
 					buffer = 0;
 					body["target"] = (domono == TRUE) ? "mono" : "lsl2";

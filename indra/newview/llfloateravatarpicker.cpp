@@ -47,6 +47,10 @@
 #include "llviewercontrol.h"
 #include "llworld.h"
 
+// [RLVa:KB]
+#include "rlvhandler.h"
+// [/RLVa:KB]
+
 const S32 MIN_WIDTH = 200;
 const S32 MIN_HEIGHT = 340;
 const LLRect FLOATER_RECT(0, 380, 240, 0);
@@ -244,7 +248,7 @@ void LLFloaterAvatarPicker::onBtnSelect(void* userdata)
 			self->mCallback(avatar_names, avatar_ids, self->mCallbackUserdata);
 		}
 	}
-	self->getChild<LLInventoryPanel>("InventoryPanel")->setSelection(LLUUID::null, FALSE);
+	if(self->init_cards)self->getChild<LLInventoryPanel>("InventoryPanel")->setSelection(LLUUID::null, FALSE);
 	self->getChild<LLScrollListCtrl>("SearchResults")->deselectAllItems(TRUE);
 	self->getChild<LLScrollListCtrl>("NearMe")->deselectAllItems(TRUE);
 	if(self->mCloseOnSelect)

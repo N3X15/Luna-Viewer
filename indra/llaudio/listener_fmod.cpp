@@ -39,10 +39,12 @@
 #if LL_WINDOWS
 #include <windows.h>
 #pragma warning (disable : 4005)
-#define LoadLibrary LoadLibraryA
+#define LOADLIB LoadLibraryA
+#else
+#define LOADLIB LoadLibrary
 #endif
 
-#if LL_WINDOWS
+#if LL_WINDOWS || LL_LINUX
 #include "fmoddyn.h"
 #define FMOD_API(x) gFmod->x
 extern FMOD_INSTANCE* gFmod;

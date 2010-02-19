@@ -67,6 +67,10 @@
 
 #include "llglheaders.h"
 
+// [RLVa:KB]
+#include "rlvhandler.h"
+// [/RLVa:KB]
+
 const F32 GODLY_TELEPORT_HEIGHT = 200.f;
 const S32 SCROLL_HINT_WIDTH = 65;
 const F32 BIG_DOT_RADIUS = 5.f;
@@ -682,10 +686,10 @@ void LLWorldMapView::draw()
 			//			info->mAgents,
 			//			info->mName.c_str(),
 			//			LLViewerRegion::accessToShortString(info->mAccess).c_str() );
-// [RLVa:KB] - Alternate: Snowglobe-1.0 | Checked: 2009-07-04 (RLVa-1.0.0a)
+// [RLVa:KB] - Alternate: Snowglobe-1.2.4 | Checked: 2009-07-04 (RLVa-1.0.0a)
 			if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC))
 			{
-				mesg = rlv_handler_t::cstrHidden;
+				mesg = RlvStrings::getString(RLV_STRING_HIDDEN);
 			}
 			else if (info->mAccess == SIM_ACCESS_DOWN)
 // [/RLVa:KB]
@@ -1209,8 +1213,8 @@ BOOL LLWorldMapView::handleToolTip( S32 x, S32 y, std::string& msg, LLRect* stic
 		std::string message = 
 			llformat("%s (%s)",
 					 //info->mName.c_str(),
-// [RLVa:KB] - Alternate: Snowglobe-1.0 | Checked: 2009-07-04 (RLVa-1.0.0a)
-					 (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC)) ? info->mName.c_str() : rlv_handler_t::cstrHidden.c_str(),
+// [RLVa:KB] - Alternate: Snowglobe-1.2.4 | Checked: 2009-07-04 (RLVa-1.0.0a)
+					 (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC)) ? info->mName.c_str() : RlvStrings::getString(RLV_STRING_HIDDEN).c_str(),
 // [/RLVa:KB]
 					 LLViewerRegion::accessToString(info->mAccess).c_str());
 

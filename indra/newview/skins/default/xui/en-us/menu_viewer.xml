@@ -784,6 +784,10 @@
 			<on_click function="Tools.TakeCopy" userdata="" />
 			<on_enable function="Tools.EnableTakeCopy" />
 		</menu_item_call>
+		<menu_item_call enabled="false" label="Return Object" mouse_opaque="true" name="Return...">
+			<on_click function="Object.Return" />
+			<on_enable function="Object.EnableReturn" />
+		</menu_item_call>
 		<menu_item_call bottom="-403" enabled="false" height="19"
 		     label="Save Object Back to Object Contents" left="0" mouse_opaque="true"
 		     name="Save Object Back to Object Contents" width="250">
@@ -830,6 +834,13 @@
 		     width="250">
 			<on_click function="Tools.SelectedScriptAction" userdata="stop" />
 			<on_enable function="EditableSelected" />
+		</menu_item_call>
+		<menu_item_call bottom="-525" enabled="false" height="19"
+		     label="Remove Scripts in Selection" left="0"
+		     mouse_opaque="true" name="Remove Scripts in Selection"
+		     width="250">
+			<on_click function="Tools.ScriptDelete" />
+			<on_enable function="Tools.EnableScriptDelete" />
 		</menu_item_call>
 	</menu>
 	<menu bottom="219" create_jump_keys="true" drop_shadow="true" enabled="true"
@@ -991,6 +1002,7 @@
 		     mouse_opaque="true" name="Avatar List" shortcut="control|shift|a" width="155">
 			<on_click function="Emerald.ToggleAvatarList" userdata="avatars" />
 			<on_check control="ShowAvatarList" />
+      <on_enable function="RLV.EnableIfNot" userdata="shownames" />
 		</menu_item_check>
 		<menu_item_check bottom="-206" enabled="true" height="20" label="Teleport History" left="0"
 		     mouse_opaque="true" name="Teleport History" shortcut="alt|H" width="155">
@@ -1006,6 +1018,7 @@
  		     mouse_opaque="true" name="asset browser" shortcut="alt|shift|a" width="185">
       <on_click function="Phox.ToggleAssetBrowser" userdata="" />
       <on_check function="Phox.CheckAssetBrowser" userdata="" />
+      <on_enable function="RLV.EnableIfNot" userdata="showinv" />
     </menu_item_check>
     <menu_item_check bottom="-58" enabled="true" height="20" label="AO" left="0"
          mouse_opaque="true" name="AO" shortcut="control|shift|o" width="155">

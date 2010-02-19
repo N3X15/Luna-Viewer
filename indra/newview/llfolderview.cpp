@@ -350,7 +350,8 @@ void LLFolderViewItem::refresh()
 
 	if (mSearchableLabel.compare(searchable_label) ||
 		mSearchableLabelCreator.compare(searchable_label_creator) ||
-		mSearchableLabelDesc.compare(searchable_label_creator))
+		mSearchableLabelDesc.compare(searchable_label_desc) || 
+		mSearchableLabelAll.compare(searchable_label_all))
 	{
 		mSearchableLabel.assign(searchable_label);
 		mSearchableLabelCreator.assign(searchable_label_creator);
@@ -363,24 +364,6 @@ void LLFolderViewItem::refresh()
 			mParentFolder->requestArrange();
 	}
 	
-	/*if(mSearchableLabelCreator.compare(searchable_label_creator))
-	{
-		mSearchableLabelCreator.assign(searchable_label_creator);
-
-		dirtyFilter();
-		if(mParentFolder)
-			mParentFolder->requestArrange();
-	}
-
-	if(mSearchableLabelDesc.compare(searchable_label_desc))
-	{
-		mSearchableLabelDesc.assign(searchable_label_desc);
-
-		dirtyFilter();
-		if(mParentFolder)
-			mParentFolder->requestArrange();
-	}*/
-
 	S32 label_width = sFont->getWidth(mLabel);
 	if( mLabelSuffix.size() )   
 	{   
@@ -664,16 +647,21 @@ void LLFolderViewItem::rename(const std::string& new_name)
 	}
 }
 
-const std::string& LLFolderViewItem::getSearchableLabel(U32 search_type = 0) const
+const std::string& LLFolderViewItem::getSearchableLabel() const
 {
-	if(search_type == 3)
-		return mSearchableLabelAll;
-	else if(search_type == 2)
-		return mSearchableLabelDesc;
-	else if(search_type == 1)
+	U32 type = mRoot->getFilter()->getSearchType();
+	switch(type)
+	{
+	case 1:
 		return mSearchableLabelCreator;
-	else
+	case 2:
+		return mSearchableLabelDesc;
+	case 3:
+		return mSearchableLabelAll;
+	default:
 		return mSearchableLabel;
+	}
+	
 }
 
 const std::string& LLFolderViewItem::getName( void ) const
@@ -1032,8 +1020,14 @@ void LLFolderViewItem::draw()
 		{
 			// don't draw backgrounds for zero-length strings
 			S32 filter_string_length = mRoot->getFilterSubString().size();
+
 			std::string combined_string = mLabel + mLabelSuffix;
-			if ((filter_string_length > 0) && (combined_string.find(mRoot->getFilterSubString()) != -1))
+			
+			//fix so that highlighting works properly again - rkeast
+			std::string check = combined_string;
+			LLStringUtil::toUpper(check);
+
+			if ((filter_string_length > 0) && (check.find(mRoot->getFilterSubString()) != -1))
 			{
 //				llinfos << "mLabel " << mLabel<< " mLabelSuffix " << mLabelSuffix << " mLabel " << mLabel << " mLabel " << mLabel << llendl;
 				S32 left = llround(text_left) + sFont->getWidth(combined_string, 0, mStringMatchOffset) - 1;
@@ -2871,7 +2865,8 @@ const std::string LLFolderView::getFilterSubString(BOOL trim)
 void LLFolderView::filter( LLInventoryFilter& filter )
 {
 	LLFastTimer t2(LLFastTimer::FTM_FILTER);
-	filter.setFilterCount(llclamp(gSavedSettings.getS32("FilterItemsPerFrame"), 1, 5000));
+	static S32 sfilt = llclamp(gSavedSettings.getS32("FilterItemsPerFrame"), 1, 5000);
+	filter.setFilterCount(sfilt);
 
 	if (getCompletedFilterGeneration() < filter.getCurrentGeneration())
 	{
@@ -4323,7 +4318,7 @@ void LLFolderView::doIdle()
 {
 	LLFastTimer t2(LLFastTimer::FTM_INVENTORY);
 
-	BOOL debug_filters = gSavedSettings.getBOOL("DebugInventoryFilters");
+	static BOOL debug_filters = gSavedSettings.getBOOL("DebugInventoryFilters");
 	if (debug_filters != getDebugFilters())
 	{
 		mDebugFilters = debug_filters;
@@ -4565,6 +4560,10 @@ LLInventoryFilter::LLInventoryFilter(const std::string& name) :
 	mModified(FALSE),
 	mNeedTextRebuild(TRUE)
 {
+	//fix to get rid of gSavedSettings use - rkeast
+	mSearchType = 0;
+	mPartialSearch = false;
+
 	mFilterOps.mFilterTypes = 0xffffffff;
 	mFilterOps.mMinDate = time_min();
 	mFilterOps.mMaxDate = time_max();
@@ -4613,12 +4612,11 @@ BOOL LLInventoryFilter::check(LLFolderViewItem* item)
 	//When searching for all labels, we need to explode the filter string
 	//Into an array, and then compare each string to the label seperately
 	//Otherwise the filter substring needs to be 
-	//formatted in the same order as the label - Richard Keast
-	U32 search_type = gSavedSettings.getU32("InventorySearchType");
+	//formatted in the same order as the label - rkeast
 
 	BOOL passed;
 	//Added ability to toggle this type of searching for all labels cause it's convienient - RKeast
-	if(search_type == 3 || gSavedSettings.getBOOL("ShowPartialSearchResults"))
+	if(mSearchType == 3 || mPartialSearch)
 	{
 		std::istringstream i(mFilterSubString);
 		std::string blah;
@@ -4633,7 +4631,7 @@ BOOL LLInventoryFilter::check(LLFolderViewItem* item)
 		BOOL subStringMatch = true;
 		for(int i = 0; i < search_array.getLength(); i++)
 		{
-			mSubStringMatchOffset = (search_array.get(i)).size() ? item->getSearchableLabel(search_type).find(search_array.get(i)) : std::string::npos;
+			mSubStringMatchOffset = (search_array.get(i)).size() ? item->getSearchableLabel().find(search_array.get(i)) : std::string::npos;
 			subStringMatch = subStringMatch && ((search_array.get(i)).size() == 0 || mSubStringMatchOffset != std::string::npos);
 		}
 
@@ -4646,7 +4644,7 @@ BOOL LLInventoryFilter::check(LLFolderViewItem* item)
 	}	
 	else
 	{
-		mSubStringMatchOffset = mFilterSubString.size() ? item->getSearchableLabel(search_type).find(mFilterSubString) : std::string::npos;
+		mSubStringMatchOffset = mFilterSubString.size() ? item->getSearchableLabel().find(mFilterSubString) : std::string::npos;
 		passed = (0x1 << listener->getInventoryType() & mFilterOps.mFilterTypes || listener->getInventoryType() == LLInventoryType::IT_NONE)
 						&& (mFilterSubString.size() == 0 || mSubStringMatchOffset != std::string::npos)
 						&& (mFilterWorn == false || gAgent.isWearingItem(item_id) ||
@@ -4700,6 +4698,31 @@ BOOL LLInventoryFilter::isModifiedAndClear()
 	BOOL ret = mModified;
 	mModified = FALSE;
 	return ret;
+}
+
+//fix to get rid of gSavedSettings use - rkeast
+void LLInventoryFilter::setPartialSearch(bool toggle)
+{
+	
+	mPartialSearch = toggle;
+}
+
+//fix to get rid of gSavedSettings use - rkeast
+bool LLInventoryFilter::getPartialSearch()
+{
+	return mPartialSearch;
+}
+
+//fix to get rid of gSavedSettings use - rkeast
+void LLInventoryFilter::setSearchType(U32 type)
+{
+	mSearchType = type;
+}
+
+//fix to get rid of gSavedSettings use - rkeast
+U32 LLInventoryFilter::getSearchType()
+{
+	return mSearchType;
 }
 
 void LLInventoryFilter::setFilterTypes(U32 types)

@@ -90,6 +90,11 @@ RUN_PATH=`dirname "${SCRIPTSRC}" || echo .`
 echo "Running from ${RUN_PATH}"
 cd "${RUN_PATH}"
 
+# This is an added utility script to grab voice and KDU components licensed for Emerald, as well as FMOD.
+# This is now automatically run on startup, due to how small the download and unpack time has become.
+# If you object to using voice, Kakadu image decoding, or FMOD audio, comment this script out. ~Disc
+./fetch_bins.sh
+
 # Re-register the secondlife:// protocol handler every launch, for now.
 ./register_secondlifeprotocol.sh
 ## Before we mess with LD_LIBRARY_PATH, save the old one to restore for

@@ -59,6 +59,12 @@ private:
 	static void onClickVoiceRevertProd(void* data);
 	static void onCustomBeam(void* data);
 	static void onCustomBeamColor(void* data);
+
+	static void onSpellAdd(void* data);
+	static void onSpellRemove(void* data);
+	static void onSpellGetMore(void* data);
+	static void onSpellEditCustom(void* data);
+
 	static void onStealth(void* data);
 	static void callbackEmeraldStealth(const LLSD &notification, const LLSD &response);
 	static void callbackEmeraldNoStealth(const LLSD &notification, const LLSD &response);
@@ -72,8 +78,10 @@ private:
 	static void onCommitSendAppearance(LLUICtrl* ctrl, void* userdata);	
 	static void onTexturePickerCommit(LLUICtrl* ctrl, void* userdata);
 	static void onComboBoxCommit(LLUICtrl* ctrl, void* userdata);
+	static void onSpellBaseComboBoxCommit(LLUICtrl* ctrl, void* userdata);	
 	static void beamUpdateCall(LLUICtrl* ctrl, void* userdata);
 	static void onClickSetMirror(void*);
+	static void onClickSetHDDInclude(void*);
     static void onClickOtrHelp(void* data); // [$PLOTR$/]
 	static void onConditionalPreferencesChanged(LLUICtrl* ctrl, void* userdata);
 	//static void onCommitVoiceDebugServerName(LLUICtrl* caller, void* user_data);
@@ -84,7 +92,9 @@ private:
 	std::string mSkin;
 	static LLPanelEmerald* sInstance;
 	static JCInvDropTarget* mObjectDropTarget;
+	static JCInvDropTarget* mBuildObjectDropTarget;
 	static void IMAutoResponseItemDrop(LLViewerInventoryItem* item);
+	static void BuildAutoResponseItemDrop(LLViewerInventoryItem* item);
 
 protected:
 	void initHelpBtn(const std::string& name, const std::string& xml_alert);

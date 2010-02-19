@@ -1,6 +1,17 @@
 <?xml version="1.0"?>
 <llsd>
 	<map>
+  		<key>EnableVoiceChat</key>
+		<map>
+			<key>Comment</key>
+			<string>Enable talking to other residents with a microphone</string>
+			<key>Persist</key>
+			<integer>1</integer>
+			<key>Type</key>
+			<string>Boolean</string>
+			<key>Value</key>
+			<integer>1</integer>
+		</map>
     		<key>EmeraldIgnoreFinishAnimation</key>
 		<map>
 			<key>Comment</key>
@@ -12,23 +23,12 @@
 			<key>Value</key>
 			<integer>0</integer>
 		</map>
-		<key>InventorySearchType</key>
+    <key>EmeraldTranslateReplace</key>
 		<map>
 			<key>Comment</key>
-			<string>Controls what type of inventory search we perform.</string>
+      <string>Whether or not right click translate replaces the selected text</string>
 			<key>Persist</key>
-			<integer>0</integer>
-			<key>Type</key>
-			<string>U32</string>
-			<key>Value</key>
-			<integer>0</integer>
-		</map>
-		<key>ShowPartialSearchResults</key>
-		<map>
-			<key>Comment</key>
-			<string>Toggles whether to search using partial search filters on normal (name, desc, creator) searches.</string>
-			<key>Persist</key>
-			<integer>0</integer>
+      <integer>1</integer>
 			<key>Type</key>
 			<string>Boolean</string>
 			<key>Value</key>
@@ -186,6 +186,17 @@
 			<key>Value</key>
 			<integer>1</integer>
 		</map>
+		<key>RLVaEnableCompositeFolders</key>
+		<map>
+			<key>Comment</key>
+			<string>Enables composite folders for shared inventory</string>
+			<key>Persist</key>
+			<integer>1</integer>
+			<key>Type</key>
+			<string>Boolean</string>
+			<key>Value</key>
+			<integer>0</integer>
+		</map>
 		<key>RLVaEnableLegacyNaming</key>
 		<map>
 			<key>Comment</key>
@@ -200,7 +211,7 @@
 		<key>RLVaEnableWear</key>
 		<map>
 			<key>Comment</key>
-			<string>When TRUE, enables the "Wear" option on the inventory item context menu for attachments.</string>
+			<string>Enables the "Wear" option on the inventory item context menu for attachments</string>
 			<key>Persist</key>
 			<integer>1</integer>
 			<key>Type</key>
@@ -208,10 +219,21 @@
 			<key>Value</key>
 			<integer>1</integer>
 		</map>
+		<key>RLVaEnableSharedWear</key>
+		<map>
+			<key>Comment</key>
+			<string>Attachments in the shared #RLV folder can be force-attached without needing to specify an attachment point (as long as no attachment is non-detachable)</string>
+			<key>Persist</key>
+			<integer>1</integer>
+			<key>Type</key>
+			<string>Boolean</string>
+			<key>Value</key>
+			<integer>0</integer>
+		</map>
 		<key>RLVaHideLockedLayers</key>
 		<map>
 			<key>Comment</key>
-			<string>When TRUE, hides worn but "remove outfit" restricted clothing layers from @getoufit</string>
+			<string>Hides "remove outfit" restricted worn clothing layers from @getoufit</string>
 			<key>Persist</key>
 			<integer>1</integer>
 			<key>Type</key>
@@ -222,13 +244,24 @@
 		<key>RLVaHideLockedAttachments</key>
 		<map>
 			<key>Comment</key>
-			<string>When TRUE, hides worn but "no detach" restricted attachments from @getattach</string>
+			<string>Hides non-detachable worn attachments from @getattach</string>
 			<key>Persist</key>
 			<integer>1</integer>
 			<key>Type</key>
 			<string>Boolean</string>
 			<key>Value</key>
 			<integer>0</integer>
+		</map>
+		<key>RLVaSharedInvAutoRename</key>
+		<map>
+			<key>Comment</key>
+			<string>Automatically renames shared inventory items when worn</string>
+			<key>Persist</key>
+			<integer>1</integer>
+			<key>Type</key>
+			<string>Boolean</string>
+			<key>Value</key>
+			<integer>1</integer>
 		</map>
 		<key>RLVaShowNameTags</key>
 		<map>
@@ -881,7 +914,7 @@
 		<key>AvatarSex</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -919,7 +952,7 @@
 		<key>BackwardBtnRect</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -990,7 +1023,7 @@
 			<key>Type</key>
 			<string>String</string>
 			<key>Value</key>
-			<string/>
+			<string></string>
 		</map>
 		<key>BrowserProxyEnabled</key>
 		<map>
@@ -1012,7 +1045,7 @@
 			<key>Type</key>
 			<string>String</string>
 			<key>Value</key>
-			<string/>
+			<string></string>
 		</map>
 		<key>BrowserProxyPort</key>
 		<map>
@@ -1171,7 +1204,7 @@
 		<key>BuildBtnState</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -1463,7 +1496,7 @@
 			<key>Type</key>
 			<string>String</string>
 			<key>Value</key>
-			<string/>
+			<string></string>
 		</map>
 		<key>CacheSize</key>
 		<map>
@@ -1722,7 +1755,7 @@
 			<key>Type</key>
 			<string>String</string>
 			<key>Value</key>
-			<string/>
+			<string></string>
 		</map>
 		<key>CloseChatOnReturn</key>
 		<map>
@@ -1766,7 +1799,7 @@
 			<key>Type</key>
 			<string>String</string>
 			<key>Value</key>
-			<string/>
+			<string></string>
 		</map>
 		<key>CmdLineHelperURI</key>
 		<map>
@@ -1777,7 +1810,7 @@
 			<key>Type</key>
 			<string>String</string>
 			<key>Value</key>
-			<string/>
+			<string></string>
 		</map>
 		<key>CmdLineLoginURI</key>
 		<map>
@@ -1789,7 +1822,7 @@
 			<string>LLSD</string>
 			<key>Value</key>
 			<array>
-				<string/>
+				<string></string>
 			</array>
 		</map>
 		<key>ColorPaletteEntry01</key>
@@ -2422,7 +2455,7 @@
 		<key>CreateToolCopyCenters</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -2433,7 +2466,7 @@
 		<key>CreateToolCopyRotates</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -2444,7 +2477,7 @@
 		<key>CreateToolCopySelection</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -2494,7 +2527,7 @@
 			<key>Type</key>
 			<string>String</string>
 			<key>Value</key>
-			<string/>
+			<string></string>
 		</map>
 		<key>DebugBeaconLineWidth</key>
 		<map>
@@ -3502,6 +3535,39 @@
 			<key>Value</key>
 			<integer>0</integer>
 		</map>
+		<key>EmeraldSpellDisplay</key>
+		<map>
+			<key>Comment</key>
+			<string>Turn on to show mispelled text in red</string>
+			<key>Persist</key>
+			<integer>1</integer>
+			<key>Type</key>
+			<string>Boolean</string>
+			<key>Value</key>
+			<integer>0</integer>
+		</map>
+		<key>EmeraldSpellInstalled</key>
+		<map>
+			<key>Comment</key>
+			<string>The list of installed dictionaries</string>
+			<key>Persist</key>
+			<integer>1</integer>
+			<key>Type</key>
+			<string>String</string>
+			<key>Value</key>
+			<string>EN_SL</string>
+		</map>
+		<key>EmeraldSpellBase</key>
+		<map>
+			<key>Comment</key>
+			<string>The base dictionary to spell check with</string>
+			<key>Persist</key>
+			<integer>1</integer>
+			<key>Type</key>
+			<string>String</string>
+			<key>Value</key>
+			<string>English (United States of America)</string>
+		</map>
 		<key>EmeraldAOEnabled</key>
 		<map>
 			<key>Comment</key>
@@ -3650,28 +3716,28 @@
 			<key>Value</key>
 			<integer>0</integer>
 		</map>
-    <key>EmeraldModerateAllEstates</key>
-    <map>
-      <key>Comment</key>
-      <string>wut</string>
-      <key>Persist</key>
-      <integer>1</integer>
-      <key>Type</key>
-      <string>Boolean</string>
-      <key>Value</key>
-      <real>0</real>
-    </map>
-    <key>EmeraldModerateConfirm</key>
-    <map>
-      <key>Comment</key>
-      <string>wut</string>
-      <key>Persist</key>
-      <integer>1</integer>
-      <key>Type</key>
-      <string>Boolean</string>
-      <key>Value</key>
-      <real>1</real>
-    </map>
+		<key>EmeraldModerateAllEstates</key>
+		<map>
+			<key>Comment</key>
+			<string>wut</string>
+			<key>Persist</key>
+			<integer>1</integer>
+			<key>Type</key>
+			<string>Boolean</string>
+			<key>Value</key>
+			<real>0</real>
+		</map>
+		<key>EmeraldModerateConfirm</key>
+		<map>
+			<key>Comment</key>
+			<string>wut</string>
+			<key>Persist</key>
+			<integer>1</integer>
+			<key>Type</key>
+			<string>Boolean</string>
+			<key>Value</key>
+			<real>1</real>
+		</map>
 		<key>EmeraldAllowPhantomToggle</key>
 		<map>
 			<key>Comment</key>
@@ -3771,17 +3837,17 @@
 			<key>Value</key>
 			<string>Emerald</string>
 		</map>
-    <key>EmeraldPurgeInvCache</key>
-    <map>
-      <key>Comment</key>
-      <string>agent id to purge, if purge is desired</string>
-      <key>Persist</key>
-      <integer>1</integer>
-      <key>Type</key>
-      <string>String</string>
-      <key>Value</key>
-      <string></string>
-    </map>
+		<key>EmeraldPurgeInvCache</key>
+		<map>
+			<key>Comment</key>
+			<string>agent id to purge, if purge is desired</string>
+			<key>Persist</key>
+			<integer>1</integer>
+			<key>Type</key>
+			<string>String</string>
+			<key>Value</key>
+			<string></string>
+		</map>
 		<key>EmeraldBeamColorFile</key>
 		<map>
 			<key>Comment</key>
@@ -3925,6 +3991,17 @@
 			<key>Value</key>
 			<integer>0</integer>
 		</map>
+		<key>EmeraldBuildPrefs_EmbedItem</key>
+		<map>
+			<key>Comment</key>
+			<string>Whether to add item to objects</string>
+			<key>Persist</key>
+			<integer>1</integer>
+			<key>Type</key>
+			<string>Boolean</string>
+			<key>Value</key>
+			<integer>0</integer>
+		</map>
 		<key>EmeraldBuildPrefs_Material</key>
 		<map>
 			<key>Comment</key>
@@ -3962,6 +4039,17 @@
 			<string>String</string>
 			<key>Value</key>
 			<string>89556747-24cb-43ed-920b-47caed15465f</string>
+		</map>
+		<key>EmeraldBuildPrefs_Item</key>
+		<map>
+			<key>Comment</key>
+			<string>item added to new object created</string>
+			<key>Persist</key>
+			<integer>1</integer>
+			<key>Type</key>
+			<string>String</string>
+			<key>Value</key>
+			<string></string>
 		</map>
 		<key>EmeraldBuildPrefs_Alpha</key>
 		<map>
@@ -4039,6 +4127,28 @@
 			<string>F32</string>
 			<key>Value</key>
 			<real>50</real>
+		</map>
+		<key>TranslateLanguage</key>
+		<map>
+			<key>Comment</key>
+			<string>Translate Language specifier</string>
+			<key>Persist</key>
+			<integer>1</integer>
+			<key>Type</key>
+			<string>String</string>
+			<key>Value</key>
+			<string>default</string>
+		</map>
+		<key>TranslateChat</key>
+		<map>
+			<key>Comment</key>
+			<string>Translate incoming chat messages</string>
+			<key>Persist</key>
+			<integer>1</integer>
+			<key>Type</key>
+			<string>Boolean</string>
+			<key>Value</key>
+			<integer>0</integer>
 		</map>
 		<key>EmeraldBuildPrefs_PivotIsPercent</key>
 		<map>
@@ -4139,16 +4249,16 @@
 			<key>Value</key>
 			<string>cao</string>
 		</map>
-		<key>FlexCmdLineLua</key>
+		<key>EmeraldCmdLineClearChat</key>
 		<map>
 			<key>Comment</key>
-			<string>Command to execute Lua</string>
+			<string>Clear chat hsitory to stop lag from chat spam</string>
 			<key>Persist</key>
 			<integer>1</integer>
 			<key>Type</key>
 			<string>String</string>
 			<key>Value</key>
-			<string>lua</string>
+			<string>clrchat</string>
 		</map>
 		<key>EmeraldCmdLineHeight</key>
 		<map>
@@ -4691,17 +4801,17 @@
 			<key>Value</key>
 			<integer>0</integer>
 		</map>
-    <key>EmeraldIRC_AutoConnect</key>
-    <map>
-      <key>Comment</key>
-      <string>Automaticly connect to any IRC networks that you have set to auto connect to upon startup.</string>
-      <key>Persist</key>
-      <integer>1</integer>
-      <key>Type</key>
-      <string>Boolean</string>
-      <key>Value</key>
-      <integer>0</integer>
-    </map>
+		<key>EmeraldIRC_AutoConnect</key>
+		<map>
+			<key>Comment</key>
+			<string>Automaticly connect to any IRC networks that you have set to auto connect to upon startup.</string>
+			<key>Persist</key>
+			<integer>0</integer>
+			<key>Type</key>
+			<string>Boolean</string>
+			<key>Value</key>
+			<integer>1</integer>
+		</map>
 		<key>EmeraldKeepUnpackedCacheFiles</key>
 		<map>
 			<key>Comment</key>
@@ -4988,6 +5098,17 @@
 			<key>Value</key>
 			<integer>1</integer>
 		</map>
+		<key>EmeraldDontShowMyLookAt</key>
+		<map>
+			<key>Comment</key>
+			<string>Don't draw my lookat beacon on my screen.</string>
+			<key>Persist</key>
+			<integer>1</integer>
+			<key>Type</key>
+			<string>Boolean</string>
+			<key>Value</key>
+			<integer>0</integer>
+		</map>
 		<key>EmeraldShowMoneyChangeInChat</key>
 		<map>
 			<key>Comment</key>
@@ -5079,13 +5200,13 @@
 		<key>EmeraldOTRInTypingStop</key>
 		<map>
 			<key>Comment</key>
-			<string>Setting this to true will make all encrypted OTR messages be sent in an IM_TYPING_STOP packet.  This is non-standard behavior, but prevents OTR encrypted IM from being saved and delivered as offline IM.  Though it currently works LL may decide to disable the feature at any time.  This is incompatible with previous versions of OTR.</string>
+			<string>Setting this to true will make all encrypted OTR messages be sent in an IM_TYPING_STOP packet. This is non-standard behavior, but prevents OTR encrypted IM from being saved and delivered as offline IM. Though it currently works LL may decide to disable the feature at any time. This is incompatible with previous versions of OTR.</string>
 			<key>Persist</key>
 			<integer>1</integer>
 			<key>Type</key>
 			<string>Boolean</string>
 			<key>Value</key>
-			<integer>0</integer>
+			<integer>1</integer>
 		</map>
 		<key>EmeraldVelocityDoubleClickTeleport</key>
 		<map>
@@ -5140,7 +5261,29 @@
 			<key>Type</key>
 			<string>String</string>
 			<key>Value</key>
-			<string/>
+			<string></string>
+		</map>
+		<key>EmeraldEnableHDDInclude</key>
+		<map>
+			<key>Comment</key>
+			<string>orly</string>
+			<key>Persist</key>
+			<integer>1</integer>
+			<key>Type</key>
+			<string>Boolean</string>
+			<key>Value</key>
+			<integer>0</integer>
+		</map>
+		<key>EmeraldHDDIncludeLocation</key>
+		<map>
+			<key>Comment</key>
+			<string>toast</string>
+			<key>Persist</key>
+			<integer>1</integer>
+			<key>Type</key>
+			<string>String</string>
+			<key>Value</key>
+			<string></string>
 		</map>
 		<key>EmeraldInvMirrorGestures</key>
 		<map>
@@ -5252,7 +5395,73 @@
 			<key>Value</key>
 			<integer>1</integer>
 		</map>
-		<key>EmeraldClothingMode</key>
+		<key>Emeraldmm_sndcacheloc</key>
+		<map>
+			<key>Comment</key>
+			<string>Location of unpacked sound files.</string>
+			<key>Persist</key>
+			<integer>1</integer>
+			<key>Type</key>
+			<string>String</string>
+			<key>Value</key>
+			<string></string>
+		</map>
+		<key>Emeraldmm_showtexinfo</key>
+		<map>
+			<key>Comment</key>
+			<string>More info on ctrl+alt+shift+t option!</string>
+			<key>Persist</key>
+			<integer>1</integer>
+			<key>Type</key>
+			<string>Boolean</string>
+			<key>Value</key>
+			<integer>0</integer>
+		</map>
+		<key>EmeraldLSLPreprocessor</key>
+		<map>
+			<key>Comment</key>
+			<string>now you fucked up</string>
+			<key>Persist</key>
+			<integer>1</integer>
+			<key>Type</key>
+			<string>Boolean</string>
+			<key>Value</key>
+			<integer>0</integer>
+		</map>
+		<key>EmeraldLSLOptimizer</key>
+		<map>
+			<key>Comment</key>
+			<string>now you fucked up</string>
+			<key>Persist</key>
+			<integer>1</integer>
+			<key>Type</key>
+			<string>Boolean</string>
+			<key>Value</key>
+			<integer>1</integer>
+		</map>
+    <key>EmeraldLSLTextCompress</key>
+    <map>
+      <key>Comment</key>
+      <string>now you fucked up</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
+		<key>EmeraldLSLLazyLists</key>
+		<map>
+			<key>Comment</key>
+			<string>now you fucked up</string>
+			<key>Persist</key>
+			<integer>1</integer>
+			<key>Type</key>
+			<string>Boolean</string>
+			<key>Value</key>
+			<integer>0</integer>
+		</map>
+		<key>EmeraldLSLSwitch</key>
 		<map>
 			<key>Comment</key>
 			<string>now you fucked up</string>
@@ -5277,7 +5486,7 @@
 		<key>EnergyFromTop</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -5288,7 +5497,7 @@
 		<key>EnergyHeight</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -5299,7 +5508,7 @@
 		<key>EnergyWidth</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -5426,7 +5635,7 @@
 			<key>Type</key>
 			<string>String</string>
 			<key>Value</key>
-			<string/>
+			<string></string>
 		</map>
 		<key>FirstPersonAvatarVisible</key>
 		<map>
@@ -5442,7 +5651,7 @@
 		<key>FirstPersonBtnState</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -5842,17 +6051,17 @@
 			<key>Value</key>
 			<integer>0</integer>
 		</map>
-    <key>EmeraldBreastSportsBra</key>
-    <map>
-      <key>Comment</key>
-      <string>allows disabling the physics for 1 av, in case their outfit looks wrong with it on</string>
-      <key>Persist</key>
-      <integer>1</integer>
-      <key>Type</key>
-      <string>Boolean</string>
-      <key>Value</key>
-      <integer>0</integer>
-    </map>
+		<key>EmeraldBreastSportsBra</key>
+		<map>
+			<key>Comment</key>
+			<string>allows disabling the physics for 1 av, in case their outfit looks wrong with it on</string>
+			<key>Persist</key>
+			<integer>1</integer>
+			<key>Type</key>
+			<string>Boolean</string>
+			<key>Value</key>
+			<integer>0</integer>
+		</map>
 		<key>EmeraldBoobVelMax</key>
 		<map>
 			<key>Comment</key>
@@ -6330,7 +6539,7 @@
 		<key>FlyBtnState</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -6756,18 +6965,18 @@
 			<key>Value</key>
 			<real>20.0</real>
 		</map>
-    <key>EmeraldGUSLookAt</key>
-    <map>
-      <key>Comment</key>
-      <string>Stream avatar look at position using the Greenlife Utility Stream (GUS)</string>
-      <key>Persist</key>
-      <integer>1</integer>
-      <key>Type</key>
-      <string>Boolean</string>
-      <key>Value</key>
-      <real>0</real>
-    </map>
-    <key>EmeraldGUSEyeRot</key>
+		<key>EmeraldGUSLookAt</key>
+		<map>
+			<key>Comment</key>
+			<string>Stream avatar look at position using the Greenlife Utility Stream (GUS)</string>
+			<key>Persist</key>
+			<integer>1</integer>
+			<key>Type</key>
+			<string>Boolean</string>
+			<key>Value</key>
+			<real>0</real>
+		</map>
+		<key>EmeraldGUSEyeRot</key>
 		<map>
 			<key>Comment</key>
 			<string>Stream avatar eyeball mesh rotation using the Greenlife Utility Stream (GUS)</string>
@@ -6938,7 +7147,7 @@
 			<key>Type</key>
 			<string>String</string>
 			<key>Value</key>
-			<string/>
+			<string></string>
 		</map>
 		<key>FontSansSerifFallbackScale</key>
 		<map>
@@ -7042,7 +7251,7 @@
 		<key>ForwardBtnRect</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -7058,7 +7267,7 @@
 		<key>FreezeTime</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -7294,7 +7503,7 @@
 			<key>Type</key>
 			<string>String</string>
 			<key>Value</key>
-			<string/>
+			<string></string>
 		</map>
 		<key>HtmlHelpRect</key>
 		<map>
@@ -7600,7 +7809,7 @@
 			<key>Type</key>
 			<string>String</string>
 			<key>Value</key>
-			<string/>
+			<string></string>
 		</map>
 		<key>JoystickRunThreshold</key>
 		<map>
@@ -7748,7 +7957,7 @@
 			<key>Type</key>
 			<string>String</string>
 			<key>Value</key>
-			<string/>
+			<string></string>
 		</map>
 		<key>LastPrefTab</key>
 		<map>
@@ -7771,6 +7980,17 @@
 			<string>String</string>
 			<key>Value</key>
 			<string>0.0.0</string>
+		</map>
+		<key>LastSelectedGrid</key>
+		<map>
+			<key>Comment</key>
+			<string>Last grid selected from the grid pulldown</string>
+			<key>Persist</key>
+			<integer>1</integer>
+			<key>Type</key>
+			<string>String</string>
+			<key>Value</key>
+			<string></string>
 		</map>
 		<key>LastSnapshotToEmailHeight</key>
 		<map>
@@ -8001,7 +8221,7 @@
 			<key>Type</key>
 			<string>String</string>
 			<key>Value</key>
-			<string/>
+			<string></string>
 		</map>
 		<key>LosslessJ2CUpload</key>
 		<map>
@@ -8111,7 +8331,7 @@
 			<key>Type</key>
 			<string>String</string>
 			<key>Value</key>
-			<string/>
+			<string></string>
 		</map>
 		<key>MaxDragDistance</key>
 		<map>
@@ -8215,7 +8435,7 @@
 		<key>MenuBarHeight</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -8226,7 +8446,7 @@
 		<key>MenuBarWidth</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -8292,7 +8512,7 @@
 		<key>MouseSun</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -8303,7 +8523,7 @@
 		<key>MouselookBtnState</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -8314,7 +8534,7 @@
 		<key>MoveDownBtnRect</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -8330,7 +8550,7 @@
 		<key>MoveUpBtnRect</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -8484,7 +8704,7 @@
 			<key>Type</key>
 			<string>String</string>
 			<key>Value</key>
-			<string/>
+			<string></string>
 		</map>
 		<key>NextLoginLocation</key>
 		<map>
@@ -8495,7 +8715,7 @@
 			<key>Type</key>
 			<string>String</string>
 			<key>Value</key>
-			<string/>
+			<string></string>
 		</map>
 		<key>NoAudio</key>
 		<map>
@@ -8829,7 +9049,7 @@
 			<key>Type</key>
 			<string>String</string>
 			<key>Value</key>
-			<string/>
+			<string></string>
 		</map>
 		<key>PermissionsCautionEnabled</key>
 		<map>
@@ -9084,6 +9304,22 @@
 				<integer>586</integer>
 				<integer>576</integer>
 				<integer>0</integer>
+			</array>
+		</map>
+		<key>ScriptErrorRect</key>
+		<map>
+			<key>Comment</key>
+			<string>o.o</string>
+			<key>Persist</key>
+			<integer>1</integer>
+			<key>Type</key>
+			<string>Rect</string>
+			<key>Value</key>
+			<array>
+				<integer>4</integer>
+				<integer>120</integer>
+				<integer>496</integer>
+				<integer>51</integer>
 			</array>
 		</map>
 		<key>PreviewSoundRect</key>
@@ -9511,7 +9747,7 @@
 		<key>RenderSSAOEffect</key>
 		<map>
 			<key>Comment</key>
-			<string>Multiplier for (1) value and (2) saturation (HSV definition), for areas which are totally occluded.  Blends with original color for partly-occluded areas.  (Third component is unused.)</string>
+			<string>Multiplier for (1) value and (2) saturation (HSV definition), for areas which are totally occluded. Blends with original color for partly-occluded areas. (Third component is unused.)</string>
 			<key>Persist</key>
 			<integer>1</integer>
 			<key>Type</key>
@@ -9713,7 +9949,7 @@
 		<key>RenderShadowBlurSamples</key>
 		<map>
 			<key>Comment</key>
-			<string>Number of samples to take for each pass of shadow blur (value range 1-16).  Actual number of samples is value * 2 - 1.</string>
+			<string>Number of samples to take for each pass of shadow blur (value range 1-16). Actual number of samples is value * 2 - 1.</string>
 			<key>Persist</key>
 			<integer>1</integer>
 			<key>Type</key>
@@ -10172,7 +10408,7 @@
 		<key>RenderShaderLightingMaxLevel</key>
 		<map>
 			<key>Comment</key>
-			<string>Max lighting level to use in the shader (class 3 is default, 2 is less lights, 1 is sun/moon only.  Works around shader compiler bugs on certain platforms.)</string>
+			<string>Max lighting level to use in the shader (class 3 is default, 2 is less lights, 1 is sun/moon only. Works around shader compiler bugs on certain platforms.)</string>
 			<key>Persist</key>
 			<integer>1</integer>
 			<key>Type</key>
@@ -10411,6 +10647,17 @@
 			<key>Value</key>
 			<integer>0</integer>
 		</map>
+		<key>ResetFocusOnSelfClick</key>
+		<map>
+			<key>Comment</key>
+			<string>Setting this to FALSE stops the cammera from reseting its view when your zoomed in on something and acedently left click your avatar.</string>
+			<key>Persist</key>
+			<integer>1</integer>
+			<key>Type</key>
+			<string>Boolean</string>
+			<key>Value</key>
+			<integer>1</integer>
+		</map>
 		<key>RotateRight</key>
 		<map>
 			<key>Comment</key>
@@ -10436,7 +10683,7 @@
 		<key>RunBtnState</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -10777,7 +11024,7 @@
 		<key>ShowChatHistory</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -10788,7 +11035,7 @@
 		<key>ShowCommunicate</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -10843,7 +11090,7 @@
 		<key>ShowDirectory</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -10898,7 +11145,7 @@
 		<key>ShowLeaders</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -11165,7 +11412,7 @@
 		<key>ShowNearClip</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -11220,7 +11467,7 @@
 		<key>ShowParcelOwners</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -11231,7 +11478,7 @@
 		<key>ShowPermissions</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -11308,7 +11555,7 @@
 		<key>ShowTools</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -11374,7 +11621,7 @@
 		<key>SitBtnState</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -11433,7 +11680,7 @@
 		<key>SkyOverrideSimSunPosition</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -11470,7 +11717,7 @@
 		<key>SlideLeftBtnRect</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -11486,7 +11733,7 @@
 		<key>SlideRightBtnRect</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -11836,7 +12083,7 @@
 		<key>ThirdPersonBtnState</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -11858,7 +12105,7 @@
 		<key>ToolHelpRect</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -11923,7 +12170,7 @@
 		<key>TurnLeftBtnRect</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -11939,7 +12186,7 @@
 		<key>TurnRightBtnRect</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -11961,7 +12208,7 @@
 			<key>Type</key>
 			<string>String</string>
 			<key>Value</key>
-			<string/>
+			<string></string>
 		</map>
 		<key>TypeAheadTimeout</key>
 		<map>
@@ -11999,7 +12246,7 @@
 		<key>UIImgBtnCloseActiveUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12010,7 +12257,7 @@
 		<key>UIImgBtnCloseInactiveUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12021,7 +12268,7 @@
 		<key>UIImgBtnClosePressedUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12032,7 +12279,7 @@
 		<key>UIImgBtnForwardInUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12043,7 +12290,7 @@
 		<key>UIImgBtnForwardOutUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12054,7 +12301,7 @@
 		<key>UIImgBtnJumpLeftInUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12065,7 +12312,7 @@
 		<key>UIImgBtnJumpLeftOutUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12076,7 +12323,7 @@
 		<key>UIImgBtnJumpRightInUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12087,7 +12334,7 @@
 		<key>UIImgBtnJumpRightOutUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12098,7 +12345,7 @@
 		<key>UIImgBtnLeftInUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12109,7 +12356,7 @@
 		<key>UIImgBtnLeftOutUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12120,7 +12367,7 @@
 		<key>UIImgBtnMinimizeActiveUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12131,7 +12378,7 @@
 		<key>UIImgBtnMinimizeInactiveUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12142,7 +12389,7 @@
 		<key>UIImgBtnMinimizePressedUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12153,7 +12400,7 @@
 		<key>UIImgBtnMoveDownInUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12164,7 +12411,7 @@
 		<key>UIImgBtnMoveDownOutUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12175,7 +12422,7 @@
 		<key>UIImgBtnMoveUpInUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12186,7 +12433,7 @@
 		<key>UIImgBtnMoveUpOutUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12197,7 +12444,7 @@
 		<key>UIImgBtnPanDownInUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12208,7 +12455,7 @@
 		<key>UIImgBtnPanDownOutUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12219,7 +12466,7 @@
 		<key>UIImgBtnPanLeftInUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12230,7 +12477,7 @@
 		<key>UIImgBtnPanLeftOutUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12241,7 +12488,7 @@
 		<key>UIImgBtnPanRightInUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12252,7 +12499,7 @@
 		<key>UIImgBtnPanRightOutUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12263,7 +12510,7 @@
 		<key>UIImgBtnPanUpInUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12274,7 +12521,7 @@
 		<key>UIImgBtnPanUpOutUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12285,7 +12532,7 @@
 		<key>UIImgBtnRestoreActiveUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12296,7 +12543,7 @@
 		<key>UIImgBtnRestoreInactiveUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12307,7 +12554,7 @@
 		<key>UIImgBtnRestorePressedUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12318,7 +12565,7 @@
 		<key>UIImgBtnRightInUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12329,7 +12576,7 @@
 		<key>UIImgBtnRightOutUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12340,7 +12587,7 @@
 		<key>UIImgBtnScrollDownInUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12351,7 +12598,7 @@
 		<key>UIImgBtnScrollDownOutUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12362,7 +12609,7 @@
 		<key>UIImgBtnScrollLeftInUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12373,7 +12620,7 @@
 		<key>UIImgBtnScrollLeftOutUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12384,7 +12631,7 @@
 		<key>UIImgBtnScrollRightInUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12395,7 +12642,7 @@
 		<key>UIImgBtnScrollRightOutUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12406,7 +12653,7 @@
 		<key>UIImgBtnScrollUpInUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12417,7 +12664,7 @@
 		<key>UIImgBtnScrollUpOutUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12428,7 +12675,7 @@
 		<key>UIImgBtnSlideLeftInUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12439,7 +12686,7 @@
 		<key>UIImgBtnSlideLeftOutUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12450,7 +12697,7 @@
 		<key>UIImgBtnSlideRightInUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12461,7 +12708,7 @@
 		<key>UIImgBtnSlideRightOutUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12472,7 +12719,7 @@
 		<key>UIImgBtnSpinDownInUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12483,7 +12730,7 @@
 		<key>UIImgBtnSpinDownOutUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12494,7 +12741,7 @@
 		<key>UIImgBtnSpinUpInUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12505,7 +12752,7 @@
 		<key>UIImgBtnSpinUpOutUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12516,7 +12763,7 @@
 		<key>UIImgBtnTabBottomInUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12527,7 +12774,7 @@
 		<key>UIImgBtnTabBottomOutUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12538,7 +12785,7 @@
 		<key>UIImgBtnTabBottomPartialInUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12549,7 +12796,7 @@
 		<key>UIImgBtnTabBottomPartialOutUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12560,7 +12807,7 @@
 		<key>UIImgBtnTabTopInUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12571,7 +12818,7 @@
 		<key>UIImgBtnTabTopOutUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12582,7 +12829,7 @@
 		<key>UIImgBtnTabTopPartialInUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12593,7 +12840,7 @@
 		<key>UIImgBtnTabTopPartialOutUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12604,7 +12851,7 @@
 		<key>UIImgBtnTearOffActiveUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12615,7 +12862,7 @@
 		<key>UIImgBtnTearOffInactiveUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12626,7 +12873,7 @@
 		<key>UIImgBtnTearOffPressedUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12637,7 +12884,7 @@
 		<key>UIImgCheckboxActiveSelectedUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12648,7 +12895,7 @@
 		<key>UIImgCheckboxActiveUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12659,7 +12906,7 @@
 		<key>UIImgCheckboxInactiveSelectedUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12670,7 +12917,7 @@
 		<key>UIImgCheckboxInactiveUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12681,7 +12928,7 @@
 		<key>UIImgCreateSelectedUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12692,7 +12939,7 @@
 		<key>UIImgCreateUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12714,7 +12961,7 @@
 		<key>UIImgDefaultEyesUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12725,7 +12972,7 @@
 		<key>UIImgDefaultGlovesUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12736,7 +12983,7 @@
 		<key>UIImgDefaultHairUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12747,7 +12994,7 @@
 		<key>UIImgDefaultJacketUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12758,7 +13005,7 @@
 		<key>UIImgDefaultPantsUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12769,7 +13016,7 @@
 		<key>UIImgDefaultShirtUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12780,7 +13027,7 @@
 		<key>UIImgDefaultShoesUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12791,7 +13038,7 @@
 		<key>UIImgDefaultSkirtUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12802,7 +13049,7 @@
 		<key>UIImgDefaultSocksUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12813,7 +13060,7 @@
 		<key>UIImgDefaultUnderwearUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12824,7 +13071,7 @@
 		<key>UIImgDirectionArrowUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12835,7 +13082,7 @@
 		<key>UIImgFaceSelectedUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12846,7 +13093,7 @@
 		<key>UIImgFaceUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12857,7 +13104,7 @@
 		<key>UIImgFocusSelectedUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12868,7 +13115,7 @@
 		<key>UIImgFocusUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12879,7 +13126,7 @@
 		<key>UIImgGrabSelectedUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12890,7 +13137,7 @@
 		<key>UIImgGrabUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12901,7 +13148,7 @@
 		<key>UIImgMoveSelectedUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12912,7 +13159,7 @@
 		<key>UIImgMoveUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12923,7 +13170,7 @@
 		<key>UIImgRadioActiveSelectedUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12934,7 +13181,7 @@
 		<key>UIImgRadioActiveUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12945,7 +13192,7 @@
 		<key>UIImgRadioInactiveSelectedUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12956,7 +13203,7 @@
 		<key>UIImgRadioInactiveUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12967,7 +13214,7 @@
 		<key>UIImgResizeBottomRightUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12978,7 +13225,7 @@
 		<key>UIImgRotateSelectedUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12989,7 +13236,7 @@
 		<key>UIImgRotateUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -13000,7 +13247,7 @@
 		<key>UIImgScaleSelectedUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -13011,7 +13258,7 @@
 		<key>UIImgScaleUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -13022,7 +13269,7 @@
 		<key>UIImgWhiteUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -13473,7 +13720,7 @@
 		<key>UseEnergy</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -13567,7 +13814,7 @@
 			<key>Type</key>
 			<string>String</string>
 			<key>Value</key>
-			<string/>
+			<string></string>
 		</map>
 		<key>UserLoginInfo</key>
 		<map>
@@ -13721,7 +13968,7 @@
 			<key>Type</key>
 			<string>String</string>
 			<key>Value</key>
-			<string/>
+			<string></string>
 		</map>
 		<key>VivoxDebugVoiceAccountServerURI</key>
 		<map>
@@ -13732,7 +13979,7 @@
 			<key>Type</key>
 			<string>String</string>
 			<key>Value</key>
-			<string/>
+			<string></string>
 		</map>
 		<key>vivoxProductionServerName</key>
 		<map>
@@ -13913,7 +14160,7 @@
 		<key>WLSkyDetail</key>
 		<map>
 			<key>Comment</key>
-			<string>Controls vertex detail on the WindLight sky.  Lower numbers will give better performance and uglier skies.</string>
+			<string>Controls vertex detail on the WindLight sky. Lower numbers will give better performance and uglier skies.</string>
 			<key>Persist</key>
 			<integer>1</integer>
 			<key>Type</key>
@@ -13988,7 +14235,7 @@
 			<integer>1</integer>
 		</map>
 		<key>WarnEmeraldOTR</key>
-    <map>
+		<map>
 			<key>Comment</key>
 			<string>Enables OTR info dialog</string>
 			<key>Persist</key>
@@ -14542,21 +14789,16 @@
 			<key>Value</key>
 			<integer>0</integer>
 		</map>
-		<key>LuaConsoleRect</key>
+		<key>DefaultGrid</key>
 		<map>
 			<key>Comment</key>
-			<string>Rectangle for lua console</string>
+			<string>Nickname of the default grid</string>
 			<key>Persist</key>
 			<integer>1</integer>
 			<key>Type</key>
-			<string>Rect</string>
+			<string>String</string>
 			<key>Value</key>
-			<array>
-				<integer>0</integer>
-				<integer>203</integer>
-				<integer>425</integer>
-				<integer>53</integer>
-			</array>
+			<string>secondlife</string>
 		</map>
 		<key>FloaterAnimationListRect</key>
 		<map>
@@ -14699,38 +14941,38 @@
 			<key>Value</key>
 			<integer>1</integer>
 		</map>
-    <key>LeaveMouselookOnFocus</key>
-    <map>
-      <key>Comment</key>
-      <string>Dont exit mouselook when lossing focus</string>
-      <key>Persist</key>
-      <integer>1</integer>
-      <key>Type</key>
-      <string>Boolean</string>
-      <key>Value</key>
-      <integer>1</integer>
-    </map>
-    <key>EmeraldShadowsToggle</key>
-    <map>
-      <key>Comment</key>
-      <string>Enable shadow rendering</string>
-      <key>Persist</key>
-      <integer>1</integer>
-      <key>Type</key>
-      <string>Boolean</string>
-      <key>Value</key>
-      <integer>0</integer>
-    </map>
-    <key>ShowStatusBarInMouselook</key>
-    <map>
-      <key>Comment</key>
-      <string>Makes it so that the statistics bar stays visable when entering mouselook if it was open already.</string>
-      <key>Persist</key>
-      <integer>1</integer>
-      <key>Type</key>
-      <string>Boolean</string>
-      <key>Value</key>
-      <integer>0</integer>
-    </map>
+		<key>LeaveMouselookOnFocus</key>
+		<map>
+			<key>Comment</key>
+			<string>Dont exit mouselook when lossing focus</string>
+			<key>Persist</key>
+			<integer>1</integer>
+			<key>Type</key>
+			<string>Boolean</string>
+			<key>Value</key>
+			<integer>1</integer>
+		</map>
+		<key>EmeraldShadowsToggle</key>
+		<map>
+			<key>Comment</key>
+			<string>Enable shadow rendering</string>
+			<key>Persist</key>
+			<integer>1</integer>
+			<key>Type</key>
+			<string>Boolean</string>
+			<key>Value</key>
+			<integer>0</integer>
+		</map>
+		<key>ShowStatusBarInMouselook</key>
+		<map>
+			<key>Comment</key>
+			<string>Makes it so that the statistics bar stays visable when entering mouselook if it was open already.</string>
+			<key>Persist</key>
+			<integer>1</integer>
+			<key>Type</key>
+			<string>Boolean</string>
+			<key>Value</key>
+			<integer>0</integer>
+		</map>
 	</map>
 </llsd>

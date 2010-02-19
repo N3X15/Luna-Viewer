@@ -1,8 +1,7 @@
 #ifndef RLV_EXTENSIONS_H
 #define RLV_EXTENSIONS_H
 
-#include "rlvhelper.h"
-#include "rlvevent.h"
+#include "rlvcommon.h"
 
 // ============================================================================
 /*
@@ -12,24 +11,24 @@
  *
  */
 
-class RlvExtGetSet : public RlvObserver
+class RlvExtGetSet : public RlvCommandHandler
 {
 public:
 	RlvExtGetSet();
 	virtual ~RlvExtGetSet() {}
 
-	virtual BOOL onForceCommand(const RlvEvent& rlvEvent);
-	virtual BOOL onReplyCommand(const RlvEvent& rlvEvent);
+	virtual bool onForceCommand(const LLUUID& idObj, const RlvCommand& rlvCmd, ERlvCmdRet& cmdRet);
+	virtual bool onReplyCommand(const LLUUID& idObj, const RlvCommand& rlvCmd, ERlvCmdRet& cmdRet);
 protected:
 	std::string onGetDebug(std::string strSetting);
 	std::string onGetPseudoDebug(const std::string& strSetting);
-	void        onSetDebug(std::string strSetting, const std::string& strValue);
-	void        onSetPseudoDebug(const std::string& strSetting, const std::string& strValue);
+	ERlvCmdRet  onSetDebug(std::string strSetting, const std::string& strValue);
+	ERlvCmdRet  onSetPseudoDebug(const std::string& strSetting, const std::string& strValue);
 
 	std::string onGetEnv(std::string strSetting);
-	void        onSetEnv(std::string strSetting, const std::string& strValue);
+	ERlvCmdRet  onSetEnv(std::string strSetting, const std::string& strValue);
 
-	BOOL processCommand(const LLUUID& idObj, const RlvCommand& rlvCmd);
+	bool processCommand(const LLUUID& idObj, const RlvCommand& rlvCmd, ERlvCmdRet& eRet);
 
 public:
 	enum { DBG_READ = 0x01, DBG_WRITE = 0x02, DBG_PERSIST = 0x04, DBG_PSEUDO = 0x08 };

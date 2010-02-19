@@ -2,80 +2,36 @@
 <panel border="true" bottom="-409" enabled="true" follows="left|top|right|bottom"
      height="408" label="Skins" left="102" mouse_opaque="true"
      name="Skins panel" width="517">
-	<text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
-	     bottom="-22" drop_shadow_visible="true" enabled="true" follows="left|top"
-	     font="SansSerifSmall" h_pad="0" halign="left" height="12" left="10"
-	     mouse_opaque="true" name="muting_text" v_pad="0" width="400">
-		Select a skin (requires restart):
-	</text>
-	<radio_group bottom="0" draw_border="false" follows="top|left" height="380" left="12"
-		   name="skin_selection" width="480">
-		<radio_item bottom="-25" height="20" left="0" name="default" width="480">
-			Default
-		</radio_item>
-		<radio_item bottom="-65" height="20" left="0" name="silver" width="480">
-			Silver
-		</radio_item>
-		<radio_item bottom="-105" height="20" left="0" name="emerald" width="480">
-			Emerald
-		</radio_item>
-		<radio_item bottom="-145" height="20" left="0" name="ruby" width="480">
-			Ruby
-		</radio_item>
-		<radio_item bottom="-185" height="20" left="0" name="dark" width="480">
-			Dark
-		</radio_item>
-		<radio_item bottom="-225" height="20" left="0" name="pslpurple" width="480">
-			PSL-Purple
-		</radio_item>
-		<radio_item bottom="-265" height="20" left="0" name="pslgreen" width="480">
-			PSL-Green
-		</radio_item>
-		<radio_item bottom="-305" height="20" left="0" name="gred" width="480">
-			G-Red
-		</radio_item>
-		<!-- Next Row-->
-		<radio_item bottom="-25" height="20" left="230" name="sapphire" width="480">
-			Sapphire
-		</radio_item>
-		<radio_item bottom="-65" height="20" left="230" name="white_emerald" width="480">
-			White Emerald
-		</radio_item>
-    <radio_item bottom="-105" height="20" left="230" name="darkgred" width="480">
-      Dark G-Red
-    </radio_item>
-    <radio_item bottom="-145" height="20" left="230" name="darkorange" width="480">
-      Metal Orange
-    </radio_item>
-    <radio_item bottom="-185" height="20" left="230" name="gemini" width="480">
-      Gemini
-    </radio_item>
-	<radio_item bottom="-225" height="20" left="230" name="Pony-Purple" width="480">
-      Metal Purple
-    </radio_item>
-	<radio_item bottom="-265" height="20" left="230" name="Pony-Aquablue" width="480">
-      Metal Aqua
-    </radio_item>
-
-	</radio_group>
-
-
-	<button left="130" bottom="-65" width="92" height="40" name="classic_preview" label="LL" scale_image="true" image_selected="skin_thumbnail_default.png" image_unselected="skin_thumbnail_default.png" image_hover_selected="skin_thumbnail_default.png" image_hover_unselected="skin_thumbnail_default.png"/>
-	<button left="130" bottom="-105" width="92" height="40" name="silver_preview" label="LL" scale_image="true" image_selected="skin_thumbnail_silver.png" image_hover_selected="skin_thumbnail_silver.png" image_unselected="skin_thumbnail_silver.png" image_hover_unselected="skin_thumbnail_silver.png"/>
-	<button left="130" bottom="-145" width="92" height="40" name="emerald_preview" label="Iky" scale_image="true" image_selected="skin_thumbnail_emerald.png" image_hover_selected="skin_thumbnail_emerald.png" image_unselected="skin_thumbnail_emerald.png" image_hover_unselected="skin_thumbnail_emerald.png"/>
-	<button left="130" bottom="-185" width="92" height="40" name="ruby_preview" label="CIG" scale_image="true" image_selected="skin_thumbnail_ruby.png" image_unselected="skin_thumbnail_ruby.png" image_hover_selected="skin_thumbnail_ruby.png" image_hover_unselected="skin_thumbnail_ruby.png"/>
-	<button left="130" bottom="-225" width="92" height="40" name="dark_preview" label="JB" scale_image="true" image_selected="skin_thumbnail_dark.png" image_hover_selected="skin_thumbnail_dark.png" image_unselected="skin_thumbnail_dark.png" image_hover_unselected="skin_thumbnail_dark.png"/>
-	<button left="130" bottom="-265" width="92" height="40" name="pslpurple_preview" label="PSL" scale_image="true" image_selected="skin_thumbnail_pslpurple.png" image_unselected="skin_thumbnail_pslpurple.png" image_hover_selected="skin_thumbnail_pslpurple.png" image_hover_unselected="skin_thumbnail_pslpurple.png"/>
-	<button left="130" bottom="-305" width="92" height="40" name="pslgreen_preview" label="PSL" scale_image="true" image_selected="skin_thumbnail_pslgreen.png" image_hover_selected="skin_thumbnail_pslgreen.png" image_unselected="skin_thumbnail_pslgreen.png" image_hover_unselected="skin_thumbnail_pslgreen.png"/>
-	<button left="130" bottom="-345" width="92" height="40" name="gred_preview" label="LGG" scale_image="true" image_selected="skin_thumbnail_gred.png" image_unselected="skin_thumbnail_gred.png" image_hover_selected="skin_thumbnail_gred.png" image_hover_unselected="skin_thumbnail_gred.png"/>
-	<!--Next Row-->
-	<button left="360" bottom="-65" width="92" height="40" name="sapphire_preview" label="CIG" scale_image="true" image_selected="skin_thumbnail_sapphire.png" image_unselected="skin_thumbnail_sapphire.png" image_hover_selected="skin_thumbnail_sapphire.png" image_hover_unselected="skin_thumbnail_sapphire.png"/>
-	<button left="360" bottom="-105" width="92" height="40" name="white_emerald_preview" label="J R" scale_image="true" image_selected="skin_thumbnail_white_emerald.png" image_unselected="skin_thumbnail_white_emerald.png" image_hover_selected="skin_thumbnail_white_emerald.png" image_hover_unselected="skin_thumbnail_white_emerald.png"/>
-  <button left="360" bottom="-145" width="92" height="40" name="darkgred_preview" label="LGG" scale_image="true" image_selected="skin_thumbnail_darkgred.png" image_hover_selected="skin_thumbnail_darkgred.png" image_unselected="skin_thumbnail_darkgred.png" image_hover_unselected="skin_thumbnail_darkgred.png"/>
-  <button left="360" bottom="-185" width="92" height="40" name="darkorange_preview" label="PNY" scale_image="true" image_selected="skin_thumbnail_darkorange.png" image_unselected="skin_thumbnail_darkorange.png" image_hover_selected="skin_thumbnail_darkorange.png" image_hover_unselected="skin_thumbnail_darkorange.png"/>
-  <button left="360" bottom="-225" width="92" height="40" name="gemini_preview" label="GEM" scale_image="true" image_selected="skin_thumbnail_dark.png" image_unselected="skin_thumbnail_dark.png" image_hover_selected="skin_thumbnail_dark.png" image_hover_unselected="skin_thumbnail_dark.png"/>
-  
-  <button left="360" bottom="-265" width="92" height="40" name="Pony-Purple_preview" label="PNY" scale_image="true" image_selected="skin_thumbnail_Pony-Purple.png" image_unselected="skin_thumbnail_Pony-Purple.png" image_hover_selected="skin_thumbnail_Pony-Purple.png" image_hover_unselected="skin_thumbnail_Pony-Purple.png"/>
-  
-<button left="360" bottom="-305" width="92" height="40" name="Pony-Aquablue_preview" label="PNY" scale_image="true" image_selected="skin_thumbnail_Pony-Aquablue.png" image_unselected="skin_thumbnail_Pony-Aquablue.png" image_hover_selected="skin_thumbnail_Pony-Aquablue.png" image_hover_unselected="skin_thumbnail_Pony-Aquablue.png"/>
+          <text bottom_delta="-20" follows="left|top" font="SansSerifSmall" height="16" left="200"
+               name="EmSkin_txt1" width="512">Selected Skin</text>
+          <combo_box allow_text_entry="false" bottom_delta="-20" left_delta="-110" follows="left|top" height="18"
+			max_chars="200" mouse_opaque="true" name="emrd_skin_combo" width="300"
+			control_name="emrd_skin_combo" tool_tip=""/>
+          <text bottom_delta="-22" follows="left|top" font="SansSerifSmall" height="16" left_delta="20"
+               name="EmSkin_txt2" width="512">Primary Author</text>
+		<view_border blevel_style="in" bottom_delta="-18" follows="left|top" height="16" left_delta="-0"
+               mouse_opaque="false" name="emrd_box1" width="260"/>
+          <text bottom_delta="-0" follows="left|top" font="SansSerifSmall" height="16" left_delta="3"
+               name="emrd_skin_author" width="512">skin author</text>
+          <text bottom_delta="-22" follows="left|top" font="SansSerifSmall" height="16" left_delta="-3"
+               name="EmSkin_txt3" width="512">Additional Authors</text>
+		<view_border blevel_style="in" bottom_delta="-18" follows="left|top" height="16" left_delta="-0"
+               mouse_opaque="false" name="emrd_box2" width="260"/>
+          <text bottom_delta="-0" follows="left|top" font="SansSerifSmall" height="16" left_delta="3"
+               name="emrd_skin_ad_authors" width="512">additional skin authors</text>
+          <text bottom_delta="-22" follows="left|top" font="SansSerifSmall" height="16" left_delta="-3"
+               name="EmSkin_txt4" width="512">Skin folder</text>
+		<view_border blevel_style="in" bottom_delta="-18" follows="left|top" height="16" left_delta="-0"
+               mouse_opaque="false" name="emrd_box3" width="260"/>
+          <text bottom_delta="-0" follows="left|top" font="SansSerifSmall" height="16" left_delta="3"
+               name="emrd_skin_folder" width="512">skin folder</text>
+  <button scale_image="true" image_selected="skin_thumbnail_default.png" image_unselected="skin_thumbnail_default.png" image_hover_selected="skin_thumbnail_default.png" image_hover_unselected="skin_thumbnail_default.png"
+          bottom_delta="-200" default_image_name="None" follows="left|top" label="" width="400" height="175"
+		     left_delta="-70" mouse_opaque="true" name="emrd_skin_preview" tool_tip="Skin Preview" />
+          <text bottom_delta="-22" follows="left|top" font="SansSerifSmall" height="16" left_delta="160"
+               name="EmSkin_txt5" width="512">Additional info</text>
+		<text_editor bottom_delta="-40" embedded_items="false"
+		     enabled="false" follows="left|top" font="SansSerifSmall" height="40"
+		     is_unicode="false" left_delta="-135" max_length="511" mouse_opaque="true"
+		     name="emrd_skin_info" width="350" word_wrap="true" />
 </panel>

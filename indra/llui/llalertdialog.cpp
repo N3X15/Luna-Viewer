@@ -48,6 +48,7 @@
 #include "lluictrlfactory.h"
 #include "llnotifications.h"
 #include "llfunctorregistry.h"
+#include "curl/curl.h"
 
 const S32 MAX_ALLOWED_MSG_WIDTH = 400;
 const F32 DEFAULT_BUTTON_DELAY = 0.5f;

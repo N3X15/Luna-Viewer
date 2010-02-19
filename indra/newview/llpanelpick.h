@@ -70,7 +70,7 @@ public:
 	void initNewPick();
 
 	//Pick import and export - RK
-	void importNewPick();
+	bool importNewPick();
 	void exportPick();
 
 	// We need to know the creator id so the database knows which partition

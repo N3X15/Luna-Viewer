@@ -67,10 +67,10 @@
 #include "llface.h"
 #include "llfirstuse.h"
 #include "llfloater.h"
-#include "llfloaterao.h"
+#include "floaterao.h"
 #include "llfloateractivespeakers.h"
 #include "llfloateravatarinfo.h"
-#include "llfloateravatarlist.h"
+#include "floateravatarlist.h"
 #include "llfloaterbuildoptions.h"
 #include "llfloatercamera.h"
 #include "llfloaterchat.h"
@@ -139,6 +139,10 @@
 #include "llfloaterteleporthistory.h"
 #include "greenlife_utility_stream.h"
 #include "jc_lslviewerbridge.h"
+
+// [RLVa:KB]
+#include "rlvhandler.h"
+// [/RLVa:KB]
 
 using namespace LLVOAvatarDefines;
 
@@ -216,6 +220,7 @@ const F32 MIN_RADIUS_ALPHA_SIZZLE = 0.5f;
 
 const F64 CHAT_AGE_FAST_RATE = 3.0;
 
+
 // The agent instance.
 LLAgent gAgent;
 
@@ -224,6 +229,13 @@ LLAgent gAgent;
 //
 
 BOOL LLAgent::emeraldPhantom = 0;
+BOOL LLAgent::ignorePrejump = 0;
+
+BOOL LLAgent::sFirstPersonBtnState;
+BOOL LLAgent::sMouselookBtnState;
+BOOL LLAgent::sThirdPersonBtnState;
+BOOL LLAgent::sBuildBtnState;
+BOOL LLAgent::EmeraldForceFly;
 
 const F32 LLAgent::TYPING_TIMEOUT_SECS = 5.f;
 
@@ -420,8 +432,20 @@ LLAgent::LLAgent() :
 	}
 
 	mFollowCam.setMaxCameraDistantFromSubject( MAX_CAMERA_DISTANCE_FROM_AGENT );
+
+	//EmeraldForceFly = gSavedSettings.getBOOL("EmeraldAlwaysFly");
+	//gSavedSettings.getControl("EmeraldAlwaysFly")->getSignal()->connect(&updateEmeraldForceFly);
 }
 
+void LLAgent::updateEmeraldForceFly(const LLSD &data)
+{
+	EmeraldForceFly = data.asBoolean();
+}
+
+void LLAgent::updateIgnorePrejump(const LLSD &data)
+{
+	ignorePrejump = data.asBoolean();
+}
 // Requires gSavedSettings to be initialized.
 //-----------------------------------------------------------------------------
 // init()
@@ -452,6 +476,11 @@ void LLAgent::init()
 //	LLDebugVarMessageBox::show("Camera Lag", &CAMERA_FOCUS_HALF_LIFE, 0.5f, 0.01f);
 
 	mEffectColor = gSavedSettings.getColor4("EffectColor");
+	
+	ignorePrejump = gSavedSettings.getBOOL("EmeraldIgnoreFinishAnimation");
+	gSavedSettings.getControl("EmeraldIgnoreFinishAnimation")->getSignal()->connect(&updateIgnorePrejump);
+	EmeraldForceFly = gSavedSettings.getBOOL("EmeraldAlwaysFly");
+	gSavedSettings.getControl("EmeraldAlwaysFly")->getSignal()->connect(&updateEmeraldForceFly);
 	
 	mInitialized = TRUE;
 
@@ -564,6 +593,8 @@ void LLAgent::resetView(BOOL reset_camera, BOOL change_camera)
 	}
 
 	mHUDTargetZoom = 1.f;
+	mThirdPersonHeadOffset=LLVector3(0.0f,0.0f,1.0f);
+	gSavedSettings.setVector3("FocusOffsetDefault",LLVector3(1.0f,0.0f,1.0f));
 }
 
 // Handle any actions that need to be performed when the main app gains focus
@@ -770,7 +801,7 @@ BOOL LLAgent::canFly()
 // [/RLVa:KB]
 	if (isGodlike()) return TRUE;
 	//LGG always fly code
-	if(gSavedSettings.getBOOL("EmeraldAlwaysFly")) return TRUE;
+	if(EmeraldForceFly) return TRUE;
 	LLViewerRegion* regionp = getRegion();
 	if (regionp && regionp->getBlockFly()) return FALSE;
 	
@@ -2125,7 +2156,10 @@ U32 LLAgent::getControlFlags()
 		}
 	}
 */
-	return mControlFlags;
+	if(LLAgent::ignorePrejump)
+		return mControlFlags | AGENT_CONTROL_FINISH_ANIM;
+	else
+		return mControlFlags;;
 }
 
 //-----------------------------------------------------------------------------
@@ -4009,10 +4043,21 @@ void LLAgent::handleScrollWheel(S32 clicks)
 		}
 		else if (mFocusOnAvatar && mCameraMode == CAMERA_MODE_THIRD_PERSON)
 		{
+			if(gKeyboard->getKeyDown(KEY_CONTROL))
+			{
+				//mCameraOffsetDefault.mV[2]+=clicks/10.0f;;
+				mThirdPersonHeadOffset.mV[2]+=clicks/10.0f;
+				
+			}else if(gKeyboard->getKeyDown(KEY_ALT))
+			{
+				gSavedSettings.setVector3("FocusOffsetDefault",
+					gSavedSettings.getVector3("FocusOffsetDefault") + LLVector3(0.0f,0.0f,clicks/10.0f));
+			}else
+			{
 			F32 current_zoom_fraction = mTargetCameraDistance / (mCameraOffsetDefault.magVec() * gSavedSettings.getF32("CameraOffsetScale"));
 			current_zoom_fraction *= 1.f - pow(ROOT_ROOT_TWO, clicks);
-			
 			cameraOrbitIn(current_zoom_fraction * mCameraOffsetDefault.magVec() * gSavedSettings.getF32("CameraOffsetScale"));
+			}
 		}
 		else
 		{
@@ -4080,10 +4125,14 @@ void LLAgent::changeCameraToMouselook(BOOL animate)
 
 	LLToolMgr::getInstance()->setCurrentToolset(gMouselookToolset);
 
-	gSavedSettings.setBOOL("FirstPersonBtnState",	FALSE);
-	gSavedSettings.setBOOL("MouselookBtnState",		TRUE);
-	gSavedSettings.setBOOL("ThirdPersonBtnState",	FALSE);
-	gSavedSettings.setBOOL("BuildBtnState",			FALSE);
+	//gSavedSettings.setBOOL("FirstPersonBtnState",	FALSE);
+	//gSavedSettings.setBOOL("MouselookBtnState",		TRUE);
+	//gSavedSettings.setBOOL("ThirdPersonBtnState",	FALSE);
+	//gSavedSettings.setBOOL("BuildBtnState",			FALSE);
+	LLAgent::sFirstPersonBtnState = FALSE;
+	LLAgent::sMouselookBtnState = TRUE;
+	LLAgent::sThirdPersonBtnState = FALSE;
+	LLAgent::sBuildBtnState = FALSE;
 
 	if (mAvatarObject.notNull())
 	{
@@ -4181,10 +4230,14 @@ void LLAgent::changeCameraToFollow(BOOL animate)
 			mAvatarObject->startMotion( ANIM_AGENT_BREATHE_ROT );
 		}
 
-		gSavedSettings.setBOOL("FirstPersonBtnState",	FALSE);
-		gSavedSettings.setBOOL("MouselookBtnState",		FALSE);
-		gSavedSettings.setBOOL("ThirdPersonBtnState",	TRUE);
-		gSavedSettings.setBOOL("BuildBtnState",			FALSE);
+		//gSavedSettings.setBOOL("FirstPersonBtnState",	FALSE);
+		//gSavedSettings.setBOOL("MouselookBtnState",		FALSE);
+		//gSavedSettings.setBOOL("ThirdPersonBtnState",	TRUE);
+		//gSavedSettings.setBOOL("BuildBtnState",			FALSE);
+		LLAgent::sFirstPersonBtnState = FALSE;
+		LLAgent::sMouselookBtnState = FALSE;
+		LLAgent::sThirdPersonBtnState = TRUE;
+		LLAgent::sBuildBtnState = FALSE;
 
 		// unpause avatar animation
 		mPauseRequest = NULL;
@@ -4232,10 +4285,14 @@ void LLAgent::changeCameraToThirdPerson(BOOL animate)
 		mAvatarObject->startMotion( ANIM_AGENT_BREATHE_ROT );
 	}
 
-	gSavedSettings.setBOOL("FirstPersonBtnState",	FALSE);
-	gSavedSettings.setBOOL("MouselookBtnState",		FALSE);
-	gSavedSettings.setBOOL("ThirdPersonBtnState",	TRUE);
-	gSavedSettings.setBOOL("BuildBtnState",			FALSE);
+	//gSavedSettings.setBOOL("FirstPersonBtnState",	FALSE);
+	//gSavedSettings.setBOOL("MouselookBtnState",		FALSE);
+	//gSavedSettings.setBOOL("ThirdPersonBtnState",	TRUE);
+	//gSavedSettings.setBOOL("BuildBtnState",			FALSE);
+	LLAgent::sFirstPersonBtnState = FALSE;
+	LLAgent::sMouselookBtnState = FALSE;
+	LLAgent::sThirdPersonBtnState = TRUE;
+	LLAgent::sBuildBtnState = FALSE;
 
 	LLVector3 at_axis;
 
@@ -4323,10 +4380,14 @@ void LLAgent::changeCameraToCustomizeAvatar(BOOL avatar_animate, BOOL camera_ani
 		LLToolMgr::getInstance()->setCurrentToolset(gFaceEditToolset);
 	}
 
-	gSavedSettings.setBOOL("FirstPersonBtnState", FALSE);
-	gSavedSettings.setBOOL("MouselookBtnState", FALSE);
-	gSavedSettings.setBOOL("ThirdPersonBtnState", FALSE);
-	gSavedSettings.setBOOL("BuildBtnState", FALSE);
+	//gSavedSettings.setBOOL("FirstPersonBtnState", FALSE);
+	//gSavedSettings.setBOOL("MouselookBtnState", FALSE);
+	//gSavedSettings.setBOOL("ThirdPersonBtnState", FALSE);
+	//gSavedSettings.setBOOL("BuildBtnState", FALSE);
+	LLAgent::sFirstPersonBtnState = FALSE;
+	LLAgent::sMouselookBtnState = FALSE;
+	LLAgent::sThirdPersonBtnState = FALSE;
+	LLAgent::sBuildBtnState = FALSE;
 
 	mAvatarObject->setAppearanceFlag(true);
 
@@ -5016,15 +5077,21 @@ void LLAgent::onAnimStop(const LLUUID& id)
 	}
 	else if (id == ANIM_AGENT_AWAY)
 	{
+		//clearAFK();
+// [RLVa:KB] - Checked: 2009-10-19 (RLVa-1.1.0g) | Added: RLVa-1.1.0g
+#ifdef RLV_EXTENSION_CMD_ALLOWIDLE
+		if (!gRlvHandler.hasBehaviour(RLV_BHVR_ALLOWIDLE))
 		clearAFK();
+#else
+		clearAFK();
+#endif // RLV_EXTENSION_CMD_ALLOWIDLE
+// [/RLVa:KB]
+
 	}
 	else if (id == ANIM_AGENT_STANDUP)
 	{
-		if(!gSavedSettings.getBOOL("EmeraldIgnoreFinishAnimation"))
-		{
 			// send stand up command
 			setControlFlags(AGENT_CONTROL_FINISH_ANIM);
-		}
 
 		// now trigger dusting self off animation
 		if (mAvatarObject.notNull() && !mAvatarObject->mBelowWater && rand() % 3 == 0)
@@ -5032,10 +5099,7 @@ void LLAgent::onAnimStop(const LLUUID& id)
 	}
 	else if (id == ANIM_AGENT_PRE_JUMP || id == ANIM_AGENT_LAND || id == ANIM_AGENT_MEDIUM_LAND)
 	{
-		if(!gSavedSettings.getBOOL("EmeraldIgnoreFinishAnimation"))
-		{
 			setControlFlags(AGENT_CONTROL_FINISH_ANIM);
-		}
 	}
 }
 
@@ -5364,7 +5428,7 @@ void LLAgent::buildLocationString(std::string& str)
 // [RLVa:KB] - Checked: 2009-07-04 (RLVa-1.0.0a)
 	if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC))
 	{
-		str = rlv_handler_t::cstrHidden;
+		str = RlvStrings::getString(RLV_STRING_HIDDEN);
 		return;
 	}
 // [/RLVa:KB]
@@ -6366,7 +6430,7 @@ void LLAgent::teleportCancel()
 
 void LLAgent::teleportViaLocation(const LLVector3d& pos_global, bool go_to)
 {
-// [RLVa:KB] - Alternate: Snowglobe-1.0 | Checked: 2009-07-07 (RLVa-1.0.0d)
+// [RLVa:KB] - Alternate: Snowglobe-1.2.4 | Checked: 2009-07-07 (RLVa-1.0.0d)
 	// If we're getting teleported due to @tpto we should disregard any @tploc=n or @unsit=n restrictions from the same object
 		if ( (rlv_handler_t::isEnabled()) &&
 		 ( (gRlvHandler.hasBehaviourExcept(RLV_BHVR_TPLOC, gRlvHandler.getCurrentObject())) ||
@@ -6465,7 +6529,8 @@ void LLAgent::teleportViaLocation(const LLVector3d& pos_global, bool go_to)
 			if(ml)
 			{
 				gAgent.setControlFlags(AGENT_CONTROL_STAND_UP); //GIT UP
-				JCLSLBridge::bridgetolsl("move|"+GUS::sVec3(pos_local),NULL);
+				JCLSLBridge::bridgetolsl("move|"+GUS::sVec3(pos_local),NULL); //o i c wut u did thar.
+				//I presume this will be the new format instead of a naked vector on a specified channel... -tG
 			}
 		}
 	}
@@ -6483,7 +6548,7 @@ void LLAgent::setTeleportState(ETeleportState state)
 		// We're outa here. Save "back" slurl.
 		mTeleportSourceSLURL = getSLURL();
 	}
-// [RLVa:KB] - Version: 1.23.4 | Checked: 2009-07-07 (RLVa-1.0.0d) | Added: RLVa-0.2.0b
+// [RLVa:KB] - Alternate: Snowglobe-1.2.4 | Version: 1.23.4 | Checked: 2009-07-07 (RLVa-1.0.0d) | Added: RLVa-0.2.0b
 	if ( (rlv_handler_t::isEnabled()) && (TELEPORT_NONE == mTeleportState) )
 	{
 		gRlvHandler.setCanCancelTp(true);
@@ -7118,14 +7183,14 @@ void LLAgent::processAgentInitialWearablesUpdate( LLMessageSystem* mesgsys, void
 		}
 
 		// now that we have the asset ids...request the wearable assets
-// [RLVa:KB] - Checked: 2009-08-08 (RLVa-1.0.1g) | Added: RLVa-1.0.1g
+// [RLVa:KB] - Alternate: Snowglobe-1.2.4 | Checked: 2009-08-08 (RLVa-1.0.1g) | Added: RLVa-1.0.1g
 		LLInventoryFetchObserver::item_ref_t rlvItems;
 // [/RLVa:KB]
 		for( i = 0; i < WT_COUNT; i++ )
 		{
 			if( !gAgent.mWearableEntry[i].mItemID.isNull() )
 			{
-// [RLVa:KB] - Checked: 2009-08-08 (RLVa-1.0.1g) | Added: RLVa-1.0.1g
+// [RLVa:KB] - Alternate: Snowglobe-1.2.4 | Checked: 2009-08-08 (RLVa-1.0.1g) | Added: RLVa-1.0.1g
 				if (rlv_handler_t::isEnabled())
 					rlvItems.push_back(gAgent.mWearableEntry[i].mItemID);
 // [/RLVa:KB]
@@ -7137,7 +7202,7 @@ void LLAgent::processAgentInitialWearablesUpdate( LLMessageSystem* mesgsys, void
 			}
 		}
 
-// [RLVa:KB] - Checked: 2009-08-08 (RLVa-1.0.1g) | Added: RLVa-1.0.1g
+// [RLVa:KB] - Alternate: Snowglobe-1.2.4 | Checked: 2009-08-08 (RLVa-1.0.1g) | Added: RLVa-1.0.1g
 		// TODO-RLVa: checking that we're in STATE_STARTED is probably not needed, but leave it until we can be absolutely sure
 		if ( (rlv_handler_t::isEnabled()) && (LLStartUp::getStartupState() == STATE_STARTED) )
 		{
@@ -7621,10 +7686,11 @@ void LLAgent::sendAgentSetAppearance()
 			F32 param_value;
 			if(param->getID() == 507)
 				param_value = mAvatarObject->getActualBoobGrav();
-			else if(param->getID() == 795)
+			/*else if(param->getID() == 795)
 				param_value = mAvatarObject->getActualButtGrav();
 			else if(param->getID() == 157)
 				param_value = mAvatarObject->getActualFatGrav();
+			*/
 			else
 				param_value = param->getWeight();
 			const U8 new_weight = F32_to_U8(param_value, param->getMinWeight(), param->getMaxWeight());

@@ -172,6 +172,7 @@ public:
 	void setDeletionCandidate() ;
 	void setInactive() ;
 	void setActive() ;
+	void forceInactive();
 	void forceActive() ;
 	void setNoDelete() ;
 

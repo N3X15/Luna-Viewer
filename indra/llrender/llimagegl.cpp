@@ -1455,6 +1455,11 @@ void LLImageGL::setInactive()
 	}
 }
 
+void LLImageGL::forceInactive()
+{
+	mTextureState = INACTIVE;
+}
+
 //set the texture to stay in memory
 void LLImageGL::setNoDelete() 
 { 

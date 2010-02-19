@@ -134,14 +134,6 @@ void LLHUDEffectSpiral::unpackData(LLMessageSystem *mesgsys, S32 blocknum)
 	htonmemcpy(target_object_id.mData, packed_data + 16, MVT_LLUUID, 16);
 	htonmemcpy(mPositionGlobal.mdV, packed_data + 32, MVT_LLVector3d, 24);
 
-	if(mDuration > 2.5)
-	{
-		llinfos << "cancelling effect > 2.5" << llendl;	
-		cancellate();
-		markDead();
-		return;
-	}
-
 	LLViewerObject *objp = NULL;
 
 	if (object_id.isNull())
@@ -151,19 +143,13 @@ void LLHUDEffectSpiral::unpackData(LLMessageSystem *mesgsys, S32 blocknum)
 	else
 	{
 		LLViewerObject *objp = gObjectList.findObject(object_id);
-		
-		if (objp && !(objp->isAvatar() && object_id != mSenderID))
+		if (objp)
 		{
 			setSourceObject(objp);
 		}
 		else
 		{
 			// We don't have this object, kill this effect
-			if(objp && objp->isAvatar() && object_id != mSenderID)
-			{
-				llinfos << "cancelling effect object_id=" << object_id << "sender" << mSenderID << "targ " << target_object_id << llendl;	
-				cancellate();
-			}
 			markDead();
 			return;
 		}

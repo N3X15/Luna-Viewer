@@ -56,6 +56,8 @@ extern void AddNewDebugConsoleToLCD(const LLWString &newLine);
 
 LLConsole* gConsole = NULL;  // Created and destroyed in LLViewerWindow.
 
+F32 LLConsole::sConsoleBackgroundOpacity;
+
 const F32 FADE_DURATION = 2.f;
 const S32 MIN_CONSOLE_WIDTH = 50;
 
@@ -75,6 +77,14 @@ LLConsole::LLConsole(const std::string& name, const U32 max_lines, const LLRect 
 
 	setFontSize( font_size_index );
 	setMaxLines(gSavedSettings.getS32("ConsoleMaxLines"));
+
+	sConsoleBackgroundOpacity = gSavedSettings.getF32("ConsoleBackgroundOpacity");
+	gSavedSettings.getControl("ConsoleBackgroundOpacity")->getSignal()->connect(&updateConsoleBackgroundOpacity);
+}
+
+void LLConsole::updateConsoleBackgroundOpacity(const LLSD &data)
+{
+	sConsoleBackgroundOpacity = F32(data.asReal());
 }
 
 void LLConsole::setLinePersistTime(F32 seconds)
@@ -181,8 +191,9 @@ void LLConsole::draw()
 
 	LLUIImagePtr imagep = LLUI::getUIImage("rounded_square.tga");
 
-	F32 console_opacity = llclamp(gSavedSettings.getF32("ConsoleBackgroundOpacity"), 0.f, 1.f);
-	LLColor4 color = gColors.getColor("ConsoleBackground");
+	F32 console_opacity = llclamp(sConsoleBackgroundOpacity, 0.f, 1.f);
+	static LLColor4 dcolor = gColors.getColor("ConsoleBackground");
+	LLColor4 color = dcolor;
 	color.mV[VALPHA] *= console_opacity;
 
 	F32 line_height = mFont->getLineHeight();

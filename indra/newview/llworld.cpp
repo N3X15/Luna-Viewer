@@ -39,7 +39,7 @@
 #include "llstl.h"
 
 #include "llagent.h"
-//#include "llfloateravatarlist.h"
+//#include "floateravatarlist.h"
 #include "llviewercontrol.h"
 #include "lldrawpool.h"
 #include "llglheaders.h"

@@ -166,7 +166,14 @@ public:
 
 class LLInventoryFilter
 {
+
 public:
+	//fix to get rid of gSavedSettings use - rkeast
+	void setPartialSearch(bool toggle);
+	bool getPartialSearch();
+	void setSearchType(U32 type);
+	U32	 getSearchType();
+
 	typedef enum e_folder_show
 	{
 		SHOW_ALL_FOLDERS,
@@ -246,6 +253,10 @@ public:
 	void fromLLSD(LLSD& data);
 
 protected:
+	//fix to get rid of gSavedSettings use - rkeast
+	U32				mSearchType;
+	bool			mPartialSearch;
+
 	struct filter_ops
 	{
 		U32			mFilterTypes;
@@ -473,7 +484,7 @@ public:
 	// viewed. This method will ask the viewed object itself.
 	const std::string& getName( void ) const;
 
-	const std::string& getSearchableLabel( U32 search_type ) const;
+	const std::string& getSearchableLabel() const;
 
 	// This method returns the label displayed on the view. This
 	// method was primarily added to allow sorting on the folder

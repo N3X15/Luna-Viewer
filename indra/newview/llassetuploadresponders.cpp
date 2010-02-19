@@ -127,6 +127,7 @@ void LLAssetUploadResponder::error(U32 statusNum, const std::string& reason)
 			break;
 	}
 	LLUploadDialog::modalUploadFinished();
+	LLFilePicker::instance().reset(); //Coaldust Numbers' fix for bulk upload failure relog bug
 }
 
 //virtual 

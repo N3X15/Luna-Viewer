@@ -50,6 +50,7 @@
 #include "lltextbox.h"
 #include "lltrans.h"
 #include "lluiconstants.h"
+#include "llviewercontrol.h"
 #include "llviewermessage.h"
 #include "lluictrlfactory.h"
 

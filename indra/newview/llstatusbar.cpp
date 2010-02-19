@@ -86,6 +86,9 @@
 // system includes
 #include <iomanip>
 
+// [RLVa:KB]
+#include "rlvhandler.h"
+// [/RLVa:KB]
 
 //
 // Globals
@@ -579,7 +582,8 @@ void LLStatusBar::refresh()
 	{
 		// TODO-RLVa: find out whether the LCD code is still used because if so then we need to filter that as well
 		location_name = llformat("%s (%s) - %s", 
-			rlv_handler_t::cstrHiddenRegion.c_str(), region->getSimAccessString().c_str(), rlv_handler_t::cstrHidden.c_str());
+			RlvStrings::getString(RLV_STRING_HIDDEN_REGION).c_str(), region->getSimAccessString().c_str(), 
+			RlvStrings::getString(RLV_STRING_HIDDEN).c_str());
 	}
 // [/RLVa:KB]
 

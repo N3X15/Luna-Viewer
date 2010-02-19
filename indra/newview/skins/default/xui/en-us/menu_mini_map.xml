@@ -34,23 +34,23 @@
 	     width="125">
 		<on_enable function="MiniMap.EnableProfile" />
 		<menu_item_call bottom_delta="-18" enabled = "true" height="18" label="Red"
-			 left="0" mouse_opaque="true" name="" width="128">
+			 left="0" mouse_opaque="true" name="Red" width="128">
 			<on_click function="MiniMap.setred" />
 		</menu_item_call>
 		<menu_item_call bottom_delta="-18" enabled = "true" height="18" label="Green"
-			 left="0" mouse_opaque="true" name="" width="128">
+			 left="0" mouse_opaque="true" name="Green" width="128">
 			<on_click function="MiniMap.setgreen" />
 		</menu_item_call>
 		<menu_item_call bottom_delta="-18" enabled = "true" height="18" label="Blue"
-			 left="0" mouse_opaque="true" name="" width="128">
+			 left="0" mouse_opaque="true" name="Blue" width="128">
 			<on_click function="MiniMap.setblue" />
 		</menu_item_call>
 		<menu_item_call bottom_delta="-18" enabled = "true" height="18" label="Yellow"
-			 left="0" mouse_opaque="true" name="" width="128">
+			 left="0" mouse_opaque="true" name="Yellow" width="128">
 			<on_click function="MiniMap.setyellow" />
 		</menu_item_call>
 		<menu_item_call bottom_delta="-18" enabled = "true" height="18" label="Custom..."
-			 left="0" mouse_opaque="true" name="" width="128">
+			 left="0" mouse_opaque="true" name="Custom" width="128">
 			<on_click function="MiniMap.setcustom" />
 		</menu_item_call>
 	</menu>

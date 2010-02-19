@@ -12,6 +12,7 @@ include(LLRender)
 include(LLWindow)
 include(LLVFS)
 include(LLXML)
+include(HUNSPELL)
 
 include_directories(
     ${LLAUDIO_INCLUDE_DIRS}
@@ -23,6 +24,7 @@ include_directories(
     ${LLWINDOW_INCLUDE_DIRS}
     ${LLVFS_INCLUDE_DIRS}
     ${LLXML_INCLUDE_DIRS}
+		${HUNSPELL_INCLUDE_DIR}
     )
 
 set(llui_SOURCE_FILES

@@ -131,6 +131,7 @@ LLWebBrowserCtrl::~LLWebBrowserCtrl()
 
 	if (mMediaSource)
 	{
+		mMediaSource->navigateTo("data:text/html,%3Chtml%3E%3Chead%3E%3C/head%3E%3Cbody bgcolor=%22#000000%22 text=%22ffffff%22%3E%3Ch1%3E%3Ctt%3Eunloading...%3C/tt%3E%3C/h1%3E %3C/body%3E %3C/html%3E");
 		mgr->destroySource(mMediaSource);
 		mMediaSource = NULL;
 	}

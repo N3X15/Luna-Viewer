@@ -105,6 +105,13 @@ protected:
 	S32 mMusicState;
 	std::string			mOriginalIMLabel;
 
+private:
+	static BOOL sAdvSettingsPopup;
+	static BOOL sChatVisible;
+
+	static void	updateAdvSettingsPopup(const LLSD &data);
+	static void	updateChatVisible(const LLSD &data);
+
 };
 
 extern LLOverlayBar* gOverlayBar;

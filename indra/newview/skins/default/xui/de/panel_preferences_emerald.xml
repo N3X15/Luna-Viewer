@@ -6,15 +6,13 @@
     <button label="?" name="EmeraldHelp_TeleportLogin" tool_tip="Für Hilfe zu dieser Seite hier klicken."/>
       <check_box label="Doppelklick Teleport" name="double_click_tp_toggle"/>
       <check_box label="Doppelklick Autopilot" name="double_click_ap_toggle"/>
-      <check_box label="Nutze lokale TP Anfragen" name="telerequest_toggle" tool_tip="Sendet tp Anfragen an den Server(standardmässig aktiviert)"/>
-      <check_box label="Nutze llMoveToTarget anstatt TP(benötigt LSL-Brücke)" name="mldct_toggle"tool_tip="Flüstert TP Ziel auf einem privaten Channel(standardmässig deaktiviert)"/>
+      <check_box label="Sende TP Ziel Koordinaten per Channel" name="mldct_toggle" tool_tip="Flüstert TP Ziel auf einem privaten Channel(standardmässig deaktiviert)"/>
       <spinner label="Channel" name="mldct_channel" tool_tip="Channel zum flüstern des TP Ziel"/>
       <check_box label="Velocity Interpolate Double-click Teleports" name="login_screen_toggle1"/>
       <check_box label="Drehe Kamera hinter Avatar nach Doppelklick Teleport" name="move_camaftertp_toggle"/>
       <check_box label="Immer fliegen nach Teleport" name="flyaftertp_toggle"/>
       <spinner label="Doppelklick Teleport Z Abweichung" name="Double-click Teleport Z Offset" tool_tip="Option zum einstellen der Z Abweichung nach Doppelklick Teleport"/>
       <check_box label="Halbe Avatarhöhe als extra Abweichung" name="avcalc_toggle"/>
-      <check_box label="Nutze die Abweichung für das move-lock Teleport System." name="mldctoffset_toggle"/>
       <radio_group name="EmeraldDoubleClickTeleportMode">
         <radio_item name="0" tool_tip="Keine Änderung der Rotation nach Doppelklick Teleport.">
           Keine Änderung der Rotation nach Doppelklick Teleport.
@@ -44,6 +42,7 @@
         'Debug grid' voice server
       </text>
       <line_editor name="debug_voice_field" tool_tip="Maingrid Voice Channel"/>
+      <check_box label="Deaktiviere SLim Freunde List (benötigt Neustart)" name="o.owat" tool_tip="Deaktivieren der SLim Freunde Liste kann bei der Voice Verbindung helfen wenn sie eine grosse Liste haben." />
     </panel>
     <panel label="Schutz" name="Shields">
     <button label="?" name="EmeraldHelp_Shields" tool_tip="Für Hilfe zu dieser Seite hier klicken."/>
@@ -138,6 +137,7 @@ Empfohlene Eisntellungen:
     <panel label="Chat" name="Chat">
     <button label="?" name="EmeraldHelp_Chat" tool_tip="Click here for help regarding the settings in this page."/>
       <check_box label="Radar Infos im Chat anzeigen" name="radar_chat_toggle"/>
+      <check_box label="Anzeigen wenn Radar geschlossen" name="keep_open" tool_tip="Versteckt das Fenster anstatt es zu schliessen um weiterhin die Infos anzeigen zu können"/>
       <check_box label="Info wenn Avatar Region betritt/verlässt" name="radar_chat_sim_toggle"/>
       <check_box label="Info wenn Avatar Sichtweite betritt/verlässt" name="radar_chat_draw_toggle"/>
       <check_box label="Info wenn Avatar Chatreichweite betritt/verlässt" name="radar_chat_chatrange_toggle"/>
@@ -151,6 +151,7 @@ Empfohlene Eisntellungen:
       <check_box label="Chat Verlauf Zeitstempel mit Sekunden" name="EmeraldAddSecondsInHistory-toggle"/>
       <check_box label="Wenn 'Gruppenmitteilungen erhalten' deaktiviert ist, Gruppen Chat auch deaktivieren" name="EmeraldMuteGroupWhenNoticesDisabled-toggle"/>
       <check_box label="Deaktiviere alle Gruppen Chats" name="EmeraldMuteAllGroups-toggle"/>
+      <check_box label="Rechtsklick Übersetzen ersetzt markierten Text" name="EmeraldTranslateReplace"/>
       <button name="keyword_allert" label="Bearbeite Stichwort Alarm" tool_tip="Bearbeite ausstehende Warnungen."/>
       </panel>
       <panel label="Verschiedenes" name="AvatarEffects">
@@ -160,10 +161,14 @@ Empfohlene Eisntellungen:
         <check_box label="Aktiviere STRG-Alt-S um überall zu sitzen (Boden)" name="allowsittoggle"/>
         <check_box label="Blockiere automatisches sitzen bei Linksklick" name="sit-click-toggle"/>
         <check_box label="Zeige Avatarname bei Blickziel Markierung" name="EmShowLookAtNames-toggle"/>
+				<check_box label="Eigene Blickziel Markierung ausblenden" name="EmDontShowMyLook-toggle"/>
         <check_box label="Escape setzt Kamera zurück auf Standard im Kameramodus (STRG-1)" name="EmResetCamOnEscape-toggle" tool_tip="Deaktivieren verhindert das sich die Kamera zurücksetzt wenn Escape gedrückt wurde ."/>
+				<check_box label="Klick auf Avatar setzt Kamera Position zurück" name="ResetCamOnAvatar-toggle" tool_tip="Deaktivieren verhindert das die Kamera zurück gesetzt wird beim klick auf den eigenen Avatar."/>
         <check_box label="Aktiviere Minimap Rotation" name="MinimapRotate"/>
         <check_box label="Suchleiste anzeigen" name="Search_bar-toggle"/>
         <check_box label="Objekte wenn möglich mit der passenden Land Gruppe rezzen" name="grouplandrez"/>
+				<check_box label="Deaktiviert den minimum Kamera Zoom Abstand." name="EmMinZoomDist-toggle"/>
+				<check_box label="Erlaubt Kamerebewegung ohne Beschränkung durch Prims.(benötigt Neustart)" name="EmIgnoreCamConstraints-toggle"/>
         <check_box label="Aktiviere Restrained Life [RLVa] Funktionen(benötigt Neustart)" name="rlv-toggle"/>
         <view_border name="EmDivisorBridge"/>
         <check_box label="Aktiviere LSL-Client Brücke" name="EmeraldBuildBridge"/>
@@ -236,17 +241,21 @@ Empfohlene Eisntellungen:
         AO An/Aus (usage: cmd on/off)
       </text>
       <line_editor tool_tip="" name="EmeraldCmdLineAO"/>
+			<text name="loltxt15">        Löscht den Chat Verlauf(usage: cmd)</text>
+			<line_editor tool_tip="Löscht den Chat Verlauf und verhindert den Lag Effekt durch Chat Spammer." name="EmeraldCmdLineClearChat"/>
     </panel>
     <panel label="Avatar" name="wat!">
-    <button label="?" name="EmeraldHelp_Avatar" tool_tip="Für Hilfe zu dieser Seite hier klicken."/>
+      <button label="?" name="EmeraldHelp_Avatar" tool_tip="Für Hilfe zu dieser Seite hier klicken."/>
       <spinner label="X" name="X Modifier" tool_tip="Manipuliert die Bounding Box bis zu einem gewissen Grad. Kann benutzt werden um Orbiter zu verwirren oder dieHöhe des Avatars zu manipulieren ohne den Shape zu ändern."/>
       <spinner label="Y" name="Y Modifier" tool_tip="Manipuliert die Bounding Box bis zu einem gewissen Grad. Kann benutzt werden um Orbiter zu verwirren oder dieHöhe des Avatars zu manipulieren ohne den Shape zu ändern."/>
       <spinner label="Z" name="Z Modifier" tool_tip="Manipuliert die Bounding Box bis zu einem gewissen Grad. Kann benutzt werden um Orbiter zu verwirren oder dieHöhe des Avatars zu manipulieren ohne den Shape zu ändern."/>
       <spinner label="Agent updates pro Sekunde:" name="EmAgentUpdatesValue" tool_tip="Gibt an wieviel Updates pro Sekunde gesendet werden sollen. Standard 10/s" />
       <check_box label="Avatar unsichtbar rendern" name="RenderAvInvisible"/>
-<text name="BeamPrefs">
+      <check_box label="'Aussehen' Titel und Animation bei 'Aussehen bearbeiten'" name="EmeraldAppearanceAnimate"/>
+      <check_box label="Sitzen abbrechen bei 'Aussehen bearbeiten'" name="EmeraldAppearanceForceStand"/>
+    <text name="BeamPrefs">
 		Auswahlpartikeleffekt
-	</text>
+    </text>
 <view_border name="EmDivisor"/>
 <button name="EmeraldBeamPrev_rainbow" label=""/>
 <button name="EmeraldBeamPrev_Emerald" label=""/>
@@ -322,13 +331,13 @@ Empfohlene Eisntellungen:
           Hoch
         </combo_item>
       </combo_box>
-      <check_box label="Objekt in neu erstellten Prim einfügen" name="EmeraldBuildPrefs_EmbedItem"/>
+      <check_box label="Objekt in neu erstellten Prim einfügen" name="EmeraldBuildPrefsEmbedItem"/>
       <view_border name="im_give_drop_target_rect"/>
       <text name="Give inventory" tool_tip="Ziehen sie ein Inventarobjekt hier drauf">
         Inventarobjekt hier fallen lassen.
       </text>
-      <view_border name="im_give_disp_rect"/>
-      <text name="im_give_disp_rect_txt" tool_tip="">
+      <view_border name="build_item_add_disp_rect"/>
+      <text name="build_item_add_disp_rect_txt" tool_tip="">
         Aktuelles Objekt: ITEM
       </text>
       <view_border name="PivotBorder"/>
@@ -374,8 +383,8 @@ Empfohlene Eisntellungen:
     </panel>
     <panel label="Utility Stream" name="Utility Stream">
     <button label="?" name="EmeraldHelp_UtilityStream" tool_tip="Für Hilfe zu dieser Seite hier klicken."/>
-			<check_box label="Aktiviere Greenlife Utility Stream" tool_tip="Aktiviere Greenlife Utility Stream (GUS)" name="GUS Enable"/>
-			<panel name="gus_panel">
+    <panel name="gus_panel">
+			<check_box label="Aktiviere GUS" tool_tip="Aktiviere Greenlife Utility Stream (GUS)" name="GUS Enable"/>
 			<spinner label="Channel" name="Channel" width="128"/>
 			<check_box label="Aktiviere FastEvents" tool_tip="Aktiviere Greenlife Utility Stream FastEvents (GUS-FE)" name="GUS-FE Enable"/>
 			<spinner label="GUS Rate" name="Refresh Rate"/>
@@ -428,6 +437,10 @@ Simulator damit man per Script darauf zugreifen kann.
       <check_box label="Exportiere Objekt Eigenschaften" name="EmExpProp"/>
       <check_box label="Exportiere Objekt Inhalt" name="EmExpInv"/>
       <check_box label="Exportiere Objekt Texturen" name="EmExpTex"/>
+      <check_box label="Akiviere LSL Preprocessor Dateisystem Includes" name="fdgfd2"/>
+      <text name="lolyou">Include Speicherort:</text>
+      <button label="Speichern" label_selected="Set" name="set_includeHDD"/>
+      <line_editor name="include_location"/>
     </panel>
     <panel label="Effekte" name="Effects">
       <button label="?" name="EmeraldHelp_Effects" tool_tip="Für Hilfe zu dieser Seite hier klicken."/>
@@ -447,6 +460,21 @@ Simulator damit man per Script darauf zugreifen kann.
       <button bottom_delta="0" follows="left|top" font="SansSerifSmall" height="20" label="Shadows OFF" name="Emerald_ShadowsOFF" tool_tip="Turn off the rendering of dynamic shadows."
               left="120" width="100" />
 -->
+    </panel>
+    <panel label="Rechtschreibprüfung" name="SpellCheck">
+      <button label="?" name="EmeraldHelp_SpellCheck" tool_tip="Für Hilfe zu dieser Seite hier klicken."/>
+      <text name="EmSpell_txt1">Standard Wörterbuch</text>
+      <combo_box name="EmeraldSpellBase"/>
+      <text name="EmSpell_txt2">zusätzlich installierte Wörterbücher</text>
+      <combo_box name="EmSpell_Installed"/>
+			<button label="Löschen" name="EmSpell_Remove" tool_tip=""/>
+      <text name="EmSpell_txt3">verfügbare Wörterbücher</text>
+      <combo_box name="EmSpell_Avail"/>
+			<button label="Hinzufügen" name="EmSpell_Add"/>
+      <button label="Runterladen" name="EmSpell_GetMore"/>
+			<check_box  label="falsch geschriebene Wörter in Rot" name="EmeraldSpellDisplay"/>
+      <button label="Bearbeite individuelles Wörterbücher" name="EmSpell_EditCustom"/>
+      <text name="EmSpell_txt4">Rechtsklick zeigt die Auswahlliste an.</text>      
     </panel>
   </tab_container>
   </tab_container>

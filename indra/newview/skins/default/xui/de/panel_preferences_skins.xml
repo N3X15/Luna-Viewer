@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <panel label="Oberflächen" name="Skins panel">
-	<text name="muting_text">
-		Wählen Sie eine Benutzeroberfläche aus (erfordert Neustart):
-	</text>
-	<radio_group name="skin_selection">
-		<radio_item name="default">
-			Standard
-		</radio_item>
-		<radio_item name="silver">
-			Silber
-		</radio_item>
-	</radio_group>
+  <text name="EmSkin_txt1">Ausgewählte Oberfläche</text>
+  <combo_box name="emrd_skin_combo" tool_tip=""/>
+  <text name="EmSkin_txt2">Autor</text>
+	<view_border name="emrd_box1"/>
+  <text name="emrd_skin_author">Oberflächen Autor</text>
+  <text name="EmSkin_txt3">Mitautoren</text>
+	<view_border name="emrd_box2"/>
+  <text name="emrd_skin_ad_authors">Mitautoren</text>
+  <text name="EmSkin_txt4">Oberflächen Ordner</text>
+	<view_border name="emrd_box3"/>
+  <text name="emrd_skin_folder">Oberflächen Ordner</text>
+  <button label="" name="emrd_skin_preview" tool_tip="Skin Preview"/>
+  <text name="EmSkin_txt5">zusätzliche Infos</text>
+	<text_editor name="emrd_skin_info"/>
 </panel>

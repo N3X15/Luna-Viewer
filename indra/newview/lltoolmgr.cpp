@@ -64,6 +64,7 @@ LLToolset*		gCameraToolset		= NULL;
 LLToolset*		gMouselookToolset	= NULL;
 LLToolset*		gFaceEditToolset	= NULL;
 
+
 /////////////////////////////////////////////////////
 // LLToolMgr
 
@@ -239,7 +240,7 @@ bool LLToolMgr::inBuildMode()
 	// cameraMouselook() actually starts returning true.  Also, appearance edit
 	// sets build mode to true, so let's exclude that.
 	bool b=(inEdit() 
-			&& gSavedSettings.getBOOL("BuildBtnState")
+			&& LLAgent::sBuildBtnState
 			&& !gAgent.cameraMouselook()
 			&& mCurrentToolset != gFaceEditToolset);
 	

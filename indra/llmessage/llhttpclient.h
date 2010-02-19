@@ -142,6 +142,8 @@ public:
 	 */
 	static LLSD blockingGet(const std::string& url);
 
+	static void downloadFile(const std::string& url,const std::string& destinationFile);
+
 
 	
 	static void setPump(LLPumpIO& pump);

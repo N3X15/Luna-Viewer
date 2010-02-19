@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rlva_strings>
+
+  <strings>
+    <!-- Primarily used when @showloc restricted -->
+    <string name="hidden_generic">(Versteckt)</string>
+    <string name="hidden_parcel">(Versteckt Parzelle)</string>
+    <string name="hidden_region">(Versteckt Region)</string>
+
+    <!-- Received/sent IMs will be replaced by the matching string when @recvim/sendim restricted -->
+    <string name="blocked_recvim">*** IM blockiert durch ihren Viewer</string>
+    <string name="blocked_sendim">*** IM blockiert durch Absender Viewer</string>
+
+    <!-- Shown as notifications -->
+    <string name="blocked_viewxxx">[TYPE]kann aufgrund von RLV Einschränkungen nicht geöffnet werden</string>
+
+    <!-- Sent as "Busy" messages to the remote party -->
+    <string name="blocked_recvim_remote">
+      Dieser Bewohner kann aktuell kein Instant Messages lesen, bitte versuchen sie es später.
+    </string>
+    <string name="blocked_tplure_remote">
+      Dieser Bewohner kann aktuell keine Teleport Angebote annehmen. Bitte versuchen sie es später.
+    </string>
+  </strings>
+
+  <!-- Generic names used to replace resident names when @shownames restricted -->
+  <anonyms>
+    <anonym>Ein Bewohner</anonym>
+    <anonym>Dieser Bewohner</anonym>
+    <anonym>Der Bewohner</anonym>
+    <anonym>Ein Individuum</anonym>
+    <anonym>Dieses Individuum</anonym>
+    <anonym>Das Individuum</anonym>
+    <anonym>Eine Person"</anonym>
+    <anonym>Diese Person</anonym>
+    <anonym>Die Person</anonym>
+    <anonym>Ein Unbekannter</anonym>
+    <anonym>Dieser Unbekannter</anonym>
+    <anonym>Der Unbekannter</anonym>
+    <anonym>Ein Wesen</anonym>
+    <anonym>Dieses Wesen</anonym>
+    <anonym>Das Wesen</anonym>
+    <anonym>Ein Agent</anonym>
+    <anonym>Dieser Agent</anonym>
+    <anonym>Der Agent</anonym>
+    <anonym>Eine Seele</anonym>
+    <anonym>Diese Seele</anonym>
+    <anonym>Die Seele</anonym>
+    <anonym>Jemand</anonym>
+    <anonym>Ein paar leute</anonym>
+    <anonym>Irgendjemand</anonym>
+    <anonym>geheimnisvolle Person</anonym>
+    <anonym>Ein unbekanntes Wesen</anonym>
+    <anonym>unidentifiziert Person</anonym>
+    <anonym>Eine unbekannte Person</anonym>
+  </anonyms>
+
+  <behaviour-notifications>
+    <!-- 
+    <notification behaviour="defaultwear" type="add">Text goes here</notification>
+    <notification behaviour="defaultwear" type="rem">Text goes here</notification>
+    -->
+  </behaviour-notifications>
+
+</rlva_strings>

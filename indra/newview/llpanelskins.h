@@ -39,6 +39,8 @@
 class LLPanelSkins : public LLPanel
 {
 public:
+
+	std::vector<LLSD> datas;
 	LLPanelSkins();
 	virtual ~LLPanelSkins();
 
@@ -46,27 +48,12 @@ public:
 	void refresh();
 	void apply();
 	void cancel();
-
-private:
-	static void onSelectSkin(LLUICtrl* ctrl, void* data);
-	static void onClickClassic(void* data);
-	static void onClickSilver(void* data);
-	static void onClickEmerald(void* data);
-	static void onClickRuby(void* data);
-	static void onClickDark(void* data);
-	static void onClickPslpurple(void* data);
-	static void onClickPslgreen(void* data);
-	static void onClickGred(void* data);
-	static void onClickSapphire(void* data);
-	static void onClickWhite_emerald(void* data);
-	static void onClickDarkgred(void* data);
-	static void onClickDarkorange(void* data);
-	static void onClickGemini(void* data);
-	static void onClickPony_Purple(void* data);
-	static void onClickPony_Aquablue(void* data);
-
-private:
+	static void onComboBoxCommit(LLUICtrl* ctrl, void* userdata);
 	std::string mSkin;
+private:
+
+	static LLPanelSkins* sInstance;
+	std::string oldSkin;
 };
 
 #endif // LL_LLPANELSKINS_H

@@ -62,12 +62,17 @@ LLDragHandle::LLDragHandle( const std::string& name, const LLRect& rect, const s
 	mDragLastScreenY( 0 ),
 	mLastMouseScreenX( 0 ),
 	mLastMouseScreenY( 0 ),
-	mDragHighlightColor(	LLUI::sColorsGroup->getColor( "DefaultHighlightLight" ) ),
-	mDragShadowColor(		LLUI::sColorsGroup->getColor( "DefaultShadowDark" ) ),
+	//mDragHighlightColor(	LLUI::sColorsGroup->getColor( "DefaultHighlightLight" ) ),
+	//mDragShadowColor(		LLUI::sColorsGroup->getColor( "DefaultShadowDark" ) ),
 	mTitleBox( NULL ),
 	mMaxTitleWidth( 0 ),
 	mForeground( TRUE )
 {
+	static LLColor4 defaultDragHighlightColor = LLUI::sColorsGroup->getColor( "DefaultHighlightLight" );
+	static LLColor4 defaultDragShadowColor = LLUI::sColorsGroup->getColor( "DefaultShadowDark" );
+	mDragHighlightColor = defaultDragHighlightColor;
+	mDragShadowColor = defaultDragShadowColor;
+
 	sSnapMargin = LLUI::sConfigGroup->getS32("SnapMargin");
 
 	setSaveToXML(false);

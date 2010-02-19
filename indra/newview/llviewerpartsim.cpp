@@ -82,7 +82,8 @@ LLViewerPart::LLViewerPart() :
 	mPartID(0),
 	mLastUpdateTime(0.f),
 	mVPCallback(NULL),
-	mImagep(NULL)
+	mImagep(NULL),
+    mApplyFollowSource(true)
 {
 	LLMemType mt(LLMemType::MTYPE_PARTICLES);
 	mPartSourcep = NULL;
@@ -290,7 +291,14 @@ void LLViewerPartGroup::updateParticles(const F32 lastdt)
 		// "Drift" the object based on the source object
 		if (part->mFlags & LLPartData::LL_PART_FOLLOW_SRC_MASK)
 		{
+            if(part->mApplyFollowSource)
+            {
 			part->mPosAgent = part->mPartSourcep->mPosAgent;
+            }
+            else
+            {
+                part->mApplyFollowSource = true;
+            }
 			part->mPosAgent += part->mPosOffset;
 		}
 

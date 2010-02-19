@@ -13,8 +13,6 @@
 #include <map>
 #include <string>
 
-//#include "llsd.h"
-
 class LLCalc
 {
 public:

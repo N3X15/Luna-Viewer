@@ -48,6 +48,7 @@
 #include "llscrolllistctrl.h"
 #include "llviewerobject.h"
 #include "lluictrlfactory.h"
+#include "llviewercontrol.h"
 #include "llviewerwindow.h"
 
 LLFloaterBuy* LLFloaterBuy::sInstance = NULL;

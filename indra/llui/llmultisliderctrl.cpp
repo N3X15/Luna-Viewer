@@ -80,11 +80,16 @@ LLMultiSliderCtrl::LLMultiSliderCtrl(const std::string& name, const LLRect& rect
 
 	  mEditor( NULL ),
 	  mTextBox( NULL ),
-	  mTextEnabledColor( LLUI::sColorsGroup->getColor( "LabelTextColor" ) ),
-	  mTextDisabledColor( LLUI::sColorsGroup->getColor( "LabelDisabledColor" ) ),
+	  //mTextEnabledColor( LLUI::sColorsGroup->getColor( "LabelTextColor" ) ),
+	  //mTextDisabledColor( LLUI::sColorsGroup->getColor( "LabelDisabledColor" ) ),
 	  mSliderMouseUpCallback( NULL ),
 	  mSliderMouseDownCallback( NULL )
 {
+	static LLColor4 defaultTextEnabledColor = LLUI::sColorsGroup->getColor( "LabelTextColor" );
+	static LLColor4 defaultTextDisabledColor = LLUI::sColorsGroup->getColor( "LabelDisabledColor" );
+	mTextEnabledColor = (defaultTextEnabledColor);
+	mTextDisabledColor = (defaultTextDisabledColor);
+
 	S32 top = getRect().getHeight();
 	S32 bottom = 0;
 	S32 left = 0;

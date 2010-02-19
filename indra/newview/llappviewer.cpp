@@ -94,6 +94,7 @@
 #include "llimageworker.h"
 
 // The files below handle dependencies from cleanup.
+#include "llcalc.h"
 #include "llkeyframemotion.h"
 #include "llworldmap.h"
 #include "llhudmanager.h"
@@ -161,12 +162,15 @@
 #include "llviewerthrottle.h"
 #include "llparcel.h"
 
+// [RLVa:KB]
+#include "rlvhandler.h"
+// [/RLVa:KB]
 
 #include "llinventoryview.h"
 
 #include "llcommandlineparser.h"
 
-
+#include "hippogridmanager.h"
 // *FIX: These extern globals should be cleaned up.
 // The globals either represent state/config/resource-storage of either 
 // this app, or another 'component' of the viewer. App globals should be 
@@ -281,6 +285,7 @@ BOOL gLogoutInProgress = FALSE;
 F32 LLAppViewer::sMainLoopTimeOutDefault = 0.f;
 BOOL LLAppViewer::sFreezeTime = FALSE;
 
+
 ////////////////////////////////////////////////////////////
 // Internal globals... that should be removed.
 static std::string gArgs;
@@ -322,15 +327,18 @@ void updateFreezeTime(const LLSD& data)
 	LLAppViewer::sFreezeTime = data.asBoolean();
 }
 
-void handleCmdLineURIsUpdate(const LLSD& newvalue)
-{
-	LLViewerLogin::sCmdLineURIs = newvalue;
-}
-
 void idle_afk_check()
 {
 	// check idle timers
+//	if (gAllowIdleAFK && (gAwayTriggerTimer.getElapsedTimeF32() > gSavedSettings.getF32("AFKTimeout")))
+// [RLVa:KB] - Checked: 2009-10-19 (RLVa-1.1.0g) | Added: RLVa-1.1.0g
+#ifdef RLV_EXTENSION_CMD_ALLOWIDLE
+	if ( (gAllowIdleAFK || gRlvHandler.hasBehaviour(RLV_BHVR_ALLOWIDLE)) && 
+		 (gAwayTriggerTimer.getElapsedTimeF32() > gSavedSettings.getF32("AFKTimeout")))
+#else
 	if (gAllowIdleAFK && (gAwayTriggerTimer.getElapsedTimeF32() > gSavedSettings.getF32("AFKTimeout")))
+#endif // RLV_EXTENSION_CMD_ALLOWIDLE
+// [/RLVa:KB]
 	{
 		gAgent.setAFK();
 	}
@@ -475,7 +483,7 @@ static void settings_modify()
 	gSavedSettings.setBOOL("VectorizeSkin", FALSE);
 #endif
 }
-
+/*
 void LLAppViewer::initGridChoice()
 {
 	// Load	up the initial grid	choice from:
@@ -485,31 +493,27 @@ void LLAppViewer::initGridChoice()
 
 	// Set the "grid choice", this is specified	by command line.
 	std::string	grid_choice	= gSavedSettings.getString("CmdLineGridChoice");
-	LLViewerLogin* vl = LLViewerLogin::getInstance();
-	vl->setGridChoice(grid_choice);
+	LLViewerLogin::getInstance()->setGridChoice(grid_choice);
 
 	// Load last server choice by default 
 	// ignored if the command line grid	choice has been	set
-	if(grid_choice.empty() && vl->getGridChoice() != GRID_INFO_OTHER)
+	if(grid_choice.empty())
 	{
 		S32	server = gSavedSettings.getS32("ServerChoice");
+		//server = llclamp(server, 0,	(S32)GRID_INFO_COUNT - 1);
+		if(server == GRID_INFO_OTHER)
+		{
 		std::string custom_server = gSavedSettings.getString("CustomServer");
-		server = llclamp(server, 0,	(S32)GRID_INFO_COUNT - 1);
-		if(server == GRID_INFO_OTHER && !custom_server.empty())
-		{
-			vl->setGridChoice(custom_server);
+			LLViewerLogin::getInstance()->setGridChoice(custom_server);
 		}
-		else if(server != (S32)GRID_INFO_NONE && server != GRID_INFO_OTHER)
+		else if(server != (S32)GRID_INFO_NONE)
 		{
-			vl->setGridChoice((EGridInfo)server);
-		}
-		else
-		{
-			vl->setGridChoice(DEFAULT_GRID_CHOICE);
+			llwarns << "setgridchoice = " << server << llendl;
+			LLViewerLogin::getInstance()->setGridChoice(server);
 		}
 	}
 }
-
+*/
 //virtual
 bool LLAppViewer::initSLURLHandler()
 {
@@ -648,8 +652,7 @@ bool LLAppViewer::init()
 
 	// Build a string representing the current version number.
     gCurrentVersion = llformat("%s %d.%d.%d.%d", 
-
-        LL_CHANNEL, 
+        LL_DEFAULT_VIEWER_CHANNEL, 
         LL_VERSION_MAJOR, 
         LL_VERSION_MINOR, 
         LL_VERSION_PATCH, 
@@ -680,8 +683,6 @@ bool LLAppViewer::init()
 
 	gSavedSettings.getControl("MainloopTimeoutDefault")->getSignal()->connect(&updateMainLoopTimeOutDefault);
 	gSavedSettings.getControl("FreezeTime")->getSignal()->connect(&updateFreezeTime);
-	gSavedSettings.getControl("CmdLineLoginURI")->getSignal()->connect(&handleCmdLineURIsUpdate);
-
 	// track number of times that app has run
 	mNumSessions = gSavedSettings.getS32("NumSessions");
 	mNumSessions++;
@@ -1064,7 +1065,7 @@ bool LLAppViewer::mainLoop()
 			// Sleep and run background threads
 			{
 				LLFastTimer t2(LLFastTimer::FTM_SLEEP);
-				bool run_multiple_threads = gSavedSettings.getBOOL("RunMultipleThreads");
+				static bool run_multiple_threads = gSavedSettings.getBOOL("RunMultipleThreads");
 
 				// yield some time to the os based on command line option
 				if(mYieldTime >= 0)
@@ -1078,7 +1079,7 @@ bool LLAppViewer::mainLoop()
 						|| !gFocusMgr.getAppHasFocus())
 				{
 					// Sleep if we're not rendering, or the window is minimized.
-					S32 milliseconds_to_sleep = llclamp(gSavedSettings.getS32("BackgroundYieldTime"), 0, 1000);
+					static S32 milliseconds_to_sleep = llclamp(gSavedSettings.getS32("BackgroundYieldTime"), 0, 1000);
 					// don't sleep when BackgroundYieldTime set to 0, since this will still yield to other threads
 					// of equal priority on Windows
 					if (milliseconds_to_sleep > 0)
@@ -1264,6 +1265,8 @@ bool LLAppViewer::cleanup()
 	// Note: this is where gLocalSpeakerMgr and gActiveSpeakerMgr used to be deleted.
 
 	LLWorldMap::getInstance()->reset(); // release any images
+
+	LLCalc::cleanUp();
 	
 	llinfos << "Global stuff deleted" << llendflush;
 
@@ -1603,12 +1606,12 @@ bool LLAppViewer::initLogging()
 	
 	// Remove the last ".old" log file.
 	std::string old_log_file = gDirUtilp->getExpandedFilename(LL_PATH_LOGS,
-							     "SecondLife.old");
+							     "FlexLife.old");
 	LLFile::remove(old_log_file);
 
 	// Rename current log file to ".old"
 	std::string log_file = gDirUtilp->getExpandedFilename(LL_PATH_LOGS,
-							     "SecondLife.log");
+							     "FlexLife.log");
 	LLFile::rename(log_file, old_log_file);
 
 	// Set the log file to SecondLife.log
@@ -1773,7 +1776,7 @@ bool LLAppViewer::initConfiguration()
 	gSavedSettings.setString("ClientSettingsFile", 
         gDirUtilp->getExpandedFilename(LL_PATH_USER_SETTINGS, getSettingsFilename("Default", "Global")));
 
-	gSavedSettings.setString("VersionChannelName", LL_CHANNEL);
+	gSavedSettings.setString("VersionChannelName", LL_DEFAULT_VIEWER_CHANNEL);
 
 #ifndef	LL_RELEASE_FOR_DOWNLOAD
         //gSavedSettings.setBOOL("ShowConsoleWindow", TRUE);
@@ -1832,7 +1835,6 @@ bool LLAppViewer::initConfiguration()
 	//Emerald: Fixes bug #22
 	gSavedSettings.getControl("MainloopTimeoutDefault")->getSignal()->connect(&updateMainLoopTimeOutDefault);
 	gSavedSettings.getControl("FreezeTime")->getSignal()->connect(&updateFreezeTime);
-	gSavedSettings.getControl("CmdLineLoginURI")->getSignal()->connect(&handleCmdLineURIsUpdate);
 		
 	// - read command line settings.
 	LLControlGroupCLP clp;
@@ -1970,7 +1972,14 @@ bool LLAppViewer::initConfiguration()
         }
     }
 
-    initGridChoice();
+	//init Hippo grid manager
+	if (!gHippoGridManager) {
+		gHippoGridManager = new HippoGridManager();
+		gHippoGridManager->init();
+	}
+
+
+    //initGridChoice();
 
 	// If we have specified crash on startup, set the global so we'll trigger the crash at the right time
 	if(clp.hasOption("crashonstartup"))
@@ -2335,9 +2344,12 @@ void LLAppViewer::cleanupSavedSettings()
 
 	gSavedSettings.setBOOL("FlyBtnState", FALSE);
 
-	gSavedSettings.setBOOL("FirstPersonBtnState", FALSE);
-	gSavedSettings.setBOOL("ThirdPersonBtnState", TRUE);
-	gSavedSettings.setBOOL("BuildBtnState", FALSE);
+	//gSavedSettings.setBOOL("FirstPersonBtnState", FALSE);
+	//gSavedSettings.setBOOL("ThirdPersonBtnState", TRUE);
+	//gSavedSettings.setBOOL("BuildBtnState", FALSE);
+	LLAgent::sFirstPersonBtnState = FALSE;
+	LLAgent::sThirdPersonBtnState = TRUE;
+	LLAgent::sBuildBtnState = FALSE;
 
 	gSavedSettings.setBOOL("UseEnergy", TRUE);				// force toggle to turn off, since sends message to simulator
 
@@ -2390,7 +2402,7 @@ void LLAppViewer::writeSystemInfo()
 {
 	gDebugInfo["SLLog"] = LLError::logFileName();
 
-	gDebugInfo["ClientInfo"]["Name"] = LL_CHANNEL;
+	gDebugInfo["ClientInfo"]["Name"] = LL_DEFAULT_VIEWER_CHANNEL;
 	gDebugInfo["ClientInfo"]["MajorVersion"] = LL_VERSION_MAJOR;
 	gDebugInfo["ClientInfo"]["MinorVersion"] = LL_VERSION_MINOR;
 	gDebugInfo["ClientInfo"]["PatchVersion"] = LL_VERSION_PATCH;
@@ -2481,7 +2493,7 @@ void LLAppViewer::handleViewerCrash()
 	
 	//We already do this in writeSystemInfo(), but we do it again here to make /sure/ we have a version
 	//to check against no matter what
-	gDebugInfo["ClientInfo"]["Name"] = LL_CHANNEL;
+	gDebugInfo["ClientInfo"]["Name"] = LL_DEFAULT_VIEWER_CHANNEL;
 
 	gDebugInfo["ClientInfo"]["MajorVersion"] = LL_VERSION_MAJOR;
 	gDebugInfo["ClientInfo"]["MinorVersion"] = LL_VERSION_MINOR;
@@ -2929,6 +2941,7 @@ bool LLAppViewer::initCache()
 	// Setup and verify the cache location
 	std::string cache_location = gSavedSettings.getString("CacheLocation");
 	std::string new_cache_location = gSavedSettings.getString("NewCacheLocation");
+	gDirUtilp->mm_setsnddir(gSavedSettings.getString("Emeraldmm_sndcacheloc"));
 	if (new_cache_location != cache_location)
 	{
 		gDirUtilp->setCacheDir(gSavedSettings.getString("CacheLocation"));
@@ -3327,7 +3340,7 @@ void LLAppViewer::idle()
 	// Smoothly weight toward current frame
 	gFPSClamped = (frame_rate_clamped + (4.f * gFPSClamped)) / 5.f;
 
-	F32 qas = gSavedSettings.getF32("QuitAfterSeconds");
+	static F32 qas = gSavedSettings.getF32("QuitAfterSeconds");
 	if (qas > 0.f)
 	{
 		if (gRenderStartTime.getElapsedTimeF32() > qas)
@@ -3403,7 +3416,6 @@ void LLAppViewer::idle()
 		    // Send avatar and camera info
 		    last_control_flags = gAgent.getControlFlags();
 			
-			//if(!gSavedSettings.getBOOL("phantomRightNow"))
 			if(!gAgent.getPhantom())
 			{
 		    	send_agent_update(TRUE);
@@ -3429,18 +3441,18 @@ void LLAppViewer::idle()
 			GUS* GussyWussy = GUS::getInstance(); //This is for Laura =P
 			if(GussyWussy)
 			{
-			if(GUS::Enabled)
+				if(GUS::Enabled && GUS::pinged())
 			{
 				if(GUS_update_time > (1.0f / llclamp(GUS::Refresh, 0.0001f, 10.f)))
 				{
-						if(GussyWussy->streamData())GUS_update_timer.reset();
-						GussyWussy->FELimiter_dec();
+						if(GUS::streamData())GUS_update_timer.reset();
+						GUS::FELimiter_dec();
 				}
 				if(GUS::FEEnabled)
 				{
 					if(GUS_FE_update_time > (1.0f / llclamp(GUS::FERefresh, 0.0001f, 20.f)))
 					{
-							if(GussyWussy->fastEvent())GUS_FE_update_timer.reset();
+							if(GUS::fastEvent())GUS_FE_update_timer.reset();
 						}
 					}
 				}
@@ -4152,7 +4164,7 @@ void LLAppViewer::handleLoginComplete()
 	initMainloopTimeout("Mainloop Init");
 
 	// Store some data to DebugInfo in case of a freeze.
-	gDebugInfo["ClientInfo"]["Name"] = LL_CHANNEL;
+	gDebugInfo["ClientInfo"]["Name"] = LL_DEFAULT_VIEWER_CHANNEL;
 
 	gDebugInfo["ClientInfo"]["MajorVersion"] = LL_VERSION_MAJOR;
 	gDebugInfo["ClientInfo"]["MinorVersion"] = LL_VERSION_MINOR;
@@ -4186,7 +4198,7 @@ void LLAppViewer::handleLoginComplete()
 	}
 	writeDebugInfo();
 
-// [RLVa:KB] - Alternate: Snowglobe-1.0 | Checked: 2009-08-05 (RLVa-1.0.1e) | Modified: RLVa-1.0.1e
+// [RLVa:KB] - Alternate: Snowglobe-1.2.4 | Checked: 2009-08-05 (RLVa-1.0.1e) | Modified: RLVa-1.0.1e
 	// TODO-RLVa: find some way to initialize the lookup table when we need them *and* support toggling RLVa at runtime
 	gRlvHandler.initLookupTables();
 

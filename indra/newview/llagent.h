@@ -69,10 +69,6 @@
 #include "llfollowcam.h"
 // end Ventrella
 
-// [RLVa:KB] - Checked: 2009-07-07 (RLVa-1.0.0d)
-#include "rlvhandler.h"
-// [/RLVa:KB]
-
 const U8 AGENT_STATE_TYPING =	0x04;			//  Typing indication
 const U8 AGENT_STATE_EDITING =  0x10;			//  Set when agent has objects selected
 
@@ -782,7 +778,17 @@ public:
 	LLFrameTimer mDoubleTapRunTimer;
 	EDoubleTapRunMode mDoubleTapRunMode;
 
+	static BOOL sFirstPersonBtnState;
+	static BOOL sMouselookBtnState;
+	static BOOL sThirdPersonBtnState;
+	static BOOL sBuildBtnState;
+
 private:
+	static BOOL ignorePrejump;
+	static BOOL EmeraldForceFly;
+	static void updateIgnorePrejump(const LLSD &data);
+	static void	updateEmeraldForceFly(const LLSD &data);
+
 	static BOOL emeraldPhantom;
 	bool mbAlwaysRun; // should the avatar run by default rather than walk
 	bool mbRunning;	// is the avatar trying to run right now

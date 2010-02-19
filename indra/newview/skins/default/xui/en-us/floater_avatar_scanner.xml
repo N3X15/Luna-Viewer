@@ -88,6 +88,17 @@
 			       font="SansSerifSmall"
 			       follows="bottom|left"
 			       />
+			<button
+			       name="script_count_btn"
+			       label="Scripts"
+			       tool_tip="Script Count"
+			       left_delta="90"
+			       bottom_delta="0"
+			       width="80"
+			       height="20"
+			       font="SansSerifSmall"
+			       follows="bottom|left"
+			       />
 			<!--middle row -->
 			<button
 			       name="track_btn"
@@ -221,7 +232,7 @@
 			tool_tip="Apply estate actions to all estates" visible="false" />
 
       <check_box height="16" label="Confirm Actions" left_delta="0"
-      bottom_delta="-22" name="modeb" width="200" follows="bottom|left" radio_style="false" control_name="EmeraldModerateConfirm"
+      bottom_delta="-22" name="modec" width="200" follows="bottom|left" radio_style="false" control_name="EmeraldModerateConfirm"
 			tool_tip="Confirm actions" visible="false"/>
       
 		</panel>

@@ -51,6 +51,7 @@
 #include "llviewborder.h"
 
 #include "llpreeditor.h"
+//#include "llmenugl.h"
 
 class LLFontGL;
 class LLLineEditorRollback;
@@ -78,6 +79,7 @@ public:
 				 LLViewBorder::EStyle border_style = LLViewBorder::STYLE_LINE,
 				 S32 border_thickness = 1);
 
+	
 	virtual ~LLLineEditor();
 
 	virtual LLXMLNodePtr getXML(bool save_children = true) const;
@@ -95,6 +97,18 @@ public:
 	/*virtual*/ BOOL	handleUnicodeCharHere(llwchar uni_char);
 	/*virtual*/ void	onMouseCaptureLost();
 
+	struct SpellMenuBind
+	{
+		LLLineEditor* origin;
+		void * menuItem;
+		std::string word;
+		S32 wordPositionStart;
+		S32 wordPositionEnd;
+	};
+
+
+	virtual void spellReplace(SpellMenuBind* spellData);
+	virtual void insert(std::string what,S32 wher);
 	// LLEditMenuHandler overrides
 	virtual void	cut();
 	virtual BOOL	canCut() const;
@@ -116,9 +130,15 @@ public:
 
 	static void context_cut(void* data);
 	static void context_copy(void* data);
+	static void spell_correct(void* data);
+	static void spell_show(void* data);
+	static void translateText(void * data);
+	static void spell_add(void* data);
 	static void context_paste(void* data);
 	static void context_delete(void* data);
 	static void context_selectall(void* data);
+
+	std::vector<S32> getMisspelledWordsPositions();
 
 	// view overrides
 	virtual void	draw();
@@ -136,6 +156,8 @@ public:
 	virtual void	onCommit();
 	virtual BOOL	isDirty() const { return mText.getString() != mPrevText; }	// Returns TRUE if user changed value at all
 	virtual void	resetDirty() { mPrevText = mText.getString(); }		// Clear dirty state
+	virtual BOOL	isSpellDirty() const { return mText.getString() != mPrevSpelledText; }	// Returns TRUE if user changed value at all
+	virtual void	resetSpellDirty() { mPrevSpelledText = mText.getString(); }		// Clear dirty state
 
 	// assumes UTF8 text
 	virtual void	setValue(const LLSD& value ) { setText(value.asString()); }
@@ -171,6 +193,7 @@ public:
 	void setWriteableBgColor( const LLColor4& c )	{ mWriteableBgColor = c; }
 	void setReadOnlyBgColor( const LLColor4& c )	{ mReadOnlyBgColor = c; }
 	void setFocusBgColor(const LLColor4& c)			{ mFocusBgColor = c; }
+	void setOverRideAndShowMisspellings(BOOL b)		{ mOverRideAndShowMisspellings =b;}
 
 	const LLColor4& getFgColor() const			{ return mFgColor; }
 	const LLColor4& getReadOnlyFgColor() const	{ return mReadOnlyFgColor; }
@@ -230,6 +253,7 @@ private:
 	void			removeChar();
 	void			addChar(const llwchar c);
 	void			setCursorAtLocalPos(S32 local_mouse_x);
+	S32				calculateCursorFromMouse(S32 local_mouse_x);
 	S32				findPixelNearestPos(S32 cursor_offset = 0) const;
 	void			reportBadKeystroke();
 	BOOL			handleSpecialKey(KEY key, MASK mask);
@@ -258,8 +282,11 @@ protected:
 
 	LLUIString		mText;					// The string being edited.
 	std::string		mPrevText;				// Saved string for 'ESC' revert
+	std::string		mPrevSpelledText;		// saved string so we know whether to respell or not
+	std::vector<S32> misspellLocations;     // where all the mispelled words are
 	LLUIString		mLabel;					// text label that is visible when no user text provided
 
+	BOOL		mOverRideAndShowMisspellings;
 	// line history support:
 	BOOL		mHaveHistory;				// flag for enabled line history
 	typedef	std::vector<std::string>	line_history_t;
@@ -293,6 +320,7 @@ protected:
 	S32			(*mPrevalidateFunc)(const LLWString &str);
 
 	LLFrameTimer mKeystrokeTimer;
+	LLFrameTimer mSpellTimer;
 
 	LLColor4	mCursorColor;
 
@@ -332,6 +360,9 @@ private:
 
 	BOOL        mReplaceNewlinesWithSpaces; // if false, will replace pasted newlines with paragraph symbol.
 
+	//to keep track of what we have to remove before showing menu
+	std::vector<SpellMenuBind* > suggestionMenuItems;
+
 	// private helper class
 	class LLLineEditorRollback
 	{
@@ -367,6 +398,8 @@ private:
 		BOOL	mIsSelecting;
 		S32		mSelectionStart;
 		S32		mSelectionEnd;
+
+		
 	}; // end class LLLineEditorRollback
 
 }; // end class LLLineEditor

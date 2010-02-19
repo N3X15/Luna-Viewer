@@ -464,6 +464,10 @@ void OTR_Wrapper::init()
                 gDirUtilp->getExpandedFilename(
                     LL_PATH_PER_SL_ACCOUNT, OTR_PUBLIC_KEYS_FILE);
             otrl_privkey_read_fingerprints(gOTR->userstate, pubpath.c_str(), NULL, NULL);
+
+            char *rand_bytes[4]; // move the freeze on first OTR message to startup time.  It still 
+            gcry_randomize(rand_bytes, 4, GCRY_STRONG_RANDOM); // freezes, but more predictably this way.
+
 #if 0 // this will gen a key, if the user doesn't have one, at init() time
             if (gOTR && gOTR->userstate)
             {

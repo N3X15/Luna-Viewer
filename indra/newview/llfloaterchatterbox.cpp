@@ -41,7 +41,7 @@
 #include "llfloaterfriends.h"
 #include "llfloatergroups.h"
 
-#include "lggFloaterIrc.h"
+#include "lggfloaterirc.h"
 #include "llviewercontrol.h"
 #include "llimview.h"
 #include "llimpanel.h"

@@ -43,6 +43,10 @@
 #include "llresizebar.h"
 #include "lluictrlfactory.h"
 
+// [RLVa:KB]
+#include "rlvhandler.h"
+// [/RLVa:KB]
+
 LLFloaterMap::LLFloaterMap(const LLSD& key)
 	:
 	LLFloater(std::string("minimap")),

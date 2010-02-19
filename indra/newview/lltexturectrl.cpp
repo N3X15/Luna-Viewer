@@ -909,7 +909,7 @@ LLTextureCtrl::LLTextureCtrl(
 	mDropCallback(NULL),
 	mOnCancelCallback(NULL),
 	mOnSelectCallback(NULL),
-	mBorderColor( gColors.getColor("DefaultHighlightLight") ),
+	//mBorderColor( gColors.getColor("DefaultHighlightLight") ),
 	mImageAssetID( image_id ),
 	mDefaultImageAssetID( default_image_id ),
 	mDefaultImageName( default_image_name ),
@@ -923,6 +923,9 @@ LLTextureCtrl::LLTextureCtrl(
 	mDirty( FALSE ),
 	mShowLoadingPlaceholder( TRUE )
 {
+	static LLColor4 defaultBorderColor = gColors.getColor("DefaultHighlightLight");
+	mBorderColor = defaultBorderColor;
+
 	mCaption = new LLTextBox( label, 
 		LLRect( 0, BTN_HEIGHT_SMALL, getRect().getWidth(), 0 ),
 		label,

@@ -164,11 +164,11 @@ void LLPreview::setSourceID(const LLUUID& source_id)
 	sPreviewsBySource.insert(preview_multimap_t::value_type(mSourceID, getHandle()));
 }
 
-const LLViewerInventoryItem *LLPreview::getItem() const
+LLViewerInventoryItem *LLPreview::getItem() const
 {
 	if(mItem)
 		return mItem;
-	const LLViewerInventoryItem *item = NULL;
+	LLViewerInventoryItem *item = NULL;
 	if(mObjectUUID.isNull())
 	{
 		// it's an inventory item, so get the item.

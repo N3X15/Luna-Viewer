@@ -86,6 +86,10 @@
 
 #include "llsdserialize.h"
 
+// [RLVa:KB]
+#include "rlvhandler.h"
+// [/RLVa:KB]
+
 static LLRegisterWidget<LLInventoryPanel> r("inventory_panel");
 
 LLDynamicArray<LLInventoryView*> LLInventoryView::sActiveViews;
@@ -493,7 +497,7 @@ void LLInventoryView::init(LLInventoryModel* inventory)
 	addBoolControl("Inventory.SystemFoldersToTop", sort_system_folders_to_top );
 
 	//Search Controls - RKeast
-	U32 search_type = gSavedSettings.getU32("InventorySearchType");
+	U32 search_type = gSavedPerAccountSettings.getU32("EmeraldInventorySearchType");
 	BOOL search_by_name = (search_type == 0);
 
 	addBoolControl("Inventory.SearchByName", search_by_name);
@@ -503,7 +507,7 @@ void LLInventoryView::init(LLInventoryModel* inventory)
 	addBoolControl("Inventory.SearchByAll", !search_by_name);
 	
 	//Bool for toggling the partial search results - RKeast
-	BOOL partial_search = gSavedSettings.getBOOL("ShowPartialSearchResults");
+	BOOL partial_search = gSavedPerAccountSettings.getBOOL("EmeraldInventoryPartialSearch");
 	
 	addBoolControl("Inventory.PartialSearchToggle", partial_search);
 
@@ -519,6 +523,11 @@ void LLInventoryView::init(LLInventoryModel* inventory)
 	if (mActivePanel)
 	{
 		// "All Items" is the previous only view, so it gets the InventorySortOrder
+
+		//Fix for gSavedSettings use - rkeast
+		mActivePanel->getFilter()->setSearchType(search_type);
+		mActivePanel->getFilter()->setPartialSearch(partial_search);
+
 		mActivePanel->setSortOrder(gSavedSettings.getU32("InventorySortOrder"));
 		mActivePanel->getFilter()->markDefault();
 		mActivePanel->getRootFolder()->applyFunctorRecursively(*mSavedFolderState);
@@ -568,6 +577,9 @@ void LLInventoryView::init(LLInventoryModel* inventory)
 		}
 
     }
+
+	//Initialize item count - rkeast
+	mItemCount = gSavedPerAccountSettings.getS32("EmeraldInventoryPreviousCount");
 
 
 	mSearchEditor = getChild<LLSearchEditor>("inventory search editor");
@@ -822,13 +834,29 @@ void LLInventoryView::changed(U32 mask)
 {
 	std::ostringstream title;
 	title << "Inventory";
- 	if (LLInventoryModel::backgroundFetchActive())
+ 	if(LLInventoryModel::backgroundFetchActive())
 	{
 		LLLocale locale(LLLocale::USER_LOCALE);
 		std::string item_count_string;
 		LLResMgr::getInstance()->getIntegerString(item_count_string, gInventory.getItemCount());
-		title << " (Fetched " << item_count_string << " items...)";
+
+		//Displays a progress indication for loading the inventory, but not if it hasn't been loaded before on this PC, or we load more than expected - rkeast
+		if(mItemCount == -1)
+		{
+			title << " (Fetched " << item_count_string << " items...)";
+		}
+		else
+		{
+			S32 remaining = mItemCount - gInventory.getItemCount();
+			std::string total_items;
+			std::string items_remaining;
+			LLResMgr::getInstance()->getIntegerString(total_items, mItemCount);
+			LLResMgr::getInstance()->getIntegerString(items_remaining, remaining);
+			if(remaining < 0) title << " (Fetched " << item_count_string << " items...)";
+			else title << " (Fetched " << item_count_string << " items of ~" << total_items << " - ~" << items_remaining << " remaining...)";
+		}
 	}
+	else gSavedPerAccountSettings.setS32("EmeraldInventoryPreviousCount", gInventory.getItemCount());
 	title << mFilterText;
 	setTitle(title.str());
 
@@ -1635,6 +1663,30 @@ void LLInventoryPanel::draw()
 		setSelection(mSelectThisID, false);
 	}
 	LLPanel::draw();
+}
+
+//fix to get rid of gSavedSettings use - rkeast
+void LLInventoryPanel::setPartialSearch(bool toggle)
+{
+	mFolders->getFilter()->setPartialSearch(toggle);
+}
+
+//fix to get rid of gSavedSettings use - rkeast
+bool LLInventoryPanel::getPartialSearch()
+{
+	return mFolders->getFilter()->getPartialSearch();
+}
+
+//fix to get rid of gSavedSettings use - rkeast
+void LLInventoryPanel::setSearchType(U32 type)
+{
+	mFolders->getFilter()->setSearchType(type);
+}
+
+//fix to get rid of gSavedSettings use - rkeast
+U32 LLInventoryPanel::getSearchType()
+{
+	return mFolders->getFilter()->getSearchType();
 }
 
 void LLInventoryPanel::setFilterTypes(U32 filter_types)

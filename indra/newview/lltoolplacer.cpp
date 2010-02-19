@@ -69,6 +69,9 @@
 #include "llparcel.h" // moymod
 #include "llviewerparcelmgr.h" // moymod
 
+// [RLVa:KB]
+#include "rlvhandler.h"
+// [/RLVa:KB]
 
 const LLVector3 DEFAULT_OBJECT_SCALE(0.5f, 0.5f, 0.5f);
 
@@ -541,8 +544,8 @@ BOOL LLToolPlacer::placeObject(S32 x, S32 y, MASK mask)
 {
 	BOOL added = TRUE;
 	
-// [RLVa:KB] - Checked: 2009-07-05 (RLVa-1.0.0b)
-	if (gRlvHandler.hasBehaviour(RLV_BHVR_REZ))
+// [RLVa:KB] - Checked: 2010-01-02 (RLVa-1.1.0l) | Modified: RLVa-1.1.0l
+	if ( (rlv_handler_t::isEnabled()) && ((gRlvHandler.hasBehaviour(RLV_BHVR_REZ)) || (gRlvHandler.hasBehaviour(RLV_BHVR_INTERACT))) )
 	{
 		return TRUE; // Callers seem to expect a "did you handle it?" so we return TRUE rather than FALSE
 	}

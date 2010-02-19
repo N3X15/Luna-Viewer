@@ -735,7 +735,7 @@ void LLViewerImage::setBoostLevel(S32 level)
 		processTextureStats();
 	}
 
-	if(mBoostLevel != LLViewerImage::BOOST_NONE)
+	if(mBoostLevel == LLViewerImage::BOOST_UI)
 	{
 		setNoDelete() ;		
 	}

@@ -72,6 +72,7 @@ set(release_files
     xpcom.dll
     xul.dll
     openjpeg.dll
+	libhunspell.dll
     lua5.1.dll
     )
 
@@ -225,3 +226,4 @@ add_custom_target(copy_win_libs ALL DEPENDS ${all_targets})
 if(EXISTS ${internal_llkdu_path})
     add_dependencies(copy_win_libs llkdu)
 endif(EXISTS ${internal_llkdu_path})
+        set(relwithdebinfo_llkdu_dst "${CMAKE_CURRENT_BINARY_DIR}/RelWithDebInfo/llkdu.dll"

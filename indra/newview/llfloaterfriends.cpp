@@ -67,9 +67,10 @@
 #include "llviewermenufile.h"
 #include "llviewermenu.h"
 #include "llviewernetwork.h"
+#include "hippogridmanager.h"
 
 //Maximum number of people you can select to do an operation on at once.
-#define MAX_FRIEND_SELECT 2000
+#define MAX_FRIEND_SELECT 20
 #define DEFAULT_PERIOD 5.0
 #define RIGHTS_CHANGE_TIMEOUT 1.0
 #define OBSERVER_TIMEOUT 0.5
@@ -277,11 +278,29 @@ BOOL LLPanelFriends::addFriend(const LLUUID& agent_id)
 	edit_my_object_column["type"] = "checkbox";
 	edit_my_object_column["value"] = relationInfo->isRightGrantedTo(LLRelationship::GRANT_MODIFY_OBJECTS);
 
-	LLSD& edit_their_object_column = element["columns"][LIST_EDIT_THEIRS];
-	edit_their_object_column["column"] = "icon_edit_theirs";
-	edit_their_object_column["type"] = "checkbox";
-	edit_their_object_column["enabled"] = "";
-	edit_their_object_column["value"] = relationInfo->isRightGrantedFrom(LLRelationship::GRANT_MODIFY_OBJECTS);
+	{
+		LLSD& lol_column = element["columns"][LIST_VISIBLE_ONLINE_THEIRS];
+		lol_column["column"] = "icon_visible_online_theirs";
+		lol_column["type"] = "checkbox";
+		lol_column["enabled"] = "";
+		lol_column["value"] = relationInfo->isRightGrantedFrom(LLRelationship::GRANT_ONLINE_STATUS);
+	}
+
+	{
+		LLSD& lol_column = element["columns"][LIST_VISIBLE_MAP_THEIRS];
+		lol_column["column"] = "icon_visible_map_theirs";
+		lol_column["type"] = "checkbox";
+		lol_column["enabled"] = "";
+		lol_column["value"] = relationInfo->isRightGrantedFrom(LLRelationship::GRANT_MAP_LOCATION);
+	}
+
+	{
+		LLSD& lol_column = element["columns"][LIST_EDIT_THEIRS];
+		lol_column["column"] = "icon_edit_theirs";
+		lol_column["type"] = "checkbox";
+		lol_column["enabled"] = "";
+		lol_column["value"] = relationInfo->isRightGrantedFrom(LLRelationship::GRANT_MODIFY_OBJECTS);
+	}
 
 	LLSD& update_gen_column = element["columns"][LIST_FRIEND_UPDATE_GEN];
 	update_gen_column["column"] = "friend_last_update_generation";
@@ -325,6 +344,14 @@ BOOL LLPanelFriends::updateFriendItem(const LLUUID& agent_id, const LLRelationsh
 	itemp->getColumn(LIST_VISIBLE_ONLINE)->setValue(info->isRightGrantedTo(LLRelationship::GRANT_ONLINE_STATUS));
 	itemp->getColumn(LIST_VISIBLE_MAP)->setValue(info->isRightGrantedTo(LLRelationship::GRANT_MAP_LOCATION));
 	itemp->getColumn(LIST_EDIT_MINE)->setValue(info->isRightGrantedTo(LLRelationship::GRANT_MODIFY_OBJECTS));
+
+	itemp->getColumn(LIST_VISIBLE_ONLINE_THEIRS)->setValue(info->isRightGrantedFrom(LLRelationship::GRANT_ONLINE_STATUS));
+	//unreliable? broken?
+
+	itemp->getColumn(LIST_VISIBLE_MAP_THEIRS)->setValue(info->isRightGrantedFrom(LLRelationship::GRANT_MAP_LOCATION));
+	itemp->getColumn(LIST_EDIT_THEIRS)->setValue(info->isRightGrantedFrom(LLRelationship::GRANT_MODIFY_OBJECTS));
+
+
 	S32 change_generation = have_name ? info->getChangeSerialNum() : -1;
 	itemp->getColumn(LIST_FRIEND_UPDATE_GEN)->setValue(change_generation);
 
@@ -784,8 +811,7 @@ void LLPanelFriends::onClickExport(void* user_data)
 		//count += 1;
 	}
 
-	LLViewerLogin* vl = LLViewerLogin::getInstance();
-	std::string grid_uri = vl->getCurrentGridURI();
+	std::string grid_uri = gHippoGridManager->getConnectedGrid()->getLoginUri();
 	//LLStringUtil::toLower(uris[0]);
 	llsd["GRID"] = grid_uri;
 
@@ -817,9 +843,7 @@ void LLPanelFriends::onClickImport(void* user_data)
 	LLSDSerialize::fromXMLDocument(data, importer);
 	if(data.has("GRID"))
 	{
-		LLViewerLogin* vl = LLViewerLogin::getInstance();
-		std::string grid_uri = vl->getCurrentGridURI();
-		std::string grid = grid_uri;
+		std::string grid = gHippoGridManager->getConnectedGrid()->getLoginUri();
 		if(grid != data["GRID"])return;
 		data.erase("GRID");
 	}

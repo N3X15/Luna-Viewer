@@ -1418,6 +1418,7 @@ void LLViewerRegion::setSeedCapability(const std::string& url)
 	capabilityNames.append("HomeLocation");
 	capabilityNames.append("MapLayer");
 	capabilityNames.append("MapLayerGod");
+	capabilityNames.append("NewAgentInventory");
 	capabilityNames.append("NewFileAgentInventory");
 	capabilityNames.append("ParcelPropertiesUpdate");
 	capabilityNames.append("ParcelVoiceInfoRequest");

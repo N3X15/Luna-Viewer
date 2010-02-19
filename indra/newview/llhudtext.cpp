@@ -57,6 +57,9 @@
 #include "pipeline.h"
 #include <boost/tokenizer.hpp>
 
+// [RLVa:KB]
+#include "rlvhandler.h"
+// [/RLVa:KB]
 
 const F32 SPRING_STRENGTH = 0.7f;
 const F32 RESTORATION_SPRING_TIME_CONSTANT = 0.1f;
@@ -602,6 +605,20 @@ void LLHUDText::setString(const LLWString &wtext)
 void LLHUDText::clearString()
 {
 	mTextSegments.clear();
+}
+
+std::string LLHUDText::getString()
+{
+	std::vector<LLHUDTextSegment>::iterator itt = mTextSegments.begin();
+	std::vector<LLHUDTextSegment>::iterator end = mTextSegments.end();
+	std::string dump;
+	while(true)
+	{
+		dump += wstring_to_utf8str(itt->getText());
+		if(++itt != end)dump += "\n";
+		else break;
+	}
+	return dump;
 }
 
 

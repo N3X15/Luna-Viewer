@@ -96,6 +96,12 @@ public:
 								   EAcceptance* accept,
 								   std::string& tooltip_msg);
 
+	//fix to get rid of gSavedSettings use - rkeast
+	void setPartialSearch(bool toggle);
+	bool getPartialSearch();
+	void setSearchType(U32 type);
+	U32 getSearchType();
+
 	// Call this method to set the selection.
 	void openAllFolders();
 	void closeAllFolders();
@@ -305,6 +311,8 @@ protected:
 	LLSaveFolderState*			mSavedFolderState;
 
 	std::string					mFilterText;
+
+	S32							mItemCount;
 
 
 	// This container is used to hold all active inventory views. This

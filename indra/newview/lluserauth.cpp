@@ -215,7 +215,7 @@ void LLUserAuth::authenticate(
 	XMLRPC_VectorAppendString(params, "passwd", dpasswd.c_str(), 0);
 	XMLRPC_VectorAppendString(params, "start", start.c_str(), 0);
 	XMLRPC_VectorAppendString(params, "version", gCurrentVersion.c_str(), 0); // Includes channel name
-	XMLRPC_VectorAppendString(params, "channel", LL_CHANNEL, 0);
+	XMLRPC_VectorAppendString(params, "channel", LL_DEFAULT_VIEWER_CHANNEL, 0);
 	XMLRPC_VectorAppendString(params, "platform", PLATFORM_STRING, 0);
 	XMLRPC_VectorAppendString(params, "mac", hashed_mac.c_str(), 0);
 	// A bit of security through obscurity: id0 is volume_serial

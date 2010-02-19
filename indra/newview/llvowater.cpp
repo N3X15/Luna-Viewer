@@ -159,7 +159,7 @@ BOOL LLVOWater::updateGeometry(LLDrawable *drawable)
 	LLStrider<U16> indicesp;
 	U16 index_offset;
 
-	S32 size = 16;
+	S32 size = 1; //16 zwag
 
 	S32 num_quads = size*size;	
 	face->setSize(4*num_quads, 6*num_quads);

@@ -66,13 +66,17 @@
 #include "llselectmgr.h"
 #include "pipeline.h"
 
+// [RLVa:KB]
+#include "rlvhandler.h"
+// [/RLVa:KB]
+
 const S32 MIN_QUIET_FRAMES_COALESCE = 30;
 const F32 FORCE_SIMPLE_RENDER_AREA = 512.f;
 const F32 FORCE_CULL_AREA = 8.f;
 const S32 MAX_SCULPT_REZ = 128;
 
 
-const F32 SCULPT_MAX_AREA = 30.000f; // TEST!
+const F32 SCULPT_MAX_AREA = 300.000f; // TEST!
 
 BOOL gAnimateTextures = TRUE;
 extern BOOL gHideSelectedObjects;
@@ -406,6 +410,11 @@ BOOL LLVOVolume::idleUpdate(LLAgent &agent, LLWorld &world, const F64 &time)
 		mVolumeImpl->doIdleUpdate(agent, world, time);
 	}
 
+	if(mSculptTexture.notNull())
+	{
+		mSculptTexture->forceActive();
+	}
+
 	return TRUE;
 }
 
@@ -511,10 +520,11 @@ void LLVOVolume::updateTextures()
 		{
 			S32 lod = llmin(mLOD, 3);
 			F32 lodf = ((F32)(lod + 1.0f)/4.f); 
-			F32 tex_size = lodf * MAX_SCULPT_REZ;
-			mSculptTexture->addTextureStats(2.f * tex_size * tex_size);
+			F32 tex_size = lodf * (1024.0f * 1024.0f);
+			mSculptTexture->addTextureStats(2.f * tex_size);
 			mSculptTexture->setBoostLevel(llmax((S32)mSculptTexture->getBoostLevel(),
 												(S32)LLViewerImage::BOOST_SCULPTED));
+			mSculptTexture->forceActive();
 		}
 
 		S32 texture_discard = mSculptTexture->getDiscardLevel(); //try to match the texture
@@ -2152,7 +2162,7 @@ void LLVolumeGeometryManager::registerFace(LLSpatialGroup* group, LLFace* facep,
 	{
 		return;
 	}
-// [/RLVa:KB]
+// [/RVLa:KB]
 
 	//add face to drawmap
 	LLSpatialGroup::drawmap_elem_t& draw_vec = group->mDrawMap[type];	
@@ -2564,7 +2574,7 @@ void LLVolumeGeometryManager::rebuildMesh(LLSpatialGroup* group)
 void LLVolumeGeometryManager::genDrawInfo(LLSpatialGroup* group, U32 mask, std::vector<LLFace*>& faces, BOOL distance_sort)
 {
 	//calculate maximum number of vertices to store in a single buffer
-	U32 max_vertices = (LLPipeline::sRenderMaxVBOSize*1024)/LLVertexBuffer::calcStride(group->mSpatialPartition->mVertexDataMask);
+	U32 max_vertices = (gSavedSettings.getS32("RenderMaxVBOSize")*1024)/LLVertexBuffer::calcStride(group->mSpatialPartition->mVertexDataMask);
 	max_vertices = llmin(max_vertices, (U32) 65535);
 
 	if (!distance_sort)

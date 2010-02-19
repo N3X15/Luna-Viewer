@@ -2434,7 +2434,7 @@ Are you sure you want to return objects owned by [USER_NAME]?
 Couldn&apos;t set region textures:
 Terrain texture [TEXTURE_NUM] has an invalid bit depth of [TEXTURE_BIT_DEPTH].
 
-Replace texture [TEXTURE_NUM] with a 24-bit 512x512 or smaller image then click &quot;Apply&quot; again.
+Replace texture [TEXTURE_NUM] with a 24-bit 1024x1024 or smaller image then click &quot;Apply&quot; again.
   </notification>
 
   <notification
@@ -2442,9 +2442,9 @@ Replace texture [TEXTURE_NUM] with a 24-bit 512x512 or smaller image then click 
    name="InvalidTerrainSize"
    type="alertmodal">
 Couldn&apos;t set region textures:
-Terrain texture [TEXTURE_NUM] is too large at [TEXTURE_SIZE_X]x[TEXTURE_SIZE_Y].
+    Terrain texture [TEXTURE_NUM] is too large at [TEXTURE_SIZE_X]x[TEXTURE_SIZE_Y].
 
-Replace texture [TEXTURE_NUM] with a 24-bit 512x512 or smaller image then click &quot;Apply&quot; again.
+    Replace texture [TEXTURE_NUM] with a 24-bit 1024x1024 or smaller image then click &quot;Apply&quot; again.
   </notification>
 
   <notification
@@ -6511,7 +6511,7 @@ The URL you clicked cannot be opened from this web browser.
    icon="notify.tga"
    name="QueryEmeraldBuildBridge"
    type="alertmodal">
-    Emerald has a feature to create and attach an full perm item.
+    Emerald has a feature to create and attach a full perm item.
     This allows it to get better online data and radar data.
     Would you like to permit this?
     <form name="form">
@@ -6874,6 +6874,17 @@ This enables you and other avatar's breasts to have actual physics applied to th
  
 
   </notification>
+  <notification
+   icon="alertmodal.tga"
+   label="Emerald Help"
+   name="EmeraldHelp_SpellCheck"
+   type="alertmodal">
+To Spell Check a word, right click on it and choose its replacement.
+You may choose a base dictionary which stores the language style and basic words
+You may also choose to install other word lists by choosing them from the list and "add"
+You may add your own words to your custom dictionary file.
+Spell check is Hunspell based, please google for more info.
+</notification>
   <notification
 	   icon="notifytip.tga"
 	   name="NoShadows"

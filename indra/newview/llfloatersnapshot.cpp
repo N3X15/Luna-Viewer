@@ -44,6 +44,7 @@
 #include "llsdserialize.h"
 
 #include "llagent.h"
+#include "llappviewer.h"
 #include "llcallbacklist.h"
 #include "llcriticaldamp.h"
 #include "llui.h"

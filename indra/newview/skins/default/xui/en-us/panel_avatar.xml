@@ -218,7 +218,7 @@
         <flyout_button_item value="home" name="home_item">Home URL</flyout_button_item>
       </flyout_button>
 			<button bottom_delta="0" follows="left|top" font="SansSerif" halign="center"
-			     height="18" label="?" label_selected="?" left_delta="65"
+			     height="18" label="?" label_selected="?" left_delta="80"
 			     mouse_opaque="true" name="web_profile_help" width="18" />
 			<check_box bottom_delta="0" follows="right|top" font="SansSerifSmall" height="16"
 			     initial_value="false" label="Automatically load web profiles"

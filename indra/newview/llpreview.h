@@ -85,7 +85,7 @@ public:
 	void setObjectID(const LLUUID& object_id);
 	void setSourceID(const LLUUID& source_id);
 	void setAssetId(const LLUUID& asset_id);
-	const LLViewerInventoryItem *getItem() const; // searches if not constructed with it
+	LLViewerInventoryItem *getItem() const; // searches if not constructed with it
 
 	static LLPreview* find(const LLUUID& item_uuid);
 	static LLPreview*	show(const LLUUID& item_uuid, BOOL take_focus = TRUE );

@@ -71,6 +71,7 @@
 #include "llvowlsky.h"
 #include "llrender.h"
 #include "llviewerparceloverlay.h"
+#include "llfloaterchat.h" 
 
 #ifdef TOGGLE_HACKED_GODLIKE_VIEWER
 BOOL 				gHackGodmode = FALSE;
@@ -428,6 +429,17 @@ static bool handleRenderUseFBOChanged(const LLSD& newvalue)
 	return true;
 }
 
+bool handleTranslateChatPrefsChanged(const LLSD& newvalue) 
+{ 
+	LLFloaterChat* floaterp = LLFloaterChat::getInstance();	
+	if(floaterp) 
+	{
+		// update "translate chat" pref in "Local Chat" floater 
+		floaterp->updateSettings();
+	}
+	return true;
+}
+
 static bool handleRenderUseImpostorsChanged(const LLSD& newvalue)
 {
 	LLVOAvatar::sUseImpostors = newvalue.asBoolean();
@@ -512,21 +524,9 @@ bool handleVoiceClientPrefsChanged(const LLSD& newvalue)
 	return true;
 }
 
-// [RLVa:KB] - Checked: 2009-08-11 (RLVa-1.0.1h) | Added: RLVa-1.0.1h
-bool rlvHandleEnableLegacyNamingChanged(const LLSD& newvalue)
-{
-	rlv_handler_t::fLegacyNaming = newvalue.asBoolean();
-	return true;
-}
-
-bool rlvHandleShowNameTagsChanged(const LLSD& newvalue)
-{
-	RlvSettings::fShowNameTags = newvalue.asBoolean();
-	return true;
-}
-// [/RLVa:KB]
-
 ////////////////////////////////////////////////////////////////////////////
+
+LLColor4 DefaultListText;
 
 void settings_setup_listeners()
 {
@@ -672,7 +672,7 @@ void settings_setup_listeners()
 	gSavedSettings.getControl("VectorizeEnable")->getSignal()->connect(boost::bind(&handleVectorizeChanged, _1));
 	gSavedSettings.getControl("VectorizeProcessor")->getSignal()->connect(boost::bind(&handleVectorizeChanged, _1));
 	gSavedSettings.getControl("VectorizeSkin")->getSignal()->connect(boost::bind(&handleVectorizeChanged, _1));
-	gSavedPerAccountSettings.getControl("EnableVoiceChat")->getSignal()->connect(boost::bind(&handleVoiceClientPrefsChanged, _1));
+	gSavedSettings.getControl("EnableVoiceChat")->getSignal()->connect(boost::bind(&handleVoiceClientPrefsChanged, _1));
 	gSavedSettings.getControl("PTTCurrentlyEnabled")->getSignal()->connect(boost::bind(&handleVoiceClientPrefsChanged, _1));
 	gSavedSettings.getControl("PushToTalkButton")->getSignal()->connect(boost::bind(&handleVoiceClientPrefsChanged, _1));
 	gSavedSettings.getControl("PushToTalkToggle")->getSignal()->connect(boost::bind(&handleVoiceClientPrefsChanged, _1));
@@ -681,13 +681,9 @@ void settings_setup_listeners()
 	gSavedSettings.getControl("VoiceOutputAudioDevice")->getSignal()->connect(boost::bind(&handleVoiceClientPrefsChanged, _1));
 	gSavedSettings.getControl("AudioLevelMic")->getSignal()->connect(boost::bind(&handleVoiceClientPrefsChanged, _1));
 	gSavedSettings.getControl("LipSyncEnabled")->getSignal()->connect(boost::bind(&handleVoiceClientPrefsChanged, _1));	
+	gSavedSettings.getControl("TranslateChat")->getSignal()->connect(boost::bind(&handleTranslateChatPrefsChanged, _1));
 
-// [RLVa:KB] - Checked: 2009-08-11 (RLVa-1.0.1h) | Added: RLVa-1.0.1h
-	if (gSavedSettings.controlExists(RLV_SETTING_ENABLELEGACYNAMING))
-		gSavedSettings.getControl(RLV_SETTING_ENABLELEGACYNAMING)->getSignal()->connect(boost::bind(&rlvHandleEnableLegacyNamingChanged, _1));
-	if (gSavedSettings.controlExists(RLV_SETTING_SHOWNAMETAGS))
-		gSavedSettings.getControl(RLV_SETTING_SHOWNAMETAGS)->getSignal()->connect(boost::bind(&rlvHandleShowNameTagsChanged, _1));
-// [/RLVa:KB]
+	DefaultListText = gColors.getColor("DefaultListText").getValue();
 }
 
 template <> eControlType get_control_type<U32>(const U32& in, LLSD& out) 

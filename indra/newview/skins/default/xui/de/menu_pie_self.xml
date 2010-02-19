@@ -4,6 +4,7 @@
 	<menu_item_call label="Gruppen..." name="Groups..." />
 	<menu_item_call label="Los..." name="Go..." />
 	<menu_item_call label="Aufstehen" name="Stand Up" />
+  <menu_item_call label="S. Anzahl" name="ScriptCount">
 	<menu_item_call label="Freunde..." name="Friends..." />
 	<menu_item_call label="Gesten..." name="Gestures..." />
 	<pie_menu label="Ausziehen &gt;" name="Take Off &gt;">

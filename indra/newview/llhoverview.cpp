@@ -72,6 +72,10 @@
 #include "llhudmanager.h" // For testing effects
 #include "llhudeffect.h"
 
+// [RLVa:KB]
+#include "rlvhandler.h"
+// [/RLVa:KB]
+
 //
 // Constants
 //
@@ -248,7 +252,7 @@ void LLHoverView::updateText()
 // [RLVa:KB] - Checked: 2009-07-08 (RLVa-1.0.0e)
 				if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES))
 				{
-					line = gRlvHandler.getAnonym(line.append(firstname->getString()).append(1, ' ').append(lastname->getString()));
+					line = RlvStrings::getAnonym(line.append(firstname->getString()).append(1, ' ').append(lastname->getString()));
 				}
 				else
 				{
@@ -354,7 +358,7 @@ void LLHoverView::updateText()
 // [RLVa:KB] - Checked: 2009-07-08 (RLVa-1.0.0e)
 							if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES))
 							{
-								name = gRlvHandler.getAnonym(name);
+								name = RlvStrings::getAnonym(name);
 							}
 // [/RLVa:KB]
 
@@ -541,7 +545,8 @@ void LLHoverView::updateText()
 		if (hover_parcel)
 		{
 // [RLVa:KB] - Checked: 2009-07-04 (RLVa-1.0.0a) | Added: RLVa-0.2.0b
-			line.append( (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC)) ? hover_parcel->getName() : rlv_handler_t::cstrHiddenParcel );
+			line.append( (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC)) 
+				? hover_parcel->getName() : RlvStrings::getString(RLV_STRING_HIDDEN_PARCEL) );
 // [/RLVa:KB]
 			//line.append(hover_parcel->getName());
 		}
@@ -573,7 +578,7 @@ void LLHoverView::updateText()
 			else if(gCacheName->getFullName(owner, name))
 			{
 // [RLVa:KB] - Checked: 2009-07-08 (RLVa-1.0.0e) | Added: RLVa-0.2.0b
-				line.append( (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES)) ? name : gRlvHandler.getAnonym(name));
+				line.append( (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES)) ? name : RlvStrings::getAnonym(name));
 // [/RLVa:KB]
 				//line.append(name);
 			}
@@ -685,7 +690,14 @@ void LLHoverView::draw()
 	// To toggle off hover tips, you have to just suppress the draw.
 	// The picking is still needed to do cursor changes over physical
 	// and scripted objects.  JC
+//	if (!sShowHoverTips) 
+// [RLVa:KB] - Checked: 2010-01-02 (RLVa-1.1.0l) | Modified: RLVa-1.1.0l
+#ifdef RLV_EXTENSION_CMD_INTERACT
+	if ( (!sShowHoverTips) || (gRlvHandler.hasBehaviour(RLV_BHVR_INTERACT)) )
+#else
 	if (!sShowHoverTips) 
+#endif // RLV_EXTENSION_CMD_INTERACT
+// [/RLVa:KB]
 	{
 		return;
 	}
@@ -740,10 +752,10 @@ void LLHoverView::draw()
 	const LLFontGL* fontp = LLResMgr::getInstance()->getRes(LLFONT_SANSSERIF_SMALL);
 
 	// Render text.
-	LLColor4 text_color = gColors.getColor("ToolTipTextColor");
+	static LLColor4 text_color = gColors.getColor("ToolTipTextColor");
 	// LLColor4 border_color = gColors.getColor("ToolTipBorderColor");
-	LLColor4 bg_color = gColors.getColor("ToolTipBgColor");
-	LLColor4 shadow_color = gColors.getColor("ColorDropShadow");
+	static LLColor4 bg_color = gColors.getColor("ToolTipBgColor");
+	static LLColor4 shadow_color = gColors.getColor("ColorDropShadow");
 
 	// Could decrease the alpha here. JC
 	//text_color.mV[VALPHA] = alpha;
@@ -785,7 +797,7 @@ void LLHoverView::draw()
 	LLGLSUIDefault gls_ui;
 
 	shadow_color.mV[VALPHA] = 0.7f * alpha;
-	S32 shadow_offset = gSavedSettings.getS32("DropShadowTooltip");
+	static S32 shadow_offset = gSavedSettings.getS32("DropShadowTooltip");
 	shadow_imagep->draw(LLRect(left + shadow_offset, top - shadow_offset, right + shadow_offset, bottom - shadow_offset), shadow_color);
 
 	bg_color.mV[VALPHA] = alpha;

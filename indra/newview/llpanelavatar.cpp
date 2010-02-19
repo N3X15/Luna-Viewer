@@ -87,6 +87,10 @@
 
 #include <iosfwd>
 
+// [RLVa:KB]
+#include "rlvhandler.h"
+// [/RLVa:KB]
+
 // Statics
 std::list<LLPanelAvatar*> LLPanelAvatar::sAllPanels;
 BOOL LLPanelAvatar::sAllowFirstLife = FALSE;
@@ -1176,8 +1180,8 @@ void LLPanelAvatarPicks::onClickImport(void* data)
 	LLPanelPick* panel_pick = new LLPanelPick(FALSE);
 	LLTabContainer* tabs =  self->getChild<LLTabContainer>("picks tab");
 
-	panel_pick->importNewPick();
-	if(tabs)
+	bool import = panel_pick->importNewPick();
+	if(tabs && import)
 	{
 		tabs->addTabPanel(panel_pick, panel_pick->getPickName());
 		tabs->selectLastTab();
@@ -1502,7 +1506,7 @@ void LLPanelAvatar::setAvatarID(const LLUUID &avatar_id, const std::string &name
 	LLNameEditor* key_edit = getChild<LLNameEditor>("key_");
 	if(key_edit)
 	{
-		key_edit->setText(avatar_id.asString());
+		key_edit->setText(mAvatarID.asString());
 	}
 // 	if (avatar_changed)
 	{

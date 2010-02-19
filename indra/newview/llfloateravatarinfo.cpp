@@ -46,7 +46,7 @@
 #include "llinventory.h"
 #include "lluuid.h"
 #include "message.h"
-#include "lggIrcGroupHandler.h"
+#include "lggircgrouphandler.h"
 
 const char FLOATER_TITLE[] = "Profile";
 const LLRect FAI_RECT(0, 530, 420, 0);

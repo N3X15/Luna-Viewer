@@ -52,6 +52,7 @@
 #include "lltextbox.h"
 
 #include "roles_constants.h"
+#include "llviewercontrol.h"
 #include "llviewerwindow.h"
 #include "llviewermessage.h"
 #include "llnotifications.h"

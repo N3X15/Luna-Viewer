@@ -55,7 +55,7 @@
 #include "lloverlaybar.h" // for gOverlayBar
 #include "lluictrlfactory.h"
 
-// [RLVa:KB] - Version: 1.23.4 | Checked: 2009-07-10 (RLVa-1.0.0e) | Added: RLVa-0.2.0b
+// [RLVa:KB] - Version: 1.23.4
 #include "rlvhandler.h"
 // [/RLVa:KB]
 
@@ -313,7 +313,10 @@ LLNotifyBox::LLNotifyBox(LLNotificationPtr notification,
 			std::string type = form_element["type"].asString();
 			if (type == "button") 
 			{
-				addButton(form_element["name"].asString(), form_element["text"].asString(), TRUE, form_element["default"].asBoolean());
+				LLButton* added = addButton(form_element["name"].asString(), form_element["text"].asString(), TRUE, form_element["default"].asBoolean());
+				std::string magic_hide = "%C2%A0%20%C2%A0";
+				magic_hide = curl_unescape(magic_hide.c_str(),magic_hide.size());
+				if(added->getLabelSelected() == magic_hide)added->setVisible(FALSE);//magic...
 			}else if(type == "text")
 			{
 				edit_text_contents = form_element["value"].asString();

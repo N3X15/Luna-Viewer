@@ -328,7 +328,8 @@ F32 LLFocusMgr::getFocusFlashAmt() const
 
 LLColor4 LLFocusMgr::getFocusColor() const
 {
-	LLColor4 focus_color = lerp(LLUI::sColorsGroup->getColor( "FocusColor" ), LLColor4::white, getFocusFlashAmt());
+	static LLColor4 defaultFocusColor = LLUI::sColorsGroup->getColor( "FocusColor" );
+	LLColor4 focus_color = lerp(defaultFocusColor, LLColor4::white, getFocusFlashAmt());
 	// de-emphasize keyboard focus when app has lost focus (to avoid typing into wrong window problem)
 	if (!mAppHasFocus)
 	{

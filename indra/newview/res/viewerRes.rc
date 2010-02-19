@@ -63,7 +63,25 @@ END
 // remains consistent on all systems.
 IDI_LL_ICON             ICON                    "emerald_icon.ico"
 IDI_LCD_LL_ICON         ICON                    "icon1.ico"
-
+IDI_EMRLD_ICON1         ICON                    "emeraldicon10.ico"
+IDI_EMRLD_ICON2         ICON                    "emeraldicon2.ico"
+IDI_EMRLD_ICON3         ICON                    "emeraldicon3.ico"
+IDI_EMRLD_ICON4         ICON                    "emeraldicon4.ico"
+IDI_EMRLD_ICON5         ICON                    "emeraldicon5.ico"
+IDI_EMRLD_ICON6         ICON                    "emeraldicon6.ico"
+IDI_EMRLD_ICON7         ICON                    "emeraldicon7.ico"
+IDI_EMRLD_ICON8         ICON                    "emeraldicon8.ico"
+IDI_EMRLD_ICON9         ICON                    "emeraldicon9.ico"
+IDI_EMRLD_ICON10         ICON                    "emeraldicon1.ico"
+IDI_EMRLD_ICON11         ICON                    "emeraldicon11.ico"
+IDI_EMRLD_ICON12         ICON                    "emeraldicon12.ico"
+IDI_EMRLD_ICON13         ICON                    "emeraldicon13.ico"
+IDI_EMRLD_ICON14         ICON                    "emeraldicon14.ico"
+IDI_EMRLD_ICON15         ICON                    "emeraldicon15.ico"
+IDI_EMRLD_ICON16         ICON                    "emeraldicon16.ico"
+IDI_EMRLD_ICON17         ICON                    "emeraldicon17.ico"
+IDI_EMRLD_ICON18         ICON                    "emeraldicon18.ico"
+IDI_EMRLD_ICON19         ICON                    "emeraldicon19.ico"
 /////////////////////////////////////////////////////////////////////////////
 //
 // Dialog
@@ -74,7 +92,7 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_VISIBLE
 FONT 8, "MS Sans Serif"
 BEGIN
     ICON            IDI_LL_ICON,IDC_STATIC,7,7,20,20
-    LTEXT           "Loading Second Life...",666,36,13,91,8
+    LTEXT           "Loading Emerald Viewer",666,36,13,91,8
 END
 
 
@@ -138,8 +156,8 @@ TOOLMEDIAOPEN           CURSOR                  "toolmediaopen.cur"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,23,5,1101
- PRODUCTVERSION 1,23,5,1101
+ FILEVERSION 1,23,5,1579
+ PRODUCTVERSION 1,23,5,1579
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -156,12 +174,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "Red Fedora Productions"
             VALUE "FileDescription", "Second Life Open Source [FlexLife Viewer]"
-            VALUE "FileVersion", "1.23.5.1101"
+            VALUE "FileVersion", "1.23.5.1579"
             VALUE "InternalName", "FlexLife Viewer"
             VALUE "LegalCopyright", "Copyright © 2001-2009, Linden Research, Inc."
             VALUE "OriginalFilename", "SecondLife.exe"
             VALUE "ProductName", "FlexLife Viewer"
-            VALUE "ProductVersion", "1.23.5.1101"
+            VALUE "ProductVersion", "1.23.5.1579"
         END
     END
     BLOCK "VarFileInfo"

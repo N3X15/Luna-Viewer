@@ -69,10 +69,14 @@ LLSpinCtrl::LLSpinCtrl(	const std::string& name, const LLRect& rect, const std::
 	mIncrement( increment ),
 	mPrecision( 3 ),
 	mLabelBox( NULL ),
-	mTextEnabledColor( LLUI::sColorsGroup->getColor( "LabelTextColor" ) ),
-	mTextDisabledColor( LLUI::sColorsGroup->getColor( "LabelDisabledColor" ) ),
+	//mTextEnabledColor( LLUI::sColorsGroup->getColor( "LabelTextColor" ) ),
+	//mTextDisabledColor( LLUI::sColorsGroup->getColor( "LabelDisabledColor" ) ),
 	mbHasBeenSet( FALSE )
 {
+	static LLColor4 defaultTextEnabledColor = LLUI::sColorsGroup->getColor( "LabelTextColor" );
+	static LLColor4 defaultTextDisabledColor = LLUI::sColorsGroup->getColor( "LabelDisabledColor" );
+	mTextEnabledColor = (defaultTextEnabledColor);
+	mTextDisabledColor = (defaultTextDisabledColor);
 	S32 top = getRect().getHeight();
 	S32 bottom = top - 2 * SPINCTRL_BTN_HEIGHT;
 	S32 centered_top = top;

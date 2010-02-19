@@ -15,17 +15,11 @@ Hover your mouse over the options for more help.
 	     label="?" label_selected="?" left="391" mouse_opaque="true"
 	     name="help_button" width="20" />
 	<line_editor bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
-	     bottom="-24" drop_shadow_visible="true" follows="left|top" font="SansSerif"
+	     bottom="-20" drop_shadow_visible="true" follows="left|top" font="SansSerif"
 	     h_pad="0" halign="left" height="16" label="Type your new group name here"
 	     left="7" max_length="35" mouse_opaque="true" name="group_name_editor"
 	     prevalidate="ascii" v_pad="0" width="300" />
-	<text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
-	     bottom="-20" drop_shadow_visible="true" follows="left|top"
-	     font="SansSerifBig" h_pad="0" halign="left" height="16" left="7"
-	     mouse_opaque="true" name="group_name" v_pad="0" width="300">
-		Type your new group name here
-	</text>
-	<text font="SansSerifSmall" name="prepend_founded_by">
+	<text bottom_delta="-12" font="SansSerifSmall" name="prepend_founded_by">
 		Founded by
 	</text>
 	<text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"

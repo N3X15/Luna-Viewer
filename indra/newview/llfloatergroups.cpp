@@ -55,6 +55,7 @@
 #include "llscrolllistctrl.h"
 #include "lltextbox.h"
 #include "lluictrlfactory.h"
+#include "llviewercontrol.h"
 #include "llviewerwindow.h"
 #include "llimview.h"
 

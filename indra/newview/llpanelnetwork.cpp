@@ -53,12 +53,16 @@ BOOL LLPanelNetwork::postBuild()
 {
 	std::string cache_location = gDirUtilp->getExpandedFilename(LL_PATH_CACHE, "");
 	childSetText("cache_location", cache_location);
+	std::string sound_cache_location = gDirUtilp->getExpandedFilename(MM_SNDLOC, "");
+	childSetText("sound_cache_location", sound_cache_location);
 		
 	childSetAction("clear_cache", onClickClearCache, this);
 	childSetAction("clear_inv_cache", onClickClearInvCache, this);
 	if(LLStartUp::getStartupState() >= STATE_INVENTORY_SEND)childSetEnabled("clear_inv_cache",true);
 	childSetAction("set_cache", onClickSetCache, this);
 	childSetAction("reset_cache", onClickResetCache, this);
+	childSetAction("set_sound_cache", onClickSetSoundCache, this);
+	childSetAction("reset_sound_cache", onClickResetSoundCache, this);
 	
 	childSetEnabled("connection_port", gSavedSettings.getBOOL("ConnectionPortEnabled"));
 	childSetCommitCallback("connection_port_enabled", onCommitPort, this);
@@ -141,6 +145,40 @@ void LLPanelNetwork::onClickResetCache(void* user_data)
 	}
 	std::string cache_location = gDirUtilp->getCacheDir(true);
 	self->childSetText("cache_location", cache_location);
+}
+
+// static
+void LLPanelNetwork::onClickSetSoundCache(void* user_data)
+{
+	LLPanelNetwork* self = (LLPanelNetwork*)user_data;
+
+	std::string cur_name(gSavedSettings.getString("Emeraldmm_sndcacheloc"));
+	std::string proposed_name(cur_name);
+	
+	LLDirPicker& picker = LLDirPicker::instance();
+	if (! picker.getDir(&proposed_name ) )
+	{
+		return; //Canceled!
+	}
+
+	std::string dir_name = picker.getDirName();
+	if (!dir_name.empty() && dir_name != cur_name)
+	{
+		self->childSetText("sound_cache_location", dir_name);
+		gSavedSettings.setString("Emeraldmm_sndcacheloc", dir_name);
+	}
+	else
+	{
+		self->childSetText("sound_cache_location",cur_name);
+	}
+}
+
+// static
+void LLPanelNetwork::onClickResetSoundCache(void* user_data)
+{
+	LLPanelNetwork* self = (LLPanelNetwork*)user_data;
+ 	gSavedSettings.setString("Emeraldmm_sndcacheloc","");
+	self->childSetText("sound_cache_location",std::string("None"));
 }
 
 // static

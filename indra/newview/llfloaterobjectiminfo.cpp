@@ -51,7 +51,7 @@
 #include "llworldmap.h"
 #include "llregionhandle.h"
 
-// [RLVa:KB] - Version: 1.23.4 | Alternate: Emerald-370 | Checked: 2009-07-04 (RLVa-1.0.0a) | Added: RLVa-0.2.0g
+// [RLVa:KB] - Version: 1.23.4
 #include "rlvhandler.h"
 // [/RLVa:KB]
 
@@ -228,7 +228,7 @@ void LLFloaterObjectIMInfo::update(const LLUUID& object_id, const std::string& n
 
 	if (tempname.length() < 1)
 	{
-		tempname = "no name";
+		tempname = ">>";
 //		chat.mFromName = name;
 		childSetText("ObjectName",tempname);
 	}
@@ -305,7 +305,7 @@ void LLFloaterObjectIMInfo::nameCallback(const LLUUID& id, const std::string& fi
 // [RLVa:KB] - Version: 1.23.4 | Checked: 2009-07-08 (RLVa-1.0.0e) | Added: RLVa-0.2.0g
 	if ( (!is_group) && (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES)) && (gRlvHandler.isAgentNearby(id)) )
 	{
-		self->mOwnerName = gRlvHandler.getAnonym(self->mOwnerName);
+		self->mOwnerName = RlvStrings::getAnonym(self->mOwnerName);
 	}
 // [/RLVa:KB]
 

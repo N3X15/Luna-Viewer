@@ -2,8 +2,8 @@
 <panel border="true" bottom="-409" enabled="true" follows="left|top|right|bottom"
      height="408" label="General" left="102" mouse_opaque="true"
      name="general_panel" width="517">
-  <radio_group bottom="-45" draw_border="false" follows="left|bottom" height="40" left="151"
-	     name="default_start_location" width="220">
+  <radio_group bottom="-45" draw_border="false" follows="left|top" height="40" left="151"
+ 	  name="default_start_location" width="220">
     <radio_item bottom="-20" height="20" left="0" name="MyHome" width="50"
 		  tool_tip="Log into my home location by default.">
       My Home
@@ -72,7 +72,7 @@
 	<spinner bottom="-260" decimal_digits="0" enabled="true"
 	     follows="left|top" height="16" increment="1" initial_val="300"
 	     label="Away Timeout:" label_width="141" left="10" max_val="8388607"
-	     min_val="30" mouse_opaque="true" name="afk_timeout_spinner" width="202" />
+	     min_val="-9000" mouse_opaque="true" name="afk_timeout_spinner" width="202" />
 	<check_box bottom="-286" enabled="true"
 	     follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
 	     label="Notify when Linden dollars (L$) spent or received" left="151"
@@ -139,7 +139,7 @@
 		Crash reports:
 	</text>
 	<text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
-	     bottom="-384" drop_shadow_visible="true" enabled="true" follows="left|top"
+	     bottom="-394" drop_shadow_visible="true" enabled="true" follows="left|top"
 	     font="SansSerifSmall" h_pad="0" halign="left" height="18" left="10"
 	     mouse_opaque="true" name="language_textbox" v_pad="0" width="394">
 		Language:
@@ -151,6 +151,65 @@
 	     v_pad="0" width="400">
 		(Requires restart for full effect)
 	</text>
+
+  <combo_box allow_text_entry="true" bottom="-394" enabled="true"
+	     follows="left|top" height="16" left="153" max_chars="135"
+	     mouse_opaque="true" name="language_combobox" width="146">
+    <combo_item type="string" length="1" enabled="true" name="System Default Language" value="default">
+      System Default
+    </combo_item>
+    <combo_item type="string" length="1" enabled="true" name="English" value="en-us">
+      English
+    </combo_item>
+
+    <!-- After "System Default" and "English", please keep the rest of these combo_items in alphabetical order by the first character in the string. -->
+
+    <combo_item type="string" length="1" enabled="true" name="Danish" value="da">
+      Dansk (Danish) - Beta
+    </combo_item>
+    <combo_item type="string" length="1" enabled="true" name="Deutsch(German)" value="de">
+      Deutsch (German) - Beta
+    </combo_item>
+    <combo_item type="string" length="1" enabled="true" name="Spanish" value="es">
+      EspaÃ±ol (Spanish) - Beta
+    </combo_item>
+    <combo_item type="string" length="1" enabled="true" name="French" value="fr">
+      FranÃ§ais (French) - Beta
+    </combo_item>
+    <combo_item type="string" length="1" enabled="true" name="Italian" value="it">
+      Italiano (Italian) - Beta
+    </combo_item>
+    <combo_item type="string" length="1" enabled="true" name="Hungarian" value="hu">
+      Magyar (Hungarian) - Beta
+    </combo_item>
+    <combo_item type="string" length="1" enabled="true" name="Dutch" value="nl">
+      Nederlands (Dutch) - Beta
+    </combo_item>
+    <combo_item type="string" length="1" enabled="true" name="Polish" value="pl">
+      Polski (Polish) - Beta
+    </combo_item>
+    <combo_item type="string" length="1" enabled="true" name="Portugese" value="pt">
+      PortuguÃ©s (Portuguese) - Beta
+    </combo_item>
+    <combo_item type="string" length="1" enabled="true" name="Russian" value="ru">
+      Ð Ñ?ÑÑÐºÐžÐ¹ (Russian) - Beta
+    </combo_item>
+    <combo_item type="string" length="1" enabled="true" name="Turkish" value="tr">
+      TÃŒrkÃ§e (Turkish) - Beta
+    </combo_item>
+    <combo_item type="string" length="1" enabled="true" name="Ukrainian" value="uk">
+      Ð£ÐºÑ?Ð°Ñ?ÐœÑÑ?ÐºÐ° (Ukrainian) - Beta
+    </combo_item>
+    <combo_item type="string" length="1" enabled="true" name="Chinese" value="zh">
+      äž­æ?? (ç®?äœ?) (Chinese) - Beta
+    </combo_item>
+    <combo_item type="string" length="1" enabled="true" name="(Japanese)" value="ja">
+      æ?¥æ?¬èª? (Japanese) - Beta
+    </combo_item>
+    <combo_item type="string" length="1" enabled="true" name="(Korean)" value="ko">
+      í??êµ­ì?Ž (Korean) - Beta
+    </combo_item>
+  </combo_box>
 	<string name="region_name_prompt">
 		&lt;Type region name&gt;
 	</string>
@@ -167,65 +226,7 @@
 			Never send
 		</combo_item>
 	</combo_box>
-	<combo_box allow_text_entry="true" bottom="-382" enabled="true"
-	     follows="left|bottom" height="16" left="153" max_chars="135"
-	     mouse_opaque="true" name="language_combobox" width="146">
-		<combo_item type="string" length="1" enabled="true" name="System Default Language" value="default">
-			System Default
-		</combo_item>
-		<combo_item type="string" length="1" enabled="true" name="English" value="en-us">
-			English
-		</combo_item>
-		
-		<!-- After "System Default" and "English", please keep the rest of these combo_items in alphabetical order by the first character in the string. -->
-		
-		<combo_item type="string" length="1" enabled="true" name="Danish" value="da">
-			Dansk (Danish) - Beta
-		</combo_item>
-		<combo_item type="string" length="1" enabled="true" name="Deutsch(German)" value="de">
-			Deutsch (German) - Beta
-		</combo_item>
-		<combo_item type="string" length="1" enabled="true" name="Spanish" value="es">
-			Español (Spanish) - Beta
-		</combo_item>
-		<combo_item type="string" length="1" enabled="true" name="French" value="fr">
-			Français (French) - Beta
-		</combo_item>
-		<combo_item type="string" length="1" enabled="true" name="Italian" value="it">
-			Italiano (Italian) - Beta
-		</combo_item>
-		<combo_item type="string" length="1" enabled="true" name="Hungarian" value="hu">
-			Magyar (Hungarian) - Beta
-		</combo_item>
-		<combo_item type="string" length="1" enabled="true" name="Dutch" value="nl">
-			Nederlands (Dutch) - Beta
-		</combo_item>
-		<combo_item type="string" length="1" enabled="true" name="Polish" value="pl">
-			Polski (Polish) - Beta
-		</combo_item>
-		<combo_item type="string" length="1" enabled="true" name="Portugese" value="pt">
-			Portugués (Portuguese) - Beta
-		</combo_item>
- 		<combo_item type="string" length="1" enabled="true" name="Russian" value="ru">
- 			Русский (Russian) - Beta
- 		</combo_item>
-		<combo_item type="string" length="1" enabled="true" name="Turkish" value="tr">
-			Türkçe (Turkish) - Beta
-		</combo_item>
- 		<combo_item type="string" length="1" enabled="true" name="Ukrainian" value="uk">
- 			Українська (Ukrainian) - Beta
- 		</combo_item>
-		<combo_item type="string" length="1" enabled="true" name="Chinese" value="zh">
-			中文 (简体) (Chinese) - Beta
-		</combo_item>
-		<combo_item type="string" length="1" enabled="true" name="(Japanese)" value="ja">
-			日本語 (Japanese) - Beta
-		</combo_item>
-		<combo_item type="string" length="1" enabled="true" name="(Korean)" value="ko">
-			한국어 (Korean) - Beta
-		</combo_item>
-	</combo_box>
-	<check_box bottom="-400" enabled="true"
+	<check_box bottom="-415" enabled="true"
 	     follows="left|top" font="SansSerifSmall" height="16" hidden="false"
 	     initial_value="false" label="Share language with objects" left="151"
 	     mouse_opaque="true" name="language_is_public"

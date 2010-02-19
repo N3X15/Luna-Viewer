@@ -45,6 +45,7 @@
 #include "lldarray.h"
 
 #include "llpreeditor.h"
+#include "llmenugl.h"
 
 class LLFontGL;
 class LLScrollbar;
@@ -84,6 +85,7 @@ public:
 	virtual BOOL	handleHover(S32 x, S32 y, MASK mask);
 	virtual BOOL	handleScrollWheel(S32 x, S32 y, S32 clicks);
 	virtual BOOL	handleDoubleClick(S32 x, S32 y, MASK mask );
+	virtual BOOL	handleRightMouseDown( S32 x, S32 y, MASK mask );
 	virtual BOOL	handleKeyHere(KEY key, MASK mask );
 	virtual BOOL	handleUnicodeCharHere(llwchar uni_char);
 
@@ -106,6 +108,18 @@ public:
 	virtual void	setFocus( BOOL b );
 	virtual BOOL	acceptsTextInput() const;
 	virtual BOOL	isDirty() const { return( mLastCmd != NULL || (mPristineCmd && (mPristineCmd != mLastCmd)) ); }
+	BOOL	isSpellDirty() const { return mWText != mPrevSpelledText; }	// Returns TRUE if user changed value at all
+	void	resetSpellDirty() { mPrevSpelledText = mWText; }		// Clear dirty state
+
+	struct SpellMenuBind
+	{
+		LLTextEditor* origin;
+		LLMenuItemCallGL * menuItem;
+		std::string word;
+		S32 wordPositionStart;
+		S32 wordPositionEnd;
+		S32 wordY;
+	};
 
 	// LLEditMenuHandler interface
 	virtual void	undo();
@@ -117,6 +131,7 @@ public:
 	virtual void	copy();
 	virtual BOOL	canCopy() const;
 	virtual void	paste();
+	virtual void	spellReplace(SpellMenuBind* spellData);
 	virtual BOOL	canPaste() const;
 	virtual void	doDelete();
 	virtual BOOL	canDoDelete() const;
@@ -125,8 +140,21 @@ public:
 	virtual void	deselect();
 	virtual BOOL	canDeselect() const;
 
+	static void context_cut(void* data);
+	static void context_copy(void* data);
+	static void context_paste(void* data);
+	static void context_delete(void* data);
+	static void context_selectall(void* data);
+	static void translateText(void * data);
+	static void spell_correct(void* data);
+	static void spell_add(void* data);
+	static void spell_show(void* data);
+	std::vector<S32> getMisspelledWordsPositions();
+
+
+
 	void			selectNext(const std::string& search_text_in, BOOL case_insensitive, BOOL wrap = TRUE);
-	BOOL			replaceText(const std::string& search_text, const std::string& replace_text, BOOL case_insensitive, BOOL wrap = TRUE);
+	BOOL			replaceText(const std::string& search_text, const std::string& replace_text, BOOL case_insensitive, BOOL wrap = TRUE, BOOL group = FALSE);
 	void			replaceTextAll(const std::string& search_text, const std::string& replace_text, BOOL case_insensitive);
 	
 	// Undo/redo stack
@@ -138,7 +166,7 @@ public:
 	BOOL			allowsEmbeddedItems() const { return mAllowEmbeddedItems; }
 
 	// inserts text at cursor
-	void			insertText(const std::string &text);
+	void			insertText(const std::string &text, BOOL group = FALSE, BOOL deleteSelection = TRUE);
 	// appends text at end
 	void 			appendText(const std::string &wtext, bool allow_undo, bool prepend_newline,
 							   const LLStyleSP stylep = NULL);
@@ -164,6 +192,7 @@ public:
 	void			setCursor(S32 row, S32 column);
 	void			setCursorPos(S32 offset);
 	void			setCursorAndScrollToEnd();
+	void            scrollToPos(S32 pos);
 
 	void			getLineAndColumnForPosition( S32 position,  S32* line, S32* col, BOOL include_wordwrap );
 	void			getCurrentLineAndColumn( S32* line, S32* col, BOOL include_wordwrap );
@@ -174,6 +203,12 @@ public:
 								 const std::vector<std::string>& funcs,
 								 const std::vector<std::string>& tooltips,
 								 const LLColor3& func_color);
+	void addToken(LLKeywordToken::TOKEN_TYPE type,
+					const std::string& key,
+					const LLColor3& color,
+					const std::string& tool_tip = LLStringUtil::null,
+					const std::string& delimiter = LLStringUtil::null);
+
 	LLKeywords::keyword_iterator_t keywordsBegin()	{ return mKeywords.begin(); }
 	LLKeywords::keyword_iterator_t keywordsEnd()	{ return mKeywords.end(); }
 
@@ -188,6 +223,8 @@ public:
 	void			setThumbColor( const LLColor4& color );
 	void			setHighlightColor( const LLColor4& color );
 	void			setShadowColor( const LLColor4& color );
+	void setOverRideAndShowMisspellings(BOOL b)		{ mOverRideAndShowMisspellings =b;}
+
 
 	// Hacky methods to make it into a word-wrapping, potentially scrolling,
 	// read-only text box.
@@ -254,12 +291,15 @@ public:
 	const LLTextSegment*	getPreviousSegment() const;
 	void getSelectedSegments(std::vector<const LLTextSegment*>& segments) const;
 
-	static bool		isPartOfWord(llwchar c) { return (c == '_') || LLStringOps::isAlnum((char)c); }
+	static bool		isPartOfWord(llwchar c) { return ( (c == '_')  || (c == '\'') || LLStringOps::isAlnum((char)c)); }
 
+	BOOL isReadOnly() { return mReadOnly; }
 protected:
 	//
 	// Methods
 	//
+	LLHandle<LLView>					mPopupMenuHandle;
+
 
 	S32				getLength() const { return mWText.length(); }
 	void			getSegmentAndOffset( S32 startpos, S32* segidxp, S32* offsetp ) const;
@@ -323,7 +363,7 @@ protected:
 	S32				findHTMLToken(const std::string &line, S32 pos, BOOL reverse) const;
 	S32				findHTMLToken(const std::string &line, S32 pos, BOOL reverse, const char *end_delims) const;
 	BOOL			findHTML(const std::string &line, S32 *begin, S32 *end) const;
-
+	
 	// Abstract inner base class representing an undoable editor command.
 	// Concrete sub-classes can be defined for operations such as insert, remove, etc.
 	// Used as arguments to the execute() method below.
@@ -437,6 +477,7 @@ private:
 	void			drawBackground();
 	void			drawSelectionBackground();
 	void			drawCursor();
+	void			drawMisspelled();
 	void			drawText();
 	void			drawClippedSegment(const LLWString &wtext, S32 seg_start, S32 seg_end, F32 x, F32 y, S32 selection_left, S32 selection_right, const LLStyleSP& color, F32* right_x);
 
@@ -462,10 +503,16 @@ private:
 	class LLTextCmdAddChar;
 	class LLTextCmdOverwriteChar;
 	class LLTextCmdRemove;
-
+		
 	LLWString		mWText;
 	mutable std::string mUTF8Text;
 	mutable BOOL	mTextIsUpToDate;
+	LLWString		mPrevSpelledText;		// saved string so we know whether to respell or not
+	S32 spellStart;
+	S32 spellEnd;
+	std::vector<S32> misspellLocations;     // where all the mispelled words are
+	BOOL		mOverRideAndShowMisspellings;
+
 	
 	S32				mMaxTextByteLength;		// Maximum length mText is allowed to be in bytes
 
@@ -503,11 +550,16 @@ private:
 		}
 	};
 	typedef std::vector<line_info> line_list_t;
+
+	//to keep track of what we have to remove before showing menu
+	std::vector<SpellMenuBind* > suggestionMenuItems;
+
 	line_list_t mLineStartList;
 	BOOL			mReflowNeeded;
 	BOOL			mScrollNeeded;
 
 	LLFrameTimer	mKeystrokeTimer;
+	LLFrameTimer	mSpellTimer;
 
 	LLColor4		mCursorColor;
 
@@ -583,6 +635,4 @@ private:
 	LLKeywordToken* mToken;
 	BOOL		mIsDefault;
 };
-
-
 #endif  // LL_TEXTEDITOR_

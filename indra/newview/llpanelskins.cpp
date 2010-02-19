@@ -42,52 +42,107 @@
 // project includes
 #include "llviewercontrol.h"
 #include "llviewerwindow.h"
+#include "llcombobox.h"
+#include "llsdserialize.h"
 
+
+LLPanelSkins* LLPanelSkins::sInstance;
 LLPanelSkins::LLPanelSkins()
 {
 	LLUICtrlFactory::getInstance()->buildPanel(this, "panel_preferences_skins.xml");
+	if(sInstance)delete sInstance;
+	sInstance = this;
 }
 
 LLPanelSkins::~LLPanelSkins()
 {
+	sInstance = NULL;
 }
 
 BOOL LLPanelSkins::postBuild()
 {
-	LLRadioGroup* skin_select = getChild<LLRadioGroup>("skin_selection");
-	skin_select->setCommitCallback(onSelectSkin);
-	skin_select->setCallbackUserData(this);
-
-	getChild<LLButton>("classic_preview")->setClickedCallback(onClickClassic, this);
-	getChild<LLButton>("silver_preview")->setClickedCallback(onClickSilver, this);
-	getChild<LLButton>("emerald_preview")->setClickedCallback(onClickEmerald, this);
-	getChild<LLButton>("ruby_preview")->setClickedCallback(onClickRuby, this);
-	getChild<LLButton>("dark_preview")->setClickedCallback(onClickDark, this);
-	getChild<LLButton>("pslpurple_preview")->setClickedCallback(onClickPslpurple, this);
-	getChild<LLButton>("pslgreen_preview")->setClickedCallback(onClickPslgreen, this);
-	getChild<LLButton>("gred_preview")->setClickedCallback(onClickGred, this);
-	getChild<LLButton>("sapphire_preview")->setClickedCallback(onClickSapphire, this);
-	getChild<LLButton>("white_emerald_preview")->setClickedCallback(onClickWhite_emerald, this);
-	getChild<LLButton>("darkgred_preview")->setClickedCallback(onClickDarkgred, this);
-	getChild<LLButton>("darkorange_preview")->setClickedCallback(onClickDarkorange, this);
-	getChild<LLButton>("gemini_preview")->setClickedCallback(onClickGemini, this);
-	getChild<LLButton>("Pony-Purple_preview")->setClickedCallback(onClickPony_Purple, this);
-	getChild<LLButton>("Pony-Aquablue_preview")->setClickedCallback(onClickPony_Aquablue, this);
-
+	mSkin = gSavedSettings.getString("SkinCurrent");
+	oldSkin=mSkin;
+	getChild<LLComboBox>("emrd_skin_combo")->setCommitCallback(onComboBoxCommit);
 	refresh();
 	return TRUE;
 }
 
 void LLPanelSkins::refresh()
 {
-	mSkin = gSavedSettings.getString("SkinCurrent");
-	getChild<LLRadioGroup>("skin_selection")->setValue(mSkin);
+	if(mSkin=="")
+	{
+		oldSkin=mSkin="default";
+		gSavedSettings.setString("SkinCurrent",mSkin);
+	}
+	LLComboBox* comboBox = getChild<LLComboBox>("emrd_skin_combo");
+
+	if(comboBox != NULL) 
+	{
+		std::string name;
+		gDirUtilp->getNextFileInDir(gDirUtilp->getChatLogsDir(),"*",name,false);//stupid hack to clear last file search
+		comboBox->removeall();
+		datas.clear();
+		//comboBox->add("===OFF===");
+		std::string path_name(gDirUtilp->getSkinBaseDir()+gDirUtilp->getDirDelimiter());
+		bool found = true;	
+		std::string currentSkinName("");
+		while(found) 
+		{
+			found = gDirUtilp->getNextFileInDir(path_name, "*.xml", name, false);
+			llinfos << "path name " << path_name << " and name " << name << " and found " << found << llendl;
+			if(found)
+			{
+				LLSD data;
+				llifstream importer(path_name+name);
+				LLSDSerialize::fromXMLDocument(data, importer);
+
+				if(data.has("folder_name"))
+				{
+					datas.push_back(data);
+					comboBox->add(data["skin_name"].asString());
+					llinfos << "data is length " << datas.size() << " foldername field is "
+						<< data["folder_name"].asString() << " and looking for " << gSavedSettings.getString("SkinCurrent") <<llendl;
+					if(data["folder_name"].asString()==mSkin)
+					{
+						llinfos << "found!!!!!!1!1" << llendl;
+						currentSkinName = data["skin_name"].asString();
+
+						//LLButton* b;
+						//b.setImageOverlay()
+						childSetValue("emrd_skin_author",data["author_name"].asString());
+						childSetValue("emrd_skin_ad_authors",data["additional_author_names"].asString());
+						childSetValue("emrd_skin_info",data["skin_info"].asString());
+						childSetValue("emrd_skin_folder",data["folder_name"].asString());
+						LLButton* b = getChild<LLButton>("emrd_skin_preview");
+						std::string imageprev(".."+gDirUtilp->getDirDelimiter()+
+							".."+gDirUtilp->getDirDelimiter()+
+							data["folder_name"].asString()+gDirUtilp->getDirDelimiter()+
+							"textures"+gDirUtilp->getDirDelimiter()+
+							"preview.png");
+						b->setImages(imageprev,imageprev);
+						b->setHoverImages(imageprev,imageprev);
+						b->setScaleImage(TRUE);
+
+						//<button scale_image="true" image_selected="skin_thumbnail_default.png"
+						//image_unselected="skin_thumbnail_default.png" 
+						//	image_hover_selected="skin_thumbnail_default.png" 
+						//	image_hover_unselected="skin_thumbnail_default.png"/>
+
+						//set the rest here!
+					}
+				}
+			}
+		}
+		comboBox->setSimple(currentSkinName);
+	}
 }
 
 void LLPanelSkins::apply()
 {
-	if (mSkin != gSavedSettings.getString("SkinCurrent"))
+	if (oldSkin != mSkin)
 	{
+		  oldSkin=mSkin;
 		  LLNotifications::instance().add("ChangeSkin");
 		  refresh();
 	}
@@ -96,127 +151,30 @@ void LLPanelSkins::apply()
 void LLPanelSkins::cancel()
 {
 	// reverts any changes to current skin
-	gSavedSettings.setString("SkinCurrent", mSkin);
+	gSavedSettings.setString("SkinCurrent", oldSkin);
 }
 
 //static
-void LLPanelSkins::onSelectSkin(LLUICtrl* ctrl, void* data)
+void LLPanelSkins::onComboBoxCommit(LLUICtrl* ctrl, void* userdata)
 {
-	std::string skin_selection = ctrl->getValue().asString();
-	gSavedSettings.setString("SkinCurrent", skin_selection);
+	LLComboBox* box = (LLComboBox*)ctrl;
+	if(box)
+	{
+		std::string skinName = box->getValue().asString();
+		for(int i =0;i<(int)sInstance->datas.size();i++)
+		{
+			LLSD tdata=sInstance->datas[i];
+			std::string tempName = tdata["skin_name"].asString();
+			if(tempName==skinName)
+			{
+				std::string newFolder(tdata["folder_name"].asString());
+				gSavedSettings.setString("SkinCurrent",newFolder);
+				sInstance->mSkin=newFolder;
+
+				if(sInstance)sInstance->refresh();
+				return;
+			}
+		}
+	}	
 }
 
-//static 
-void LLPanelSkins::onClickClassic(void* data)
-{
-	LLPanelSkins* self = (LLPanelSkins*)data;
-	gSavedSettings.setString("SkinCurrent", "default");
-	self->getChild<LLRadioGroup>("skin_selection")->setValue("default");
-}
-
-//static 
-void LLPanelSkins::onClickSilver(void* data)
-{
-	LLPanelSkins* self = (LLPanelSkins*)data;
-	gSavedSettings.setString("SkinCurrent", "silver");
-	self->getChild<LLRadioGroup>("skin_selection")->setValue("silver");
-}
-
-//static 
-void LLPanelSkins::onClickEmerald(void* data)
-{
-	LLPanelSkins* self = (LLPanelSkins*)data;
-	gSavedSettings.setString("SkinCurrent", "emerald");
-	self->getChild<LLRadioGroup>("skin_selection")->setValue("emerald");
-}
-
-//static 
-void LLPanelSkins::onClickRuby(void* data)
-{
-	LLPanelSkins* self = (LLPanelSkins*)data;
-	gSavedSettings.setString("SkinCurrent", "ruby");
-	self->getChild<LLRadioGroup>("skin_selection")->setValue("ruby");
-}
-//static 
-void LLPanelSkins::onClickDark(void* data)
-{
-	LLPanelSkins* self = (LLPanelSkins*)data;
-	gSavedSettings.setString("SkinCurrent", "dark");
-	self->getChild<LLRadioGroup>("skin_selection")->setValue("dark");
-}
-
-//static 
-void LLPanelSkins::onClickPslpurple(void* data)
-{
-	LLPanelSkins* self = (LLPanelSkins*)data;
-	gSavedSettings.setString("SkinCurrent", "pslpurple");
-	self->getChild<LLRadioGroup>("skin_selection")->setValue("pslpurple");
-}
-//static 
-void LLPanelSkins::onClickPslgreen(void* data)
-{
-	LLPanelSkins* self = (LLPanelSkins*)data;
-	gSavedSettings.setString("SkinCurrent", "pslgreen");
-	self->getChild<LLRadioGroup>("skin_selection")->setValue("pslgreen");
-}
-
-//static 
-void LLPanelSkins::onClickGred(void* data)
-{
-	LLPanelSkins* self = (LLPanelSkins*)data;
-	gSavedSettings.setString("SkinCurrent", "gred");
-	self->getChild<LLRadioGroup>("skin_selection")->setValue("gred");
-}
-//static 
-void LLPanelSkins::onClickSapphire(void* data)
-{
-	LLPanelSkins* self = (LLPanelSkins*)data;
-	gSavedSettings.setString("SkinCurrent", "sapphire");
-	self->getChild<LLRadioGroup>("skin_selection")->setValue("sapphire");
-}
-
-//static 
-void LLPanelSkins::onClickWhite_emerald(void* data)
-{
-	LLPanelSkins* self = (LLPanelSkins*)data;
-	gSavedSettings.setString("SkinCurrent", "white_emerald");
-	self->getChild<LLRadioGroup>("skin_selection")->setValue("white_emerald");
-}
-//static 
-void LLPanelSkins::onClickDarkgred(void* data)
-{
-	LLPanelSkins* self = (LLPanelSkins*)data;
-	gSavedSettings.setString("SkinCurrent", "darkgred");
-	self->getChild<LLRadioGroup>("skin_selection")->setValue("darkgred");
-}
-
-//static 
-void LLPanelSkins::onClickDarkorange(void* data)
-{
-	LLPanelSkins* self = (LLPanelSkins*)data;
-	gSavedSettings.setString("SkinCurrent", "darkorange");
-	self->getChild<LLRadioGroup>("skin_selection")->setValue("darkorange");
-}
-//static 
-void LLPanelSkins::onClickGemini(void* data)
-{
-	LLPanelSkins* self = (LLPanelSkins*)data;
-	gSavedSettings.setString("SkinCurrent", "gemini");
-	self->getChild<LLRadioGroup>("skin_selection")->setValue("gemini");
-}
-
-//static 
-void LLPanelSkins::onClickPony_Purple(void* data)
-{
-	LLPanelSkins* self = (LLPanelSkins*)data;
-	gSavedSettings.setString("SkinCurrent", "Pony-Purple");
-	self->getChild<LLRadioGroup>("skin_selection")->setValue("Pony-Purple");
-}
-
-//static 
-void LLPanelSkins::onClickPony_Aquablue(void* data)
-{
-	LLPanelSkins* self = (LLPanelSkins*)data;
-	gSavedSettings.setString("SkinCurrent", "Pony-Aquablue");
-	self->getChild<LLRadioGroup>("skin_selection")->setValue("Pony-Aquablue");
-}

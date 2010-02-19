@@ -1198,13 +1198,13 @@ Wählen Sie ein einzelnes Objekt aus und versuchen Sie es erneut.
 		Die Regionstexturen konnten nicht festgelegt werden:
 Die Terraintextur [TEXTURE_NUM] hat eine ungültige Bit-Tiefe [TEXTURE_BIT_DEPTH].
 
-Ersetzen Sie die Textur [TEXTURE_NUM] mit einer Bilddatei von maximal 512x512 und 24 Bit und klicken Sie dann erneut auf „Übernehmen“.
+Ersetzen Sie die Textur [TEXTURE_NUM] mit einer Bilddatei von maximal 1024x1024 und 24 Bit und klicken Sie dann erneut auf „Übernehmen“.
 	</notification>
 	<notification name="InvalidTerrainSize">
 		Die Regionstexturen konnten nicht festgelegt werden:
 Die Terraintextur [TEXTURE_NUM] ist mit [TEXTURE_SIZE_X]x[TEXTURE_SIZE_Y] zu groß.
 
-Ersetzen Sie die Textur [TEXTURE_NUM] mit einer Bilddatei von maximal 512x512 und 24 Bit und klicken Sie dann erneut auf „Übernehmen“.
+Ersetzen Sie die Textur [TEXTURE_NUM] mit einer Bilddatei von maximal 1024x1024 und 24 Bit und klicken Sie dann erneut auf „Übernehmen“.
 	</notification>
 	<notification name="RawUploadStarted">
 		Hochladen gestartet. Je nach Verbindungsgeschwindigkeit kann der Vorgang bis zu 2 Minuten dauern.
@@ -3295,6 +3295,13 @@ Sollte das Problem fortbestehen, finden Sie weitere Hilfestellung unter: http://
       Kontrolliert die Reibung und damit wann die Brüste zur Ruhe kommen. Umso höher der Wert umso schneller.
     - Z Einfluss
       Kontrolliert den Einfluss der Avatar Bewegung. Höherer Wert erhöht den Effekt.
+  </notification>
+  <notification label="Emerald Help" name="EmeraldHelp_SpellCheck">
+    Rechtsklick auf ein Wort zeigt die Auswahlliste an.
+    Wählen sie ein Standard Wörterbuch das den Sprachstil und die Basis Wörter enthält.
+    Sie können auch andere Wörterbücher nutzen durch auswählen von der Liste und "Hinzufügen".
+    Eigene Wörter können sie dem individuellem Wörterbuch hinzufügen.
+    Die Rechtschreibhilfe basiert auf Hunspell, mehr Informationen finden sie im Internet.
   </notification>
   <notification name="NoShadows">
   Schatten können nicht aktiviert werden da ihre Grafik Einstellungen zu niedrig sind. Stellen sie sicher das ihre Einstellungen auf Ultra sind und alle Schatten Optionen aktiviert.

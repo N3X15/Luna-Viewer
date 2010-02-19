@@ -34,6 +34,7 @@
 #define LL_LLVIEWERIMAGELIST_H
 
 #include "lluuid.h"
+#include "llimagej2c.h"
 //#include "message.h"
 #include "llgl.h"
 #include "llstat.h"

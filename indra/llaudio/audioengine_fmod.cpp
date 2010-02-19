@@ -44,15 +44,17 @@
 #if LL_WINDOWS
 #include <windows.h>
 #pragma warning (disable : 4005)
-#define LoadLibrary LoadLibraryA
-#endif //LL_WINDOWS
-#if LL_WINDOWS
+#define LOADLIB LoadLibraryA
+#else
+#define LOADLIB LoadLibrary
+#endif
+#if LL_WINDOWS || LL_LINUX
 #include "fmoddyn.h"
 #define FMOD_API(x) gFmod->x
 FMOD_INSTANCE* gFmod = NULL;
 #else //LL_WINDOWS
 #define FMOD_API(x) x
-#endif //LL_WINDOWS
+#endif //LL_WINDOWS || LL_LINUX
 #include "fmod.h"
 #include "fmod_errors.h"
 #include "lldir.h"
@@ -108,7 +110,12 @@ bool LLAudioEngine_FMOD::init(const S32 num_channels, void* userdata)
 {
 #if LL_WINDOWS
 	gFmod = FMOD_CreateInstance("fmod.dll");
+#elif LL_LINUX
+	gFmod = FMOD_CreateInstance("libfmod-3.75.so");
 #endif
+//#elif LL_DARWIN
+//	gFmod = FMOD_CreateInstance("libfmodwrapper.dylib");
+//#endif
 
 #if LL_WINDOWS
 	if(!gFmod) {
@@ -333,6 +340,7 @@ LLAudioChannel *LLAudioEngine_FMOD::createChannel()
 
 void LLAudioEngine_FMOD::initWind()
 {
+	if(mWindGen)return;
 	mWindGen = new LLWindGen<MIXBUFFERFORMAT>;
 
 	if (!gWindDSP)
@@ -349,6 +357,7 @@ void LLAudioEngine_FMOD::initWind()
 
 void LLAudioEngine_FMOD::cleanupWind()
 {
+	if(!mWindGen)return;
 	if (gWindDSP)
 	{
 		FMOD_API(FSOUND_DSP_SetActive)(gWindDSP, false);
@@ -368,9 +377,23 @@ void LLAudioEngine_FMOD::updateWind(LLVector3 wind_vec, F32 camera_height_above_
 	F64 pitch;
 	F64 center_freq;
 
-	if (!mEnableWind)
+	static bool lastwind = false;
+	if (!mEnableWind || mWindMuted)
 	{
+		//WIND IS OFF
+		if(lastwind != false)
+		{
+			lastwind = false;
+			if(mWindGen)cleanupWind();
+		}
 		return;
+	}else
+	{
+		if(lastwind != true)
+		{
+			lastwind = true;
+			if(!mWindGen)initWind();
+		}
 	}
 	
 	if (mWindUpdateTimer.checkExpirationAndReset(LL_WIND_UPDATE_INTERVAL))

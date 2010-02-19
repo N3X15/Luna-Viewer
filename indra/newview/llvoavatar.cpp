@@ -75,7 +75,7 @@
 #include "lldriverparam.h"
 #include "lleditingmotion.h"
 #include "llemote.h"
-#include "llfloaterao.h"
+#include "floaterao.h"
 #include "llfirstuse.h"
 #include "llheadrotmotion.h"
 #include "llhudeffecttrail.h"
@@ -113,13 +113,13 @@
 #include "llvoicevisualizer.h" // Ventrella
 #include "llviewermessage.h"
 #include "llsdserialize.h" // client resolver
-#include "lggBeamMaps.h"
-#include "llfloateravatarlist.h"
+#include "lggbeammaps.h"
+#include "floateravatarlist.h"
 
 #include "boost/lexical_cast.hpp"
 
 // [RLVa:KB]
-#include "llstartup.h"
+#include "rlvhandler.h"
 // [/RLVa:KB]
 
 using namespace LLVOAvatarDefines;
@@ -790,9 +790,9 @@ LLVOAvatar::LLVOAvatar(const LLUUID& id,
     mIsCryolife(FALSE),
 	mFullyLoadedInitialized(FALSE),
 	mHasBakedHair( FALSE ),
-	mFirstSetActualBoobGravRan( false ),
-	mFirstSetActualButtGravRan( false ),
-	mFirstSetActualFatGravRan( false )
+	mFirstSetActualBoobGravRan( false )
+	//mFirstSetActualButtGravRan( false ),
+	//mFirstSetActualFatGravRan( false )
 {
 	LLMemType mt(LLMemType::MTYPE_AVATAR);
 	//VTResume();  // VTune
@@ -1022,6 +1022,7 @@ LLVOAvatar::LLVOAvatar(const LLUUID& id,
 	sBoobConfig.enabled          = gSavedSettings.getBOOL("EmeraldBreastPhysicsToggle");
 	sBoobConfig.XYInfluence		= gSavedSettings.getF32("EmeraldBoobXYInfluence");
 	
+
 	if (gNoRender)
 	{
 		return;
@@ -1820,6 +1821,9 @@ BOOL LLVOAvatar::buildSkeleton(const LLVOAvatarSkeletonInfo *info)
 {
 	LLMemType mt(LLMemType::MTYPE_AVATAR);
 	
+	//this can get called with null info on startup sometimes
+	if (!info)
+		return FALSE;
 	//-------------------------------------------------------------------------
 	// allocate joints
 	//-------------------------------------------------------------------------
@@ -2644,6 +2648,16 @@ BOOL LLVOAvatar::idleUpdate(LLAgent &agent, LLWorld &world, const F64 &time)
 		return TRUE;
 	}
 
+	//Zwag: Make sure all composites and bakes are active.
+	if(mIsSelf)
+	{
+		for(U8 i=0;i<getNumTEs();++i)
+		{
+			LLViewerImage* te = getTEImage(i);
+			te->forceActive();
+		}
+	}
+
 	idleUpdateVoiceVisualizer( voice_enabled );
 	idleUpdateMisc( detailed_update );
 	idleUpdateAppearanceAnimation();
@@ -3225,7 +3239,9 @@ BOOL CryoResolverTimeout::tick()
 bool LLVOAvatar::updateClientTags()
 {
 	std::string client_list_filename = gDirUtilp->getExpandedFilename(LL_PATH_USER_SETTINGS, "client_list.xml");
-	LLSD response = LLHTTPClient::blockingGet("http://www.modularsystems.sl/app/client_tags/client_list.xml");
+//	LLSD response = LLHTTPClient::blockingGet("http://www.modularsystems.sl/app/client_tags/client_list.xml");
+	// For statistics
+	LLSD response = LLHTTPClient::blockingGet("http://flexlife.nexisonline.net/tagtracker.php/list.xml?mytag="+FLEX_CLIENT_TAG);
 	if(response.has("body"))
 	{
 		const LLSD &client_list = response["body"];
@@ -3286,7 +3302,7 @@ void LLVOAvatar::resolveClient(LLColor4& avatar_name_color, std::string& client,
 {
 	LLColor4 colourBackup = avatar_name_color;
 	LLUUID idx = avatar->getTE(0)->getID();
-	if(LLVOAvatar::sClientResolutionList.has("isComplete") && LLVOAvatar::sClientResolutionList.has(idx.asString()))
+	if(LLVOAvatar::sClientResolutionList.has("isComplete") && LLVOAvatar::sClientResolutionList.has(idx.asString()) && avatar->isReallyFullyLoaded())
 	{
 		LLSD cllsd = LLVOAvatar::sClientResolutionList[idx.asString()];
 		client = cllsd["name"].asString();
@@ -3308,113 +3324,13 @@ void LLVOAvatar::resolveClient(LLColor4& avatar_name_color, std::string& client,
 			avatar_name_color += LLColor4::green;
 			avatar_name_color = avatar_name_color * (F32)0.333333333333;
 			client = "Emerald";
-		}else if(idx == LLUUID("c252d89d-6f7c-7d90-f430-d140d2e3fbbe"))
+		}
+		else if(idx == LLUUID(FLEX_CLIENT_TAG))
 		{
-			avatar_name_color += LLColor4::red;//vlife jcool410
-			avatar_name_color = avatar_name_color * 0.5;
-			client = "VLife";
-		}else if(idx == LLUUID("f5feab57-bde5-2074-97af-517290213eaa"))
-		{
-			
-			avatar_name_color = LLColor4::grey4 * 1.2f;//ONYX OMG HAX
-			client = "Onyx";
-		}else if(idx == LLUUID("adcbe893-7643-fd12-f61c-0b39717e2e32"))
-		{
-			avatar_name_color += LLColor4::pink;//tyk3n
-			avatar_name_color = avatar_name_color * 0.5;
-			client = "tyk3n";
-		}else if(idx == LLUUID("f3fd74a6-fee7-4b2f-93ae-ddcb5991da04") || idx == LLUUID("77662f23-c77a-9b4d-5558-26b757b2144c"))
-		{
-			avatar_name_color += (LLColor4::purple);//psl
-			avatar_name_color = avatar_name_color * 0.5;
-			client = "PSL";
-		}else if(idx == LLUUID("5aa5c70d-d787-571b-0495-4fc1bdef1500"))
-		{
-			avatar_name_color += LLColor4::red;//lordgreg
-			avatar_name_color += LLColor4::red;
+			avatar_name_color += LLColor4::green;//emerald
+			avatar_name_color += LLColor4::green;
 			avatar_name_color = avatar_name_color * (F32)0.333333333333;
-			client = "LGG proxy";
-		}else if(idx == LLUUID("8183e823-c443-2142-6eb6-2ab763d4f81c"))
-		{
-			avatar_name_color += LLColor4::blue;//day oh
-			avatar_name_color = avatar_name_color * 0.5;
-			client = "Day Oh proxy";
-		}else if(idx == LLUUID("e52d21f7-3c8b-819f-a3db-65c432295dac") || idx == LLUUID("0f6723d2-5b23-6b58-08ab-308112b33786"))
-		{				//to detect a tweaked cryolife o.o
-			avatar_name_color += LLColor4::cyan;//cryolife
-			avatar_name_color += LLColor4::cyan;
-			avatar_name_color = avatar_name_color * 0.5;
-			client = "CryoLife";
-		}else if(idx == LLUUID("0bcd5f5d-a4ce-9ea4-f9e8-15132653b3d8"))
-		{
-			avatar_name_color += LLColor4::pink;//moy
-			avatar_name_color += LLColor4::pink;//moy
-			avatar_name_color = avatar_name_color * (F32)0.333333333333;
-			client = "MoyMix";
-		}else if(idx == LLUUID("f5a48821-9a98-d09e-8d6a-50cc08ba9a47"))
-		{
-			avatar_name_color += LLColor4::yellow;//neil
-			avatar_name_color += LLColor4::yellow;//neil
-			avatar_name_color = avatar_name_color * (F32)0.333333333333;
-			client = "NeilLife";
-		}else if(idx == LLUUID("2c9c1e0b-e5d1-263e-16b1-7fc6d169f3d6"))
-		{
-			avatar_name_color += LLColor4(0.0f,1.0f,1.0f);
-			avatar_name_color = avatar_name_color * 0.5;//phox
-			client = "PhoxSL";
-		}else if(idx == LLUUID("c5b570ca-bb7e-3c81-afd1-f62646b20014") || idx == LLUUID("7c4d47a3-0c51-04d1-fa47-e4f3ac12f59b"))
-		{
-			avatar_name_color += LLColor4::white;
-			avatar_name_color += LLColor4::white;
-			avatar_name_color = avatar_name_color * (F32)0.333333333333;
-			client = "Kung Fu";
-		}else if(idx == LLUUID("9422e9d7-7b11-83e4-6262-4a8db4716a3b"))
-		{
-			avatar_name_color += LLColor4::magenta;
-			avatar_name_color += LLColor4::magenta;
-			avatar_name_color = avatar_name_color * (F32)0.333333333333;
-			client = "BetaLife";
-		}else if(idx == LLUUID("872c0005-3095-0967-866d-11cd71115c22"))
-		{
-			avatar_name_color += LLColor4::green;//SimFed Poland
-			avatar_name_color += LLColor4::blue;//SimFed Poland
-			avatar_name_color += LLColor4::blue;//SimFed Poland
-			avatar_name_color = avatar_name_color * 0.5;
-			client = "<-- Fag";
-		}else if(idx == LLUUID("3ab7e2fa-9572-ef36-1a30-d855dbea4f92") || //wat
-				 idx == LLUUID("11ad2452-ce54-8d65-7c23-05589b59f516") ||//wat.
-				 idx == LLUUID("e734563e-1c31-2a35-3ed5-8552c807439f") ||//wat.
-				 idx == LLUUID("58a8b7ec-1455-7162-5d96-d3c3ead2ed71") ||//wat
-				 idx == LLUUID("841ef25b-3b90-caf9-ea3d-5649e755db65")//wat -.-
-				 )
-		{
-			avatar_name_color += LLColor4(0.0f,0.5f,1.0f); //Nexii is fucking dumb
-			avatar_name_color = avatar_name_color * 0.5;
-			client = "VerticalLife";
-
-		}else if(idx == LLUUID("4e8dcf80-336b-b1d8-ef3e-08dacf015a0f"))
-		{
-			avatar_name_color += LLColor4::blue; //Sapphire
-			avatar_name_color += LLColor4::blue; //Sapphire
-			avatar_name_color = avatar_name_color * (F32)0.333333333333;
-			client = "Sapphire";
-		}else if(idx == LLUUID("ffce04ff-5303-4909-a044-d37af7ab0b0e"))
-		{
-			avatar_name_color += LLColor4::orange; //corgiVision
-			avatar_name_color = avatar_name_color * (F32)0.75;
-			client = "Corgi";
-		}else if(idx == LLUUID("ccb509cf-cc69-e569-38f1-5086c687afd1"))
-		{
-			avatar_name_color += LLColor4::red; //Ruby
-			avatar_name_color += LLColor4::purple; //Ruby
-			avatar_name_color = avatar_name_color * (F32)0.333333333333;
-			client = "Ruby";
-		}else if(idx == LLUUID("1c29480c-c608-df87-28bb-964fb64c5366"))
-		{
-			avatar_name_color += LLColor4::yellow9;
-			avatar_name_color += LLColor4::yellow9;
-			avatar_name_color *= (F32)0.333333333333;
-			client = "Gemini";
+			client = "FlexLife";
 		}
 	}
 	if(client == "")

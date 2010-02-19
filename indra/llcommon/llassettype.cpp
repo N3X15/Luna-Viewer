@@ -129,7 +129,8 @@ const char* LLAssetType::mAssetTypeNames[LLAssetType::AT_COUNT] =
 	"jpeg",
 	"animatn",
 	"gesture",
-	"simstate"
+	"simstate",
+	"sky"
 };
 
 // This table is meant for decoding to human readable form. Put any
@@ -159,7 +160,8 @@ const char* LLAssetType::mAssetTypeHumanNames[LLAssetType::AT_COUNT] =
 	"jpeg image",
 	"animation",
 	"gesture",
-	"simstate"
+	"simstate",
+	"sky"
 };
 
 ///----------------------------------------------------------------------------

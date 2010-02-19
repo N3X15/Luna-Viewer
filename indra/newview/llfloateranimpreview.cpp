@@ -164,6 +164,7 @@ BOOL LLFloaterAnimPreview::postBuild()
 
 	childSetLabelArg("ok_btn", "[AMOUNT]", llformat("%d",sUploadAmount));
 	childSetAction("ok_btn", onBtnOK, this);
+	childSetAction("cancel_btn", onBtnCancel, this);
 	setDefaultBtn();
 
 	mPreviewRect.set(PREVIEW_HPAD, 
@@ -980,6 +981,21 @@ void LLFloaterAnimPreview::refresh()
 	}
 }
 
+//-----------------------------------------------------------------------------
+// onBtnCancel()
+//-----------------------------------------------------------------------------
+void LLFloaterAnimPreview::onBtnCancel(void* userdata)
+{
+	LLFloaterAnimPreview* floaterp = (LLFloaterAnimPreview*)userdata;
+	if (!floaterp->getEnabled()) return;
+
+	if (floaterp->mMotionID.notNull())//floaterp->mAnimPreview)
+	{
+		gAgent.getAvatarObject()->removeMotion(floaterp->mMotionID);
+		LLKeyframeDataCache::removeKeyframeData(floaterp->mMotionID);
+	}
+	floaterp->close(false);
+}
 //-----------------------------------------------------------------------------
 // onBtnOK()
 //-----------------------------------------------------------------------------

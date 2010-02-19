@@ -140,6 +140,10 @@ public:
 
 private:
 	void updateBuffer() ;
+
+	static F32 sConsoleBackgroundOpacity;
+
+	static void	updateConsoleBackgroundOpacity(const LLSD &data);
 };
 
 extern LLConsole* gConsole;

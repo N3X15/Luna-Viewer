@@ -1,6 +1,6 @@
 /* Copyright (c) 2009
  *
- * Modular Systems. All rights reserved.
+ * Modular Systems Ltd. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or
  * without modification, are permitted provided that the following
@@ -12,11 +12,11 @@
  *      copyright notice, this list of conditions and the following
  *      disclaimer in the documentation and/or other materials provided
  *      with the distribution.
- *   3. Neither the name Modular Systems nor the names of its contributors
+ *   3. Neither the name Modular Systems Ltd nor the names of its contributors
  *      may be used to endorse or promote products derived from this
  *      software without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY MODULAR SYSTEMS AND CONTRIBUTORS “AS IS”
+ * THIS SOFTWARE IS PROVIDED BY MODULAR SYSTEMS LTD AND CONTRIBUTORS “AS IS”
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
  * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
  * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL MODULAR SYSTEMS OR CONTRIBUTORS
@@ -42,17 +42,15 @@
 
 #include "jcfloater_areasearch.h"
 
+#include "llviewercontrol.h"
 #include "llviewerobjectlist.h"
 
 #include "llcategory.h"
-
-#include "llcachename.h"
 
 #include "llfloaterchat.h"
 
 #include "llchat.h"
 #include "lltracker.h"
-#include "llviewerregion.h"
 
 JCFloaterAreaSearch* JCFloaterAreaSearch::sInstance = NULL;
 std::map<LLUUID, AObjectDetails> JCFloaterAreaSearch::mObjectDetails;
@@ -61,20 +59,11 @@ std::string JCFloaterAreaSearch::searched_desc;
 std::string JCFloaterAreaSearch::searched_owner;
 std::string JCFloaterAreaSearch::searched_group;
 bool JCFloaterAreaSearch::payable_object;
-bool JCFloaterAreaSearch::scripted_object;
-bool JCFloaterAreaSearch::touch_object;
-bool JCFloaterAreaSearch::temporary_object;
-bool JCFloaterAreaSearch::sculpted_object;
-bool JCFloaterAreaSearch::flexible_object;
-bool JCFloaterAreaSearch::phantom_object;
-bool JCFloaterAreaSearch::sound_object;
-bool JCFloaterAreaSearch::particle_object;
-bool JCFloaterAreaSearch::animation_object;
-bool JCFloaterAreaSearch::inventoryadd_object;
-bool JCFloaterAreaSearch::attachment_object;
-bool JCFloaterAreaSearch::hudattachment_object;
+bool JCFloaterAreaSearch::buyable_object;
 
-JCFloaterAreaSearch::JCFloaterAreaSearch() :  LLFloater()
+JCFloaterAreaSearch::JCFloaterAreaSearch() :  
+LLFloater(),
+mResultList(0)
 {
 	llassert_always(sInstance == NULL);
 	sInstance = this;
@@ -112,23 +101,14 @@ BOOL JCFloaterAreaSearch::postBuild()
 	mResultList->setDoubleClickCallback(onDoubleClick);
 	mResultList->sortByColumn("Name", TRUE);
 
+	childSetAction("Reload",reload,this);
+
 	childSetAction("Search",search,this);
 
-	childSetCommitCallback("payable", onCheckPayable,this);
-	childSetCommitCallback("touch_only", onCheckTouchOnly,this);
-	childSetCommitCallback("scripted", onCheckScripted,this);
-	childSetCommitCallback("sounds", onCheckSounds,this);
-	childSetCommitCallback("particles", onCheckParticles,this);
-	childSetCommitCallback("animations", onCheckAnimations,this);
-	childSetCommitCallback("temporary", onCheckTemporary,this);
-	childSetCommitCallback("sculpted", onCheckSculpted,this);
-	childSetCommitCallback("flexible", onCheckFlexible,this);
-	childSetCommitCallback("phantom", onCheckPhantom,this);
-	childSetCommitCallback("inventoryadd", onCheckInventoryAdd,this);
-	childSetCommitCallback("attachment", onCheckAttachment,this);
-	childSetCommitCallback("hudattachment", onCheckHudAttachment,this);
-
-
+	///childSetCommitCallback("Name query chunk", onCommitLine);
+	//childSetCommitCallback("Description query chunk", onCommitLine);
+	//childSetCommitCallback("Owner query chunk", onCommitLine);
+	//childSetCommitCallback("group query chunk", onCommitLine);
 
 	childSetKeystrokeCallback("Name query chunk", onCommitLine, 0);
 	childSetKeystrokeCallback("Description query chunk", onCommitLine, 0);
@@ -147,17 +127,32 @@ void JCFloaterAreaSearch::onDoubleClick(void *userdata)
 	LLViewerObject* objectp = gObjectList.findObject(object_id);
 	if(objectp)
 	{
+	//gAgent.setFocusObject(gObjectList.findObject(object_id));
+	//gAgent.setFocusOnAvatar(FALSE, TRUE);
+		//LLVector3 pos_agent = objectp->getPositionGlobal()
+		//LLVector3d pos_global = gAgent.getPosGlobalFromAgent(pos_agent);
 		LLTracker::trackLocation(objectp->getPositionGlobal(), mObjectDetails[object_id].name, "", LLTracker::LOCATION_ITEM);
 	}
 }
 
+void JCFloaterAreaSearch::reload(void* data)
+{
+	if(sInstance)sInstance->close(TRUE);
+	JCFloaterAreaSearch::toggle();
+	JCFloaterAreaSearch::toggle();
+}
+
 void JCFloaterAreaSearch::search(void* data)
 {
+	{LLChat chat;
+	chat.mText = "clicked search";
+	LLFloaterChat::addChat(chat);}
 	results();
 }
 
 void JCFloaterAreaSearch::draw()
 {
+	//results();
 	LLFloater::draw();
 }
 
@@ -172,103 +167,57 @@ void JCFloaterAreaSearch::onCommitLine(LLLineEditor* line, void* user_data)
 	else if(name == "Description query chunk")searched_desc = text;
 	else if(name == "Owner query chunk")searched_owner = text;
 	else if(name == "Group query chunk")searched_group = text;
-}
+	/*{LLChat chat;
+	chat.mText = "loaded "+name+" with "+text;
+	LLFloaterChat::addChat(chat);}*/
 
-void JCFloaterAreaSearch::onCheckPayable(LLUICtrl* ctrl,void* user_data)
+	if(text.length() > 3)results();
+	//return TRUE;
+}
+void mark(std::string lo)//debug
 {
-	JCFloaterAreaSearch* self = (JCFloaterAreaSearch*)user_data;
-	payable_object = self->childGetValue("payable").asBoolean();
+	{LLChat chat;
+	chat.mText = lo;
+	LLFloaterChat::addChat(chat);}
 }
-
-void JCFloaterAreaSearch::onCheckTouchOnly(LLUICtrl* ctrl,void* user_data)
+std::string request_string = "Requested_123456";
+void JCFloaterAreaSearch::requestifneed(LLViewerObject *objectp)
 {
-	JCFloaterAreaSearch* self = (JCFloaterAreaSearch*)user_data;
-	touch_object = self->childGetValue("touch_only").asBoolean();
-	scripted_object = self->childGetValue("touch_only").asBoolean();
-}
+	if(objectp)
+	{
+		LLUUID object_id = objectp->getID();
+		if(mObjectDetails.count( object_id ) == 0)
+		{
+			//mark("not in list");
+			AObjectDetails* details = &mObjectDetails[object_id];
+			details->name = request_string;
+			details->desc = request_string;
+			details->owner_id = LLUUID::null;
+			details->group_id = LLUUID::null;
 
-void JCFloaterAreaSearch::onCheckScripted(LLUICtrl* ctrl,void* user_data)
-{
-	JCFloaterAreaSearch* self = (JCFloaterAreaSearch*)user_data;
-	scripted_object = self->childGetValue("scripted").asBoolean();
+			LLMessageSystem* msg = gMessageSystem;
+			msg->newMessageFast(_PREHASH_RequestObjectPropertiesFamily);
+			msg->nextBlockFast(_PREHASH_AgentData);
+			msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID());
+			msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
+			msg->nextBlockFast(_PREHASH_ObjectData);
+			msg->addU32Fast(_PREHASH_RequestFlags, 0 );
+			msg->addUUIDFast(_PREHASH_ObjectID, object_id);
+			gAgent.sendReliableMessage();
+			//mark("sent data req");
+		}
+	}
 }
-
-void JCFloaterAreaSearch::onCheckSounds(LLUICtrl* ctrl,void* user_data)
-{
-	JCFloaterAreaSearch* self = (JCFloaterAreaSearch*)user_data;
-	sound_object = self->childGetValue("sounds").asBoolean();
-}
-
-void JCFloaterAreaSearch::onCheckParticles(LLUICtrl* ctrl,void* user_data)
-{
-	JCFloaterAreaSearch* self = (JCFloaterAreaSearch*)user_data;
-	particle_object = self->childGetValue("particles").asBoolean();
-}
-
-void JCFloaterAreaSearch::onCheckAnimations(LLUICtrl* ctrl,void* user_data)
-{
-	JCFloaterAreaSearch* self = (JCFloaterAreaSearch*)user_data;
-	animation_object = self->childGetValue("animations").asBoolean();
-}
-
-void JCFloaterAreaSearch::onCheckTemporary(LLUICtrl* ctrl,void* user_data)
-{
-	JCFloaterAreaSearch* self = (JCFloaterAreaSearch*)user_data;
-	temporary_object = self->childGetValue("temporary").asBoolean();
-}
-
-void JCFloaterAreaSearch::onCheckSculpted(LLUICtrl* ctrl,void* user_data)
-{
-	JCFloaterAreaSearch* self = (JCFloaterAreaSearch*)user_data;
-	sculpted_object = self->childGetValue("sculpted").asBoolean();
-}
-
-void JCFloaterAreaSearch::onCheckFlexible(LLUICtrl* ctrl,void* user_data)
-{
-	JCFloaterAreaSearch* self = (JCFloaterAreaSearch*)user_data;
-	flexible_object = self->childGetValue("flexible").asBoolean();
-}
-
-void JCFloaterAreaSearch::onCheckPhantom(LLUICtrl* ctrl,void* user_data)
-{
-	JCFloaterAreaSearch* self = (JCFloaterAreaSearch*)user_data;
-	phantom_object = self->childGetValue("phantom").asBoolean();
-}
-
-void JCFloaterAreaSearch::onCheckInventoryAdd(LLUICtrl* ctrl,void* user_data)
-{
-	JCFloaterAreaSearch* self = (JCFloaterAreaSearch*)user_data;
-	inventoryadd_object = self->childGetValue("inventoryadd").asBoolean();
-}
-
-void JCFloaterAreaSearch::onCheckAttachment(LLUICtrl* ctrl,void* user_data)
-{
-	JCFloaterAreaSearch* self = (JCFloaterAreaSearch*)user_data;
-	attachment_object = self->childGetValue("attachment").asBoolean();
-}
-
-void JCFloaterAreaSearch::onCheckHudAttachment(LLUICtrl* ctrl,void* user_data)
-{
-	JCFloaterAreaSearch* self = (JCFloaterAreaSearch*)user_data;
-	hudattachment_object = self->childGetValue("hudattachment").asBoolean();
-}
-
 void JCFloaterAreaSearch::results()
 {
 	if(!sInstance)return;
 	if(!(sInstance->getVisible()))return;
 	//mark("results()");
 	LLDynamicArray<LLUUID> selected = sInstance->mResultList->getSelectedIDs();
+	S32 scrollpos = sInstance->mResultList->getScrollPos();
 	sInstance->mResultList->deleteAllItems();
 	S32 i;
 	S32 total = gObjectList.getNumObjects();
-
-	F32 throttle = gSavedSettings.getF32("OutBandwidth");
-	if(throttle < 128000.)
-	{
-		gMessageSystem->mPacketRing.setOutBandwidth(128000.0);
-	}
-	gMessageSystem->mPacketRing.setUseOutThrottle(TRUE);
 
 	LLViewerRegion* our_region = gAgent.getRegion();
 	for (i = 0; i < total; i++)
@@ -278,56 +227,131 @@ void JCFloaterAreaSearch::results()
 		{
 			if(objectp->getRegion() == our_region)
 			{
-				if(objectp->isRoot()){
-
-				if(objectp->isAvatar()){ continue; }
-				else if(payable_object || (bool)objectp->flagTakesMoney() != payable_object){ continue; }
-				else if(scripted_object || (bool)objectp->flagScripted() != scripted_object){ continue; }
-				else if(touch_object || (bool)objectp->flagHandleTouch() != touch_object){ continue; }
-				else if(temporary_object || (bool)objectp->flagTemporary() != temporary_object){ continue; }
-				else if(sculpted_object || (bool)objectp->isSculpted() != sculpted_object){ continue; }
-				else if(flexible_object || (bool)objectp->isFlexible() != flexible_object){ continue; }
-				else if(phantom_object || (bool)objectp->flagPhantom() != phantom_object){ continue; }
-				else if(sound_object || (bool)objectp->isAudioSource() != sound_object){ continue; }
-				else if(particle_object || (bool)objectp->isParticleSource() != particle_object){ continue; }
-				else if(animation_object || (bool)objectp->flagAnimSource() != animation_object){ continue; }
-				else if(inventoryadd_object || (bool)objectp->flagAllowInventoryAdd() != inventoryadd_object){ continue; }
-				else if(attachment_object || (bool)objectp->isAttachment() != attachment_object){ continue; }
-				else if(hudattachment_object || (bool)objectp->isHUDAttachment() != hudattachment_object){ continue; } 
-
-
-					LLUUID object_id = objectp->getID();
-					// we have to query the simulator for information 
-					// about this object
-					LLMessageSystem* msg = gMessageSystem;
-					msg->newMessageFast(_PREHASH_RequestObjectPropertiesFamily);
-					msg->nextBlockFast(_PREHASH_AgentData);
-					msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID());
-					msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
-					msg->nextBlockFast(_PREHASH_ObjectData);
-					msg->addU32Fast(_PREHASH_RequestFlags, MY_REQUEST );
-					msg->addUUIDFast(_PREHASH_ObjectID, object_id);
-					gAgent.sendReliableMessage();
+				LLUUID object_id = objectp->getID();
+				if(objectp->isRoot() && !objectp->flagTemporary() && !objectp->flagTemporaryOnRez())
+				{
+					//mark("isRoot()");
+					bool emptyfields = (searched_name == "" && searched_desc == "" && searched_owner == "" && searched_group == "");
+					if(!emptyfields && mObjectDetails.count( object_id ) == 0)
+					{
+						//mark("not all entries are \"\"");
+						requestifneed(objectp);
+						//obj_counts[objectp->getPCode()]++;
+					}else
+					{
+						//mark("all entries are \"\" or we have data");
+						AObjectDetails* details = &mObjectDetails[object_id];
+						std::string object_name = details->name;
+						std::string object_desc = details->desc;
+						std::string object_owner;
+						std::string object_group;
+						gCacheName->getFullName(details->owner_id,object_owner);
+						gCacheName->getGroupName(details->group_id,object_group);
+						if(
+							emptyfields || object_name != request_string
+							)
+						{
+							//mark("both names are loaded or aren't needed");
+							std::string onU = object_owner;
+							std::string cnU = object_group;
+							LLStringUtil::toLower(object_name);
+							LLStringUtil::toLower(object_desc);
+							LLStringUtil::toLower(object_owner);
+							LLStringUtil::toLower(object_group);
+							if(
+								(searched_name == "" || object_name.find(searched_name) != -1) &&
+								(searched_desc == "" || object_desc.find(searched_desc) != -1) &&
+								(searched_owner == "" || object_owner.find(searched_owner) != -1) &&
+								(searched_group == "" || object_group.find(searched_group) != -1) &&
+								(!payable_object || (bool)objectp->flagTakesMoney() == payable_object)
+								)
+							{
+								requestifneed(objectp);
+								//mark("pass");
+								LLSD element;
+								element["id"] = object_id;
+								element["columns"][LIST_OBJECT_NAME]["column"] = "Name";
+								element["columns"][LIST_OBJECT_NAME]["type"] = "text";
+								element["columns"][LIST_OBJECT_NAME]["color"] = gColors.getColor("DefaultListText").getValue();
+								element["columns"][LIST_OBJECT_NAME]["value"] = details->name;//item->getName();//ai->second//"avatar_icon";
+								element["columns"][LIST_OBJECT_DESC]["column"] = "Description";
+								element["columns"][LIST_OBJECT_DESC]["type"] = "text";
+								element["columns"][LIST_OBJECT_DESC]["value"] = details->desc;//ai->second;
+								element["columns"][LIST_OBJECT_DESC]["color"] = gColors.getColor("DefaultListText").getValue();
+								element["columns"][LIST_OBJECT_OWNER]["column"] = "Owner";
+								element["columns"][LIST_OBJECT_OWNER]["type"] = "text";
+								element["columns"][LIST_OBJECT_OWNER]["value"] = onU;//aifirst;
+								element["columns"][LIST_OBJECT_OWNER]["color"] = gColors.getColor("DefaultListText").getValue();
+								element["columns"][LIST_OBJECT_GROUP]["column"] = "Group";
+								element["columns"][LIST_OBJECT_GROUP]["type"] = "text";
+								element["columns"][LIST_OBJECT_GROUP]["value"] = cnU;//ai->second;
+								element["columns"][LIST_OBJECT_GROUP]["color"] = gColors.getColor("DefaultListText").getValue();
+								sInstance->mResultList->addElement(element, ADD_BOTTOM);
+							}
+						}
+					}
 				}
 			}
 		}
+	}
+
+	sInstance->mResultList->sortItems();
+	sInstance->mResultList->selectMultiple(selected);
+	sInstance->mResultList->setScrollPos(scrollpos);
+}
+
+void JCFloaterAreaSearch::callbackLoadOwnerName(const LLUUID& id, const std::string& first, const std::string& last, BOOL is_group, void* data)
+{
+	results();
+}
+
+void JCFloaterAreaSearch::processObjectPropertiesFamily(LLMessageSystem* msg, void** user_data)
+{
+	//JCFloaterAreaSearch *self = JCFloaterAreaSearch::getInstance();
+	LLUUID object_id;
+	U32 request_flags;
+	//LLUUID group_id;
+	LLUUID owner_id;
+	LLUUID group_id;
+	LLUUID extra_id;
+	U32 base_mask, owner_mask, group_mask, everyone_mask, next_owner_mask;
+	LLSaleInfo sale_info;
+	LLCategory category;
+	msg->getU32Fast(_PREHASH_ObjectData, _PREHASH_RequestFlags,	request_flags );
+	msg->getUUIDFast(_PREHASH_ObjectData, _PREHASH_ObjectID,		object_id );
+	msg->getUUIDFast(_PREHASH_ObjectData, _PREHASH_OwnerID,		owner_id );
+	msg->getUUIDFast(_PREHASH_ObjectData, _PREHASH_GroupID,		group_id );
+	msg->getU32Fast(_PREHASH_ObjectData, _PREHASH_BaseMask,		base_mask );
+	msg->getU32Fast(_PREHASH_ObjectData, _PREHASH_OwnerMask,		owner_mask );
+	msg->getU32Fast(_PREHASH_ObjectData,_PREHASH_GroupMask,		group_mask );
+	msg->getU32Fast(_PREHASH_ObjectData, _PREHASH_EveryoneMask,	everyone_mask );
+	msg->getU32Fast(_PREHASH_ObjectData, _PREHASH_NextOwnerMask, next_owner_mask);
+	sale_info.unpackMessage(msg, _PREHASH_ObjectData);
+	category.unpackMessage(msg, _PREHASH_ObjectData);
+	LLUUID last_owner_id;
+	msg->getUUIDFast(_PREHASH_ObjectData, _PREHASH_LastOwnerID, last_owner_id );
+	std::string name;
+	msg->getStringFast(_PREHASH_ObjectData, _PREHASH_Name, name);
+	std::string desc;
+	msg->getStringFast(_PREHASH_ObjectData, _PREHASH_Description, desc);
+
+
+	if(mObjectDetails.count( object_id ) != 0)
+	{
+		AObjectDetails* details = &mObjectDetails[object_id];
+		details->name = name;
+		details->desc = desc;
+		details->owner_id = owner_id;
+		details->group_id = group_id;
+		//mark(owner_id.asString());
+		//mark(group_id.asString());
+		gCacheName->get(owner_id, FALSE, callbackLoadOwnerName);
+		gCacheName->get(group_id, TRUE, callbackLoadOwnerName);
 	}
 }
 
 void JCFloaterAreaSearch::close(bool app)
 {
-	F32 throttle = gSavedSettings.getF32("OutBandwidth");
-	if(throttle != 0.)
-	{
-		gMessageSystem->mPacketRing.setOutBandwidth(throttle);
-		gMessageSystem->mPacketRing.setUseOutThrottle(TRUE);
-	}
-	else
-	{
-		gMessageSystem->mPacketRing.setOutBandwidth(0.0);
-		gMessageSystem->mPacketRing.setUseOutThrottle(FALSE);
-	}
-
 	if(app)
 	{
 		LLFloater::close(app);
@@ -338,126 +362,4 @@ void JCFloaterAreaSearch::close(bool app)
 			sInstance->setVisible(FALSE);
 		}
 	}
-}
-
-// static
-void JCFloaterAreaSearch::processObjectPropertiesFamily(LLMessageSystem* msg, void** user_data)
-{
-	if(!sInstance) return;
-	LLUUID id;
-
-	U32 request_flags;
-	LLUUID creator_id;
-	LLUUID owner_id;
-	LLUUID group_id;
-	LLUUID extra_id;
-	U32 base_mask, owner_mask, group_mask, everyone_mask, next_owner_mask;
-	LLSaleInfo sale_info;
-	LLCategory category;
-	
-	msg->getU32Fast(_PREHASH_ObjectData, _PREHASH_RequestFlags,	request_flags );
-	msg->getUUIDFast(_PREHASH_ObjectData, _PREHASH_ObjectID,		id );
-	msg->getUUIDFast(_PREHASH_ObjectData, _PREHASH_OwnerID,		owner_id );
-	msg->getUUIDFast(_PREHASH_ObjectData, _PREHASH_GroupID,		group_id );
-	msg->getU32Fast(_PREHASH_ObjectData, _PREHASH_BaseMask,		base_mask );
-	msg->getU32Fast(_PREHASH_ObjectData, _PREHASH_OwnerMask,		owner_mask );
-	msg->getU32Fast(_PREHASH_ObjectData,_PREHASH_GroupMask,		group_mask );
-	msg->getU32Fast(_PREHASH_ObjectData, _PREHASH_EveryoneMask,	everyone_mask );
-	msg->getU32Fast(_PREHASH_ObjectData, _PREHASH_NextOwnerMask, next_owner_mask);
-	sale_info.unpackMessage(msg, _PREHASH_ObjectData);
-	category.unpackMessage(msg, _PREHASH_ObjectData);
-
-	LLUUID last_owner_id;
-	msg->getUUIDFast(_PREHASH_ObjectData, _PREHASH_LastOwnerID, last_owner_id );
-
-	// unpack name & desc
-	std::string name;
-	msg->getStringFast(_PREHASH_ObjectData, _PREHASH_Name, name);
-
-	std::string desc;
-	msg->getStringFast(_PREHASH_ObjectData, _PREHASH_Description, desc);
-
-	std::string fullname;
-	gCacheName->getFullName(owner_id, fullname);
-
-	std::string groupname;
-	gCacheName->getFullName(group_id, groupname);
-
-	LLStringUtil::toLower(name);
-	LLStringUtil::toLower(desc);
-	LLStringUtil::toLower(fullname);
-	LLStringUtil::toLower(groupname);
-
-	if(searched_name != ""){
-		if(name.find(searched_name) == -1){
-			return;
-		}
-	}
-
-	if(searched_desc != ""){
-		if(desc.find(searched_desc) == -1){
-			return;
-		}
-	}
-
-	if(searched_owner != ""){
-		if(fullname.find(searched_owner) == -1){
-			return;
-		}
-	}
-
-	if(searched_group != ""){
-		if(groupname.find(searched_group) == -1){
-			return;
-		}
-	}
-
-	LLSD element;
-	element["id"] = id;
-	element["columns"][LIST_OBJECT_NAME]["column"] = "Name";
-	element["columns"][LIST_OBJECT_NAME]["type"] = "text";
-	element["columns"][LIST_OBJECT_NAME]["color"] = gColors.getColor("DefaultListText").getValue();
-	element["columns"][LIST_OBJECT_NAME]["value"] = name;//item->getName();//ai->second//"avatar_icon";
-	element["columns"][LIST_OBJECT_DESC]["column"] = "Description";
-	element["columns"][LIST_OBJECT_DESC]["type"] = "text";
-	element["columns"][LIST_OBJECT_DESC]["value"] = desc;//ai->second;
-	element["columns"][LIST_OBJECT_DESC]["color"] = gColors.getColor("DefaultListText").getValue();
-	element["columns"][LIST_OBJECT_OWNER]["column"] = "Owner";
-	element["columns"][LIST_OBJECT_OWNER]["type"] = "text";
-	element["columns"][LIST_OBJECT_OWNER]["value"] = fullname;//aifirst;
-	element["columns"][LIST_OBJECT_OWNER]["color"] = gColors.getColor("DefaultListText").getValue();
-	element["columns"][LIST_OBJECT_GROUP]["column"] = "Group";
-	element["columns"][LIST_OBJECT_GROUP]["type"] = "text";
-	element["columns"][LIST_OBJECT_GROUP]["value"] = groupname;//ai->second;
-	element["columns"][LIST_OBJECT_GROUP]["color"] = gColors.getColor("DefaultListText").getValue();
-	
-	sInstance->mResultList->addElement(element, ADD_BOTTOM);
-
-	sInstance->mResultList->sortItems();
-
-	// Now look through all of the hovered nodes
-	struct f : public LLSelectedNodeFunctor
-	{
-		LLUUID mID;
-		f(const LLUUID& id) : mID(id) {}
-		virtual bool apply(LLSelectNode* node)
-		{
-			return (node->getObject() && node->getObject()->mID == mID);
-		}
-	} func(id);
-	LLSelectNode* node = LLSelectMgr::getInstance()->getHoverObjects()->getFirstNode(&func);
-
-	if (node)
-	{
-		node->mValid = TRUE;
-		node->mPermissions->init(LLUUID::null, owner_id,
-								 last_owner_id, group_id);
-		node->mPermissions->initMasks(base_mask, owner_mask, everyone_mask, group_mask, next_owner_mask);
-		node->mSaleInfo = sale_info;
-		node->mCategory = category;
-		node->mName.assign(name);
-		node->mDescription.assign(desc);
-	}
-
-	dialog_refresh_all();
 }

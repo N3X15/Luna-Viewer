@@ -53,6 +53,7 @@
 
 #include "llstatusbar.h"
 #include "llfloaterworldmap.h"
+#include "llviewercontrol.h"
 #include "llviewermessage.h"
 
 ////////////////////////////////////////////////////////////////////////////

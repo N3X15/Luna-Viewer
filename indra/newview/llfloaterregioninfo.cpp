@@ -81,6 +81,10 @@
 #include "llviewerwindow.h"
 #include "llvlcomposition.h"
 
+// [RLVa:KB]
+#include "rlvhandler.h"
+// [/RLVa:KB]
+
 #define ELAR_ENABLED 0 // Enable when server support is implemented
 
 const S32 TERRAIN_TEXTURE_COUNT = 4;
@@ -975,17 +979,18 @@ void LLPanelRegionDebugInfo::onClickTopScripts(void* data)
 // static
 void LLPanelRegionDebugInfo::onClickRestart(void* data)
 {
+	LLPanelRegionDebugInfo* self = (LLPanelRegionDebugInfo*)data;
 	LLNotifications::instance().add("ConfirmRestart", LLSD(), LLSD(), 
-		boost::bind(&LLPanelRegionDebugInfo::callbackRestart, (LLPanelRegionDebugInfo*)data, _1, _2));
+		boost::bind(&LLPanelRegionDebugInfo::callbackRestart, (LLPanelRegionDebugInfo*)data, _1, _2, self->getChild<LLSpinCtrl>("rcount")->getValue().asInteger()));
 }
 
-bool LLPanelRegionDebugInfo::callbackRestart(const LLSD& notification, const LLSD& response)
+bool LLPanelRegionDebugInfo::callbackRestart(const LLSD& notification, const LLSD& response, S32 seconds)
 {
 	S32 option = LLNotification::getSelectedOption(notification, response);
 	if (option != 0) return false;
 
-	strings_t strings;
-	strings.push_back("120");
+	strings_t strings; 
+	strings.push_back(llformat("%d",seconds));
 	LLUUID invoice(LLFloaterRegionInfo::getLastInvoice());
 	sendEstateOwnerMessage(gMessageSystem, "restart", invoice, strings);
 	return false;
@@ -1153,7 +1158,7 @@ BOOL LLPanelRegionTextureInfo::validateTextureSizes()
 			return FALSE;
 		}
 
-		if (width > 512 || height > 512)
+		if (width > 1024 || height > 1024)
 		{
 
 			LLSD args;

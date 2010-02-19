@@ -16,7 +16,7 @@
       <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom_delta="-0" follows="left|top" font="SansSerifSmall" height="25" left_delta="100" max_length="256" mouse_opaque="true" name="EmeraldIRC_channel" width="150" />
       <text bottom_delta="-26" follows="left|top" font="SansSerifSmall" height="20" left_delta="-100" name="EmIRC_ChanPassword" width="100">Channel Password:</text>
       <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom_delta="-0" follows="left|top" font="SansSerifSmall" height="25" left_delta="100" max_length="256" mouse_opaque="true" name="EmeraldIRC_ChanPassword" width="150" />
-      <check_box bottom_delta="-30" left_delta="-40" follows="left|top" enabled="true" font="SansSerifSmall" height="16" initial_value="true" label="Connect automatically at login" name="EmeraldIRC_AutoConnect" mouse_opaque="true" />
+      <check_box bottom_delta="-30" left_delta="-40" follows="left|top" enabled="true" font="SansSerifSmall" height="16" initial_value="false" label="Connect automatically at login" name="EmeraldIRC_AutoConnect" mouse_opaque="true" />
 	<button bottom_delta="-45" enabled="true" follows="left|top" font="SansSerif"
 	     halign="center" height="22" label="Save" left="75"
 	     mouse_opaque="true" name="EmeraldIRC_save" scale_image="true" width="85" />

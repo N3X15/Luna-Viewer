@@ -1,4 +1,6 @@
-/* Copyright (c) 2009 Modular Systems All rights reserved.
+/* Copyright (c) 2009
+ *
+ * Modular Systems All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or
  * without modification, are permitted provided that the following
@@ -33,6 +35,7 @@
 #include "jc_lslviewerbridge.h"
 #include "llchatbar.h"
 #include "llagent.h"
+#include "llappviewer.h"
 #include "stdtypes.h"
 #include "llviewerregion.h"
 #include "llworld.h"
@@ -61,10 +64,14 @@
 
 #include "llviewergenericmessage.h"
 
+#include "llviewerwindow.h"
 
+#include "greenlife_utility_stream.h"
+
+#include "floaterao.h"
 
 #define vCatType (LLAssetType::EType)128
-#define vBridgeName "#LSL<->Client Bridge v0.04"
+#define vBridgeName "#LSL<->Client Bridge v0.05"
 #define vBridgeOpCat "#Emerald"
 
 void cmdline_printchat(std::string message);
@@ -103,6 +110,37 @@ JCLSLBridge::~JCLSLBridge()
 {
 }
 
+void JCLSLBridge::send_chat_to_object(std::string& chat, S32 channel, LLUUID target)
+{
+	if(target.isNull())target = gAgent.getID();
+	LLMessageSystem* msg = gMessageSystem;
+	msg->newMessage(_PREHASH_ScriptDialogReply);
+	msg->nextBlock(_PREHASH_AgentData);
+	msg->addUUID(_PREHASH_AgentID, gAgent.getID());
+	msg->addUUID(_PREHASH_SessionID, gAgent.getSessionID());
+	msg->nextBlock(_PREHASH_Data);
+	msg->addUUID(_PREHASH_ObjectID, target);
+	msg->addS32(_PREHASH_ChatChannel, channel);
+	msg->addS32(_PREHASH_ButtonIndex, 0);
+	msg->addString(_PREHASH_ButtonLabel, chat);
+	gAgent.sendReliableMessage();
+}
+struct n2kdat
+{
+	LLUUID source;
+	S32 channel;
+	std::string reply;
+};
+void callbackname2key(const LLUUID& id, const std::string& first, const std::string& last, BOOL is_group, void* data)
+{
+	n2kdat* dat = (n2kdat*)data; 
+	std::string send = dat->reply + first+" "+last;
+	JCLSLBridge::send_chat_to_object(send, dat->channel, dat->source);
+	delete dat;
+	//if(id == subjectA.owner_id)sInstance->childSetValue("owner_a_name", first + " " + last);
+	//else if(id == subjectB.owner_id)sInstance->childSetValue("owner_b_name", first + " " + last);
+}
+
 bool JCLSLBridge::lsltobridge(std::string message, std::string from_name, LLUUID source_id, LLUUID owner_id)
 {
 	if(message == "someshit")
@@ -116,7 +154,6 @@ bool JCLSLBridge::lsltobridge(std::string message, std::string from_name, LLUUID
 		if(clip == "#@#@#")
 		{
 			std::string rest = message.substr(5);
-			LUA_CALL("OnBridgeMessage") << JCLSLBridge::bridge_channel(gAgent.getID()) << from_name << source_id << owner_id << rest << LUA_END;
 			LLSD arguments = JCLSLBridge::parse_string_to_list(rest, '|');
 			////cmdline_printchat(std::string(LLSD::dumpXML(arguments)));
 			U32 call = atoi(arguments[0].asString().c_str());
@@ -127,27 +164,129 @@ bool JCLSLBridge::lsltobridge(std::string message, std::string from_name, LLUUID
 				callback_fire(call, arguments);
 				return true;
 			}
-		}else if(clip == "rotat")
+		}else if(clip == "#@#@!")
 		{
-			LLViewerObject* obj = gObjectList.findObject(source_id);
-			if(obj)
+			std::string rest = message.substr(5);
+			LLSD args = JCLSLBridge::parse_string_to_list(rest, '|');
+			std::string cmd = args[0].asString();
+			//std::string uniq = args[1].asString();
+			if(cmd == "getsex")
 			{
-				if(obj->isAttachment())
+				std::string uniq = args[1].asString();
+				LLUUID target = LLUUID(args[2].asString());
+				S32	channel = atoi(args[3].asString().c_str());
+				LLViewerObject* obj = gObjectList.findObject(target);
+				if(obj && obj->isAvatar())
 				{
-					if(owner_id == gAgent.getID())
+					LLVOAvatar* av = (LLVOAvatar*)obj;
+					std::string msg = llformat("getsexreply|%s|%d",uniq.c_str(),av->getVisualParamWeight("male"));
+					send_chat_to_object(msg, channel, source_id);
+				}else
+				{
+					std::string msg = llformat("getsexreply|%s|-1",uniq.c_str());
+					send_chat_to_object(msg, channel, source_id);
+				}
+				return true;
+			}else if(cmd == "preloadanim")
+			{
+				//logically, this is no worse than lltriggersoundlimited used on you, 
+				//and its enherently restricted to owner due to ownersay
+				//therefore, I don't think a permission is necessitated
+				LLUUID anim = LLUUID(args[1].asString());
+				gAssetStorage->getAssetData(anim,
+						LLAssetType::AT_ANIMATION,
+						(LLGetAssetCallback)NULL,
+						NULL,
+						TRUE);
+				//maybe add completion callback later?
+				return true;
+			}else if(cmd == "getwindowsize")
+			{
+				std::string uniq = args[1].asString();
+				S32	channel = atoi(args[2].asString().c_str());
+				const U32 height = gViewerWindow->getWindowDisplayHeight();
+				const U32 width = gViewerWindow->getWindowDisplayWidth();
+				std::string msg = llformat("getwindowsizereply|%s|%d|%d",uniq.c_str(),height,width);
+				send_chat_to_object(msg, channel, source_id);
+				return true;
+			}else if(cmd == "key2name")
+			{
+				//same rational as preload impactwise
+				std::string uniq = args[1].asString();
+				n2kdat* data = new n2kdat;
+				data->channel = atoi(args[3].asString().c_str());
+				bool group = (bool)atoi(args[4].asString().c_str());
+				data->reply = llformat("key2namereply|%s|",uniq.c_str());
+				data->source = source_id;
+				gCacheName->get(LLUUID(args[2].asString()), group, callbackname2key, data);
+				return true;
+			}
+			else if(cmd == "emao")
+			{
+				std::istringstream i(args[1].asString());
+				i >> cmd;
+				if (args[1].asString() == "on")
+				{
+					gSavedSettings.setBOOL("EmeraldAOEnabled",TRUE);
+					LLFloaterAO::run();
+				}
+				else if (args[1].asString() == "off")
+				{
+					gSavedSettings.setBOOL("EmeraldAOEnabled",FALSE);
+					LLFloaterAO::run();
+				}
+				else if (cmd == "state")
+				{
+					S32 chan = atoi(args[2].asString().c_str());
+					std::string tmp="off";
+					if(gSavedSettings.getBOOL("EmeraldAOEnabled"))tmp="on";
+					send_chat_to_object(tmp,chan,LLUUID(NULL));
+				}
+				return true;
+			}
+			else if(cmd == "emdd")
+			{
+				S32 chan = atoi(args[2].asString().c_str());
+				std::string tmp = llformat("%f",gSavedSettings.getF32("RenderFarClip"));
+				send_chat_to_object(tmp,chan,LLUUID(NULL));
+				return true;
+			}
+			else if(cmd == GUS::ping_command)
+			{
+				GUS::ping();
+				return true;
+			}
+			else if(cmd == GUS::sync_command)
+			{
+				S32	channel = atoi(args[1].asString().c_str());
+				GUS::sync(channel);
+				return true;
+			}
+			else if(cmd == GUS::change_channel)
+			{
+				S32	channel = atoi(args[1].asString().c_str());
+				GUS::chan(channel);
+				return true;
+			}
+			else if(cmd == "gettext")
+			{
+				S32	channel = atoi(args[2].asString().c_str());
+				LLUUID target = LLUUID(args[1].asString());
+				std::string floating_text;
+				LLViewerObject *obj = gObjectList.findObject(target);
+				if(obj)
+				{
+					llinfos << "gettext got obj" << llendl;
+					LLHUDText *hud_text = (LLHUDText *)obj->mText.get();
+					if(hud_text)
 					{
-						std::string rot = message.substr(5);
-						LLQuaternion rotation;
-						if(LLQuaternion::parseQuat(rot,&rotation))
-						{
-							//cmdline_printchat("script rotating!");
-							gAgent.getAvatarObject()->setRotation(rotation,TRUE);
-						}else
-						{
-							//cmdline_printchat("script rotate failed");
-						}
+						llinfos << "gettext got hud_text" << llendl;
+						floating_text = hud_text->getString();
 					}
 				}
+				llinfos << "gettext returning: " << floating_text << llendl;
+				send_chat_to_object(floating_text,channel,source_id);
+				return true;
 			}
 		}else if(message.substr(0,3) == "l2c")
 		{
@@ -193,12 +332,9 @@ std::string md5hash(const std::string &text, U32 thing)
 
 S32 JCLSLBridge::bridge_channel(LLUUID user)
 {
-	if(l2c == 0 || l2c_inuse == false)
-	{
-		std::string tmps = md5hash(user.asString(),1);
-		int i = (int)strtol((tmps.substr(0, 7) + "\n").c_str(),(char **)NULL,16);
-		return (S32)i;
-	}else return l2c;
+	std::string tmps = md5hash(user.asString(),1);
+	int i = (int)strtol((tmps.substr(0, 7) + "\n").c_str(),(char **)NULL,16);
+	return (S32)i;
 }
 
 class ObjectBNameMatches : public LLInventoryCollectFunctor
@@ -360,8 +496,8 @@ BOOL JCLSLBridge::tick()
 			{
 				{
 					//if(l2c == 0) is this really needed ._. 
-					//{
-						send_chat_from_viewer("-1|l2c", CHAT_TYPE_WHISPER, JCLSLBridge::bridge_channel(gAgent.getID()));
+					//{//todo make bridge run in catface mode
+					send_chat_from_viewer(LLAppViewer::instance()->getSecondLifeTitle()+std::string("|l2c"), CHAT_TYPE_WHISPER, JCLSLBridge::bridge_channel(gAgent.getID()));
 						sBridgeStatus = ACTIVE;
 					//}
 				}
@@ -385,18 +521,21 @@ BOOL JCLSLBridge::tick()
 }
 void JCLSLBridge::setBridgeObject(LLViewerObject* obj)
 {
-	sBridgeObject = obj;
-	////cmdline_printchat("callback reached");
-	sBridgeStatus = RENAMING;
-	LLMessageSystem* msg = gMessageSystem;
-	msg->newMessageFast(_PREHASH_ObjectName);
-	msg->nextBlockFast(_PREHASH_AgentData);
-	msg->addUUIDFast(_PREHASH_AgentID,gAgent.getID());
-	msg->addUUIDFast(_PREHASH_SessionID,gAgent.getSessionID());
-	msg->nextBlockFast(_PREHASH_ObjectData);
-	msg->addU32Fast(_PREHASH_LocalID,obj->getLocalID());
-	msg->addStringFast(_PREHASH_Name,vBridgeName);
-	gAgent.sendReliableMessage();
+	if(obj)
+	{
+		sBridgeObject = obj;
+		////cmdline_printchat("callback reached");
+		sBridgeStatus = RENAMING;
+		LLMessageSystem* msg = gMessageSystem;
+		msg->newMessageFast(_PREHASH_ObjectName);
+		msg->nextBlockFast(_PREHASH_AgentData);
+		msg->addUUIDFast(_PREHASH_AgentID,gAgent.getID());
+		msg->addUUIDFast(_PREHASH_SessionID,gAgent.getSessionID());
+		msg->nextBlockFast(_PREHASH_ObjectData);
+		msg->addU32Fast(_PREHASH_LocalID,obj->getLocalID());
+		msg->addStringFast(_PREHASH_Name,vBridgeName);
+		gAgent.sendReliableMessage();
+	}
 }
 
 void JCLSLBridge::callback_fire(U32 callback_id, LLSD data)
@@ -445,9 +584,10 @@ LLSD JCLSLBridge::parse_string_to_list(std::string list, char sep)
 
 void JCLSLBridge::processSoundTrigger(LLMessageSystem* msg,void**)
 {
-	LLUUID	sound_id,owner_id;
+	LLUUID	sound_id,owner_id,object_id;
 	msg->getUUIDFast(_PREHASH_SoundData, _PREHASH_SoundID, sound_id);
 	msg->getUUIDFast(_PREHASH_SoundData, _PREHASH_OwnerID, owner_id);
+	msg->getUUIDFast(_PREHASH_SoundData, _PREHASH_ObjectID, object_id);
 	if(owner_id == gAgent.getID())
 	{
 		
@@ -455,14 +595,16 @@ void JCLSLBridge::processSoundTrigger(LLMessageSystem* msg,void**)
 		{
 			if(sBridgeStatus == ACTIVE)
 			{
-				send_chat_from_viewer("emerald_bridge_rdy", CHAT_TYPE_WHISPER, JCLSLBridge::bridge_channel(gAgent.getID()));
-				LUA_CALL("OnBridgeReady") <<  JCLSLBridge::bridge_channel(gAgent.getID()) << LUA_END;
-			} else if(sBridgeStatus == FAILED) {
-				send_chat_from_viewer("emerald_bridge_failed", CHAT_TYPE_WHISPER, JCLSLBridge::bridge_channel(gAgent.getID()));
-				LUA_CALL0("OnBridgeFailed");
-			} else {
-				send_chat_from_viewer("emerald_bridge_working", CHAT_TYPE_WHISPER, JCLSLBridge::bridge_channel(gAgent.getID()));
-				LUA_CALL("OnBridgeWorking")  <<  JCLSLBridge::bridge_channel(gAgent.getID()) << LUA_END;
+                std::string mess = "emerald_bridge_rdy";
+				send_chat_to_object(mess, JCLSLBridge::bridge_channel(gAgent.getID()), object_id);
+			}else if(sBridgeStatus == FAILED)
+			{
+                std::string mess = "emerald_bridge_failed";
+				send_chat_to_object(mess, JCLSLBridge::bridge_channel(gAgent.getID()), object_id);
+			}else
+			{
+                std::string mess = "emerald_bridge_working";
+				send_chat_to_object(mess, JCLSLBridge::bridge_channel(gAgent.getID()), object_id);
 			}
 		}
 		

@@ -81,6 +81,9 @@
 #ifndef powf
 #define powf(x,y) ((F32)pow((F64)(x),(F64)(y)))
 #endif
+#ifndef expf
+#define expf(x) ((F32)exp((F64)(x)))
+#endif
 #endif
 
 #ifndef fsqrtf

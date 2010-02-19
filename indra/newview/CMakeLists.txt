@@ -4,13 +4,14 @@ project(viewer)
 
 include(00-Common)
 include(Boost)
-include(BuildVersion)
+#include(BuildVersion)
 include(DBusGlib)
 include(DirectX)
 include(ELFIO)
 include(FMOD)
 include(OPENAL)
 include(FindOpenGL)
+include(JsonCpp)
 include(FindSWIG)
 include(LLAddBuildTest)
 include(LLAudio)
@@ -38,20 +39,9 @@ include(UI)
 include(UnixInstall)
 include(LLKDU)
 include(Emerald)
+include(HUNSPELL)
 include(LUA)
-#include(FindCEGUI) # Broken on Linux
 include(ViewerMiscLibs)
-
-#FIND_PACKAGE(SWIG REQUIRED)
-
-#SET_SOURCE_FILES_PROPERTIES(LuaBase.swig PROPERTIES CPLUSPLUS ON)
-#SET_SOURCE_FILES_PROPERTIES(LuaBase.swig PROPERTIES SWIG_FLAGS "-includeall")
-#SET(CMAKE_SWIG_FLAGS "-c++")
-#SWIG_ADD_MODULE(LuaBase lua LuaBase.swig LuaBase.cpp)
-
-#find_package(Cg)
-#find_package(GLUT)
-#find_package(CEGUI)
 
 if (WINDOWS)
     include(CopyWinLibs)
@@ -63,11 +53,13 @@ endif (WINDOWS)
 
 if (DARWIN OR LINUX)
     include(libotrb)
+#    include(libhunspellb)
 endif (DARWIN OR LINUX)
 
 include_directories(
     ${DBUSGLIB_INCLUDE_DIRS}
     ${ELFIO_INCLUDE_DIR}
+	${JSONCPP_INCLUDE_DIRS}
     ${LLAUDIO_INCLUDE_DIRS}
     ${LLCHARACTER_INCLUDE_DIRS}
     ${LLCOMMON_INCLUDE_DIRS}
@@ -84,8 +76,8 @@ include_directories(
     ${LLXML_INCLUDE_DIRS}
     ${LSCRIPT_INCLUDE_DIRS}
     ${LSCRIPT_INCLUDE_DIRS}/lscript_compile
+	${HUNSPELL_INCLUDE_DIR}
     ${EMERALD_INCLUDE_DIRS}
-#    ${CEGUI_INCLUDE_DIR}
 )
 
 if (WINDOWS)
@@ -102,28 +94,37 @@ if (WINDOWS)
 		)
 
 set(viewer_SOURCE_FILES
-	llfloaterao.cpp
+	lgghunspell_wrapper.cpp
+	floaterlogin.cpp
+    hippogridmanager.cpp
+	hipporestrequest.cpp
+	floaterao.cpp
 	importtracker.cpp
 	exporttracker.cpp
 	chatbar_as_cmdline.cpp
-	IRC.cpp
+	irc.cpp
+	jclslpreproc.cpp
+#	jcmagicdb.cpp
+#	jcscripteditor.cpp
+#	jc_achievements.cpp
 	jc_lslviewerbridge.cpp
 	jcfloater_animation_list.cpp
 	jcfloater_areasearch.cpp
 	jc_asset_comparer.cpp
 	jcobjectpropertylist.cpp
-	mfdKeywordFloater.cpp
-	lggBeamMapFloater.cpp
-	lggBeamColorMapFloater.cpp
-	lggBeamsColors.cpp
-	lggIrcData.cpp
-	lggIrcGroupHandler.cpp
-	lggIrcProfileFloater.cpp
-	lggFloaterIrcEdit.cpp
-	lggFloaterIrc.cpp
-	lggBeamMaps.cpp
-	llfloaterassetbrowser.cpp
-	lggIrcThread.cpp
+	mfdkeywordfloater.cpp
+	lggbeammapfloater.cpp
+	lggbeamcolormapfloater.cpp
+	lggbeamscolors.cpp
+	lggdicdownload.cpp
+	lggircdata.cpp
+	lggircgrouphandler.cpp
+	lggircprofilefloater.cpp
+	lggfloaterircedit.cpp
+	lggfloaterirc.cpp
+	lggbeammaps.cpp
+	floaterassetbrowser.cpp
+	lggircthread.cpp
     llagent.cpp
     llagentaccess.cpp
     llagentdata.cpp
@@ -188,7 +189,7 @@ set(viewer_SOURCE_FILES
     llfloateranimpreview.cpp
     llfloaterauction.cpp
     llfloateravatarinfo.cpp
-	llfloateravatarlist.cpp
+	floateravatarlist.cpp
     llfloateravatarpicker.cpp
     llfloateravatartextures.cpp
     llfloaterbeacons.cpp
@@ -250,6 +251,7 @@ set(viewer_SOURCE_FILES
     llfloaterregioninfo.cpp
     llfloaterreporter.cpp
     llfloaterscriptdebug.cpp
+    llfloatersearchreplace.cpp
     llfloatersellland.cpp
     llfloatersettingsdebug.cpp
     llfloatersnapshot.cpp
@@ -299,7 +301,6 @@ set(viewer_SOURCE_FILES
     lllandmarklist.cpp
     lllogchat.cpp
     llloginhandler.cpp
-    llsavedlogins.cpp
     llmanip.cpp
     llmaniprotate.cpp
     llmanipscale.cpp
@@ -422,6 +423,7 @@ set(viewer_SOURCE_FILES
     lltoolview.cpp
     lltracker.cpp
     lltrans.cpp
+	lltranslate.cpp
     lluploaddialog.cpp
     llurl.cpp
     llurldispatcher.cpp
@@ -510,8 +512,6 @@ set(viewer_SOURCE_FILES
     llxmlrpctransaction.cpp
     noise.cpp
     pipeline.cpp
-#   tsstuff.cpp
-#   tslua.cpp
     LuaAgent_f.cpp
     LuaAvatar_f.cpp
     LuaBase_f.cpp
@@ -525,9 +525,11 @@ set(viewer_SOURCE_FILES
     flexconsole.cpp
     rlvhandler.cpp
     rlvhelper.cpp
+    rlvcommon.cpp
     rlvmultistringsearch.cpp
     rlvextensions.cpp
     rlvfloaterbehaviour.cpp
+	scriptcounter.cpp
     otr_wrapper.cpp
     otr_floater_smp_dialog.cpp
     otr_floater_smp_progress.cpp
@@ -555,27 +557,36 @@ endif (LINUX)
 set(viewer_HEADER_FILES
     CMakeLists.txt
     ViewerInstall.cmake
+	lgghunspell_wrapper.h
     chatbar_as_cmdline.h
     importtracker.h
-    IRC.h
+	floaterlogin.h
+    hippogridmanager.h
+	hipporestrequest.h
+    irc.h
 	jc_lslviewerbridge.h
-	llfloaterao.h
+	floaterao.h
+	jclslpreproc.h
+#	jcmagicdb.h
+#	jcscripteditor.h
+#	jc_achievements.h
 	jcfloater_animation_list.h
 	jcfloater_areasearch.h
 	jcobjectpropertylist.h
-    mfdKeywordFloater.h
+    mfdkeywordfloater.h
 	exporttracker.h
-	lggBeamMaps.h
-	lggBeamMapFloater.h
-	lggBeamColorMapFloater.h
-	lggBeamsColors.h
-    lggFloaterIrcEdit.h
-    lggFloaterIrc.h
-    lggIrcGroupHandler.h
-	lggIrcProfileFloater.h
-    lggIrcThread.h
-    lggIrcData.h
-	llfloaterassetbrowser.h
+    lggbeammaps.h
+    lggbeammapfloater.h
+    lggbeamcolormapfloater.h
+    lggbeamscolors.h
+	lggdicdownload.h
+    lggfloaterircedit.h
+    lggfloaterirc.h
+    lggircgrouphandler.h
+	lggircprofilefloater.h
+    lggircthread.h
+    lggircdata.h
+	floaterassetbrowser.h
     llagent.h
     llagentaccess.h
     llagentdata.h
@@ -642,7 +653,7 @@ set(viewer_HEADER_FILES
     llfloateranimpreview.h
     llfloaterauction.h
     llfloateravatarinfo.h
-	llfloateravatarlist.h
+	floateravatarlist.h
     llfloateravatarpicker.h
     llfloateravatartextures.h
     llfloaterbeacons.h
@@ -704,6 +715,7 @@ set(viewer_HEADER_FILES
     llfloaterproperties.h
     llfloaterregioninfo.h
     llfloaterreporter.h
+    llfloatersearchreplace.h
     llfloaterscriptdebug.h
     llfloatersellland.h
     llfloatersettingsdebug.h
@@ -752,7 +764,6 @@ set(viewer_HEADER_FILES
     lllightconstants.h
     lllogchat.h
     llloginhandler.h
-    llsavedlogins.h
     llmanip.h
     llmaniprotate.h
     llmanipscale.h
@@ -878,6 +889,7 @@ set(viewer_HEADER_FILES
     lltoolview.h
     lltracker.h
     lltrans.h
+	lltranslate.h
     lluiconstants.h
     lluploaddialog.h
     llurl.h
@@ -970,8 +982,6 @@ set(viewer_HEADER_FILES
     noise.h
     pipeline.h
     randgauss.h
-#    tsstuff.h
-#    tslua.h
     VertexCache.h
     VorbisFramework.h
     FLLua.h
@@ -989,12 +999,13 @@ set(viewer_HEADER_FILES
     LuaWindlight.h
 	flexconsole.h
     rlvdefines.h
-    rlvevent.h
     rlvhandler.h
     rlvhelper.h
+    rlvcommon.h
     rlvmultistringsearch.h
     rlvextensions.h
     rlvfloaterbehaviour.h
+	scriptcounter.h
     otr_wrapper.h
     otr_floater_smp_dialog.h
     otr_floater_smp_progress.h
@@ -1113,6 +1124,25 @@ if (WINDOWS)
         res/lltoolzoomout.cur
         res/emerald_icon.png
         res/emerald_icon.ico
+        res/emeraldicon1.ico
+        res/emeraldicon2.ico
+        res/emeraldicon3.ico
+        res/emeraldicon4.ico
+        res/emeraldicon5.ico
+        res/emeraldicon6.ico
+        res/emeraldicon7.ico
+        res/emeraldicon8.ico
+        res/emeraldicon9.ico
+        res/emeraldicon10.ico
+        res/emeraldicon11.ico
+        res/emeraldicon12.ico
+        res/emeraldicon13.ico
+        res/emeraldicon14.ico
+        res/emeraldicon15.ico
+        res/emeraldicon16.ico
+        res/emeraldicon17.ico
+        res/emeraldicon18.ico
+        res/emeraldicon19.ico
         res/resource.h
         res/toolbuy.cur
         res/toolopen.cur
@@ -1257,11 +1287,12 @@ endif (OPENAL)
 if (FMOD)
   set(LLSTARTUP_COMPILE_FLAGS "${LLSTARTUP_COMPILE_FLAGS} -DLL_FMOD")
 
-  if (NOT WINDOWS)
+	# This is supposed to build fmodwrapper.dylib from the static FMOD library for Darwin
+	# Right now we're making it a link target for the viewer..
+  if (DARWIN)
     set(fmodwrapper_SOURCE_FILES fmodwrapper.cpp)
     add_library(fmodwrapper SHARED ${fmodwrapper_SOURCE_FILES})
     set(fmodwrapper_needed_LIBRARIES ${FMOD_LIBRARY})
-    if (DARWIN)
       list(APPEND fmodwrapper_needed_LIBRARIES ${CARBON_LIBRARY})
       set_target_properties(
         fmodwrapper
@@ -1270,10 +1301,9 @@ if (FMOD)
         INSTALL_NAME_DIR "@executable_path/../Resources"
         LINK_FLAGS "-unexported_symbols_list ${CMAKE_CURRENT_SOURCE_DIR}/fmod_hidden_symbols.exp"
         )
-    endif (DARWIN)
     set(FMODWRAPPER_LIBRARY fmodwrapper)
     target_link_libraries(fmodwrapper ${fmodwrapper_needed_LIBRARIES})
-  endif (NOT WINDOWS)
+  endif (DARWIN)
 endif (FMOD)
 
 set_source_files_properties(llstartup.cpp PROPERTIES COMPILE_FLAGS "${LLSTARTUP_COMPILE_FLAGS}")
@@ -1360,6 +1390,7 @@ if (WINDOWS)
         ARGS
           ${CMAKE_CURRENT_SOURCE_DIR}/viewer_manifest.py
           --configuration=${CMAKE_CFG_INTDIR}
+          --version=${VERSION_VIEWER}
           --channel=${VIEWER_CHANNEL}
           --login_channel=${VIEWER_LOGIN_CHANNEL}
           --grid=${GRID}
@@ -1404,7 +1435,8 @@ if (WINDOWS)
 		${BOOST_REGEX_LIBRARY}
 		${DBUSGLIB_LIBRARIES}
 		${OPENGL_LIBRARIES}
-		${FMODWRAPPER_LIBRARY}
+		${JSONCPP_LIBRARIES}
+#		${FMODWRAPPER_LIBRARY}
 		${OPENGL_LIBRARIES}
 		${MOZLIB_LIBRARIES}
 		${SDL_LIBRARY}
@@ -1414,6 +1446,7 @@ if (WINDOWS)
 		${WINDOWS_LIBRARIES}
 		${XMLRPCEPI_LIBRARIES}
 		${ELFIO_LIBRARIES}
+        ${HUNSPELL_LIBRARY}
 		${EMERALD_LIBRARIES}
 		${LUA_LIBRARY}
 #		${CEGUI_LIBRARY}
@@ -1441,6 +1474,14 @@ else (WINDOWS)
 		${viewer_LIBRARIES}
 		${BOOST_PROGRAM_OPTIONS_LIBRARY}
 		${BOOST_REGEX_LIBRARY}
+		${BOOST_PYTHON_LIBRARY}
+		${BOOST_SIGNALS_LIBRARY}
+		${BOOST_WAVE_LIBRARY}
+		${BOOST_SYSTEM_LIBRARY}
+		${BOOST_FILESYSTEM_LIBRARY}
+		${BOOST_IOSTREAMS_LIBRARY}
+		${BOOST_DATE_TIME_LIBRARY}
+		${BOOST_THREAD_LIBRARY}
 		${DBUSGLIB_LIBRARIES}
 		${OPENGL_LIBRARIES}
 		${FMODWRAPPER_LIBRARY}
@@ -1453,14 +1494,18 @@ else (WINDOWS)
 		${WINDOWS_LIBRARIES}
 		${XMLRPCEPI_LIBRARIES}
 		${ELFIO_LIBRARIES}
+        ${GCRYPT_LIBRARY}
+	    ${GPG-ERROR_LIBRARY}
+		${OTR_LIBRARY}
+		${HUNSPELL_LIBRARY}
+		${JSONCPP_LIBRARIES}
 		${EMERALD_LIBRARIES}
 		${LUA_LIBRARY}
 		${OTR_LIBRARY}
-#		${CEGUI_LIBRARY}
 	)
 endif (WINDOWS)
 
-build_version(viewer)
+#build_version(viewer)
 
 set(ARTWORK_DIR ${CMAKE_CURRENT_SOURCE_DIR} CACHE PATH
     "Path to artwork files.")
@@ -1474,7 +1519,7 @@ if (LINUX)
       DEPENDS ${VIEWER_BINARY_NAME}
       )
 
-  set(product FlexLife-${ARCH}-${viewer_VERSION})
+  set(product FlexLife-${ARCH}-${VERSION_VIEWER})
 
   add_custom_command(
       OUTPUT ${product}.tar.bz2
@@ -1482,6 +1527,7 @@ if (LINUX)
       ARGS
         ${CMAKE_CURRENT_SOURCE_DIR}/viewer_manifest.py
         --grid=${GRID}
+        --version=${VERSION_VIEWER}
         --channel=${VIEWER_CHANNEL}
         --login_channel=${VIEWER_LOGIN_CHANNEL}
         --installer_name=${product}
@@ -1542,6 +1588,7 @@ if (DARWIN)
         ${CMAKE_CURRENT_SOURCE_DIR}/viewer_manifest.py
         --grid=${GRID}
         --configuration=${CMAKE_CFG_INTDIR}
+          --version=${VERSION_VIEWER}
         --channel=${VIEWER_CHANNEL}
         --login_channel=${VIEWER_LOGIN_CHANNEL}
         --source=${CMAKE_CURRENT_SOURCE_DIR}
@@ -1562,6 +1609,7 @@ if (DARWIN)
           --grid=${GRID}
           --configuration=${CMAKE_CFG_INTDIR}
           --channel=${VIEWER_CHANNEL}
+          --version=${VERSION_VIEWER}
           --login_channel=${VIEWER_LOGIN_CHANNEL}
           --source=${CMAKE_CURRENT_SOURCE_DIR}
           --artwork=${ARTWORK_DIR}

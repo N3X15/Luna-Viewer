@@ -457,10 +457,10 @@ void LLKeywords::findSegments(std::vector<LLTextSegment *>* seg_list, const LLWS
 
 			// check against words
 			llwchar prev = cur > base ? *(cur-1) : 0;
-			if( !isalnum( prev ) && (prev != '_') )
+			if( !isalnum( prev ) && (prev != '_') && (prev != '#'))
 			{
 				const llwchar* p = cur;
-				while( isalnum( *p ) || (*p == '_') )
+				while( isalnum( *p ) || (*p == '_') || (*p == '#') )
 				{
 					p++;
 				}

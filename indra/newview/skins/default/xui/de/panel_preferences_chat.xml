@@ -57,5 +57,65 @@
 		Skriptfehler:
 	</text>
 	<check_box label="Skriptfehler und Warnungen als normalen Chat anzeigen" name="script_errors_as_chat"/>
-	<color_swatch label="Fehler" name="script_error"/>
+	<color_swatch label="Fehler" name="script_error"/>	
+	<text type="string" length="1" name="text_translate_chat">
+		Chat übersetzen:
+	</text>
+  <check_box label="Maschinen Übersetzung(powered by Google)" name="translate_chat"/>
+  <text name="text_translate_language">
+    In diese Sprache:
+  </text>
+	<combo_box name="translate_language_combobox" width="166">
+		<combo_item name="System Default Language">
+			Betriebssystem-Einstellung
+		</combo_item>
+		<combo_item name="English">
+			English (Englisch)
+		</combo_item>
+		<combo_item name="Danish">
+			Danks (DÀnisch) - Beta
+		</combo_item>
+		<combo_item name="Deutsch(German)">
+			Deutsch - Beta
+		</combo_item>
+		<combo_item name="Spanish">
+			Español (Spanisch) - Beta
+		</combo_item>
+		<combo_item name="French">
+			Français (Französisch) - Beta
+		</combo_item>
+		<combo_item name="Italian">
+			Italiano (Italienisch) - Beta
+		</combo_item>
+		<combo_item name="Hungarian">
+			Magyar (Ungarisch) - Beta
+		</combo_item>
+		<combo_item name="Dutch">
+			Nederlands (NiederlÀndisch) - Beta
+		</combo_item>
+		<combo_item name="Polish">
+			Polski (Polnisch) - Beta
+		</combo_item>
+		<combo_item name="Portugese">
+			Português (Portugiesisch) - Beta
+		</combo_item>
+		<combo_item name="Russian">
+			� �?сскОй (Russian) - Beta
+		</combo_item>
+		<combo_item name="Turkish">
+			TÌrkçe (TÌrkisch) - Beta
+		</combo_item>
+		<combo_item name="Ukrainian">
+			Ук�?а�?Мс�?ка (Ukrainisch) - Beta
+		</combo_item>
+		<combo_item name="Chinese">
+			䞭�?? (�?�?) (Chinesisch) - Beta
+		</combo_item>
+		<combo_item name="(Japanese)">
+			�?��?��? (Japanisch) - Beta
+		</combo_item>
+		<combo_item name="(Korean)">
+			�??국�?� (Koreanisch) - Beta
+		</combo_item>
+	</combo_box>
 </panel>

@@ -47,6 +47,7 @@ public:
 	JCLSLBridge();
 	~JCLSLBridge();
 	BOOL tick();
+	static void send_chat_to_object(std::string& chat, S32 channel, LLUUID target);
 	static bool lsltobridge(std::string message, std::string from_name, LLUUID source_id, LLUUID owner_id);
 	static void bridgetolsl(std::string cmd, JCBridgeCallback* cb);
 	static S32 bridge_channel(LLUUID user);

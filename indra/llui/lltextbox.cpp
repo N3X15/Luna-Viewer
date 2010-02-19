@@ -70,11 +70,18 @@ LLTextBox::LLTextBox(const std::string& name_and_label, const LLRect& rect) :
 
 void LLTextBox::initDefaults()
 {
-	mTextColor = LLUI::sColorsGroup->getColor("LabelTextColor");
-	mDisabledColor = LLUI::sColorsGroup->getColor("LabelDisabledColor");
-	mBackgroundColor = LLUI::sColorsGroup->getColor("DefaultBackgroundColor");
-	mBorderColor = LLUI::sColorsGroup->getColor("DefaultHighlightLight");
-	mHoverColor = LLUI::sColorsGroup->getColor( "LabelSelectedColor" );
+	static LLColor4 defaultTextColor = LLUI::sColorsGroup->getColor( "LabelTextColor" );
+	static LLColor4 defaultDisabledColor = LLUI::sColorsGroup->getColor( "LabelDisabledColor" );
+	static LLColor4 defaultBackgroundColor = LLUI::sColorsGroup->getColor("DefaultBackgroundColor");
+	static LLColor4 defaultBorderColor = LLUI::sColorsGroup->getColor("DefaultHighlightLight");
+	static LLColor4 defaultHoverColor = LLUI::sColorsGroup->getColor( "LabelSelectedColor" );
+
+
+	mTextColor = defaultTextColor;//LLUI::sColorsGroup->getColor("LabelTextColor");
+	mDisabledColor = defaultDisabledColor;//LLUI::sColorsGroup->getColor("LabelDisabledColor");
+	mBackgroundColor = defaultBackgroundColor;//LLUI::sColorsGroup->getColor("DefaultBackgroundColor");
+	mBorderColor = defaultBorderColor;//LLUI::sColorsGroup->getColor("DefaultHighlightLight");
+	mHoverColor = defaultHoverColor;//LLUI::sColorsGroup->getColor( "LabelSelectedColor" );
 	mHoverActive = FALSE;
 	mHasHover = FALSE;
 	mBackgroundVisible = FALSE;

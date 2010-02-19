@@ -121,7 +121,7 @@ BOOL LLPrefsVoice::postBuild()
 	childSetVisible("enable_voice_check", !voice_disabled);
 	childSetEnabled("enable_voice_check", !voice_disabled);
 
-	bool enable = !voice_disabled && gSavedPerAccountSettings.getBOOL("EnableVoiceChat");
+	bool enable = !voice_disabled && gSavedSettings.getBOOL("EnableVoiceChat");
 	childSetValue("enable_voice_check", enable);
 	onCommitEnableVoiceChat(getChild<LLCheckBoxCtrl>("enable_voice_check"), this);
 
@@ -136,7 +136,7 @@ BOOL LLPrefsVoice::postBuild()
 
 void LLPrefsVoice::apply()
 {
-	gSavedPerAccountSettings.setBOOL("EnableVoiceChat", childGetValue("enable_voice_check"));
+	gSavedSettings.setBOOL("EnableVoiceChat", childGetValue("enable_voice_check"));
 
 	gSavedSettings.setString("PushToTalkButton", childGetValue("modifier_combo"));
 	gSavedSettings.setBOOL("VoiceCallsFriendsOnly", childGetValue("voice_call_friends_only_check"));
@@ -197,18 +197,18 @@ void LLPrefsVoice::onClickResetVoice(void* user_data)
 {
 	// *TODO: Change this to make voice really reset
 	BOOL voice_disabled = gSavedSettings.getBOOL("CmdLineDisableVoice");
-	bool enable = !voice_disabled && gSavedPerAccountSettings.getBOOL("EnableVoiceChat");
+	bool enable = !voice_disabled && gSavedSettings.getBOOL("EnableVoiceChat");
 	if(enable)
 	{
 		//Seems to make voice at least reconnect to the current channel.
 		//Was hopeing it would have actualy restarted voice. --Liny
-		gSavedPerAccountSettings.setBOOL("EnableVoiceChat", FALSE);
+		gSavedSettings.setBOOL("EnableVoiceChat", FALSE);
 		LLFloaterVoiceDeviceSettings* voice_device_settings = LLFloaterVoiceDeviceSettings::getInstance();
 		if(voice_device_settings)
 		{
 			voice_device_settings->apply();
 		}
-		gSavedPerAccountSettings.setBOOL("EnableVoiceChat", TRUE);
+		gSavedSettings.setBOOL("EnableVoiceChat", TRUE);
 		voice_device_settings = LLFloaterVoiceDeviceSettings::getInstance();
 		if(voice_device_settings)
 		{

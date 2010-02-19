@@ -31,6 +31,7 @@
 
 
 #include "llagent.h"
+#include "llvoinventorylistener.h"
 
 
 class JCExportTracker : public LLVOInventoryListener

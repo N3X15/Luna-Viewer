@@ -62,6 +62,7 @@ typedef enum ELLPath
 	FL_PATH_LUA=18,
 	FL_PATH_MACROS=19,
 	FL_PATH_SKY=20,
+	MM_SNDLOC = 50,
 	LL_PATH_LAST
 } ELLPath;
 
@@ -71,6 +72,7 @@ class LLDir
  public:
 	LLDir();
 	virtual ~LLDir();
+	void mm_setsnddir(const std::string &path);//::MOYMOD::
 
 	virtual void initAppDirs(const std::string &app_name) = 0;
  public:	
@@ -82,6 +84,9 @@ class LLDir
 	virtual void getRandomFileInDir(const std::string &dirname, const std::string &mask, std::string &fname) = 0;
 	virtual std::string getCurPath() = 0;
 	virtual BOOL fileExists(const std::string &filename) const = 0;
+	int mm_usesnd();
+    int mm_usesndcache;
+    std::string mm_sndcacheloc;
 
 	const std::string findFile(const std::string &filename, const std::string searchPath1 = "", const std::string searchPath2 = "", const std::string searchPath3 = "") const;
 	const std::string &getExecutablePathAndName() const;	// Full pathname of the executable

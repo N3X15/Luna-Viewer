@@ -383,10 +383,14 @@ void LLViewerPartSourceScript::update(const F32 dt)
 				//llwarns << "Unknown source pattern " << (S32)mPartSysData.mPattern << llendl;
 			}
 
-			if (part->mFlags & LLPartData::LL_PART_FOLLOW_SRC_MASK ||	// SVC-193, VWR-717
-				part->mFlags & LLPartData::LL_PART_TARGET_LINEAR_MASK) 
+			if ((part->mFlags & LLPartData::LL_PART_FOLLOW_SRC_MASK) && (mPartSysData.mBurstRadius != 0.0)) 
 			{
-				mPartSysData.mBurstRadius = 0; 
+                part->mApplyFollowSource = false;
+			}
+            
+            if (part->mFlags & LLPartData::LL_PART_TARGET_LINEAR_MASK)
+            {
+                mPartSysData.mBurstRadius = 0.0;
 			}
 
 			LLViewerPartSim::getInstance()->addPart(part);

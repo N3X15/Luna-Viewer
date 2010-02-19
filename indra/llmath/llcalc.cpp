@@ -11,15 +11,6 @@
 
 #include "llcalc.h"
 
-#include <boost/version.hpp>
-#if BOOST_VERSION >= 103600
-#include <boost/spirit/include/classic_core.hpp>
-#include <boost/spirit/include/classic_error_handling.hpp>
-#else
-#include <boost/spirit/core.hpp>
-#include <boost/spirit/error_handling.hpp>
-#endif
-
 #include "llcalcparser.h"
 #include "llmath.h"
 
@@ -126,8 +117,6 @@ void LLCalc::updateVariables(LLSD& vars)
 
 bool LLCalc::evalString(const std::string& expression, F32& result)
 {
-	using namespace boost::spirit;
-	
 	std::string expr_upper = expression;
 	LLStringUtil::toUpper(expr_upper);
 	

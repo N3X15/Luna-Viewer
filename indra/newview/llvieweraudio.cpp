@@ -204,12 +204,11 @@ void audio_update_listener()
 
 void audio_update_wind(bool force_update)
 {
-#ifdef kAUDIO_ENABLE_WIND
 	//
 	//  Extract height above water to modulate filter by whether above/below water 
 	// 
 	LLViewerRegion* region = gAgent.getRegion();
-	if (region && !gAudiop->getWindMuted()) // disable wind /ez
+	if (!gAudiop->getWindMuted() && region) // disable wind /ez
 	{
 		static F32 last_camera_water_height = -1000.f;
 		LLVector3 camera_pos = gAgent.getCameraPositionAgent();
@@ -247,5 +246,4 @@ void audio_update_wind(bool force_update)
 		last_camera_water_height = camera_water_height;
 		gAudiop->updateWind(gRelativeWindVec, camera_water_height);
 	}
-#endif
 }

@@ -169,6 +169,9 @@ public:
 	const LLVector3d &getCenterGlobal() const	{ return mCenterGlobal; }
 	LLVector3 getCenterAgent() const;
 
+	void setHighlightColor(LLColor4 color) {mHighlightColor=color};
+	LLColor4 getHighlightColor() {return mHighlightColor;}
+
 	void setRegionNameAndZone(const std::string& name_and_zone);
 	const std::string& getName() const				{ return mName; }
 	const std::string& getZoning() const			{ return mZoning; }
@@ -302,6 +305,7 @@ public:
 	LLCloudLayer mCloudLayer;
 	//VolumetricClouds *mVolumeClouds;
 	LLViewerParcelOverlay	*mParcelOverlay;
+	LLColor4				mHighlightColor;
 
 	LLStat	mBitStat;
 	LLStat	mPacketsStat;

@@ -75,7 +75,10 @@
 		<on_click function="Self.StandUp" userdata="" />
 		<on_enable function="Self.EnableStandUp" />
 	</menu_item_call>
-	<menu_item_separator />
+	<menu_item_call enabled="false" hidden="false" label="S. Count" mouse_opaque="true" name="ScriptCount">
+		<on_click function="Object.ScriptCount" />
+		<on_visible function="Object.VisibleScriptCount" />
+	</menu_item_call>
 	<menu_item_call enabled="true" label="Gestures..." name="Gestures...">
 		<on_click function="ShowFloater" userdata="gestures" />
 	</menu_item_call>

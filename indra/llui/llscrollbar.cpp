@@ -68,13 +68,22 @@ LLScrollbar::LLScrollbar(
 		mDragStartY( 0 ),
 		mHoverGlowStrength(0.15f),
 		mCurGlowStrength(0.f),
-		mTrackColor( LLUI::sColorsGroup->getColor("ScrollbarTrackColor") ),
-		mThumbColor ( LLUI::sColorsGroup->getColor("ScrollbarThumbColor") ),
-		mHighlightColor ( LLUI::sColorsGroup->getColor("DefaultHighlightLight") ),
-		mShadowColor ( LLUI::sColorsGroup->getColor("DefaultShadowLight") ),
+		//mTrackColor( LLUI::sColorsGroup->getColor("ScrollbarTrackColor") ),
+		//mThumbColor ( LLUI::sColorsGroup->getColor("ScrollbarThumbColor") ),
+		//mHighlightColor ( LLUI::sColorsGroup->getColor("DefaultHighlightLight") ),
+		//mShadowColor ( LLUI::sColorsGroup->getColor("DefaultShadowLight") ),
 		mOnScrollEndCallback( NULL ),
 		mOnScrollEndData( NULL )
 {
+	static LLColor4 defaultTrackColor = LLUI::sColorsGroup->getColor("ScrollbarTrackColor");
+	static LLColor4 defaultThumbColor = LLUI::sColorsGroup->getColor("ScrollbarThumbColor");
+	static LLColor4 defaultHighlightColor = LLUI::sColorsGroup->getColor("DefaultHighlightLight");
+	static LLColor4 defaultShadowColor = LLUI::sColorsGroup->getColor("DefaultShadowLight");
+
+	mTrackColor = defaultTrackColor;//LLUI::sColorsGroup->getColor("ScrollbarTrackColor");
+	mThumbColor = defaultThumbColor;//LLUI::sColorsGroup->getColor("ScrollbarThumbColor");
+	mHighlightColor = defaultHighlightColor;//LLUI::sColorsGroup->getColor("DefaultHighlightLight");
+	mShadowColor = defaultShadowColor;//LLUI::sColorsGroup->getColor("DefaultShadowLight");
 	//llassert( 0 <= mDocSize );
 	//llassert( 0 <= mDocPos && mDocPos <= mDocSize );
 	

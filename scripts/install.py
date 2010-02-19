@@ -64,7 +64,6 @@ def add_indra_lib_path():
 base_dir = add_indra_lib_path()
 
 import copy
-import md5
 import optparse
 import os
 import platform
@@ -75,7 +74,12 @@ import tempfile
 import urllib2
 import urlparse
 
-from sets import Set as set, ImmutableSet as frozenset
+try:
+    # Python 2.6
+    from hashlib import md5
+except ImportError:
+    # Python 2.5 and earlier
+    from md5 import new as md5
 
 from indra.base import llsd
 from indra.util import helpformatter
@@ -106,7 +110,7 @@ class InstallFile(object):
         return "ifile{%s:%s}" % (self.pkgname, self.url)
 
     def _is_md5sum_match(self):
-        hasher = md5.new(file(self.filename, 'rb').read())
+        hasher = md5(file(self.filename, 'rb').read())
         if hasher.hexdigest() == self.md5sum:
             return  True
         return False
@@ -412,7 +416,8 @@ linux -- specify a package for all arch and compilers on linux
 darwin/universal -- specify a mac os x universal
 windows/i686/vs/2003 -- specify a windows visual studio 2003 package"""
         if name not in self._installables:
-            print "Error: must add library with --add-installable or " \
+            print "Error: " + name + " not found in install.xml. " \
+                  +" Must add library with --add-installable or " \
                   +"--add-installable-metadata before using " \
                   +"--add-installable-package option"
             return False
@@ -779,7 +784,7 @@ def _get_platform():
             # TODO -- someday when install.py accepts a platform of the form 
             # os/arch/compiler/compiler_version then we can replace the 
             # 'linux64' platform with 'linux/x86_64/gcc/4.1'
-            this_platform = 'linux64'
+            this_platform = 'linux'
     return this_platform
 
 def _getuser():

@@ -2539,7 +2539,7 @@ bool start_messaging_system(
 
 	gMessageSystem->setHandlerFuncFast(_PREHASH_StartPingCheck,			process_start_ping_check,		NULL);
 	gMessageSystem->setHandlerFuncFast(_PREHASH_CompletePingCheck,		process_complete_ping_check,	NULL);
-	gMessageSystem->setHandlerFuncFast(_PREHASH_OpenCircuit,			open_circuit,			NULL);
+	//gMessageSystem->setHandlerFuncFast(_PREHASH_OpenCircuit,			open_circuit,			NULL);
 	gMessageSystem->setHandlerFuncFast(_PREHASH_CloseCircuit,			close_circuit,			NULL);
 
 	//gMessageSystem->setHandlerFuncFast(_PREHASH_AssignCircuitCode, LLMessageSystem::processAssignCircuitCode);	   

@@ -35,9 +35,11 @@
 #include "lluictrlfactory.h"
 
 #include "llagent.h"
+#include "llcategory.h"
 
 #include "jc_asset_comparer.h"
 
+#include "llselectmgr.h"
 #include "lltoolobjpicker.h"
 #include "lltoolmgr.h"
 #include "llviewerobjectlist.h"

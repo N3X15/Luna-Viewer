@@ -33,7 +33,7 @@
 #include "llviewerprecompiledheaders.h"
 
 #include "llpanelemerald.h"
-#include "lggBeamMapFloater.h"
+#include "lggbeammapfloater.h"
 // linden library includes
 #include "llradiogroup.h"
 #include "llbutton.h"
@@ -43,7 +43,7 @@
 #include "llslider.h"
 #include "lltexturectrl.h"
 
-#include "lggBeamMaps.h"
+#include "lggbeammaps.h"
 
 // project includes
 #include "llviewercontrol.h"
@@ -63,9 +63,10 @@
 #include "lldirpicker.h"
 
 #include "llweb.h" // [$PLOTR$/]
-#include "lggBeamColorMapFloater.h"
+#include "lggbeamcolormapfloater.h"
 #include "llsliderctrl.h"
-#include "mfdKeywordFloater.h"
+#include "mfdkeywordfloater.h"
+#include "lgghunspell_wrapper.h"
 
 ////////begin drop utility/////////////
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -157,6 +158,7 @@ BOOL JCInvDropTarget::handleDragAndDrop(S32 x, S32 y, MASK mask, BOOL drop,
 LLPanelEmerald* LLPanelEmerald::sInstance;
 
 JCInvDropTarget * LLPanelEmerald::mObjectDropTarget;
+JCInvDropTarget * LLPanelEmerald::mBuildObjectDropTarget;
 
 LLPanelEmerald::LLPanelEmerald()
 {
@@ -169,7 +171,9 @@ LLPanelEmerald::~LLPanelEmerald()
 {
 	sInstance = NULL;
 	delete mObjectDropTarget;
+	delete mBuildObjectDropTarget;
 	mObjectDropTarget = NULL;
+	mBuildObjectDropTarget = NULL;
 }
 
 void LLPanelEmerald::initHelpBtn(const std::string& name, const std::string& xml_alert)
@@ -205,6 +209,8 @@ BOOL LLPanelEmerald::postBuild()
 	getChild<LLTextureCtrl>("texture control")->setDefaultImageAssetID(LLUUID("89556747-24cb-43ed-920b-47caed15465f"));
 	getChild<LLTextureCtrl>("texture control")->setCommitCallback(onTexturePickerCommit);
 
+	getChild<LLComboBox>("EmeraldSpellBase")->setCommitCallback(onSpellBaseComboBoxCommit);
+
 		
 	//childSetCommitCallback("material",onComboBoxCommit);
 	//childSetCommitCallback("combobox shininess",onComboBoxCommit);
@@ -213,6 +219,11 @@ BOOL LLPanelEmerald::postBuild()
 
 
 	getChild<LLButton>("keyword_allert")->setClickedCallback(onKeywordAllertButton,this);
+	
+	getChild<LLButton>("EmSpell_EditCustom")->setClickedCallback(onSpellEditCustom, this);
+	getChild<LLButton>("EmSpell_GetMore")->setClickedCallback(onSpellGetMore, this);
+	getChild<LLButton>("EmSpell_Add")->setClickedCallback(onSpellAdd, this);
+	getChild<LLButton>("EmSpell_Remove")->setClickedCallback(onSpellRemove, this);
 	
 
 	getChild<LLButton>("BeamColor_new")->setClickedCallback(onCustomBeamColor, this);
@@ -244,7 +255,9 @@ BOOL LLPanelEmerald::postBuild()
 	childSetCommitCallback("EmeraldCmdTeleportToCam", onCommitApplyControl);
 	childSetCommitCallback("EmeraldCmdLineKeyToName", onCommitApplyControl);
 	childSetCommitCallback("EmeraldCmdLineOfferTp", onCommitApplyControl);
+	childSetCommitCallback("EmeraldCmdLineTP2", onCommitApplyControl);
 	childSetCommitCallback("EmeraldCmdLineAO", onCommitApplyControl);
+	childSetCommitCallback("EmeraldCmdLineClearChat", onCommitApplyControl);
 
 	childSetCommitCallback("X Modifier", onCommitSendAppearance);
 	childSetCommitCallback("Y Modifier", onCommitSendAppearance);
@@ -266,6 +279,7 @@ BOOL LLPanelEmerald::postBuild()
 	initHelpBtn("EmeraldHelp_UtilityStream",	"EmeraldHelp_UtilityStream");
 	initHelpBtn("EmeraldHelp_Inventory",		"EmeraldHelp_Inventory");
 	initHelpBtn("EmeraldHelp_Effects",			"EmeraldHelp_Effects");
+	initHelpBtn("EmeraldHelp_SpellCheck",		"EmeraldHelp_SpellCheck");
 
 	LLView *target_view = getChild<LLView>("im_give_drop_target_rect");
 	if(target_view)
@@ -276,6 +290,13 @@ BOOL LLPanelEmerald::postBuild()
 		}
 		mObjectDropTarget = new JCInvDropTarget("drop target", target_view->getRect(), IMAutoResponseItemDrop);//, mAvatarID);
 		addChild(mObjectDropTarget);
+	}
+	target_view = getChild<LLView>("build_item_add_disp_rect");
+	if(target_view)
+	{
+		if (mBuildObjectDropTarget) delete mBuildObjectDropTarget;
+		mBuildObjectDropTarget = new JCInvDropTarget("build drop target", target_view->getRect(),BuildAutoResponseItemDrop);
+		addChild(mBuildObjectDropTarget);
 	}
 
 	if(LLStartUp::getStartupState() == STATE_STARTED)
@@ -292,9 +313,22 @@ BOOL LLPanelEmerald::postBuild()
 		{
 			childSetValue("im_give_disp_rect_txt","Currently set to a item not on this account");
 		}
+		itemid = (LLUUID)gSavedSettings.getString("EmeraldBuildPrefs_Item");
+		item = gInventory.getItem(itemid);
+		if(item)
+		{
+			childSetValue("build_item_add_disp_rect_txt","Currently set to: "+item->getName());
+		}else if(itemid.isNull())
+		{
+			childSetValue("build_item_add_disp_rect_txt","Currently not set");
+		}else
+		{
+			childSetValue("build_item_add_disp_rect_txt","Currently set to a item not on this account");
+		}
 	}else
 	{
 		childSetValue("im_give_disp_rect_txt","Not logged in");
+		childSetValue("build_item_add_disp_rect_txt","Not logged in");
 	}
 
 	LLWString auto_response = utf8str_to_wstring( gSavedPerAccountSettings.getString("EmeraldInstantMessageResponse") );
@@ -315,6 +349,9 @@ BOOL LLPanelEmerald::postBuild()
 	childSetAction("set_mirror", onClickSetMirror, this);
 	childSetCommitCallback("mirror_location", onCommitApplyControl);
 
+	childSetAction("set_includeHDD", onClickSetHDDInclude, this);
+	childSetCommitCallback("include_location", onCommitApplyControl);
+
 	getChild<LLCheckBoxCtrl>("telerequest_toggle")->setCommitCallback(onConditionalPreferencesChanged);
 	getChild<LLCheckBoxCtrl>("mldct_toggle")->setCommitCallback(onConditionalPreferencesChanged);
 
@@ -324,8 +361,8 @@ BOOL LLPanelEmerald::postBuild()
 
 void LLPanelEmerald::refresh()
 {
-	LLComboBox* comboBox = getChild<LLComboBox>("EmeraldBeamShape_combo");
 	
+	LLComboBox* comboBox = getChild<LLComboBox>("EmeraldBeamShape_combo");
 
 	if(comboBox != NULL) 
 	{
@@ -351,6 +388,43 @@ void LLPanelEmerald::refresh()
 		}
 		comboBox->setSimple(gSavedSettings.getString("EmeraldBeamColorFile"));
 	}
+	comboBox = getChild<LLComboBox>("EmeraldSpellBase");
+	if(comboBox != NULL) 
+	{
+		comboBox->removeall();
+		std::vector<std::string> names = glggHunSpell->getDicts();
+		for(int i=0; i<(int)names.size(); i++) 
+		{
+			comboBox->add(names[i]);
+		}
+		comboBox->setSimple(gSavedSettings.getString("EmeraldSpellBase"));
+	}
+	comboBox = getChild<LLComboBox>("EmSpell_Avail");
+	if(comboBox != NULL) 
+	{
+		comboBox->removeall();
+
+		comboBox->add("");
+		std::vector<std::string> names = glggHunSpell->getAvailDicts();
+		for(int i=0; i<(int)names.size(); i++) 
+		{
+			comboBox->add(names[i]);
+		}
+		comboBox->setSimple(std::string(""));
+	}
+	comboBox = getChild<LLComboBox>("EmSpell_Installed");
+	if(comboBox != NULL) 
+	{
+		comboBox->removeall();
+
+		comboBox->add("");
+		std::vector<std::string> names = glggHunSpell->getInstalledDicts();
+		for(int i=0; i<(int)names.size(); i++) 
+		{
+			comboBox->add(names[i]);
+		}
+		comboBox->setSimple(std::string(""));
+	}
 
 	//epic hax (TODO: make this less hax)
 	onConditionalPreferencesChanged(getChild<LLCheckBoxCtrl>("telerequest_toggle"), NULL);
@@ -364,6 +438,11 @@ void LLPanelEmerald::IMAutoResponseItemDrop(LLViewerInventoryItem* item)
 	gSavedPerAccountSettings.setString("EmeraldInstantMessageResponseItemData", item->getUUID().asString());
 	sInstance->childSetValue("im_give_disp_rect_txt","Currently set to: "+item->getName());
 }
+void LLPanelEmerald::BuildAutoResponseItemDrop(LLViewerInventoryItem* item)
+{
+	gSavedSettings.setString("EmeraldBuildPrefs_Item", item->getUUID().asString());
+	sInstance->childSetValue("build_item_add_disp_rect_txt","Currently set to: "+item->getName());
+}
 
 void LLPanelEmerald::apply()
 {
@@ -373,6 +452,7 @@ void LLPanelEmerald::apply()
 	LLWStringUtil::replaceTabsWithSpaces(im_response, 4);
 	LLWStringUtil::replaceChar(im_response, '\n', '^');
 	LLWStringUtil::replaceChar(im_response, ' ', '%');
+	glggHunSpell->setNewHighlightSetting(gSavedSettings.getBOOL("EmeraldSpellDisplay"));
 	gSavedPerAccountSettings.setString("EmeraldInstantMessageResponse", std::string(wstring_to_utf8str(im_response)));
 
 	//gSavedPerAccountSettings.setString(
@@ -461,6 +541,32 @@ void LLPanelEmerald::onCustomBeamColor(void* data)
 {
 	LggBeamColorMap::show(true,data);
 }
+void LLPanelEmerald::onSpellAdd(void* data)
+{
+	LLPanelEmerald* panel = (LLPanelEmerald*)data;
+	if(panel)
+	{
+		glggHunSpell->addButton(panel->childGetValue("EmSpell_Avail").asString());
+	}
+	panel->refresh();
+}
+void LLPanelEmerald::onSpellRemove(void* data)
+{
+	LLPanelEmerald* panel = (LLPanelEmerald*)data;
+	if(panel)
+	{
+		glggHunSpell->removeButton(panel->childGetValue("EmSpell_Installed").asString());
+	}
+	panel->refresh();
+}
+void LLPanelEmerald::onSpellGetMore(void* data)
+{
+	glggHunSpell->getMoreButton(data);
+}
+void LLPanelEmerald::onSpellEditCustom(void* data)
+{
+	glggHunSpell->editCustomButton();
+}
 void LLPanelEmerald::onStealth(void* data)
 {
 	//LLPanelEmerald* self =(LLPanelEmerald*)data;
@@ -521,12 +627,26 @@ void LLPanelEmerald::beamUpdateCall(LLUICtrl* crtl, void* userdata)
 }
 void LLPanelEmerald::onComboBoxCommit(LLUICtrl* ctrl, void* userdata)
 {
+	
 	LLComboBox* box = (LLComboBox*)ctrl;
 	if(box)
 	{
 		gSavedSettings.setString(box->getControlName(),box->getValue().asString());
+	}	
+}
+void LLPanelEmerald::onSpellBaseComboBoxCommit(LLUICtrl* ctrl, void* userdata)
+{
+
+	LLComboBox* box = (LLComboBox*)ctrl;
+	if(box)
+	{
+		glggHunSpell->newDictSelection(box->getValue().asString());
+		//LLPanelEmerald* panel = (LLPanelEmerald*)userdata;//box->getParent();
+		if(sInstance)sInstance->refresh();
+
 	}
-	
+	//LLPanelEmerald* panel = (LLPanelEmerald*)userdata;
+	//if(panel)panel->refresh();
 }
 void LLPanelEmerald::onTexturePickerCommit(LLUICtrl* ctrl, void* userdata)
 {
@@ -645,13 +765,28 @@ void LLPanelEmerald::onClickSetMirror(void* user_data)
 	if (!dir_name.empty() && dir_name != cur_name)
 	{
 		self->childSetText("mirror_location", dir_name);
-		//LLNotifications::instance().add("CacheWillBeMoved");
 		gSavedSettings.setString("EmeraldInvMirrorLocation", dir_name);
 	}
-	else
+}
+
+void LLPanelEmerald::onClickSetHDDInclude(void* user_data)
+{
+	LLPanelEmerald* self = (LLPanelEmerald*)user_data;
+
+	std::string cur_name(gSavedSettings.getString("EmeraldHDDIncludeLocation"));
+	std::string proposed_name(cur_name);
+	
+	LLDirPicker& picker = LLDirPicker::instance();
+	if (! picker.getDir(&proposed_name ) )
 	{
-		std::string cache_location = gDirUtilp->getCacheDir();
-		self->childSetText("mirror_location", cache_location);
+		return; //Canceled!
+	}
+
+	std::string dir_name = picker.getDirName();
+	if (!dir_name.empty() && dir_name != cur_name)
+	{
+		self->childSetText("include_location", dir_name);
+		gSavedSettings.setString("EmeraldHDDIncludeLocation", dir_name);
 	}
 }
 

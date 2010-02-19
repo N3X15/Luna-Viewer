@@ -33,7 +33,7 @@
 #include "llviewerprecompiledheaders.h"
 
 #include "llimpanel.h"
-#include "lggIrcGroupHandler.h"
+#include "lggircgrouphandler.h"
 
 #include "indra_constants.h"
 #include "llfocusmgr.h"
@@ -85,8 +85,12 @@
 #include "otr_wrapper.h"
 #include "otr_floater_smp_dialog.h"
 #include "otr_floater_smp_progress.h"
-#include "mfdKeywordFloater.h"
+#include "mfdkeywordfloater.h"
 #endif // USE_OTR // [/$PLOTR$]
+
+// [RLVa:KB]
+#include "rlvhandler.h"
+// [/RLVa:KB]
 
 //
 // Constants
@@ -1175,7 +1179,8 @@ void LLFloaterIMPanel::init(const std::string& session_label)
 		mVoiceChannel = new LLVoiceChannelGroup(mSessionUUID, mSessionLabel);
 		break;
 	case IM_SESSION_IRC_START:
-		mSessionLabel = "#"+mSessionLabel;
+		mSessionLabel = "<"+mSessionLabel+">";
+		setShortTitle(mSessionLabel);
 		mFactoryMap["active_speakers_panel"] = LLCallbackMap(createSpeakersPanel, this);
 		xml_filename =  "floater_instant_message_ad_hoc.xml";
 		mVoiceChannel = new LLVoiceChannelGroup(mSessionUUID, mSessionLabel);
@@ -1213,8 +1218,8 @@ void LLFloaterIMPanel::init(const std::string& session_label)
 		mVoiceChannel = new LLVoiceChannelP2P(mSessionUUID, mSessionLabel, mOtherParticipantUUID);
 		break;
 	case IM_PRIVATE_IRC:
-		mSessionLabel = "#"+mSessionLabel;
-
+		mSessionLabel = mSessionLabel;
+		setShortTitle(mSessionLabel);
 		xml_filename = "floater_instant_message.xml";
 
 		mTextIMPossible = TRUE;
@@ -1960,10 +1965,7 @@ void LLFloaterIMPanel::onClickHistory( void* userdata )
 	if (self->mOtherParticipantUUID.notNull())
 	{
 		char command[256];
-		std::string fullname;
-		//gCacheName->getFullName(self->mOtherParticipantUUID, fullname);
-		//if(fullname == "(Loading...)")
-			fullname= self->getTitle();
+		std::string fullname(gDirUtilp->getScrubbedFileName(self->getTitle()));
 		sprintf(command, "\"%s\\%s.txt\"", gDirUtilp->getPerAccountChatLogsDir().c_str(),fullname.c_str());
 		gViewerWindow->getWindow()->ShellEx(command);
 
@@ -3025,18 +3027,18 @@ void LLFloaterIMPanel::sendMsg(bool ooc)
 			}
 			//utf8_text = utf8str_truncate(utf8_text, MAX_MSG_BUF_SIZE - 1);
 
-// [RLVa:KB] - Alternate: Emerald-370 | Checked: 2009-07-10 (RLVa-1.0.0g) | Modified: RLVa-1.0.0g
+// [RLVa:KB] - Alternate: Snowglobe-1.2.4 | Checked: 2009-07-10 (RLVa-1.0.0g) | Modified: RLVa-1.0.0g
 			if (gRlvHandler.hasBehaviour(RLV_BHVR_SENDIM))
 			{
 				if (IM_NOTHING_SPECIAL == mDialog)			// One-on-one IM: allow if recipient is a sendim exception
 				{
 					if (!gRlvHandler.isException(RLV_BHVR_SENDIM, mOtherParticipantUUID))
-						utf8_text = rlv_handler_t::cstrBlockedSendIM;
+						utf8_text = RlvStrings::getString(RLV_STRING_BLOCKED_SENDIM);
 				}
 				else if (gAgent.isInGroup(mSessionUUID))	// Group chat: allow if recipient is a sendim exception
 				{
 					if (!gRlvHandler.isException(RLV_BHVR_SENDIM, mSessionUUID))
-						utf8_text = rlv_handler_t::cstrBlockedSendIM;
+						utf8_text = RlvStrings::getString(RLV_STRING_BLOCKED_SENDIM);
 				}
 				else if (mSpeakers)							// Conference chat: allow if all participants are sendim exceptions
 				{
@@ -3049,14 +3051,14 @@ void LLFloaterIMPanel::sendMsg(bool ooc)
 						LLSpeaker* pSpeaker = *itSpeaker;
 						if ( (gAgent.getID() != pSpeaker->mID) && (!gRlvHandler.isException(RLV_BHVR_SENDIM, pSpeaker->mID)) )
 						{
-							utf8_text = rlv_handler_t::cstrBlockedSendIM;
+							utf8_text = RlvStrings::getString(RLV_STRING_BLOCKED_SENDIM);
 							break;
 						}
 					}
 				}
 				else										// Catch all fall-through
 				{
-					utf8_text = rlv_handler_t::cstrBlockedSendIM;
+					utf8_text = RlvStrings::getString(RLV_STRING_BLOCKED_SENDIM);
 				}
 			}
 // [/RLVa:KB]

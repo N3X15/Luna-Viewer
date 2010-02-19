@@ -61,6 +61,10 @@
 #include "llmediamanager.h"
 #include "llwindow.h"
 
+// [RLVa:KB]
+#include "rlvhandler.h"
+// [/RLVa:KB]
+
 #if LL_WINDOWS
 #include "lldxhardware.h"
 #endif
@@ -122,13 +126,13 @@ LLFloaterAbout::LLFloaterAbout()
 		+ llformat(" %d.%d.%d (%d) %s %s (%s) %s\n",
 			LL_VERSION_MAJOR, LL_VERSION_MINOR, LL_VERSION_PATCH, LL_VIEWER_BUILD,
 			__DATE__, __TIME__,
-			LL_CHANNEL, ASSTRING(EMERALD_BRANCH));
+			LL_DEFAULT_VIEWER_CHANNEL, ASSTRING(EMERALD_BRANCH));
 #else
 	std::string version = LLAppViewer::instance()->getSecondLifeTitle()
 		+ llformat(" %d.%d.%d (%d) %s %s (%s)\n",
-				   LL_VERSION_MAJOR, LL_VERSION_MINOR, LL_VERSION_PATCH, LL_VERSION_BUILD,
-				   __DATE__, __TIME__,
-				   LL_CHANNEL);
+			LL_VERSION_MAJOR, LL_VERSION_MINOR, LL_VERSION_PATCH, LL_VERSION_BUILD,
+			__DATE__, __TIME__,
+			LL_DEFAULT_VIEWER_CHANNEL);
 #endif
 	support_widget->appendColoredText(version, FALSE, FALSE, gColors.getColor("TextFgReadOnlyColor"));
 	support_widget->appendStyledText(LLTrans::getString("ReleaseNotes"), false, false, viewer_link_style);
@@ -149,7 +153,7 @@ LLFloaterAbout::LLFloaterAbout()
 // [RLVa:KB] - Version: 1.23.4 | Checked: 2009-07-04 (RLVa-1.0.0a)
 	if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC))
 	{
-		support.append(rlv_handler_t::cstrHidden);
+		support.append(RlvStrings::getString(RLV_STRING_HIDDEN));
 		support.append("\n\n");
 	}
 	else if (region)
@@ -316,7 +320,7 @@ static std::string get_viewer_release_notes_url()
 		<< LL_VERSION_BUILD;
 
 	LLSD query;
-	query["channel"] = LL_CHANNEL;
+	query["channel"] = LL_DEFAULT_VIEWER_CHANNEL;
 	query["version"] = version.str();
 
 	std::ostringstream url;

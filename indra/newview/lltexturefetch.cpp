@@ -926,7 +926,7 @@ bool LLTextureFetchWorker::doWork(S32 param)
 		}
 		S32 datasize = mFormattedImage->getDataSize();
 		llassert_always(datasize);
-		setPriority(LLWorkerThread::PRIORITY_LOW | mWorkPriority); // Set priority first since Responder may change it
+		setPriority(LLWorkerThread::PRIORITY_HIGH | mWorkPriority); // Set priority first since Responder may change it
 		U32 cache_priority = mWorkPriority;
 		mWritten = FALSE;
 		mState = WAIT_ON_WRITE;
@@ -1378,7 +1378,8 @@ bool LLTextureFetch::createRequest(const std::string& filename, const LLUUID& id
 	}
 	else
 	{
-		desired_size = FIRST_PACKET_SIZE;
+		//Zwag: This appears to fix a lot of broken textures when using llkdu and emkdu.
+		desired_size = 1024;
 		desired_discard = MAX_DISCARD_LEVEL;
 	}
 

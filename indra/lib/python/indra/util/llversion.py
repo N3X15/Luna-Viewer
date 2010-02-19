@@ -28,44 +28,59 @@ $/LicenseInfo$
 """
 
 import re, sys, os, commands
+import StringIO
+import ConfigParser
+from indra.base import config, llsd
 
-# Methods for gathering version information from
-# llversionviewer.h and llversionserver.h
+# Methods for gathering version information from indra/Version
 
 def get_src_root():
     indra_lib_python_indra_path = os.path.dirname(__file__)
-    return os.path.abspath(os.path.realpath(indra_lib_python_indra_path + "/../../../../../"))
+    return os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(os.path.realpath(indra_lib_python_indra_path)))))))
 
-def get_version_file_contents(version_type):
-    filepath = get_src_root() + '/indra/llcommon/llversion%s.h' % version_type
+def get_version_file_contents():
+    filepath = os.path.join(get_src_root(),'indra', 'Version')
     file = open(filepath,"r")
     file_str = file.read()
     file.close()
     return file_str
 
-def get_version(version_type):
-    file_str = get_version_file_contents(version_type)
-    m = re.search('const S32 LL_VERSION_MAJOR = (\d+);', file_str)
-    VER_MAJOR = m.group(1)
-    m = re.search('const S32 LL_VERSION_MINOR = (\d+);', file_str)
-    VER_MINOR = m.group(1)
-    m = re.search('const S32 LL_VERSION_PATCH = (\d+);', file_str)
-    VER_PATCH = m.group(1)
-    m = re.search('const S32 LL_VERSION_BUILD = (\d+);', file_str)
-    VER_BUILD = m.group(1)
-    version = "%(VER_MAJOR)s.%(VER_MINOR)s.%(VER_PATCH)s.%(VER_BUILD)s" % locals()
-    return version
+def get_version(version_type, revision=0):
+    config_parser = ConfigParser.ConfigParser()
+    file_str = os.linesep.join(['[versions]', get_version_file_contents()])
+    try:
+        config_parser.readfp(StringIO.StringIO(file_str))
+
+        if version_type == 'viewer':
+            version = config_parser.get('versions', 'VERSION_VIEWER')
+        elif version_type == 'server':
+            version = config_parser.get('versions', 'VERSION_SERVER')
+        else:
+            raise Exception('Invalid version type "%s"' % version_type)
+        if revision:
+            return '.'.join([version, revision])
+        else:
+            return '.'.join([version, get_svn_revision()])
+    except:
+        raise
+        # raise Exception("Unable to parse version file.")
 
 def get_channel(version_type):
-    file_str = get_version_file_contents(version_type)
-    m = re.search('const char \* const LL_CHANNEL = "(.+)";', file_str)
-    return m.group(1)
-    
-def get_viewer_version():
-    return get_version('viewer')
+    if version_type == 'viewer':
+        settings_file = open(os.path.join(
+            get_src_root(), 'indra', 'newview', 'app_settings', 'settings.xml'))
+        data = llsd.parse(settings_file.read())
+        settings_file.close()
+        return data['VersionChannelName']['Value']
 
-def get_server_version():
-    return get_version('server')
+    config.load()
+    return config.get('channel', 'Second Life Server')
+
+def get_viewer_version(revision=0):
+    return get_version('viewer', revision)
+
+def get_server_version(revision=0):
+    return get_version('server', revision)
 
 def get_viewer_channel():
     return get_channel('viewer')
@@ -76,12 +91,14 @@ def get_server_channel():
 # Methods for gathering subversion information
 def get_svn_status_matching(regular_expression):
     # Get the subversion info from the working source tree
+    # *TODO: This does not work if the user only has TortoiseSVN installed.
     status, output = commands.getstatusoutput('svn info %s' % get_src_root())
+    # Return revision zero if not in svn -- CG 2009-09-17
     m = regular_expression.search(output)
     if not m:
-        print "Failed to parse svn info output, resultfollows:"
-        print output
-        raise Exception, "No matching svn status in "+src_root
+        #print "Failed to parse svn info output, resultfollows:"
+        #print output
+        return '0'
     return m.group(1)
 
 def get_svn_branch():

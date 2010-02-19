@@ -40,7 +40,7 @@
 #include "llcolorswatch.h"
 #include "llviewercontrol.h"
 
-// [RLVa:KB] - Checked: 2009-07-08 (RLVa-1.0.0g)
+// [RLVa:KB]
 #include "rlvhandler.h"
 #include "rlvextensions.h"
 // [/RLVa:KB]

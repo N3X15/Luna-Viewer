@@ -50,10 +50,14 @@
 #include "llurldispatcher.h"
 #include "llworld.h"
 #include "llworldmap.h"
-#include "llfloateravatarlist.h"
-#include "llfloaterao.h"
+#include "floateravatarlist.h"
+#include "floaterao.h"
 #include "llviewerobjectlist.h"
+#include "llviewertexteditor.h"
 #include "llvoavatar.h"
+#include "lltooldraganddrop.h"
+#include "llinventorymodel.h"
+#include "llselectmgr.h"
 
 #include <iosfwd>
 
@@ -63,11 +67,142 @@
 
 #include "llfloaterchat.h"
 
+#include "jclslpreproc.h"
+
 void cmdline_printchat(std::string message);
 void cmdline_rezplat(bool use_saved_value = true, F32 visual_radius = 30.0);
 void cmdline_tp2name(std::string target);
 
 LLUUID cmdline_partial_name2key(std::string name);
+
+
+
+LLViewerInventoryItem::item_array_t findInventoryInFolder(const std::string& ifolder)
+{
+	LLUUID folder = gInventory.findCategoryByName(ifolder);
+	LLViewerInventoryCategory::cat_array_t cats;
+	LLViewerInventoryItem::item_array_t items;
+	//ObjectContentNameMatches objectnamematches(ifolder);
+	gInventory.collectDescendents(folder,cats,items,FALSE);//,objectnamematches);
+
+	return items;
+}
+
+class JCZface : public LLEventTimer
+{
+public:
+	JCZface(std::stack<LLViewerInventoryItem*> stack, LLUUID dest, F32 pause) : LLEventTimer( pause )
+	{
+		cmdline_printchat("initialized");
+		instack = stack;
+		indest = dest;
+	}
+	~JCZface()
+	{
+		cmdline_printchat("deinitialized");
+	}
+	BOOL tick()
+	{
+		LLViewerInventoryItem* subj = instack.top();
+		instack.pop();
+		LLViewerObject *objectp = gObjectList.findObject(indest);
+		if(objectp)
+		{
+			cmdline_printchat(std::string("dropping ")+subj->getName());
+			LLToolDragAndDrop::dropInventory(objectp,subj,LLToolDragAndDrop::SOURCE_AGENT,gAgent.getID());
+			return (instack.size() == 0);
+		}else
+		{
+			cmdline_printchat("object lost");
+			return TRUE;
+		}	
+	}
+
+
+private:
+	std::stack<LLViewerInventoryItem*> instack;
+	LLUUID indest;
+};
+
+class JCZtake : public LLEventTimer
+{
+public:
+	static BOOL ztakeon;
+
+	JCZtake() : LLEventTimer(0.1f)
+	{
+		ztakeon = TRUE;
+		cmdline_printchat("initialized");
+	}
+	~JCZtake()
+	{
+		cmdline_printchat("deinitialized");
+	}
+	BOOL tick()
+	{
+		{
+			LLViewerObject* root_object = LLSelectMgr::getInstance()->getSelection()->getFirstRootObject();
+			if(root_object && !root_object->isDead())
+			{
+				LLViewerObject::child_list_t children=root_object->getChildren();
+				LLMessageSystem    *msg = gMessageSystem;
+				for(LLViewerObject::child_list_t::const_iterator itr=children.begin();itr!=children.end();++itr)
+				{
+					LLViewerObject* object = (*itr);
+					U32 localid=object->getLocalID();
+					if(done_prims.find(localid) == done_prims.end())
+					{
+						done_prims.insert(localid);
+						std::string name = llformat("%.1f x %.1f x %.1f",object->getScale().mV[VX],object->getScale().mV[VY],object->getScale().mV[VZ]);
+						cmdline_printchat(std::string("Rename&take ")+name);
+						msg->newMessageFast(_PREHASH_ObjectName);
+						msg->nextBlockFast(_PREHASH_AgentData);
+						msg->addUUIDFast(_PREHASH_AgentID,gAgent.getID());
+						msg->addUUIDFast(_PREHASH_SessionID,gAgent.getSessionID());
+						msg->nextBlockFast(_PREHASH_ObjectData);
+						msg->addU32Fast(_PREHASH_LocalID,localid);
+						msg->addStringFast(_PREHASH_Name,name);
+						gAgent.sendReliableMessage();
+
+						msg->newMessageFast(_PREHASH_DeRezObject);
+						msg->nextBlockFast(_PREHASH_AgentData);
+						msg->addUUIDFast(_PREHASH_AgentID,gAgent.getID());
+						msg->addUUIDFast(_PREHASH_SessionID,gAgent.getSessionID());
+						msg->nextBlockFast(_PREHASH_AgentBlock);
+						msg->addUUIDFast(_PREHASH_GroupID,LLUUID::null);
+						msg->addU8Fast(_PREHASH_Destination,4);
+						msg->addUUIDFast(_PREHASH_DestinationID,LLUUID::null);
+						LLUUID rand;
+						rand.generate();
+						msg->addUUIDFast(_PREHASH_TransactionID,rand);
+						msg->addU8Fast(_PREHASH_PacketCount,1);
+						msg->addU8Fast(_PREHASH_PacketNumber,0);
+						msg->nextBlockFast(_PREHASH_ObjectData);
+						msg->addU32Fast(_PREHASH_ObjectLocalID,localid);
+						gAgent.sendReliableMessage();
+					}
+				}
+			}
+		}
+		return ztakeon;
+	}
+
+
+private:
+	std::set<U32> done_prims;
+	
+};
+
+void invrepair()
+{
+
+	LLViewerInventoryCategory::cat_array_t cats;
+	LLViewerInventoryItem::item_array_t items;
+	//ObjectContentNameMatches objectnamematches(ifolder);
+	gInventory.collectDescendents(gAgent.getInventoryRootID(),cats,items,FALSE);//,objectnamematches);
+}
+
+
 
 
 bool cmd_line_chat(std::string revised_text, EChatType type)
@@ -278,12 +413,64 @@ bool cmd_line_chat(std::string revised_text, EChatType type)
 					cmdline_tp2name(name);
 				}
 				return false;
-			}else if (command == "/xyzzy")
+			}else if (command == "xyzzy")
 			{
 				//Zwag: I wonder how many people will actually get this?
 				cmdline_printchat("Nothing happens.");
 				return false;
-			} 
+			}else if(command == "typingstop")
+			{
+				std::string text;
+				if(i >> text)
+				{
+					gChatBar->sendChatFromViewer(text, CHAT_TYPE_STOP, FALSE);
+				} 
+			}
+			else if(command == gSavedSettings.getString("EmeraldCmdLineClearChat"))
+			{
+				LLFloaterChat* chat = LLFloaterChat::getInstance(LLSD());
+				if(chat)
+				{
+					LLViewerTextEditor*	history_editor = chat->getChild<LLViewerTextEditor>("Chat History Editor");
+					LLViewerTextEditor*	history_editor_with_mute = chat->getChild<LLViewerTextEditor>("Chat History Editor with mute");
+					history_editor->clear();
+					history_editor_with_mute->clear();
+					return false;
+				}
+			}else if(command == "zdrop")
+			{
+				cmdline_printchat("lolZ");
+				std::string lolfolder;
+				if(i >> lolfolder)
+				{
+					cmdline_printchat("lolfolder");
+					std::stack<LLViewerInventoryItem*> lolstack;
+					LLDynamicArray<LLPointer<LLViewerInventoryItem> > lolinv = findInventoryInFolder(lolfolder);
+					for(LLDynamicArray<LLPointer<LLViewerInventoryItem> >::iterator it = lolinv.begin(); it != lolinv.end(); ++it)
+					{
+						LLViewerInventoryItem* item = *it;
+						lolstack.push(item);
+					}
+
+					if(lolstack.size())
+					{
+						cmdline_printchat("lolstack.size()");
+						std::string loldest;
+						if(i >> loldest)
+						{
+							cmdline_printchat("loldest");
+							LLUUID sdest = LLUUID(loldest);
+							new JCZface(lolstack, sdest, 2.5f);
+						}
+					}else cmdline_printchat("no size");
+				}
+			}else if(command == "invrepair")
+			{
+				invrepair();
+			}
+			//
+			// FlexLife
+			//
 			else if(command == gSavedSettings.getString("FlexCmdLineLua"))
 			{
 				// FLEXLIFE:  Raw Lua Command from chatbar.

@@ -12,9 +12,6 @@ Bewegen Sie die Maus über die Optionen, um weitere Informationen anzuzeigen.
 	</string>
 	<button label="?" label_selected="?" name="help_button"/>
 	<line_editor label="Neuen Gruppennamen hier eingeben" name="group_name_editor"/>
-	<text name="group_name">
-		Neuen Gruppennamen hier eingeben
-	</text>
 	<text name="prepend_founded_by">
 		Gegründet von
 	</text>

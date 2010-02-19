@@ -55,6 +55,7 @@
 	<menu_item_call label="Aktywuj" name="Activate"/>
 	<menu_item_call label="Deaktywuj" name="Deactivate"/>
 	<menu_item_call label="Odłącz od Siebie" name="Detach From Yourself"/>
+	<menu_item_call label="Edytuj" name="Attachment Edit"/>
 	<menu_item_call label="Przywróć ostatnią pozycję" name="Restore to Last Position"/>
 	<menu_item_call label="Ubierz" name="Object Wear"/>
 	<menu label="Dołącz do" name="Attach To"/>

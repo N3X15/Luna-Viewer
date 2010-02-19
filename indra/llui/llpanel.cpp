@@ -67,9 +67,13 @@ static LLRegisterWidget<LLPanel> r1("panel");
 void LLPanel::init()
 {
 	// mRectControl
-	mBgColorAlpha        = LLUI::sColorsGroup->getColor( "DefaultBackgroundColor" );
-	mBgColorOpaque       = LLUI::sColorsGroup->getColor( "FocusBackgroundColor" );
-	mDefaultBtnHighlight = LLUI::sColorsGroup->getColor( "DefaultHighlightLight" );
+	static LLColor4 defaultBgColorAlpha        = LLUI::sColorsGroup->getColor( "DefaultBackgroundColor" );
+	static LLColor4 defaultBgColorOpaque       = LLUI::sColorsGroup->getColor( "FocusBackgroundColor" );
+	static LLColor4 defaultDefaultBtnHighlight = LLUI::sColorsGroup->getColor( "DefaultHighlightLight" );
+
+	mBgColorAlpha        = defaultBgColorAlpha;//LLUI::sColorsGroup->getColor( "DefaultBackgroundColor" );
+	mBgColorOpaque       = defaultBgColorOpaque;//LLUI::sColorsGroup->getColor( "FocusBackgroundColor" );
+	mDefaultBtnHighlight = defaultDefaultBtnHighlight;//LLUI::sColorsGroup->getColor( "DefaultHighlightLight" );
 	mBgVisible = FALSE;
 	mBgOpaque = FALSE;
 	mBorder = NULL;

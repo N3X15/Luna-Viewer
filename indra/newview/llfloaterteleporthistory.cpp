@@ -46,7 +46,7 @@
 
 #include "apr_time.h"
 
-// [RLVa:KB] - Alternate: Emerald-370
+// [RLVa:KB] - Emerald specific
 #include "rlvhandler.h"
 // [/RLVa:KB]
 
@@ -159,10 +159,10 @@ void LLFloaterTeleportHistory::addEntry(std::string regionName, S16 x, S16 y, S1
 // [RLVa:KB] - Alternate: Emerald-370
 		if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC))
 		{
-			value["columns"][0]["value"] = rlv_handler_t::cstrHiddenRegion;
-			value["columns"][1]["value"] = rlv_handler_t::cstrHidden;
-			value["columns"][3]["value"] = rlv_handler_t::cstrHidden;
-			value["columns"][4]["value"] = rlv_handler_t::cstrHidden;
+			value["columns"][0]["value"] = RlvStrings::getString(RLV_STRING_HIDDEN_REGION);
+			value["columns"][1]["value"] = RlvStrings::getString(RLV_STRING_HIDDEN);
+			value["columns"][3]["value"] = RlvStrings::getString(RLV_STRING_HIDDEN);
+			value["columns"][4]["value"] = RlvStrings::getString(RLV_STRING_HIDDEN);
 		}
 // [/RLVa:KB]
 
@@ -183,12 +183,12 @@ void LLFloaterTeleportHistory::setButtonsEnabled(BOOL on)
 // [RLVa:KB] - Alternate: Emerald-370
 	if (rlv_handler_t::isEnabled())
 	{
-		if ( (pItem) && (pItem->getColumn(4)) && (rlv_handler_t::cstrHidden == pItem->getColumn(4)->getValue().asString()) )
+		if ( (pItem) && (pItem->getColumn(4)) && (RlvStrings::getString(RLV_STRING_HIDDEN) == pItem->getColumn(4)->getValue().asString()) )
 		{
 			on = FALSE;
 		}
 	}
-// [/RLVa:KB]
+// [/RLVa:K]
 
 	// enable or disable buttons
 	childSetEnabled("teleport", on);

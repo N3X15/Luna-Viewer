@@ -91,6 +91,7 @@ public:
 	static void	trackAvatar( const LLUUID& avatar_id, const std::string& name );
 	static void	trackLandmark( const LLUUID& landmark_asset_id, const LLUUID& landmark_item_id , const std::string& name);
 	static void	trackLocation(const LLVector3d& pos, const std::string& full_name, const std::string& tooltip, ETrackingLocationType location_type = LOCATION_NOTHING);
+	static void trackLocationUpdate(const LLVector3d& pos, const std::string& full_name, const std::string& tooltip, ETrackingLocationType location_type = LOCATION_NOTHING);
 
 	// returns global pos of tracked thing
 	static LLVector3d 	getTrackedPositionGlobal();

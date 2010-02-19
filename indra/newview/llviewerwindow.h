@@ -430,6 +430,25 @@ protected:
 	static std::string sSnapshotDir;
 
 	static std::string sMovieBaseName;
+
+private:
+	static BOOL sMouseSmooth;
+	static F32 sToolTipDelay;
+	static F32 sDragAndDropToolTipDelay;
+	static BOOL sChatBarStealsFocus;
+	static F32 sPicksPerSecondMouseMoving;
+	static F32 sPicksPerSecondMouseStationary;
+	static BOOL sChatFullWidth;
+	static BOOL sDisplayTimecode;
+
+	static void	updateMouseSmooth(const LLSD &data);
+	static void	updateToolTipDelay(const LLSD &data);
+	static void	updateDragAndDropToolTipDelay(const LLSD &data);
+	static void	updateChatBarStealsFocus(const LLSD &data);
+	static void	updatePicksPerSecondMouseMoving(const LLSD &data);
+	static void	updatePicksPerSecondMouseStationary(const LLSD &data);
+	static void updateChatFullWidth(const LLSD &data);
+	static void updateDisplayTimecode(const LLSD &data);
 };	
 
 class LLBottomPanel : public LLPanel

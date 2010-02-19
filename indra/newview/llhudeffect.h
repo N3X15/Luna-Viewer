@@ -70,13 +70,11 @@ protected:
 
 	virtual void packData(LLMessageSystem *mesgsys);
 	virtual void unpackData(LLMessageSystem *mesgsys, S32 blocknum);
-	virtual void cancellate();
 	virtual void update();
 
 	static void getIDType(LLMessageSystem *mesgsys, S32 blocknum, LLUUID &uuid, U8 &type);
 
 protected:
-	LLUUID		mSenderID;
 	LLUUID		mID;
 	F32			mDuration;
 	LLColor4U	mColor;

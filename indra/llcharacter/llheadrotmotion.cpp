@@ -292,6 +292,7 @@ LLEyeMotion::LLEyeMotion(const LLUUID &id) : LLMotion(id)
 
 	mLeftEyeState = new LLJointState;
 	mRightEyeState = new LLJointState;
+
 }
 
 
@@ -456,6 +457,8 @@ BOOL LLEyeMotion::onUpdate(F32 time, U8* joint_mask)
 		target_eye_rot.getEulerAngles(&roll, &pitch, &yaw);
 		target_eye_rot.setQuat(0.0f, pitch, yaw);
 
+	//The following calculations are pointless; Uchi, Zwagoth and I agree ~tG
+	/*
 	// if they eyes are maxed, just stick em back in front of the av
 		LLQuaternion	check_target_eye_rot;
 		check_target_eye_rot = target_eye_rot;
@@ -475,17 +478,17 @@ BOOL LLEyeMotion::onUpdate(F32 time, U8* joint_mask)
 	//check_target_eye_rot = check_target_eye_rot * LLVector3(1.f, 1.f, 0.3f);	
 
 	// if rotation angle is greater than limit (cos is less than limit)
+	
 	if( check_target_eye_rot.mQ[VW] < cos_angle_lim )
 	{
-		/*LLVector3		forward(1.f, 0.0, 0.0);
-		left.setVec(forward % forward);
-		up.setVec(forward % left);
-		target_eye_rot = LLQuaternion(forward, left, up);
-		needsvergence = false;
-		lookAtDistance = 5.0f;
+		//LLVector3		forward(1.f, 0.0, 0.0);
+		//left.setVec(forward % forward);
+		//up.setVec(forward % left);
+		//target_eye_rot = LLQuaternion(forward, left, up);
+		//needsvergence = false;
+		//lookAtDistance = 5.0f;
 		//target_eye_rot *= ~mHeadJoint->getWorldRotation();
 		// convert target rotation to head-local coordinates
-		*/
 
 		LLVector3 forward =  (LLVector3::x_axis * mHeadJoint->getWorldRotation()) * 5.f;
 		forward.normVec();
@@ -518,7 +521,7 @@ BOOL LLEyeMotion::onUpdate(F32 time, U8* joint_mask)
 	{
 		mEyeRefocusTimer.reset();
 	}
-
+	*/
 		// constrain target orientation to be in front of avatar's face
 		target_eye_rot.constrain(EYE_ROT_LIMIT_ANGLE);
 

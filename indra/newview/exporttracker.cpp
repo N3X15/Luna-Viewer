@@ -40,13 +40,16 @@
 #include "llsdserialize.h"
 #include "lldirpicker.h"
 #include "llfilepicker.h"
+#include "llinventorymodel.h"
 #include "llviewerregion.h"
 #include "llwindow.h"
 #include "lltransfersourceasset.h"
 #include "llviewernetwork.h"
 #include "llcurl.h"
+#include "llselectmgr.h"
+#include "llviewercontrol.h"
 #include "llviewerimagelist.h"
-
+#include "hippogridmanager.h"
 #include "llimagej2c.h"
 
 #include "llviewertexteditor.h"
@@ -346,6 +349,14 @@ bool JCExportTracker::serializeSelection()
 	{
 		LLFirstUse::EmeraldNCreatorExport();
 	}
+	F32 throttle = gSavedSettings.getF32("OutBandwidth");
+	// Gross magical value that is 128kbit/s
+	// Sim appears to drop requests if they come in faster than this. *sigh*
+	if(throttle < 128000.)
+	{
+		gMessageSystem->mPacketRing.setOutBandwidth(128000.0);
+	}
+	gMessageSystem->mPacketRing.setUseOutThrottle(TRUE);
 	return serialize(catfayse);
 }
 
@@ -361,15 +372,6 @@ bool JCExportTracker::serialize(LLDynamicArray<LLViewerObject*> objects)
 	if (!file_picker.getSaveFile(LLFilePicker::FFSAVE_XML))
 		return false; // User canceled save.
 
-	F32 throttle = gSavedSettings.getF32("OutBandwidth");
-	// Gross magical value that is 128kbit/s
-	// Sim appears to drop requests if they come in faster than this. *sigh*
-	if(throttle < 128000.)
-	{
-		gMessageSystem->mPacketRing.setOutBandwidth(128000.0);
-	}
-	gMessageSystem->mPacketRing.setUseOutThrottle(TRUE);
-		
 	destination = file_picker.getFirstFile();
 
 	//destination = destination.substr(0,destination.find_last_of("."));
@@ -434,17 +436,6 @@ bool JCExportTracker::serialize(LLDynamicArray<LLViewerObject*> objects)
 		data = total;
 	}
 
-	if(throttle != 0.)
-	{
-		gMessageSystem->mPacketRing.setOutBandwidth(throttle);
-		gMessageSystem->mPacketRing.setUseOutThrottle(TRUE);
-	}
-	else
-	{
-		gMessageSystem->mPacketRing.setOutBandwidth(0.0);
-		gMessageSystem->mPacketRing.setUseOutThrottle(FALSE);
-	}
-
 	return success;
 
 }
@@ -456,8 +447,7 @@ void JCExportTracker::finalize(LLSD data)
 	header["Version"] = 2;
 	file["Header"] = header;
 	std::vector<std::string> uris;
-		LLViewerLogin* vl = LLViewerLogin::getInstance();
-		std::string grid_uri = vl->getCurrentGridURI();
+	std::string grid_uri = gHippoGridManager->getConnectedGrid()->getLoginUri();
 	//LLStringUtil::toLower(uris[0]);
 	file["Grid"] = grid_uri;
 	file["Objects"] = data;
@@ -477,8 +467,19 @@ void JCExportTracker::completechk()
 	{
 		//cmdline_printchat("Full property export completed.");
 		cmdline_printchat("(Content downloads may require more time, but the tracker is free for another export.)");
-		finalize(data);
-	}
+		F32 throttle = gSavedSettings.getF32("OutBandwidth");
+		if(throttle != 0.)
+		{
+			gMessageSystem->mPacketRing.setOutBandwidth(throttle);
+			gMessageSystem->mPacketRing.setUseOutThrottle(TRUE);
+		}
+		else
+		{
+			gMessageSystem->mPacketRing.setOutBandwidth(0.0);
+			gMessageSystem->mPacketRing.setUseOutThrottle(FALSE);
+		}
+			finalize(data);
+		}
 }
 
 //LLSD* chkdata(LLUUID id, LLSD* data)
@@ -689,35 +690,37 @@ void JCExportTracker::inventoryChanged(LLViewerObject* obj,
 								//cmdline_printchat("downloaded inventory for "+obj->getID().asString());
 								LLSD inventory;
 								//lol lol lol lol lol
-								InventoryObjectList::const_iterator it = inv->begin();
-								InventoryObjectList::const_iterator end = inv->end();
-								U32 num = 0;
-								for( ;	it != end;	++it)
+								if(inv)
 								{
-									LLInventoryObject* asset = (*it);
-									if(asset)
+									InventoryObjectList::const_iterator it = inv->begin();
+									InventoryObjectList::const_iterator end = inv->end();
+									U32 num = 0;
+									for( ;	it != end;	++it)
 									{
-										LLPermissions perm(((LLInventoryItem*)((LLInventoryObject*)(*it)))->getPermissions());
-										if(couldDL(asset->getType())
-										&& perm.allowCopyBy(gAgent.getID())
-										&& perm.allowModifyBy(gAgent.getID())
-										&& perm.allowTransferTo(LLUUID::null))// && is_asset_id_knowable(asset->getType()))
+										LLInventoryObject* asset = (*it);
+										if(asset)
 										{
-											LLSD inv_item;
-											inv_item["name"] = asset->getName();
-											inv_item["type"] = LLAssetType::lookup(asset->getType());
-											//cmdline_printchat("requesting asset for "+asset->getName());
-											inv_item["desc"] = ((LLInventoryItem*)((LLInventoryObject*)(*it)))->getDescription();//god help us all
-											inv_item["item_id"] = asset->getUUID().asString();
-											JCExportTracker::mirror(asset, obj, asset_dir, asset->getUUID().asString());//loltest
-											//unacceptable
-											inventory[num] = inv_item;
-											num += 1;
+											LLPermissions perm(((LLInventoryItem*)((LLInventoryObject*)(*it)))->getPermissions());
+											if(couldDL(asset->getType())
+											&& perm.allowCopyBy(gAgent.getID())
+											&& perm.allowModifyBy(gAgent.getID())
+											&& perm.allowTransferTo(LLUUID::null))// && is_asset_id_knowable(asset->getType()))
+											{
+												LLSD inv_item;
+												inv_item["name"] = asset->getName();
+												inv_item["type"] = LLAssetType::lookup(asset->getType());
+												//cmdline_printchat("requesting asset for "+asset->getName());
+												inv_item["desc"] = ((LLInventoryItem*)((LLInventoryObject*)(*it)))->getDescription();//god help us all
+												inv_item["item_id"] = asset->getUUID().asString();
+												JCExportTracker::mirror(asset, obj, asset_dir, asset->getUUID().asString());//loltest
+												//unacceptable
+												inventory[num] = inv_item;
+												num += 1;
+											}
 										}
 									}
+									(*link_itr)["inventory"] = inventory;
 								}
-								(*link_itr)["inventory"] = inventory;
-
 								invqueries -= 1;
 								//cmdline_printchat(llformat("%d inv queries left",invqueries));
 							}

@@ -36,6 +36,9 @@
 
 #include "llpanelgeneral.h"
 
+#include "hippogridmanager.h"
+#include "floaterlogin.h"
+
 #include "indra_constants.h"		// for key and mask constants
 #include "llfontgl.h"
 #include "llmd5.h"
@@ -43,6 +46,7 @@
 #include "llversionviewer.h"
 #include "v4color.h"
 
+#include "llappviewer.h"
 #include "llbutton.h"
 #include "llcheckboxctrl.h"
 #include "llcommandhandler.h"		// for secondlife:///app/login/
@@ -50,6 +54,8 @@
 #include "llcurl.h"
 #include "llviewercontrol.h"
 #include "llfloaterabout.h"
+#include "llfloaterchat.h"
+#include "llchat.h"
 #include "llfloatertest.h"
 #include "llfloaterpreference.h"
 #include "llfocusmgr.h"
@@ -78,7 +84,7 @@
 
 #include "llglheaders.h"
 
-// [RLVa:KB] - Version: 1.23.4 | Checked: 2009-07-08 (RLVa-1.0.0e)
+// [RLVa:KB]
 #include "rlvhandler.h"
 // [/RLVa:KB]
 
@@ -86,7 +92,7 @@
 
 const S32 BLACK_BORDER_HEIGHT = 160;
 const S32 MAX_PASSWORD = 16;
-
+const std::string EMERALD_LOGIN_PAGE = "http://www.modularsystems.sl/app/login";
 LLPanelLogin *LLPanelLogin::sInstance = NULL;
 BOOL LLPanelLogin::sCapslockDidNotification = FALSE;
 
@@ -208,18 +214,9 @@ LLPanelLogin::LLPanelLogin(const LLRect &rect,
 	reshape(rect.getWidth(), rect.getHeight());
 
 #if !USE_VIEWER_AUTH
-	LLComboBox* first_name_combo = sInstance->getChild<LLComboBox>("first_name_combo");
-	first_name_combo->setCommitCallback(onSelectLoginEntry);
-	first_name_combo->setFocusLostCallback(onLoginComboLostFocus);
-	first_name_combo->setPrevalidate(LLLineEditor::prevalidatePrintableNoSpace);
-	first_name_combo->setSuppressTentative(true);
+	childSetPrevalidate("first_name_edit", LLLineEditor::prevalidatePrintableNoSpace);
+	childSetPrevalidate("last_name_edit", LLLineEditor::prevalidatePrintableNoSpace);
 	
-
-	LLLineEditor* last_name_edit = sInstance->getChild<LLLineEditor>("last_name_edit");
-	last_name_edit->setPrevalidate(LLLineEditor::prevalidatePrintableNoSpace);
-	last_name_edit->setCommitCallback(onLastNameEditLostFocus);
-	
-	childSetCommitCallback("remember_name_check", onNameCheckChanged);
 	childSetCommitCallback("password_edit", mungePassword);
 	childSetKeystrokeCallback("password_edit", onPassKey, this);
 	childSetUserData("password_edit", this);
@@ -262,15 +259,16 @@ LLPanelLogin::LLPanelLogin(const LLRect &rect,
 
 	LLComboBox* server_choice_combo = sInstance->getChild<LLComboBox>("server_combo");
 	server_choice_combo->setCommitCallback(onSelectServer);
-	server_choice_combo->setFocusLostCallback(onServerComboLostFocus);
+	//server_choice_combo->setFocusLostCallback(onServerComboLostFocus);
 
 	childSetAction("connect_btn", onClickConnect, this);
+	childSetAction("grid_btn", onClickGrid, this);
 
 	setDefaultBtn("connect_btn");
 
 	// childSetAction("quit_btn", onClickQuit, this);
 
-	std::string channel = LL_CHANNEL;
+	std::string channel = LL_DEFAULT_VIEWER_CHANNEL;
 	std::string version = llformat("%d.%d.%d (%d)",
 		LL_VERSION_MAJOR,
 		LL_VERSION_MINOR,
@@ -282,6 +280,9 @@ LLPanelLogin::LLPanelLogin(const LLRect &rect,
 	channel_text->setClickedCallback(onClickVersion);
 	channel_text->setCallbackUserData(this);
 	
+	childSetValue("autorelog_toggle",LLStartUp::s_re_login);
+	childSetCommitCallback("autorelog_toggle",onClickToggleAutorelog);
+
 	LLTextBox* forgot_password_text = getChild<LLTextBox>("forgot_password_text");
 	forgot_password_text->setClickedCallback(onClickForgotPassword);
 
@@ -318,7 +319,7 @@ LLPanelLogin::LLPanelLogin(const LLRect &rect,
 	// kick off a request to grab the url manually
 	gResponsePtr = LLIamHereLogin::build( this );
 
-	std::string login_page = LLViewerLogin::getInstance()->getLoginPageURI();
+	std::string login_page = EMERALD_LOGIN_PAGE;
 	if (login_page.empty())
 	{
 		login_page = getString( "real_url" );
@@ -512,26 +513,29 @@ void LLPanelLogin::giveFocus()
 	if( sInstance )
 	{
 		// Grab focus and move cursor to first blank input field
-		std::string first = sInstance->childGetText("first_name_combo");
+		std::string first = sInstance->childGetText("first_name_edit");
 		std::string pass = sInstance->childGetText("password_edit");
 
 		BOOL have_first = !first.empty();
 		BOOL have_pass = !pass.empty();
 
+		LLLineEditor* edit = NULL;
 		if (have_first && !have_pass)
 		{
-		LLLineEditor* edit = NULL;
 			// User saved his name but not his password.  Move
 			// focus to password field.
 			edit = sInstance->getChild<LLLineEditor>("password_edit");
-			edit->setFocus(TRUE);
-			edit->selectAll();
 		}
 		else
 		{
 			// User doesn't have a name, so start there.
-			LLComboBox* combo = sInstance->getChild<LLComboBox>("first_name_combo");
-			combo->setFocusText(TRUE);
+			edit = sInstance->getChild<LLLineEditor>("first_name_edit");
+		}
+
+		if (edit)
+		{
+			edit->setFocus(TRUE);
+			edit->selectAll();
 		}
 	}
 #endif
@@ -554,13 +558,13 @@ void LLPanelLogin::show(const LLRect &rect,
 
 	// Make sure that focus always goes here (and use the latest sInstance that was just created)
 	gFocusMgr.setDefaultKeyboardFocus(sInstance);
+	LLPanelLogin::addServer(LLViewerLogin::getInstance()->getGridLabel());
 }
 
 // static
 void LLPanelLogin::setFields(const std::string& firstname,
 			     const std::string& lastname,
-			     const std::string& password,
-			     const LLSavedLogins& login_history)
+			     const std::string& password)
 {
 	if (!sInstance)
 	{
@@ -568,30 +572,8 @@ void LLPanelLogin::setFields(const std::string& firstname,
 		return;
 	}
 
-	LLComboBox* login_combo = sInstance->getChild<LLComboBox>("first_name_combo");
+	sInstance->childSetText("first_name_edit", firstname);
 	sInstance->childSetText("last_name_edit", lastname);
-	
-	if (login_history.size() > 0)
-	{
-		sInstance->mLoginHistoryData = login_history;
-		
-		llassert(login_combo);
-		login_combo->clear();
-		
-		const LLSavedLoginsVector& entries = sInstance->mLoginHistoryData.getEntries();
-		for (LLSavedLoginsVector::const_reverse_iterator i = entries.rbegin();
-			 i != entries.rend(); ++i)
-		{
-			LLSD e = i->asLLSD();
-			if (e.isMap()) login_combo->add(i->getDisplayString(), e);
-		}
-	}
-	else
-	{
-		sInstance->mLoginHistoryData = LLSavedLogins();
-	}
-
-	login_combo->setLabel(firstname);
 
 	// Max "actual" password length is 16 characters.
 	// Hex digests are always 32 characters.
@@ -618,63 +600,9 @@ void LLPanelLogin::setFields(const std::string& firstname,
 	}
 }
 
-// static
-void LLPanelLogin::setFields(const LLSavedLoginEntry& entry)
-{
-	if (!sInstance)
-	{
-		llwarns << "Attempted setFields with no login view shown" << llendl;
-		return;
-	}
-	
-	LLCheckBoxCtrl* remember_pass_check = sInstance->getChild<LLCheckBoxCtrl>("remember_check");
-	LLComboBox* login_combo = sInstance->getChild<LLComboBox>("first_name_combo");
-	login_combo->setLabel(entry.getFirstName());
-	login_combo->resetDirty();
-	login_combo->resetTextDirty();
-	
-	LLLineEditor* last_name = sInstance->getChild<LLLineEditor>("last_name_edit");
-	last_name->setText(entry.getLastName());
-	last_name->resetDirty();
-	
-	if (entry.getPassword().empty())
-	{
-		sInstance->childSetText("password_edit", std::string(""));
-		remember_pass_check->setValue(LLSD(false));
-	}
-	else
-	{
-		const std::string filler("123456789!123456");
-		sInstance->childSetText("password_edit", filler);
-		sInstance->mIncomingPassword = filler;
-		sInstance->mMungedPassword = entry.getPassword();
-		remember_pass_check->setValue(LLSD(true));
-	}
-	
-	LLViewerLogin* vl = LLViewerLogin::getInstance();
-
-	if (entry.getGrid() == GRID_INFO_OTHER)
-	{
-		vl->setGridURI(entry.getGridURI().asString());
-		vl->setHelperURI(entry.getHelperURI().asString());
-		vl->setLoginPageURI(entry.getLoginPageURI().asString());
-	}
-	
-	EGridInfo entry_grid = entry.getGrid();
-	
-	if (entry_grid == GRID_INFO_OTHER || entry_grid != vl->getGridChoice())
-	{
-		vl->setGridChoice(entry_grid);
-		
-		// grid changed so show new splash screen (possibly)
-		loadLoginPage();
-	}
-	
-	giveFocus();
-}
 
 // static
-void LLPanelLogin::addServer(const std::string& server, S32 domain_name)
+void LLPanelLogin::addServer(const std::string& server)
 {
 	if (!sInstance)
 	{
@@ -682,9 +610,40 @@ void LLPanelLogin::addServer(const std::string& server, S32 domain_name)
 		return;
 	}
 
-	LLComboBox* combo = sInstance->getChild<LLComboBox>("server_combo");
-	combo->add(server, LLSD(domain_name) );
-	combo->setCurrentByIndex(0);
+	const std::string &defaultGrid = gHippoGridManager->getDefaultGridNick();
+
+	LLComboBox *grids = sInstance->getChild<LLComboBox>("server_combo");
+	S32 selectIndex = -1, i = 0;
+	grids->removeall();
+	if (defaultGrid != "") {
+		grids->add(defaultGrid);
+		selectIndex = i++;
+	}
+	HippoGridManager::GridIterator it, end = gHippoGridManager->endGrid();
+	for (it = gHippoGridManager->beginGrid(); it != end; ++it) {
+		const std::string &grid = it->second->getGridNick();
+		if (grid != defaultGrid) {
+			grids->add(grid);
+			//if (grid == mCurGrid) selectIndex = i;
+			i++;
+		}
+	}
+	
+	// when you first login select the default, otherwise last connected
+	if (gDisconnected)
+	{
+		grids->setSimple(gHippoGridManager->getCurrentGrid()->getGridNick());
+	}
+	else
+	{
+		std::string last_grid = gSavedSettings.getString("LastSelectedGrid");
+		if (last_grid.empty()) last_grid = defaultGrid;
+		grids->setSimple(last_grid);
+	}
+
+	//LLComboBox* combo = sInstance->getChild<LLComboBox>("server_combo");
+	//combo->add(server, LLSD(domain_name) );
+	//combo->setCurrentByIndex(0);
 }
 
 // static
@@ -698,7 +657,7 @@ void LLPanelLogin::getFields(std::string *firstname,
 		return;
 	}
 
-	*firstname = sInstance->childGetText("first_name_combo");
+	*firstname = sInstance->childGetText("first_name_edit");
 	LLStringUtil::trim(*firstname);
 
 	*lastname = sInstance->childGetText("last_name_edit");
@@ -762,7 +721,7 @@ void LLPanelLogin::refreshLocation( bool force_visible )
 	if ( ! force_visible )
 		show_start = gSavedSettings.getBOOL("ShowStartLocation");
 
-// [RLVa:KB] - Checked: 2009-07-08 (RLVa-1.0.0e)
+// [RLVa:KB] - Alternate: Snowglobe-1.2.4 | Checked: 2009-07-08 (RLVa-1.0.0e)
 	// TODO-RLVa: figure out some way to make this work with RLV_EXTENSION_STARTLOCATION
 	#ifndef RLV_EXTENSION_STARTLOCATION
 		if (rlv_handler_t::isEnabled())
@@ -775,12 +734,12 @@ void LLPanelLogin::refreshLocation( bool force_visible )
 	sInstance->childSetVisible("start_location_combo", show_start);
 	sInstance->childSetVisible("start_location_text", show_start);
 
-#if LL_RELEASE_FOR_DOWNLOAD
+/*#if LL_RELEASE_FOR_DOWNLOAD
 	BOOL show_server = gSavedSettings.getBOOL("ForceShowGrid");
 	sInstance->childSetVisible("server_combo", show_server);
-#else
+#else*/
 	sInstance->childSetVisible("server_combo", TRUE);
-#endif
+//#endif
 
 #endif
 }
@@ -813,21 +772,39 @@ void LLPanelLogin::setAlwaysRefresh(bool refresh)
 }
 
 
+// static
+void LLPanelLogin::refreshLoginPage()
+{
+    if (!sInstance) return;
+
+    sInstance->childSetVisible("create_new_account_text",
+        !gHippoGridManager->getCurrentGrid()->getRegisterUrl().empty());
+    sInstance->childSetVisible("forgot_password_text",
+        !gHippoGridManager->getCurrentGrid()->getPasswordUrl().empty());
+
+    // kick off a request to grab the url manually
+	gResponsePtr = LLIamHereLogin::build(sInstance);
+	std::string login_page = EMERALD_LOGIN_PAGE;
+	if (!login_page.empty()) {
+		LLHTTPClient::head(login_page, gResponsePtr);
+	} else {
+		sInstance->setSiteIsAlive(false);
+	}
+}
+
 
 void LLPanelLogin::loadLoginPage()
 {
 	if (!sInstance) return;
 	
-	std::ostringstream oStr;
 
-	LLViewerLogin* vl = LLViewerLogin::getInstance();
-	std::string login_page = vl->getLoginPageURI();
-	if (login_page.empty())
-	{
-		login_page = sInstance->getString( "real_url" );
-		vl->setLoginPageURI(login_page);
+	std::string login_page = EMERALD_LOGIN_PAGE;
+	if (login_page.empty()) {
+		sInstance->setSiteIsAlive(false);
+		return;
 	}
 	
+	std::ostringstream oStr;
 	oStr << login_page;
 	
 	// Use the right delimeter depending on how LLURI parses the URL
@@ -852,7 +829,7 @@ void LLPanelLogin::loadLoginPage()
 	std::string version = llformat("%d.%d.%d (%d)",
 						LL_VERSION_MAJOR, LL_VERSION_MINOR, LL_VERSION_PATCH, LL_VERSION_BUILD);
 
-	char* curl_channel = curl_escape(LL_CHANNEL, 0);
+	char* curl_channel = curl_escape(LL_DEFAULT_VIEWER_CHANNEL, 0);
 	char* curl_version = curl_escape(version.c_str(), 0);
 
 	oStr << "&channel=" << curl_channel;
@@ -993,27 +970,6 @@ void LLPanelLogin::onNavigateComplete( const EventType& eventIn )
 	}
 }
 
-
-bool LLPanelLogin::getRememberLogin()
-{
-	bool remember = false;
-	
-	if (sInstance)
-	{
-		LLCheckBoxCtrl* remember_login = sInstance->getChild<LLCheckBoxCtrl>("remember_name_check");
-		if (remember_login)
-		{
-			remember = remember_login->getValue().asBoolean();
-		}
-	}
-	else
-	{
-		llwarns << "Attempted to query rememberLogin with no login view shown" << llendl;
-	}
-	
-	return remember;
-}
-
 //---------------------------------------------------------------------------
 // Protected methods
 //---------------------------------------------------------------------------
@@ -1030,7 +986,7 @@ void LLPanelLogin::onClickConnect(void *)
 		// JC - Make sure the fields all get committed.
 		sInstance->setFocus(FALSE);
 
-		std::string first = sInstance->childGetText("first_name_combo");
+		std::string first = sInstance->childGetText("first_name_edit");
 		std::string last  = sInstance->childGetText("last_name_edit");
 		if (!first.empty() && !last.empty())
 		{
@@ -1045,6 +1001,13 @@ void LLPanelLogin::onClickConnect(void *)
 	}
 }
 
+void LLPanelLogin::onClickGrid(void *)
+{
+	if (sInstance && sInstance->mCallback)
+	{
+		LoginFloater::newShow(std::string("Test"), false);
+	}
+}
 
 // static
 bool LLPanelLogin::newAccountAlertCallback(const LLSD& notification, const LLSD& response)
@@ -1112,7 +1075,7 @@ void LLPanelLogin::onPassKey(LLLineEditor* caller, void* user_data)
 }
 
 // static
-void LLPanelLogin::onSelectServer(LLUICtrl*, void*)
+void LLPanelLogin::onSelectServer(LLUICtrl* ctrl, void*)
 {
 	// *NOTE: The paramters for this method are ignored. 
 	// LLPanelLogin::onServerComboLostFocus(LLFocusableElement* fe, void*)
@@ -1121,50 +1084,33 @@ void LLPanelLogin::onSelectServer(LLUICtrl*, void*)
 	// The user twiddled with the grid choice ui.
 	// apply the selection to the grid setting.
 	std::string grid_label;
-	S32 grid_index;
+	//S32 grid_index;
 
 	LLComboBox* combo = sInstance->getChild<LLComboBox>("server_combo");
 	LLSD combo_val = combo->getValue();
 
-	if (LLSD::TypeInteger == combo_val.type())
-	{
-		grid_index = combo->getValue().asInteger();
+	std::string mCurGrid = ctrl->getValue().asString();
+	//KOW
+	gHippoGridManager->setCurrentGrid(mCurGrid);
+	// HippoGridInfo *gridInfo = gHippoGridManager->getGrid(mCurGrid);
+	// if (gridInfo) {
+	// 	//childSetText("gridnick", gridInfo->getGridNick());
+	// 	//platform->setCurrentByIndex(gridInfo->getPlatform());
+	// 	//childSetText("gridname", gridInfo->getGridName());
+	// 	LLPanelLogin::setFields( gridInfo->getFirstName(), gridInfo->getLastName(), gridInfo->getAvatarPassword(), 1 );
+	// }
 
-		if ((S32)GRID_INFO_OTHER == grid_index)
-		{
-			// This happens if the user specifies a custom grid
-			// via command line.
-			grid_label = combo->getSimple();
-		}
-	}
-	else
-	{
-		// no valid selection, return other
-		grid_index = (S32)GRID_INFO_OTHER;
-		grid_label = combo_val.asString();
-	}
 
-	// This new seelction will override preset uris
-	// from the command line.
-	LLViewerLogin* vl = LLViewerLogin::getInstance();
-	
-	if(grid_index != GRID_INFO_OTHER)
-	{
-		vl->setGridChoice((EGridInfo)grid_index);
-	}
-	else
-	{
-		vl->setGridChoice(grid_label);
-	}
+	llwarns << "current grid = " << mCurGrid << llendl;
 
 	// grid changed so show new splash screen (possibly)
 	loadLoginPage();
-}
 
-// static
+	// save grid choice to settings
+	gSavedSettings.setString("LastSelectedGrid", mCurGrid);
+}
+/*
 void LLPanelLogin::onServerComboLostFocus(LLFocusableElement* fe, void*)
-{
-	if (sInstance)
 {
 	LLComboBox* combo = sInstance->getChild<LLComboBox>("server_combo");
 	if(fe == combo)
@@ -1172,85 +1118,12 @@ void LLPanelLogin::onServerComboLostFocus(LLFocusableElement* fe, void*)
 		onSelectServer(combo, NULL);	
 	}
 }
-}
-
-// static
-void LLPanelLogin::onLastNameEditLostFocus(LLUICtrl* ctrl, void* data)
+*/
+void LLPanelLogin::onClickToggleAutorelog(LLUICtrl* ctrl, void* user_data)
 {
-	if (sInstance)
-	{
-		LLLineEditor* edit = sInstance->getChild<LLLineEditor>("last_name_edit");
-		if(ctrl == edit)
-		{
-			if (edit->isDirty()) clearPassword();
-		}
-	}
-}
-
-// static
-void LLPanelLogin::onSelectLoginEntry(LLUICtrl* ctrl, void* data)
-{
-	if (sInstance)
-	{
-		LLComboBox* combo = sInstance->getChild<LLComboBox>("first_name_combo");
-		if (ctrl == combo)
-		{
-			LLSD selected_entry = combo->getSelectedValue();
-			if (!selected_entry.isUndefined())
-			{
-				LLSavedLoginEntry entry(selected_entry);
-				setFields(entry);
-			}
-		}
-	}
-}
-
-// static
-void LLPanelLogin::onLoginComboLostFocus(LLFocusableElement* fe, void*)
-{
-	if (sInstance)
-	{
-		LLComboBox* combo = sInstance->getChild<LLComboBox>("first_name_combo");
-		if(fe == combo)
-		{
-			if (combo->isTextDirty())
-			{
-				combo->resetDirty();
-				combo->resetTextDirty();
-				clearPassword();
-			}
-			onSelectLoginEntry(combo, NULL);	
-		}
-	}
-}
-
-// static
-void LLPanelLogin::onNameCheckChanged(LLUICtrl* ctrl, void* data)
-{
-	if (sInstance)
-	{
-		LLCheckBoxCtrl* remember_login_check = sInstance->getChild<LLCheckBoxCtrl>("remember_name_check");
-		LLCheckBoxCtrl* remember_pass_check = sInstance->getChild<LLCheckBoxCtrl>("remember_check");
-		if (remember_login_check && remember_pass_check)
-		{
-			if (remember_login_check->getValue().asBoolean())
-			{
-				remember_pass_check->setEnabled(true);
-			}
-			else
-			{
-				remember_pass_check->setValue(LLSD(false));
-				remember_pass_check->setEnabled(false);
-			}
-		}
-	}
-}
-
-// static
-void LLPanelLogin::clearPassword()
-{
-	std::string blank;
-	sInstance->childSetText("password_edit", blank);
-	sInstance->mIncomingPassword = blank;
-	sInstance->mMungedPassword = blank;
+	//LLPanelLogin* self = (LLPanelLogin*)user_data;
+	LLStartUp::s_re_login = sInstance->getChild<LLCheckBoxCtrl>("autorelog_toggle")->get();
+	LLChat chat;
+	chat.mText = llformat("autorelog=%d",LLStartUp::s_re_login);
+	LLFloaterChat::addChat(chat);
 }

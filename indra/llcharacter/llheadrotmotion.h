@@ -201,7 +201,7 @@ public:
 	LLPointer<LLJointState> mRightEyeState;
 
 
-	LLFrameTimer		mEyeRefocusTimer;
+	//LLFrameTimer		mEyeRefocusTimer;
 	LLVector3			mLastTargetPos;
 
 

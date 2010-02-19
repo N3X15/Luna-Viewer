@@ -61,6 +61,10 @@
 #include "llsdutil.h"
 #include <deque>
 
+// [RLVa:KB]
+#include "rlvhandler.h"
+// [/RLVa:KB]
+
 //#define DIFF_INVENTORY_FILES
 #ifdef DIFF_INVENTORY_FILES
 #include "process.h"
@@ -401,6 +405,35 @@ LLUUID LLInventoryModel::createNewCategory(const LLUUID& parent_id,
 	if(preferred_type == LLAssetType::AT_SIMSTATE)
 	{
 		lldebugs << "Attempt to create simstate category." << llendl;
+		return id;
+	}else
+	if(preferred_type == LLAssetType::AT_SOUND_WAV)
+	{
+		lldebugs << "Attempt to create (wave) uncompressed sound category." << llendl;
+		return id;
+	}else
+	if(preferred_type == LLAssetType::AT_IMAGE_TGA)
+	{
+		lldebugs << "Attempt to create a AT_IMAGE_TGA uncompresssed images category." << llendl;
+		return id;
+	}else
+	if(preferred_type == LLAssetType::AT_TEXTURE_TGA)
+	{
+		lldebugs << "Attempt to create a AT_TEXTURE_TGA uncompresssed images category." << llendl;
+		return id;
+	}
+
+	else if(preferred_type == LLAssetType::AT_IMAGE_JPEG)
+	{
+		lldebugs << "Attempt to create a AT_IMAGE_JPEG uncompresssed images category." << llendl;
+		return id;
+	}else if(preferred_type == LLAssetType::AT_SCRIPT)
+	{
+		lldebugs << "Attempt to create a AT_Script scripts category." << llendl;
+		return id;
+	}else if(preferred_type == LLAssetType::AT_LSL_BYTECODE)
+	{
+		lldebugs << "Attempt to create a AT_LSL_BYTECODE scripts category." << llendl;
 		return id;
 	}
 

@@ -31,6 +31,7 @@
 			<button name="profile_btn" label="Profil" tool_tip="Öffnet das Profil des ausgewählten Avatars" />
 			<button name="im_btn" label="IM" tool_tip="IM an ausgewählten Avatar schicken" />
 			<button name="offer_btn" label="TP anbieten" tool_tip="Ausgewähltem Avatar Teleport schicken"/>
+			<button name="script_count_btn" label="Scripts" tool_tip="Script Anzahl"/>
 			<!--middle row -->
 			<button name="track_btn" label="verfolgen" tool_tip="verfolgt die Position des Avatars"/>
 			<button name="mark_btn" label="Markieren" tool_tip="Markiert den Avatar in der Liste"/>

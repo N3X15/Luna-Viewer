@@ -65,6 +65,10 @@
 #include "lluictrlfactory.h"
 #include "roles_constants.h"
 
+// [RLVa:KB]
+#include "rlvhandler.h"
+// [/RLVa:KB]
+
 ///----------------------------------------------------------------------------
 /// Class llpanelpermissions
 ///----------------------------------------------------------------------------
@@ -330,14 +334,14 @@ void LLPanelPermissions::refresh()
 		}
 	}
 
-// [RLVa:KB] - Alternate: Emerald-370 | Checked: 2009-07-08 (RLVa-1.0.0e)
+// [RLVa:KB] - Alternate: Emerald-1345 | Checked: 2009-07-08 (RLVa-1.0.0e)
 	bool fRlvEnableOwner = true; bool fRlvEnableLastOwner = true;
 	if ( (rlv_handler_t::isEnabled()) && (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES)) )
 	{
 		// Only filter the owner name if: the selection is all owned by the same avie and not group owned
 		if ( (owners_identical) && (!LLSelectMgr::getInstance()->selectIsGroupOwned()) )
 		{
-			owner_name = gRlvHandler.getAnonym(owner_name);
+			owner_name = RlvStrings::getAnonym(owner_name);
 			fRlvEnableOwner = false;
 		}
 
@@ -345,7 +349,7 @@ void LLPanelPermissions::refresh()
 		// TODO-RLVa: need to test the last owner filtering more
 		if ( (owners_identical) && (mLastOwnerID.notNull()) && (!last_owner_name.empty()) )
 		{
-			last_owner_name = gRlvHandler.getAnonym(last_owner_name);
+			last_owner_name = RlvStrings::getAnonym(last_owner_name);
 			fRlvEnableLastOwner = false;
 		}
 	}

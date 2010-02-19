@@ -41,7 +41,7 @@
 #include "llfocusmgr.h"
 #include "llrender.h"
 
-#include "llfloateravatarlist.h"
+#include "floateravatarlist.h"
 
 #include "llagent.h"
 #include "llcallingcard.h"
@@ -71,6 +71,10 @@
 #include "llglheaders.h"
 
 #include "llmutelist.h"
+
+// [RLVa:KB]
+#include "rlvhandler.h"
+// [/RLVa:KB]
 
 const F32 MAP_SCALE_MIN = 32;
 const F32 MAP_SCALE_MID = 172;
@@ -190,6 +194,7 @@ void LLNetMap::mm_setcolor(LLUUID key,LLColor4 col){
 }
 void LLNetMap::draw()
 {
+	LUA_CALL0("NetMapDraw");
  	static LLFrameTimer map_timer;
 
 	if (mObjectImagep.isNull())
@@ -258,7 +263,7 @@ void LLNetMap::draw()
 			F32 top =		bottom + mScale ;
 			F32 right =		left + mScale ;
 
-			gGL.color4fv(regionp == gAgent.getRegion() ? this_region_color.mV : live_region_color.mV);
+			gGL.color4fv(regionp == gAgent.getRegion() ? this_region_color.mV : regionp->getHighlightColor().mV);
 			if (!regionp->isAlive())
 			{
 				gGL.color4fv(dead_region_color.mV);
@@ -319,8 +324,9 @@ void LLNetMap::draw()
 
 			// Draw buildings
 			//gObjectList.renderObjectsForMap(*this);
-			if(!gSavedSettings.getBOOL("mm_fastminimap")){
-			gObjectList.renderObjectsForMap(*this);
+			if(!gSavedSettings.getBOOL("mm_fastminimap"))
+			{
+				gObjectList.renderObjectsForMap(*this);
 				mObjectImagep->setSubImage(mObjectRawImagep, 0, 0, mObjectImagep->getWidth(), mObjectImagep->getHeight());
 			}
 
@@ -599,7 +605,7 @@ BOOL LLNetMap::handleToolTip( S32 x, S32 y, std::string& msg, LLRect* sticky_rec
 		{
 //			msg.append(fullname);
 // [RLVa:KB] - Version: 1.23.4 | Alternate: Emerald-370 | Checked: 2009-07-08 (RLVa-1.0.0e) | Modified: RLVa-0.2.0b
-			msg.append( (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES)) ? fullname : gRlvHandler.getAnonym(fullname) );
+			msg.append( (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES)) ? fullname : RlvStrings::getAnonym(fullname) );
 // [/RLVa:KB]
 
 			LLVector3d mypos = gAgent.getPositionGlobal();
@@ -624,7 +630,7 @@ BOOL LLNetMap::handleToolTip( S32 x, S32 y, std::string& msg, LLRect* sticky_rec
 			msg.append( llformat("\n(Distance: %.02fm)\n\n",distance) );
 		}
 // [RLVa:KB] - Version: 1.23.4 | Alternate: Emerald-370 | Checked: 2009-07-04 (RLVa-1.0.0a) | Modified: RLVa-0.2.0b
-		msg.append( (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC)) ? region->getName() : rlv_handler_t::cstrHidden );
+		msg.append( (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC)) ? region->getName() : RlvStrings::getString(RLV_STRING_HIDDEN) );
 // [/RLVa:KB]
 //		msg.append( region->getName() );
 

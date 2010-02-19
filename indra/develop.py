@@ -45,6 +45,7 @@ import commands
 class CommandError(Exception):
     pass
 
+
 def mkdir(path):
     try:
         os.mkdir(path)
@@ -78,6 +79,7 @@ class PlatformSetup(object):
     project_name = 'SecondLife'
     distcc = True
     cmake_opts = []
+    word_size = 32
 
     def __init__(self):
         self.script_dir = os.path.realpath(
@@ -119,6 +121,7 @@ class PlatformSetup(object):
             opts=quote(opts),
             standalone=self.standalone,
             unattended=self.unattended,
+            word_size=self.word_size,
             type=self.build_type.upper(),
             )
         #if simple:
@@ -126,6 +129,7 @@ class PlatformSetup(object):
         return ('cmake -DCMAKE_BUILD_TYPE:STRING=%(type)s '
                 '-DSTANDALONE:BOOL=%(standalone)s '
                 '-DUNATTENDED:BOOL=%(unattended)s '
+                '-DWORD_SIZE:STRING=%(word_size)s '
                 '-G %(generator)r %(opts)s %(dir)r' % args)
 
     def run_cmake(self, args=[]):
@@ -228,6 +232,8 @@ class UnixSetup(PlatformSetup):
             cpu = 'i686'
         elif cpu == 'Power Macintosh':
             cpu = 'ppc'
+        elif cpu == 'x86_64' and self.word_size == 32:
+            cpu = 'i686'
         return cpu
 
     def run(self, command, name=None):
@@ -284,7 +290,8 @@ class LinuxSetup(UnixSetup):
             standalone=self.standalone,
             unattended=self.unattended,
             type=self.build_type.upper(),
-            project_name=self.project_name
+            project_name=self.project_name,
+            word_size=self.word_size,
             )
         if not self.is_internal_tree():
             args.update({'cxx':'g++', 'server':'OFF', 'viewer':'ON'})
@@ -310,6 +317,7 @@ class LinuxSetup(UnixSetup):
                 '-G %(generator)r -DSERVER:BOOL=%(server)s '
                 '-DVIEWER:BOOL=%(viewer)s -DSTANDALONE:BOOL=%(standalone)s '
                 '-DUNATTENDED:BOOL=%(unattended)s '
+                '-DWORD_SIZE:STRING=%(word_size)s '
                 '-DROOT_PROJECT_NAME:STRING=%(project_name)s '
                 '%(opts)s %(dir)r')
                % args)
@@ -412,10 +420,11 @@ class DarwinSetup(UnixSetup):
             generator=self.generator,
             opts=quote(opts),
             standalone=self.standalone,
+            word_size=self.word_size,
             unattended=self.unattended,
             project_name=self.project_name,
             universal='',
-            type=self.build_type.upper()
+            type=self.build_type.upper(),
             )
         if self.unattended == 'ON':
             args['universal'] = '-DCMAKE_OSX_ARCHITECTURES:STRING=\'i386;ppc\''
@@ -425,6 +434,7 @@ class DarwinSetup(UnixSetup):
                 '-DCMAKE_BUILD_TYPE:STRING=%(type)s '
                 '-DSTANDALONE:BOOL=%(standalone)s '
                 '-DUNATTENDED:BOOL=%(unattended)s '
+                '-DWORD_SIZE:STRING=%(word_size)s '
                 '-DROOT_PROJECT_NAME:STRING=%(project_name)s '
                 '%(universal)s '
                 '%(opts)s %(dir)r' % args)
@@ -472,12 +482,6 @@ class WindowsSetup(PlatformSetup):
         super(WindowsSetup, self).__init__()
         self._generator = None
         self.incredibuild = False
-        import struct
-        if struct.calcsize("P") > 4:        
-        	print "AMD64 Python executable detected. Redirecting registry lookup"
-        	self.wow64path = 'WOW6432node\\'
-        else:
-        	self.wow64path = ''
 
     def _get_generator(self):
         if self._generator is None:
@@ -495,7 +499,7 @@ class WindowsSetup(PlatformSetup):
                         break
                 else:
                     print >> sys.stderr, 'Cannot find any Visual Studio installation'
-                    sys.exit(1)
+                    eys.exit(1)
         return self._generator
 
     def _set_generator(self, gen):
@@ -516,13 +520,15 @@ class WindowsSetup(PlatformSetup):
             opts=quote(opts),
             standalone=self.standalone,
             unattended=self.unattended,
-            project_name=self.project_name
+            project_name=self.project_name,
+            word_size=self.word_size,
             )
         #if simple:
         #    return 'cmake %(opts)s "%(dir)s"' % args
         return ('cmake -G "%(generator)s" '
                 '-DSTANDALONE:BOOL=%(standalone)s '
                 '-DUNATTENDED:BOOL=%(unattended)s '
+                '-DWORD_SIZE:STRING=%(word_size)s '
                 '-DROOT_PROJECT_NAME:STRING=%(project_name)s '
                 '%(opts)s "%(dir)s"' % args)
 
@@ -532,8 +538,8 @@ class WindowsSetup(PlatformSetup):
         gen = gen.lower()
         try:
             import _winreg
-            key_str = (r'SOFTWARE\%sMicrosoft\VisualStudio\%s\Setup\VS' %
-                       (self.wow64path,self.gens[gen]['ver']))
+            key_str = (r'SOFTWARE\Microsoft\VisualStudio\%s\Setup\VS' %
+                       self.gens[gen]['ver'])
             value_str = (r'EnvironmentDirectory')
             print ('Reading VS environment from HKEY_LOCAL_MACHINE\%s\%s' %
                    (key_str, value_str))
@@ -554,8 +560,8 @@ class WindowsSetup(PlatformSetup):
         gen = gen.lower()
         try:
             import _winreg
-            key_str = (r'SOFTWARE\%sMicrosoft\VCEXpress\%s\Setup\VC' %
-                       (self.wow64path,self.gens[gen]['ver']))
+            key_str = (r'SOFTWARE\Microsoft\VCEXpress\%s\Setup\VC' %
+                       self.gens[gen]['ver'])
             value_str = (r'ProductDir')
             print ('Reading VS environment from HKEY_LOCAL_MACHINE\%s\%s' %
                    (key_str, value_str))
@@ -666,13 +672,15 @@ class CygwinSetup(WindowsSetup):
             opts=quote(opts),
             standalone=self.standalone,
             unattended=self.unattended,
-            project_name=self.project_name
+            project_name=self.project_name,
+            word_size=self.word_size,
             )
         #if simple:
         #    return 'cmake %(opts)s "%(dir)s"' % args
         return ('cmake -G "%(generator)s" '
                 '-DUNATTENDED:BOOl=%(unattended)s '
                 '-DSTANDALONE:BOOL=%(standalone)s '
+                '-DWORD_SIZE:STRING=%(word_size)s '
                 '-DROOT_PROJECT_NAME:STRING=%(project_name)s '
                 '%(opts)s "%(dir)s"' % args)
 
@@ -693,6 +701,7 @@ Options:
        --unattended     build unattended, do not invoke any tools requiring
                         a human response
   -t | --type=NAME      build type ("Debug", "Release", or "RelWithDebInfo")
+  -m32 | -m64           build architecture (32-bit or 64-bit)
   -N | --no-distcc      disable use of distcc
   -G | --generator=NAME generator name
                         Windows: VC71 or VS2003 (default), VC80 (VS2005) or 
@@ -726,7 +735,7 @@ def main(arguments):
     try:
         opts, args = getopt.getopt(
             arguments,
-            '?hNt:p:G:',
+            '?hNt:p:G:m:',
             ['help', 'standalone', 'no-distcc', 'unattended', 'type=', 'incredibuild', 'generator=', 'project='])
     except getopt.GetoptError, err:
         print >> sys.stderr, 'Error:', err
@@ -744,6 +753,13 @@ For example: develop.py configure -DSERVER:BOOL=OFF"""
             setup.standalone = 'ON'
         elif o in ('--unattended',):
             setup.unattended = 'ON'
+        elif o in ('-m',):
+            if a in ('32', '64'):
+                setup.word_size = int(a)
+            else:
+                print >> sys.stderr, 'Error: unknown word size', repr(a)
+                print >> sys.stderr, 'Supported word sizes: 32, 64'
+                sys.exit(1)
         elif o in ('-t', '--type'):
             try:
                 setup.build_type = setup.build_types[a.lower()]

@@ -56,10 +56,10 @@ if (FMOD)
          )
 
     if (LINUX)
-      if (${CXX_VERSION} MATCHES "4.[23]")
+      if (${CXX_VERSION} MATCHES "4.[234]")
         set_source_files_properties(audioengine_fmod.cpp
                                     COMPILE_FLAGS -Wno-error=write-strings)
-      endif (${CXX_VERSION} MATCHES "4.[23]")
+      endif (${CXX_VERSION} MATCHES "4.[234]")
     endif (LINUX)
 endif (FMOD)
 

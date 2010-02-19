@@ -55,6 +55,7 @@
 	<menu_item_call label="활성화" name="Activate" />
 	<menu_item_call label="비활성화" name="Deactivate" />
 	<menu_item_call label="자신에서 분리" name="Detach From Yourself" />
+	<menu_item_call label="편집" name="Attachment Edit" />
 	<menu_item_call label="착용" name="Object Wear" />
 	<menu label="착용 대상" name="Attach To" />
 	<menu label="HUD에 착용" name="Attach To HUD" />

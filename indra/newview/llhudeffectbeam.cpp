@@ -140,27 +140,10 @@ void LLHUDEffectBeam::unpackData(LLMessageSystem *mesgsys, S32 blocknum)
 	
 	htonmemcpy(source_id.mData, packed_data, MVT_LLUUID, 16);
 
-	if(mDuration > 10.0)
-	{
-		llinfos << "cancelling effect > 10.0 beam" << llendl;	
-		cancellate();
-		markDead();
-		return;
-	}
-
 	LLViewerObject *objp = gObjectList.findObject(source_id);
-	if (objp && source_id == mSenderID)
+	if (objp)
 	{
 		setSourceObject(objp);
-	}else
-	{
-		if(source_id != mSenderID)
-		{
-			llinfos << "cancelling effect source_id" << llendl;	
-			cancellate();
-		}
-		markDead();
-		return;
 	}
 
 	use_target_object = packed_data[16];

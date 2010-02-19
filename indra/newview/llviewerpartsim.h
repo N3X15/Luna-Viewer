@@ -79,6 +79,7 @@ public:
 	LLColor4		mColor;
 	LLVector2		mScale;
 
+    bool            mApplyFollowSource;
 	static U32		sNextPartID;
 };
 

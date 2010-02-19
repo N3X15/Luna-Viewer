@@ -292,6 +292,9 @@ public:
 
 	BOOL isWearingAttachment( const LLUUID& inv_item_id );
 	LLViewerObject* getWornAttachment( const LLUUID& inv_item_id );
+// [RLVa:KB] - Checked: 2009-12-18 (RLVa-1.1.0i) | Added: RLVa-1.1.0i
+	LLViewerJointAttachment* getWornAttachmentPoint(const LLUUID& inv_item_id);
+// [/RLVa:KB]
 	const std::string getAttachedPointName(const LLUUID& inv_item_id);
 
 	static LLVOAvatar* findAvatarFromAttachment( LLViewerObject* obj );
@@ -366,6 +369,7 @@ public:
 	//--------------------------------------------------------------------
 public:
 	BOOL            isFullyLoaded();
+	BOOL			isReallyFullyLoaded();
 	BOOL            updateIsFullyLoaded();
 private:
 	BOOL            mFullyLoaded;
@@ -512,13 +516,13 @@ private:
 
 private:
 	bool			mFirstSetActualBoobGravRan;
-	bool			mFirstSetActualButtGravRan;
-	bool			mFirstSetActualFatGravRan;
+	//bool			mFirstSetActualButtGravRan;
+	//bool			mFirstSetActualFatGravRan;
 	LLFrameTimer	mBoobBounceTimer;
 	EmeraldAvatarLocalBoobConfig mLocalBoobConfig;
 	EmeraldBoobState mBoobState;
-	EmeraldBoobState mButtState;
-	EmeraldBoobState mFatState;
+	//EmeraldBoobState mButtState;
+	//EmeraldBoobState mFatState;
 
 public:
 	//boob
@@ -534,7 +538,7 @@ public:
 	}
 
 	//butt
-	F32				getActualButtGrav() { return mLocalBoobConfig.actualButtGrav; }
+	/*F32				getActualButtGrav() { return mLocalBoobConfig.actualButtGrav; }
 	void			setActualButtGrav(F32 grav)
 	{
 		mLocalBoobConfig.actualButtGrav = grav;
@@ -544,7 +548,6 @@ public:
 			mFirstSetActualButtGravRan = true;
 		}
 	}
-
 	//fat
 	F32				getActualFatGrav() { return mLocalBoobConfig.actualFatGrav; }
 	void			setActualFatGrav(F32 grav)
@@ -556,7 +559,7 @@ public:
 			mFirstSetActualFatGravRan = true;
 		}
 	}
-
+	*/
 	static EmeraldGlobalBoobConfig sBoobConfig;
 
 	//--------------------------------------------------------------------

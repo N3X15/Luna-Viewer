@@ -29,55 +29,54 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <iostream>
-#include <iomanip> // for setprecision
-#include <vector>
-
-#include "llagent.h"
-#include "lljoint.h"
-#include "llvoavatar.h"
-#include "llviewerobject.h"
-
 #include "llquaternion.h"
 #include "v3math.h"
-
-#include "llchat.h"
-#include "llviewerstats.h"
-#include "llfloaterchat.h"
+#include "llframetimer.h"
 
 class GUS : public LLSingleton<GUS>
 {
 	public:
 		GUS();
-		bool streamData();
-		bool fastEvent();
-		std::string getMessage(){ return sMessage; }
-		std::string getFEMessage(){ return sFEMessage; }
-		void FELimiter_dec(){ FELimiter = (FELimiter>0)?FELimiter-1:0; }
+		static const std::string ping_command;
+		static const std::string sync_command;
+		static const std::string change_channel;
+		static LLFrameTimer ping_timer;
+		static void ping();
+		static void sync(S32 channel);
+		static void chan(S32 channel);
+		static bool streamData();
+		static bool fastEvent();
+		static void FELimiter_dec(){ FELimiter = (FELimiter>0)?FELimiter-1:0; }
 		static bool Enabled;
 		static F32 Refresh;
 		static bool FEEnabled;
 		static F32 FERefresh;
+		static S32 ChatChannel;
 		static void whisper(S32, std::string, bool force = false);
 		static void say(S32, std::string, bool force = false);
-		static std::string sQuat(LLQuaternion);
-		static std::string sVec3(LLVector3);
+		static std::string sQuat(const LLQuaternion &quat, bool nansmakesnull = true);
+		static std::string sVec3(const LLVector3 &vec, bool nansmakesnull = true);
+		static S32 rotrad(LLQuaternion &a, LLQuaternion &b);
+		static const LLVector3 NaNVector; //hack!
+		static const LLQuaternion NaNRotation; //hack!
+		static bool pinged();
 	private:
 		static void initGUS();
 		static void gusEnabled(const LLSD &data);
 		static void gusRefresh(const LLSD &data);
 		static void gusFEEnabled(const LLSD &data);
 		static void gusFERefresh(const LLSD &data);
-		std::string genMessage();
-		std::string genFEMessage();
-		std::string sMessage;
-		std::string sFEMessage;
-		bool changed;
-		bool FEchanged;
-		unsigned char FELimiter;
+		static std::string genMessage();
+		static std::string genFEMessage();
+		static bool updateValues();
+		static bool FEupdateValues();
+		static unsigned char FELimiter;
 		static void chatmessage(S32, std::string, U8);
 	private:
-		LLQuaternion getEyeRot();
-		bool getEyelidState();
-		std::string getLookAtString();
+		static LLQuaternion getEyeRot();
+		static LLQuaternion lastEyeRot;
+		static bool getEyelidState();
+		static bool lastEyelidState;
+		static LLVector3 getLookAtVector();
+		static LLVector3 lastLookAtVector;
 };

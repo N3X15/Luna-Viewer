@@ -52,6 +52,7 @@
 #include "llviewerobject.h"
 #include "llviewerregion.h"
 #include "lluictrlfactory.h"
+#include "llviewercontrol.h"
 #include "llviewerwindow.h"
 
 LLFloaterBuyContents* LLFloaterBuyContents::sInstance = NULL;

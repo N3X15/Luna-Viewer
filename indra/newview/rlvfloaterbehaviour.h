@@ -2,7 +2,7 @@
 #define RLV_FLOATER_BEHAVIOUR
 
 #include "llfloater.h"
-#include "rlvevent.h"
+#include "rlvcommon.h"
 
 // ============================================================================
 

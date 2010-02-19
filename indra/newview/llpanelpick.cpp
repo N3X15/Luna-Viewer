@@ -60,11 +60,15 @@
 #include "llviewerregion.h"
 #include "llviewerwindow.h"
 
+// [RLVa:KB]
+#include "rlvhandler.h"
+// [/RLVa:KB]
+
 //For pick import and export - RK
 #include "llfilepicker.h"
 #include "llviewernetwork.h"
 #include "llsdserialize.h"
-
+#include "hippogridmanager.h"
 //static
 std::list<LLPanelPick*> LLPanelPick::sAllPanels;
 
@@ -196,11 +200,11 @@ void LLPanelPick::initNewPick()
 }
 
 //Imports a new pick from an xml - RK
-void LLPanelPick::importNewPick()
+bool LLPanelPick::importNewPick()
 {
 	LLFilePicker& file_picker = LLFilePicker::instance();
 
-	if(!file_picker.getOpenFile(LLFilePicker::FFLOAD_XML)) return;// User canceled load.
+	if(!file_picker.getOpenFile(LLFilePicker::FFLOAD_XML)) return false;// User canceled load.
 	else
 	{
 		std::string file = file_picker.getFirstFile();
@@ -226,6 +230,7 @@ void LLPanelPick::importNewPick()
 		mImporting = true;
 
 		sendPickInfoUpdate();
+		return true;
 	}
 }
 
@@ -252,9 +257,7 @@ void LLPanelPick::exportPick()
 	LLSD header;
 	header["Version"] = 2;
 	file["Header"] = header;
-	std::vector<std::string> uris;
-		LLViewerLogin* vl = LLViewerLogin::getInstance();
-		std::string grid_uri = vl->getCurrentGridURI();
+	std::string grid_uri = gHippoGridManager->getConnectedGrid()->getLoginUri();
 	//LLStringUtil::toLower(uris[0]);
 	file["Grid"] = grid_uri;
 	file["Data"] = datas;
@@ -510,7 +513,7 @@ void LLPanelPick::refresh()
 		//mSetBtn->setEnabled(is_self);
 // [RLVa:KB] - Checked: 2009-07-04 (RLVa-1.0.0a)
 		mSetBtn->setEnabled(is_self && (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC)) );
-// [/RLVa:KB]
+// [/RLVa]
 	}
 }
 

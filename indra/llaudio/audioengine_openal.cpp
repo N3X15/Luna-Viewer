@@ -400,6 +400,7 @@ U32 LLAudioBufferOpenAL::getLength()
 
 void LLAudioEngine_OpenAL::initWind()
 {
+	if(mWindGen)return;
 	ALenum error;
 	llinfos << "LLAudioEngine_OpenAL::initWind() start" << llendl;
 
@@ -433,6 +434,7 @@ void LLAudioEngine_OpenAL::initWind()
 
 void LLAudioEngine_OpenAL::cleanupWind()
 {
+	if(!mWindGen)return;
 	llinfos << "LLAudioEngine_OpenAL::cleanupWind()" << llendl;
 
 	if (mWindSource != AL_NONE)
@@ -468,8 +470,24 @@ void LLAudioEngine_OpenAL::updateWind(LLVector3 wind_vec, F32 camera_altitude)
 	F64 center_freq;
 	ALenum error;
 	
-	if (!mEnableWind)
+	static bool lastwind = false;
+	if (!mEnableWind || mWindMuted)
+	{
+		//WIND IS OFF
+		if(lastwind != false)
+		{
+			lastwind = false;
+			if(mWindGen)cleanupWind();
+		}
 		return;
+	}else
+	{
+		if(lastwind != true)
+		{
+			lastwind = true;
+			if(!mWindGen)initWind();
+		}
+	}
 	
 	if(!mWindBuf)
 		return;

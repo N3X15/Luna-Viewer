@@ -9,6 +9,7 @@
 #include "llvoavatar.h"
 
 #include "rlvfloaterbehaviour.h"
+#include "rlvhandler.h"
 
 // ============================================================================
 

@@ -32,13 +32,6 @@
 #include "llfloater.h"
 #include "lluuid.h"
 #include "llstring.h"
-#include "llviewerobject.h"
-
-class LLMessageSystem;
-class LLViewerObject;
-
-
-const U32 MY_REQUEST 		= 0x01 << 0;
 
 struct AObjectDetails
 {
@@ -61,14 +54,15 @@ public:
 	/*virtual*/ void close(bool app = false);
 
 	static void results();
+
 	static void toggle();
-	static void processObjectPropertiesFamily(LLMessageSystem *mesgsys, void **user_data);
 
 private:
 
+	static void reload(void* data);
 	static void search(void* data);
-	static void onDoubleClick(void *userdata);
 	static void onCommitLine(LLLineEditor* line, void* user_data);
+	static void requestifneed(LLViewerObject *objectp);
 
 	enum OBJECT_COLUMN_ORDER
 	{
@@ -76,6 +70,8 @@ private:
 		LIST_OBJECT_DESC,
 		LIST_OBJECT_OWNER,
 		LIST_OBJECT_GROUP,
+		LIST_OBJECT_PAYABLE,
+		LIST_OBJECT_BUYABLE
 	};
 
 	static JCFloaterAreaSearch* sInstance;
@@ -88,39 +84,16 @@ private:
 	static std::string searched_desc;
 	static std::string searched_owner;
 	static std::string searched_group;
-
 	static bool payable_object;
-	static bool scripted_object;
-	static bool touch_object;
-	static bool temporary_object;
-	static bool sculpted_object;
-	static bool flexible_object;
-	static bool phantom_object;
-	static bool sound_object;
-	static bool particle_object;
-	static bool animation_object;
-	static bool inventoryadd_object;
-	static bool attachment_object;
-	static bool hudattachment_object;
+	static bool buyable_object;
 
-	static void onCheckPayable(LLUICtrl* ctrl,void* user_data);
-	static void onCheckTouchOnly(LLUICtrl* ctrl,void* user_data);
-	static void onCheckScripted(LLUICtrl* ctrl,void* user_data);
-	static void onCheckSounds(LLUICtrl* ctrl,void* user_data);
-	static void onCheckParticles(LLUICtrl* ctrl,void* user_data);
-	static void onCheckAnimations(LLUICtrl* ctrl,void* user_data);
-	static void onCheckTemporary(LLUICtrl* ctrl,void* user_data);
-	static void onCheckSculpted(LLUICtrl* ctrl,void* user_data);
-	static void onCheckFlexible(LLUICtrl* ctrl,void* user_data);
-	static void onCheckPhantom(LLUICtrl* ctrl,void* user_data);
-	static void onCheckInventoryAdd(LLUICtrl* ctrl,void* user_data);
-	static void onCheckAttachment(LLUICtrl* ctrl,void* user_data);
-	static void onCheckHudAttachment(LLUICtrl* ctrl,void* user_data);
-
+	static void onDoubleClick(void *userdata);
 
 public:
 
 	static JCFloaterAreaSearch* getInstance(){ return sInstance; }
 
-};
+	static void callbackLoadOwnerName(const LLUUID& id, const std::string& first, const std::string& last, BOOL is_group, void* data);
 
+	static void processObjectPropertiesFamily(LLMessageSystem* msg, void** user_data);
+};

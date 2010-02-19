@@ -56,9 +56,12 @@
 #include "llui.h"
 #include "lluictrlfactory.h"
 #include "llclipboard.h"
+#include "../newview/lgghunspell_wrapper.h"
+#include "../newview/lltranslate.h"
+#include "../newview/llviewercontrol.h"
 
 
-#include "llmenugl.h"
+//#include "llmenugl.h"
 //
 // Imported globals
 //
@@ -91,6 +94,34 @@ static LLRegisterWidget<LLLineEditor> r1("line_editor");
 //
 // Member functions
 //
+class LineChatTranslationReceiver : public LLTranslate::TranslationReceiver
+{
+public :
+	LineChatTranslationReceiver(const std::string &toLang, LLLineEditor* line): LLTranslate::TranslationReceiver("", toLang),
+		m_line(line)	
+	{
+	}
+
+	static boost::intrusive_ptr<LineChatTranslationReceiver> build(const std::string &toLang,LLLineEditor* line)
+	{
+		return boost::intrusive_ptr<LineChatTranslationReceiver>(new LineChatTranslationReceiver(toLang,line));
+	}
+
+protected:
+	void handleResponse(const std::string &translation, const std::string &detectedLanguage)
+	{
+		BOOL rep = gSavedSettings.getBOOL("EmeraldTranslateReplace");
+		if(rep)
+			m_line->deleteSelection();
+		m_line->insert((rep?"":" (") + translation + (rep?"":")"),m_line->getCursor());
+	}
+	void handleFailure()
+	{
+		LLTranslate::TranslationReceiver::handleFailure();
+	}
+private:
+	LLLineEditor* m_line;
+};
  
 LLLineEditor::LLLineEditor(const std::string& name, const LLRect& rect,
 						   const std::string& default_text, const LLFontGL* font,
@@ -140,7 +171,8 @@ LLLineEditor::LLLineEditor(const std::string& name, const LLRect& rect,
 		mReadOnly(FALSE),
 		mHaveHistory(FALSE),
 		mImage( sImage ),
-		mReplaceNewlinesWithSpaces( TRUE )
+		mReplaceNewlinesWithSpaces( TRUE ),
+		mOverRideAndShowMisspellings( FALSE )
 {
 	llassert( max_length_bytes > 0 );
 
@@ -191,6 +223,43 @@ LLLineEditor::LLLineEditor(const std::string& name, const LLRect& rect,
 	menu->append(new LLMenuItemCallGL("Paste", context_paste, NULL, this));
 	menu->append(new LLMenuItemCallGL("Delete", context_delete, NULL, this));
 	menu->append(new LLMenuItemCallGL("Select All", context_selectall, NULL, this));
+	menu->appendSeparator("Transep");
+	LLMenuGL* translatemenu = new LLMenuGL("Translate To");
+	translatemenu->setCanTearOff(FALSE);
+	SpellMenuBind* t=new SpellMenuBind;t->origin=this;t->word="en";
+	translatemenu->append(new LLMenuItemCallGL("English",translateText, NULL, t));
+	t=new SpellMenuBind;t->origin=this;t->word="da";
+	translatemenu->append(new LLMenuItemCallGL("Danish",translateText, NULL, t));
+	t=new SpellMenuBind;t->origin=this;t->word="de";
+	translatemenu->append(new LLMenuItemCallGL("Deutsch(German)",translateText, NULL, t));
+	t=new SpellMenuBind;t->origin=this;t->word="es";
+	translatemenu->append(new LLMenuItemCallGL("Spanish",translateText, NULL, t));
+	t=new SpellMenuBind;t->origin=this;t->word="fr";
+	translatemenu->append(new LLMenuItemCallGL("French",translateText, NULL, t));
+	t=new SpellMenuBind;t->origin=this;t->word="it";
+	translatemenu->append(new LLMenuItemCallGL("Italian",translateText, NULL, t));
+	t=new SpellMenuBind;t->origin=this;t->word="hu";
+	translatemenu->append(new LLMenuItemCallGL("Hungarian",translateText, NULL, t));
+	t=new SpellMenuBind;t->origin=this;t->word="nl";
+	translatemenu->append(new LLMenuItemCallGL("Dutch",translateText, NULL, t));
+	t=new SpellMenuBind;t->origin=this;t->word="pl";
+	translatemenu->append(new LLMenuItemCallGL("Polish",translateText, NULL, t));
+	t=new SpellMenuBind;t->origin=this;t->word="pt";
+	translatemenu->append(new LLMenuItemCallGL("Portugese",translateText, NULL, t));
+	t=new SpellMenuBind;t->origin=this;t->word="ru";
+	translatemenu->append(new LLMenuItemCallGL("Russian",translateText, NULL, t));
+	t=new SpellMenuBind;t->origin=this;t->word="tr";
+	translatemenu->append(new LLMenuItemCallGL("Turkish",translateText, NULL, t));
+	t=new SpellMenuBind;t->origin=this;t->word="uk";
+	translatemenu->append(new LLMenuItemCallGL("Ukrainian",translateText, NULL, t));
+	t=new SpellMenuBind;t->origin=this;t->word="zh";
+	translatemenu->append(new LLMenuItemCallGL("Chinese",translateText, NULL, t));
+	t=new SpellMenuBind;t->origin=this;t->word="ja";
+	translatemenu->append(new LLMenuItemCallGL("Japanese",translateText, NULL, t));
+	t=new SpellMenuBind;t->origin=this;t->word="ko";
+	translatemenu->append(new LLMenuItemCallGL("Korean",translateText, NULL, t));
+	menu->appendMenu(translatemenu);
+	menu->appendSeparator("Spelsep");
 	//menu->setBackgroundColor(gColors.getColor("MenuPopupBgColor"));
 	menu->setCanTearOff(FALSE);
 	menu->setVisible(FALSE);
@@ -362,10 +431,7 @@ void LLLineEditor::setText(const LLStringExplicit &new_text)
 
 	mPrevText = mText;
 }
-
-
-// Picks a new cursor position based on the actual screen size of text being drawn.
-void LLLineEditor::setCursorAtLocalPos( S32 local_mouse_x )
+S32 LLLineEditor::calculateCursorFromMouse( S32 local_mouse_x )
 {
 	const llwchar* wtext = mText.getWString().c_str();
 	LLWString asterix_text;
@@ -378,13 +444,17 @@ void LLLineEditor::setCursorAtLocalPos( S32 local_mouse_x )
 		wtext = asterix_text.c_str();
 	}
 
-	S32 cursor_pos =
-		mScrollHPos + 
+	return mScrollHPos + 
 		mGLFont->charFromPixelOffset(
-			wtext, mScrollHPos,
-			(F32)(local_mouse_x - mMinHPixels),
-			(F32)(mMaxHPixels - mMinHPixels + 1)); // min-max range is inclusive
-	setCursor(cursor_pos);
+		wtext, mScrollHPos,
+		(F32)(local_mouse_x - mMinHPixels),
+		(F32)(mMaxHPixels - mMinHPixels + 1)); // min-max range is inclusive
+}
+
+// Picks a new cursor position based on the actual screen size of text being drawn.
+void LLLineEditor::setCursorAtLocalPos( S32 local_mouse_x )
+{
+	setCursor(calculateCursorFromMouse(local_mouse_x));
 }
 
 void LLLineEditor::setCursor( S32 pos )
@@ -448,6 +518,97 @@ void LLLineEditor::context_copy(void* data)
 {
 	LLLineEditor* line = (LLLineEditor*)data;
 	if(line)line->copy();
+}
+void LLLineEditor::spell_correct(void* data)
+{
+	SpellMenuBind* tempBind = (SpellMenuBind*)data;
+	LLLineEditor* line = tempBind->origin;
+	if(tempBind && line)
+	{
+		llinfos << ((LLMenuItemCallGL *)(tempBind->menuItem))->getName() << " : " << tempBind->origin->getName() << " : " << tempBind->word << llendl;
+		if(line)line->spellReplace(tempBind);
+
+	}
+}
+void LLLineEditor::translateText(void * data)
+{
+	SpellMenuBind* t = (SpellMenuBind*)data;
+	LLLineEditor* line = t->origin;
+	const std::string &toLang = t->word;//LLTranslate::getTranslateLanguage();
+	LLHTTPClient::ResponderPtr result = LineChatTranslationReceiver::build(toLang,line);
+	S32 left_pos = llmin( line->mSelectionStart, line->mSelectionEnd );
+	S32 length = abs( line->mSelectionStart - line->mSelectionEnd );
+	LLTranslate::translateMessage(result,"", toLang, line->mText.getString().substr(left_pos, length));
+}
+void LLLineEditor::spell_show(void * data)
+{
+	SpellMenuBind* tempBind = (SpellMenuBind*)data;
+	LLLineEditor* line = tempBind->origin;
+
+	if(tempBind && line)
+	{
+		if(tempBind->word=="Show Misspellings")
+		{
+			line->setOverRideAndShowMisspellings(TRUE);
+		}else
+		{
+			line->setOverRideAndShowMisspellings(FALSE);
+		}
+	}
+
+
+}
+std::vector<S32> LLLineEditor::getMisspelledWordsPositions()
+{
+	std::vector<S32> thePosesOfBadWords;
+	const LLWString& text = mText.getWString();
+	S32 wordStart=0;
+	S32 wordEnd=0;
+
+	while(wordEnd < (S32)text.length())
+	{
+		//go through all the chars... XD	
+		if( LLTextEditor::isPartOfWord( text[wordEnd] ) ) 
+			
+		{
+			// Select word the cursor is over
+			while ((wordEnd > 0) && LLTextEditor::isPartOfWord(text[wordEnd-1]))
+			{
+				wordEnd--;
+			}
+			wordStart=wordEnd;
+			while ((wordEnd < (S32)text.length()) && LLTextEditor::isPartOfWord( text[wordEnd] ) )
+			{
+				wordEnd++;
+			}	
+			//got a word :D
+			std::string selectedWord(std::string(text.begin(), 
+				text.end()).substr(wordStart,wordEnd-wordStart));
+			if(!glggHunSpell->isSpelledRight(selectedWord))
+			{	
+				//misspelled word here, and you have just right clicked on it!
+				//get the center of this word..
+				//S32 center =  llround( (wordEnd-wordStart)/2 ) + wordStart;
+				//turn this cursor position into a pixel pos
+				//center = findPixelNearestPos(center-getCursor());
+
+				thePosesOfBadWords.push_back(
+					wordStart);
+				thePosesOfBadWords.push_back(wordEnd);
+			}
+		}
+		wordEnd++;
+	}
+	return thePosesOfBadWords;
+}
+void LLLineEditor::spell_add(void* data)
+{
+	SpellMenuBind* tempBind = (SpellMenuBind*)data;
+	if(tempBind)
+	{
+		glggHunSpell->addWordToCustomDictionary(tempBind->word);
+		tempBind->origin->mPrevSpelledText="";//make it update
+	}
 }
 void LLLineEditor::context_paste(void* data)
 {
@@ -557,9 +718,100 @@ BOOL LLLineEditor::handleRightMouseDown( S32 x, S32 y, MASK mask )
 {
 	setFocus(TRUE);
 
+	//setCursorAtLocalPos( x);
+	S32 wordStart = 0;
+	S32 wordEnd = calculateCursorFromMouse(x);
+	
+
 	LLMenuGL* menu = (LLMenuGL*)mPopupMenuHandle.get();
 	if (menu)
 	{
+		if(menu->isOpen())
+			menu->setVisible(FALSE);
+		for(int i = 0;i<(int)suggestionMenuItems.size();i++)
+		{
+			SpellMenuBind * tempBind = suggestionMenuItems[i];
+			if(tempBind)
+			{
+				menu->remove((LLMenuItemCallGL *)tempBind->menuItem);
+				((LLMenuItemCallGL *)tempBind->menuItem)->die();
+				//delete tempBind->menuItem;
+				//tempBind->menuItem = NULL;
+				delete tempBind;
+			}
+		}
+		suggestionMenuItems.clear();
+
+		menu->setItemVisible("Translate To",!mReadOnly);
+		menu->setItemVisible("Transep",!mReadOnly);
+
+		const LLWString& text = mText.getWString();
+		if(( LLTextEditor::isPartOfWord( text[wordEnd] ) ) 
+			&&(!mReadOnly))
+		{
+			// Select word the cursor is over
+			while ((wordEnd > 0) && LLTextEditor::isPartOfWord(text[wordEnd-1]))
+			{
+				wordEnd--;
+			}
+			wordStart=wordEnd;
+			//startSelection();
+
+			while ((wordEnd < (S32)text.length()) && LLTextEditor::isPartOfWord( text[wordEnd] ) )
+			{
+				wordEnd++;
+			}		
+			std::string selectedWord(std::string(text.begin(), 
+				text.end()).substr(wordStart,wordEnd-wordStart));
+			if(!glggHunSpell->isSpelledRight(selectedWord))
+			{	
+				//misspelled word here, and you have just right clicked on it!
+				std::vector<std::string> suggs = glggHunSpell->getSuggestionList(selectedWord);
+				//menu->setItemVisible("Transep",(suggs.size()>0));
+
+				for(int i = 0;i<(int)suggs.size();i++)
+				{
+					SpellMenuBind * tempStruct = new SpellMenuBind;
+					tempStruct->origin = this;
+					tempStruct->word = suggs[i];
+					tempStruct->wordPositionEnd = wordEnd;
+					tempStruct->wordPositionStart=wordStart;
+					LLMenuItemCallGL * suggMenuItem = new LLMenuItemCallGL(
+						tempStruct->word, spell_correct, NULL, tempStruct);
+					//new LLMenuItemCallGL("Select All", context_selectall, NULL, this));
+					tempStruct->menuItem = suggMenuItem;
+					suggestionMenuItems.push_back(tempStruct);
+					menu->append(suggMenuItem);
+				}
+				SpellMenuBind * tempStruct = new SpellMenuBind;
+				tempStruct->origin = this;
+				tempStruct->word = selectedWord;
+				tempStruct->wordPositionEnd = wordEnd;
+				tempStruct->wordPositionStart=wordStart;
+				LLMenuItemCallGL * suggMenuItem = new LLMenuItemCallGL(
+					"Add Word", spell_add, NULL, tempStruct);
+				tempStruct->menuItem = suggMenuItem;
+				suggestionMenuItems.push_back(tempStruct);
+				menu->append(suggMenuItem);
+			}
+
+		}
+		if((!mReadOnly)&&((!glggHunSpell->highlightInRed)
+			||(mOverRideAndShowMisspellings)))
+		{
+			SpellMenuBind * tempStruct = new SpellMenuBind;
+			tempStruct->origin = this;
+			if(mOverRideAndShowMisspellings)
+				tempStruct->word = "Hide Misspellings";
+			else
+				tempStruct->word = "Show Misspellings";
+			LLMenuItemCallGL * suggMenuItem = new LLMenuItemCallGL(
+				tempStruct->word, spell_show, NULL, tempStruct);
+			tempStruct->menuItem = suggMenuItem;
+			suggestionMenuItems.push_back(tempStruct);
+			menu->append(suggMenuItem);
+		}
+
 		menu->buildDrawLabels();
 		menu->updateParent(LLMenuGL::sMenuContainer);
 		LLMenuGL::showPopup(this, menu, x, y);
@@ -1010,7 +1262,32 @@ void LLLineEditor::copy()
 		gClipboard.copyFromSubstring( mText.getWString(), left_pos, length );
 	}
 }
+void LLLineEditor::spellReplace(SpellMenuBind* spellData)
+{
+	mText.erase(spellData->wordPositionStart,
+		spellData->wordPositionEnd - spellData->wordPositionStart);
+	insert(spellData->word,spellData->wordPositionStart);
+	mCursorPos+=spellData->word.length() - (spellData->wordPositionEnd-spellData->wordPositionStart);
 
+	
+}
+void LLLineEditor::insert(std::string what, S32 wher)
+{
+	LLLineEditorRollback rollback(this);
+	LLWString clean_string(utf8str_to_wstring(what));
+	LLWStringUtil::replaceTabsWithSpaces(clean_string, 4);
+	mText.insert(wher, clean_string);
+	//see if we should move over the cursor acordingly
+	// Validate new string and rollback the if needed.
+	BOOL need_to_rollback = ( mPrevalidateFunc && !mPrevalidateFunc( mText.getWString() ) );
+	if( need_to_rollback )
+	{
+		rollback.doRollback( this );
+		reportBadKeystroke();
+	}
+	else if( mKeystrokeCallback )
+		mKeystrokeCallback( this, mCallbackUserData );
+}
 BOOL LLLineEditor::canPaste() const
 {
 	return !mReadOnly && gClipboard.canPasteString(); 
@@ -1023,6 +1300,7 @@ void LLLineEditor::paste()
 	if (canPaste())
 	{
 		LLWString paste = gClipboard.getPasteWString();
+		
 		if (!paste.empty())
 		{
 			// Prepare for possible rollback
@@ -1036,7 +1314,7 @@ void LLLineEditor::paste()
 
 			// Clean up string (replace tabs and returns and remove characters that our fonts don't support.)
 			LLWString clean_string(paste);
-			LLWStringUtil::replaceTabsWithSpaces(clean_string, 1);
+			LLWStringUtil::replaceTabsWithSpaces(clean_string, 4);
 			//clean_string = wstring_detabify(paste, 1);
 			LLWStringUtil::replaceChar(clean_string, '\n', mReplaceNewlinesWithSpaces ? ' ' : 182); // 182 == paragraph character
 
@@ -1761,6 +2039,45 @@ void LLLineEditor::draw()
 	if (mDrawAsterixes)
 	{
 		mText = saved_text;
+	}
+	
+	if((glggHunSpell->highlightInRed || mOverRideAndShowMisspellings)
+		&&(!mReadOnly))
+	{
+		
+		F32 elapsed = mSpellTimer.getElapsedTimeF32();
+		if(S32(elapsed / 1) & 1) 
+		{
+			if(isSpellDirty())
+			{
+				resetSpellDirty();
+				misspellLocations=getMisspelledWordsPositions();
+			}
+		}
+		for(int i =0;i<(int)misspellLocations.size();i++)
+		{
+			S32 wstart =findPixelNearestPos( misspellLocations[i]-getCursor());
+			S32 wend = findPixelNearestPos(misspellLocations[++i]-getCursor());
+			S32 maxw = getRect().getWidth();
+
+			if(wend > maxw)
+			{
+				wend=maxw;
+			}
+			if(wstart > maxw)
+			{
+				wstart=maxw;
+			}
+			gGL.color4ub(255,0,0,200);
+			//3 line zig zags..
+			while(wstart<wend)
+			{
+				gl_line_2d(wstart,cursor_bottom-2,wstart+3,cursor_bottom+1);
+				gl_line_2d(wstart+3,cursor_bottom+1,wstart+6,cursor_bottom-2);
+				wstart+=6;
+			}
+				
+		}
 	}
 }
 

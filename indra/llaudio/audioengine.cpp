@@ -1107,21 +1107,25 @@ void LLAudioEngine::cleanupAudioSource(LLAudioSource *asp)
 
 bool LLAudioEngine::hasDecodedFile(const LLUUID &uuid)
 {
-	std::string uuid_str;
-	uuid.toString(uuid_str);
+    std::string uuid_str;
+    uuid.toString(uuid_str);
 
-	std::string wav_path;
-	wav_path = gDirUtilp->getExpandedFilename(LL_PATH_CACHE,uuid_str);
-	wav_path += ".dsf";
+    std::string wav_path;
+    if(gDirUtilp->mm_usesnd()) //::MODMOD::
+        wav_path = gDirUtilp->getExpandedFilename(MM_SNDLOC,uuid_str);
+    else
+        wav_path = gDirUtilp->getExpandedFilename(LL_PATH_CACHE,uuid_str);
 
-	if (gDirUtilp->fileExists(wav_path))
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+    wav_path += ".dsf";
+    //llinfos << wav_path << llendl;
+    if (gDirUtilp->fileExists(wav_path))
+    {
+        return TRUE;
+    }
+    else
+    {
+        return FALSE;
+    }
 }
 
 
@@ -1855,36 +1859,40 @@ LLAudioData::LLAudioData(const LLUUID &uuid) :
 bool LLAudioData::load()
 {
 	// For now, just assume we're going to use one buffer per audiodata.
-	if (mBufferp)
-	{
-		// We already have this sound in a buffer, don't do anything.
-		llinfos << "Already have a buffer for this sound, don't bother loading!" << llendl;
-		return true;
-	}
-	
-	mBufferp = gAudiop->getFreeBuffer();
-	if (!mBufferp)
-	{
-		// No free buffers, abort.
-		llinfos << "Not able to allocate a new audio buffer, aborting." << llendl;
-		return false;
-	}
+    if (mBufferp)
+    {
+        // We already have this sound in a buffer, don't do anything.
+        llinfos << "Already have a buffer for this sound, don't bother loading!" << llendl;
+        return TRUE;
+    }
+    
+    mBufferp = gAudiop->getFreeBuffer();
+    if (!mBufferp)
+    {
+        // No free buffers, abort.
+        llinfos << "Not able to allocate a new audio buffer, aborting." << llendl;
+        return FALSE;
+    }
 
-	std::string uuid_str;
-	std::string wav_path;
-	mID.toString(uuid_str);
-	wav_path= gDirUtilp->getExpandedFilename(LL_PATH_CACHE,uuid_str) + ".dsf";
+    std::string uuid_str;
+    std::string wav_path;
+    mID.toString(uuid_str);
+    if(gDirUtilp->mm_usesnd()) //::MODMOD::
+        wav_path = gDirUtilp->getExpandedFilename(MM_SNDLOC,uuid_str);
+    else
+        wav_path = gDirUtilp->getExpandedFilename(LL_PATH_CACHE,uuid_str);
+    wav_path+=".dsf";
+    if (!mBufferp->loadWAV(wav_path))
+    {
+        //llinfos << wav_path << llendl;
+        // Hrm.  Right now, let's unset the buffer, since it's empty.
+        gAudiop->cleanupBuffer(mBufferp);
+        mBufferp = NULL;
 
-	if (!mBufferp->loadWAV(wav_path))
-	{
-		// Hrm.  Right now, let's unset the buffer, since it's empty.
-		gAudiop->cleanupBuffer(mBufferp);
-		mBufferp = NULL;
-
-		return false;
-	}
-	mBufferp->mAudioDatap = this;
-	return true;
+        return FALSE;
+    }
+    mBufferp->mAudioDatap = this;
+    return TRUE;
 }
 
 
