@@ -79,7 +79,7 @@ void LuaDumpVisualParams()
 std::string  LuaDumpVisualParamsToLuaCode()
 {
 	LLVOAvatar *av=gAgent.getAvatarObject();
-	LuaError("DumpVisualParamsToLuaCode() DEBUG: Dumping vis params. (Checking perms)");
+	//LuaError("DumpVisualParamsToLuaCode() DEBUG: Dumping vis params. (Checking perms)");
 	LLViewerInventoryItem* item;
 	item = (LLViewerInventoryItem*)gAgent.getWearableInventoryItem(WT_SHAPE);
 	if(!item)
@@ -134,7 +134,7 @@ std::string  LuaDumpVisualParamsToLuaCode()
 	}
 */
 	param_msg.append("UpdateAppearance()\n");
-	LuaError("DumpVisualParamsToLuaCode() DEBUG: Done.");
+	//LuaError("DumpVisualParamsToLuaCode() DEBUG: Done.");
 	return param_msg;
 }
 
