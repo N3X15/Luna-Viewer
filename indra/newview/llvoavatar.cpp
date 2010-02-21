@@ -3410,7 +3410,7 @@ void LLVOAvatar::idleUpdateNameTag(const LLVector3& root_pos_last)
 	BOOL render_name =	visible_chat ||
 						(visible_avatar &&
 // [RLVa:KB] - Checked: 2009-08-11 (RLVa-1.0.1h) | Added: RLVa-1.0.0h
-						( (!fRlvShowNames) || (RlvSettings::fShowNameTags) ) &&
+						( (!fRlvShowNames) || (RlvSettings::getShowNameTags()) ) &&
 // [/RLVa:KB]
 						((sRenderName == RENDER_NAME_ALWAYS) ||
 						(sRenderName == RENDER_NAME_FADE && time_visible < NAME_SHOW_TIME)));
@@ -3442,7 +3442,7 @@ void LLVOAvatar::idleUpdateNameTag(const LLVector3& root_pos_last)
 			}
 		}
 		else if (sRenderGroupTitles != mRenderGroupTitles)
-// [/RLVa:KB]
+// [/RLVa]
 		//if (sRenderGroupTitles != mRenderGroupTitles)
 		{
 			mRenderGroupTitles = sRenderGroupTitles;
@@ -3588,7 +3588,7 @@ void LLVOAvatar::idleUpdateNameTag(const LLVector3& root_pos_last)
 				}
 				else
 				{
-					line = gRlvHandler.getAnonym(line.assign(firstname->getString()).append(" ").append(lastname->getString()));
+					line = RlvStrings::getAnonym(line.assign(firstname->getString()).append(" ").append(lastname->getString()));
 				}
 // [/RLVa:KB]
 				BOOL need_comma = FALSE;
@@ -6904,6 +6904,20 @@ LLViewerObject* LLVOAvatar::getWornAttachment( const LLUUID& inv_item_id )
 	return NULL;
 }
 
+// [RLVa:KB] - Checked: 2009-12-18 (RLVa-1.1.0i) | Added: RLVa-1.1.0i
+LLViewerJointAttachment* LLVOAvatar::getWornAttachmentPoint(const LLUUID& inv_item_id)
+{
+	for (attachment_map_t::const_iterator itAttach = mAttachmentPoints.begin(); 
+			itAttach != mAttachmentPoints.end(); ++itAttach)
+	{
+		LLViewerJointAttachment* pAttachPt = itAttach->second;
+		if (pAttachPt->getItemID() == inv_item_id)
+			return pAttachPt;
+	}
+	return NULL;
+}
+// [/RLVa:KB]
+
 const std::string LLVOAvatar::getAttachedPointName(const LLUUID& inv_item_id)
 {
 	for (attachment_map_t::iterator iter = mAttachmentPoints.begin(); 
@@ -7367,6 +7381,11 @@ BOOL LLVOAvatar::updateIsFullyLoaded()
 	return changed;
 }
 
+
+BOOL LLVOAvatar::isReallyFullyLoaded()
+{
+	return mFullyLoaded;
+}
 
 BOOL LLVOAvatar::isFullyLoaded()
 {
@@ -8586,7 +8605,7 @@ void LLVOAvatar::processAvatarAppearance( LLMessageSystem* mesgsys )
 					llwarns << "Boob Grav SET to " << newWeight << " for " << getFullname() << llendl;
 					setActualBoobGrav(newWeight);
 				}
-				if(param->getID() == 795 && newWeight != getActualButtGrav())
+				/*if(param->getID() == 795 && newWeight != getActualButtGrav())
 				{
 					llwarns << "Butt Grav SET to " << newWeight << " for " << getFullname() << llendl;
 					setActualButtGrav(newWeight);
@@ -8596,7 +8615,7 @@ void LLVOAvatar::processAvatarAppearance( LLMessageSystem* mesgsys )
 					llwarns << "Fat Grav SET to " << newWeight << " for " << getFullname() << llendl;
 					setActualFatGrav(newWeight);
 				}
-
+				*/
 
 
 				if (is_first_appearance_message || (param->getWeight() != newWeight))
@@ -9336,7 +9355,6 @@ BOOL LLVOAvatarSkeletonInfo::parseXml(LLXmlTreeNode* node)
 //-----------------------------------------------------------------------------
 // parseXmlSkeletonNode(): parses <skeleton> nodes from XML tree
 //-----------------------------------------------------------------------------
-// NOTE:  This is where shit's failing in loading.
 BOOL LLVOAvatarXmlInfo::parseXmlSkeletonNode(LLXmlTreeNode* root)
 {
 	LLXmlTreeNode* node = root->getChildByName( "skeleton" );
@@ -9864,6 +9882,15 @@ void LLVOAvatar::idleUpdateRenderCost()
 		}
 	}	
 
+	std::set<LLUUID>::const_iterator tex_iter;
+	for(tex_iter = textures.begin();tex_iter != textures.end();++tex_iter)
+	{
+		LLViewerImage* img = gImageList.getImage(*tex_iter);
+		if(img)
+		{
+			shame += (img->getHeight() * img->getWidth()) >> 4;
+		}
+	}
 	shame += textures.size() * 5;
 
 	setDebugText(llformat("%d", shame));
@@ -9926,7 +9953,6 @@ U32 calc_shame(LLVOVolume* volume, std::set<LLUUID> &textures)
 	U32 flexi = 0;
 	U32 animtex = 0;
 	U32 particles = 0;
-	U32 scale = 0;
 	U32 bump = 0;
 	U32 planar = 0;
 	
@@ -9938,9 +9964,6 @@ U32 calc_shame(LLVOVolume* volume, std::set<LLUUID> &textures)
 	{
 		particles = 1;
 	}
-
-	const LLVector3& sc = volume->getScale();
-	scale += (U32) sc.mV[0] + (U32) sc.mV[1] + (U32) sc.mV[2];
 
 	LLDrawable* drawablep = volume->mDrawable;
 
@@ -9958,6 +9981,7 @@ U32 calc_shame(LLVOVolume* volume, std::set<LLUUID> &textures)
 		LLViewerImage* img = face->getTexture();
 
 		textures.insert(img->getID());
+
 
 		if (face->getPoolType() == LLDrawPool::POOL_ALPHA)
 		{
@@ -9993,7 +10017,7 @@ U32 calc_shame(LLVOVolume* volume, std::set<LLUUID> &textures)
 		}
 	}
 
-	shame += invisi + shiny + glow + alpha*4 + flexi*8 + animtex*4 + particles*16+bump*4+scale+planar;
+	shame += invisi + shiny + glow + alpha*4 + flexi*8 + animtex*4 + particles*16 + bump*4 + planar;
 
 	LLViewerObject::const_child_list_t& child_list = volume->getChildren();
 	for (LLViewerObject::child_list_t::const_iterator iter = child_list.begin();
