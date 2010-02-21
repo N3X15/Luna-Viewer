@@ -32,6 +32,7 @@ set(debug_files
     openjpegd.dll
     windbgdlg.exe
     lua5.1.dll
+	libhunspell.dll
     )
 
 if(OPENAL)
