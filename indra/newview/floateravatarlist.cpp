@@ -142,7 +142,8 @@ typedef enum e_radar_alert_type
 } ERadarAlertType;
 void chat_avatar_status(std::string name, LLUUID key, ERadarAlertType type, bool entering)
 {
-	if(gSavedSettings.getBOOL("EmeraldRadarChatAlerts") && (strcmp(name.c_str(),"(???) (???)") == 1))
+//	if(gSavedSettings.getBOOL("EmeraldRadarChatAlerts") && (strcmp(name.c_str(),"(???) (???)") == 1))
+	if(gSavedSettings.getBOOL("EmeraldRadarChatAlerts"))
 	{
 // [RLVa:KB] - Alternate: Emerald-370
 		if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES))

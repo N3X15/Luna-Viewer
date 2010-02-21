@@ -8157,93 +8157,37 @@ void LLAgent::userRemoveAllAttachments( void* userdata )
 		return;
 	}
 
-// [RLVa:KB] - Checked: 2009-10-10 (RLVa-1.0.5a) | Modified: RLVa-1.0.5a
-	// NOTE-RLVa: This function is called from inside RlvHandler as well, hence the rather heavy modifications
-	std::list<U32> rlvAttachments;
-	// TODO-RLVa: Once we have the improved "removeWearable" logic implemented we can just get rid of the whole "rlvCompFolders" hassle
-	#ifdef RLV_EXPERIMENTAL_COMPOSITES
-		std::list<LLUUID> rlvCompFolders;
-	#endif // RLV_EXPERIMENTAL_COMPOSITES
-
-	for (LLVOAvatar::attachment_map_t::iterator iter = avatarp->mAttachmentPoints.begin(); 
-		 iter != avatarp->mAttachmentPoints.end(); )
+// [RLVa:KB] - Checked: 2009-11-24 (RLVa-1.1.0f) | Modified: RLVa-1.1.0e
+	std::list<U32> LocalIDs;
+	for (LLVOAvatar::attachment_map_t::iterator iter = avatarp->mAttachmentPoints.begin(); iter != avatarp->mAttachmentPoints.end(); )
 	{
 		LLVOAvatar::attachment_map_t::iterator curiter = iter++;
 		LLViewerJointAttachment* attachment = curiter->second;
 		LLViewerObject* objectp = attachment->getObject();
 		if (objectp)
 		{
-			if (rlv_handler_t::isEnabled())
-			{
-				if (gRlvHandler.isLockedAttachment(curiter->first, RLV_LOCK_REMOVE))
+			if ( (rlv_handler_t::isEnabled()) && (gRlvHandler.isLockedAttachment(curiter->first, RLV_LOCK_REMOVE)) )
 					continue;
-
-				// Check if we're being called in response to an RLV command (that would be @detach=force)
-				if ( (gRlvHandler.getCurrentCommand()) && (attachment->getItemID().notNull()) )
-				{
-					if (!gRlvHandler.isStrippable(attachment->getItemID()))	// "nostrip" can be taken off by the user but not @detach
-						continue;
-
-					#ifdef RLV_EXPERIMENTAL_COMPOSITES
-						LLViewerInventoryCategory* pFolder;
-						if (gRlvHandler.getCompositeInfo(attachment->getItemID(), NULL, &pFolder))
-						{
-							#ifdef RLV_EXPERIMENTAL_COMPOSITE_LOCKING
-								if (!gRlvHandler.canTakeOffComposite(pFolder))
-									continue;
-							#endif // RLV_EXPERIMENTAL_COMPOSITE_LOCKING
-
-							// The attachment belongs to a composite folder so there may be additional things we need to take off
-							if (std::find(rlvCompFolders.begin(), rlvCompFolders.end(), pFolder->getUUID()) != rlvCompFolders.end())
-								rlvCompFolders.push_back(pFolder->getUUID());
-						}
-					#endif // RLV_EXPERIMENTAL_COMPOSITES
-				}
-			}
-			rlvAttachments.push_back(objectp->getLocalID());
+			LocalIDs.push_back(objectp->getLocalID());
 		}
 	}
 
 	// Only send the message if we actually have something to detach
-	if (rlvAttachments.size() > 0)
+	if (LocalIDs.size() > 0)
 	{
 	gMessageSystem->newMessage("ObjectDetach");
 	gMessageSystem->nextBlockFast(_PREHASH_AgentData);
 	gMessageSystem->addUUIDFast(_PREHASH_AgentID, gAgent.getID() );
 	gMessageSystem->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
 
-		for (std::list<U32>::const_iterator itAttach = rlvAttachments.begin(); itAttach != rlvAttachments.end(); ++itAttach)
+		for (std::list<U32>::const_iterator itLocalID = LocalIDs.begin(); itLocalID != LocalIDs.end(); ++itLocalID)
 		{
 			gMessageSystem->nextBlockFast(_PREHASH_ObjectData);
-			gMessageSystem->addU32Fast(_PREHASH_ObjectLocalID, *itAttach);
+			gMessageSystem->addU32Fast(_PREHASH_ObjectLocalID, *itLocalID);
 		}
 
 	gMessageSystem->sendReliable( gAgent.getRegionHost() );
 	}
-
-	#ifdef RLV_EXPERIMENTAL_COMPOSITES
-		if (rlv_handler_t::isEnabled)
-		{
-			// If we encountered any composite folders then we need to @detach all of them
-			for (std::list<LLUUID>::const_iterator itFolder = rlvCompFolders.begin(); itFolder != rlvCompFolders.end(); ++itFolder)
-			{
-				std::string strFolder = gRlvHandler.getSharedPath(*itFolder);
-
-				// It shouldn't happen but make absolutely sure that we don't issue @detach:=force and reenter this function
-				if (!strFolder.empty())
-				{
-					std::string strCmd = "detach:" + strFolder + "=force";
-					#ifdef RLV_DEBUG
-						RLV_INFOS << "\t- detaching composite folder: @" << strCmd << LL_ENDL;
-					#endif // RLV_DEBUG
-
-					// HACK-RLV: executing a command while another command is currently executing isn't the best thing to do, however
-					//           in this specific case it is safe (and still better than making processForceCommand public)
-					gRlvHandler.processCommand(gRlvHandler.getCurrentObject(), strCmd);
-				}
-			}
-		}
-	#endif // RLV_EXPERIMENTAL_COMPOSITES
 // [/RLVa:KB]
 }
 

@@ -69,7 +69,11 @@
 #include "llviewerregion.h"
 
 #include "llfirstuse.h"
-#include "lggIrcGroupHandler.h"
+#include "lggircgrouphandler.h"
+
+// [RLVa:KB]
+#include "rlvhandler.h"
+// [/RLVa:KB]
 
 //
 // Globals
@@ -807,9 +811,7 @@ LLUUID LLIMMgr::addSession(
 	EInstantMessage dialog,
 	const LLUUID& other_participant_id)
 {
-	//lggtodo
 	LLUUID session_id = computeSessionID(dialog, other_participant_id);
-
 	LLFloaterIMPanel* floater = findFloaterBySession(session_id);
 	if(!floater)
 	{
@@ -839,7 +841,7 @@ LLUUID LLIMMgr::addSession(
 		floater->open();
 	}
 	//mTabContainer->selectTabPanel(panel);
-	floater->setInputFocus(TRUE);
+	if(gSavedPerAccountSettings.getBOOL("EmeraldInstantMessageAnnounceStealFocus"))floater->setInputFocus(TRUE);
 	return floater->getSessionID();
 }
 
@@ -889,7 +891,7 @@ LLUUID LLIMMgr::addSession(
 		floater->open();
 	}
 	//mTabContainer->selectTabPanel(panel);
-	floater->setInputFocus(TRUE);
+	if(gSavedPerAccountSettings.getBOOL("EmeraldInstantMessageAnnounceStealFocus"))floater->setInputFocus(TRUE);
 	return floater->getSessionID();
 }
 
@@ -1583,7 +1585,7 @@ public:
 						return;
 				}
 				else if (!gRlvHandler.isException(RLV_BHVR_RECVIM, from_id))
-					message = message.substr(0, message_offset) + rlv_handler_t::cstrBlockedRecvIM;
+					message = message.substr(0, message_offset) + RlvStrings::getString(RLV_STRING_BLOCKED_RECVIM);
 			}
 // [/RLVa:KB]
 

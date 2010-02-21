@@ -54,7 +54,7 @@ std::set<std::string> ScriptCounter::objIDS;
 int ScriptCounter::objectCount;
 LLViewerObject* ScriptCounter::foo;
 void cmdline_printchat(std::string chat);
-//std::stringstream ScriptCounter::sstr;
+std::stringstream ScriptCounter::sstr;
 int ScriptCounter::countingDone;
 
 ScriptCounter::ScriptCounter()
@@ -81,8 +81,8 @@ LLVOAvatar* find_avatar_from_object( const LLUUID& object_id );
 
 void ScriptCounter::showResult()
 {
-	ScriptCounter::getInstance()->sstr << scriptcount;
-	cmdline_printchat(ScriptCounter::getInstance()->sstr.str());
+	sstr << scriptcount;
+	cmdline_printchat(sstr.str());
 	init();
 }
 
@@ -96,9 +96,9 @@ void ScriptCounter::processObjectPropertiesFamily(LLMessageSystem* msg, void** u
 	if(object_id == reqObjectID)
 	{
 		if(doDelete)
-			ScriptCounter::getInstance()->sstr << "Deleted scripts from object "+name+": ";
+			sstr << "Deleted scripts from object "+name+": ";
 		else
-			ScriptCounter::getInstance()->sstr << "Counted scripts on object "+name+": ";
+			sstr << "Counted scripts on object "+name+": ";
 		reqObjectID.setNull();
 		if(countingDone)
 			showResult();
@@ -115,9 +115,9 @@ void ScriptCounter::processObjectProperties(LLMessageSystem* msg, void** user_da
 	if(object_id == reqObjectID)
 	{
 		if(doDelete)
-			ScriptCounter::getInstance()->sstr << "Deleted scripts from object "+name+": ";
+			sstr << "Deleted scripts from object "+name+": ";
 		else
-			ScriptCounter::getInstance()->sstr << "Counted scripts on object "+name+": ";
+			sstr << "Counted scripts on object "+name+": ";
 		reqObjectID.setNull();
 		if(countingDone)
 			showResult();
@@ -128,7 +128,7 @@ void ScriptCounter::serializeSelection(bool delScript)
 {
 	LLDynamicArray<LLViewerObject*> catfayse;
 	foo=LLSelectMgr::getInstance()->getSelection()->getPrimaryObject();
-	ScriptCounter::getInstance()->sstr.str("");
+	sstr.str("");
 	doDelete=false;
 	scriptcount=0;
 	objIDS.clear();
@@ -270,7 +270,7 @@ void ScriptCounter::completechk()
 	{
 		if(reqObjectID.isNull())
 		{
-			if(ScriptCounter::getInstance()->sstr.str() == "")
+			if(sstr.str() == "")
 			{
 				if(foo->isAvatar())
 				{
@@ -287,17 +287,17 @@ void ScriptCounter::completechk()
 					  if(!firstname || !lastname)
 						valid=0;
 					  if(valid)
-						  ScriptCounter::getInstance()->sstr << "Counted scripts from " << objectCount << " attachments on " << firstname->getString() << " " << lastname->getString() << ": ";
+						  sstr << "Counted scripts from " << objectCount << " attachments on " << firstname->getString() << " " << lastname->getString() << ": ";
 					}
 					if(!valid)
-						ScriptCounter::getInstance()->sstr << "Counted scripts from " << objectCount << " attachments on avatar: ";
+						sstr << "Counted scripts from " << objectCount << " attachments on avatar: ";
 				}
 				else
 				{
 					if(doDelete)
-						ScriptCounter::getInstance()->sstr << "Deleted scripts in " << objectCount << " objects: ";
+						sstr << "Deleted scripts in " << objectCount << " objects: ";
 					else
-						ScriptCounter::getInstance()->sstr << "Counted scripts in " << objectCount << " objects: ";
+						sstr << "Counted scripts in " << objectCount << " objects: ";
 				}
 				F32 throttle = gSavedSettings.getF32("OutBandwidth");
 				if(throttle != 0.f)
