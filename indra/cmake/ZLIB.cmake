@@ -14,12 +14,12 @@ else (STANDALONE)
 	find_library(Z_RELEASE
 								NAMES z zlib zdll z1g llz
 								PATHS ${ARCH_PREBUILT_DIRS_RELEASE}
-								NO_DEFAULT_PATH
+#								NO_DEFAULT_PATH
 								)
 	find_library(Z_DEBUG
 								NAMES z zlibd zdll z1g llz
 								PATHS ${ARCH_PREBUILT_DIRS_DEBUG}
-								NO_DEFAULT_PATH
+#								NO_DEFAULT_PATH
 								)
 	set(ZLIB_LIBRARIES optimized ${Z_RELEASE} debug ${Z_DEBUG}) 
 #	message(STATUS "Zlib Library: ${ZLIB_LIBRARIES}")

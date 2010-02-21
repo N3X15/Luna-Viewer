@@ -122,6 +122,8 @@
 #include "rlvhandler.h"
 // [/RLVa:KB]
 
+#include "flex_constants.h"
+
 using namespace LLVOAvatarDefines;
 //-----------------------------------------------------------------------------
 // Global constants

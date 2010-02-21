@@ -9,7 +9,7 @@ else (STANDALONE)
 	
 	set(HUNSPELL_INCLUDE_DIR ${LIBS_PREBUILT_DIR}/include/hunspell)
 	
-	find_library(HUNSPELL_RELEASE NAMES libhunspell hunspell hunspell-1.2 PATHS ${ARCH_PREBUILT_DIRS_RELEASE} NO_DEFAULT_PATH)
+	find_library(HUNSPELL_RELEASE NAMES libhunspell hunspell hunspell-1.2 PATHS ${ARCH_PREBUILT_DIRS_RELEASE})
 #	MESSAGE(STATUS "Hunspell library: ${HUNSPELL_RELEASE}")
 	if (HUNSPELL_RELEASE)
 		set(HUNSPELL_LIBRARY ${HUNSPELL_RELEASE})

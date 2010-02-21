@@ -1,0 +1,6 @@
+
+local function OnSculptTooBig(object_id,texture_id,surface_area)
+	print("Disabling sculptie "..object_id.." using texture "..texture_id.." (Surface area: "..surface_area.." sqm)")
+end
+
+SetHook("OnSculptTooBig",OnSculptTooBig)

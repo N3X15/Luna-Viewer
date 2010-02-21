@@ -1,0 +1,6 @@
+#! /usr/bin/env sh
+
+# Fix for your path
+cd /root/FlexLife/trunk/indra/newview/lua/lib/gtk//share/lua/5.1/lgob
+
+./generator.lua "$@"
