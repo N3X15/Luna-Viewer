@@ -1,3 +1,6 @@
+// From http://www.gamedev.net/columns/hardcore/cloudrendering/default.asp
+// Appears to be public domain.
+//
 #include "llviewerprecompiledheaders.h"
 #include <algorithm>
 
@@ -173,10 +176,10 @@ void VolumetricClouds::Update(Vector3 Sun, Vector3 Camera)
 		llinfos << "#" << i << ": Cam direction" << llendl;
 		ToCam =  Normalize(Camera - Clouds[i].Center);
 
-		llinfos << "#" << i << " Dot(SunDir,Cloud)" << llendl;
+		llinfos << "#" << i << ": Dot(SunDir,Cloud)" << llendl;
 		if (Dot(SunDir, Clouds[i].LastLight) < 0.99f)
 		{
-			llinfos << "#" << i << " Light cloud" << llendl;
+			llinfos << "#" << i << ": Light cloud" << llendl;
 			LightCloud(&Clouds[i], Sun);
 			MakeCloudImpostor(&Clouds[i], Sun, Camera);
 			Clouds[i].LastLight = SunDir;
@@ -443,38 +446,27 @@ void VolumetricClouds::MakeCloudImpostor(VolumetricCloud* Cloud, Vector3 Sun, Ve
 
 void VolumetricClouds::LightCloud(VolumetricCloud* Cloud, Vector3 Sun)
 {
-//	llinfos << "Lighting cloud..." << llendl;
-
-//	llinfos << "Setup sun..." << llendl;	
 //	assume Sun is a point!!
 	Sun = Normalize(Sun) * Cloud->Radius * 1.5f + Cloud->Center;
 	
-//	llinfos << "Set cloud puff distances..." << llendl;
 //	puffs are now in world space
 	unsigned i, j;	
 	for (i = 0; i < Cloud->Puffs.size(); i++)
 		Cloud->Puffs[i].DistanceToCam = SqDist(Sun, Cloud->Puffs[i].Position);
-	
-//	llinfos << "Sort cloud puffs" << llendl;
+
 	SortParticles(Cloud, SORT_AWAY);
-	
-//	llinfos << "Assign d, r, and pr" << llendl;
-//	llinfos << " * d" << llendl;
+
 	float d = Dist(Sun, Cloud->Center);
-//	llinfos << " * r" << llendl;
 	float r = Cloud->Radius;
-//	llinfos << " * pr (Cloud->Puffs.size()=" << Cloud->Puffs.size()<< ")" << llendl;
 	float pr = Cloud->Puffs[0].Size;
 			
-//	llinfos << "Setup orthographic projection" << llendl;
 	//we setup an orthographic projection
 	//the view volume will thus be a box and it will fit the cloud perfectly
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
 	glLoadIdentity();
 	glOrtho(-Cloud->Radius-pr, Cloud->Radius+pr, -Cloud->Radius-pr, Cloud->Radius+pr, d - r, d + r);
-		
-//	llinfos << "Setup camera" << llendl;
+
 	//setup the camera to lookat the cloud center and be positioned on the sun
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
@@ -483,13 +475,11 @@ void VolumetricClouds::LightCloud(VolumetricCloud* Cloud, Vector3 Sun)
 		
 	glPushAttrib(GL_VIEWPORT_BIT);
 	glViewport(0, 0, SplatBufferSize, SplatBufferSize);
-		
-//	llinfos << "clear buffer" << llendl;
+
 	//clear our buffer make it fully bright
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-//	llinfos << "Extract up & right vectors" << llendl;
 	//your standard up and right vector extraction
 	float mat[16];
 	glGetFloatv(GL_MODELVIEW_MATRIX, mat);
@@ -497,7 +487,6 @@ void VolumetricClouds::LightCloud(VolumetricCloud* Cloud, Vector3 Sun)
 	Vector3 vx(mat[0], mat[4], mat[8] );
 	Vector3 vy(mat[1], mat[5], mat[9] );	
 	
-//	llinfos << "Setup texture?" << llendl;
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, PuffTexture);
 
@@ -506,8 +495,7 @@ void VolumetricClouds::LightCloud(VolumetricCloud* Cloud, Vector3 Sun)
 	double mp[16], mm[16];
 	int vp[4];
 	float *buf, avg;
-		
-//	llinfos << "Setup projection (again)" << llendl;
+
 	//used for projection
 	glGetDoublev(GL_MODELVIEW_MATRIX, mm);
 	glGetDoublev(GL_PROJECTION_MATRIX, mp);
@@ -515,8 +503,7 @@ void VolumetricClouds::LightCloud(VolumetricCloud* Cloud, Vector3 Sun)
 
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, PuffTexture);
-		
-	//llinfos << "Blend..." << llendl;
+
 	//our blending is enabled
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
@@ -549,7 +536,7 @@ void VolumetricClouds::LightCloud(VolumetricCloud* Cloud, Vector3 Sun)
 		Pixels = (int)(sqrt(Area) * SplatBufferSize / (2 * Cloud->Radius));
 		if (Pixels < 1) Pixels = 1;
 		
-	    //make sure we're not reading from outside the viewport, that's Undefined
+		//make sure we're not reading from outside the viewport, that's Undefined
 		ReadX = (int)(CenterX-Pixels/2);
 		if (ReadX < 0) ReadX = 0;
 		ReadY = (int)(CenterY-Pixels/2);
@@ -608,6 +595,8 @@ void VolumetricClouds::LightCloud(VolumetricCloud* Cloud, Vector3 Sun)
 	
 	glMatrixMode(GL_MODELVIEW);
 	glPopMatrix();	
+
+	// Reset states?  (I have no idea how to get around the LLGLState stuff, hopefully this will work.)
 	LLGLState::restoreGL();			
 }
 

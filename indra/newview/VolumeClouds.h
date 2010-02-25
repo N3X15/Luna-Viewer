@@ -1,4 +1,6 @@
-
+// From http://www.gamedev.net/columns/hardcore/cloudrendering/default.asp
+// Appears to be public domain.
+//
 #include "llviewerprecompiledheaders.h"
 #include "v3math.h"
 #include "v4math.h"
@@ -115,8 +117,10 @@ private:
 	int NumSprites, NumImpostors;
 	float Albedo, Extinction;
 	U64 mRegionHandle;
-
 };
+
+// Needed to use Vector3 instead of LLVectors due to storage of Vector3s in a binary file.
+//	Will eventually convert, but right now I'm more concerned about basic functionality.
 
 inline LLVector3 V2LLV(const Vector3 i)
 {
