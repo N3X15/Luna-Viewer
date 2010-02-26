@@ -1,8 +1,8 @@
 --[[
-	FlexLife Lua Loader
+	Luna Lua Loader
 		by N3X15
 	
-	 Copyright (C) 2008-2009 FlexLife Contributors
+	 Copyright (C) 2008-2009 Luna Contributors
 	 
 	 This program is free software; you can redistribute it and/or modify
 	 it under the terms of the GNU General Public License as published by
@@ -100,7 +100,7 @@ end
 
 
 -- Load scripts in directory.
-function flLoadDir(dir,silent)
+function LunaLoadDir(dir,silent)
 	local dirlist = dirtree(dir)
 	if(dirlist==nil) then
 		error ("Dirlist = null ("..dir..")")
@@ -126,7 +126,7 @@ end
 --                                 Load libs                                    --
 ----------------------------------------------------------------------------------
 
---flLoadDir(getCWD().."lib/") -- FlexLife Libraries
+--LunaLoadDir(getCWD().."lib/") -- Luna Libraries
 
 -- Copy SL functions into the global table
 --  This is so one doesn't have to use SL.print to print to the window.
@@ -139,7 +139,7 @@ end
 
 dofile("lua/EventHandling.lua")
 
-flLoadDir("lua/lib/",true)  -- User Libraries
-flLoadDir("lua/Hooks/",false) -- User Hooks
+LunaLoadDir("lua/lib/",true)  -- User Libraries
+LunaLoadDir("lua/Hooks/",false) -- User Hooks
 
 --DumpAllHooks();

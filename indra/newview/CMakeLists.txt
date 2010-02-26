@@ -517,12 +517,11 @@ set(viewer_SOURCE_FILES
     LuaBase_f.cpp
     LuaBuild_f.cpp
     LuaWindlight.cpp
-    FlexUI.cpp
+#    LunaUI.cpp
     LuaUI.cpp
 #   SLua.cpp
     LuaBase.cpp
     FLLua.cpp
-    flexconsole.cpp
     rlvhandler.cpp
     rlvhelper.cpp
     rlvcommon.cpp
@@ -992,12 +991,12 @@ set(viewer_HEADER_FILES
 	LuaBase.h
 	LuaBase_f.h
 	LuaBuild_f.h
-    FlexUI.h
+#   FlexUI.h
 	LuaUI.h
 	LuaBase.h
 #	LuaTypes.h
     LuaWindlight.h
-	flexconsole.h
+	lunaconsole.h
     rlvdefines.h
     rlvhandler.h
     rlvhelper.h
@@ -1519,7 +1518,7 @@ if (LINUX)
       DEPENDS ${VIEWER_BINARY_NAME}
       )
 
-  set(product FlexLife-${ARCH}-${VERSION_VIEWER})
+  set(product Luna-${ARCH}-${VERSION_VIEWER})
 
   add_custom_command(
       OUTPUT ${product}.tar.bz2
@@ -1547,16 +1546,16 @@ if (LINUX)
 endif (LINUX)
 
 if (DARWIN)
-  set(product "FlexLife Viewer")
+  set(product "Luna Viewer")
   set_target_properties(
     ${VIEWER_BINARY_NAME}
     PROPERTIES
     OUTPUT_NAME "${product}"
     MACOSX_BUNDLE_INFO_STRING "info string - localize me"
     MACOSX_BUNDLE_ICON_FILE "secondlife.icns"
-    MACOSX_BUNDLE_GUI_IDENTIFIER "FlexLife Viewer"
+    MACOSX_BUNDLE_GUI_IDENTIFIER "Luna Viewer"
     MACOSX_BUNDLE_LONG_VERSION_STRING "ververver"
-    MACOSX_BUNDLE_BUNDLE_NAME "FlexLife Viewer"
+    MACOSX_BUNDLE_BUNDLE_NAME "Luna Viewer"
     MACOSX_BUNDLE_SHORT_VERSION_STRING "asdf"
     MACOSX_BUNDLE_BUNDLE_VERSION "asdf"
     MACOSX_BUNDLE_COPYRIGHT "Copyright (c) 2009 Red Fedora Productions"

@@ -33,8 +33,8 @@ find . -type f -name "*.xml" -print | while
 read filename
 do (
         echo $filename;
-        flip -ub $filename
-        svn propset svn:eol-style native $filename > /dev/null
+        flip -ub "$filename"
+        svn propset svn:eol-style native "$filename" > /dev/null
 )
 done
 find . -type f -name "*.txt" -print | while

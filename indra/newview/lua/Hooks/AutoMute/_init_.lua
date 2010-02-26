@@ -1,8 +1,8 @@
 --[[
-	FlexLife Automatic Mute Plugin
+	Luna Automatic Mute Plugin
 		by N3X15
 	
-	Copyright (C) 2008-2009 FlexLife Contributors
+	Copyright (C) 2008-2009 Luna Contributors
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -49,8 +49,7 @@ local AMCheckSoundTrigger = function (sound_id, owner_id, gain, object_id, paren
 		if gAutoMuted[owner_id] then return end
 		gAutoMuted[owner_id]=true
 		if muteAvatar(owner_id) then
-			error(key2name(owner_id).." is playing really damn loud noises.")
-			say("This user has automatically muted "..key2name(owner_id).." for playing a sound on FlexLife's automute list ("..sound_id..").")
+			error("AutoMute has automatically muted "..key2name(owner_id).." for playing a sound on FlexLife's automute list ("..sound_id..").")
 		end
 	else
 		--print(key2name(owner_id).." is playing "..sound_id.."")
@@ -65,8 +64,7 @@ local AMCheckAttachedSound = function (object_id,audio_uuid,owner_id,gain,flags)
 		if gAutoMuted[owner_id] then return end
 		gAutoMuted[owner_id]=true
 		if muteAvatar(owner_id) then
-			error(key2name(owner_id).." is playing really damn loud noises.")
-			say("This user has automatically muted "..key2name(owner_id).." for playing a sound on FlexLife's automute list ("..audio_uuid..").")
+			error("AutoMute has automatically muted "..key2name(owner_id).." for playing a sound on FlexLife's automute list ("..audio_uuid..").")
 		end
 	else
 		--print("[OBJECT] "..key2name(owner_id).." is playing "..audio_uuid)
@@ -94,15 +92,15 @@ local AMCheckSetText = function(text,object_id)
 	if isInTable(gAutoMuteText,text)==true then
 		if isInTable(gAutoMuted,owner_id) then return end
 		if muteAvatar(owner_id) then
-			error(key2name(owner_id).." is playing really damn loud noises.")
-			say("This user has automatically muted "..key2name(owner_id).." for playing a sound on FlexLife's automute list.")
+			error("AutoMute has automatically muted "..key2name(owner_id).." for playing a sound on FlexLife's automute list.")
 		end
 	end	
 end
+
 gAutoMuteSounds={}
 gAutoMuteTextures={}
 
-flLoadDir("lua/Hooks/"..PluginName.."/DB/",true)
+LunaLoadDir("lua/Hooks/"..PluginName.."/DB/",true)
 
 print("[AutoMute] Loaded "..tostring(#gAutoMuteSounds).." sounds for automuting.")
 print("[AutoMute] Loaded "..tostring(#gAutoMuteTextures).." textures for automuting.")

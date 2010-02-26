@@ -1,9 +1,9 @@
 /**
  * @file FLLua.cpp
- * @brief FlexLife Viewer Lua Integration Framework
+ * @brief Luna Viewer Lua Integration Framework
  * @author N3X15
  *
- *  Copyright (C) 2008-2009 FlexLife Contributors
+ *  Copyright (C) 2008-2009 Luna Contributors
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@
 #include <vector>
 #include <queue>
 #include <boost/tokenizer.hpp>
-#include "FLLua.h"
+#include "LunaLua.h"
 
 /* Lua libraries */
 extern "C" {

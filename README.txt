@@ -1,13 +1,13 @@
-FlexLife SVN
+Luna Viewer SVN
 
-FlexLife is a new Second Life viewer designed to become one of the most 
+Luna is a new Second Life viewer designed to become one of the most 
 extendable viewers available.  It makes use of the Emerald viewer codebase
 (with a new customized Lua engine based off of a de-griefed ShoopedLife Lua engine) 
 and adds in some security patches.
 
 == Licensing ==
 
-Same GPL/FLOSS license as SL itself.  When FLACS (Flex Life Anti-Cheat System) is introduced, that portion will become proprietary.
+Same GPL/FLOSS license as SL itself.
 
 == How to Build ==
 

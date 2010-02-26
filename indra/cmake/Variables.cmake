@@ -101,9 +101,9 @@ endif (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 # Default deploy grid
 set(GRID agni CACHE STRING "Target Grid")
 
-set(VIEWER ON CACHE BOOL "Build Second Life viewer.")
-set(VIEWER_CHANNEL "FlexLife Development" CACHE STRING "Viewer Channel Name")
-set(VIEWER_LOGIN_CHANNEL ${VIEWER_CHANNEL} CACHE STRING "Fake login channel for A/B Testing")
+set(VIEWER ON CACHE BOOL "Build Luna viewer.")
+set(VIEWER_CHANNEL "Luna Development" CACHE STRING "Viewer Channel Name")
+set(VIEWER_LOGIN_CHANNEL ${VIEWER_CHANNEL} CACHE STRING "Luna built from SVN")
 
 set(STANDALONE OFF CACHE BOOL "Do not use Linden-supplied prebuilt libraries.")
 

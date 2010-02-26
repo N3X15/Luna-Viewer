@@ -1,8 +1,8 @@
 --[[
-	FlexLife Lua Event Handler
+	Luna Lua Event Handler
 		by N3X15
 	
-	Copyright (C) 2008-2009 FlexLife Contributors
+	Copyright (C) 2008-2009 Luna Contributors
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -71,7 +71,7 @@ function SetHook(EventName,Func)
 	table.insert(gEvents[EventName],Func);
 end
 
--- Should only be called from FlexLife's C++ code, or from a package that initialized the event called.
+-- Should only be called from Luna's C++ code, or from a package that initialized the event called.
 function CallHook(EventName,...)
 	if(gEvents[EventName]==nil) then return 0 end -- No hooks to call, so exit.
 	val=0
@@ -105,7 +105,7 @@ function DumpAllHooks()
 end
 
 function DumpAllHooks2Wiki()
-	local txt = "Registered hooks in FlexLife ".._SLUA_VERSION..":"
+	local txt = "Registered hooks in Luna ".._SLUA_VERSION..":"
 	local h=gEvents
 	table.sort(h)
 	for name,_ in pairs(h) do

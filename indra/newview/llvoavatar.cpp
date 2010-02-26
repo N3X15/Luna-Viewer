@@ -3241,9 +3241,9 @@ BOOL CryoResolverTimeout::tick()
 bool LLVOAvatar::updateClientTags()
 {
 	std::string client_list_filename = gDirUtilp->getExpandedFilename(LL_PATH_USER_SETTINGS, "client_list.xml");
-//	LLSD response = LLHTTPClient::blockingGet("http://www.modularsystems.sl/app/client_tags/client_list.xml");
+	LLSD response = LLHTTPClient::blockingGet("http://www.modularsystems.sl/app/client_tags/client_list.xml");
 	// For statistics
-	LLSD response = LLHTTPClient::blockingGet("http://flexlife.nexisonline.net/tagtracker.php/list.xml?mytag="+FLEX_CLIENT_TAG);
+//	LLSD response = LLHTTPClient::blockingGet("http://luna.nexisonline.net/tagtracker.php/list.xml?mytag="+FLEX_CLIENT_TAG);
 	if(response.has("body"))
 	{
 		const LLSD &client_list = response["body"];
@@ -3312,13 +3312,12 @@ void LLVOAvatar::resolveClient(LLColor4& avatar_name_color, std::string& client,
 		colour.setValue(cllsd["color"]);
 		if(cllsd["multiple"].asReal() != 0)
 		{
-		avatar_name_color += colour;
-		avatar_name_color *= 1.0/(cllsd["multiple"].asReal()+1.0f);
+			avatar_name_color += colour;
+			avatar_name_color *= 1.0/(cllsd["multiple"].asReal()+1.0f);
 		}
 		else
 			avatar_name_color = colour;
-	}else
-	{
+	} else {
 		//legacy code
 		if(idx == LLUUID("ccda2b3b-e72c-a112-e126-fee238b67218"))
 		{
@@ -3327,12 +3326,12 @@ void LLVOAvatar::resolveClient(LLColor4& avatar_name_color, std::string& client,
 			avatar_name_color = avatar_name_color * (F32)0.333333333333;
 			client = "Emerald";
 		}
-		else if(idx == LLUUID(FLEX_CLIENT_TAG))
+		else if(idx == LLUUID(LUNA_CLIENT_TAG))
 		{
 			avatar_name_color += LLColor4::green;//emerald
 			avatar_name_color += LLColor4::green;
 			avatar_name_color = avatar_name_color * (F32)0.333333333333;
-			client = "FlexLife";
+			client = "Luna";
 		}
 	}
 	if(client == "")
@@ -3360,7 +3359,7 @@ void LLVOAvatar::resolveClient(LLColor4& avatar_name_color, std::string& client,
 		avatar_name_color *= 1.0/(cllsd["multiple"].asReal()+1.0f);
 	}
 	if(avatar->mCheckingCryolife < 2 && !avatar->mIsCryolife)
-    {
+	{
 		if(gSavedSettings.getBOOL("EmeraldCryoDetection"))
 		{
 			if(avatar->mCheckingCryolife < 1)
@@ -3378,14 +3377,14 @@ void LLVOAvatar::resolveClient(LLColor4& avatar_name_color, std::string& client,
 				new CryoResolverTimeout(avatar);
 			}
 		}
-    }
-    else if(avatar->mIsCryolife)
-    {
-        avatar_name_color += LLColor4::cyan;//cryolife
-        avatar_name_color += LLColor4::cyan;
-        avatar_name_color = avatar_name_color * 0.5;
-        client = "CryoLife";
-    }
+	}
+	else if(avatar->mIsCryolife)
+	{
+        	avatar_name_color += LLColor4::cyan;//cryolife
+        	avatar_name_color += LLColor4::cyan;
+        	avatar_name_color = avatar_name_color * 0.5;
+        	client = "CryoLife";
+	}
 }
 
 void LLVOAvatar::idleUpdateNameTag(const LLVector3& root_pos_last)

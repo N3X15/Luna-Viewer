@@ -216,5 +216,5 @@
 #include "llvfile.h"
 #include "llvfs.h"
 
-#include "FLLua.h"
+#include "LunaLua.h"
 #endif

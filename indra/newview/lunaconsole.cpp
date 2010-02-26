@@ -1,5 +1,5 @@
 #include "llviewerprecompiledheaders.h"
-#include "flexconsole.h"
+#include "lunaconsole.h"
 #include "lluictrlfactory.h"
 #include "llviewertexteditor.h"
 #include "llcallbacklist.h"

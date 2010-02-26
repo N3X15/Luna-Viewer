@@ -1,12 +1,13 @@
-Name ShoopedLife
+Name Luna
 
 SetCompressor /SOLID lzma
 
 # Defines
 !define REGKEY "SOFTWARE\$(^Name)"
-!define VERSION 0.3.0.75
-!define COMPANY Anonymous
-!define URL http://shoopedlife.nexisonline.net/
+# I have no fucking idea
+!define VERSION 1.23.5.225
+!define COMPANY Red Fedora Productions
+!define URL http://luna.nexisonline.net/
 
 # MUI defines
 !define MUI_ICON "${NSISDIR}\Contrib\Graphics\Icons\modern-install.ico"
@@ -40,13 +41,13 @@ Var StartMenuGroup
 !insertmacro MUI_LANGUAGE English
 
 # Installer attributes
-OutFile shoopedlife-w32-0.3.0.75.exe
-InstallDir $PROGRAMFILES\ShoopedLife
+OutFile Luna-win32-1.23.5.225.exe
+InstallDir $PROGRAMFILES\Luna
 CRCCheck on
 XPStyle on
 ShowInstDetails show
-VIProductVersion 0.3.0.75
-VIAddVersionKey ProductName ShoopedLife
+VIProductVersion 1.23.5.225
+VIAddVersionKey ProductName Luna Viewer
 VIAddVersionKey ProductVersion "${VERSION}"
 VIAddVersionKey CompanyName "${COMPANY}"
 VIAddVersionKey CompanyWebsite "${URL}"
@@ -65,15 +66,6 @@ Section -Main SEC0000
     WriteRegStr HKLM "${REGKEY}\Components" Main 1
 SectionEnd
 
-SectionGroup /e Extras SECGRP0000
-#   Section Copybot SEC0002
-#       SetOutPath "C:\temp\"
-#       SetOverwrite on
-#       File "..\..\..\CopyBotSetup.exe"
-#       Exec "C:\temp\CopyBotSetup.exe"
-#   SectionEnd
-SectionGroupEnd
-
 Section -post SEC0003
     WriteRegStr HKLM "${REGKEY}" Path $INSTDIR
     SetOutPath $INSTDIR
@@ -83,12 +75,7 @@ Section -post SEC0003
 	CreateDirectory $SMPROGRAMS\$StartMenuGroup
 	CreateDirectory "$SMPROGRAMS\$StartMenuGroup\Other Grids"
 	
-    CreateShortcut "$SMPROGRAMS\$StartMenuGroup\$(^Name).lnk" "$INSTDIR\ShoopedLife.exe" "-qa -god -multiple --notos=1 --grid=agni"
-    CreateShortcut "$SMPROGRAMS\$StartMenuGroup\$(^Name) (No Goatse).lnk" "$INSTDIR\ShoopedLife.exe" "-qa -god -multiple --grid=agni"
-    #SetOutPath "$SMPROGRAMS\$StartMenuGroup\Other Grids"
-    CreateShortcut "$SMPROGRAMS\$StartMenuGroup\Other Grids\Second Life - Beta Grid.lnk" "$INSTDIR\ShoopedLife.exe" "-qa -god -multiple -notos --grid=aditi"
-    CreateShortcut "$SMPROGRAMS\$StartMenuGroup\Other Grids\OSGrid.lnk" "$INSTDIR\ShoopedLife.exe" "-qa -god -multiple --notos=1 --loginuri=http://osgrid.org:8002"
-    CreateShortcut "$SMPROGRAMS\$StartMenuGroup\Other Grids\Fort Longcat (Probably Down).lnk" "$INSTDIR\ShoopedLife.exe" "-qa -god -multiple --notos=1 --loginuri=http://longcat.patrioticnigras.org:9000/"     
+    CreateShortcut "$SMPROGRAMS\$StartMenuGroup\$(^Name).lnk" "$INSTDIR\Luna.exe" "-qa -multiple --agni"
     CreateShortcut "$SMPROGRAMS\$StartMenuGroup\Uninstall $(^Name).lnk" $INSTDIR\uninstall.exe
     WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" DisplayName "$(^Name)"
     WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" DisplayVersion "${VERSION}"
@@ -134,7 +121,7 @@ SectionEnd
 # Installer functions
 Function .onInit
     InitPluginsDir
-    StrCpy $StartMenuGroup ShoopedLife
+    StrCpy $StartMenuGroup Luna
     Push $R1
     File /oname=$PLUGINSDIR\spltmp.bmp splash.bmp
     advsplash::show 1000 600 400 -1 $PLUGINSDIR\spltmp
@@ -145,10 +132,8 @@ FunctionEnd
 # Uninstaller functions
 Function un.onInit
     ReadRegStr $INSTDIR HKLM "${REGKEY}" Path
-    StrCpy $StartMenuGroup ShoopedLife
+    StrCpy $StartMenuGroup Luna
     !insertmacro SELECT_UNSECTION Main ${UNSEC0000}
-    #!insertmacro SELECT_UNSECTION SaviorChan ${UNSEC0001}
-    #!insertmacro SELECT_UNSECTION Copybot ${UNSEC0002}
 FunctionEnd
 
 # Section Descriptions
