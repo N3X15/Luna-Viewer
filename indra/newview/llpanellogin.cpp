@@ -940,7 +940,10 @@ void LLPanelLogin::loadLoginPage()
 	* Working example: 
 	* http://flexlife.nexisonline.net/login/index2.php/ (etc)
 	*/
-	std::string login_splash( "http://flexlife.nexisonline.net/login/index2.php/" );
+	std::string login_splash( "http://luna.nexisonline.net/login/index.php" );
+/*
+llmessage/llhttpclient.cpp now sends X-Luna-Version/OS headers.
+
 #if LL_WINDOWS
 	login_splash.append("/w/");			
 #elif LL_LINUX
@@ -948,8 +951,8 @@ void LLPanelLogin::loadLoginPage()
 #elif LL_DARWIN
 	login_splash.append("/m/");
 #endif
-	login_splash.append(llformat("%d/%d/%d/%d",LL_VERSION_MAJOR,LL_VERSION_MINOR,LL_VERSION_PATCH,LL_VERSION_BUILD));	
-	
+	login_splash.append(llformat("%d/%d/%d/%d/",LL_VERSION_MAJOR,LL_VERSION_MINOR,LL_VERSION_PATCH,LL_VERSION_BUILD));	
+*/
 	// navigate to the "real" page 
 	web_browser->navigateTo( login_splash );
 }

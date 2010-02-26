@@ -237,8 +237,8 @@ static void request(
             //the Pragma header it so gratuitously inserts
             //Before inserting the header, force libcurl
             //to not use the proxy (read: llurlrequest.cpp)
-			static const std::string PRAGMA("Pragma");
-			if ((iter->first == PRAGMA) && (iter->second.asString().empty()))
+  	static const std::string PRAGMA("Pragma");
+	if ((iter->first == PRAGMA) && (iter->second.asString().empty()))
             {
                 req->useProxy(false);
             }
@@ -247,6 +247,24 @@ static void request(
             req->addHeader(header.str().c_str());
         }
     }
+
+	// Login screen version detection
+	req->addHeader(llformat("X-Luna-Version: %d.%d.%d.%d",LL_VERSION_MAJOR,LL_VERSION_MINOR,LL_VERSION_PATCH,LL_VERSION_BUILD).c_str());
+#if LL_WINDOWS
+	std::string os("1");
+#elif LL_LINUX
+	std::string os("2");
+#elif LL_DARWIN
+	std::string os("3");
+#else
+	std::string os("0");
+#endif
+	req->addHeader(llformat("X-Luna-OS: %s",os).c_str());
+/*
+	// Rolling this around in my head.  May be useful later on.
+	if(gShareMyAvatarUUID)
+		addUUIDHeader
+*/
 
 	// Check to see if we have already set Accept or not. If no one
 	// set it, set it to application/llsd+xml since that's what we
@@ -267,6 +285,7 @@ static void request(
 		req->addHeader(llformat("X-SecondLife-UDP-Listen-Port: %d",
 								gMessageSystem->mPort).c_str());
    	}
+
 
 	if (method == LLURLRequest::HTTP_PUT || method == LLURLRequest::HTTP_POST)
 	{
