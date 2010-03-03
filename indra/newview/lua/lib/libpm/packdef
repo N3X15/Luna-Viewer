@@ -1,0 +1,7 @@
+Package:	LPM
+Version:	svn.r217
+Description:	Luna Package Manager
+Homepage:	http://luna.nexisonline.net
+Author:		Luna Contributors
+Depends:	Luna >= 1.23.5.217
+Provides library libpm

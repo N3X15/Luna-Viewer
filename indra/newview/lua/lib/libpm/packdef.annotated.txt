@@ -1,0 +1,36 @@
+# Luna Packdef File
+# Tells LPM what package it's dicking with
+# 
+
+# Package ID.  Once assigned it should NOT be changed, since it's used in dependency calculations.
+Package:	LPM
+
+#Version ID.  SVN is essentially 0.  r# becomes #/10000 (So that r1000 < 1000).  Non-alphanumeric characters are delimiters.
+# 1.0.0 -> 1, 0, 0
+# 2.0~r215 -> 2, 0, 215/10000
+Version:	svn.r217
+
+# One-line blurb.
+Description:	Luna Package Manager
+
+# Durr
+Homepage:	http://luna.nexisonline.net
+
+# Name <email>
+Author:		Luna Contributors
+
+# You can use many of these to specify multiple deps.
+# This means "I need any version of Luna equal to or over v1.23.5.217.
+# Valid operators:
+# 	>=
+#	<=
+#	==
+#	>
+#	<
+Depends:	Luna >= 1.23.5.217
+
+# Tells the uninstaller what folder to remove
+# 	library = lua/lib/something/
+#	plugin	= lua/Hooks/something/
+# 	macro	= Not available yet.
+Provides library libpm

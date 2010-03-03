@@ -23,17 +23,81 @@ function lpm(command,argument)
 		LPM.DownloadManifests()
 	end
 end
+
 function LPM.DownloadManifests()
+	RemotePackages={}
 	for i,v in pairs(LPM.Repositories)
 		print("Checking",v)
 		local m = "manifests/"..v..".txt";
-		LPM.Download(i.."MANIFEST.txt",)
-		LPM.ParseManifest(v,m);
+		LPM.Download(i.."MANIFEST.txt",m)
+		LPM.ParseManifest(m);
+	end
+	RemotePackages=LPM._man
+	LPM._man={}
+end
+
+function LPM.ParseLocalManifests()
+	Packages={}
+	local dirlist = dirtree(".")
+	if(dirlist==nil) then
+		error ("Dirlist = null (.)")
+		return
+	end
+	for ent in dirlist do
+		-- packdef
+		local ext=string.sub(ent,-7)
+		--print(ext)
+		if ext=="packdef" then
+			LPM.ParseManifest(ent)
+		end
+	end
+	Packages=LPM._man
+	LPM._man={}
+end
+
+function DumpManifest(manifest)
+	print(" Dumping "..#manifest.." items...")
+	for name,package in pairs(manifest) do
+		local deps = "DEPS: "
+		for _,d in pairs(package.Depends) do
+			deps=deps..", "..d
+		end
+		print(" * "..name,package.Version)
 	end
 end
 
-function LPM.ParseManifest(reponame,file)
-	dofile(file)
+LPM._man={}
+function LPM.ParseManifest(file)
+	local cp=nil
+	local cd={}
+	local prov={}
+	for line in io.lines(file) do
+		-- Variable: Value
+		local d,args = string.match(line,"(%w+):%s+(.*)")
+		if not(d == nil) then
+			if d=="Package" then
+				if not cp == nil then
+					LPM._man[cp].Provides=prov
+					LPM._man[cp].Depends=cd
+				end
+				cp=args
+				LPM._man[cp]={}
+				LPM._man[cp].Name=cp;
+				cd={}
+				prov={}
+			elseif d=="Depends" then
+				cd[#cd+1]=args
+			elseif d=="Provides" then
+				prov[#prov+1]=args
+			else
+				LPM._man[cp][d]=args
+			end
+		end
+	end
+	if not cp == nil then
+		LPM._man[cp].Provides=prov
+		LPM._man[cp].Depends=cd
+	end
 end
 
 function LPM.FindTokens(str)
