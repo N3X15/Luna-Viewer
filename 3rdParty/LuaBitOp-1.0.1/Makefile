@@ -3,7 +3,7 @@
 # To compile with MinGW please run: mingw32-make -f Makefile.mingw
 
 # Include path where lua.h, luaconf.h and lauxlib.h reside:
-INCLUDES= -I/usr/include/lua5.1/
+INCLUDES= -I../libraries/include/lua/
 
 DEFINES=
 # Use this if you need to compile for an old ARM ABI with swapped FPA doubles

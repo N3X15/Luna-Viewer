@@ -17,7 +17,7 @@
 #include "llviewerobjectlist.h"
 #include "llviewerregion.h"
 #include "llurldispatcher.h"
-#include "flexconsole.h"
+#include "lunaconsole.h"
 #include "llmutelist.h"
 
 //#include <direct.h>

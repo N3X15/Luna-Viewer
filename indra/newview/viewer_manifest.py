@@ -49,7 +49,7 @@ class ViewerManifest(LLManifest):
         self.path(src="../../scripts/messages/message_template.msg", dst="app_settings/message_template.msg")
         self.path(src="../../etc/message.xml", dst="app_settings/message.xml")
 	self.path(src="lua/lfs.so",dst="lfs.so")
-	self.path(src="doc/license.htm",dst="readme.htm")
+	self.path(src="../../doc/license.htm",dst="readme.htm")
 	
 	if self.prefix(src="lua"):
             self.path("*.lua")
@@ -623,7 +623,7 @@ class LinuxManifest(ViewerManifest):
     def construct(self):
         super(LinuxManifest, self).construct()
         self.path("licenses-linux.txt","licenses.txt")
-        self.path("LunaIcon.png","secondlife_icon.png")
+        self.path("../../LunaIcon.png","secondlife_icon.png")
         if self.prefix("linux_tools", dst=""):
             self.path("client-readme.txt","README-linux.txt")
             self.path("client-readme-voice.txt","README-linux-voice.txt")

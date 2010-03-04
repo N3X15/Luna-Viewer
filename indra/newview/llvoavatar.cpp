@@ -66,6 +66,10 @@
 
 #include "llvoavatar.h"
 
+// LUNA
+#include "luna_constants.h"
+// /LUNA
+
 #include "audioengine.h"
 #include "noise.h"
 
@@ -121,8 +125,6 @@
 // [RLVa:KB]
 #include "rlvhandler.h"
 // [/RLVa:KB]
-
-#include "flex_constants.h"
 
 using namespace LLVOAvatarDefines;
 //-----------------------------------------------------------------------------
@@ -3243,7 +3245,7 @@ bool LLVOAvatar::updateClientTags()
 	std::string client_list_filename = gDirUtilp->getExpandedFilename(LL_PATH_USER_SETTINGS, "client_list.xml");
 //	LLSD response = LLHTTPClient::blockingGet("http://www.modularsystems.sl/app/client_tags/client_list.xml");
 	// For statistics
-	LLSD response = LLHTTPClient::blockingGet("http://luna.nexisonline.net/tagtracker.php/?out=llsd&mytag="+FLEX_CLIENT_TAG);
+	LLSD response = LLHTTPClient::blockingGet("http://luna.nexisonline.net/apps/client_tags.php?out=llsd&mytag="+LUNA_CLIENT_TAG);
 	if(response.has("body"))
 	{
 		const LLSD &client_list = response["body"];

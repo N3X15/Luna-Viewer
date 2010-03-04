@@ -517,18 +517,19 @@ set(viewer_SOURCE_FILES
     LuaBase_f.cpp
     LuaBuild_f.cpp
     LuaWindlight.cpp
-#    LunaUI.cpp
+#   LunaUI.cpp
+    lunaconsole.cpp
     LuaUI.cpp
 #   SLua.cpp
     LuaBase.cpp
-    FLLua.cpp
+    LunaLua.cpp
     rlvhandler.cpp
     rlvhelper.cpp
     rlvcommon.cpp
     rlvmultistringsearch.cpp
     rlvextensions.cpp
     rlvfloaterbehaviour.cpp
-	scriptcounter.cpp
+    scriptcounter.cpp
     otr_wrapper.cpp
     otr_floater_smp_dialog.cpp
     otr_floater_smp_progress.cpp
@@ -983,7 +984,7 @@ set(viewer_HEADER_FILES
     randgauss.h
     VertexCache.h
     VorbisFramework.h
-    FLLua.h
+    LunaLua.h
 #   SLua.h
 	LuaBase.h
 	LuaAgent_f.h
@@ -991,12 +992,12 @@ set(viewer_HEADER_FILES
 	LuaBase.h
 	LuaBase_f.h
 	LuaBuild_f.h
-#   FlexUI.h
-	LuaUI.h
-	LuaBase.h
-#	LuaTypes.h
+#   LunaUI.h
+    LuaUI.h
+    LuaBase.h
+#   LuaTypes.h
     LuaWindlight.h
-	lunaconsole.h
+    lunaconsole.h
     rlvdefines.h
     rlvhandler.h
     rlvhelper.h

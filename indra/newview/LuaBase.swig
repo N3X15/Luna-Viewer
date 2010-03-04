@@ -1,6 +1,6 @@
 /**
  * @file LuaBase.swig
- * @brief FlexLife Lua Integration Framework
+ * @brief Luna Lua Integration Framework
  * @author N3X15
  *
  *  Copyright (C) 2008-2009 N3X15

@@ -230,7 +230,7 @@
 #include "exporttracker.h"
 #include "scriptcounter.h"
 
-#include "flexconsole.h"
+#include "lunaconsole.h"
 
 using namespace LLVOAvatarDefines;
 void init_client_menu(LLMenuGL* menu);

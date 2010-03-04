@@ -34,6 +34,8 @@
 
 #include "llhttpclient.h"
 
+#include "llversionviewer.h" // LUNA
+
 #include "llassetstorage.h"
 #include "lliopipe.h"
 #include "llurlrequest.h"
