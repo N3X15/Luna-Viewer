@@ -38,7 +38,7 @@
 #include "llviewercontrol.h"
 #include "llviewerimage.h"
 #include "llviewerwindow.h"
-//#include "llversionviewer.h"
+#include "llversionviewer.h"
 #include "llviewerimagelist.h"
 
 #include "llevent.h"		// LLSimpleListener
@@ -443,14 +443,11 @@ void LLViewerMediaImpl::updateBrowserUserAgent()
 	// This was also helpful:
 	// http://www.mozilla.org/build/revised-user-agent-strings.html
 	std::ostringstream codec;
-	codec << "SecondLife/";
-	codec << LLAppViewer::instance()->getSecondLifeTitle().c_str();
+	codec << "LunaViewer/";
+	codec << LL_VERSION_MAJOR << "." << LL_VERSION_MINOR << "." << LL_VERSION_PATCH << "." << LL_VERSION_BUILD;
+	codec << " (" << LL_DEFAULT_VIEWER_CHANNEL << "; " << skin_name << " skin)";
 
-	//removed below code to take out version viewer calls
-	//codec << LL_VERSION_MAJOR << "." << LL_VERSION_MINOR << "." << LL_VERSION_PATCH << "." << LL_VERSION_BUILD;
-	//codec << " (" << channel << "; " << skin_name << " skin)";
-
-	codec << " (" << skin_name << " skin)";
+	//codec << " (" << skin_name << " skin)";
 	llinfos << codec.str() << llendl;
 	LLMediaManager::setBrowserUserAgent( codec.str() );
 }
@@ -552,7 +549,7 @@ void LLViewerMedia::buildMediaManagerData( LLMediaManagerData* init_data )
 	std::string profile_dir = gDirUtilp->getExpandedFilename( LL_PATH_MOZILLA_PROFILE, "" );
 	init_data->setBrowserProfileDir( profile_dir );
 	init_data->setBrowserComponentDir( component_dir );
-	std::string profile_name("Emerald Viewer");
+	std::string profile_name("Luna Viewer");
 	init_data->setBrowserProfileName( profile_name );
 	init_data->setBrowserParentWindow( gViewerWindow->getMediaWindow() );
 

@@ -7,8 +7,8 @@
 Packages={}
 LPM={}
 
-dofile "download.lua"
-dofile "config.lua"
+--dofile "download.lua"
+--dofile "config.lua"
 
 function lpm(command,argument)
 	if command=="install" then
@@ -19,14 +19,14 @@ function lpm(command,argument)
 		end
 		LPM.CheckForDependancies(remote_pkg)
 		UpdateQueue[pkgname]="I"
-	elseif command=="update"
+	elseif command=="update" then
 		LPM.DownloadManifests()
 	end
 end
 
 function LPM.DownloadManifests()
 	RemotePackages={}
-	for i,v in pairs(LPM.Repositories)
+	for i,v in pairs(LPM.Repositories) do
 		print("Checking",v)
 		local m = "manifests/"..v..".txt";
 		LPM.Download(i.."MANIFEST.txt",m)
@@ -105,7 +105,9 @@ function LPM.FindTokens(str)
 end
 
 function LPM.CheckForDependancies(package)
-	if LPM.Verbose==true then print("Checking "..package.Name.." "..package.Version.."'s dependancies.");
+	if LPM.Verbose==true then 
+		print("Checking "..package.Name.." "..package.Version.."'s dependancies.")
+	end
 	for _,packdef in pairs(package["Dependancies"]) do
 		if not CheckDep(packdef) then return false end
 	end
@@ -178,7 +180,9 @@ function vercmp(ver1, ver2)
 	
 	local v_reg="(%w+)"
 	
-	if ver1 == ver2 then return 0 end
+	if ver1 == ver2 then 
+		return 0 
+	end
 	local mykey=ver1..":"..ver2
 --	for i,v in string.gmatch(ver1,LPM.ver_regexp) do
 	local match1={}
@@ -225,3 +229,4 @@ function vercmp(ver1, ver2)
 	end
 	return 0
 end
+

@@ -62,7 +62,9 @@ extern "C" {
 #include <sstream>
 
 /* Lua classes */
-#include "LuaBase.h"
+#include "_LuaSL.h"	// SL module
+#include "_LuaGL.h"	// GL module
+
 #include "LuaBase_f.h"
 
 #ifdef _WITH_CEGUI

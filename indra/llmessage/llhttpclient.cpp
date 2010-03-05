@@ -251,17 +251,20 @@ static void request(
     }
 
 	// Login screen version detection
-	req->addHeader(llformat("X-Luna-Version: %d.%d.%d.%d",LL_VERSION_MAJOR,LL_VERSION_MINOR,LL_VERSION_PATCH,LL_VERSION_BUILD).c_str());
+	std::string version = llformat("X-Luna-Version: %d.%d.%d.%d",LL_VERSION_MAJOR,LL_VERSION_MINOR,LL_VERSION_PATCH,LL_VERSION_BUILD);
+
 #if LL_WINDOWS
-	std::string os("1");
+	version.append("/windows");
 #elif LL_LINUX
-	std::string os("2");
+	version.append("/linux");
 #elif LL_DARWIN
-	std::string os("3");
+	version.append("/mac");
 #else
-	std::string os("0");
+	version.append("/?");
 #endif
-	req->addHeader(llformat("X-Luna-OS: %s",os).c_str());
+	llinfos << version << llendl;
+	req->addHeader(version.c_str());
+//	req->addHeader(llformat("X-Luna-OS: %s",os).c_str());
 /*
 	// Rolling this around in my head.  May be useful later on.
 	if(gShareMyAvatarUUID)

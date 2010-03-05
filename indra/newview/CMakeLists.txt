@@ -517,11 +517,11 @@ set(viewer_SOURCE_FILES
     LuaBase_f.cpp
     LuaBuild_f.cpp
     LuaWindlight.cpp
-#   LunaUI.cpp
     lunaconsole.cpp
     LuaUI.cpp
-#   SLua.cpp
-    LuaBase.cpp
+    _LuaSL.cpp # SL module
+    swig/GL.cpp
+    _LuaGL.cpp # GL module
     LunaLua.cpp
     rlvhandler.cpp
     rlvhelper.cpp
@@ -986,18 +986,19 @@ set(viewer_HEADER_FILES
     VorbisFramework.h
     LunaLua.h
 #   SLua.h
-	LuaBase.h
-	LuaAgent_f.h
-	LuaAvatar_f.h
-	LuaBase.h
-	LuaBase_f.h
-	LuaBuild_f.h
+    LuaAgent_f.h
+    LuaAvatar_f.h
+    LuaBase_f.h
+    LuaBuild_f.h
 #   LunaUI.h
     LuaUI.h
-    LuaBase.h
+    _LuaSL.h	# SL Module
+    swig/GL.h
+    _LuaGL.h	# GL Module
 #   LuaTypes.h
     LuaWindlight.h
     lunaconsole.h
+    LunaLua.h
     rlvdefines.h
     rlvhandler.h
     rlvhelper.h
