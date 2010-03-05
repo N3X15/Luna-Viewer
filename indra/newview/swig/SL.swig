@@ -3,7 +3,7 @@
  * @brief Luna Lua Integration Framework
  * @author N3X15
  *
- *  Copyright (C) 2008-2009 N3X15
+ *  Copyright (C) 2008-2010 Luna Contributors
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -63,21 +63,21 @@
 %}
 
 %include <std_string.i>
-%include "../newview/LLUUID.i"
+%include "../LLUUID.i"
 
-%import "../llcommon/stdtypes.h"
-%import "../llprimitive/llprimitive.h"
-%import "../newview/llagent.h"
-%import "../newview/llviewerregion.h"
-%import "../newview/llviewerobject.h"
-%import "../newview/llvovolume.h"
-%import "../newview/llselectmgr.h"
-%import "../llui/llfloater.h"
-%import "../llui/llpanel.h"
-%import "../llui/llbutton.h"
-%import "../llui/lliconctrl.h"
+%import "../../llcommon/stdtypes.h"
+%import "../../llprimitive/llprimitive.h"
+%import "../llagent.h"
+%import "../llviewerregion.h"
+%import "../llviewerobject.h"
+%import "../llvovolume.h"
+%import "../llselectmgr.h"
+%import "../../llui/llfloater.h"
+%import "../../llui/llpanel.h"
+%import "../../llui/llbutton.h"
+%import "../../llui/lliconctrl.h"
 
-%import "../newview/llviewerpartsource.h"
+%import "../llviewerpartsource.h"
 
 
 %rename(SendChat)		LuaSendChat(const char *msg, bool IsDebug=false);
@@ -128,18 +128,18 @@ static int LuaBase_print (lua_State *L) {
 %rename(RemoveAllWearables)	LuaRemoveAllWearables();
 %rename(setTEImage)		LuaSetTEImage(int index,const LLUUID& id);
 
-%include "LuaBase_f.h"
+%include "../LuaBase_f.h"
 
 %rename(key2name)		LuaFindAvatarName(const LLUUID& id);
 %rename(name2key)		LuaFindAvatarKey(const char* fullname);
 %rename(UpdateAppearance)	LuaUpdateAppearance();
 
-%include "LuaAvatar_f.h"
+%include "../LuaAvatar_f.h"
 
-%include "LuaAgent_f.h"
+%include "../LuaAgent_f.h"
 
-%include "../llcharacter/llcharacter.h"
-%include "../newview/llagent.h"
+%include "../../llcharacter/llcharacter.h"
+%include "../../newview/llagent.h"
 
 
 extern bool gAllowWorldMap;
@@ -152,12 +152,12 @@ extern LLAgent *gAgent;
 %rename (Vector4)	LLVector4;
 //%rename (Color4)	LLColor4;
 
-%include "LuaParticles.h"
-%include "LuaWindlight.h"
+%include "../LuaParticles.h"
+%include "../LuaWindlight.h"
 
-%include "../newview/llviewerobject.h"
+%include "../../newview/llviewerobject.h"
 
-%include "../newview/LuaUI.h"
+//%include "../../newview/LuaUI.h"
 
 %rename (Floater) 	LuaFloater;
 %rename (Button) 	LuaButton;

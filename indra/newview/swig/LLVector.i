@@ -14,10 +14,10 @@
 %ignore LLVector4::rotVec(F32, LLVector4 const&);
 %ignore LLVector4::rotVec(F32, F32, F32, F32);
 %ignore LLVector3::parseVector3(std::string const&,LLVector3*);
-%include "../llmath/v2math.h"
-%include "../llmath/v3math.h"
-%include "../llmath/v4math.h"
-%include "../llmath/v4color.h"
+%include "../../llmath/v2math.h"
+%include "../../llmath/v3math.h"
+%include "../../llmath/v4math.h"
+%include "../../llmath/v4color.h"
 
 /////////////////////////////////////////////////////////
 // LLVector2 Extensions
