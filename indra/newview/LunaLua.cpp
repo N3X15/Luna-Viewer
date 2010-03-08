@@ -64,6 +64,7 @@ extern "C" {
 /* Lua classes */
 #include "_LuaSL.h"	// SL module
 #include "_LuaGL.h"	// GL module
+#include "_LuaRegion.h"	// GL module
 
 #include "LuaBase_f.h"
 
@@ -77,6 +78,8 @@ extern LLAgent gAgent;
 
 extern "C" {
 extern int luaopen_SL(lua_State* L); // declare the wrapped module
+extern int luaopen_GL(lua_State* L); // declare the wrapped module
+extern int luaopen_Region(lua_State* L); // declare the wrapped module
 }
 
 ///////////////////////////////////////////////
@@ -177,6 +180,7 @@ bool FLLua::init()
 	}
 	sInstance->start();
 	LL_INFOS("Lua") << "Lua started." << llendl;
+	// @hook OnLunaInit() Luna's Lua engine has initialized.
 	LUA_CALL0("OnLuaInit");
 	return true;
 }
@@ -346,6 +350,8 @@ bool FLLua::load()
 
 	LL_INFOS("Lua") << __LINE__ << ": *** LOADING SWIG BINDINGS ***" << llendl;
 	luaopen_SL(pLuaStack);
+	luaopen_GL(pLuaStack);
+	luaopen_Region(pLuaStack);
 
 #ifdef _WITH_CEGUI
 	LL_INFOS("Lua") << __LINE__ << ": *** LOADING Crazy Eddie's GUI BINDINGS ***" << llendl;

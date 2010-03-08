@@ -120,30 +120,3 @@ function DumpAllHooks2Wiki()
 	return txt
 end
 
--- Misc/Unsorted
-RegisterHook("OnLuaInit",	"Fired when the Lua engine (re)starts.")
-RegisterHook("OnAgentInit",	"Fired when YOUR agent initializes.")
-RegisterHook("EmeraldPhantomOn","Fired when you enter or leave phantom mode.")
-RegisterHook("OnObjectCreated",	"When an object is created, this event sends its Object UUID and PrimCode to Lua.")
-RegisterHook("OnAttach",	"This event is fired when an avatar attaches an object.")
-RegisterHook("OnAvatarLoaded",	"Fired when an avatar finishes loading.")
-RegisterHook("OnAttachedParticles","Fired by an object's particle system being set.")
-
--- Bridge stuff
-RegisterHook("OnBridgeMessage",	"When Emerald's LSL bridge sends a response or command, this event is fired.")
-RegisterHook("OnBridgeReady",	"Signals that the Emerald LSL Bridge is ready.")
-RegisterHook("OnBridgeFailed",	"Signals that the Emerald LSL Bridge is broken.")
-RegisterHook("OnBridgeWorking",	"Signals that the Emerald LSL Bridge is working.")
-
--- Sounds
-RegisterHook("OnSoundTriggered","Triggered when a sound plays.")
-RegisterHook("OnSoundAttachment","Triggered when an attachment plays a sound.")
-RegisterHook("OnAttachedSound",	"When an object's sound system is set, this event is called.")
-
--- CHat 
-RegisterHook("OnChatWhisper",	"Triggered when someone whispers something.")
-RegisterHook("OnOwnerSay",	"Triggered when you get an llOwnerSay event.")
-RegisterHook("OnChatSay",	"Triggered when someone says something.")
-RegisterHook("OnChatShout",	"Triggered when someone shouts something")
-RegisterHook("OnChatDebug",	"Triggered when an object says something on the debug channel. (Used to communicate with scripts)")
-

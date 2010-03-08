@@ -1,7 +1,5 @@
-SWIGPATH="newview/swig/"
-
-licensing=[[
 /**
+ * @file LuaBase.swig
  * @brief Luna Lua Integration Framework
  * @author N3X15
  *
@@ -24,36 +22,41 @@ licensing=[[
  * $Id$
  */
 
-]]
+%module Region
 
-function BuildModule(name)
-	if not exists(SWIGPATH..name..".swig") then
-		print(" * Not found.")
-		return
-	end
-	local outfile = string.format("newview/_Lua%s",name)
-	local cl = "swig -lua -c++ -o "..outfile..".cpp -oh "..outfile..".h "..SWIGPATH..name..".swig | tee "..SWIGPATH..name..".swig.log"
-	print(cl)
-	os.execute(cl);
-	if not exists(outfile..".h") then
-		print("touch "..outfile..".h")
-		os.execute("touch "..outfile..".h")
-		io.open(outfile..".h"):write(licensing.."\n// This file is purposefully empty because swig is dumb.")
-	end
-end
+//Fixed for Visual Studio
+//Has to be in begin section. VS will choke if this include isn't the very
+//first thing in the file. If GCC doesn't like it, encapsulate in 
+//#ifdef _WIN32 and include it be in #infdef _WIN32 in the header section
+//http://www.swig.org/Doc1.3/SWIG.html  5.6 Code Insertion
+#ifdef _WIN32
+%begin %{
+#include "llviewerprecompiledheaders.h"
+%}
+#endif
+%{
 
-function exists(filename)
-	local file = io.open(filename)
-	if file then
-		io.close(file)
-		return true
-	else
-		return false
-	end
-end
 
-i=1
-for i=1,#arg,1 do
---	print(i,arg[i])
-	BuildModule(arg[i])
-end
+#include "stdtypes.h"
+
+#include "llviewerregion.h"
+
+//#include "llprimitive.h"
+//#include "llviewerobject.h"
+//#include "llvovolume.h"
+#include "v2math.h"
+#include "v3math.h"
+#include "v4math.h"
+#include "v4color.h"
+#include "llhttpclient.h"
+#include "m4math.h"
+#include "llvoclouds.h"
+
+#include "swig/Region/Region.h"
+%}
+
+%include "../llviewerregion.h"
+
+%rename (Region) LLViewerRegion;
+
+%include "Region/Region.h"

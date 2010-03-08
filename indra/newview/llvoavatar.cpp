@@ -3085,6 +3085,7 @@ void LLVOAvatar::idleUpdateLoadingEffect()
 		if (isFullyLoaded())
 		{
 			deleteParticleSource();
+			// @hook OnAvatarLoaded(id,name,region_id) Triggered when an avatar has been fully loaded.
 			LUA_CALL("OnAvatarLoaded") << getID() << getFullname() << getRegion()->getRegionID() << LUA_END;
 		}
 		else

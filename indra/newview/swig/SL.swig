@@ -1,5 +1,5 @@
 /**
- * @file LuaBase.swig
+ * @file SL.swig
  * @brief Luna Lua Integration Framework
  * @author N3X15
  *
@@ -111,8 +111,6 @@ static int LuaBase_print (lua_State *L) {
 }
 %}
 
-%rename(RegionFromName)		LuaRegionFromName(const char *msg);
-%rename(GetCurrentRegion)	LuaGetCurrentRegion();
 %rename(GetCWD)			LuaGetCWD();
 %rename(error)			LuaError(const char* msg);
 

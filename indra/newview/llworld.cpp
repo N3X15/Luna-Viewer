@@ -719,6 +719,34 @@ LLCloudGroup* LLWorld::findCloudGroup(const LLCloudPuff &puff)
 	return NULL;
 }
 
+LLViewerRegion* LLWorld::findByName(std::string name)
+{
+	if (mActiveRegionList.size())
+	{
+		for (region_list_t::iterator iter = mActiveRegionList.begin();
+			 iter != mActiveRegionList.end(); ++iter)
+		{
+			LLViewerRegion* regionp = *iter;
+			if(regionp->getName()==name)
+				return regionp;
+		}
+	}
+	return NULL;
+}
+LLViewerRegion* LLWorld::findByUUID(LLUUID id)
+{
+	if (mActiveRegionList.size())
+	{
+		for (region_list_t::iterator iter = mActiveRegionList.begin();
+			 iter != mActiveRegionList.end(); ++iter)
+		{
+			LLViewerRegion* regionp = *iter;
+			if(regionp->getRegionID()==id)
+				return regionp;
+		}
+	}
+	return NULL;
+}
 
 void LLWorld::renderPropertyLines()
 {

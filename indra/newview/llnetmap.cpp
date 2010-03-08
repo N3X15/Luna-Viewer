@@ -194,6 +194,7 @@ void LLNetMap::mm_setcolor(LLUUID key,LLColor4 col){
 }
 void LLNetMap::draw()
 {
+	// @hook NetMapDraw( ) Tells Lua that it's time to update any rendering-related stuff to do with the minimap (DEPRECIATED!)
 	LUA_CALL0("NetMapDraw");
  	static LLFrameTimer map_timer;
 

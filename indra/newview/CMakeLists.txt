@@ -512,16 +512,22 @@ set(viewer_SOURCE_FILES
     llxmlrpctransaction.cpp
     noise.cpp
     pipeline.cpp
-    LuaAgent_f.cpp
-    LuaAvatar_f.cpp
-    LuaBase_f.cpp
-    LuaBuild_f.cpp
-    LuaWindlight.cpp
     lunaconsole.cpp
     LuaUI.cpp
-    _LuaSL.cpp # SL module
+# SL module -----------------
+    LuaAgent_f.cpp
+    LuaAvatar_f.cpp
+    LuaBuild_f.cpp
+    LuaBase_f.cpp
+    LuaWindlight.cpp
+    _LuaSL.cpp 
+# GL Module -----------------
     swig/GL.cpp
-    _LuaGL.cpp # GL module
+    _LuaGL.cpp
+# Region Module -------------
+    _LuaRegion.cpp
+    swig/Region/Region.cpp
+#----------------------------
     LunaLua.cpp
     rlvhandler.cpp
     rlvhelper.cpp
@@ -985,17 +991,22 @@ set(viewer_HEADER_FILES
     VertexCache.h
     VorbisFramework.h
     LunaLua.h
-#   SLua.h
+# Base Module ------------
     LuaAgent_f.h
     LuaAvatar_f.h
     LuaBase_f.h
     LuaBuild_f.h
+    LuaWindlight.h
 #   LunaUI.h
     LuaUI.h
-    _LuaSL.h	# SL Module
+    _LuaSL.h
+# GL Module --------------
     swig/GL.h
-    _LuaGL.h	# GL Module
-#   LuaTypes.h
+    _LuaGL.h
+# Region module ----------
+    swig/Region/Region.h
+    _LuaRegion.h
+# ------------------------
     LuaWindlight.h
     lunaconsole.h
     LunaLua.h

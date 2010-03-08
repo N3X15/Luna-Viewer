@@ -138,6 +138,7 @@ for k,v in pairs(SL) do
 end
 
 dofile("lua/EventHandling.lua")
+dofile("lua/HookDocs.lua")
 
 LunaLoadDir("lua/lib/",true)  -- User Libraries
 LunaLoadDir("lua/Hooks/",false) -- User Hooks

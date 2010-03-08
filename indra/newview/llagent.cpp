@@ -484,7 +484,7 @@ void LLAgent::init()
 	
 	mInitialized = TRUE;
 
-	// Run a lua hook
+	// @hook OnAgentInit(name, is_godlike) On login, tells the Lua engine the name of the user and whether it's a Linden or not.
 	std::string lolname;
 	this->getName(lolname);
 	LUA_CALL("OnAgentInit") << lolname << isGodlike() << LUA_END;
@@ -823,6 +823,7 @@ BOOL LLAgent::canFly()
 void LLAgent::setPhantom(BOOL phantom)
 {
 	emeraldPhantom = phantom;
+	// @hook EmeraldPhantomOn(is_phantom) Tells the script engine whether a user has become phantom.
 	LUA_CALL("EmeraldPhantomOn") << phantom << LUA_END;
 }
 //-----------------------------------------------------------------------------
@@ -955,6 +956,7 @@ void LLAgent::setRegion(LLViewerRegion *regionp)
 				gSky.mVOGroundp->setRegion(regionp);
 			}
 
+			// @hook OnRegionChanged(name,ip) Tells Lua that you have moved into a new region.
 			LUA_CALL("OnRegionChanged") << regionp->getName() << ip << LUA_END;
 		}
 		else

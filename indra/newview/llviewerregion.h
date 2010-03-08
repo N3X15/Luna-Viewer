@@ -44,11 +44,13 @@
 #include "v3dmath.h"
 #include "llhost.h"
 #include "llstring.h"
+#include "llhttpclient.h"
 #include "llregionflags.h"
 #include "lluuid.h"
 #include "lldatapacker.h"
 #include "llvocache.h"
 #include "llweb.h"
+#include "m4math.h"
 
 //#include "VolumeClouds.h"
 
@@ -120,11 +122,11 @@ public:
 	inline BOOL getAllowDamage()			const;
 	inline BOOL getAllowLandmark()			const;
 	inline BOOL getAllowSetHome()			const;
-	inline BOOL getResetHomeOnTeleport()	const;
-	inline BOOL getSunFixed()				const;
-	inline BOOL getBlockFly()				const;
-	inline BOOL getAllowDirectTeleport()	const;
-	inline BOOL isPrelude()					const;
+	inline BOOL getResetHomeOnTeleport()		const;
+	inline BOOL getSunFixed()			const;
+	inline BOOL getBlockFly()			const;
+	inline BOOL getAllowDirectTeleport()		const;
+	inline BOOL isPrelude()				const;
 	inline BOOL getAllowTerraform() 		const;
 	inline BOOL getRestrictPushObject()		const;
 	inline BOOL getReleaseNotesRequested()		const;
@@ -301,11 +303,11 @@ protected:
 	void setFlags(BOOL b, U32 flags);
 
 public:
-	LLWind  mWind;
-	LLCloudLayer mCloudLayer;
-	//VolumetricClouds *mVolumeClouds;
+	LLWind  		mWind;
+	LLCloudLayer 		mCloudLayer;
+	//VolumetricClouds 	*mVolumeClouds;
 	LLViewerParcelOverlay	*mParcelOverlay;
-	LLColor4				mHighlightColor;
+	LLColor4		mHighlightColor;
 
 	LLStat	mBitStat;
 	LLStat	mPacketsStat;

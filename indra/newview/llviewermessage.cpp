@@ -3285,9 +3285,11 @@ void process_chat_from_simulator(LLMessageSystem *msg, void **user_data)
 			{
 			case CHAT_TYPE_WHISPER:
 				verb = " " + LLTrans::getString("whisper") + " ";
+				// @hook OnChatWhisper(from_id,owner_id,message) Triggered when someone whispers something in local chat
 				LUA_CALL("OnChatWhisper") << from_id << owner_id << mesg << LUA_END;
 				break;
 			case CHAT_TYPE_OWNER:
+				// @hook OnChatSay(from_id,owner_id,message) Triggered when an object uses llOwnerSay.
 				LUA_CALL("OnOwnerSay") << from_id << owner_id << mesg << LUA_END;
 				if(JCLSLBridge::lsltobridge(mesg, from_name, from_id, owner_id))return;
 // [RLVa:KB] - Checked: 2009-11-25 (RLVa-1.1.0f) | Modified: RLVa-1.1.0f
@@ -3379,12 +3381,19 @@ void process_chat_from_simulator(LLMessageSystem *msg, void **user_data)
 			case CHAT_TYPE_NORMAL:
 				verb = ": ";
 				if(chat.mChatType!=CHAT_TYPE_DEBUG_MSG)
+				{
+					// @hook OnChatSay(from_id,owner_id,message) Triggered when someone says something in local chat.
 					LUA_CALL("OnChatSay") << from_id << owner_id << mesg << LUA_END;
+				}
 				else
+				{
+					// @hook OnChatDebug(from_id,owner_id,message) Triggered when an object states something on the debug channel.
 					LUA_CALL("OnChatDebug") << from_id << owner_id << mesg << LUA_END;
+				}
 				break;
 			case CHAT_TYPE_SHOUT:
 				verb = " " + LLTrans::getString("shout") + " ";
+				// @hook OnChatShout(from_id,owner_id,message) Triggered when someone shouts something in local chat.
 				LUA_CALL("OnChatShout") << from_id << owner_id << mesg << LUA_END;
 				break;
 			case CHAT_TYPE_START:
@@ -3392,6 +3401,8 @@ void process_chat_from_simulator(LLMessageSystem *msg, void **user_data)
 				LL_WARNS("Messaging") << "Got chat type start/stop in main chat processing." << LL_ENDL;
 				break;
 			default:
+				// @hook OnChatUnknown(type,from_id,owner_id,message) Triggered when someone uses an unknown chat method.
+				LUA_CALL("OnChatUnknown") << chat.mChatType << from_id << owner_id << mesg << LUA_END;
 				LL_WARNS("Messaging") << "Unknown type " << chat.mChatType << " in chat!" << LL_ENDL;
 				verb = " say, ";
 				break;
@@ -4425,7 +4436,8 @@ void process_sound_trigger(LLMessageSystem *msg, void **)
 		
 	gAudiop->triggerSound(sound_id, owner_id, gain, LLAudioEngine::AUDIO_TYPE_SFX, pos_global);
 	// Snapshot sound: 3d09f582-3851-c0e0-f5ba-277ac5c73fb4
-
+	// TODO: Exclude collisions
+	// @hook OnSoundTriggered(sound_id,owner_id,gain,object_id,parent_id) Triggered when a sound is triggered.
 	LUA_CALL("OnSoundTriggered") << sound_id << owner_id << gain << object_id << parent_id << LUA_END;
 }
 
