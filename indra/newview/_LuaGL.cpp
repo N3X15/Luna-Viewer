@@ -1490,11 +1490,14 @@ SWIG_Lua_dostring(lua_State *L, const char* str) {
 
 /* -------- TYPES TABLE (BEGIN) -------- */
 
-#define SWIGTYPE_p_GLubyte swig_types[0]
-#define SWIGTYPE_p_LLTexUnit swig_types[1]
-#define SWIGTYPE_p_float swig_types[2]
-static swig_type_info *swig_types[4];
-static swig_module_info swig_module = {swig_types, 3, 0, 0, 0, 0};
+#define SWIGTYPE_p_BOOL swig_types[0]
+#define SWIGTYPE_p_GLubyte swig_types[1]
+#define SWIGTYPE_p_LLTexUnit swig_types[2]
+#define SWIGTYPE_p_LLUUID swig_types[3]
+#define SWIGTYPE_p_float swig_types[4]
+#define SWIGTYPE_p_std__string swig_types[5]
+static swig_type_info *swig_types[7];
+static swig_module_info swig_module = {swig_types, 6, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -1533,9 +1536,587 @@ typedef struct{} LANGUAGE_OBJ;
 
 #include "swig/GL.h"
 
+
+	#include <string>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
+static int _wrap_new_string__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  std::string *result = 0 ;
+  
+  SWIG_check_num_args("std::string",0,0)
+  result = (std::string *)new std::string();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_std__string,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_string__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  char *arg1 = (char *) 0 ;
+  std::string *result = 0 ;
+  
+  SWIG_check_num_args("std::string",1,1)
+  if(!lua_isstring(L,1)) SWIG_fail_arg("std::string",1,"char const *");
+  arg1 = (char *)lua_tostring(L, 1);
+  result = (std::string *)new std::string((char const *)arg1);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_std__string,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_string(lua_State* L) {
+  int argc;
+  int argv[2]={
+    1,2
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 0) {
+    return _wrap_new_string__SWIG_0(L);
+  }
+  if (argc == 1) {
+    int _v;
+    {
+      _v = lua_isstring(L,argv[0]);
+    }
+    if (_v) {
+      return _wrap_new_string__SWIG_1(L);
+    }
+  }
+  
+  lua_pushstring(L,"Wrong arguments for overloaded function 'new_string'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    std::string()\n"
+    "    std::string(char const *)\n");
+  lua_error(L);return 0;
+}
+
+
+static int _wrap_string_size(lua_State* L) {
+  int SWIG_arg = 0;
+  std::string *arg1 = (std::string *) 0 ;
+  unsigned int result;
+  
+  SWIG_check_num_args("size",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("size",1,"std::string const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_std__string,0))){
+    SWIG_fail_ptr("string_size",1,SWIGTYPE_p_std__string);
+  }
+  
+  result = (unsigned int)((std::string const *)arg1)->size();
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_string_length(lua_State* L) {
+  int SWIG_arg = 0;
+  std::string *arg1 = (std::string *) 0 ;
+  unsigned int result;
+  
+  SWIG_check_num_args("length",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("length",1,"std::string const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_std__string,0))){
+    SWIG_fail_ptr("string_length",1,SWIGTYPE_p_std__string);
+  }
+  
+  result = (unsigned int)((std::string const *)arg1)->length();
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_string_empty(lua_State* L) {
+  int SWIG_arg = 0;
+  std::string *arg1 = (std::string *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("empty",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("empty",1,"std::string const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_std__string,0))){
+    SWIG_fail_ptr("string_empty",1,SWIGTYPE_p_std__string);
+  }
+  
+  result = (bool)((std::string const *)arg1)->empty();
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_string_c_str(lua_State* L) {
+  int SWIG_arg = 0;
+  std::string *arg1 = (std::string *) 0 ;
+  char *result = 0 ;
+  
+  SWIG_check_num_args("c_str",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("c_str",1,"std::string const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_std__string,0))){
+    SWIG_fail_ptr("string_c_str",1,SWIGTYPE_p_std__string);
+  }
+  
+  result = (char *)((std::string const *)arg1)->c_str();
+  lua_pushstring(L,(const char*)result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_string_data(lua_State* L) {
+  int SWIG_arg = 0;
+  std::string *arg1 = (std::string *) 0 ;
+  char *result = 0 ;
+  
+  SWIG_check_num_args("data",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("data",1,"std::string const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_std__string,0))){
+    SWIG_fail_ptr("string_data",1,SWIGTYPE_p_std__string);
+  }
+  
+  result = (char *)((std::string const *)arg1)->data();
+  lua_pushstring(L,(const char*)result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_string_assign(lua_State* L) {
+  int SWIG_arg = 0;
+  std::string *arg1 = (std::string *) 0 ;
+  char *arg2 = (char *) 0 ;
+  
+  SWIG_check_num_args("assign",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("assign",1,"std::string *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("assign",2,"char const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_std__string,0))){
+    SWIG_fail_ptr("string_assign",1,SWIGTYPE_p_std__string);
+  }
+  
+  arg2 = (char *)lua_tostring(L, 2);
+  (arg1)->assign((char const *)arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static void swig_delete_string(void *obj) {
+std::string *arg1 = (std::string *) obj;
+delete arg1;
+}
+static swig_lua_method swig_std_string_methods[] = {
+    {"size", _wrap_string_size}, 
+    {"length", _wrap_string_length}, 
+    {"empty", _wrap_string_empty}, 
+    {"c_str", _wrap_string_c_str}, 
+    {"data", _wrap_string_data}, 
+    {"assign", _wrap_string_assign}, 
+    {0,0}
+};
+static swig_lua_attribute swig_std_string_attributes[] = {
+    {0,0,0}
+};
+static swig_lua_class *swig_std_string_bases[] = {0};
+static const char *swig_std_string_base_names[] = {0};
+static swig_lua_class _wrap_class_std_string = { "string", &SWIGTYPE_p_std__string,_wrap_new_string, swig_delete_string, swig_std_string_methods, swig_std_string_attributes, swig_std_string_bases, swig_std_string_base_names };
+
+static int _wrap_new_UUID__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  LLUUID *result = 0 ;
+  
+  SWIG_check_num_args("LLUUID",0,0)
+  result = (LLUUID *)new LLUUID();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_LLUUID,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_UUID__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  char *arg1 = (char *) 0 ;
+  LLUUID *result = 0 ;
+  
+  SWIG_check_num_args("LLUUID",1,1)
+  if(!lua_isstring(L,1)) SWIG_fail_arg("LLUUID",1,"char const *");
+  arg1 = (char *)lua_tostring(L, 1);
+  result = (LLUUID *)new LLUUID((char const *)arg1);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_LLUUID,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_UUID(lua_State* L) {
+  int argc;
+  int argv[2]={
+    1,2
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 0) {
+    return _wrap_new_UUID__SWIG_0(L);
+  }
+  if (argc == 1) {
+    int _v;
+    {
+      _v = lua_isstring(L,argv[0]);
+    }
+    if (_v) {
+      return _wrap_new_UUID__SWIG_1(L);
+    }
+  }
+  
+  lua_pushstring(L,"Wrong arguments for overloaded function 'new_UUID'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    LLUUID()\n"
+    "    LLUUID(char const *)\n");
+  lua_error(L);return 0;
+}
+
+
+static int _wrap_UUID_asString(lua_State* L) {
+  int SWIG_arg = 0;
+  LLUUID *arg1 = (LLUUID *) 0 ;
+  std::string result;
+  
+  SWIG_check_num_args("asString",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("asString",1,"LLUUID const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLUUID,0))){
+    SWIG_fail_ptr("UUID_asString",1,SWIGTYPE_p_LLUUID);
+  }
+  
+  result = ((LLUUID const *)arg1)->asString();
+  lua_pushlstring(L,(&result)->data(),(&result)->size()); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_UUID_set__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  LLUUID *arg1 = (LLUUID *) 0 ;
+  std::string *arg2 = 0 ;
+  BOOL arg3 ;
+  std::string temp2 ;
+  BOOL *argp3 ;
+  BOOL result;
+  
+  SWIG_check_num_args("set",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("set",1,"LLUUID *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("set",2,"std::string const &");
+  if(!lua_isuserdata(L,3)) SWIG_fail_arg("set",3,"BOOL");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLUUID,0))){
+    SWIG_fail_ptr("UUID_set",1,SWIGTYPE_p_LLUUID);
+  }
+  
+  temp2.assign(lua_tostring(L,2),lua_strlen(L,2)); arg2=&temp2;
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&argp3,SWIGTYPE_p_BOOL,0))){
+    SWIG_fail_ptr("UUID_set",3,SWIGTYPE_p_BOOL);
+  }
+  arg3 = *argp3;
+  
+  result = (arg1)->set((std::string const &)*arg2,arg3);
+  {
+    BOOL * resultptr = new BOOL((const BOOL &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_BOOL,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_UUID_set__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  LLUUID *arg1 = (LLUUID *) 0 ;
+  std::string *arg2 = 0 ;
+  std::string temp2 ;
+  BOOL result;
+  
+  SWIG_check_num_args("set",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("set",1,"LLUUID *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("set",2,"std::string const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLUUID,0))){
+    SWIG_fail_ptr("UUID_set",1,SWIGTYPE_p_LLUUID);
+  }
+  
+  temp2.assign(lua_tostring(L,2),lua_strlen(L,2)); arg2=&temp2;
+  result = (arg1)->set((std::string const &)*arg2);
+  {
+    BOOL * resultptr = new BOOL((const BOOL &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_BOOL,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_UUID_set(lua_State* L) {
+  int argc;
+  int argv[4]={
+    1,2,3,4
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_LLUUID, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isstring(L,argv[1]);
+      }
+      if (_v) {
+        return _wrap_UUID_set__SWIG_1(L);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_LLUUID, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isstring(L,argv[1]);
+      }
+      if (_v) {
+        {
+          void *ptr;
+          if (lua_isuserdata(L,argv[2])==0 || SWIG_ConvertPtr(L,argv[2], (void **) &ptr, SWIGTYPE_p_BOOL, 0)) {
+            _v = 0;
+          } else {
+            _v = 1;
+          }
+        }
+        if (_v) {
+          return _wrap_UUID_set__SWIG_0(L);
+        }
+      }
+    }
+  }
+  
+  lua_pushstring(L,"Wrong arguments for overloaded function 'UUID_set'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    set(LLUUID *,std::string const &,BOOL)\n"
+    "    set(LLUUID *,std::string const &)\n");
+  lua_error(L);return 0;
+}
+
+
+static int _wrap_UUID_isNull(lua_State* L) {
+  int SWIG_arg = 0;
+  LLUUID *arg1 = (LLUUID *) 0 ;
+  BOOL result;
+  
+  SWIG_check_num_args("isNull",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("isNull",1,"LLUUID const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLUUID,0))){
+    SWIG_fail_ptr("UUID_isNull",1,SWIGTYPE_p_LLUUID);
+  }
+  
+  result = ((LLUUID const *)arg1)->isNull();
+  {
+    BOOL * resultptr = new BOOL((const BOOL &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_BOOL,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_UUID_notNull(lua_State* L) {
+  int SWIG_arg = 0;
+  LLUUID *arg1 = (LLUUID *) 0 ;
+  BOOL result;
+  
+  SWIG_check_num_args("notNull",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("notNull",1,"LLUUID const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLUUID,0))){
+    SWIG_fail_ptr("UUID_notNull",1,SWIGTYPE_p_LLUUID);
+  }
+  
+  result = ((LLUUID const *)arg1)->notNull();
+  {
+    BOOL * resultptr = new BOOL((const BOOL &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_BOOL,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_UUID_setNull(lua_State* L) {
+  int SWIG_arg = 0;
+  LLUUID *arg1 = (LLUUID *) 0 ;
+  
+  SWIG_check_num_args("setNull",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setNull",1,"LLUUID *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLUUID,0))){
+    SWIG_fail_ptr("UUID_setNull",1,SWIGTYPE_p_LLUUID);
+  }
+  
+  (arg1)->setNull();
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_UUID_validate(lua_State* L) {
+  int SWIG_arg = 0;
+  std::string *arg1 = 0 ;
+  std::string temp1 ;
+  BOOL result;
+  
+  SWIG_check_num_args("LLUUID::validate",1,1)
+  if(!lua_isstring(L,1)) SWIG_fail_arg("LLUUID::validate",1,"std::string const &");
+  temp1.assign(lua_tostring(L,1),lua_strlen(L,1)); arg1=&temp1;
+  result = LLUUID::validate((std::string const &)*arg1);
+  {
+    BOOL * resultptr = new BOOL((const BOOL &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_BOOL,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static void swig_delete_UUID(void *obj) {
+LLUUID *arg1 = (LLUUID *) obj;
+delete arg1;
+}
+static swig_lua_method swig_LLUUID_methods[] = {
+    {"asString", _wrap_UUID_asString}, 
+    {"set", _wrap_UUID_set}, 
+    {"isNull", _wrap_UUID_isNull}, 
+    {"notNull", _wrap_UUID_notNull}, 
+    {"setNull", _wrap_UUID_setNull}, 
+    {0,0}
+};
+static swig_lua_attribute swig_LLUUID_attributes[] = {
+    {0,0,0}
+};
+static swig_lua_class *swig_LLUUID_bases[] = {0};
+static const char *swig_LLUUID_base_names[] = {0};
+static swig_lua_class _wrap_class_LLUUID = { "UUID", &SWIGTYPE_p_LLUUID,_wrap_new_UUID, swig_delete_UUID, swig_LLUUID_methods, swig_LLUUID_attributes, swig_LLUUID_bases, swig_LLUUID_base_names };
+
 static int _wrap_refreshState(lua_State* L) {
   int SWIG_arg = 0;
   
@@ -2364,6 +2945,7 @@ fail:
 #endif
 
 static const struct luaL_reg swig_commands[] = {
+    { "UUID_validate", _wrap_UUID_validate},
     { "refreshState", _wrap_refreshState},
     { "translatef", _wrap_translatef},
     { "scalef", _wrap_scalef},
@@ -2403,6 +2985,7 @@ static swig_lua_var_info swig_variables[] = {
 };
 
 static swig_lua_const_info swig_constants[] = {
+{ SWIG_LUA_STRING,  (char *)"UUID_null", 0, 0, (void *)"00000000-0000-0000-0000-000000000000", 0},
 { SWIG_LUA_INT,     (char *)"TRIANGLES", (long) TRIANGLES, 0, 0, 0},
 { SWIG_LUA_INT,     (char *)"TRIANGLE_STRIP", (long) TRIANGLE_STRIP, 0, 0, 0},
 { SWIG_LUA_INT,     (char *)"TRIANGLE_FAN", (long) TRIANGLE_FAN, 0, 0, 0},
@@ -2442,24 +3025,36 @@ static swig_lua_const_info swig_constants[] = {
 
 /* -------- TYPE CONVERSION AND EQUIVALENCE RULES (BEGIN) -------- */
 
+static swig_type_info _swigt__p_BOOL = {"_p_BOOL", "BOOL *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_GLubyte = {"_p_GLubyte", "GLubyte *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_LLTexUnit = {"_p_LLTexUnit", "LLTexUnit *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_LLUUID = {"_p_LLUUID", "LLUUID *", 0, 0, (void*)&_wrap_class_LLUUID, 0};
 static swig_type_info _swigt__p_float = {"_p_float", "float *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_std__string = {"_p_std__string", "std::string *", 0, 0, (void*)&_wrap_class_std_string, 0};
 
 static swig_type_info *swig_type_initial[] = {
+  &_swigt__p_BOOL,
   &_swigt__p_GLubyte,
   &_swigt__p_LLTexUnit,
+  &_swigt__p_LLUUID,
   &_swigt__p_float,
+  &_swigt__p_std__string,
 };
 
+static swig_cast_info _swigc__p_BOOL[] = {  {&_swigt__p_BOOL, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_GLubyte[] = {  {&_swigt__p_GLubyte, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_LLTexUnit[] = {  {&_swigt__p_LLTexUnit, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_LLUUID[] = {  {&_swigt__p_LLUUID, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_float[] = {  {&_swigt__p_float, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_std__string[] = {  {&_swigt__p_std__string, 0, 0, 0},{0, 0, 0, 0}};
 
 static swig_cast_info *swig_cast_initial[] = {
+  _swigc__p_BOOL,
   _swigc__p_GLubyte,
   _swigc__p_LLTexUnit,
+  _swigc__p_LLUUID,
   _swigc__p_float,
+  _swigc__p_std__string,
 };
 
 

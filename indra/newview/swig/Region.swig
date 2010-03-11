@@ -54,6 +54,9 @@
 
 #include "swig/Region/Region.h"
 %}
+%include <std_string.i>
+%include "LLUUID.i"
+//%include "LLVector.i" // Getting lots of redefinition errors...
 
 %include "../llviewerregion.h"
 

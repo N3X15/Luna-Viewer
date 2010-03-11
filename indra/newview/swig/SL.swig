@@ -63,7 +63,8 @@
 %}
 
 %include <std_string.i>
-%include "../LLUUID.i"
+%include "LLUUID.i"
+%include "LLVector.i"
 
 %import "../../llcommon/stdtypes.h"
 %import "../../llprimitive/llprimitive.h"
@@ -142,13 +143,6 @@ static int LuaBase_print (lua_State *L) {
 
 extern bool gAllowWorldMap;
 extern LLAgent *gAgent;
-
-%include "LLVector.i"
-
-%rename (Vector2)	LLVector2;
-%rename (Vector3)	LLVector3;
-%rename (Vector4)	LLVector4;
-//%rename (Color4)	LLColor4;
 
 %include "../LuaParticles.h"
 %include "../LuaWindlight.h"

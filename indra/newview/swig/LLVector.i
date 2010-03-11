@@ -38,6 +38,8 @@
 };
 
 %{
+#ifndef LLVECTOR2_ACCESSORS_DONE
+#define LLVECTOR2_ACCESSORS_DONE
 float LLVector2_x_get(LLVector2 *v)
 {
 	return v->mV[VX];
@@ -57,6 +59,7 @@ void LLVector2_y_set(LLVector2 *v,float val)
 {
 	v->mV[VY]=val;
 }
+#endif
 %}
 /////////////////////////////////////////////////////////
 // LLVector3 Extensions
@@ -82,6 +85,8 @@ void LLVector2_y_set(LLVector2 *v,float val)
 };
 
 %{
+#ifndef LLVECTOR3_ACCESSORS_DONE
+#define LLVECTOR3_ACCESSORS_DONE
 // Accessors for LLVector3::x
 float LLVector3_x_get(LLVector3 *v)
 {
@@ -147,6 +152,7 @@ void LLVector3_b_set(LLVector3 *v,float val)
 {
 	v->mV[VZ]=val;
 }
+#endif
 %}
 
 /////////////////////////////////////////////////////////
@@ -174,6 +180,8 @@ void LLVector3_b_set(LLVector3 *v,float val)
 };
 
 %{
+#ifndef LLVECTOR4_ACCESSORS_DONE
+#define LLVECTOR4_ACCESSORS_DONE
 // Accessors for LLVector4::x
 float LLVector4_x_get(LLVector4 *v)
 {
@@ -261,5 +269,11 @@ void LLVector4_a_set(LLVector4 *v,float val)
 {
 	v->mV[VW]=val;
 }
+#endif
 %}
+
+%rename (Vector2)	LLVector2;
+%rename (Vector3)	LLVector3;
+%rename (Vector4)	LLVector4;
+//%rename (Color4)	LLColor4;
 

@@ -56,6 +56,10 @@
 #include "swig/GL.h"
 %}
 
+%include <std_string.i>
+%include "LLUUID.i"
+//%include "LLVector.i" // Getting lots of redefinition errors...
+
 //%include "../../llrender/llrender.h" // GL drawing methods
 //%include "../../llrender/llglheaders.h" // GL drawing methods
 

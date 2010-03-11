@@ -1559,9 +1559,587 @@ typedef struct{} LANGUAGE_OBJ;
 
 #include "swig/Region/Region.h"
 
+
+	#include <string>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
+static int _wrap_new_string__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  std::string *result = 0 ;
+  
+  SWIG_check_num_args("std::string",0,0)
+  result = (std::string *)new std::string();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_std__string,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_string__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  char *arg1 = (char *) 0 ;
+  std::string *result = 0 ;
+  
+  SWIG_check_num_args("std::string",1,1)
+  if(!lua_isstring(L,1)) SWIG_fail_arg("std::string",1,"char const *");
+  arg1 = (char *)lua_tostring(L, 1);
+  result = (std::string *)new std::string((char const *)arg1);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_std__string,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_string(lua_State* L) {
+  int argc;
+  int argv[2]={
+    1,2
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 0) {
+    return _wrap_new_string__SWIG_0(L);
+  }
+  if (argc == 1) {
+    int _v;
+    {
+      _v = lua_isstring(L,argv[0]);
+    }
+    if (_v) {
+      return _wrap_new_string__SWIG_1(L);
+    }
+  }
+  
+  lua_pushstring(L,"Wrong arguments for overloaded function 'new_string'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    std::string()\n"
+    "    std::string(char const *)\n");
+  lua_error(L);return 0;
+}
+
+
+static int _wrap_string_size(lua_State* L) {
+  int SWIG_arg = 0;
+  std::string *arg1 = (std::string *) 0 ;
+  unsigned int result;
+  
+  SWIG_check_num_args("size",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("size",1,"std::string const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_std__string,0))){
+    SWIG_fail_ptr("string_size",1,SWIGTYPE_p_std__string);
+  }
+  
+  result = (unsigned int)((std::string const *)arg1)->size();
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_string_length(lua_State* L) {
+  int SWIG_arg = 0;
+  std::string *arg1 = (std::string *) 0 ;
+  unsigned int result;
+  
+  SWIG_check_num_args("length",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("length",1,"std::string const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_std__string,0))){
+    SWIG_fail_ptr("string_length",1,SWIGTYPE_p_std__string);
+  }
+  
+  result = (unsigned int)((std::string const *)arg1)->length();
+  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_string_empty(lua_State* L) {
+  int SWIG_arg = 0;
+  std::string *arg1 = (std::string *) 0 ;
+  bool result;
+  
+  SWIG_check_num_args("empty",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("empty",1,"std::string const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_std__string,0))){
+    SWIG_fail_ptr("string_empty",1,SWIGTYPE_p_std__string);
+  }
+  
+  result = (bool)((std::string const *)arg1)->empty();
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_string_c_str(lua_State* L) {
+  int SWIG_arg = 0;
+  std::string *arg1 = (std::string *) 0 ;
+  char *result = 0 ;
+  
+  SWIG_check_num_args("c_str",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("c_str",1,"std::string const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_std__string,0))){
+    SWIG_fail_ptr("string_c_str",1,SWIGTYPE_p_std__string);
+  }
+  
+  result = (char *)((std::string const *)arg1)->c_str();
+  lua_pushstring(L,(const char*)result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_string_data(lua_State* L) {
+  int SWIG_arg = 0;
+  std::string *arg1 = (std::string *) 0 ;
+  char *result = 0 ;
+  
+  SWIG_check_num_args("data",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("data",1,"std::string const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_std__string,0))){
+    SWIG_fail_ptr("string_data",1,SWIGTYPE_p_std__string);
+  }
+  
+  result = (char *)((std::string const *)arg1)->data();
+  lua_pushstring(L,(const char*)result); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_string_assign(lua_State* L) {
+  int SWIG_arg = 0;
+  std::string *arg1 = (std::string *) 0 ;
+  char *arg2 = (char *) 0 ;
+  
+  SWIG_check_num_args("assign",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("assign",1,"std::string *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("assign",2,"char const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_std__string,0))){
+    SWIG_fail_ptr("string_assign",1,SWIGTYPE_p_std__string);
+  }
+  
+  arg2 = (char *)lua_tostring(L, 2);
+  (arg1)->assign((char const *)arg2);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static void swig_delete_string(void *obj) {
+std::string *arg1 = (std::string *) obj;
+delete arg1;
+}
+static swig_lua_method swig_std_string_methods[] = {
+    {"size", _wrap_string_size}, 
+    {"length", _wrap_string_length}, 
+    {"empty", _wrap_string_empty}, 
+    {"c_str", _wrap_string_c_str}, 
+    {"data", _wrap_string_data}, 
+    {"assign", _wrap_string_assign}, 
+    {0,0}
+};
+static swig_lua_attribute swig_std_string_attributes[] = {
+    {0,0,0}
+};
+static swig_lua_class *swig_std_string_bases[] = {0};
+static const char *swig_std_string_base_names[] = {0};
+static swig_lua_class _wrap_class_std_string = { "string", &SWIGTYPE_p_std__string,_wrap_new_string, swig_delete_string, swig_std_string_methods, swig_std_string_attributes, swig_std_string_bases, swig_std_string_base_names };
+
+static int _wrap_new_UUID__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  LLUUID *result = 0 ;
+  
+  SWIG_check_num_args("LLUUID",0,0)
+  result = (LLUUID *)new LLUUID();
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_LLUUID,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_UUID__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  char *arg1 = (char *) 0 ;
+  LLUUID *result = 0 ;
+  
+  SWIG_check_num_args("LLUUID",1,1)
+  if(!lua_isstring(L,1)) SWIG_fail_arg("LLUUID",1,"char const *");
+  arg1 = (char *)lua_tostring(L, 1);
+  result = (LLUUID *)new LLUUID((char const *)arg1);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_LLUUID,1); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_new_UUID(lua_State* L) {
+  int argc;
+  int argv[2]={
+    1,2
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 0) {
+    return _wrap_new_UUID__SWIG_0(L);
+  }
+  if (argc == 1) {
+    int _v;
+    {
+      _v = lua_isstring(L,argv[0]);
+    }
+    if (_v) {
+      return _wrap_new_UUID__SWIG_1(L);
+    }
+  }
+  
+  lua_pushstring(L,"Wrong arguments for overloaded function 'new_UUID'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    LLUUID()\n"
+    "    LLUUID(char const *)\n");
+  lua_error(L);return 0;
+}
+
+
+static int _wrap_UUID_asString(lua_State* L) {
+  int SWIG_arg = 0;
+  LLUUID *arg1 = (LLUUID *) 0 ;
+  std::string result;
+  
+  SWIG_check_num_args("asString",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("asString",1,"LLUUID const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLUUID,0))){
+    SWIG_fail_ptr("UUID_asString",1,SWIGTYPE_p_LLUUID);
+  }
+  
+  result = ((LLUUID const *)arg1)->asString();
+  lua_pushlstring(L,(&result)->data(),(&result)->size()); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_UUID_set__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  LLUUID *arg1 = (LLUUID *) 0 ;
+  std::string *arg2 = 0 ;
+  BOOL arg3 ;
+  std::string temp2 ;
+  BOOL *argp3 ;
+  BOOL result;
+  
+  SWIG_check_num_args("set",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("set",1,"LLUUID *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("set",2,"std::string const &");
+  if(!lua_isuserdata(L,3)) SWIG_fail_arg("set",3,"BOOL");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLUUID,0))){
+    SWIG_fail_ptr("UUID_set",1,SWIGTYPE_p_LLUUID);
+  }
+  
+  temp2.assign(lua_tostring(L,2),lua_strlen(L,2)); arg2=&temp2;
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&argp3,SWIGTYPE_p_BOOL,0))){
+    SWIG_fail_ptr("UUID_set",3,SWIGTYPE_p_BOOL);
+  }
+  arg3 = *argp3;
+  
+  result = (arg1)->set((std::string const &)*arg2,arg3);
+  {
+    BOOL * resultptr = new BOOL((const BOOL &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_BOOL,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_UUID_set__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  LLUUID *arg1 = (LLUUID *) 0 ;
+  std::string *arg2 = 0 ;
+  std::string temp2 ;
+  BOOL result;
+  
+  SWIG_check_num_args("set",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("set",1,"LLUUID *");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("set",2,"std::string const &");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLUUID,0))){
+    SWIG_fail_ptr("UUID_set",1,SWIGTYPE_p_LLUUID);
+  }
+  
+  temp2.assign(lua_tostring(L,2),lua_strlen(L,2)); arg2=&temp2;
+  result = (arg1)->set((std::string const &)*arg2);
+  {
+    BOOL * resultptr = new BOOL((const BOOL &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_BOOL,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_UUID_set(lua_State* L) {
+  int argc;
+  int argv[4]={
+    1,2,3,4
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 2) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_LLUUID, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isstring(L,argv[1]);
+      }
+      if (_v) {
+        return _wrap_UUID_set__SWIG_1(L);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    {
+      void *ptr;
+      if (SWIG_isptrtype(L,argv[0])==0 || SWIG_ConvertPtr(L,argv[0], (void **) &ptr, SWIGTYPE_p_LLUUID, 0)) {
+        _v = 0;
+      } else {
+        _v = 1;
+      }
+    }
+    if (_v) {
+      {
+        _v = lua_isstring(L,argv[1]);
+      }
+      if (_v) {
+        {
+          void *ptr;
+          if (lua_isuserdata(L,argv[2])==0 || SWIG_ConvertPtr(L,argv[2], (void **) &ptr, SWIGTYPE_p_BOOL, 0)) {
+            _v = 0;
+          } else {
+            _v = 1;
+          }
+        }
+        if (_v) {
+          return _wrap_UUID_set__SWIG_0(L);
+        }
+      }
+    }
+  }
+  
+  lua_pushstring(L,"Wrong arguments for overloaded function 'UUID_set'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    set(LLUUID *,std::string const &,BOOL)\n"
+    "    set(LLUUID *,std::string const &)\n");
+  lua_error(L);return 0;
+}
+
+
+static int _wrap_UUID_isNull(lua_State* L) {
+  int SWIG_arg = 0;
+  LLUUID *arg1 = (LLUUID *) 0 ;
+  BOOL result;
+  
+  SWIG_check_num_args("isNull",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("isNull",1,"LLUUID const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLUUID,0))){
+    SWIG_fail_ptr("UUID_isNull",1,SWIGTYPE_p_LLUUID);
+  }
+  
+  result = ((LLUUID const *)arg1)->isNull();
+  {
+    BOOL * resultptr = new BOOL((const BOOL &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_BOOL,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_UUID_notNull(lua_State* L) {
+  int SWIG_arg = 0;
+  LLUUID *arg1 = (LLUUID *) 0 ;
+  BOOL result;
+  
+  SWIG_check_num_args("notNull",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("notNull",1,"LLUUID const *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLUUID,0))){
+    SWIG_fail_ptr("UUID_notNull",1,SWIGTYPE_p_LLUUID);
+  }
+  
+  result = ((LLUUID const *)arg1)->notNull();
+  {
+    BOOL * resultptr = new BOOL((const BOOL &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_BOOL,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_UUID_setNull(lua_State* L) {
+  int SWIG_arg = 0;
+  LLUUID *arg1 = (LLUUID *) 0 ;
+  
+  SWIG_check_num_args("setNull",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setNull",1,"LLUUID *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLUUID,0))){
+    SWIG_fail_ptr("UUID_setNull",1,SWIGTYPE_p_LLUUID);
+  }
+  
+  (arg1)->setNull();
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_UUID_validate(lua_State* L) {
+  int SWIG_arg = 0;
+  std::string *arg1 = 0 ;
+  std::string temp1 ;
+  BOOL result;
+  
+  SWIG_check_num_args("LLUUID::validate",1,1)
+  if(!lua_isstring(L,1)) SWIG_fail_arg("LLUUID::validate",1,"std::string const &");
+  temp1.assign(lua_tostring(L,1),lua_strlen(L,1)); arg1=&temp1;
+  result = LLUUID::validate((std::string const &)*arg1);
+  {
+    BOOL * resultptr = new BOOL((const BOOL &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_BOOL,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static void swig_delete_UUID(void *obj) {
+LLUUID *arg1 = (LLUUID *) obj;
+delete arg1;
+}
+static swig_lua_method swig_LLUUID_methods[] = {
+    {"asString", _wrap_UUID_asString}, 
+    {"set", _wrap_UUID_set}, 
+    {"isNull", _wrap_UUID_isNull}, 
+    {"notNull", _wrap_UUID_notNull}, 
+    {"setNull", _wrap_UUID_setNull}, 
+    {0,0}
+};
+static swig_lua_attribute swig_LLUUID_attributes[] = {
+    {0,0,0}
+};
+static swig_lua_class *swig_LLUUID_bases[] = {0};
+static const char *swig_LLUUID_base_names[] = {0};
+static swig_lua_class _wrap_class_LLUUID = { "UUID", &SWIGTYPE_p_LLUUID,_wrap_new_UUID, swig_delete_UUID, swig_LLUUID_methods, swig_LLUUID_attributes, swig_LLUUID_bases, swig_LLUUID_base_names };
+
 static int _wrap_MAX_OBJECT_CACHE_ENTRIES_get(lua_State* L) {
   int SWIG_arg = 0;
   U32 result;
@@ -2897,20 +3475,17 @@ static int _wrap_LLViewerRegion_setRegionNameAndZone(lua_State* L) {
   int SWIG_arg = 0;
   LLViewerRegion *arg1 = (LLViewerRegion *) 0 ;
   std::string *arg2 = 0 ;
+  std::string temp2 ;
   
   SWIG_check_num_args("setRegionNameAndZone",2,2)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setRegionNameAndZone",1,"LLViewerRegion *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("setRegionNameAndZone",2,"std::string const &");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("setRegionNameAndZone",2,"std::string const &");
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLViewerRegion,0))){
     SWIG_fail_ptr("LLViewerRegion_setRegionNameAndZone",1,SWIGTYPE_p_LLViewerRegion);
   }
   
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_std__string,0))){
-    SWIG_fail_ptr("LLViewerRegion_setRegionNameAndZone",2,SWIGTYPE_p_std__string);
-  }
-  
+  temp2.assign(lua_tostring(L,2),lua_strlen(L,2)); arg2=&temp2;
   (arg1)->setRegionNameAndZone((std::string const &)*arg2);
   
   return SWIG_arg;
@@ -2939,7 +3514,7 @@ static int _wrap_LLViewerRegion_getName(lua_State* L) {
     std::string const &_result_ref = ((LLViewerRegion const *)arg1)->getName();
     result = (std::string *) &_result_ref;
   }
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_std__string,0); SWIG_arg++; 
+  lua_pushlstring(L,result->data(),result->size()); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -2966,7 +3541,7 @@ static int _wrap_LLViewerRegion_getZoning(lua_State* L) {
     std::string const &_result_ref = ((LLViewerRegion const *)arg1)->getZoning();
     result = (std::string *) &_result_ref;
   }
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_std__string,0); SWIG_arg++; 
+  lua_pushlstring(L,result->data(),result->size()); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -2981,20 +3556,18 @@ static int _wrap_LLViewerRegion_setOwner(lua_State* L) {
   int SWIG_arg = 0;
   LLViewerRegion *arg1 = (LLViewerRegion *) 0 ;
   LLUUID *arg2 = 0 ;
+  LLUUID temp2 ;
   
   SWIG_check_num_args("setOwner",2,2)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setOwner",1,"LLViewerRegion *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("setOwner",2,"LLUUID const &");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("setOwner",2,"LLUUID const &");
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLViewerRegion,0))){
     SWIG_fail_ptr("LLViewerRegion_setOwner",1,SWIGTYPE_p_LLViewerRegion);
   }
   
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_LLUUID,0))){
-    SWIG_fail_ptr("LLViewerRegion_setOwner",2,SWIGTYPE_p_LLUUID);
-  }
-  
+  SWIG_contract_assert(temp2.set(lua_tostring(L,2),false),"Must be of UUID format.")
+  arg2=&temp2;
   (arg1)->setOwner((LLUUID const &)*arg2);
   
   return SWIG_arg;
@@ -3023,7 +3596,7 @@ static int _wrap_LLViewerRegion_getOwner(lua_State* L) {
     LLUUID const &_result_ref = ((LLViewerRegion const *)arg1)->getOwner();
     result = (LLUUID *) &_result_ref;
   }
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_LLUUID,0); SWIG_arg++; 
+  lua_pushlstring(L,result->asString().data(),result->asString().size()); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -3192,10 +3765,7 @@ static int _wrap_LLViewerRegion_getSimAccessString(lua_State* L) {
   }
   
   result = ((LLViewerRegion const *)arg1)->getSimAccessString();
-  {
-    std::string * resultptr = new std::string((const std::string &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_std__string,1); SWIG_arg++;
-  }
+  lua_pushlstring(L,(&result)->data(),(&result)->size()); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -3276,7 +3846,7 @@ static int _wrap_LLViewerRegion_getSimColoName(lua_State* L) {
     std::string const &_result_ref = ((LLViewerRegion const *)arg1)->getSimColoName();
     result = (std::string *) &_result_ref;
   }
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_std__string,0); SWIG_arg++; 
+  lua_pushlstring(L,result->data(),result->size()); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -3303,7 +3873,7 @@ static int _wrap_LLViewerRegion_getSimProductSKU(lua_State* L) {
     std::string const &_result_ref = ((LLViewerRegion const *)arg1)->getSimProductSKU();
     result = (std::string *) &_result_ref;
   }
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_std__string,0); SWIG_arg++; 
+  lua_pushlstring(L,result->data(),result->size()); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -3330,7 +3900,7 @@ static int _wrap_LLViewerRegion_getSimProductName(lua_State* L) {
     std::string const &_result_ref = ((LLViewerRegion const *)arg1)->getSimProductName();
     result = (std::string *) &_result_ref;
   }
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_std__string,0); SWIG_arg++; 
+  lua_pushlstring(L,result->data(),result->size()); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -3356,10 +3926,7 @@ static int _wrap_LLViewerRegion_regionFlagsToString(lua_State* L) {
   arg1 = *argp1;
   
   result = LLViewerRegion::regionFlagsToString(arg1);
-  {
-    std::string * resultptr = new std::string((const std::string &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_std__string,1); SWIG_arg++;
-  }
+  lua_pushlstring(L,(&result)->data(),(&result)->size()); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -3385,10 +3952,7 @@ static int _wrap_LLViewerRegion_accessToString(lua_State* L) {
   arg1 = *argp1;
   
   result = LLViewerRegion::accessToString(arg1);
-  {
-    std::string * resultptr = new std::string((const std::string &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_std__string,1); SWIG_arg++;
-  }
+  lua_pushlstring(L,(&result)->data(),(&result)->size()); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -3414,10 +3978,7 @@ static int _wrap_LLViewerRegion_accessToShortString(lua_State* L) {
   arg1 = *argp1;
   
   result = LLViewerRegion::accessToShortString(arg1);
-  {
-    std::string * resultptr = new std::string((const std::string &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_std__string,1); SWIG_arg++;
-  }
+  lua_pushlstring(L,(&result)->data(),(&result)->size()); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -3462,20 +4023,18 @@ static int _wrap_LLViewerRegion_setCacheID(lua_State* L) {
   int SWIG_arg = 0;
   LLViewerRegion *arg1 = (LLViewerRegion *) 0 ;
   LLUUID *arg2 = 0 ;
+  LLUUID temp2 ;
   
   SWIG_check_num_args("setCacheID",2,2)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setCacheID",1,"LLViewerRegion *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("setCacheID",2,"LLUUID const &");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("setCacheID",2,"LLUUID const &");
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLViewerRegion,0))){
     SWIG_fail_ptr("LLViewerRegion_setCacheID",1,SWIGTYPE_p_LLViewerRegion);
   }
   
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_LLUUID,0))){
-    SWIG_fail_ptr("LLViewerRegion_setCacheID",2,SWIGTYPE_p_LLUUID);
-  }
-  
+  SWIG_contract_assert(temp2.set(lua_tostring(L,2),false),"Must be of UUID format.")
+  arg2=&temp2;
   (arg1)->setCacheID((LLUUID const &)*arg2);
   
   return SWIG_arg;
@@ -3717,20 +4276,17 @@ static int _wrap_LLViewerRegion_setSeedCapability(lua_State* L) {
   int SWIG_arg = 0;
   LLViewerRegion *arg1 = (LLViewerRegion *) 0 ;
   std::string *arg2 = 0 ;
+  std::string temp2 ;
   
   SWIG_check_num_args("setSeedCapability",2,2)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setSeedCapability",1,"LLViewerRegion *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("setSeedCapability",2,"std::string const &");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("setSeedCapability",2,"std::string const &");
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLViewerRegion,0))){
     SWIG_fail_ptr("LLViewerRegion_setSeedCapability",1,SWIGTYPE_p_LLViewerRegion);
   }
   
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_std__string,0))){
-    SWIG_fail_ptr("LLViewerRegion_setSeedCapability",2,SWIGTYPE_p_std__string);
-  }
-  
+  temp2.assign(lua_tostring(L,2),lua_strlen(L,2)); arg2=&temp2;
   (arg1)->setSeedCapability((std::string const &)*arg2);
   
   return SWIG_arg;
@@ -3748,26 +4304,20 @@ static int _wrap_LLViewerRegion_setCapability(lua_State* L) {
   LLViewerRegion *arg1 = (LLViewerRegion *) 0 ;
   std::string *arg2 = 0 ;
   std::string *arg3 = 0 ;
+  std::string temp2 ;
+  std::string temp3 ;
   
   SWIG_check_num_args("setCapability",3,3)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setCapability",1,"LLViewerRegion *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("setCapability",2,"std::string const &");
-  if(!lua_isuserdata(L,3)) SWIG_fail_arg("setCapability",3,"std::string const &");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("setCapability",2,"std::string const &");
+  if(!lua_isstring(L,3)) SWIG_fail_arg("setCapability",3,"std::string const &");
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLViewerRegion,0))){
     SWIG_fail_ptr("LLViewerRegion_setCapability",1,SWIGTYPE_p_LLViewerRegion);
   }
   
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_std__string,0))){
-    SWIG_fail_ptr("LLViewerRegion_setCapability",2,SWIGTYPE_p_std__string);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&arg3,SWIGTYPE_p_std__string,0))){
-    SWIG_fail_ptr("LLViewerRegion_setCapability",3,SWIGTYPE_p_std__string);
-  }
-  
+  temp2.assign(lua_tostring(L,2),lua_strlen(L,2)); arg2=&temp2;
+  temp3.assign(lua_tostring(L,3),lua_strlen(L,3)); arg3=&temp3;
   (arg1)->setCapability((std::string const &)*arg2,(std::string const &)*arg3);
   
   return SWIG_arg;
@@ -3784,26 +4334,20 @@ static int _wrap_LLViewerRegion_getCapability(lua_State* L) {
   int SWIG_arg = 0;
   LLViewerRegion *arg1 = (LLViewerRegion *) 0 ;
   std::string *arg2 = 0 ;
+  std::string temp2 ;
   std::string result;
   
   SWIG_check_num_args("getCapability",2,2)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("getCapability",1,"LLViewerRegion const *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("getCapability",2,"std::string const &");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("getCapability",2,"std::string const &");
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLViewerRegion,0))){
     SWIG_fail_ptr("LLViewerRegion_getCapability",1,SWIGTYPE_p_LLViewerRegion);
   }
   
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_std__string,0))){
-    SWIG_fail_ptr("LLViewerRegion_getCapability",2,SWIGTYPE_p_std__string);
-  }
-  
+  temp2.assign(lua_tostring(L,2),lua_strlen(L,2)); arg2=&temp2;
   result = ((LLViewerRegion const *)arg1)->getCapability((std::string const &)*arg2);
-  {
-    std::string * resultptr = new std::string((const std::string &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_std__string,1); SWIG_arg++;
-  }
+  lua_pushlstring(L,(&result)->data(),(&result)->size()); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -3817,15 +4361,12 @@ fail:
 static int _wrap_LLViewerRegion_isSpecialCapabilityName(lua_State* L) {
   int SWIG_arg = 0;
   std::string *arg1 = 0 ;
+  std::string temp1 ;
   bool result;
   
   SWIG_check_num_args("LLViewerRegion::isSpecialCapabilityName",1,1)
-  if(!lua_isuserdata(L,1)) SWIG_fail_arg("LLViewerRegion::isSpecialCapabilityName",1,"std::string const &");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_std__string,0))){
-    SWIG_fail_ptr("LLViewerRegion_isSpecialCapabilityName",1,SWIGTYPE_p_std__string);
-  }
-  
+  if(!lua_isstring(L,1)) SWIG_fail_arg("LLViewerRegion::isSpecialCapabilityName",1,"std::string const &");
+  temp1.assign(lua_tostring(L,1),lua_strlen(L,1)); arg1=&temp1;
   result = (bool)LLViewerRegion::isSpecialCapabilityName((std::string const &)*arg1);
   lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
@@ -3958,7 +4499,7 @@ static int _wrap_LLViewerRegion_getRegionID(lua_State* L) {
     LLUUID const &_result_ref = ((LLViewerRegion const *)arg1)->getRegionID();
     result = (LLUUID *) &_result_ref;
   }
-  SWIG_NewPointerObj(L,result,SWIGTYPE_p_LLUUID,0); SWIG_arg++; 
+  lua_pushlstring(L,result->asString().data(),result->asString().size()); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -3973,20 +4514,18 @@ static int _wrap_LLViewerRegion_setRegionID(lua_State* L) {
   int SWIG_arg = 0;
   LLViewerRegion *arg1 = (LLViewerRegion *) 0 ;
   LLUUID *arg2 = 0 ;
+  LLUUID temp2 ;
   
   SWIG_check_num_args("setRegionID",2,2)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setRegionID",1,"LLViewerRegion *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("setRegionID",2,"LLUUID const &");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("setRegionID",2,"LLUUID const &");
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLViewerRegion,0))){
     SWIG_fail_ptr("LLViewerRegion_setRegionID",1,SWIGTYPE_p_LLViewerRegion);
   }
   
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_LLUUID,0))){
-    SWIG_fail_ptr("LLViewerRegion_setRegionID",2,SWIGTYPE_p_LLUUID);
-  }
-  
+  SWIG_contract_assert(temp2.set(lua_tostring(L,2),false),"Must be of UUID format.")
+  arg2=&temp2;
   (arg1)->setRegionID((LLUUID const &)*arg2);
   
   return SWIG_arg;
@@ -5238,24 +5777,22 @@ fail:
 static int _wrap_LLViewerRegion_mMapAvatarIDs_set(lua_State* L) {
   int SWIG_arg = 0;
   LLViewerRegion *arg1 = (LLViewerRegion *) 0 ;
-  LLDynamicArray< LLUUID > arg2 ;
-  LLDynamicArray< LLUUID > *argp2 ;
+  LLDynamicArray< LLUUID > *arg2 = (LLDynamicArray< LLUUID > *) 0 ;
   
   SWIG_check_num_args("mMapAvatarIDs",2,2)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("mMapAvatarIDs",1,"LLViewerRegion *");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("mMapAvatarIDs",2,"LLDynamicArray< LLUUID >");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("mMapAvatarIDs",2,"LLDynamicArray< LLUUID > *");
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLViewerRegion,0))){
     SWIG_fail_ptr("LLViewerRegion_mMapAvatarIDs_set",1,SWIGTYPE_p_LLViewerRegion);
   }
   
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&argp2,SWIGTYPE_p_LLDynamicArrayT_LLUUID_t,0))){
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_LLDynamicArrayT_LLUUID_t,0))){
     SWIG_fail_ptr("LLViewerRegion_mMapAvatarIDs_set",2,SWIGTYPE_p_LLDynamicArrayT_LLUUID_t);
   }
-  arg2 = *argp2;
   
-  if (arg1) (arg1)->mMapAvatarIDs = arg2;
+  if (arg1) (arg1)->mMapAvatarIDs = *arg2;
   
   return SWIG_arg;
   
@@ -5270,7 +5807,7 @@ fail:
 static int _wrap_LLViewerRegion_mMapAvatarIDs_get(lua_State* L) {
   int SWIG_arg = 0;
   LLViewerRegion *arg1 = (LLViewerRegion *) 0 ;
-  LLDynamicArray< LLUUID > result;
+  LLDynamicArray< LLUUID > *result = 0 ;
   
   SWIG_check_num_args("mMapAvatarIDs",1,1)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("mMapAvatarIDs",1,"LLViewerRegion *");
@@ -5279,11 +5816,8 @@ static int _wrap_LLViewerRegion_mMapAvatarIDs_get(lua_State* L) {
     SWIG_fail_ptr("LLViewerRegion_mMapAvatarIDs_get",1,SWIGTYPE_p_LLViewerRegion);
   }
   
-  result =  ((arg1)->mMapAvatarIDs);
-  {
-    LLDynamicArray< LLUUID > * resultptr = new LLDynamicArray< LLUUID >((const LLDynamicArray< LLUUID > &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_LLDynamicArrayT_LLUUID_t,1); SWIG_arg++;
-  }
+  result = (LLDynamicArray< LLUUID > *)& ((arg1)->mMapAvatarIDs);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_LLDynamicArrayT_LLUUID_t,0); SWIG_arg++; 
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -5423,17 +5957,11 @@ static swig_lua_class _wrap_class_LLViewerRegion = { "LLViewerRegion", &SWIGTYPE
 static int _wrap_FindByName(lua_State* L) {
   int SWIG_arg = 0;
   std::string arg1 ;
-  std::string *argp1 ;
   LLViewerRegion *result = 0 ;
   
   SWIG_check_num_args("FindByName",1,1)
-  if(!lua_isuserdata(L,1)) SWIG_fail_arg("FindByName",1,"std::string");
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&argp1,SWIGTYPE_p_std__string,0))){
-    SWIG_fail_ptr("FindByName",1,SWIGTYPE_p_std__string);
-  }
-  arg1 = *argp1;
-  
+  if(!lua_isstring(L,1)) SWIG_fail_arg("FindByName",1,"std::string");
+  (&arg1)->assign(lua_tostring(L,1),lua_strlen(L,1));
   result = (LLViewerRegion *)FindByName(arg1);
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_LLViewerRegion,0); SWIG_arg++; 
   return SWIG_arg;
@@ -5449,16 +5977,12 @@ fail:
 static int _wrap_FindByUUID(lua_State* L) {
   int SWIG_arg = 0;
   LLUUID arg1 ;
-  LLUUID *argp1 ;
   LLViewerRegion *result = 0 ;
   
   SWIG_check_num_args("FindByUUID",1,1)
-  if(!lua_isuserdata(L,1)) SWIG_fail_arg("FindByUUID",1,"LLUUID");
+  if(!lua_isstring(L,1)) SWIG_fail_arg("FindByUUID",1,"LLUUID");
   
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&argp1,SWIGTYPE_p_LLUUID,0))){
-    SWIG_fail_ptr("FindByUUID",1,SWIGTYPE_p_LLUUID);
-  }
-  arg1 = *argp1;
+  SWIG_contract_assert((&arg1)->set(lua_tostring(L,1),false),"Must be of UUID format.");
   
   result = (LLViewerRegion *)FindByUUID(arg1);
   SWIG_NewPointerObj(L,result,SWIGTYPE_p_LLViewerRegion,0); SWIG_arg++; 
@@ -5477,6 +6001,7 @@ fail:
 #endif
 
 static const struct luaL_reg swig_commands[] = {
+    { "UUID_validate", _wrap_UUID_validate},
     { "LLViewerRegion_regionFlagsToString", _wrap_LLViewerRegion_regionFlagsToString},
     { "LLViewerRegion_accessToString", _wrap_LLViewerRegion_accessToString},
     { "LLViewerRegion_accessToShortString", _wrap_LLViewerRegion_accessToShortString},
@@ -5493,6 +6018,7 @@ static swig_lua_var_info swig_variables[] = {
 };
 
 static swig_lua_const_info swig_constants[] = {
+{ SWIG_LUA_STRING,  (char *)"UUID_null", 0, 0, (void *)"00000000-0000-0000-0000-000000000000", 0},
 { SWIG_LUA_INT,     (char *)"LAND", (long) 1, 0, 0, 0},
 { SWIG_LUA_INT,     (char *)"WATER", (long) 2, 0, 0, 0},
 { SWIG_LUA_INT,     (char *)"LLViewerRegion_PARTITION_HUD", (long) LLViewerRegion::PARTITION_HUD, 0, 0, 0},
@@ -5528,7 +6054,7 @@ static swig_type_info _swigt__p_LLSD = {"_p_LLSD", "LLSD *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_LLSpatialPartition = {"_p_LLSpatialPartition", "LLSpatialPartition *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_LLStat = {"_p_LLStat", "LLStat *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_LLSurface = {"_p_LLSurface", "LLSurface *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_LLUUID = {"_p_LLUUID", "LLUUID *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_LLUUID = {"_p_LLUUID", "LLUUID *", 0, 0, (void*)&_wrap_class_LLUUID, 0};
 static swig_type_info _swigt__p_LLVLComposition = {"_p_LLVLComposition", "LLVLComposition *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_LLVector3 = {"_p_LLVector3", "LLVector3 *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_LLVector3d = {"_p_LLVector3d", "LLVector3d *", 0, 0, (void*)0, 0};
@@ -5542,7 +6068,7 @@ static swig_type_info _swigt__p_U64 = {"_p_U64", "U64 *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_U8 = {"_p_U8", "U8 *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_eObjectPartitions = {"_p_eObjectPartitions", "eObjectPartitions *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_p_void = {"_p_p_void", "void **", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_std__string = {"_p_std__string", "std::string *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_std__string = {"_p_std__string", "std::string *", 0, 0, (void*)&_wrap_class_std_string, 0};
 
 static swig_type_info *swig_type_initial[] = {
   &_swigt__p_BOOL,

@@ -35,8 +35,10 @@
 %}
 #endif
 %{
-
-
+// Everything from here down to llviewerobject.h is a dependency of LLViewerObject(List).
+//	Yes.  All of these.
+//	Removing them causes all kinds of hell because of shitty dependency resolution.
+//	-- Nexypoo
 #include "linden_common.h"
 #include "material_codes.h"
 #include "imageids.h"
@@ -71,6 +73,12 @@
 #include "swig/Object/Object.h"
 %}
 
+%include <std_string.i>
+%include "LLUUID.i"
+//%include "LLVector.i" // Getting lots of redefinition errors...
+
+// I have no idea why these are failing, but they are during compile.  
+// Probably a missing dependency, but I have no idea /where/. -- Nexypoo
 %ignore LLPrimitive::getVolumeType();
 %ignore LLPrimitive::setVolumeType(const U8);
 
@@ -79,6 +87,5 @@
 %include "../../newview/llviewerobject.h"
 
 %rename (Object) LLViewerObject;
-
 
 %include "Object/Object.h"
