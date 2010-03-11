@@ -27,8 +27,10 @@ for line in io.lines() do
 		print ("DELETE",filename)
 		os.execute("svn delete "..filename)
 	elseif chunks[1]=="?" then
-		print ("ADD",filename)
-		os.execute("svn add "..filename)
+		if filename and not filename:find("libraries/") then
+			print ("ADD",filename)
+			os.execute("svn add "..filename)
+		end
 	end
 end
 

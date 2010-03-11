@@ -64,7 +64,8 @@ extern "C" {
 /* Lua classes */
 #include "_LuaSL.h"	// SL module
 #include "_LuaGL.h"	// GL module
-#include "_LuaRegion.h"	// GL module
+#include "_LuaRegion.h"	// Region module
+#include "_LuaObject.h"	// Object module
 
 #include "LuaBase_f.h"
 
@@ -77,9 +78,10 @@ extern "C" {
 extern LLAgent gAgent;
 
 extern "C" {
-extern int luaopen_SL(lua_State* L); // declare the wrapped module
-extern int luaopen_GL(lua_State* L); // declare the wrapped module
-extern int luaopen_Region(lua_State* L); // declare the wrapped module
+	extern int luaopen_SL(lua_State* L); 	// SL module
+	extern int luaopen_GL(lua_State* L); 	// GL module
+	extern int luaopen_Region(lua_State* L);// Region module
+	extern int luaopen_Object(lua_State* L);// Object module
 }
 
 ///////////////////////////////////////////////
@@ -117,6 +119,16 @@ HookRequest& HookRequest::operator<<(const char *in)
 HookRequest& HookRequest::operator<<(const LLUUID &fullid)
 {
 	mArgs.push_back(fullid.asString());
+	return *this;
+}
+HookRequest& HookRequest::operator<<(LLViewerRegion *in)
+{
+	mArgs.push_back("&REGION;"+in->getRegionID().asString());
+	return *this;
+}
+HookRequest& HookRequest::operator<<(LLViewerObject *in)
+{
+	mArgs.push_back("&OBJECT;"+in->getID().asString());
 	return *this;
 }
 
@@ -352,6 +364,7 @@ bool FLLua::load()
 	luaopen_SL(pLuaStack);
 	luaopen_GL(pLuaStack);
 	luaopen_Region(pLuaStack);
+	luaopen_Object(pLuaStack);
 
 #ifdef _WITH_CEGUI
 	LL_INFOS("Lua") << __LINE__ << ": *** LOADING Crazy Eddie's GUI BINDINGS ***" << llendl;

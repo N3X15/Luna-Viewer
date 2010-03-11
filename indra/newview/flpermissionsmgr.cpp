@@ -1,6 +1,6 @@
 // From LLSelectMgr, refactored and ungayed.
 // static
-void LLSelectMgr::processObjectProperties(LLMessageSystem* msg, void** user_data)
+void LPermsMgr::processObjectProperties(LLMessageSystem* msg, void** user_data)
 {
 	S32 i;
 	S32 count = msg->getNumberOfBlocksFast(_PREHASH_ObjectData);

@@ -653,6 +653,8 @@ void LLPipeline::createGLBuffers()
 			gGL.getTexUnit(0)->setTextureFilteringOption(LLTexUnit::TFO_POINT);
 		}
 	}
+	// @hook PipelineCreateBuffers() Reserve GL buffers.
+	LUA_CALL0("PipeineCreateBuffers");
 }
 
 void LLPipeline::restoreGL() 
@@ -1601,6 +1603,9 @@ void LLPipeline::updateGeom(F32 max_dtime)
 	// notify various object types to reset internal cost metrics, etc.
 	// for now, only LLVOVolume does this to throttle LOD changes
 	LLVOVolume::preUpdateGeom();
+
+	// @hook PreUpdateGeometry() Before geometry update.
+	LUA_CALL0("PreUpdateGeometry");
 
 	// Iterate through all drawables on the priority build queue,
 	for (LLDrawable::drawable_list_t::iterator iter = mBuildQ1.begin();

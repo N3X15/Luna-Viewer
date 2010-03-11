@@ -51,6 +51,7 @@
 const std::string GUS::ping_command = "GUS_ping"; //client-lsl-bridge command
 const std::string GUS::sync_command = "GUS_sync"; //client-lsl-bridge command
 const std::string GUS::change_channel = "GUS_chan"; //client-lsl-bridge command
+
 LLFrameTimer GUS::ping_timer;
 bool GUS::Enabled = false;
 F32 GUS::Refresh = 0.001f;

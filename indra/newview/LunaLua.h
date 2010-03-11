@@ -36,6 +36,8 @@ extern "C" {
 #include "llstring.h"
 #include "message.h"
 #include "llviewerimage.h"
+#include "llviewerregion.h"
+#include "llviewerobject.h"
 
 //Macros for Lua event calls
 //No arguments. LUA_CALL0("OnSomething");
@@ -55,6 +57,8 @@ public:
 	HookRequest& operator<<(const std::string &in);
 	HookRequest& operator<<(const char *in);
 	HookRequest& operator<<(const LLUUID &in);
+	HookRequest& operator<<(LLViewerRegion *in);
+	HookRequest& operator<<(LLViewerObject *in);
 	HookRequest& operator<<(const lua_done *in)
 		{Send(); return *this;}//Send off.
 

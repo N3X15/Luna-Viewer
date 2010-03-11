@@ -527,6 +527,9 @@ set(viewer_SOURCE_FILES
 # Region Module -------------
     _LuaRegion.cpp
     swig/Region/Region.cpp
+# Object Module -------------
+    _LuaObject.cpp
+#    swig/Object/Object.cpp
 #----------------------------
     LunaLua.cpp
     rlvhandler.cpp
@@ -1006,6 +1009,9 @@ set(viewer_HEADER_FILES
 # Region module ----------
     swig/Region/Region.h
     _LuaRegion.h
+# Object Module
+    swig/Object/Object.h
+    _LuaObject.h
 # ------------------------
     LuaWindlight.h
     lunaconsole.h
