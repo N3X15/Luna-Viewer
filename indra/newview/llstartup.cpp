@@ -433,6 +433,9 @@ bool idle_startup()
 			LLNotifications::instance().add(gViewerWindow->getInitAlert());
 		}
 			
+
+		LLNotifications::instance().add("3PVPWarning");
+			
 		gSavedSettings.setS32("LastFeatureVersion", LLFeatureManager::getInstance()->getVersion());
 
 		std::string xml_file = LLUI::locateSkin("xui_version.xml");

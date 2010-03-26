@@ -485,13 +485,13 @@ std::string HippoGridInfo::sanitizeUri(std::string &uri)
 
 void HippoGridInfo::initFallback()
 {
-	FALLBACK_GRIDINFO.mGridNick = "secondlife";
-	FALLBACK_GRIDINFO.setPlatform(PLATFORM_SECONDLIFE);
-	FALLBACK_GRIDINFO.setGridName("Second Life");
-	FALLBACK_GRIDINFO.setLoginUri("https://login.agni.lindenlab.com/cgi-bin/login.cgi");
-	FALLBACK_GRIDINFO.setLoginPage("http://www.modularsystems.sl/app/login/");
-	FALLBACK_GRIDINFO.setHelperUri("https://secondlife.com/helpers/");
-	FALLBACK_GRIDINFO.setWebSite("http://secondlife.com/");
+	FALLBACK_GRIDINFO.mGridNick = "osgrid";
+	FALLBACK_GRIDINFO.setPlatform(PLATFORM_OPENSIM);
+	FALLBACK_GRIDINFO.setGridName("OSGrid");
+	FALLBACK_GRIDINFO.setLoginUri("http://osgrid.org:8002");
+	FALLBACK_GRIDINFO.setLoginPage("http://www.osgrid.org/loginscreen.php");
+	FALLBACK_GRIDINFO.setHelperUri("http://osgrid.org");
+	FALLBACK_GRIDINFO.setWebSite("http://osgrid.org/");
 }
 
 
@@ -634,8 +634,8 @@ void HippoGridManager::setDefaultGrid(const std::string &grid)
 	GridIterator it = mGridInfo.find(grid);
 	if (it != mGridInfo.end()) {
 		mDefaultGrid = grid;
-	} else if (mGridInfo.find("secondlife") != mGridInfo.end()) {
-		mDefaultGrid = "secondlife";
+	} else if (mGridInfo.find("osgrid") != mGridInfo.end()) {
+		mDefaultGrid = "osgrid";
 	} else if (!mGridInfo.empty()) {
         mDefaultGrid = mGridInfo.begin()->first;
 	} else {

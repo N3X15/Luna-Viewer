@@ -12,6 +12,7 @@
     </map>
 
     <!-- Second Life -->
+<!--
     <map>
       <key>gridnick</key><string>secondlife</string>
       <key>gridname</key><string>Second Life</string>
@@ -24,7 +25,7 @@
       <key>register</key><string>http://secondlife.com/registration/</string>
       <key>password</key><string>http://secondlife.com/account/request.php</string>
     </map>
-
+-->
     <!-- Local Host -->
     <map>
       <key>gridnick</key><string>localhost</string>
