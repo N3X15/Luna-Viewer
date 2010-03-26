@@ -8,6 +8,7 @@ MODULES=""
 MODULES="${MODULES} SL" 	# Base module (handles types and stuff)
 MODULES="${MODULES} GL" 	# GL module (rendering)
 MODULES="${MODULES} Region"	# Region module
+MODULES="${MODULES} Object"	# Object manipulation module.
 
 #Build the SL and GL Lua modules.
 lua newview/swig/BuildModules.lua ${MODULES}

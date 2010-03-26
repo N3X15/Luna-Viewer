@@ -1,0 +1,7 @@
+installed.xml
+*~
+*.o
+*.bak
+Thumbs.db
+_Lua*.*
+HookDocs.wiki
