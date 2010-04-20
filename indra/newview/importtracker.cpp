@@ -1071,7 +1071,7 @@ void ImportTracker::plywood_above_head()
 		msg->addUUIDFast(_PREHASH_GroupID, gAgent.getGroupID());
 		msg->nextBlockFast(_PREHASH_ObjectData);
 		msg->addU8Fast(_PREHASH_Material, 3);
-		msg->addU32Fast(_PREHASH_AddFlags, 0);
+		msg->addU32Fast(_PREHASH_AddFlags, FLAGS_CREATE_SELECTED);
 		LLVolumeParams	volume_params;
 		volume_params.setType(0x01, 0x10);
 		volume_params.setBeginAndEndS(0.f, 1.f);

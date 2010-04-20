@@ -19,13 +19,13 @@
 	<!-- PASSWORD -->
 	<text name="password_text">Kennwort:</text>
 	<line_editor name="password_edit"/>
-	<check_box name="remember_check" label="Password speichern"/>
-	<!-- GRIDS -->
-	<text name="grid_text">Grid:</text>
-	<combo_box name="server_combo"/>
-	<button name="grid_btn" label="Grid Manager"/>
+	<check_box name="remember_check" label="Account Daten speichern"/>
 	<!-- LOG IN -->
 	<button name="connect_btn" label="Anmelden"/>
+	<!-- GRIDS -->
+	<text name="grid_text">Accounts:</text>
+	<combo_box name="server_combo"/>
+	<button name="grid_btn" label="Login Manager"/>
 	<!-- ACCOUNT / FORGOT PASSWORD -->
 	<text name="create_new_account_text" font-style="UNDERLINE" hover="true" hover_>Konto erstellen</text>
 	<text name="forgot_password_text" font-style="UNDERLINE" hover="true" hover_>Namen oder Kennwort vergessen?</text>

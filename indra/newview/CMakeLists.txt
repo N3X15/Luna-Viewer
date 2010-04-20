@@ -1577,7 +1577,7 @@ if (DARWIN)
     MACOSX_BUNDLE_BUNDLE_NAME "Luna Viewer"
     MACOSX_BUNDLE_SHORT_VERSION_STRING "asdf"
     MACOSX_BUNDLE_BUNDLE_VERSION "asdf"
-    MACOSX_BUNDLE_COPYRIGHT "Copyright (c) 2009 Red Fedora Productions"
+    MACOSX_BUNDLE_COPYRIGHT "Copyright (c) 2009-2010 Red Fedora Productions"
     )
 
   add_custom_command(

@@ -2084,15 +2084,25 @@ class LLObjectEnableDerender : public view_listener_t
 		if (rlv_handler_t::isEnabled())
 		{
 			LLObjectSelectionHandle hSelect = LLSelectMgr::getInstance()->getSelection();
-			if ( (hSelect.notNull()) && (hSelect->isAttachment()) )
+			if (hSelect.notNull())
+			{
+				if (hSelect->isAttachment())
 			{
 				LLViewerObject* pObj = hSelect->getFirstRootObject(TRUE);
-
+					if (pObj)
+					{
 				// Get the attachment's owner
 				while ( (pObj) && (pObj->isAttachment()) )
 					pObj = (LLViewerObject*)pObj->getParent();
-
 				fEnable = (pObj->getID() != gAgent.getID());
+					}
+				}
+				else if ( (gAgent.getAvatarObject()) && (gAgent.getAvatarObject()->mIsSitting) )
+				{
+					RlvSelectIsSittingOn f(gAgent.getAvatarObject()->getRoot());
+					if (hSelect->getFirstRootNode(&f, TRUE))
+						fEnable = false;
+				}
 			}
 		}
 
@@ -3456,8 +3466,8 @@ class LLLandSit : public view_listener_t
 {
 	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
 	{
-// [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g)
-		if (gRlvHandler.hasBehaviour(RLV_BHVR_UNSIT))
+// [RLVa:KB] - Checked: 2010-03-31 (RLVa-1.1.1a) | Modified: RLVa-1.2.0c
+		if ( (rlv_handler_t::isEnabled()) && ((gRlvHandler.hasBehaviour(RLV_BHVR_UNSIT)) || (gRlvHandler.hasBehaviour(RLV_BHVR_SIT))) )
 		{
 			return true;
 		}

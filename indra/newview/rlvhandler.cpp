@@ -118,7 +118,7 @@ static bool rlvParseNotifyOption(const std::string& strOption, S32& nChannel, st
 
 // Checked: 2009-08-04 (RLVa-1.0.1d) | Modified: RLVa-1.0.1d
 RlvHandler::RlvHandler() 
-	: m_fCanCancelTp(false), m_pGCTimer(NULL), m_pWLSnapshot(NULL), m_pBhvrNotify(NULL)
+	: m_fCanCancelTp(true), m_pGCTimer(NULL), m_pWLSnapshot(NULL), m_pBhvrNotify(NULL)
 {
 	// Array auto-initialization to 0 is non-standard? (Compiler warning in VC-8.0)
 	memset(m_LayersAdd, 0, sizeof(S16) * WT_COUNT);
@@ -1010,7 +1010,7 @@ void RlvHandler::filterNames(std::string& strUTF8Text) const
 	#endif
 }
 
-// Checked: 2009-12-05 (RLVa-1.1.0h) | Modified: RLVa-1.1.0h
+// Checked: 2010-02-27 (RLVa-1.1.1a) | Modified: RLVa-1.2.0a
 bool RlvHandler::redirectChatOrEmote(const std::string& strUTF8Text) const
 {
 	// Sanity check - @redirchat only for chat and @rediremote only for emotes
@@ -1021,7 +1021,7 @@ bool RlvHandler::redirectChatOrEmote(const std::string& strUTF8Text) const
 	if (RLV_BHVR_REDIRCHAT == eBhvr)
 	{
 		std::string strText = strUTF8Text;
-		filterChat(strText, true);
+		filterChat(strText, false);
 		if (strText != "...")
 			return false;	// @sendchat wouldn't filter it so @redirchat won't redirect it either
 	}

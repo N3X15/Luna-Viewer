@@ -115,7 +115,6 @@ public:
 LLLoginRefreshHandler gLoginRefreshHandler;
 
 
-
 // helper class that trys to download a URL from a web site and calls a method 
 // on parent class indicating if the web server is working or not
 class LLIamHereLogin : public LLHTTPClient::Responder
@@ -169,6 +168,21 @@ void set_start_location(LLUICtrl* ctrl, void* data)
     LLURLSimString::setString(ctrl->getValue().asString());
 }
 
+std::string uriToGrid(std::string loginUri)
+{
+	LLStringUtil::toLower(loginUri);
+	std::string uris [] = {"http://grid.3rdrockgrid.com:8002","http://Gianttest.no-ip.biz:8002/","http://thegorgrid.com:8002","http://grid.cyberlandia.net:8002","http://reactiongrid.com:8008/","http://grid.newworldgrid.com:8002/","http://grid01.from-ne.com:8002/","http://wsterra.com:8002","http://login.legendcityonline.com", "http://osgrid.org:8002/","https://login.aditi.lindenlab.com/cgi-bin/login.cgi","https://login.agni.lindenlab.com/cgi-bin/login.cgi","https://login.aruna.lindenlab.com/cgi-bin/login.cgi","https://login.bharati.lindenlab.com/cgi-bin/login.cgi","https://login.chandra.lindenlab.com/cgi-bin/login.cgi","https://login.damballah.lindenlab.com/cgi-bin/login.cgi","https://login.danu.lindenlab.com/cgi-bin/login.cgi","https://login.durga.lindenlab.com/cgi-bin/login.cgi","https://login.ganga.lindenlab.com/cgi-bin/login.cgi","https://login.mitra.lindenlab.com/cgi-bin/login.cgi","https://login.mohini.lindenlab.com/cgi-bin/login.cgi","https://login.nandi.lindenlab.com/cgi-bin/login.cgi","https://login.parvati.lindenlab.com/cgi-bin/login.cgi","https://login.radha.lindenlab.com/cgi-bin/login.cgi","https://login.ravi.lindenlab.com/cgi-bin/login.cgi","https://login.siva.lindenlab.com/cgi-bin/login.cgi","https://login.shakti.lindenlab.com/cgi-bin/login.cgi","https://login.skanda.lindenlab.com/cgi-bin/login.cgi","https://login.soma.lindenlab.com/cgi-bin/login.cgi","https://login.uma.lindenlab.com/cgi-bin/login.cgi","https://login.vaak.lindenlab.com/cgi-bin/login.cgi","https://login.yami.lindenlab.com/cgi-bin/login.cgi","localhost","http://127.0.0.1","https://login.dmz.lindenlab.com/cgi-bin/login.cgi"};
+	std::string names [] = {"3rdR","Giant","Gor","Cyber","React","NewWG","AltL","WST","Legend","OsGrid", "SL","SL","Aruna","Bharati","Chandra","Damballah","Danu","Durga","Ganga","Mitra","Mohini","Nandi","Parvati","Radha","Ravi","Siva","Shakti","Skanda","Soma","Uma","Vaak","Yami","Local","localhost","Local","Other"};
+	for(int i = 0;i<20;i++)
+	{
+		std::string lookFor = uris[i];
+		LLStringUtil::toLower(lookFor);	
+		int found = loginUri.find(lookFor);
+		if(found!=std::string::npos)
+			return " "+names[i];
+	}
+	return "";
+}
 //---------------------------------------------------------------------------
 // Public methods
 //---------------------------------------------------------------------------
@@ -558,13 +572,13 @@ void LLPanelLogin::show(const LLRect &rect,
 
 	// Make sure that focus always goes here (and use the latest sInstance that was just created)
 	gFocusMgr.setDefaultKeyboardFocus(sInstance);
-	LLPanelLogin::addServer(LLViewerLogin::getInstance()->getGridLabel());
+	//LLPanelLogin::addServer(LLViewerLogin::getInstance()->getGridLabel());
+	LLPanelLogin::addServer(gHippoGridManager->getDefaultGridNick());
 }
 
 // static
-void LLPanelLogin::setFields(const std::string& firstname,
-			     const std::string& lastname,
-			     const std::string& password)
+void LLPanelLogin::setFields(const std::string& firstname, const std::string& lastname, const std::string& password,
+							 BOOL remember)
 {
 	if (!sInstance)
 	{
@@ -572,8 +586,8 @@ void LLPanelLogin::setFields(const std::string& firstname,
 		return;
 	}
 
-	sInstance->childSetText("first_name_edit", firstname);
-	sInstance->childSetText("last_name_edit", lastname);
+	if(firstname!="")	sInstance->childSetText("first_name_edit", firstname);
+	if(lastname!="")	sInstance->childSetText("last_name_edit", lastname);
 
 	// Max "actual" password length is 16 characters.
 	// Hex digests are always 32 characters.
@@ -591,6 +605,8 @@ void LLPanelLogin::setFields(const std::string& firstname,
 	else
 	{
 		// this is a normal text password
+		if(password!="")
+		{
 		sInstance->childSetText("password_edit", password);
 		sInstance->mIncomingPassword = password;
 		LLMD5 pass((unsigned char *)password.c_str());
@@ -598,6 +614,9 @@ void LLPanelLogin::setFields(const std::string& firstname,
 		pass.hex_digest(munged_password);
 		sInstance->mMungedPassword = munged_password;
 	}
+	}
+
+	sInstance->childSetValue("remember_check", remember);
 }
 
 
@@ -629,7 +648,8 @@ void LLPanelLogin::addServer(const std::string& server)
 		}
 	}
 	
-	// when you first login select the default, otherwise last connected
+	grids->setCurrentByIndex(0);
+	/* when you first login select the default, otherwise last connected
 	if (gDisconnected)
 	{
 		grids->setSimple(gHippoGridManager->getCurrentGrid()->getGridNick());
@@ -639,7 +659,7 @@ void LLPanelLogin::addServer(const std::string& server)
 		std::string last_grid = gSavedSettings.getString("LastSelectedGrid");
 		if (last_grid.empty()) last_grid = defaultGrid;
 		grids->setSimple(last_grid);
-	}
+	}*/
 
 	//LLComboBox* combo = sInstance->getChild<LLComboBox>("server_combo");
 	//combo->add(server, LLSD(domain_name) );
@@ -647,9 +667,8 @@ void LLPanelLogin::addServer(const std::string& server)
 }
 
 // static
-void LLPanelLogin::getFields(std::string *firstname,
-			     std::string *lastname,
-			     std::string *password)
+void LLPanelLogin::getFields(std::string &firstname, std::string &lastname, std::string &password,
+							BOOL &remember)
 {
 	if (!sInstance)
 	{
@@ -657,13 +676,14 @@ void LLPanelLogin::getFields(std::string *firstname,
 		return;
 	}
 
-	*firstname = sInstance->childGetText("first_name_edit");
-	LLStringUtil::trim(*firstname);
+	firstname = sInstance->childGetText("first_name_edit");
+	LLStringUtil::trim(firstname);
 
-	*lastname = sInstance->childGetText("last_name_edit");
-	LLStringUtil::trim(*lastname);
+	lastname = sInstance->childGetText("last_name_edit");
+	LLStringUtil::trim(lastname);
 
-	*password = sInstance->mMungedPassword;
+	password = sInstance->mMungedPassword;
+	remember = sInstance->childGetValue("remember_check");
 }
 
 // static
@@ -816,7 +836,11 @@ void LLPanelLogin::loadLoginPage()
 	}
 
 	// Language
-	std::string language = LLUI::getLanguage();
+	std::string language(gSavedSettings.getString("Language"));
+	if(language == "default")
+	{
+		language = gSavedSettings.getString("SystemLanguage");
+	}
 	oStr << first_query_delimiter<<"lang=" << language;
 	
 	// First Login?
@@ -989,17 +1013,83 @@ void LLPanelLogin::onClickConnect(void *)
 		// JC - Make sure the fields all get committed.
 		sInstance->setFocus(FALSE);
 
-		std::string first = sInstance->childGetText("first_name_edit");
-		std::string last  = sInstance->childGetText("last_name_edit");
+		std::string first;
+		std::string last;
+		std::string pass;
+		BOOL remember;
+		sInstance->getFields(first,last,pass,remember);
+		pass = sInstance->childGetText("password_edit");
 		if (!first.empty() && !last.empty())
 		{
 			// has both first and last name typed
+
+			if(remember)
+			{
+				//lgg we need to check the saved logins and add this if it doesnt exist
+				HippoGridInfo *gridInfo = gHippoGridManager->getCurrentGrid();
+				
+				std::string login_nick = first+" "+last+uriToGrid(gridInfo->getLoginUri());
+				HippoGridInfo::cleanUpGridNick(login_nick);
+				HippoGridInfo *nickInfo = gHippoGridManager->getGrid(login_nick);
+				if(!nickInfo)
+				{
+					nickInfo = new HippoGridInfo(login_nick);
+					nickInfo->setGridName(login_nick);
+					gHippoGridManager->addGrid(nickInfo);
+					addServer(login_nick);
+				}
+				//we already have a saved login for this person
+				//need to edit it with current grid info, and new password
+
+				nickInfo->setCurrencySymbol(gridInfo->getCurrencySymbol());
+				nickInfo->setDirectoryFee(gridInfo->getRawDirectoryFee());
+				nickInfo->setHelperUri(gridInfo->getHelperUri());
+				nickInfo->setLoginUri(gridInfo->getLoginUri());
+				nickInfo->setLoginPage(gridInfo->getLoginPage());
+				nickInfo->setPasswordUrl(gridInfo->getPasswordUrl());
+				nickInfo->setPlatform(gridInfo->getPlatform());
+				nickInfo->setRealCurrencySymbol(gridInfo->getRealCurrencySymbol());
+				nickInfo->setRegisterUrl(gridInfo->getRegisterUrl());
+				nickInfo->setRenderCompat(gridInfo->isRenderCompat());
+				nickInfo->setSearchUrl(gridInfo->getSearchUrl());
+				nickInfo->setSupportUrl(gridInfo->getSupportUrl());
+				nickInfo->setWebSite(gridInfo->getWebSite());
+				
+				if(pass.empty())
+					nickInfo->setAvatarPassword(std::string(""));
+				else if(pass != std::string("123456789!123456"))
+				{
+					// store account authentication data
+					std::string hashed_password;
+					if (pass.length() != 32)
+					{
+						LLMD5 passd5((unsigned char *)pass.c_str());
+						char munged_password[MD5HEX_STR_SIZE];
+						passd5.hex_digest(munged_password);
+						hashed_password = munged_password;
+					}
+					nickInfo->setAvatarPassword(hashed_password);
+				}
+				nickInfo->setFirstName(first);
+				nickInfo->setLastName(last);
+				nickInfo->setGridName(login_nick);
+
+
+				//nickInfo->setCurrencySymbol(gridInfo->getCurrencySymbol());
+				//gHippoGridManager->saveFile();
+				gHippoGridManager->setCurrentGrid(nickInfo->getGridNick());
+				gHippoGridManager->setDefaultGrid(nickInfo->getGridNick());
+				gHippoGridManager->saveFile();
+			}
+
+			
 			sInstance->mCallback(0, sInstance->mCallbackData);
+	
 		}
 		else
 		{
-			LLNotifications::instance().add("MustHaveAccountToLogIn", LLSD(), LLSD(),
-										LLPanelLogin::newAccountAlertCallback);
+			LLNotifications::instance().add("MustHaveAccountToLogIn", LLSD(), LLSD(),LLPanelLogin::newAccountAlertCallback);
+
 		}
 	}
 }
@@ -1009,6 +1099,7 @@ void LLPanelLogin::onClickGrid(void *)
 	if (sInstance && sInstance->mCallback)
 	{
 		LoginFloater::newShow(std::string("Test"), false);
+		//sInstance->setFields("","","",true);
 	}
 }
 
@@ -1095,13 +1186,16 @@ void LLPanelLogin::onSelectServer(LLUICtrl* ctrl, void*)
 	std::string mCurGrid = ctrl->getValue().asString();
 	//KOW
 	gHippoGridManager->setCurrentGrid(mCurGrid);
-	// HippoGridInfo *gridInfo = gHippoGridManager->getGrid(mCurGrid);
-	// if (gridInfo) {
-	// 	//childSetText("gridnick", gridInfo->getGridNick());
-	// 	//platform->setCurrentByIndex(gridInfo->getPlatform());
-	// 	//childSetText("gridname", gridInfo->getGridName());
-	// 	LLPanelLogin::setFields( gridInfo->getFirstName(), gridInfo->getLastName(), gridInfo->getAvatarPassword(), 1 );
-	// }
+	
+	HippoGridInfo *gridInfo = gHippoGridManager->getGrid(mCurGrid);
+		if (gridInfo) {
+			//childSetText("gridnick", gridInfo->getGridNick());
+			//platform->setCurrentByIndex(gridInfo->getPlatform());
+			//childSetText("gridname", gridInfo->getGridName());
+			LLPanelLogin::setFields( gridInfo->getFirstName(), gridInfo->getLastName(), gridInfo->getAvatarPassword(), gSavedSettings.getBOOL("RememberPassword") );
+		}
+	//gHippoGridManager->setCurrentGrid(mCurGrid);
+
 
 
 	llwarns << "current grid = " << mCurGrid << llendl;

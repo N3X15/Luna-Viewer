@@ -458,6 +458,15 @@ void LLScriptLibrary::init()
 	addFunction(new LLScriptLibraryFunction(10.f, 0.f, dummy_func, "llHTTPResponse", NULL, "kis", "llHTTPResponse(key id, integer status, string body)\nResponds to request id with status and body."));
 	addFunction(new LLScriptLibraryFunction(10.f, 0.f, dummy_func, "llGetHTTPHeader", "s", "ks", "string llGetHTTPHeader(key id, string header)\nGet the value for header for request id."));
 
+    // Prim media (see lscript_prim_media.h)
+	addFunction(new LLScriptLibraryFunction(10.f, 1.0f, dummy_func, "llSetPrimMediaParams", "i", "il", "i dunno lol"));
+	addFunction(new LLScriptLibraryFunction(10.f, 1.0f, dummy_func, "llGetPrimMediaParams", "l", "il", "i dunno lol"));
+	addFunction(new LLScriptLibraryFunction(10.f, 1.0f, dummy_func, "llClearPrimMedia", "i", "i", "i dunno lol"));
+	addFunction(new LLScriptLibraryFunction(10.f, 0.f, dummy_func, "llSetLinkPrimitiveParamsFast", NULL, "il", "llSetLinkPrimitiveParamsFast(integer link_number, list parameters)\nAlter linked prims with no delay."));
+	addFunction(new LLScriptLibraryFunction(10.f, 0.f, dummy_func, "llGetLinkPrimitiveParams", NULL, "il", "list llGetLinkPrimitiveParams(integer link_number, list parameters)\nMuch like llGetObjectDetails, but with PRIM_X style parameter names."));
+	addFunction(new LLScriptLibraryFunction(10.f, 0.f, dummy_func, "llLinkParticleSystem", NULL, "il", "llSetLinkParticleSystem(integer link_number, list parameters)\ni dunno lol"));
+	addFunction(new LLScriptLibraryFunction(10.f, 0.f, dummy_func, "llSetLinkTextureAnim", NULL, "iiiiifff", "i dunno lol"));
+
 	// energy, sleep, dummy_func, name, return type, parameters, help text, gods-only
 
 	// IF YOU ADD NEW SCRIPT CALLS, YOU MUST PUT THEM AT THE END OF THIS LIST.

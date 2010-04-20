@@ -262,7 +262,7 @@ static void request(
 #else
 	version.append("/?");
 #endif
-	llinfos << version << llendl;
+	//llinfos << version << llendl;
 	req->addHeader(version.c_str());
 //	req->addHeader(llformat("X-Luna-OS: %s",os).c_str());
 /*

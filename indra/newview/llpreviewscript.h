@@ -145,6 +145,7 @@ private:
 	std::string		mHelpURL;
 	LLTextEditor*	mEditor;
 	LLTextEditor*	mPostEditor;
+	std::string		mPostScript;
 	void			(*mLoadCallback)(void* userdata);
 	void			(*mSaveCallback)(void* userdata, BOOL close_after_save);
 	void			(*mSearchReplaceCallback) (void* userdata);

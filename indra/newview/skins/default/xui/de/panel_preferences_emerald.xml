@@ -13,14 +13,7 @@
       <check_box label="Immer fliegen nach Teleport" name="flyaftertp_toggle"/>
       <spinner label="Doppelklick Teleport Z Abweichung" name="Double-click Teleport Z Offset" tool_tip="Option zum einstellen der Z Abweichung nach Doppelklick Teleport"/>
       <check_box label="Halbe Avatarhöhe als extra Abweichung" name="avcalc_toggle"/>
-      <radio_group name="EmeraldDoubleClickTeleportMode">
-        <radio_item name="0" tool_tip="Keine Änderung der Rotation nach Doppelklick Teleport.">
-          Keine Änderung der Rotation nach Doppelklick Teleport.
-        </radio_item>
-        <radio_item name="1" tool_tip="Kamerarotation gleich Avatarrotation nach Doppelklick Teleport.">
-          Kamerarotation gleich Avatarrotation nach Doppelklick Teleport.
-        </radio_item>
-      </radio_group>
+      <check_box label="Kamerarotation gleich Avatarrotation nach Doppelklick Teleport." name="avrot_toggle"/>
       <check_box label="Teleport Audio Effekt abspielen" name="TPSound-toggle"/>
       <check_box label="Neue Client Definition runterladen" name="DownloadTags_toggle"/>
       <check_box label="Client Info anzeigen" name="DisplayTags_toggle"/>

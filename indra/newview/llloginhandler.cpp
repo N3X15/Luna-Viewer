@@ -204,7 +204,7 @@ bool LLLoginHandler::handle(const LLSD& tokens,
 		if (!mFirstName.empty() || !mLastName.empty())
 		{
 			// Fill in the name, and maybe the password
-			LLPanelLogin::setFields(mFirstName, mLastName, password);
+			LLPanelLogin::setFields(mFirstName, mLastName, password,false);
 		}
 
 		if (mWebLoginKey.isNull())

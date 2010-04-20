@@ -3383,6 +3383,8 @@ void LLObjectBridge::performAction(LLFolderView* folder, LLInventoryModel* model
 	}
 	else if ("edit" == action)
 	{
+		if (gRlvHandler.hasBehaviour(RLV_BHVR_EDIT))
+			return;
 		LLVOAvatar* avatarp = gAgent.getAvatarObject();
 		if (!avatarp)
 			return;
@@ -3585,7 +3587,7 @@ void LLObjectBridge::buildContextMenu(LLMenuGL& menu, U32 flags)
 			{
 				items.push_back(std::string("Detach From Yourself"));
 				items.push_back(std::string("Attachment Edit"));
-				if ( (flags & FIRST_SELECTED_ITEM) == 0)
+				if ( ( (flags & FIRST_SELECTED_ITEM) == 0) || (gRlvHandler.hasBehaviour(RLV_BHVR_EDIT)) )
 				{
 					disabled_items.push_back(std::string("Attachment Edit"));
 				}

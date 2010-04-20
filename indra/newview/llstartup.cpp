@@ -360,6 +360,7 @@ bool idle_startup()
 	static std::string firstname;
 	static std::string lastname;
 	static LLUUID web_login_key;
+	static std::string grid;
 	static std::string password;
 	static std::vector<const char*> requested_options;
 
@@ -377,6 +378,7 @@ bool idle_startup()
 	static S32  location_which = START_LOCATION_ID_LAST;
 
 	static bool show_connect_box = true;
+	static BOOL remember_password = TRUE;
 
 	static bool stipend_since_login = false;
 
@@ -434,7 +436,7 @@ bool idle_startup()
 		}
 			
 
-		LLNotifications::instance().add("3PVPWarning");
+		//LLNotifications::instance().add("3PVPWarning");
 			
 		gSavedSettings.setS32("LastFeatureVersion", LLFeatureManager::getInstance()->getVersion());
 
@@ -743,6 +745,7 @@ bool idle_startup()
 			char md5pass[33];               /* Flawfinder: ignore */
 			pass.hex_digest(md5pass);
 			password = md5pass;
+			remember_password = gSavedSettings.getBOOL("RememberPassword");
 			
 #ifdef USE_VIEWER_AUTH
 			show_connect_box = true;
@@ -757,6 +760,7 @@ bool idle_startup()
 			lastname = gSavedSettings.getString("LastName");
 			password = LLStartUp::loadPasswordFromDisk();
 			gSavedSettings.setBOOL("RememberPassword", TRUE);
+			remember_password = TRUE;
 			
 #ifdef USE_VIEWER_AUTH
 			show_connect_box = true;
@@ -767,9 +771,14 @@ bool idle_startup()
 		else
 		{
 			// if not automatically logging in, display login dialog
-			firstname = gSavedSettings.getString("FirstName");
-			lastname = gSavedSettings.getString("LastName");
-			password = LLStartUp::loadPasswordFromDisk();
+			// a valid grid is selected (in llpanellogin, for some reason?)
+			// This should get the right values from the grid manager now -Patrick Sapinski (Monday, August 17, 2009)
+			HippoGridInfo *gridInfo = gHippoGridManager->getCurrentGrid();
+			firstname = gridInfo->getFirstName();
+			lastname = gridInfo->getLastName();
+			password = gridInfo->getAvatarPassword();
+			
+			remember_password = gSavedSettings.getBOOL("RememberPassword");
 			show_connect_box = true;
 		}
 
@@ -820,7 +829,7 @@ bool idle_startup()
 			// Show the login dialog
 			login_show();
 			// connect dialog is already shown, so fill in the names
-			LLPanelLogin::setFields( firstname, lastname, password);
+			LLPanelLogin::setFields( firstname, lastname, password, remember_password );
 
 			LLPanelLogin::giveFocus();
 
@@ -913,7 +922,7 @@ bool idle_startup()
 		{
 			// TODO if not use viewer auth
 			// Load all the name information out of the login view
-			LLPanelLogin::getFields(&firstname, &lastname, &password);
+			LLPanelLogin::getFields(firstname, lastname, password, remember_password);
 			// end TODO			
 	 
 			// HACK: Try to make not jump on login
@@ -925,14 +934,24 @@ bool idle_startup()
 			gSavedSettings.setString("FirstName", firstname);
 			gSavedSettings.setString("LastName", lastname);
 
-			//LL_INFOS("AppInit") << "Attempting login as: " << firstname << " " << lastname << " " << LL_ENDL;
+			if (remember_password)
+			{
+				LLStartUp::savePasswordToDisk(password);
+			}
+			else
+			{
+				LLStartUp::deletePasswordFromDisk();
+			}
+			gSavedSettings.setBOOL("RememberPassword", remember_password);
+
+			//LL_INFOS("AppInit") << "Attempting login as: " << firstname << " " << lastname << " " << password << LL_ENDL;
 			gDebugInfo["LoginName"] = firstname + " " + lastname;	
 		}
 
         gHippoGridManager->setCurrentGridAsConnected();
 		// create necessary directories
 		// *FIX: these mkdir's should error check
-		gDirUtilp->setLindenUserDir(firstname, lastname);
+		gDirUtilp->setLindenUserDir("", firstname, lastname);
     	LLFile::mkdir(gDirUtilp->getLindenUserDir());
 
         // Set PerAccountSettingsFile to the default value.
@@ -968,7 +987,7 @@ bool idle_startup()
 		{
 			gDirUtilp->setChatLogsDir(gSavedPerAccountSettings.getString("InstantMessageLogPath"));		
 		}
-		
+		//gHippoGridManager->getCurrentGridNick() add this to it? breaks chat logs...
 		gDirUtilp->setPerAccountChatLogsDir(firstname, lastname);
 
 		LLFile::mkdir(gDirUtilp->getChatLogsDir());
@@ -1479,7 +1498,7 @@ bool idle_startup()
 			gSavedSettings.setString("FirstName", firstname);
 			gSavedSettings.setString("LastName", lastname);
 
-			if (gSavedSettings.getBOOL("RememberPassword"))
+			if (remember_password)
 			{
 				// Successful login means the password is valid, so save it.
 				LLStartUp::savePasswordToDisk(password);
@@ -1490,6 +1509,8 @@ bool idle_startup()
 				// during this login session.
 				LLStartUp::deletePasswordFromDisk();
 			}
+			gSavedSettings.setBOOL("RememberPassword", remember_password);
+
 			
 			// this is their actual ability to access content
 			text = LLUserAuth::getInstance()->getResponse("agent_access_max");
@@ -1759,6 +1780,7 @@ bool idle_startup()
 			reset_login();
 			gSavedSettings.setBOOL("AutoLogin", FALSE);
 			show_connect_box = true;
+			LLStartUp::deletePasswordFromDisk();
 		}
 		return FALSE;
 	}
@@ -2808,11 +2830,14 @@ void login_callback(S32 option, void *userdata)
 	{
 		// Make sure we don't save the password if the user is trying to clear it.
 		std::string first, last, password;
-		LLPanelLogin::getFields(&first, &last, &password);
-		if (!gSavedSettings.getBOOL("RememberPassword"))
+		BOOL remember = TRUE;
+		LLPanelLogin::getFields(first, last, password, remember);
+		if (!remember)
 		{
 			// turn off the setting and write out to disk
+			gSavedSettings.setBOOL("RememberPassword", FALSE);
 			gSavedSettings.saveToFile( gSavedSettings.getString("ClientSettingsFile") , TRUE );
+			LLStartUp::deletePasswordFromDisk();
 		}
 
 		// Next iteration through main loop should shut down the app cleanly.
@@ -2942,9 +2967,13 @@ bool first_run_dialog_callback(const LLSD& notification, const LLSD& response)
 	if (0 == option)
 	{
 		LL_DEBUGS("AppInit") << "First run dialog cancelling" << LL_ENDL;
-		LLWeb::loadURL( CREATE_ACCOUNT_URL );
+        const std::string &url = gHippoGridManager->getConnectedGrid()->getRegisterUrl();
+        if (!url.empty()) {
+		    LLWeb::loadURL(url);
+        } else {
+            llwarns << "Account creation URL is empty" << llendl;
 	}
-
+    }
 	LLPanelLogin::giveFocus();
 	return false;
 }
@@ -2987,9 +3016,11 @@ bool login_alert_status(const LLSD& notification, const LLSD& response)
     {
         case 0:     // OK
             break;
-        case 1:     // Help
-            LLWeb::loadURL( SUPPORT_URL );
+        case 1: {   // Help
+            const std::string &url = gHippoGridManager->getConnectedGrid()->getSupportUrl();
+            if (!url.empty()) LLWeb::loadURL(url);
             break;
+        }
         case 2:     // Teleport
             // Restart the login process, starting at our home locaton
             LLURLSimString::setString(LLURLSimString::sLocationStringHome);

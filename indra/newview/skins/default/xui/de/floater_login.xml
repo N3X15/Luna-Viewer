@@ -16,19 +16,18 @@
     Grid Name:
   </text>
   <line_editor name="gridnick"/>
-  <!--
   <text name="first_name_text">
-		First Name:
+		Vorname:
 	</text>
   <line_editor name="first_name"/>
 
   <text name="last_name_text">
-    Last Name:
+    Nachname:
   </text>
   <line_editor name="last_name"/>
 
   <text name="avatar_password_text">
-		Password:
+		Passwort:
 	</text>
 	<line_editor name="avatar_password"/>
 
@@ -46,12 +45,14 @@
       &lt;Type region name&gt;
     </combo_item>
   </combo_box>
-  -->
   <text name="loginuri_text">
     Login URI:
   </text>
   <line_editor name="loginuri"/>
   <button label="Lade Grid Info" label_selected="Hol Grid Info" name="btn_gridinfo"/>
+  <text_editor name="protip1">
+    Tip: Mit dem "Kopieren" Button können sie mehrere Account Profile für das gleiche Grid anlegen.
+  </text_editor>
   <text name="loginpage_text">
     Optionale Felder
   </text>
@@ -98,9 +99,9 @@
 
   <!-- Cancel/Connect Buttons -->
 
-  <!--
+
   <button label="Set as Default" label_selected="Set as Default" name="set_default"/>
-  -->
+
 
   <!-- <button label="Connect" label_selected="Connect" name="connect_btn"/>  -->
   <button label="Ok" label_selected="Ok" name="btn_ok"/>

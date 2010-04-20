@@ -93,9 +93,9 @@ void JCExportTracker::init()
 	destination = "";
 	asset_dir = "";
 	requested_textures.clear();
-	export_properties = gSavedSettings.getBOOL("EmeraldExportProperties");
+	export_properties = TRUE;
 	export_inventory = gSavedSettings.getBOOL("EmeraldExportInventory");
-	export_textures = gSavedSettings.getBOOL("EmeraldExportTextures");
+	export_textures = FALSE;
 	////cmdline_printchat("init()");
 	////cmdline_printchat(llformat("%d",export_properties));
 	////cmdline_printchat(llformat("%d",export_inventory));
@@ -347,7 +347,8 @@ bool JCExportTracker::serializeSelection()
 													  creator_name);
 	if(!creators_identical || (CreatorID.notNull() && CreatorID != gAgent.getID()))
 	{
-		LLFirstUse::EmeraldNCreatorExport();
+		cmdline_printchat("You cannot export this item, you are not the creator.");
+		return false;
 	}
 	F32 throttle = gSavedSettings.getF32("OutBandwidth");
 	// Gross magical value that is 128kbit/s
@@ -575,7 +576,12 @@ void JCExportTracker::processObjectProperties(LLMessageSystem* msg, void** user_
 								msg->getStringFast(_PREHASH_ObjectData, _PREHASH_TouchName, touch_name, i);
 								std::string sit_name;
 								msg->getStringFast(_PREHASH_ObjectData, _PREHASH_SitName, sit_name, i);
-
+								//Creator check
+								if(creator_id != owner_id)
+								{
+									cmdline_printchat("You cannot export this item, as you are not the creator.");
+									return;
+								}
 								//unpack TE IDs
 								std::vector<LLUUID> texture_ids;
 								S32 size = msg->getSizeFast(_PREHASH_ObjectData, i, _PREHASH_TextureID);
@@ -633,12 +639,12 @@ BOOL couldDL(LLAssetType::EType type)
 	{//things we could plausibly DL anyway atm
 	case LLAssetType::AT_TEXTURE:
 	case LLAssetType::AT_SCRIPT:
-	case LLAssetType::AT_CLOTHING:
+	//case LLAssetType::AT_CLOTHING:
 	case LLAssetType::AT_NOTECARD:
 	case LLAssetType::AT_LSL_TEXT:
 	case LLAssetType::AT_TEXTURE_TGA:
-	case LLAssetType::AT_BODYPART:
-	case LLAssetType::AT_GESTURE:
+	//case LLAssetType::AT_BODYPART:
+	//case LLAssetType::AT_GESTURE:
 		return TRUE;
 		break;
 	default:

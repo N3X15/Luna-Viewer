@@ -38,16 +38,13 @@
 					 label="Double-click Teleport Z Offset" label_width="160" left_delta="0" bottom_delta="-20"
 					 max_val="9001" min_val="0" name="Double-click Teleport Z Offset" tool_tip="Controls the Z Offset for Double-click Teleports"
 					 width="210" control_name="EmeraldDoubleClickZOffset"/>
-				<check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
+        <check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
 					 initial_value="false" label="Additionally offset up by half the avatar height" left_delta="0"
 					 mouse_opaque="true" name="avcalc_toggle" radio_style="false" width="270" control_name="EmeraldDoubleClickTeleportAvCalc"/>
-				<radio_group bottom_delta="-45" draw_border="false" follows="top|left" height="40" name="EmeraldDoubleClickTeleportMode"
-					 width="270">
-					<radio_item bottom_delta="-10" height="20" left="0" name="0" width="270"
-						 tool_tip="This makes the avatar rotation stay the same between doubleclick teleports.">          Keep avatar rotation the same when doubleclick teleporting</radio_item>
-					<radio_item bottom_delta="-10" height="20" left="0" name="1" width="270"
-						 tool_tip="This makes the avatar use the camera's left/right rotation on doubleclick teleport.">          Rotate avatar according to camera left/right rotation on doubleclick teleport</radio_item>
-				</radio_group>
+        <check_box bottom_delta="-25" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
+					 initial_value="false" label="Rotate avatar according to camera left/right rotation on doubleclick teleport" left_delta="0"
+					 mouse_opaque="true" name="avrot_toggle" radio_style="false" width="270" control_name="EmeraldDoubleClickTeleportMode"/>
+        
 				<check_box bottom_delta="-25" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
 					 initial_value="false" label="Play Teleport sound effect" left_delta="0" mouse_opaque="true"
 					 name="TPSound-toggle" radio_style="false" width="270" control_name="EmeraldPlayTpSound"/>

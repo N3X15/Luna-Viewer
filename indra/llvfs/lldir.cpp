@@ -247,7 +247,7 @@ std::string LLDir::buildSLOSCacheDir() const
 	}
 	else
 	{
-		res = getOSCacheDir() + mDirDelimiter + "FlexLife";
+		res = getOSCacheDir() + mDirDelimiter + "Luna";
 	}
 	return res;
 }
@@ -332,6 +332,7 @@ std::string LLDir::getExpandedFilename(ELLPath location, const std::string& subd
 		prefix += mDirDelimiter;
 		prefix += "Hooks";
 		break;
+	// Do we need this anymore?
 	case FL_PATH_SKY:
 		prefix = getAppRODataDir();
 		prefix += mDirDelimiter;
@@ -565,19 +566,26 @@ std::string LLDir::getForbiddenFileChars()
 	return "\\/:*?\"<>|";
 }
 
-void LLDir::setLindenUserDir(const std::string &first, const std::string &last)
+void LLDir::setLindenUserDir(const std::string &grid, const std::string &first, const std::string &last)
 {
 	// if both first and last aren't set, assume we're grabbing the cached dir
 	if (!first.empty() && !last.empty())
 	{
 		// some platforms have case-sensitive filesystems, so be
 		// utterly consistent with our firstname/lastname case.
+		std::string gridlower(grid);
+		LLStringUtil::toLower(gridlower);
 		std::string firstlower(first);
 		LLStringUtil::toLower(firstlower);
 		std::string lastlower(last);
 		LLStringUtil::toLower(lastlower);
 		mLindenUserDir = getOSUserAppDir();
 		mLindenUserDir += mDirDelimiter;
+		if(!gridlower.empty())
+		{
+			mLindenUserDir += gridlower;
+			mLindenUserDir += "-";
+		}
 		mLindenUserDir += firstlower;
 		mLindenUserDir += "_";
 		mLindenUserDir += lastlower;
@@ -589,6 +597,7 @@ void LLDir::setLindenUserDir(const std::string &first, const std::string &last)
 
 	dumpCurrentDirectories();	
 }
+
 
 void LLDir::setChatLogsDir(const std::string &path)
 {

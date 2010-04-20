@@ -963,15 +963,15 @@ void JCLSLPreprocessor::start_process()
 		def = llformat("__SHORTFILE__=\"%s\"",name.c_str());
 		ctx.add_macro_definition(def,false);
 
-		ctx.add_macro_definition("list(input)=((list)input)",false);
-		ctx.add_macro_definition("float(input)=((float)input)",false);
-		ctx.add_macro_definition("integer(input)=((integer)input)",false);
-		ctx.add_macro_definition("key(input)=((key)input)",false);
-		ctx.add_macro_definition("list(input)=((list)input)",false);
-		ctx.add_macro_definition("rotation(input)=((rotation)input)",false);
-		ctx.add_macro_definition("quaternion(input)=((quaternion)input)",false);
-		ctx.add_macro_definition("string(input)=((string)input)",false);
-		ctx.add_macro_definition("vector(input)=((vector)input)",false);
+		ctx.add_macro_definition("list(input)=((list)(input))",false);
+		ctx.add_macro_definition("float(input)=((float)(input))",false);
+		ctx.add_macro_definition("integer(input)=((integer)(input))",false);
+		ctx.add_macro_definition("key(input)=((key)(input))",false);
+		ctx.add_macro_definition("list(input)=((list)(input))",false);
+		ctx.add_macro_definition("rotation(input)=((rotation)(input))",false);
+		ctx.add_macro_definition("quaternion(input)=((quaternion)(input))",false);
+		ctx.add_macro_definition("string(input)=((string)(input))",false);
+		ctx.add_macro_definition("vector(input)=((vector)(input))",false);
 
 		context_type::iterator_type first = ctx.begin();
 		context_type::iterator_type last = ctx.end();
@@ -1107,6 +1107,7 @@ void JCLSLPreprocessor::start_process()
 		{
 			outfield->setText(LLStringExplicit(output));
 		}
+		mCore->mPostScript = output;
 		mCore->doSaveComplete((void*)mCore,mClose);
 	}
 	waving = FALSE;

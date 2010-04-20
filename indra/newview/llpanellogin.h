@@ -34,9 +34,20 @@
 #define LL_LLPANELLOGIN_H
 
 #include "llpanel.h"
-#include "llmemory.h"			// LLPointer<>
-#include "llwebbrowserctrl.h"	// LLWebBrowserCtrlObserver
 
+#include "llcommandhandler.h"
+#include "lldbstrings.h"
+#include "llmemory.h"
+#include "llviewerimage.h"
+#include "llstring.h"
+#include "llmd5.h"
+#include "llwebbrowserctrl.h"
+
+class LLTextBox;
+class LLLineEditor;
+class LLCheckBoxCtrl;
+class LLButton;
+class LLComboBox;
 class LLUIImage;
 
 class LLPanelLogin:	
@@ -60,13 +71,13 @@ public:
 
 	// Remember password checkbox is set via gSavedSettings "RememberPassword"
 	static void setFields(const std::string& firstname, const std::string& lastname, 
-		const std::string& password);
+		const std::string& password, BOOL remember);
 	
 	static void addServer(const std::string& server);
 	static void refreshLocation( bool force_visible );
 
-	static void getFields(std::string *firstname, std::string *lastname,
-						  std::string *password);
+	static void getFields(std::string& firstname, std::string& lastname,
+						  std::string& password, BOOL& remember);
 
 	static BOOL isGridComboDirty();
 	static void getLocation(std::string &location);
@@ -109,7 +120,5 @@ private:
 	BOOL			mHtmlAvailable;
 };
 
-std::string load_password_from_disk(void);
-void save_password_to_disk(const char* hashed_password);
 
 #endif

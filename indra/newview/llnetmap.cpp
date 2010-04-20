@@ -264,7 +264,7 @@ void LLNetMap::draw()
 			F32 top =		bottom + mScale ;
 			F32 right =		left + mScale ;
 
-			gGL.color4fv(regionp == gAgent.getRegion() ? this_region_color.mV : regionp->getHighlightColor().mV);
+			gGL.color4fv(regionp == gAgent.getRegion() ? this_region_color.mV : live_region_color.mV);
 			if (!regionp->isAlive())
 			{
 				gGL.color4fv(dead_region_color.mV);

@@ -129,9 +129,9 @@ class JCZtake : public LLEventTimer
 public:
 	static BOOL ztakeon;
 
-	JCZtake() : LLEventTimer(0.1f)
+	JCZtake() : LLEventTimer(2.0f)
 	{
-		ztakeon = TRUE;
+		ztakeon = FALSE;
 		cmdline_printchat("initialized");
 	}
 	~JCZtake()
@@ -141,19 +141,17 @@ public:
 	BOOL tick()
 	{
 		{
-			LLViewerObject* root_object = LLSelectMgr::getInstance()->getSelection()->getFirstRootObject();
-			if(root_object && !root_object->isDead())
-			{
-				LLViewerObject::child_list_t children=root_object->getChildren();
 				LLMessageSystem    *msg = gMessageSystem;
-				for(LLViewerObject::child_list_t::const_iterator itr=children.begin();itr!=children.end();++itr)
+			for(LLObjectSelection::iterator itr=LLSelectMgr::getInstance()->getSelection()->begin();
+				itr!=LLSelectMgr::getInstance()->getSelection()->end();++itr)
 				{
-					LLViewerObject* object = (*itr);
+				LLSelectNode* node = (*itr);
+				LLViewerObject* object = node->getObject();
 					U32 localid=object->getLocalID();
 					if(done_prims.find(localid) == done_prims.end())
 					{
 						done_prims.insert(localid);
-						std::string name = llformat("%.1f x %.1f x %.1f",object->getScale().mV[VX],object->getScale().mV[VY],object->getScale().mV[VZ]);
+					std::string name = llformat("%fx%fx%f",object->getScale().mV[VX],object->getScale().mV[VY],object->getScale().mV[VZ]);
 						cmdline_printchat(std::string("Rename&take ")+name);
 						msg->newMessageFast(_PREHASH_ObjectName);
 						msg->nextBlockFast(_PREHASH_AgentData);
@@ -183,7 +181,6 @@ public:
 					}
 				}
 			}
-		}
 		return ztakeon;
 	}
 
@@ -263,6 +260,7 @@ bool cmd_line_chat(std::string revised_text, EChatType type)
 					if (status == "on" )
 					{
 						gSavedSettings.setBOOL("EmeraldAOEnabled",TRUE);
+						LLFloaterAO::init();
 						LLFloaterAO::run();
 					}
 					else if (status == "off" )
@@ -413,7 +411,7 @@ bool cmd_line_chat(std::string revised_text, EChatType type)
 					cmdline_tp2name(name);
 				}
 				return false;
-			}else if (command == "xyzzy")
+			}else if (revised_text == "xyzzy")
 			{
 				//Zwag: I wonder how many people will actually get this?
 				cmdline_printchat("Nothing happens.");
@@ -471,11 +469,11 @@ bool cmd_line_chat(std::string revised_text, EChatType type)
 			//
 			// FlexLife
 			//
-			else if(command == gSavedSettings.getString("FlexCmdLineLua"))
+			else if(command == "/lua")
 			{
 				// FLEXLIFE:  Raw Lua Command from chatbar.
 				// And yes, it currently just shoves the command into the same queue as a macro.
-				int sz = gSavedSettings.getString("FlexCmdLineLua").size();
+				int sz = 4;
 				FLLua::callCommand(revised_text.substr(sz));
 				return false;
 			}

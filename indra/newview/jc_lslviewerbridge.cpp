@@ -366,7 +366,14 @@ const LLUUID& JCLSLBridge::findInventoryByName(const std::string& object_name)
 	LLViewerInventoryCategory::cat_array_t cats;
 	LLViewerInventoryItem::item_array_t items;
 	ObjectBNameMatches objectnamematches(object_name);
-	gInventory.collectDescendentsIf(gAgent.getInventoryRootID(),cats,items,FALSE,objectnamematches);
+	LLUUID vcatid;
+	vcatid = gInventory.findCategoryByName(vBridgeOpCat);
+	if(vcatid.isNull())
+	{
+		////cmdline_printchat("creating folder");
+		vcatid = gInventory.createNewCategory(gAgent.getInventoryRootID(), LLAssetType::AT_NONE, vBridgeOpCat);
+	}
+	gInventory.collectDescendentsIf(vcatid,cats,items,FALSE,objectnamematches);
 
 	if (items.count())
 	{

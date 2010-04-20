@@ -826,6 +826,7 @@ public:
 	static F32 		sUnbakedUpdateTime; // Last time stats were updated (to prevent multiple updates per frame) 
 	static F32 		sGreyTime; // Total seconds with >=1 grey avatars
 	static F32 		sGreyUpdateTime; // Last time stats were updated (to prevent multiple updates per frame) 
+	static bool		sDoProperArc;
 
 	const std::string getBakedStatusForPrintout() const;
 };

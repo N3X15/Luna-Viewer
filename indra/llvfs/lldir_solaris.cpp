@@ -139,9 +139,9 @@ LLDir_Solaris::LLDir_Solaris()
 	llinfos << "mExecutablePathAndName = [" << mExecutablePathAndName << "]" << llendl;
 
 	//NOTE: Why force people to cd into the package directory?
-	//      Look for SECONDLIFE env variable and use it, if set.
+	//      Look for LUNA env variable and use it, if set.
 
-	char *dcf = getenv("FLEXLIFE");
+	char *dcf = getenv("LUNA");
 	if(dcf != NULL){
 		(void)strcpy(path, dcf);
 		(void)strcat(path, "/bin");	//NOTE:  make sure we point at the bin

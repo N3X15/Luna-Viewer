@@ -58,6 +58,7 @@ S32 LLViewerPartSim::sParticleCount2 = 0;
 // This controls how greedy individual particle burst sources are allowed to be, and adapts according to how near the particle-count limit we are.
 F32 LLViewerPartSim::sParticleAdaptiveRate = 0.0625f;
 F32 LLViewerPartSim::sParticleBurstRate = 0.5f;
+bool LLViewerPartSim::sUseNewFollowSourceLogic = true;
 
 //static
 const S32 LLViewerPartSim::MAX_PART_COUNT = 8192;
@@ -492,6 +493,7 @@ LLViewerPartSim::LLViewerPartSim()
 {
 	LLMemType mt(LLMemType::MTYPE_PARTICLES);
 	sMaxParticleCount = gSavedSettings.getS32("RenderMaxPartCount");
+	sUseNewFollowSourceLogic = (bool)gSavedSettings.getBOOL("EmeraldUseNewFollowSourceLogic");
 	static U32 id_seed = 0;
 	mID = ++id_seed;
 }

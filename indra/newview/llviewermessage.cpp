@@ -2132,8 +2132,8 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 // [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g)
 			if ( (gRlvHandler.hasBehaviour(RLV_BHVR_RECVIM)) && (!gRlvHandler.isException(RLV_BHVR_RECVIM, from_id)) )
 			{
+				if (!is_muted)
 				rlvSendBusyMessage(from_id, RlvStrings::getString(RLV_STRING_BLOCKED_RECVIM_REMOTE), session_id);
-
 				message = message.substr(0, message_offset) + RlvStrings::getString(RLV_STRING_BLOCKED_RECVIM);
 			}
 // [/RLVa:KB]
@@ -5828,12 +5828,12 @@ void process_script_question(LLMessageSystem *msg, void **user_data)
 			LLViewerObject* pObj = gObjectList.findObject(taskid);
 			if (pObj)
 			{
-				if (pObj->permYouOwner())
-				{
+//				if (pObj->permYouOwner())
+//				{
 					// PERMISSION_TAKE_CONTROLS and PERMISSION_ATTACH are only auto-granted to objects this avie owns
 					rlvQuestionsOther &= ~(LSCRIPTRunTimePermissionBits[SCRIPT_PERMISSION_TAKE_CONTROLS] | 
 						LSCRIPTRunTimePermissionBits[SCRIPT_PERMISSION_ATTACH]);
-				}
+//				}
 			}
 		}
 

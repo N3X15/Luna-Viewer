@@ -16,7 +16,7 @@
 
 typedef std::map<LLUUID, RlvObject> rlv_object_map_t;
 typedef std::multimap<ERlvBehaviour, RlvException> rlv_exception_map_t;
-typedef std::map<S32, LLUUID> rlv_attachlock_map_t;
+typedef std::multimap<S32, LLUUID> rlv_attachlock_map_t;
 
 class RlvHandler
 {

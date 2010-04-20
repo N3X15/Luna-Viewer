@@ -75,7 +75,7 @@ public:
 
 	virtual bool handle(const LLSD& params,
 						const LLSD& query_map,
-						LLWebBrowserCtrl* web) = 0;
+						LLWebBrowserCtrl* web=NULL) = 0;
 		// For URL secondlife:///app/foo/bar/baz?cat=1&dog=2
 		// @params - array of "bar", "baz", possibly empty
 		// @query_map - map of "cat" -> 1, "dog" -> 2, possibly empty

@@ -490,6 +490,16 @@ void lggHunSpell_Wrapper::setNewDictionary(std::string newDict)
 	std::string dicaffpath(gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS, "dictionaries", std::string(newDict+".aff")).c_str());
 	std::string dicdicpath(gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS, "dictionaries", std::string(newDict+".dic")).c_str());
 	
+	//check to make sure this dictionary exists, if not, make it use one we know does
+	if(!gDirUtilp->fileExists(dicaffpath))
+	{
+		gSavedSettings.setString("EmeraldSpellBase","English (United States of America)");
+		LLSD args;
+		args["MESSAGE"] = "Your current dictionary could not be found, please re-download it.  Setting dictionary to English...";
+		LLNotifications::instance().add("GenericAlert", args);
+		setNewDictionary("English (United States of America)");
+		return;
+	}
 	llinfos << "Setting new base dictionary -> " << dicaffpath.c_str() << llendl;
 
 	myHunspell = new Hunspell(dicaffpath.c_str(),dicdicpath.c_str());

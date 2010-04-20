@@ -530,7 +530,8 @@ std::string LLScriptEdCore::getScriptText()
 {
 	if(gSavedSettings.getBOOL("EmeraldLSLPreprocessor") && mPostEditor)
 	{
-		return mPostEditor->getText();
+		//return mPostEditor->getText();
+		return mPostScript;
 	}else if (mEditor)
 	{
 		return mEditor->getText();

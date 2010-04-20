@@ -213,6 +213,23 @@ LLFloaterAO::LLFloaterAO()
 LLFloaterAO::~LLFloaterAO()
 {
     sInstance=NULL;
+	mcomboBox_stands = 0;
+	mcomboBox_walks = 0;
+	mcomboBox_runs = 0;
+	mcomboBox_jumps = 0;
+	mcomboBox_sits = 0;
+	mcomboBox_gsits = 0;
+	mcomboBox_crouchs = 0;
+	mcomboBox_cwalks = 0;
+	mcomboBox_falls = 0;
+	mcomboBox_hovers = 0;
+	mcomboBox_flys = 0;
+	mcomboBox_flyslows = 0;
+	mcomboBox_flyups = 0;
+	mcomboBox_flydowns = 0;
+	mcomboBox_lands = 0;
+	mcomboBox_standups = 0;
+	mcomboBox_prejumps = 0;
 	delete mAOItemDropTarget;
 	mAOItemDropTarget = NULL;
 //	llinfos << "floater destroyed" << llendl;

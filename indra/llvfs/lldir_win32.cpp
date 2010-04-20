@@ -155,12 +155,12 @@ void LLDir_Win32::initAppDirs(const std::string &app_name)
 {
 	if(app_name == "*Portable*")
 	{
-		mAppName = "FlexLife";
+		mAppName = "Luna";
 		mOSUserAppDir = mExecutableDir;
 		mOSUserAppDir += "\\";
 		mOSUserAppDir += "UserData";
 		mPortable = true;
-		mCacheDir = mTempDir + "\\FlexLife.cache";
+		mCacheDir = mTempDir + "\\Luna.cache";
 	}
 	else
 	{

@@ -178,6 +178,8 @@ public:
 	static S32  getMaxPartCount()						{ return sMaxParticleCount; }
 	static void incPartCount(const S32 count)			{ sParticleCount += count; }
 	static void decPartCount(const S32 count)			{ sParticleCount -= count; }
+	static void setUseNewFollowSource(const bool use)	{ sUseNewFollowSourceLogic = use; }
+	static bool getUseNewFollowSource()					{ return sUseNewFollowSourceLogic; }
 	
 	U32 mID;
 
@@ -193,6 +195,7 @@ protected:
 	static S32 sParticleCount;
 	static F32 sParticleAdaptiveRate;
 	static F32 sParticleBurstRate;
+	static bool sUseNewFollowSourceLogic;
 
 	static const S32 MAX_PART_COUNT;
 	static const F32 PART_THROTTLE_THRESHOLD;

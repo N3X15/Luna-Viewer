@@ -121,23 +121,6 @@ Error details: The alert called &apos;[_NAME]&apos; was not found in notificatio
   </notification>
 
   <notification
-   functor="GenericAcknowledge"
-   icon="alertmodal.tga"
-   name="3PVPWarning"
-   label="3PVP Compliance Warning"
-   type="alertmodal">
-Luna (nor any other Open Source SL viewer) does not comply with the new Second Life 3rd Party Viewer Policy.  Because of this, we have removed the SL grid from the grid repositor and have chosen OSGrid as the default login spot.  
-
-If you choose to use Luna on the Second Life grid after April 30th, 2010, you do so at your own risk, and by doing so YOU AGREE THAT WE ARE NOT RESPONSIBLE FOR YOUR ACTIONS OR ANY DAMAGES INCURRED BY YOUR USE OF THIS SOFTWARE.  We will NOT support Luna if you use it on any Second Life grid, including private SL firewalled installations.
-
-If you do not agree with these terms or do not understand, please exit Luna immediately.
-    <usetemplate
-     name="okbutton"
-     yestext="OK"/>
-  </notification>
-
-
-  <notification
    icon="alertmodal.tga"
    name="FloaterNotFound"
    type="alertmodal">

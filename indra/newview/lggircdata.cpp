@@ -114,7 +114,7 @@ lggIrcData::lggIrcData()
   serverPassword(""),
   channelPassword(""),
   nickPassword(""),
-  autoLogin(TRUE),
+  autoLogin(FALSE),
   id(LLUUID::generateNewID())
 {
 	std::string first("Emerald");

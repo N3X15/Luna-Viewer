@@ -144,6 +144,7 @@ void lggFloaterIrcEdit::onClickSave(void* data)
 	
 	lggFloaterIrcEdit* self = (lggFloaterIrcEdit*)data;
 	//LLFilePicker& picker = LLFilePicker::instance();
+	BOOL autologin = self->childGetValue("EmeraldIRC_AutoConnect").asBoolean();
 	lggIrcData dat(
 	self->childGetValue("EmeraldIRC_server"),	
 	self->childGetValue("EmeraldIRC_tag"),
@@ -153,8 +154,10 @@ void lggFloaterIrcEdit::onClickSave(void* data)
 	self->childGetValue("EmeraldIRC_password"),
 	self->childGetValue("EmeraldIRC_ChanPassword"),
 	self->childGetValue("EmeraldIRC_ServerPassword"),
-	self->childGetValue("EmeraldIRC_AutoConnect").asBoolean(),
+	autologin,
 	LLUUID::generateNewID());
+	//so if they manually select auto log in, and save it, it works
+	if(autologin)gSavedSettings.setBOOL("EmeraldIRC_AutoConnect",true);
 
 	std::string path_name2(gDirUtilp->getExpandedFilename( LL_PATH_PER_SL_ACCOUNT , "IRCGroups", ""));
 				

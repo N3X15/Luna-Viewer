@@ -593,8 +593,6 @@ void LLAgent::resetView(BOOL reset_camera, BOOL change_camera)
 	}
 
 	mHUDTargetZoom = 1.f;
-	mThirdPersonHeadOffset=LLVector3(0.0f,0.0f,1.0f);
-	gSavedSettings.setVector3("FocusOffsetDefault",LLVector3(1.0f,0.0f,1.0f));
 }
 
 // Handle any actions that need to be performed when the main app gains focus
@@ -4050,7 +4048,7 @@ void LLAgent::handleScrollWheel(S32 clicks)
 				//mCameraOffsetDefault.mV[2]+=clicks/10.0f;;
 				mThirdPersonHeadOffset.mV[2]+=clicks/10.0f;
 				
-			}else if(gKeyboard->getKeyDown(KEY_ALT))
+			}else if(gKeyboard->getKeyDown(KEY_SHIFT))
 			{
 				gSavedSettings.setVector3("FocusOffsetDefault",
 					gSavedSettings.getVector3("FocusOffsetDefault") + LLVector3(0.0f,0.0f,clicks/10.0f));
@@ -4276,6 +4274,11 @@ void LLAgent::changeCameraToThirdPerson(BOOL animate)
 	gViewerWindow->getWindow()->resetBusyCount();
 
 	mCameraZoomFraction = INITIAL_ZOOM_FRACTION;
+	
+	gSavedSettings.setVector3("FocusOffsetDefault",LLVector3(1.0f,0.0f,1.0f));
+	mCameraOffsetDefault = gSavedSettings.getVector3("CameraOffsetDefault");
+	mThirdPersonHeadOffset=LLVector3(0.0f,0.0f,1.0f);
+
 
 	if (mAvatarObject.notNull())
 	{
@@ -6355,12 +6358,21 @@ void LLAgent::teleportRequest(
 // Landmark ID = LLUUID::null means teleport home
 void LLAgent::teleportViaLandmark(const LLUUID& landmark_asset_id)
 {
-// [RLVa:KB] - Checked: 2009-07-07 (RLVa-1.0.0d)
-	if ( (rlv_handler_t::isEnabled()) &&
-		 ( (gRlvHandler.hasBehaviour(RLV_BHVR_TPLM)) || 
-		   ((gRlvHandler.hasBehaviour(RLV_BHVR_UNSIT)) && (mAvatarObject.notNull()) && (mAvatarObject->mIsSitting)) ))
+// [RLVa:KB] - Alternate: Snowglobe-1.2.4 | Checked: 2010-03-02 (RLVa-1.1.1a) | Modified: RLVa-1.2.0a
+	if (rlv_handler_t::isEnabled()) 
+	{
+		// If we're getting teleported due to @tpto we should disregard any @tploc=n or @unsit=n restrictions from the same object
+		if ( (gRlvHandler.hasBehaviourExcept(RLV_BHVR_TPLOC, gRlvHandler.getCurrentObject())) ||
+		     ( (mAvatarObject.notNull()) && (mAvatarObject->mIsSitting) && 
+			   (gRlvHandler.hasBehaviourExcept(RLV_BHVR_UNSIT, gRlvHandler.getCurrentObject()))) )
 	{
 		return;
+		}
+
+		if ( (gRlvHandler.getCurrentCommand()) && (RLV_BHVR_TPTO == gRlvHandler.getCurrentCommand()->getBehaviourType()) )
+		{
+			gRlvHandler.setCanCancelTp(false);
+		}
 	}
 // [/RLVa:KB]
 
