@@ -12,7 +12,10 @@ def svnInfo(file):
 	    return match.group(1)
     file.close()
     return None
-	
+
+# N3X15:  This is cheating, but it'll work for now.
+def gitInfo():
+    return os.popen("git log -n 1 --pretty=format:%ct")
     
 def get_version():
     """Figure out svn version..."""
@@ -20,6 +23,9 @@ def get_version():
     if rev:
 	return rev
     rev = svnInfo(os.popen("svn info"))
+    if rev:
+        return rev
+    rev = gitInfo()
     return rev
 
 if __name__ == "__main__":

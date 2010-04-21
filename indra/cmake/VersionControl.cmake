@@ -38,7 +38,7 @@ macro(vcs_get_revision _output_variable)
       )
 
     if (NOT ${_svn_info_result} EQUAL 0)
-      message(STATUS "svn info failed: ${_svn_info_error}")
+      message(STATUS "svn info failed (falling back to git): ${_svn_info_error}")
       set(${_output_variable} 0)
     else (NOT ${_svn_info_result} EQUAL 0)
       string(REGEX REPLACE 
@@ -47,6 +47,25 @@ macro(vcs_get_revision _output_variable)
         ${_output_variable}
         ${_svn_info_output})
     endif (NOT ${_svn_info_result} EQUAL 0)
+
+    if (${_output_variable} EQUAL 0)
+      execute_process(
+        COMMAND git log -n 1 --pretty=format:%ct
+        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/..
+        OUTPUT_VARIABLE _git_log_output
+        ERROR_VARIABLE _git_log_error
+        RESULT_VARIABLE _git_log_result
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+        ERROR_STRIP_TRAILING_WHITESPACE
+        )
+      if (NOT ${_git_log_result} EQUAL 0)
+        message(STATUS "git log failed: ${_git_log_error}")
+        set(${_output_variable} 0)
+      else (NOT ${_git_log_result} EQUAL 0)
+        set(${_output_variable} ${_git_log_output})
+      endif (NOT ${_git_log_result} EQUAL 0)
+    endif (${_output_variable} EQUAL 0)
+
   else (Subversion_FOUND)
     if (WINDOWS AND TORTOISE_WCREV_EXECUTABLE)
       # try to find TortoisSVN if we are on windows.
