@@ -173,6 +173,8 @@ void LLHUDEffectBeam::unpackData(LLMessageSystem *mesgsys, S32 blocknum)
 	mFadeInterp.setEndTime(mKillTime);
 	mFadeInterp.setStartVal(1.f);
 	mFadeInterp.setEndVal(0.f);
+
+	LUA_CALL("OnBeamEffect") << source_id << target_id << new_target << mColor << LUA_END;
 }
 
 void LLHUDEffectBeam::setSourceObject(LLViewerObject *objp)
