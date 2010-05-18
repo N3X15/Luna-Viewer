@@ -13,7 +13,7 @@ RegisterHook("PreUpdateGeometry"	,"Before geometry update.")
 -- defined in indra/newview/llviewerobject.cpp:4401
 RegisterHook("OnAttachedSound"	,"Object playing a sound (includes looped sounds).")
 
--- defined in indra/newview/llagent.cpp:959
+-- defined in indra/newview/llagent.cpp:957
 RegisterHook("OnRegionChanged"	,"Tells Lua that you have moved into a new region.")
 
 -- defined in indra/newview/llviewerobject.cpp:4275
@@ -34,10 +34,10 @@ RegisterHook("OnChatShout"	,"Triggered when someone shouts something in local ch
 -- defined in indra/newview/LunaLua.cpp:195
 RegisterHook("OnLunaInit"	,"Luna's Lua engine has initialized.")
 
--- defined in indra/newview/llvoavatar.cpp:3088
+-- defined in indra/newview/llvoavatar.cpp:3090
 RegisterHook("OnAvatarLoaded"	,"Triggered when an avatar has been fully loaded.")
 
--- defined in indra/newview/llagent.cpp:826
+-- defined in indra/newview/llagent.cpp:824
 RegisterHook("EmeraldPhantomOn"	,"Tells the script engine whether a user has become phantom.")
 
 -- defined in indra/newview/llagent.cpp:487
@@ -49,7 +49,7 @@ RegisterHook("PipelineCreateBuffers"	,"Reserve GL buffers.")
 -- defined in indra/newview/llviewerobject.cpp:1020
 RegisterHook("OnSetText"	,"Someone set this object's llSetText.")
 
--- defined in indra/newview/llviewerobjectlist.cpp:1364
+-- defined in indra/newview/llviewerobjectlist.cpp:1367
 RegisterHook("OnObjectCreated"	,"An object has rezzed/appeared.")
 
 -- defined in indra/newview/llviewermessage.cpp:3390
