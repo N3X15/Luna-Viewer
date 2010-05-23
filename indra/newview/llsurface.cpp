@@ -120,7 +120,7 @@ LLSurface::~LLSurface()
 	mSurfaceZ = NULL;
 
 	delete [] mNorm;
-
+	
 	mGridsPerEdge = 0;
 	mGridsPerPatchEdge = 0;
 	mPatchesPerEdge = 0;

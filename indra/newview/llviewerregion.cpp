@@ -757,6 +757,96 @@ F32 LLViewerRegion::getCompositionXY(const S32 x, const S32 y) const
 	return getComposition()->getValueScaled((F32)x, (F32)y);
 }
 
+F32 LLViewerRegion::getCompositionXYZ(const S32 x, const S32 y,const S32 z) const
+{
+	if (x >= 256)
+	{
+		if (y >= 256)
+		{
+			LLVector3d center = getCenterGlobal() + LLVector3d(256.f, 256.f, 0.f);
+			LLViewerRegion *regionp = LLWorld::getInstance()->getRegionFromPosGlobal(center);
+			if (regionp)
+			{
+				// OK, we need to do some hackery here - different simulators no longer use
+				// the same composition values, necessarily.
+				// If we're attempting to blend, then we want to make the fractional part of
+				// this region match the fractional of the adjacent.  For now, just minimize
+				// the delta.
+				F32 our_comp = getComposition()->getValueScaled(255, 255);
+				F32 adj_comp = regionp->getComposition()->getValueScaled(x - 256.f, y - 256.f);
+				while (llabs(our_comp - adj_comp) >= 1.f)
+				{
+					if (our_comp > adj_comp)
+					{
+						adj_comp += 1.f;
+					}
+					else
+					{
+						adj_comp -= 1.f;
+					}
+				}
+				return adj_comp;
+			}
+		}
+		else
+		{
+			LLVector3d center = getCenterGlobal() + LLVector3d(256.f, 0, 0.f);
+			LLViewerRegion *regionp = LLWorld::getInstance()->getRegionFromPosGlobal(center);
+			if (regionp)
+			{
+				// OK, we need to do some hackery here - different simulators no longer use
+				// the same composition values, necessarily.
+				// If we're attempting to blend, then we want to make the fractional part of
+				// this region match the fractional of the adjacent.  For now, just minimize
+				// the delta.
+				F32 our_comp = getComposition()->getValueScaled(255.f, (F32)y);
+				F32 adj_comp = regionp->getComposition()->getValueScaled(x - 256.f, (F32)y);
+				while (llabs(our_comp - adj_comp) >= 1.f)
+				{
+					if (our_comp > adj_comp)
+					{
+						adj_comp += 1.f;
+					}
+					else
+					{
+						adj_comp -= 1.f;
+					}
+				}
+				return adj_comp;
+			}
+		}
+	}
+	else if (y >= 256)
+	{
+		LLVector3d center = getCenterGlobal() + LLVector3d(0.f, 256.f, 0.f);
+		LLViewerRegion *regionp = LLWorld::getInstance()->getRegionFromPosGlobal(center);
+		if (regionp)
+		{
+			// OK, we need to do some hackery here - different simulators no longer use
+			// the same composition values, necessarily.
+			// If we're attempting to blend, then we want to make the fractional part of
+			// this region match the fractional of the adjacent.  For now, just minimize
+			// the delta.
+			F32 our_comp = getComposition()->getValueScaled((F32)x, 255.f);
+			F32 adj_comp = regionp->getComposition()->getValueScaled((F32)x, y - 256.f);
+			while (llabs(our_comp - adj_comp) >= 1.f)
+			{
+				if (our_comp > adj_comp)
+				{
+					adj_comp += 1.f;
+				}
+				else
+				{
+					adj_comp -= 1.f;
+				}
+			}
+			return adj_comp;
+		}
+	}
+
+	return getComposition()->getValueScaled((F32)x, (F32)y);
+}
+
 void LLViewerRegion::calculateCenterGlobal() 
 {
 	mCenterGlobal = mOriginGlobal;
