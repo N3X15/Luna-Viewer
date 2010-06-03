@@ -195,6 +195,8 @@
 #include "floaterao.h"
 #include "scriptcounter.h"
 
+#include "LunaVoxelSurface.h"
+
 // [RLVa:KB]
 #include "rlvhandler.h"
 // [/RLVa:KB]
