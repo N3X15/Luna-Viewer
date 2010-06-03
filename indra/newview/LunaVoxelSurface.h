@@ -157,7 +157,7 @@ public:
 	void dirtyLayer(int LID);
 
 	static void setTextureSize(const S32 texture_size);
-
+	static void HandleLayerPacket(LLMessageSystem *mesgsys, void **user_data);
 	friend class LLSurfacePatch;
 	friend std::ostream& operator<<(std::ostream &s, const LLSurface &S);
 public:
