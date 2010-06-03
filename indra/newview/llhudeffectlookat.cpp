@@ -380,7 +380,7 @@ void LLHUDEffectLookAt::unpackData(LLMessageSystem *mesgsys, S32 blocknum)
 		clearLookAtTarget();
 	}
 
-	LUA_CALL("OnLookAt") << source_id << target_id << new_target << (int)lookAtTypeUnpacked << LUA_END;
+	//LUA_CALL("OnLookAt") << source_id << target_id << new_target << (int)lookAtTypeUnpacked << LUA_END;
 }
 
 //-----------------------------------------------------------------------------
