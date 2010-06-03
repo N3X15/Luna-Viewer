@@ -513,6 +513,8 @@ set(viewer_SOURCE_FILES
     noise.cpp
     pipeline.cpp
     lunaconsole.cpp
+    LunaVoxelSurface.cpp
+    LunaVOVoxelSurface.cpp
     LuaUI.cpp
 # SL module -----------------
     LuaAgent_f.cpp
@@ -993,6 +995,8 @@ set(viewer_HEADER_FILES
     randgauss.h
     VertexCache.h
     VorbisFramework.h
+    LunaVoxelSurface.h
+    LunaVOVoxelSurface.h
     LunaLua.h
 # Base Module ------------
     LuaAgent_f.h
