@@ -202,7 +202,7 @@ void LLHUDEffectPointAt::unpackData(LLMessageSystem *mesgsys, S32 blocknum)
 
 //	mKillTime = mTimer.getElapsedTimeF32() + mDuration;
 	update();
-	LUA_CALL("OnPointAt") << source_id << target_id << new_target << pointAtTypeUnpacked << LUA_END;
+	//LUA_CALL("OnPointAt") << source_id << target_id << new_target << pointAtTypeUnpacked << LUA_END;
 }
 
 //-----------------------------------------------------------------------------
