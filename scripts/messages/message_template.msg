@@ -6,7 +6,7 @@ version 2.0
 // numbers. Each message must be numbered relative to the
 // other messages of that type. The current highest number 
 // for each type is listed below:
-// Low: 423
+// Low: 426
 // Medium: 18
 // High: 29
 // PLEASE UPDATE THIS WHEN YOU ADD A NEW MESSAGE!
@@ -8932,5 +8932,68 @@ version 2.0
 		{	Description			Variable	1	}
 		{	CreationDate		S32	}
 		{	CRC				U32	}
+	}
+}
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////
+// VOXELSIM VOXEL PACKETS
+//////////////////////////////////////////////////////////////////////////////////////
+
+// VoxelLayer
+//	Sparse matrix of {x,y,MaterialID}
+{
+	VoxelLayer Low 911 NotTrusted Zerocoded
+	{
+		LayerData		Single
+		{	Z		U32	}
+	}
+	{
+		VoxelData		Variable
+		{	X		U32	}
+		{	Y		U32	}
+		{	Material	U8	}
+	}
+}
+
+// VoxelAdd
+//	Adds a solid voxel to the terrain at the specified point.
+//
+{
+	VoxelAdd Low 912 NotTrusted Unencoded
+	{
+		VoxelData		Single
+		{	X		U32	}
+		{	Y		U32	}
+		{	Z		U32	}
+		{	Material	U8	}
+	}
+}
+
+// VoxelRemove
+//	Adds an air voxel to the terrain at the specified point.
+//
+{
+	VoxelRemove Low 913 NotTrusted Unencoded
+	{
+		VoxelData		Single
+		{	X		U32	}
+		{	Y		U32	}
+		{	Z		U32	}
+	}
+}
+
+// VoxelUpdate
+//	Updates voxel material at the specified point.
+//
+{
+	VoxelUpdate Low 914 NotTrusted Unencoded
+	{
+		VoxelData		Single
+		{	X		U32	}
+		{	Y		U32	}
+		{	Z		U32	}
+		{	Material	U8	}
 	}
 }

@@ -3460,7 +3460,24 @@ void register_viewer_callbacks(LLMessageSystem* msg)
 
 	msg->setHandlerFuncFast(_PREHASH_FeatureDisabled, process_feature_disabled_message);
 
-	msg->setHandlerFunc("VoxelLayer",LunaVoxelSurface::OnVoxelLayer);
+/*
+// VoxelLayer
+//	Sparse matrix of {x,y,MaterialID}
+{
+	VoxelLayer Low 911 NotTrusted Zerocoded
+	{
+		LayerData		Single
+		{	Z		U32	}
+	}
+	{
+		VoxelData		Variable
+		{	X		U32	}
+		{	Y		U32	}
+		{	Material	U8	}
+	}
+}
+*/
+	msg->setHandlerFunc("VoxelLayer",LunaVoxelSurface::HandleLayerPacket);
 }
 
 void init_stat_view()

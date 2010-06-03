@@ -165,7 +165,6 @@ void LunaVoxelSurface::HandleLayerPacket(LLMessageSystem *mesgsys, void **user_d
 	}
 
 	U32 x,y,z,f;
-	byte Material;
 
 	mesgsys->getU32("LayerData","Z", z);
 	mesgsys->getU32("LayerData","Flags", f);
