@@ -82,13 +82,13 @@ public const byte MATFLAG_TOXIC	=0x08;
 struct VoxMaterial
 {
 public: 
-	byte		ID;//		= 0x00;
+	const char	ID;//		= 0x00;
 	string		Name;//		= "Granite";
 	MaterialType	Type;//		= MaterialType.Igneous;
 	F32		Density;//		= 2.75f;
 	LLUUID		Texture;//		= UUID.Zero;
 	int		Deposit;//		= DepositType.Layer;
-	byte 		Flags;//		= (MatFlags)0x00;
+	const char	Flags;//		= (MatFlags)0x00;
 }
 
 class LunaVoxelSurface 
@@ -108,16 +108,16 @@ public:
 
 	void setOriginGlobal(const LLVector3d &origin_global);
 
-	void SetVoxel(int x,int y,int z,byte matID);
-	void SetVoxelsFromLayer(int z,byte *matID);
+	void SetVoxel(int x,int y,int z,unsigned char matID);
+	void SetVoxelsFromLayer(int z,unsigned char *matID);
 
 	void connectNeighbor(LunaVoxelSurface *neighborp, U32 direction);
 	void disconnectNeighbor(LunaVoxelSurface *neighborp);
 	void disconnectAllNeighbors();
 
 	void AddMaterial(VoxMaterial Material);
-	VoxMaterial GetMaterial(byte ID);
-	void NukeMaterial(byte ID);
+	VoxMaterial GetMaterial(unsigned char ID);
+	void NukeMaterial(unsigned char ID);
 
 	LLVector3 getOriginAgent() const;
 	const LLVector3d &getOriginGlobal() const;
@@ -167,7 +167,7 @@ public:
 	S32 YScale;
 	S32 ZScale;
 
-	std::map<byte,VoxMaterial> mMaterials;
+	std::map<unsigned char,VoxMaterial> mMaterials;
 	// Each surface points at 8 neighbors (or NULL)
 	// +---+---+---+
 	// |NW | N | NE|
@@ -205,7 +205,7 @@ protected:
 	LLVector3d	mOriginGlobal;		// In absolute frame
 
 	// Array of grid data, XScale*YScale*ZScale
-	byte *mVoxels
+	unsigned char *mVoxels
 
 	// Array of grid normals, XScale*YScale*ZScale
 	LLVector3 *mNorm;

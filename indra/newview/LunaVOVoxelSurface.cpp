@@ -367,27 +367,22 @@ void LunaVOVoxelSurface::MarchCube(
 		*(colorsp++)=LLColor4U::white;
 		*(texcoords0p++)=LLVector2(0.f,0.f); // Texture offsets, fix this
 		*(texcoords1p++)=LLVector2(0.f,0.f); // This, too
-		*(indicesp++)=iEdge; 			// I seriously don't fucking know, maybe something to do with gLunaTriangleConnectionTable?
+		//*(indicesp++)=iEdge; 			// I seriously don't fucking know, maybe something to do with gLunaTriangleConnectionTable?
             }
 	}
-	index_offset+=12;
-/*
-
         //Draw the triangles that were found.  There can be up to five per cube
         for(iTriangle = 0; iTriangle < 5; iTriangle++)
         {
-            if(a2iTriangleConnectionTable[iFlagIndex][3*iTriangle] < 0) break;
+            if(gLunaTriangleConnectionTable[iFlagIndex][3*iTriangle] < 0) break;
 
             for(iCorner = 0; iCorner < 3; iCorner++)
             {
-                iVertex = a2iTriangleConnectionTable[iFlagIndex][3*iTriangle+iCorner];
+                iVertex = gLunaTriangleConnectionTable[iFlagIndex][3*iTriangle+iCorner];
 
-                vGetColor(sColor, asEdgeVertex[iVertex], asEdgeNorm[iVertex]);
-                glColor4f(sColor.fX, sColor.fY, sColor.fZ, 0.6);
-                glNormal3f(asEdgeNorm[iVertex].fX,   asEdgeNorm[iVertex].fY,   asEdgeNorm[iVertex].fZ);
-                glVertex3f(asEdgeVertex[iVertex].fX, asEdgeVertex[iVertex].fY, asEdgeVertex[iVertex].fZ);
+                *(indicesp++)=iVertex;
+		index_offset++;
             }
-        }*/
+        }
 }
 
 //vMarchCube2 performs the Marching Tetrahedrons algorithm on a single cube by making six calls to vMarchTetrahedron

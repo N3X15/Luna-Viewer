@@ -60,6 +60,61 @@
 #include "lldrawpoolterrain.h"
 #include "lldrawable.h"
 
+
+class LunaMaterialsFetched : public LLHTTPClient::Responder
+{
+	LOG_CLASS(LunaMaterialsFetched);
+public:
+    LunaMaterialsFetched(LLViewerRegion* region)
+		: mRegion(region)
+    { }
+	virtual ~BaseCapabilitiesComplete()
+	{
+	}
+
+	void setRegion(LLViewerRegion* region)
+	{
+		mRegion = region ;
+	}
+
+	void error(U32 statusNum, const std::string& reason)
+	{
+		LL_WARNS2("Voxels", "Materials") << statusNum << ": " << reason << LL_ENDL;
+	}
+
+	void result(const LLSD& content)
+	{
+		if(!mRegion || LLHTTPClient::ResponderPtr(this) != mRegion->getHttpResponderPtr()) //region is removed or responder is not created.
+		{
+			return ;
+		}
+
+		LLSD::array_const_iterator iter;
+		for(iter = content.beginMap(); iter != content.endMap(); ++iter)
+		{
+			LLSD matSD = *content;
+			VoxMaterial mat;
+			mat.ID		= (U8)matSD["ID"].asInteger();
+			mat.Name	= matSD["Name"].asString();
+			//mat.Type	= matSD["Type"].asString();
+			mat.Density	= matSD["Density"].asSingle();
+			mat.Texture	= matSD["Texture"].asUUID();
+			mat.Deposit	= matSD["Deposit"].asInteger();
+			mat.Flags	= (U8)matSD["Flags"].asInteger();
+			mRegion->mVoxels->AddMaterial(mat);
+			LL_DEBUGS2("Voxels", "Materials") << "Adding material: " << mat.Name << LL_ENDL;
+		}
+	}
+
+	static boost::intrusive_ptr<LunaMaterialsFetched> build(LLViewerRegion* region)
+	{
+		return boost::intrusive_ptr<LunaMaterialsFetched>(new LunaMaterialsFetched(region));
+	}
+
+private:
+	LLViewerRegion* mRegion;
+};
+
 LunaVoxelSurface::LunaVoxelSurface(LLViewerRegion *regionp = NULL):
 	XScale(0),
 	YScale(0),
@@ -94,6 +149,55 @@ void LunaVoxelSurface::initClasses()
 {
 }
 
+// static
+void LunaVoxelSurface::HandleLayerPacket(LLMessageSystem *mesgsys, void **user_data)
+{
+	LLViewerRegion *regionp = LLWorld::getInstance()->getRegion(mesgsys->getSender());
+
+	if (!regionp || gNoRender)
+	{
+		return;
+	}
+
+	if(!regionp->mVoxels)
+	{
+		regionp->mVoxels=LunaVoxelSurface::create(256,256,100,regionp->getOriginGlobal());
+	}
+
+	U32 x,y,z,f;
+	byte Material;
+
+	mesgsys->getU32("LayerData","Z", z);
+	mesgsys->getU32("LayerData","Flags", f);
+	if((f&1)==1) // Clear voxels
+	{
+		regionp->mVoxels=LunaVoxelSurface::create(256,256,100,regionp->getOriginGlobal());
+	}
+	S32 size = mesgsys->getNumberOfBlocks("VoxelData");
+	if (0 == size)
+	{
+		LL_WARNS("Messaging") << "Layer data has zero size." << LL_ENDL;
+		return;
+	}
+	if (size < 0)
+	{
+		// getSizeFast() is probably trying to tell us about an error
+		LL_WARNS("Messaging") << "getSizeFast() returned negative result: "
+			<< size
+			<< LL_ENDL;
+		return;
+	}
+
+	for(S32 i = 0; i < size; ++i)
+	{
+		unsigned char m = 0x00;
+		mesgsys->getU32("VoxelData","X",x,i);
+		mesgsys->getU32("VoxelData","Y",y,i);
+		mesgsys->getU32("VoxelData","Material",m,i);
+		!regionp->mVoxels->SetVoxel(x,y,z,m);
+	}
+}
+
 void LunaVoxelSurface::create(const U32 width
 		const U32 length,
 		const U32 height,
@@ -103,7 +207,7 @@ void LunaVoxelSurface::create(const U32 width
 	YScale=length;
 	ZScale=height;
 
-	mVoxels=new byte[XScale*YScale*ZScale];
+	mVoxels=new unsigned char[XScale*YScale*ZScale];
 	for(int x=0;x<XScale;x++)
 	{
 		for(int y=0;x<XScale;x++)
@@ -115,7 +219,7 @@ void LunaVoxelSurface::create(const U32 width
 	mOriginGlobal.setVec(origin_global);
 }
 
-void LunaVoxelSurface::SetVoxel(int x,int y, int z, byte material)
+void LunaVoxelSurface::SetVoxel(int x,int y, int z, unsigned char material)
 {
 	if(x<0) x=0;
 	if(x>XScale-1) x = XScale-1;
@@ -127,14 +231,14 @@ void LunaVoxelSurface::SetVoxel(int x,int y, int z, byte material)
 	mVoxels[x+(y*YScale)+(z*YScale*ZScale)]=material;
 }
 
-void LunaVoxelSurface::SetVoxelsFromLayer(int z,byte *material)
+void LunaVoxelSurface::SetVoxelsFromLayer(int z,unsigned char *material)
 {
 	if(z<0 || z>ZScale-1) return;
 	for(int x=0;x<XScale;x++)
 	{
 		for(int y=0;y<YScale;y++)
 		{
-			SetVoxel(x,y,z,byte[x+(YScale*y)]);
+			SetVoxel(x,y,z,material[x+(YScale*y)]);
 		}
 	}
 }

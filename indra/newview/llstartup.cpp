@@ -1150,6 +1150,7 @@ bool idle_startup()
 		//requested_options.push_back("inventory-targets");
 		requested_options.push_back("buddy-list");
 		requested_options.push_back("ui-config");
+		requested_options.push_back("voxels"); // VoxelSim
 #endif
 		requested_options.push_back("tutorial_setting");
 		requested_options.push_back("login-flags");
@@ -3458,6 +3459,8 @@ void register_viewer_callbacks(LLMessageSystem* msg)
 	msg->setHandlerFunc("GenericMessage", process_generic_message);
 
 	msg->setHandlerFuncFast(_PREHASH_FeatureDisabled, process_feature_disabled_message);
+
+	msg->setHandlerFunc("VoxelLayer",LunaVoxelSurface::OnVoxelLayer);
 }
 
 void init_stat_view()

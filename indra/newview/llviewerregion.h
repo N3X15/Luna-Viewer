@@ -67,6 +67,7 @@ class LLMessageSystem;
 class LLNetMap;
 class LLViewerParcelOverlay;
 class LLSurface;
+class LunaVoxelSurface;
 class LLVOCache;
 class LLVOCacheEntry;
 class LLSpatialPartition;
@@ -321,7 +322,8 @@ public:
 
 private:
 	// The surfaces and other layers
-	LLSurface*	mLandp;
+	LLSurface*		mLandp;
+	LunaVoxelSurface*	mVoxelsp;
 
 	// Region geometry data
 	LLVector3d	mOriginGlobal;	// Location of southwest corner of region (meters)

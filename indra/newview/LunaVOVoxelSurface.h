@@ -11,10 +11,10 @@ public:
 	enum
 	{
 		VERTEX_DATA_MASK =	(1 << LLVertexBuffer::TYPE_VERTEX) |
-							(1 << LLVertexBuffer::TYPE_NORMAL) |
-							(1 << LLVertexBuffer::TYPE_TEXCOORD0) |
-							(1 << LLVertexBuffer::TYPE_TEXCOORD1) |
-							(1 << LLVertexBuffer::TYPE_COLOR) 
+					(1 << LLVertexBuffer::TYPE_NORMAL) |
+					(1 << LLVertexBuffer::TYPE_TEXCOORD0) |
+					(1 << LLVertexBuffer::TYPE_TEXCOORD1) |
+					(1 << LLVertexBuffer::TYPE_COLOR) 
 	};
 
 	LunaVOVoxelSurface(const LLUUID &id, const LLPCode pcode, LLViewerRegion *regionp);
@@ -43,11 +43,10 @@ public:
 	/*virtual*/ void updateSpatialExtents(LLVector3& newMin, LLVector3& newMax);
 	/*virtual*/ BOOL isActive() const; // Whether this object needs to do an idleUpdate.
 
-	void setPatch(LLSurfacePatch *patchp);
-	LLSurfacePatch	*getPatch() const		{ return mPatchp; }
-
 	void dirtyPatch();
 	void dirtyGeom();
+
+	static void HandleLayerPacket(LLMessageSystem *mesgsys, void **user_data);
 
 	/*virtual*/ BOOL lineSegmentIntersect(const LLVector3& start, const LLVector3& end, 
 										  S32 face = -1,                        // which face to check, -1 = ALL_SIDES
@@ -65,7 +64,7 @@ protected:
 
 	LLFacePool		*mPool;
 	LLFacePool		*getPool();
-	S32				mBaseComp;
+	S32			mBaseComp;
 	LunaVoxelSurface	*mPatchp;
 	BOOL			mDirtyTexture;
 	BOOL			mDirtyTerrain;

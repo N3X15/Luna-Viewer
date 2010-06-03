@@ -111,13 +111,13 @@ public:
 	*/
 	//@{
 		typedef bool			Boolean;
-		typedef S32				Integer;
-		typedef F64				Real;
+		typedef S32			Integer;
+		typedef F64			Real;
 		typedef std::string		String;
 		typedef LLUUID			UUID;
 		typedef LLDate			Date;
 		typedef LLURI			URI;
-		typedef std::vector<U8>	Binary;
+		typedef std::vector<U8>		Binary;
 	//@}
 	
 	/** @name Scalar Constructors */

@@ -132,6 +132,7 @@ public:
 		
 		if (STATE_SEED_GRANTED_WAIT == LLStartUp::getStartupState())
 		{
+			
 			LLStartUp::setStartupState( STATE_SEED_CAP_GRANTED );
 		}
 	}
@@ -216,13 +217,13 @@ LLViewerRegion::LLViewerRegion(const U64 &handle,
 	
 	//create object partitions
 	//MUST MATCH declaration of eObjectPartitions
-	mObjectPartition.push_back(new LLHUDPartition());		//PARTITION_HUD
+	mObjectPartition.push_back(new LLHUDPartition());	//PARTITION_HUD
 	mObjectPartition.push_back(new LLTerrainPartition());	//PARTITION_TERRAIN
-	mObjectPartition.push_back(new LLWaterPartition());		//PARTITION_WATER
-	mObjectPartition.push_back(new LLTreePartition());		//PARTITION_TREE
+	mObjectPartition.push_back(new LLWaterPartition());	//PARTITION_WATER
+	mObjectPartition.push_back(new LLTreePartition());	//PARTITION_TREE
 	mObjectPartition.push_back(new LLParticlePartition());	//PARTITION_PARTICLE
-	mObjectPartition.push_back(new LLCloudPartition());		//PARTITION_CLOUD
-	mObjectPartition.push_back(new LLGrassPartition());		//PARTITION_GRASS
+	mObjectPartition.push_back(new LLCloudPartition());	//PARTITION_CLOUD
+	mObjectPartition.push_back(new LLGrassPartition());	//PARTITION_GRASS
 	mObjectPartition.push_back(new LLVolumePartition());	//PARTITION_VOLUME
 	mObjectPartition.push_back(new LLBridgePartition());	//PARTITION_BRIDGE
 	mObjectPartition.push_back(new LLHUDParticlePartition());//PARTITION_HUD_PARTICLE
@@ -1516,6 +1517,8 @@ void LLViewerRegion::setSeedCapability(const std::string& url)
 	capabilityNames.append("ProvisionVoiceAccountRequest");
 	capabilityNames.append("RemoteParcelRequest");
 	capabilityNames.append("RequestTextureDownload");
+	capabilityNames.append("RequestVoxelLayer");		// VoxelSim
+	capabilityNames.append("RequestMaterialMap");		// VoxelSim
 	capabilityNames.append("SearchStatRequest");
 	capabilityNames.append("SearchStatTracking");
 	capabilityNames.append("SendPostcard");
@@ -1537,6 +1540,7 @@ void LLViewerRegion::setSeedCapability(const std::string& url)
 	capabilityNames.append("ViewerStats");
 	// Please add new capabilities alphabetically to reduce
 	// merge conflicts.
+	// No one's listening to this :/
 
 	llinfos << "posting to seed " << url << llendl;
 
