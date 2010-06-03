@@ -32,8 +32,6 @@
 
 #include "llviewerprecompiledheaders.h"
 
-#include "LunaVoxelSurface.h"
-
 #include "llrender.h"
 
 #include "llviewerimagelist.h"
