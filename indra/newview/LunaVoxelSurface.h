@@ -67,26 +67,26 @@ enum MaterialType
 	Sedimentary
 };
 	
-public const int DEPOSIT_LAYER=0;
-public const int DEPOSIT_SMALL_CLUSTER=0;
-public const int DEPOSIT_LARGE_CLUSTER=0;
-public const int DEPOSIT_VEIN=0;
+const int DEPOSIT_LAYER=0;
+const int DEPOSIT_SMALL_CLUSTER=0;
+const int DEPOSIT_LARGE_CLUSTER=0;
+const int DEPOSIT_VEIN=0;
 
-public const byte MATFLAG_SOLID	=0x01;
-public const byte MATFLAG_FLUID	=0x02;
-public const byte MATFLAG_DAMP	=0x04;
-public const byte MATFLAG_TOXIC	=0x08;
+const U8 MATFLAG_SOLID	=0x01;
+const U8 MATFLAG_FLUID	=0x02;
+const U8 MATFLAG_DAMP	=0x04;
+const U8 MATFLAG_TOXIC	=0x08;
 
 struct VoxMaterial
 {
 public: 
-	const char	ID;//		= 0x00;
-	string		Name;//		= "Granite";
+	U8		ID;//		= 0x00;
+	std::string		Name;//		= "Granite";
 	MaterialType	Type;//		= MaterialType.Igneous;
 	F32		Density;//		= 2.75f;
 	LLUUID		Texture;//		= UUID.Zero;
 	int		Deposit;//		= DepositType.Layer;
-	const char	Flags;//		= (MatFlags)0x00;
+	U8		Flags;//		= (MatFlags)0x00;
 }
 
 class LunaVoxelSurface 
@@ -97,7 +97,7 @@ public:
 
 	static void initClasses(); // Do class initialization for LLSurface and its child classes.
 
-	void create(const U32 width
+	void create(const U32 width,
 		const U32 length,
 		const U32 height,
 		const LLVector3d &origin_global);	// Allocates and initializes surface
@@ -150,7 +150,7 @@ public:
 
 	LLViewerImage *getSTexture();
 	LLViewerImage *getWaterTexture();
-	BOOL hasZData() const							{ return mHasZData; }
+	BOOL hasData() const							{ return mHasData; }
 
 	void dirtyAllLayers();	// Use this to dirty all patches when changing terrain parameters
 
@@ -203,7 +203,7 @@ protected:
 	LLVector3d	mOriginGlobal;		// In absolute frame
 
 	// Array of grid data, XScale*YScale*ZScale
-	unsigned char *mVoxels
+	U8 *mVoxels
 
 	// Array of grid normals, XScale*YScale*ZScale
 	LLVector3 *mNorm;
