@@ -67,10 +67,10 @@ enum MaterialType
 	Sedimentary
 };
 	
-const int DEPOSIT_LAYER=0;
-const int DEPOSIT_SMALL_CLUSTER=0;
-const int DEPOSIT_LARGE_CLUSTER=0;
-const int DEPOSIT_VEIN=0;
+const int DEPOSIT_LAYER		= 0; // Like a "base coat".  
+const int DEPOSIT_SMALL_CLUSTER	= 1; // A "ball" of material (rare gems?)
+const int DEPOSIT_LARGE_CLUSTER	= 2; // Larger ball
+const int DEPOSIT_VEIN		= 3; // Ore vein
 
 const U8 MATFLAG_SOLID	=0x01;
 const U8 MATFLAG_FLUID	=0x02;
@@ -81,13 +81,13 @@ struct VoxMaterial
 {
 public: 
 	U8		ID;//		= 0x00;
-	std::string		Name;//		= "Granite";
+	std::string	Name;//		= "Granite";
 	MaterialType	Type;//		= MaterialType.Igneous;
 	F32		Density;//		= 2.75f;
 	LLUUID		Texture;//		= UUID.Zero;
 	int		Deposit;//		= DepositType.Layer;
 	U8		Flags;//		= (MatFlags)0x00;
-}
+};
 
 class LunaVoxelSurface 
 {
@@ -203,7 +203,7 @@ protected:
 	LLVector3d	mOriginGlobal;		// In absolute frame
 
 	// Array of grid data, XScale*YScale*ZScale
-	U8 *mVoxels
+	U8 *mVoxels;
 
 	// Array of grid normals, XScale*YScale*ZScale
 	LLVector3 *mNorm;

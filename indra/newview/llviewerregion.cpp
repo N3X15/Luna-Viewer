@@ -757,7 +757,7 @@ F32 LLViewerRegion::getCompositionXY(const S32 x, const S32 y) const
 
 	return getComposition()->getValueScaled((F32)x, (F32)y);
 }
-
+/*
 F32 LLViewerRegion::getCompositionXYZ(const S32 x, const S32 y,const S32 z) const
 {
 	if (x >= 256)
@@ -847,7 +847,7 @@ F32 LLViewerRegion::getCompositionXYZ(const S32 x, const S32 y,const S32 z) cons
 
 	return getComposition()->getValueScaled((F32)x, (F32)y);
 }
-
+*/
 void LLViewerRegion::calculateCenterGlobal() 
 {
 	mCenterGlobal = mOriginGlobal;
