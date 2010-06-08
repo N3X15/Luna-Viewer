@@ -68,7 +68,7 @@ public:
     LunaMaterialsFetched(LLViewerRegion* region)
 		: mRegion(region)
     { }
-	virtual ~BaseCapabilitiesComplete()
+	virtual ~LunaMaterialsFetched()
 	{
 	}
 
@@ -89,10 +89,10 @@ public:
 			return ;
 		}
 
-		LLSD::array_const_iterator iter;
+		LLSD::map_const_iterator iter;
 		for(iter = content.beginMap(); iter != content.endMap(); ++iter)
 		{
-			LLSD matSD = *content;
+			LLSD matSD = iter->second;
 			VoxMaterial mat;
 			mat.ID		= (U8)matSD["ID"].asInteger();
 			mat.Name	= matSD["Name"].asString();
@@ -320,7 +320,7 @@ const LLVector3d &LunaVoxelSurface::getOriginGlobal() const
 // or if location is not above surface returns zero.
 F32 LunaVoxelSurface::resolveHeightRegion(const int x, const int y) const
 {
-	F32 h = 0f;
+	F32 h = 0.0f;
 	for(int z = 0;z<ZScale;z++)
 	{
 		if(IsSolid(x,y,z))
@@ -332,7 +332,7 @@ F32 LunaVoxelSurface::resolveHeightGlobal(const LLVector3d &position_global) con
 {
 	if (!mRegionp)
 	{
-		return 0.f;
+		return 0.0f;
 	}
 	
 	LLVector3 pos_region = mRegionp->getPosRegionFromGlobal(v);
@@ -344,6 +344,6 @@ F32 LunaVoxelSurface::resolveHeightGlobal(const LLVector3d &position_global) con
 LLVector3 LunaVoxelSurface::resolveNormalGlobal(const LLVector3d& v) const
 {
 	// No fucking idea.
-	return new LLVector3(0f,0f,0f);
+	return new LLVector3(0.0f,0.0f,0.0f);
 }
 
