@@ -183,6 +183,7 @@ LLViewerRegion::LLViewerRegion(const U64 &handle,
 	updateRenderMatrix();
 
 	mLandp = new LLSurface('l', NULL);
+	mVoxels = new LunaVoxelSurface(NULL);
 	//mVolumeClouds=NULL;
 	if (!gNoRender)
 	{
@@ -194,6 +195,11 @@ LLViewerRegion::LLViewerRegion(const U64 &handle,
 		mLandp->setRegion(this);
 		mLandp->create(grids_per_region_edge,
 						grids_per_patch_edge,
+						mOriginGlobal,
+						mWidth);
+		mVoxels->setRegion(this);
+		mVoxels->create(grids_per_region_edge,
+						grids_per_patch_edge, 100,
 						mOriginGlobal,
 						mWidth);
 	}
@@ -268,6 +274,7 @@ LLViewerRegion::~LLViewerRegion()
 	delete mCompositionp;
 	delete mParcelOverlay;
 	delete mLandp;
+	delete mVoxels;
 	delete mEventPoll;
 	LLHTTPSender::clearSender(mHost);
 	

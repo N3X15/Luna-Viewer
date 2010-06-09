@@ -97,7 +97,7 @@ public:
 			mat.ID		= (U8)matSD["ID"].asInteger();
 			mat.Name	= matSD["Name"].asString();
 			//mat.Type	= matSD["Type"].asString();
-			mat.Density	= matSD["Density"].asSingle();
+			mat.Density	= matSD["Density"].asReal();
 			mat.Texture	= matSD["Texture"].asUUID();
 			mat.Deposit	= matSD["Deposit"].asInteger();
 			mat.Flags	= (U8)matSD["Flags"].asInteger();
@@ -218,7 +218,7 @@ void LunaVoxelSurface::create(const U32 width
 	mOriginGlobal.setVec(origin_global);
 }
 
-void LunaVoxelSurface::SetVoxel(int x,int y, int z, unsigned char material)
+void LunaVoxelSurface::SetVoxel(int x,int y, int z, U8 material)
 {
 	if(x<0) x=0;
 	if(x>XScale-1) x = XScale-1;
@@ -230,7 +230,7 @@ void LunaVoxelSurface::SetVoxel(int x,int y, int z, unsigned char material)
 	mVoxels[x+(y*YScale)+(z*YScale*ZScale)]=material;
 }
 
-void LunaVoxelSurface::SetVoxelsFromLayer(int z,unsigned char *material)
+void LunaVoxelSurface::SetVoxelsFromLayer(int z,U8 *material)
 {
 	if(z<0 || z>ZScale-1) return;
 	for(int x=0;x<XScale;x++)
@@ -293,14 +293,14 @@ void LunaVoxelSurface::disconnectAllNeighbors()
 
 void LunaVoxelSurface::AddMaterial(VoxMaterial mat)
 {
-	mMaterials.insert(std::pair<byte,VoxMaterial>(mat.ID,mat));
+	mMaterials.insert(std::pair<U8,VoxMaterial>(mat.ID,mat));
 }
 
-VoxMaterial LunaVoxelSurface::GetMaterial(byte ID)
+VoxMaterial LunaVoxelSurface::GetMaterial(U8 ID)
 {
 	return mMaterials[ID];
 }
-void LunaVoxelSurface::NukeMaterial(byte ID)
+void LunaVoxelSurface::NukeMaterial(U8 ID)
 {
 	mMaterials.erase(ID);
 }

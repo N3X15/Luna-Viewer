@@ -60,7 +60,7 @@ public:
 
 	BOOL			mDirtiedPatch;
 protected:
-	~LLVOSurfacePatch();
+	~LunaVOVoxelSurface();
 
 	LLFacePool		*mPool;
 	LLFacePool		*getPool();

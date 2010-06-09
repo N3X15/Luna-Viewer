@@ -323,7 +323,7 @@ public:
 private:
 	// The surfaces and other layers
 	LLSurface*		mLandp;
-	LunaVoxelSurface*	mVoxelsp;
+	LunaVoxelSurface*	mVoxels;
 
 	// Region geometry data
 	LLVector3d	mOriginGlobal;	// Location of southwest corner of region (meters)
