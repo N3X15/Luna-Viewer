@@ -1,0 +1,28 @@
+Due to bullshit that both the Emerald Team and Emerald pulled, this viewer is currently not TPV compliant.
+
+Use of this client under the current version is a violation of the Second Life Third Party Viewer agreement.  Therefore:
+
+*********************************************************************
+* LOGGING INTO THE SECOND LIFE GRID IS NOT SUPPORTED AT THE MOMENT. *
+*    YOU LOG INTO AGNI AT YOUR OWN RISK.  YOU HAVE BEEN WARNED.     *
+*********************************************************************
+
+== Details ==
+
+First of all, I've been permanently banned for things in the past (usually bullshit reasons, like cursing), 
+which automatically invalidates the TPV agreement.  The other developers are not banned as far as I know, but 
+I do not think they count.  I don't log into Second Life anymore (I usually use this in InWorldz anyway), 
+but I still don't think that counts.  If you wish to ask the Lindens about this at any of the GlowSnobe meetings or whatever,
+go right ahead.
+
+In addition, although I have removed most traces of Emerald, there are a few shards left that I am working on removing.  
+Emerald was a popular viewer up until the development team used it's popularity to launch a denial of service attack 
+against a website they did not like.  They also routinely leaked users' private information without notification or permission.
+
+Keep in mind that the updating process will be *very slow*, as I am currently embroiled in a horrendous 8-week university course from Hell.  
+
+Thank you for your understanding and cooperation.
+
+Rob "N3X15" Nelson
+Lead Developer
+nexisentertainment@gmail.com
