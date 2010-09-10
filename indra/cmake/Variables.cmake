@@ -34,7 +34,6 @@ set(VIEWER_DIR ${CMAKE_SOURCE_DIR}/${VIEWER_PREFIX})
 set(LIBS_PREBUILT_DIR ${CMAKE_SOURCE_DIR}/../libraries CACHE PATH
     "Location of prebuilt libraries.")
 
-
 if (EXISTS ${CMAKE_SOURCE_DIR}/Server.cmake)
   # We use this as a marker that you can try to use the proprietary libraries.
   set(INSTALL_PROPRIETARY ON CACHE BOOL "Install proprietary binaries")
@@ -43,8 +42,6 @@ endif (EXISTS ${CMAKE_SOURCE_DIR}/Server.cmake)
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
   set(WINDOWS ON BOOL FORCE)
-  set(COMPILE_OTR ON BOOL FORCE)
-  set(USE_OTR 1)
   set(ARCH i686)
   set(LL_ARCH ${ARCH}_win32)
   set(LL_ARCH_DIR ${ARCH}-win32)
@@ -53,8 +50,7 @@ endif (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
   set(LINUX ON BOOl FORCE)
-  set(COMPILE_OTR 0)
-  set(USE_OTR 0)
+
   # If someone has specified a word size, use that to determine the
   # architecture.  Otherwise, let the architecture specify the word size.
   if (WORD_SIZE EQUAL 32)
@@ -62,13 +58,13 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
   elseif (WORD_SIZE EQUAL 64)
     set(ARCH x86_64)
   else (WORD_SIZE EQUAL 32)
-  execute_process(COMMAND uname -m COMMAND sed s/i.86/i686/
-                  OUTPUT_VARIABLE ARCH OUTPUT_STRIP_TRAILING_WHITESPACE)
-    if (ARCH STREQUAL x86_64)
-      set(WORD_SIZE 64)
-    else (ARCH STREQUAL x86_64)
+    if(CMAKE_SIZEOF_VOID_P MATCHES 4)
+      set(ARCH i686)
       set(WORD_SIZE 32)
-    endif (ARCH STREQUAL x86_64)
+    else(CMAKE_SIZEOF_VOID_P MATCHES 4)
+      set(ARCH x86_64)
+      set(WORD_SIZE 64)
+    endif(CMAKE_SIZEOF_VOID_P MATCHES 4)
   endif (WORD_SIZE EQUAL 32)
 
   set(LL_ARCH ${ARCH}_linux)
@@ -77,8 +73,6 @@ endif (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
   set(DARWIN 1)
-  set(COMPILE_OTR 0)
-  set(USE_OTR 0)
   # set this dynamically from the build system now -
   # NOTE: wont have a distributable build unless you add this on the configure line with:
   # -DCMAKE_OSX_ARCHITECTURES:STRING='i386;ppc'
@@ -104,6 +98,16 @@ set(GRID agni CACHE STRING "Target Grid")
 set(VIEWER ON CACHE BOOL "Build Luna viewer.")
 set(VIEWER_CHANNEL "Luna Development" CACHE STRING "Viewer Channel Name")
 set(VIEWER_LOGIN_CHANNEL ${VIEWER_CHANNEL} CACHE STRING "Luna built from SVN")
+set(VIEWER_BRANDING_ID "Luna" CACHE STRING "Viewer branding id (currently secondlife|snowglobe)")
+
+# *TODO: break out proper Branding-secondlife.cmake, Branding-snowglobe.cmake, etc
+if (${VIEWER_BRANDING_ID} MATCHES "secondlife")
+  set(VIEWER_BRANDING_NAME "Second Life")
+  set(VIEWER_BRANDING_NAME_CAMELCASE "SecondLife")
+elseif (${VIEWER_BRANDING_ID} MATCHES "Luna")
+  set(VIEWER_BRANDING_NAME "Luna")
+  set(VIEWER_BRANDING_NAME_CAMELCASE "Luna")
+endif (${VIEWER_BRANDING_ID} MATCHES "secondlife")
 
 set(STANDALONE OFF CACHE BOOL "Do not use Linden-supplied prebuilt libraries.")
 

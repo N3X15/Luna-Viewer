@@ -195,7 +195,7 @@ public:
 	virtual BOOL	handleMouseDown(S32 x, S32 y, MASK mask);
 	virtual BOOL	handleRightMouseDown(S32 x, S32 y, MASK mask);
 	virtual BOOL	handleDoubleClick(S32 x, S32 y, MASK mask);
-
+	virtual BOOL	handleMiddleMouseDown(S32 x, S32 y, MASK mask);
 	virtual void	draw();
 
 	virtual void	onOpen() {}
@@ -216,6 +216,10 @@ public:
 	virtual BOOL	canSaveAs() const { return FALSE; }
 
 	virtual void	saveAs() {}
+	
+	// <edit>
+	virtual LLUUID  getItemID() { return LLUUID::null; }
+	// </edit>
 
 	void			setSnapTarget(LLHandle<LLFloater> handle) { mSnappedTo = handle; }
 	void			clearSnapTarget() { mSnappedTo.markDead(); }
@@ -364,6 +368,9 @@ public:
 	// attempt to close all floaters
 	void			closeAllChildren(bool app_quitting);
 	BOOL			allChildrenClosed();
+	// <edit>
+	void			minimizeAllChildren();
+	// </edit>
 
 	LLFloater* getFrontmost();
 	LLFloater* getBackmost();
@@ -398,6 +405,7 @@ public:
 	virtual ~LLMultiFloater() {};
 
 	virtual BOOL postBuild();
+	virtual LLXMLNodePtr getXML(bool save_children = true) const;
 	/*virtual*/ void open();	/* Flawfinder: ignore */
 	/*virtual*/ void onClose(bool app_quitting);
 	/*virtual*/ void draw();

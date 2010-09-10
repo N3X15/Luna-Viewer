@@ -56,6 +56,10 @@
 #include "lltexteditor.h"
 #include "lltextbox.h"
 
+// <edit>
+#include "lldelayeduidelete.h"
+// </edit>
+
 //HACK: this allows you to instantiate LLView from xml with "<view/>" which we don't want
 static LLRegisterWidget<LLView> r("view");
 
@@ -87,7 +91,10 @@ LLView::LLView() :
 	mUseBoundingRect(FALSE),
 	mVisible(TRUE),
 	mNextInsertionOrdinal(0),
-	mHoverCursor(UI_CURSOR_ARROW)
+	mHoverCursor(UI_CURSOR_ARROW),
+	// <edit>
+	mDelayedDelete(FALSE)
+	// </edit>
 {
 }
 
@@ -105,7 +112,10 @@ LLView::LLView(const std::string& name, BOOL mouse_opaque) :
 	mUseBoundingRect(FALSE),
 	mVisible(TRUE),
 	mNextInsertionOrdinal(0),
-	mHoverCursor(UI_CURSOR_ARROW)
+	mHoverCursor(UI_CURSOR_ARROW),
+	// <edit>
+	mDelayedDelete(FALSE)
+	// </edit>
 {
 }
 
@@ -127,7 +137,10 @@ LLView::LLView(
 	mUseBoundingRect(FALSE),
 	mVisible(TRUE),
 	mNextInsertionOrdinal(0),
-	mHoverCursor(UI_CURSOR_ARROW)
+	mHoverCursor(UI_CURSOR_ARROW),
+	// <edit>
+	mDelayedDelete(FALSE)
+	// </edit>
 {
 }
 
@@ -136,11 +149,6 @@ LLView::~LLView()
 {
 	//llinfos << "Deleting view " << mName << ":" << (void*) this << llendl;
 // 	llassert(LLView::sIsDrawing == FALSE);
-	if( gFocusMgr.getKeyboardFocus() == this )
-	{
-		llwarns << "View holding keyboard focus deleted: " << getName() << ".  Keyboard focus removed." << llendl;
-		gFocusMgr.removeKeyboardFocusWithoutCallback( this );
-	}
 
 	if( hasMouseCapture() )
 	{
@@ -148,7 +156,10 @@ LLView::~LLView()
 		gFocusMgr.removeMouseCaptureWithoutCallback( this );
 	}
 
-	deleteAllChildren();
+	// <edit> TESTZONE DERF
+	//deleteAllChildren();
+	deleteAllChildren(mDelayedDelete);
+	// </edit>
 
 	if (mParentView != NULL)
 	{
@@ -580,8 +591,26 @@ BOOL LLView::focusPrev(LLView::child_list_t & result)
 // delete all children. Override this function if you need to
 // perform any extra clean up such as cached pointers to selected
 // children, etc.
-void LLView::deleteAllChildren()
+// <edit>
+//void LLView::deleteAllChildren()
+void LLView::deleteAllChildren(BOOL delay_delete)
+// </edit>
 {
+	// <edit> TESTZONE DERF
+	if(delay_delete)
+	{
+		child_list_t::iterator end = mChildList.end();
+		for(child_list_t::iterator iter = mChildList.begin(); iter != end; ++iter)
+		{
+			if((*iter)->getParent() == this)
+				(*iter)->mParentView = NULL;
+		}
+		mCtrlOrder.clear();
+		std::list<LLView*> children(mChildList);
+		gDeleteScheduler->addViewDeleteJob(children);
+		return;
+	}
+	// </edit>
 	// clear out the control ordering
 	mCtrlOrder.clear();
 
@@ -984,6 +1013,30 @@ BOOL LLView::handleRightMouseUp(S32 x, S32 y, MASK mask)
 	}
 	return handled;
 }
+ 
+BOOL LLView::handleMiddleMouseDown(S32 x, S32 y, MASK mask)
+{
+	LLView* handled_view = childrenHandleMiddleMouseDown( x, y, mask );
+	BOOL handled = (handled_view != NULL);
+	if( !handled && blockMouseEvent(x, y) )
+	{
+		handled = TRUE;
+		handled_view = this;
+	}
+
+	return handled;
+}
+
+BOOL LLView::handleMiddleMouseUp(S32 x, S32 y, MASK mask)
+{
+	BOOL handled = childrenHandleMiddleMouseUp( x, y, mask ) != NULL;
+	if( !handled && blockMouseEvent(x, y) )
+	{
+		handled = TRUE;
+	}
+	return handled;
+}
+
 
 LLView* LLView::childrenHandleScrollWheel(S32 x, S32 y, S32 clicks)
 {
@@ -1145,6 +1198,34 @@ LLView* LLView::childrenHandleRightMouseDown(S32 x, S32 y, MASK mask)
 	return handled_view;
 }
 
+LLView* LLView::childrenHandleMiddleMouseDown(S32 x, S32 y, MASK mask)
+{
+	LLView* handled_view = NULL;
+
+	if (getVisible() && getEnabled() )
+	{
+		for ( child_list_iter_t child_it = mChildList.begin(); child_it != mChildList.end(); ++child_it)
+		{
+			LLView* viewp = *child_it;
+			S32 local_x = x - viewp->getRect().mLeft;
+			S32 local_y = y - viewp->getRect().mBottom;
+			if (viewp->pointInView(local_x, local_y) &&
+				viewp->getVisible() &&
+				viewp->getEnabled() &&
+				viewp->handleMiddleMouseDown( local_x, local_y, mask ))
+			{
+				if (sDebugMouseHandling)
+				{
+					sMouseHandlerMessage = std::string("->") + viewp->mName + sMouseHandlerMessage;
+				}
+				handled_view = viewp;
+				break;
+			}
+		}
+	}
+	return handled_view;
+}
+
 LLView* LLView::childrenHandleDoubleClick(S32 x, S32 y, MASK mask)
 {
 	LLView* handled_view = NULL;
@@ -1230,6 +1311,32 @@ LLView* LLView::childrenHandleRightMouseUp(S32 x, S32 y, MASK mask)
 	return handled_view;
 }
 
+LLView* LLView::childrenHandleMiddleMouseUp(S32 x, S32 y, MASK mask)
+{
+	LLView* handled_view = NULL;
+	if( getVisible() && getEnabled() )
+	{
+		for ( child_list_iter_t child_it = mChildList.begin(); child_it != mChildList.end(); ++child_it)
+		{
+			LLView* viewp = *child_it;
+			S32 local_x = x - viewp->getRect().mLeft;
+			S32 local_y = y - viewp->getRect().mBottom;
+			if (viewp->pointInView(local_x, local_y) &&
+				viewp->getVisible() &&
+				viewp->getEnabled() &&
+				viewp->handleMiddleMouseUp( local_x, local_y, mask ))
+			{
+				if (sDebugMouseHandling)
+				{
+					sMouseHandlerMessage = std::string("->") + viewp->mName + sMouseHandlerMessage;
+				}
+				handled_view = viewp;
+				break;
+			}
+		}
+	}
+	return handled_view;
+}
 
 void LLView::draw()
 {
@@ -1249,7 +1356,7 @@ void LLView::draw()
 	LLRect screenRect;
 
 	// draw focused control on top of everything else
-	LLView* focus_view = gFocusMgr.getKeyboardFocus();
+	LLUICtrl* focus_view = dynamic_cast<LLUICtrl*>(gFocusMgr.getKeyboardFocus());
 	if (focus_view && focus_view->getParent() != this)
 	{
 		focus_view = NULL;
@@ -1700,7 +1807,13 @@ BOOL LLView::deleteViewByHandle(LLHandle<LLView> handle)
 {
 	LLView* viewp = handle.get();
 
-	delete viewp;
+	//<edit> Getting some crashes on exit,
+	//guess it should check if the view actually exists before deleting it, but I'm not wading through all of Philip's code.
+	//probably a bug in the delayed ui delete crap (what *is* that, anyways?)
+	if(viewp)
+		delete viewp;
+	//</edit>
+
 	return viewp != NULL;
 }
 
@@ -1865,7 +1978,7 @@ BOOL LLView::localRectToOtherView( const LLRect& local, LLRect* other, LLView* o
 // virtual
 LLXMLNodePtr LLView::getXML(bool save_children) const
 {
-	//FIXME: need to provide actual derived type tag, probably outside this method
+	//If called from a derived class, the derived class will override the node name
 	LLXMLNodePtr node = new LLXMLNode("view", FALSE);
 
 	node->createChild("name", TRUE)->setStringValue(getName());
@@ -2275,6 +2388,8 @@ LLView*	LLView::findSnapEdge(S32& new_edge_val, const LLCoordGL& mouse_dir, ESna
 void LLView::registerEventListener(std::string name, LLSimpleListener* function)
 {
 	mDispatchList.insert(std::pair<std::string, LLSimpleListener*>(name, function));
+	lldebugs << getName() << " registered " << name << llendl;
+
 }
 
 void LLView::deregisterEventListener(std::string name)

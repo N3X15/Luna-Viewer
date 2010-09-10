@@ -48,12 +48,14 @@ set(llmessage_SOURCE_FILES
     llmail.cpp
     llmessagebuilder.cpp
     llmessageconfig.cpp
+    llmessagelog.cpp
     llmessagereader.cpp
     llmessagetemplate.cpp
     llmessagetemplateparser.cpp
     llmessagethrottle.cpp
     llmime.cpp
     llnamevalue.cpp
+    llnetcanary.cpp
     llnullcipher.cpp
     llpacketack.cpp
     llpacketbuffer.cpp
@@ -96,6 +98,7 @@ set(llmessage_SOURCE_FILES
     patch_code.cpp
     patch_dct.cpp
     patch_idct.cpp
+    llsocks5.cpp
     )
 
 set(llmessage_HEADER_FILES
@@ -137,6 +140,7 @@ set(llmessage_HEADER_FILES
     llmail.h
     llmessagebuilder.h
     llmessageconfig.h
+    llmessagelog.h
     llmessagereader.h
     llmessagetemplate.h
     llmessagetemplateparser.h
@@ -144,6 +148,7 @@ set(llmessage_HEADER_FILES
     llmime.h
     llmsgvariabletype.h
     llnamevalue.h
+    llnetcanary.h
     llnullcipher.h
     llpacketack.h
     llpacketbuffer.h
@@ -193,6 +198,7 @@ set(llmessage_HEADER_FILES
     patch_code.h
     patch_dct.h
     sound_ids.h
+    llsocks5.h
     )
 
 set_source_files_properties(${llmessage_HEADER_FILES}
@@ -201,6 +207,7 @@ set_source_files_properties(${llmessage_HEADER_FILES}
 list(APPEND llmessage_SOURCE_FILES ${llmessage_HEADER_FILES})
 
 add_library (llmessage ${llmessage_SOURCE_FILES})
+add_dependencies(llmessage prepare)
 target_link_libraries(
     llmessage
     ${CURL_LIBRARIES}

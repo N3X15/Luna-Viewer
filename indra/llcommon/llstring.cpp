@@ -603,7 +603,7 @@ bool LLStringOps::isHexString(const std::string& str)
 	{
 		if (!isxdigit(buf[len])) return false;
 	}
-	
+
 	return true;
 }
 

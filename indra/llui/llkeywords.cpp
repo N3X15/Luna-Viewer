@@ -59,22 +59,6 @@ inline BOOL LLKeywordToken::isHead(const llwchar* s) const
 	return res;
 }
 
-inline BOOL LLKeywordToken::isTail(const llwchar* s) const
-{
-	BOOL res = TRUE;
-	const llwchar* t = mDelimiter.c_str();
-	S32 len = mDelimiter.size();
-	for (S32 i=0; i<len; i++)
-	{
-		if (s[i] != t[i])
-		{
-			res = FALSE;
-			break;
-		}
-	}
-	return res;
-}
-
 LLKeywords::LLKeywords() : mLoaded(FALSE)
 {
 }
@@ -128,7 +112,6 @@ BOOL LLKeywords::loadFromFile( const std::string& filename )
 	std::string SOL_LINE("[line ");
 	std::string SOL_ONE_SIDED_DELIMITER("[one_sided_delimiter ");
 	std::string SOL_TWO_SIDED_DELIMITER("[two_sided_delimiter ");
-	std::string SOL_TWO_SIDED_DELIMITER_ESC("[two_sided_delimiter_esc ");
 
 	LLColor3 cur_color( 1, 0, 0 );
 	LLKeywordToken::TOKEN_TYPE cur_type = LLKeywordToken::WORD;
@@ -160,12 +143,6 @@ BOOL LLKeywords::loadFromFile( const std::string& filename )
 			cur_type = LLKeywordToken::TWO_SIDED_DELIMITER;
 			continue;
 		}
-		else if( line.find(SOL_TWO_SIDED_DELIMITER_ESC) == 0 )
-		{
-			cur_color = readColor( line.substr(SOL_TWO_SIDED_DELIMITER_ESC.size()) );
-			cur_type = LLKeywordToken::TWO_SIDED_DELIMITER_ESC;
-			continue;
-		}
 		else if( line.find(SOL_ONE_SIDED_DELIMITER) == 0 )	
 		{
 			cur_color = readColor( line.substr(SOL_ONE_SIDED_DELIMITER.size()) );
@@ -186,17 +163,6 @@ BOOL LLKeywords::loadFromFile( const std::string& filename )
 			// first word is keyword
 			std::string keyword = (*token_word_iter);
 			LLStringUtil::trim(keyword);
-			// second word may be right delimiter
-
-			std::string delimiter;
-			if (cur_type == LLKeywordToken::TWO_SIDED_DELIMITER || cur_type == LLKeywordToken::TWO_SIDED_DELIMITER_ESC)
-			{
-				while (delimiter.length() == 0 && ++token_word_iter != word_tokens.end())
-				{
-					delimiter = *token_word_iter;
-					LLStringUtil::trim(delimiter);
-				}
-			}
 
 			// following words are tooltip
 			std::string tool_tip;
@@ -210,11 +176,11 @@ BOOL LLKeywords::loadFromFile( const std::string& filename )
 			{
 				// Replace : with \n for multi-line tool tips.
 				LLStringUtil::replaceChar( tool_tip, ':', '\n' );
-				addToken(cur_type, keyword, cur_color, tool_tip, delimiter );
+				addToken(cur_type, keyword, cur_color, tool_tip );
 			}
 			else
 			{
-				addToken(cur_type, keyword, cur_color, LLStringUtil::null,  delimiter  );
+				addToken(cur_type, keyword, cur_color, LLStringUtil::null );
 			}
 		}
 	}
@@ -229,26 +195,23 @@ BOOL LLKeywords::loadFromFile( const std::string& filename )
 void LLKeywords::addToken(LLKeywordToken::TOKEN_TYPE type,
 						  const std::string& key_in,
 						  const LLColor3& color,
-						  const std::string& tool_tip_in,
-						  const std::string& delimiter_in)
+						  const std::string& tool_tip_in )
 {
 	LLWString key = utf8str_to_wstring(key_in);
 	LLWString tool_tip = utf8str_to_wstring(tool_tip_in);
-	LLWString delimiter = utf8str_to_wstring(delimiter_in);
 	switch(type)
 	{
 	case LLKeywordToken::WORD:
-		mWordTokenMap[key] = new LLKeywordToken(type, color, key, tool_tip, LLWStringUtil::null);
+		mWordTokenMap[key] = new LLKeywordToken(type, color, key, tool_tip);
 		break;
 
 	case LLKeywordToken::LINE:
-		mLineTokenList.push_front(new LLKeywordToken(type, color, key, tool_tip, LLWStringUtil::null));
+		mLineTokenList.push_front(new LLKeywordToken(type, color, key, tool_tip));
 		break;
 
 	case LLKeywordToken::TWO_SIDED_DELIMITER:
-	case LLKeywordToken::TWO_SIDED_DELIMITER_ESC:
 	case LLKeywordToken::ONE_SIDED_DELIMITER:
-		mDelimiterTokenList.push_front(new LLKeywordToken(type, color, key, tool_tip, delimiter));
+		mDelimiterTokenList.push_front(new LLKeywordToken(type, color, key, tool_tip));
 		break;
 
 	default:
@@ -379,15 +342,12 @@ void LLKeywords::findSegments(std::vector<LLTextSegment *>* seg_list, const LLWS
 					seg_start = cur - base;
 					cur += cur_delimiter->getLength();
 					
-					//if( cur_delimiter->getType() == LLKeywordToken::TWO_SIDED_DELIMITER )
-					LLKeywordToken::TOKEN_TYPE type = cur_delimiter->getType();
-					if( type == LLKeywordToken::TWO_SIDED_DELIMITER || type == LLKeywordToken::TWO_SIDED_DELIMITER_ESC )
+					if( cur_delimiter->getType() == LLKeywordToken::TWO_SIDED_DELIMITER )
 					{
-						//llassert( cur_delimiter->getDelimiter() != NULL );
-						while( *cur && !cur_delimiter->isTail(cur) )
+						while( *cur && !cur_delimiter->isHead(cur))
 						{
 							// Check for an escape sequence.
-							if (type == LLKeywordToken::TWO_SIDED_DELIMITER_ESC && *cur == '\\')
+							if (*cur == '\\')
 							{
 								// Count the number of backslashes.
 								S32 num_backslashes = 0;
@@ -398,7 +358,7 @@ void LLKeywords::findSegments(std::vector<LLTextSegment *>* seg_list, const LLWS
 									cur++;
 								}
 								// Is the next character the end delimiter?
-								if (cur_delimiter->isTail(cur))
+								if (cur_delimiter->isHead(cur))
 								{
 									// Is there was an odd number of backslashes, then this delimiter
 									// does not end the sequence.
@@ -424,7 +384,7 @@ void LLKeywords::findSegments(std::vector<LLTextSegment *>* seg_list, const LLWS
 						if( *cur )
 						{
 							cur += cur_delimiter->getLength();
-							seg_end = seg_start + between_delimiters + cur_delimiter->getLength() + cur_delimiter->getLength2();
+							seg_end = seg_start + between_delimiters + 2 * cur_delimiter->getLength();
 						}
 						else
 						{
@@ -457,10 +417,10 @@ void LLKeywords::findSegments(std::vector<LLTextSegment *>* seg_list, const LLWS
 
 			// check against words
 			llwchar prev = cur > base ? *(cur-1) : 0;
-			if( !isalnum( prev ) && (prev != '_') && (prev != '#'))
+			if( !isalnum( prev ) && (prev != '_') )
 			{
 				const llwchar* p = cur;
-				while( isalnum( *p ) || (*p == '_') || (*p == '#') )
+				while( isalnum( *p ) || (*p == '_') )
 				{
 					p++;
 				}

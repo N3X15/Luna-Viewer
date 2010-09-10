@@ -63,7 +63,6 @@ static const char* INVENTORY_TYPE_NAMES[LLInventoryType::IT_COUNT] =
 	"wearable",
 	"animation",
 	"gesture",		// 20
-	"sky",
 };
 
 // This table is meant for decoding to human readable form. Put any
@@ -92,7 +91,6 @@ static const char* INVENTORY_TYPE_HUMAN_NAMES[LLInventoryType::IT_COUNT] =
 	"wearable",
 	"animation",
 	"gesture",		// 20
-	"sky",
 };
 
 // Maps asset types to the default inventory type for that kind of asset.

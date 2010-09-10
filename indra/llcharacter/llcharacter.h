@@ -258,7 +258,6 @@ public:
 	void setAppearanceFlag( bool flag )	{ mInAppearance = flag; } 
 	bool getAppearanceFlag()			{ return mInAppearance; }
 
-
 	U32				getAppearanceSerialNum() const		{ return mAppearanceSerialNum; }
 	void			setAppearanceSerialNum( U32 num )	{ mAppearanceSerialNum = num; }
 	
@@ -278,9 +277,7 @@ protected:
 	U32					mAppearanceSerialNum;
 	U32					mSkeletonSerialNum;
 	LLAnimPauseRequest	mPauseRequest;
-
 	BOOL mInAppearance;
-
 
 private:
 	// visual parameter stuff

@@ -2931,6 +2931,7 @@ void LLWindowWin32::ShellEx(const std::string& command )
 	ShellExecuteEx( &sei );
 }
 
+
 void LLWindowWin32::spawnWebBrowser(const std::string& escaped_url )
 {
 	bool found = false;

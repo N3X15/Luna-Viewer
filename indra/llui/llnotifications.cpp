@@ -61,13 +61,12 @@ private:
 	{
 		// we ignore "load" messages, but rewrite the persistence file on any other
 		std::string sigtype = payload["sigtype"];
-		/*if (sigtype != "load")
+		if (sigtype != "load")
 		{
 			savePersistentNotifications();
-		}*/
+		}
 		return false;
 	}
-	
 
 	// The history channel gets all notifications except those that have been cancelled
 	static bool historyFilter(LLNotificationPtr pNotification)
@@ -75,7 +74,7 @@ private:
 		return !pNotification->isCancelled();
 	}
 
-	/*void savePersistentNotifications()
+	void savePersistentNotifications()
 	{
 		llinfos << "Saving open notifications to " << mFileName << llendl;
 
@@ -104,7 +103,6 @@ private:
 		LLPointer<LLSDFormatter> formatter = new LLSDXMLFormatter();
 		formatter->format(output, notify_file, LLSDFormatter::OPTIONS_PRETTY);
 	}
-	*/
 
 	void loadPersistentNotifications()
 	{
@@ -1149,12 +1147,10 @@ void LLNotifications::forceResponse(const LLNotification::Params& params, S32 op
 	
 	if (selected_item.isUndefined())
 	{
-		llwarns << "Invalid option " << option << " for notification " << (std::string)params.name << llendl;
-		//return;
-	}else
-	{
-		response[selected_item["name"].asString()] = true;
+		llwarns << "Invalid option" << option << " for notification " << (std::string)params.name << llendl;
+		return;
 	}
+	response[selected_item["name"].asString()] = true;
 
 	temp_notify->respond(response);
 }

@@ -34,9 +34,6 @@
 
 #include "llmultisliderctrl.h"
 
-#include "audioengine.h"
-#include "sound_ids.h"
-
 #include "llmath.h"
 #include "llfontgl.h"
 #include "llgl.h"
@@ -80,16 +77,11 @@ LLMultiSliderCtrl::LLMultiSliderCtrl(const std::string& name, const LLRect& rect
 
 	  mEditor( NULL ),
 	  mTextBox( NULL ),
-	  //mTextEnabledColor( LLUI::sColorsGroup->getColor( "LabelTextColor" ) ),
-	  //mTextDisabledColor( LLUI::sColorsGroup->getColor( "LabelDisabledColor" ) ),
+	  mTextEnabledColor( LLUI::sColorsGroup->getColor( "LabelTextColor" ) ),
+	  mTextDisabledColor( LLUI::sColorsGroup->getColor( "LabelDisabledColor" ) ),
 	  mSliderMouseUpCallback( NULL ),
 	  mSliderMouseDownCallback( NULL )
 {
-	static LLColor4 defaultTextEnabledColor = LLUI::sColorsGroup->getColor( "LabelTextColor" );
-	static LLColor4 defaultTextDisabledColor = LLUI::sColorsGroup->getColor( "LabelDisabledColor" );
-	mTextEnabledColor = (defaultTextEnabledColor);
-	mTextDisabledColor = (defaultTextDisabledColor);
-
 	S32 top = getRect().getHeight();
 	S32 bottom = 0;
 	S32 left = 0;
@@ -137,7 +129,7 @@ LLMultiSliderCtrl::LLMultiSliderCtrl(const std::string& name, const LLRect& rect
 				&LLLineEditor::prevalidateFloat );
 			mEditor->setFollowsLeft();
 			mEditor->setFollowsBottom();
-			mEditor->setFocusReceivedCallback( &LLMultiSliderCtrl::onEditorGainFocus );
+			mEditor->setFocusReceivedCallback( &LLMultiSliderCtrl::onEditorGainFocus, this );
 			mEditor->setIgnoreTab(TRUE);
 			// don't do this, as selecting the entire text is single clicking in some cases
 			// and double clicking in others
@@ -505,6 +497,8 @@ void LLMultiSliderCtrl::setControlName(const std::string& control_name, LLView* 
 LLXMLNodePtr LLMultiSliderCtrl::getXML(bool save_children) const
 {
 	LLXMLNodePtr node = LLUICtrl::getXML();
+
+	node->setName(LL_MULTI_SLIDER_CTRL_TAG);
 
 	node->createChild("show_text", TRUE)->setBoolValue(mShowText);
 

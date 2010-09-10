@@ -52,8 +52,7 @@ LLResizeBar::LLResizeBar( const std::string& name, LLView* resizing_view, const 
 	mSide( side ),
 	mSnappingEnabled(TRUE),
 	mAllowDoubleClickSnapping(TRUE),
-	mResizingView(resizing_view),
-	mDragCallback(NULL)
+	mResizingView(resizing_view)
 {
 	// set up some generically good follow code.
 	switch( side )
@@ -211,8 +210,6 @@ BOOL LLResizeBar::handleHover(S32 x, S32 y, MASK mask)
 			// change view shape as user operation
 			mResizingView->userSetShape(scaled_rect);
 
-			if(mDragCallback)mDragCallback(mDragCallbackUserdata);
-
 			// update last valid mouse cursor position based on resized view's actual size
 			LLRect new_rect = mResizingView->getRect();
 			switch(mSide)
@@ -288,16 +285,8 @@ BOOL LLResizeBar::handleDoubleClick(S32 x, S32 y, MASK mask)
 		}
 
 		mResizingView->userSetShape(scaled_rect);
-		if(mDragCallback)mDragCallback(mDragCallbackUserdata);
 	}
 
 	return TRUE;
 }
-
-void LLResizeBar::setChangeCallback( void(*function)(void*), void* value)
-{
-	mDragCallback = function;
-	if(value)mDragCallbackUserdata = value;
-}
-
 

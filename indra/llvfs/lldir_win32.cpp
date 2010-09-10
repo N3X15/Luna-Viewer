@@ -143,6 +143,8 @@ LLDir_Win32::LLDir_Win32()
 			llwarns << "Couldn't create LL_PATH_CACHE dir " << mDefaultCacheDir << llendl;
 		}
 	}
+
+	mLLPluginDir = mExecutableDir + mDirDelimiter + "llplugin";
 }
 
 LLDir_Win32::~LLDir_Win32()
@@ -153,23 +155,10 @@ LLDir_Win32::~LLDir_Win32()
 
 void LLDir_Win32::initAppDirs(const std::string &app_name)
 {
-	if(app_name == "*Portable*")
-	{
-		mAppName = "Luna";
-		mOSUserAppDir = mExecutableDir;
-		mOSUserAppDir += "\\";
-		mOSUserAppDir += "UserData";
-		mPortable = true;
-		mCacheDir = mTempDir + "\\Luna.cache";
-	}
-	else
-	{
-		mAppName = app_name;
-		mOSUserAppDir = mOSUserDir;
-		mOSUserAppDir += "\\";
-		mOSUserAppDir += app_name;
-		mPortable = false;
-	}
+	mAppName = app_name;
+	mOSUserAppDir = mOSUserDir;
+	mOSUserAppDir += "\\";
+	mOSUserAppDir += app_name;
 
 	int res = LLFile::mkdir(mOSUserAppDir);
 	if (res == -1)
@@ -388,6 +377,19 @@ BOOL LLDir_Win32::fileExists(const std::string &filename) const
 	{
 		return FALSE;
 	}
+}
+
+
+/*virtual*/ std::string LLDir_Win32::getLLPluginLauncher()
+{
+	return gDirUtilp->getExecutableDir() + gDirUtilp->getDirDelimiter() +
+		"SLPlugin.exe";
+}
+
+/*virtual*/ std::string LLDir_Win32::getLLPluginFilename(std::string base_name)
+{
+	return gDirUtilp->getLLPluginDir() + gDirUtilp->getDirDelimiter() +
+		base_name + ".dll";
 }
 
 

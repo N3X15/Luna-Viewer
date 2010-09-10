@@ -1193,6 +1193,12 @@ BOOL LLFloater::handleRightMouseDown(S32 x, S32 y, MASK mask)
 	return was_minimized || LLPanel::handleRightMouseDown( x, y, mask );
 }
 
+BOOL LLFloater::handleMiddleMouseDown(S32 x, S32 y, MASK mask)
+{
+	bringToFront( x, y );
+	return LLPanel::handleMiddleMouseDown( x, y, mask );
+}
+
 
 // virtual
 BOOL LLFloater::handleDoubleClick(S32 x, S32 y, MASK mask)
@@ -1402,7 +1408,6 @@ void LLFloater::draw()
 		S32 right = getRect().getWidth() - LLPANEL_BORDER_WIDTH;
 		S32 bottom = LLPANEL_BORDER_WIDTH;
 
-		/*
 		LLColor4 shadow_color = LLUI::sColorsGroup->getColor("ColorDropShadow");
 		F32 shadow_offset = (F32)LLUI::sConfigGroup->getS32("DropShadowFloater");
 		if (!isBackgroundOpaque())
@@ -1413,7 +1418,6 @@ void LLFloater::draw()
 		gl_drop_shadow(left, top, right, bottom, 
 			shadow_color, 
 			llround(shadow_offset));
-		*/
 
 		// No transparent windows in simple UI
 		if (isBackgroundOpaque())
@@ -1441,9 +1445,9 @@ void LLFloater::draw()
 	{
 		if (hasFocus() && getDefaultButton()->getEnabled())
 		{
-			LLUICtrl* focus_ctrl = gFocusMgr.getKeyboardFocus();
+			LLFocusableElement* focus_ctrl = gFocusMgr.getKeyboardFocus();
 			// is this button a direct descendent and not a nested widget (e.g. checkbox)?
-			BOOL focus_is_child_button = dynamic_cast<LLButton*>(focus_ctrl) != NULL && focus_ctrl->getParent() == this;
+			BOOL focus_is_child_button = dynamic_cast<LLButton*>(focus_ctrl) != NULL && dynamic_cast<LLButton*>(focus_ctrl)->getParent() == this;
 			// only enable default button when current focus is not a button
 			getDefaultButton()->setBorderEnabled(!focus_is_child_button);
 		}
@@ -1463,7 +1467,7 @@ void LLFloater::draw()
 	else
 	{
 		// draw children
-		LLView* focused_child = gFocusMgr.getKeyboardFocus();
+		LLView* focused_child = dynamic_cast<LLView*>(gFocusMgr.getKeyboardFocus());
 		BOOL focused_child_visible = FALSE;
 		if (focused_child && focused_child->getParent() == this)
 		{
@@ -1711,8 +1715,7 @@ void LLFloater::buildButtons()
 		buttonp->setFollowsTop();
 		buttonp->setFollowsRight();
 		buttonp->setToolTip( sButtonToolTips[i] );
-		static LLColor4 defaultFloaterButtonImageColor = LLUI::sColorsGroup->getColor("FloaterButtonImageColor");
-		buttonp->setImageColor(defaultFloaterButtonImageColor);
+		buttonp->setImageColor(LLUI::sColorsGroup->getColor("FloaterButtonImageColor"));
 		buttonp->setHoverImages(sButtonPressedImageNames[i],
 								sButtonPressedImageNames[i]);
 		buttonp->setScaleImage(TRUE);
@@ -2181,6 +2184,32 @@ void LLFloaterView::closeAllChildren(bool app_quitting)
 	}
 }
 
+// <edit>
+void LLFloaterView::minimizeAllChildren()
+{
+	// iterate over a copy of the list, because closing windows will destroy
+	// some windows on the list.
+	child_list_t child_list = *(getChildList());
+
+	for (child_list_const_iter_t it = child_list.begin(); it != child_list.end(); ++it)
+	{
+		LLView* viewp = *it;
+		child_list_const_iter_t exists = std::find(getChildList()->begin(), getChildList()->end(), viewp);
+		if (exists == getChildList()->end())
+		{
+			// this floater has already been removed
+			continue;
+		}
+
+		LLFloater* floaterp = (LLFloater*)viewp;
+
+		if (!floaterp->isDead())
+		{
+			floaterp->setMinimized(TRUE);
+		}
+	}
+}
+// </edit>
 
 BOOL LLFloaterView::allChildrenClosed()
 {
@@ -2191,7 +2220,7 @@ BOOL LLFloaterView::allChildrenClosed()
 		LLView* viewp = *it;
 		LLFloater* floaterp = (LLFloater*)viewp;
 
-		if (floaterp->getVisible() && !floaterp->isDead() && floaterp->canClose())
+		if (floaterp->getVisible() && !floaterp->isDead() && floaterp->isCloseable())
 		{
 			return false;
 		}
@@ -2510,6 +2539,15 @@ LLMultiFloater::LLMultiFloater(
 	
 }
 
+// virtual
+LLXMLNodePtr LLMultiFloater::getXML(bool save_children) const
+{
+	LLXMLNodePtr node = LLFloater::getXML();
+
+	node->setName(LL_MULTI_FLOATER_TAG);
+
+	return node;
+}
 
 void LLMultiFloater::open()	/* Flawfinder: ignore */
 {
@@ -2932,6 +2970,8 @@ void LLMultiFloater::updateResizeLimits()
 LLXMLNodePtr LLFloater::getXML(bool save_children) const
 {
 	LLXMLNodePtr node = LLPanel::getXML();
+
+	node->setName(LL_FLOATER_TAG);
 
 	node->createChild("title", TRUE)->setStringValue(getCurrentTitle());
 

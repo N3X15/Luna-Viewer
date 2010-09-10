@@ -75,8 +75,7 @@ LLComboBox::LLComboBox(	const std::string& name, const LLRect &rect, const std::
 	mPrearrangeCallback( NULL ),
 	mTextEntryCallback( NULL ),
 	mSuppressTentative( false ),
-	mLabel(label),
-	mListColor( LLUI::sColorsGroup->getColor( "ComboBoxBg" ))
+	mLabel(label)
 {
 	// Always use text box 
 	// Text label button
@@ -101,8 +100,7 @@ LLComboBox::LLComboBox(	const std::string& name, const LLRect &rect, const std::
 	mList = new LLScrollListCtrl(std::string("ComboBox"), LLRect(), 
 								 &LLComboBox::onItemSelected, this, FALSE);
 	mList->setVisible(FALSE);
-	
-	mList->setBgWriteableColor(mListColor); //LLColor4(0.3f,0.3f,0.3f,1) );
+	mList->setBgWriteableColor( LLColor4(1,1,1,1) );
 	mList->setCommitOnKeyboardMovement(FALSE);
 	addChild(mList);
 
@@ -122,6 +120,8 @@ LLComboBox::~LLComboBox()
 LLXMLNodePtr LLComboBox::getXML(bool save_children) const
 {
 	LLXMLNodePtr node = LLUICtrl::getXML();
+
+	node->setName(LL_COMBO_BOX_TAG);
 
 	// Attributes
 
@@ -196,8 +196,15 @@ LLView* LLComboBox::fromXML(LLXMLNodePtr node, LLView *parent, LLUICtrlFactory *
 
 				std::string value = label;
 				child->getAttributeString("value", value);
-
-				combo_box->add(label, LLSD(value) );
+				
+				LLScrollListItem * item=combo_box->add(label, LLSD(value) );
+				
+				if(item && child->hasAttribute("tool_tip"))
+				{
+					std::string tool_tip = label;
+					child->getAttributeString("tool_tip", tool_tip);
+					item->setToolTip(tool_tip);
+				}
 			}
 		}
 	}
@@ -685,11 +692,15 @@ void LLComboBox::showList()
 
 void LLComboBox::hideList()
 {
+#if 0	// Don't do this! mTextEntry->getText() can be truncated, in which case selectItemByLabel
+	// fails and this only resets the selection :/
+
 	//*HACK: store the original value explicitly somewhere, not just in label
 	std::string orig_selection = mAllowTextEntry ? mTextEntry->getText() : mButton->getLabelSelected();
 
 	// assert selection in list
 	mList->selectItemByLabel(orig_selection, FALSE);
+#endif
 
 	mButton->setToggleState(FALSE);
 	mList->setVisible(FALSE);
@@ -1024,7 +1035,7 @@ void LLComboBox::setSuppressTentative(bool suppress)
 void LLComboBox::setFocusText(BOOL b)
 {
 	LLUICtrl::setFocus(b);
-	
+
 	if (b && mTextEntry)
 	{
 		if (mTextEntry->getVisible())
@@ -1213,6 +1224,33 @@ LLFlyoutButton::LLFlyoutButton(
 	updateLayout();
 }
 
+// virtual
+LLXMLNodePtr LLFlyoutButton::getXML(bool save_children) const
+{
+	LLXMLNodePtr node = LLComboBox::getXML();
+
+	node->setName(LL_FLYOUT_BUTTON_TAG);
+
+	LLXMLNodePtr child;
+
+	for (child = node->getFirstChild(); child.notNull();)
+	{
+		if (child->hasName("combo_item"))
+		{
+			child->setName(LL_FLYOUT_BUTTON_ITEM_TAG);
+
+			//setName does a delete and add, so we have to start over
+			child = node->getFirstChild();
+		}
+		else
+		{
+			child = child->getNextSibling();
+		}
+	}
+
+	return node;
+}
+
 //static 
 LLView* LLFlyoutButton::fromXML(LLXMLNodePtr node, LLView *parent, LLUICtrlFactory *factory)
 {
@@ -1311,3 +1349,4 @@ void LLFlyoutButton::setToggleState(BOOL state)
 {
 	mToggleState = state;
 }
+

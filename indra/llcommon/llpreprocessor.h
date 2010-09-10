@@ -124,7 +124,7 @@ using snprintf_hack::snprintf;
 // Deal with VC6 problems
 #if LL_MSVC
 #pragma warning( 3	     : 4701 )	// "local variable used without being initialized"  Treat this as level 3, not level 4.
-//#pragma warning( 3	     : 4702 )	// "unreachable code"  Treat this as level 3, not level 4.
+#pragma warning( 3	     : 4702 )	// "unreachable code"  Treat this as level 3, not level 4.
 #pragma warning( 3	     : 4189 )	// "local variable initialized but not referenced"  Treat this as level 3, not level 4.
 //#pragma warning( 3	: 4018 )	// "signed/unsigned mismatch"  Treat this as level 3, not level 4.
 #pragma warning( 3       : 4265 )	// "class has virtual functions, but destructor is not virtual"

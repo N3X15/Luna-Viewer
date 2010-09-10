@@ -255,7 +255,6 @@ LLSD LLControlVariable::getSaveValue() const
 
 LLPointer<LLControlVariable> LLControlGroup::getControl(const std::string& name)
 {
-	//LL_WARNS("ZWAG") << "Looking up setting: " << name << LL_ENDL;
 	ctrl_name_table_t::iterator iter = mNameTable.find(name);
 	return iter == mNameTable.end() ? LLPointer<LLControlVariable>() : iter->second;
 }

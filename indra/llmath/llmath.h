@@ -35,6 +35,7 @@
 
 #include <cmath>
 #include <cstdlib>
+#include <complex>
 #include "lldefs.h"
 #include "llstl.h" // *TODO: Remove when LLString is gone
 #include "llstring.h" // *TODO: Remove when LLString is gone
@@ -60,9 +61,11 @@
 #endif
 
 // Single Precision Floating Point Routines
-#if _MSC_VER < 1400
 #ifndef sqrtf
-#define sqrtf(x)		((F32)sqrt((F64)(x)))
+#define sqrtf(x)	((F32)sqrt((F64)(x)))
+#endif
+#ifndef fsqrtf
+#define fsqrtf(x)	sqrtf(x)
 #endif
 
 #ifndef cosf
@@ -75,19 +78,14 @@
 #define tanf(x)		((F32)tan((F64)(x)))
 #endif
 #ifndef acosf
-#define acosf(x)		((F32)acos((F64)(x)))
+#define acosf(x)	((F32)acos((F64)(x)))
 #endif
 
 #ifndef powf
-#define powf(x,y) ((F32)pow((F64)(x),(F64)(y)))
+#define powf(x,y)	((F32)pow((F64)(x),(F64)(y)))
 #endif
 #ifndef expf
-#define expf(x) ((F32)exp((F64)(x)))
-#endif
-#endif
-
-#ifndef fsqrtf
-#define fsqrtf(x)		sqrtf(x)
+#define expf(x)		((F32)exp((F64)(x)))
 #endif
 
 const F32	GRAVITY			= -9.8f;

@@ -2214,6 +2214,7 @@ void LLVolume::sculpt(U16 sculpt_width, U16 sculpt_height, S8 sculpt_components,
 	{
 		sculpt_detail = 4.0;
 	}
+
 	sculpt_calc_mesh_resolution(sculpt_width, sculpt_height, sculpt_type, sculpt_detail, requested_sizeS, requested_sizeT);
 
 	mPathp->generate(mParams.getPathParams(), sculpt_detail, 0, TRUE, requested_sizeS);
@@ -4268,7 +4269,7 @@ LLFaceID LLVolume::generateFaceMask()
 		}
 		break;
 	default:
-		llerrs << "Unknown profile!" << llendl
+		llerrs << "Unknown profile!" << llendl;
 		break;
 	}
 

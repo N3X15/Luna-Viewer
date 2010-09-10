@@ -3,7 +3,6 @@
 project(llcommon)
 
 include(00-Common)
-include(Utils)
 include(LLCommon)
 
 include_directories(
@@ -42,6 +41,8 @@ set(llcommon_SOURCE_FILES
     llmemorystream.cpp
     llmetrics.cpp
     llmortician.cpp
+    lloptioninterface.cpp
+    llprocesslauncher.cpp
     llprocessor.cpp
     llqueuedthread.cpp
     llrand.cpp
@@ -135,8 +136,10 @@ set(llcommon_HEADER_FILES
     llmetrics.h
     llmortician.h
     llnametable.h
+    lloptioninterface.h
     llpreprocessor.h
     llpriqueuemap.h
+    llprocesslauncher.h
     llprocessor.h
     llptrskiplist.h
     llptrskipmap.h
@@ -165,8 +168,8 @@ set(llcommon_HEADER_FILES
     lluri.h
     lluuid.h
     lluuidhashmap.h
-#    llversionserver.h
-#    llversionviewer.h
+    llversionserver.h
+    llversionviewer.h
     llworkerthread.h
     metaclass.h
     metaclasst.h
@@ -189,21 +192,32 @@ set_source_files_properties(${llcommon_HEADER_FILES}
 
 list(APPEND llcommon_SOURCE_FILES ${llcommon_HEADER_FILES})
 
-configure_files(llcommon_GENERATED_HEADER_FILES
-    llversionserver.h
-    llversionviewer.h
-    )
-set_source_files_properties(${llcommon_GENERATED_HEADER_FILES}
-                            PROPERTIES HEADER_FILE_ONLY TRUE)
-list(APPEND llcommon_SOURCE_FILES ${llcommon_GENERATED_HEADER_FILES})
-
 add_library (llcommon ${llcommon_SOURCE_FILES})
+add_dependencies(llcommon prepare)
 target_link_libraries(
     llcommon
     ${APRUTIL_LIBRARIES}
     ${APR_LIBRARIES}
     ${EXPAT_LIBRARIES}
     ${ZLIB_LIBRARIES}
-    ${ASPELL_LIBRARIES}
-     
     )
+
+if(WORD_SIZE EQUAL 64)
+    add_library (llcommonPIC ${llcommon_SOURCE_FILES})
+    add_dependencies(llcommonPIC prepare)
+
+    if(WINDOWS)
+        add_definitions(/FIXED:NO)
+    else(WINDOWS) # not windows therefore gcc LINUX and DARWIN
+        add_definitions(-fPIC)
+    endif(WINDOWS)
+
+    target_link_libraries(
+    llcommonPIC
+    ${APRUTIL_LIBRARIES}
+    ${APR_LIBRARIES}
+    ${EXPAT_LIBRARIES}
+    ${ZLIB_LIBRARIES}
+    )
+endif(WORD_SIZE EQUAL 64)
+

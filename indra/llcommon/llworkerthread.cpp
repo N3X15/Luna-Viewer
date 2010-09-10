@@ -44,11 +44,6 @@ LLWorkerThread::LLWorkerThread(const std::string& name, bool threaded) :
 	LLQueuedThread(name, threaded)
 {
 	mDeleteMutex = new LLMutex(NULL);
-
-	if(!mLocalAPRFilePoolp)
-	{
-		mLocalAPRFilePoolp = new LLVolatileAPRPool() ;
-	}
 }
 
 LLWorkerThread::~LLWorkerThread()
@@ -112,7 +107,7 @@ S32 LLWorkerThread::update(U32 max_time_ms)
 		delete *iter;
 	}
 	// delete and aborted entries mean there's still work to do
-	res +=  !mDeleteList.empty() + !delete_list.empty();
+	res += delete_list.size() + abort_list.size();
 	return res;
 }
 
@@ -201,6 +196,7 @@ LLWorkerClass::~LLWorkerClass()
 {
 	llassert_always(!(mWorkFlags & WCF_WORKING));
 	llassert_always(mWorkFlags & WCF_DELETE_REQUESTED);
+	llassert_always(!mMutex.isLocked());
 	if (mRequestHandle != LLWorkerThread::nullHandle())
 	{
 		LLWorkerThread::WorkRequest* workreq = (LLWorkerThread::WorkRequest*)mWorkerThread->getRequest(mRequestHandle);

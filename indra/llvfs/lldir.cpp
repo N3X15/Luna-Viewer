@@ -294,6 +294,10 @@ const std::string LLDir::getSkinBaseDir() const
 	return dir;
 }
 
+const std::string &LLDir::getLLPluginDir() const
+{
+	return mLLPluginDir;
+}
 
 std::string LLDir::getExpandedFilename(ELLPath location, const std::string& filename) const
 {
@@ -332,14 +336,6 @@ std::string LLDir::getExpandedFilename(ELLPath location, const std::string& subd
 		prefix += mDirDelimiter;
 		prefix += "Hooks";
 		break;
-	// Do we need this anymore?
-	case FL_PATH_SKY:
-		prefix = getAppRODataDir();
-		prefix += mDirDelimiter;
-		prefix += "app_settings";
-		prefix += mDirDelimiter;
-		prefix += "SilverLining";
-		break;
 
 	case LL_PATH_APP_SETTINGS:
 		prefix = getAppRODataDir();
@@ -365,10 +361,6 @@ std::string LLDir::getExpandedFilename(ELLPath location, const std::string& subd
 		
 	case LL_PATH_CACHE:
 	    prefix = getCacheDir();
-		break;
-	
-	case MM_SNDLOC:
-        prefix = mm_sndcacheloc;
 		break;
 		
 	case LL_PATH_USER_SETTINGS:
@@ -496,6 +488,8 @@ std::string LLDir::getDirName(const std::string& filepath) const
 
 std::string LLDir::getExtension(const std::string& filepath) const
 {
+	if (filepath.empty())
+		return std::string();
 	std::string basename = getBaseFileName(filepath, false);
 	std::size_t offset = basename.find_last_of('.');
 	std::string exten = (offset == std::string::npos || offset == 0) ? "" : basename.substr(offset+1);
@@ -566,26 +560,19 @@ std::string LLDir::getForbiddenFileChars()
 	return "\\/:*?\"<>|";
 }
 
-void LLDir::setLindenUserDir(const std::string &grid, const std::string &first, const std::string &last)
+void LLDir::setLindenUserDir(const std::string &first, const std::string &last)
 {
 	// if both first and last aren't set, assume we're grabbing the cached dir
 	if (!first.empty() && !last.empty())
 	{
 		// some platforms have case-sensitive filesystems, so be
 		// utterly consistent with our firstname/lastname case.
-		std::string gridlower(grid);
-		LLStringUtil::toLower(gridlower);
 		std::string firstlower(first);
 		LLStringUtil::toLower(firstlower);
 		std::string lastlower(last);
 		LLStringUtil::toLower(lastlower);
 		mLindenUserDir = getOSUserAppDir();
 		mLindenUserDir += mDirDelimiter;
-		if(!gridlower.empty())
-		{
-			mLindenUserDir += gridlower;
-			mLindenUserDir += "-";
-		}
 		mLindenUserDir += firstlower;
 		mLindenUserDir += "_";
 		mLindenUserDir += lastlower;
@@ -597,7 +584,6 @@ void LLDir::setLindenUserDir(const std::string &grid, const std::string &first, 
 
 	dumpCurrentDirectories();	
 }
-
 
 void LLDir::setChatLogsDir(const std::string &path)
 {
@@ -658,18 +644,7 @@ void LLDir::setSkinFolder(const std::string &skin_folder)
 	mDefaultSkinDir += mDirDelimiter;	
 	mDefaultSkinDir += "default";
 }
-int LLDir::mm_usesnd()
-{
-    return mm_usesndcache;
-}
-void LLDir::mm_setsnddir(const std::string &path)
-{
-    mm_usesndcache = 1;
-    
-	if(path.empty())	mm_usesndcache = 0;
 
-    mm_sndcacheloc = path;
-}
 bool LLDir::setCacheDir(const std::string &path)
 {
 	if (path.empty() )

@@ -3,6 +3,7 @@
 project(llimage)
 
 include(00-Common)
+include(LLAddBuildTest)
 include(LLCommon)
 include(LLImage)
 include(LLMath)
@@ -18,11 +19,13 @@ include_directories(
     )
 
 set(llimage_SOURCE_FILES
+     aes.cpp
     llimagebmp.cpp
     llimage.cpp
     llimagedxt.cpp
     llimagej2c.cpp
     llimagejpeg.cpp
+    llimagemetadatareader.cpp
     llimagepng.cpp
     llimagetga.cpp
     llimageworker.cpp
@@ -31,12 +34,13 @@ set(llimage_SOURCE_FILES
 
 set(llimage_HEADER_FILES
     CMakeLists.txt
-
+     aes.h
     llimage.h
     llimagebmp.h
     llimagedxt.h
     llimagej2c.h
     llimagejpeg.h
+    llimagemetadatareader.h
     llimagepng.h
     llimagetga.h
     llimageworker.h
@@ -50,9 +54,15 @@ set_source_files_properties(${llimage_HEADER_FILES}
 list(APPEND llimage_SOURCE_FILES ${llimage_HEADER_FILES})
 
 add_library (llimage ${llimage_SOURCE_FILES})
+add_dependencies(llimage prepare)
 target_link_libraries(
     llimage
     ${JPEG_LIBRARIES}
     ${PNG_LIBRARIES}
     ${ZLIB_LIBRARIES}
     )
+
+# Add tests
+if (NOT STANDALONE)
+	ADD_BUILD_TEST(llimageworker llimage)
+endif (NOT STANDALONE)

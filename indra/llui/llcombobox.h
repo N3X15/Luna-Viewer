@@ -96,11 +96,11 @@ public:
 	virtual void	resetDirty();				// Clear dirty state
 
 	virtual void	setFocus(BOOL b);
-	
+
 	// Allow prevalidation of text input field
 	void			setPrevalidate( BOOL (*func)(const LLWString &) );
 
-	// Selects item by underlying LLSD value, using LLSD::asString() matching.  
+	// Selects item by underlying LLSD value, using LLSD::asString() matching.
 	// For simple items, this is just the name of the label.
 	virtual void	setValue(const LLSD& value );
 
@@ -185,7 +185,7 @@ public:
 	static void		onItemSelected(LLUICtrl* item, void *userdata);
 	static void		onTextEntry(LLLineEditor* line_editor, void* user_data);
 	static void		onTextCommit(LLUICtrl* caller, void* user_data);
-	
+
 	void			setSuppressTentative(bool suppress);
 
 	void			updateSelection();
@@ -198,7 +198,6 @@ protected:
 	EPreferredPosition	mListPosition;
 	LLPointer<LLUIImage>	mArrowImage;
 	std::string			mLabel;
-	LLColor4			mListColor;
 
 private:
 	S32					mButtonPadding;
@@ -227,6 +226,7 @@ public:
 
 	void setToggleState(BOOL state);
 
+	virtual LLXMLNodePtr getXML(bool save_children = true) const;
 	static LLView* fromXML(LLXMLNodePtr node, LLView *parent, LLUICtrlFactory *factory);
 	static void		onActionButtonClick(void *userdata);
 	static void		onSelectAction(LLUICtrl* ctrl, void *userdata);

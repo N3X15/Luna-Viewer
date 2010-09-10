@@ -292,7 +292,6 @@ LLEyeMotion::LLEyeMotion(const LLUUID &id) : LLMotion(id)
 
 	mLeftEyeState = new LLJointState;
 	mRightEyeState = new LLJointState;
-
 }
 
 
@@ -456,72 +455,6 @@ BOOL LLEyeMotion::onUpdate(F32 time, U8* joint_mask)
 		F32 roll, pitch, yaw;
 		target_eye_rot.getEulerAngles(&roll, &pitch, &yaw);
 		target_eye_rot.setQuat(0.0f, pitch, yaw);
-
-	//The following calculations are pointless; Uchi, Zwagoth and I agree ~tG
-	/*
-	// if they eyes are maxed, just stick em back in front of the av
-		LLQuaternion	check_target_eye_rot;
-		check_target_eye_rot = target_eye_rot;
-		F32 cos_angle_lim, sin_angle_lim;
-	cos_angle_lim = cosf( EYE_ROT_LIMIT_ANGLE/1.5 );	// mQ[VW] limit
-	sin_angle_lim = sinf( EYE_ROT_LIMIT_ANGLE/2 );	// rotation axis length	limit
-
-
-	if (check_target_eye_rot.mQ[VW] < 0.f)
-	{
-		check_target_eye_rot.mQ[VX] *= -1.f;
-		check_target_eye_rot.mQ[VY] *= -1.f;
-		check_target_eye_rot.mQ[VZ] *= -1.f;
-		check_target_eye_rot.mQ[VW] *= -1.f;
-	}
-
-	//check_target_eye_rot = check_target_eye_rot * LLVector3(1.f, 1.f, 0.3f);	
-
-	// if rotation angle is greater than limit (cos is less than limit)
-	
-	if( check_target_eye_rot.mQ[VW] < cos_angle_lim )
-	{
-		//LLVector3		forward(1.f, 0.0, 0.0);
-		//left.setVec(forward % forward);
-		//up.setVec(forward % left);
-		//target_eye_rot = LLQuaternion(forward, left, up);
-		//needsvergence = false;
-		//lookAtDistance = 5.0f;
-		//target_eye_rot *= ~mHeadJoint->getWorldRotation();
-		// convert target rotation to head-local coordinates
-
-		LLVector3 forward =  (LLVector3::x_axis * mHeadJoint->getWorldRotation()) * 5.f;
-		forward.normVec();
-		eye_look_at = forward;
-		lookAtDistance = eye_look_at.normVec();
-
-		if(mEyeRefocusTimer.getElapsedTimeF32() > 1.5f + ll_frand(2.f))
-		{
-			mEyeRefocusTimer.reset();
-			mLastTargetPos = eye_look_at;
-		}
-		else
-			if(mCharacter->getAppearanceFlag() != true)
-				eye_look_at = mLastTargetPos;
-
-
-		left.setVec(skyward % eye_look_at);
-		up.setVec(eye_look_at % left);
-
-		target_eye_rot = LLQuaternion(eye_look_at, left, up);
-		// convert target rotation to head-local coordinates
-		target_eye_rot *= ~mHeadJoint->getWorldRotation();
-		// eliminate any Euler roll - we're lucky that roll is applied last.
-		//F32 roll, pitch, yaw;
-		target_eye_rot.getEulerAngles(&roll, &pitch, &yaw);
-		target_eye_rot.setQuat(0.0f, pitch, yaw);
-
-	}
-	else
-	{
-		mEyeRefocusTimer.reset();
-	}
-	*/
 		// constrain target orientation to be in front of avatar's face
 		target_eye_rot.constrain(EYE_ROT_LIMIT_ANGLE);
 
@@ -573,20 +506,6 @@ BOOL LLEyeMotion::onUpdate(F32 time, U8* joint_mask)
 	LLQuaternion right_eye_rot = target_eye_rot;
 	vergence_quat.transQuat();
 	right_eye_rot = vergence_quat * eye_jitter_rot * right_eye_rot;
-
-	//if in appearance, set the eyes straight forward
-	if(mCharacter->getAppearanceFlag()) // no idea why this variable is reversed
-	{
-		LLVector3		forward(1.f, 0.0, 0.0);
-		LLVector3		left;
-		LLVector3		up;
-		left.setVec(forward % forward);
-		up.setVec(forward % left);
-		target_eye_rot = LLQuaternion(forward, left, up);
-		mLeftEyeState->setRotation( target_eye_rot );
-		mRightEyeState->setRotation( target_eye_rot );
-		return TRUE;
-	}
 
 	mLeftEyeState->setRotation( left_eye_rot );
 	mRightEyeState->setRotation( right_eye_rot );

@@ -48,9 +48,6 @@
 
 #include <Carbon/Carbon.h>
 
-#include "MoreFilesX.h"
-#include "FSCopyObject.h"
-
 #include "llerrorcontrol.h"
 
 enum
@@ -68,8 +65,9 @@ EventHandlerRef gEventHandler = NULL;
 OSStatus gFailure = noErr;
 Boolean gCancelled = false;
 
-char *gUpdateURL;
-char *gProductName;
+const char *gUpdateURL;
+const char *gProductName;
+const char *gBundleID;
 
 void *updatethreadproc(void*);
 
@@ -338,6 +336,10 @@ int parse_args(int argc, char **argv)
 		{
 			gProductName = argv[j];
 		}
+		else if ((!strcmp(argv[j], "-bundleid")) && (++j < argc)) 
+		{
+			gBundleID = argv[j];
+		}
 	}
 
 	return 0;
@@ -364,6 +366,7 @@ int main(int argc, char **argv)
 	//
 	gUpdateURL  = NULL;
 	gProductName = NULL;
+	gBundleID = NULL;
 	parse_args(argc, argv);
 	if (!gUpdateURL)
 	{
@@ -380,6 +383,14 @@ int main(int argc, char **argv)
 		else
 		{
 			gProductName = "Second Life";
+		}
+		if (gBundleID)
+		{
+			llinfos << "Bundle ID is: " << gBundleID << llendl;
+		}
+		else
+		{
+			gBundleID = "com.secondlife.indra.viewer";
 		}
 	}
 	
@@ -547,20 +558,6 @@ bool isDirWritable(FSRef &dir)
 	return result;
 }
 
-static void utf8str_to_HFSUniStr255(HFSUniStr255 *dest, const char* src)
-{
-	llutf16string	utf16str = utf8str_to_utf16str(src);
-
-	dest->length = utf16str.size();
-	if(dest->length > 255)
-	{
-		// There's onl room for 255 chars in a HFSUniStr25..
-		// Truncate to avoid stack smaching or other badness.
-		dest->length = 255;
-	}
-	memcpy(dest->unicode, utf16str.data(), sizeof(UniChar)* dest->length);		/* Flawfinder: ignore */
-}
-
 static std::string HFSUniStr255_to_utf8str(const HFSUniStr255* src)
 {
 	llutf16string string16((U16*)&(src->unicode), src->length);
@@ -584,19 +581,12 @@ int restoreObject(const char* aside, const char* target, const char* path, const
 
 	llinfos << "Copying " << source << " to " << dest << llendl;
 
-	err = FSCopyObject(	
+	err = FSCopyObjectSync(
 			&sourceRef,
 			&destRef,
-			0,
-			kFSCatInfoNone,
-			kDupeActionReplace,
-			NULL,
-			false,
-			false,
 			NULL,
 			NULL,
-			NULL,
-			NULL);
+			kFSFileOperationOverwrite);
 
 	if(err != noErr) return false;
 	return true;
@@ -622,7 +612,8 @@ static bool isFSRefViewerBundle(FSRef *targetRef)
 	CFURLRef targetURL = NULL;
 	CFBundleRef targetBundle = NULL;
 	CFStringRef targetBundleID = NULL;
-	
+	CFStringRef sourceBundleID = NULL;
+
 	targetURL = CFURLCreateFromFSRef(NULL, targetRef);
 
 	if(targetURL == NULL)
@@ -649,7 +640,8 @@ static bool isFSRefViewerBundle(FSRef *targetRef)
 	}
 	else
 	{
-		if(CFStringCompare(targetBundleID, CFSTR("com.secondlife.indra.viewer"), 0) == kCFCompareEqualTo)
+		sourceBundleID = CFStringCreateWithCString(NULL, gBundleID, kCFStringEncodingUTF8);
+		if(CFStringCompare(sourceBundleID, targetBundleID, 0) == kCFCompareEqualTo)
 		{
 			// This is the bundle we're looking for.
 			result = true;
@@ -779,21 +771,21 @@ void *updatethreadproc(void*)
 			// so we need to go up 3 levels to get the path to the main application bundle.
 			if(err == noErr)
 			{
-				err = FSGetParentRef(&myBundle, &targetRef);
+				err = FSGetCatalogInfo(&myBundle, kFSCatInfoNone, NULL, NULL, NULL, &targetRef);
 			}
 			if(err == noErr)
 			{
-				err = FSGetParentRef(&targetRef, &targetRef);
+				err = FSGetCatalogInfo(&targetRef, kFSCatInfoNone, NULL, NULL, NULL, &targetRef);
 			}
 			if(err == noErr)
 			{
-				err = FSGetParentRef(&targetRef, &targetRef);
+				err = FSGetCatalogInfo(&targetRef, kFSCatInfoNone, NULL, NULL, NULL, &targetRef);
 			}
 			
 			// And once more to get the parent of the target
 			if(err == noErr)
 			{
-				err = FSGetParentRef(&targetRef, &targetParentRef);
+				err = FSGetCatalogInfo(&targetRef, kFSCatInfoNone, NULL, NULL, NULL, &targetParentRef);
 			}
 			
 			if(err == noErr)
@@ -1032,7 +1024,7 @@ void *updatethreadproc(void*)
 		if(!mountOutput.empty())
 		{
 			const char *s = mountOutput.c_str();
-			char *prefix = "/dev/";
+			const char *prefix = "/dev/";
 			char *sub = strstr(s, prefix);
 			
 			if(sub != NULL)
@@ -1077,14 +1069,16 @@ void *updatethreadproc(void*)
 		char aside[MAX_PATH];		/* Flawfinder: ignore */
 		
 		// this will hold the name of the destination target
-		HFSUniStr255 appNameUniStr;
+		CFStringRef appNameRef;
 
 		if(replacingTarget)
 		{
 			// Get the name of the target we're replacing
+			HFSUniStr255 appNameUniStr;
 			err = FSGetCatalogInfo(&targetRef, 0, NULL, &appNameUniStr, NULL, NULL);
 			if(err != noErr)
 				throw 0;
+			appNameRef = FSCreateStringFromHFSUniStr(NULL, &appNameUniStr);
 			
 			// Move aside old version (into work directory)
 			err = FSMoveObject(&targetRef, &tempDirRef, &asideRef);
@@ -1099,7 +1093,7 @@ void *updatethreadproc(void*)
 			// Construct the name of the target based on the product name
 			char appName[MAX_PATH];		/* Flawfinder: ignore */
 			snprintf(appName, sizeof(appName), "%s.app", gProductName);		
-			utf8str_to_HFSUniStr255( &appNameUniStr, appName );
+			appNameRef = CFStringCreateWithCString(NULL, appName, kCFStringEncodingUTF8);
 		}
 		
 		sendProgress(0, 0, CFSTR("Copying files..."));
@@ -1107,19 +1101,12 @@ void *updatethreadproc(void*)
 		llinfos << "Starting copy..." << llendl;
 
 		// Copy the new version from the disk image to the target location.
-		err = FSCopyObject(	
+		err = FSCopyObjectSync(
 				&sourceRef,
 				&targetParentRef,
-				0,
-				kFSCatInfoNone,
-				kDupeActionStandard,
-				&appNameUniStr,
-				false,
-				false,
-				NULL,
-				NULL,
+				appNameRef,
 				&targetRef,
-				NULL);
+				kFSFileOperationDefaultOptions);
 		
 		// Grab the path for later use.
 		err = FSRefMakePath(&targetRef, (UInt8*)target, sizeof(target));
@@ -1131,7 +1118,7 @@ void *updatethreadproc(void*)
 		if(err != noErr)
 		{
 			// Something went wrong during the copy.  Attempt to put the old version back and bail.
-			(void)FSDeleteObjects(&targetRef);
+			(void)FSDeleteObject(&targetRef);
 			if(replacingTarget)
 			{
 				(void)FSMoveObject(&asideRef, &targetParentRef, NULL);

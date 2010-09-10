@@ -108,7 +108,7 @@ const int LL_ERR_PRICE_MISMATCH = -23018;
 #else
 #define llassert(func)
 #endif
-#define llassert_always(func)	if (!(func)) llwarns << "ASSERT (" << #func << ")" << llendl;
+#define llassert_always(func)	if (!(func)) llerrs << "ASSERT (" << #func << ")" << llendl;
 
 #ifdef SHOW_ASSERT
 #define llverify(func)			if (!(func)) llerrs << "ASSERT (" << #func << ")" << llendl;

@@ -223,10 +223,25 @@ void LLCrashLogger::gatherFiles()
 	gatherPlatformSpecificFiles();
 
 	//Use the debug log to reconstruct the URL to send the crash report to
-	mCrashHost = "http://modularsystems.sl/app/crash/crash.php";
+	if(mDebugLog.has("CurrentSimHost"))
+	{
+		mCrashHost = "https://";
+		mCrashHost += mDebugLog["CurrentSimHost"].asString();
+		mCrashHost += ":12043/crash/report";
+	}
+	else if(mDebugLog.has("GridName"))
+	{
+		// This is a 'little' hacky, but its the best simple solution.
+		std::string grid_host = mDebugLog["GridName"].asString();
+		LLStringUtil::toLower(grid_host);
+
+		mCrashHost = "https://login.";
+		mCrashHost += grid_host;
+		mCrashHost += ".lindenlab.com:12043/crash/report";
+	}
 
 	// Use login servers as the alternate, since they are already load balanced and have a known name
-	mAltCrashHost = "http://modularsystems.sl/app/crash/crash.php";
+	mAltCrashHost = "https://login.agni.lindenlab.com:12043/crash/report";
 
 	mCrashInfo["DebugLog"] = mDebugLog;
 	mFileMap["StatsLog"] = gDirUtilp->getExpandedFilename(LL_PATH_LOGS,"stats.log");
@@ -356,8 +371,8 @@ bool LLCrashLogger::init()
 	// We assume that all the logs we're looking for reside on the current drive
 	gDirUtilp->initAppDirs("SecondLife");
 
-	// Default to the product name "Emerald Viewer" (this is overridden by the -name argument)
-	mProductName = "Emerald Viewer";
+	// Default to the product name "Second Life" (this is overridden by the -name argument)
+	mProductName = "Second Life";
 	
 	mCrashSettings.declareS32(CRASH_BEHAVIOR_SETTING, CRASH_BEHAVIOR_ASK, "Controls behavior when viewer crashes "
 		"(0 = ask before sending crash report, 1 = always send crash report, 2 = never send crash report)");

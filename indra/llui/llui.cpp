@@ -38,7 +38,6 @@
 #include <map>
 
 // Linden library includes
-#include "audioengine.h"
 #include "v2math.h"
 #include "v4color.h"
 #include "llrender.h"
@@ -887,7 +886,6 @@ void gl_ring( F32 radius, F32 width, const LLColor4& center_color, const LLColor
 	gGL.popMatrix();
 }
 
-// TODO: [LUA] gLuaStyle[UICheckerboard][0-1]
 // Draw gray and white checkerboard with black border
 void gl_rect_2d_checkerboard(const LLRect& rect)
 {

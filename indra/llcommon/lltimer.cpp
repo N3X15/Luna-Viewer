@@ -555,6 +555,24 @@ void secondsToTimecodeString(F32 current_time, std::string& tcstring)
 }
 
 
+void timeToFormattedString(time_t time, std::string format, std::string &timestr)
+{
+	char buffer[256];
+	struct tm *t;
+	t = localtime(&time);
+	strftime(buffer, 255, format.c_str(), t);
+	timestr = (const char*)buffer;
+}
+
+
+void timeStructToFormattedString(struct tm * time, std::string format, std::string &timestr)
+{
+	char buffer[256];
+	strftime(buffer, 255, format.c_str(), time);
+	timestr = (const char*)buffer;
+}
+
+
 //////////////////////////////////////////////////////////////////////////////
 //
 //		LLEventTimer Implementation

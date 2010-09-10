@@ -72,6 +72,9 @@ void *APR_THREAD_FUNC LLThread::staticRun(apr_thread_t *apr_threadp, void *datap
 	// Set thread state to running
 	threadp->mStatus = RUNNING;
 
+	// Create a thread local APRFile pool.
+	LLVolatileAPRPool::createLocalAPRFilePool();
+
 	// Run the user supplied function
 	threadp->run();
 
@@ -102,20 +105,12 @@ LLThread::LLThread(const std::string& name, apr_pool_t *poolp) :
 		apr_pool_create(&mAPRPoolp, NULL); // Create a subpool for this thread
 	}
 	mRunCondition = new LLCondition(mAPRPoolp);
-
-	mLocalAPRFilePoolp = NULL ;
 }
 
 
 LLThread::~LLThread()
 {
 	shutdown();
-
-	if(mLocalAPRFilePoolp)
-	{
-		delete mLocalAPRFilePoolp ;
-		mLocalAPRFilePoolp = NULL ;
-	}
 }
 
 void LLThread::shutdown()
@@ -288,7 +283,6 @@ LLMutex::LLMutex(apr_pool_t *poolp) :
 	apr_thread_mutex_create(&mAPRMutexp, APR_THREAD_MUTEX_UNNESTED, mAPRPoolp);
 }
 
-
 LLMutex::~LLMutex()
 {
 #if _DEBUG
@@ -302,29 +296,14 @@ LLMutex::~LLMutex()
 	}
 }
 
-
-void LLMutex::lock()
-{
-	apr_thread_mutex_lock(mAPRMutexp);
-}
-
-void LLMutex::unlock()
-{
-	apr_thread_mutex_unlock(mAPRMutexp);
-}
-
 bool LLMutex::isLocked()
 {
-	apr_status_t status = apr_thread_mutex_trylock(mAPRMutexp);
-	if (APR_STATUS_IS_EBUSY(status))
+  	if (!tryLock())
 	{
 		return true;
 	}
-	else
-	{
-		apr_thread_mutex_unlock(mAPRMutexp);
-		return false;
-	}
+	apr_thread_mutex_unlock(mAPRMutexp);
+	return false;
 }
 
 //============================================================================
@@ -337,13 +316,11 @@ LLCondition::LLCondition(apr_pool_t *poolp) :
 	apr_thread_cond_create(&mAPRCondp, mAPRPoolp);
 }
 
-
 LLCondition::~LLCondition()
 {
 	apr_thread_cond_destroy(mAPRCondp);
 	mAPRCondp = NULL;
 }
-
 
 void LLCondition::wait()
 {

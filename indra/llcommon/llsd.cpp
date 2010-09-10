@@ -161,7 +161,7 @@ namespace
 		ImplBase(DataRef value) : mValue(value) { }
 		
 		virtual LLSD::Type type() const { return T; }
-		using Impl::assign;
+
 		virtual void assign(LLSD::Impl*& var, DataRef value) {
 			if (shared())
 			{

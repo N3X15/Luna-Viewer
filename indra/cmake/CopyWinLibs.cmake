@@ -14,33 +14,20 @@ set(vivox_files
     ortp.dll
     wrap_oal.dll
     )
+copy_if_different(
+    ${vivox_src_dir}
+    "${CMAKE_CURRENT_BINARY_DIR}/Debug"
+    out_targets
+    ${vivox_files}
+    )
+set(all_targets ${all_targets} ${out_targets})
+
 
 set(debug_src_dir "${CMAKE_SOURCE_DIR}/../libraries/i686-win32/lib/debug")
 set(debug_files
-    freebl3.dll
-    js3250.dll
-    nspr4.dll
-    nss3.dll
-    nssckbi.dll
-    plc4.dll
-    plds4.dll
-    smime3.dll
-    softokn3.dll
-    ssl3.dll
-    xpcom.dll
-    xul.dll
     openjpegd.dll
-    windbgdlg.exe
     lua5.1.dll
-	libhunspell.dll
     )
-
-if(OPENAL)
-    list(APPEND debug_files
-        soft-oal.dll
-        softalut.dll
-    )
-endif(OPENAL)
 
 copy_if_different(
     ${debug_src_dir} 
@@ -50,40 +37,181 @@ copy_if_different(
     )
 set(all_targets ${all_targets} ${out_targets})
 
+# Debug config runtime files required for the plugin test mule
+set(plugintest_debug_src_dir "${CMAKE_SOURCE_DIR}/../libraries/i686-win32/lib/debug")
+set(plugintest_debug_files
+    libeay32.dll
+    libglib-2.0-0.dll
+    libgmodule-2.0-0.dll
+    libgobject-2.0-0.dll
+    libgthread-2.0-0.dll
+    qtcored4.dll
+    qtguid4.dll
+    qtnetworkd4.dll
+    qtopengld4.dll
+    qtwebkitd4.dll
+    ssleay32.dll
+    )
 copy_if_different(
-    ${vivox_src_dir} 
-    "${CMAKE_CURRENT_BINARY_DIR}/Debug"
-    out_targets 
-    ${vivox_files}
+    ${plugintest_debug_src_dir}
+    "${CMAKE_CURRENT_BINARY_DIR}/../test_apps/llplugintest/Debug"
+    out_targets
+    ${plugintest_debug_files}
+    )
+set(all_targets ${all_targets} ${out_targets})
+
+# Debug config runtime files required for the plugin test mule (Qt image format plugins)
+set(plugintest_debug_src_dir "${CMAKE_SOURCE_DIR}/../libraries/i686-win32/lib/debug/imageformats")
+set(plugintest_debug_files
+    qgifd4.dll
+    qicod4.dll
+    qjpegd4.dll
+    qmngd4.dll
+    qsvgd4.dll
+    qtiffd4.dll
+    )
+copy_if_different(
+    ${plugintest_debug_src_dir}
+    "${CMAKE_CURRENT_BINARY_DIR}/../test_apps/llplugintest/Debug/imageformats"
+    out_targets
+    ${plugintest_debug_files}
+    )
+set(all_targets ${all_targets} ${out_targets})
+
+copy_if_different(
+    ${plugintest_debug_src_dir}
+    "${CMAKE_CURRENT_BINARY_DIR}/llplugin/imageformats"
+    out_targets
+    ${plugintest_debug_files}
+    )
+set(all_targets ${all_targets} ${out_targets})
+
+# Release & ReleaseDebInfo config runtime files required for the plugin test mule
+set(plugintest_release_src_dir "${CMAKE_SOURCE_DIR}/../libraries/i686-win32/lib/release")
+set(plugintest_release_files
+    libeay32.dll
+    libglib-2.0-0.dll
+    libgmodule-2.0-0.dll
+    libgobject-2.0-0.dll
+    libgthread-2.0-0.dll
+#    llkdu.dll        (not required for plugin test)
+    qtcore4.dll
+    qtgui4.dll
+    qtnetwork4.dll
+    qtopengl4.dll
+    qtwebkit4.dll
+    ssleay32.dll
+    )
+copy_if_different(
+    ${plugintest_release_src_dir}
+    "${CMAKE_CURRENT_BINARY_DIR}/../test_apps/llplugintest/Release"
+    out_targets
+    ${plugintest_release_files}
+    )
+set(all_targets ${all_targets} ${out_targets})
+
+copy_if_different(
+    ${plugintest_release_src_dir}
+    "${CMAKE_CURRENT_BINARY_DIR}/../test_apps/llplugintest/RelWithDebInfo"
+    out_targets
+    ${plugintest_release_files}
+    )
+set(all_targets ${all_targets} ${out_targets})
+
+# Release & ReleaseDebInfo config runtime files required for the plugin test mule (Qt image format plugins)
+set(plugintest_release_src_dir "${CMAKE_SOURCE_DIR}/../libraries/i686-win32/lib/release/imageformats")
+set(plugintest_release_files
+    qgif4.dll
+    qico4.dll
+    qjpeg4.dll
+    qmng4.dll
+    qsvg4.dll
+    qtiff4.dll
+    )
+copy_if_different(
+    ${plugintest_release_src_dir}
+    "${CMAKE_CURRENT_BINARY_DIR}/../test_apps/llplugintest/Release/imageformats"
+    out_targets
+    ${plugintest_release_files}
+    )
+set(all_targets ${all_targets} ${out_targets})
+
+copy_if_different(
+    ${plugintest_release_src_dir}
+    "${CMAKE_CURRENT_BINARY_DIR}/../test_apps/llplugintest/RelWithDebInfo/imageformats"
+    out_targets
+    ${plugintest_release_files}
+    )
+set(all_targets ${all_targets} ${out_targets})
+
+copy_if_different(
+    ${plugintest_release_src_dir}
+    "${CMAKE_CURRENT_BINARY_DIR}/Release/llplugin/imageformats"
+    out_targets
+    ${plugintest_release_files}
+    )
+set(all_targets ${all_targets} ${out_targets})
+
+copy_if_different(
+    ${plugintest_release_src_dir}
+    "${CMAKE_CURRENT_BINARY_DIR}/RelWithDebInfo/llplugin/imageformats"
+    out_targets
+    ${plugintest_release_files}
+    )
+set(all_targets ${all_targets} ${out_targets})
+
+# Debug config runtime files required for the plugins
+set(plugins_debug_src_dir "${CMAKE_SOURCE_DIR}/../libraries/i686-win32/lib/debug")
+set(plugins_debug_files
+    libeay32.dll
+    qtcored4.dll
+    qtguid4.dll
+    qtnetworkd4.dll
+    qtopengld4.dll
+    qtwebkitd4.dll
+    ssleay32.dll
+    )
+copy_if_different(
+    ${plugins_debug_src_dir}
+    "${CMAKE_CURRENT_BINARY_DIR}/Debug/llplugin"
+    out_targets
+    ${plugins_debug_files}
+    )
+set(all_targets ${all_targets} ${out_targets})
+
+# Release & ReleaseDebInfo config runtime files required for the plugins
+set(plugins_release_src_dir "${CMAKE_SOURCE_DIR}/../libraries/i686-win32/lib/release")
+set(plugins_release_files
+    libeay32.dll
+    qtcore4.dll
+    qtgui4.dll
+    qtnetwork4.dll
+    qtopengl4.dll
+    qtwebkit4.dll
+    ssleay32.dll
+    )
+copy_if_different(
+    ${plugins_release_src_dir}
+    "${CMAKE_CURRENT_BINARY_DIR}/Release/llplugin"
+    out_targets
+    ${plugins_release_files}
+    )
+set(all_targets ${all_targets} ${out_targets})
+
+copy_if_different(
+    ${plugins_release_src_dir}
+    "${CMAKE_CURRENT_BINARY_DIR}/RelWithDebInfo/llplugin"
+    out_targets
+    ${plugins_release_files}
     )
 set(all_targets ${all_targets} ${out_targets})
 
 set(release_src_dir "${CMAKE_SOURCE_DIR}/../libraries/i686-win32/lib/release")
 set(release_files
-    freebl3.dll
-    js3250.dll
-    nspr4.dll
-    nss3.dll
-    nssckbi.dll
-    plc4.dll
-    plds4.dll
-    smime3.dll
-    softokn3.dll
-    ssl3.dll
-    xpcom.dll
-    xul.dll
     openjpeg.dll
-	libhunspell.dll
     lua5.1.dll
     )
-
-if(OPENAL)
-    list(APPEND release_files
-        soft-oal.dll
-        softalut.dll
-    )
-endif(OPENAL)
-
+    
 copy_if_different(
     ${release_src_dir} 
     "${CMAKE_CURRENT_BINARY_DIR}/Release"
@@ -187,6 +315,20 @@ if (MSVC80)
             ${debug_msvc8_files}
             )
         set(all_targets ${all_targets} ${out_targets})
+
+        set(debug_appconfig_file ${CMAKE_CURRENT_BINARY_DIR}/Debug/Ascent.exe.config)
+        add_custom_command(
+            OUTPUT ${debug_appconfig_file}
+            COMMAND ${PYTHON_EXECUTABLE}
+            ARGS
+              ${CMAKE_CURRENT_SOURCE_DIR}/build_win32_appConfig.py
+              ${CMAKE_CURRENT_BINARY_DIR}/Debug/Microsoft.VC80.DebugCRT.manifest
+              ${CMAKE_CURRENT_SOURCE_DIR}/SecondLifeDebug.exe.config
+              ${debug_appconfig_file}
+            DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/Debug/Microsoft.VC80.DebugCRT.manifest
+            COMMENT "Creating debug app config file"
+            )
+
     endif (EXISTS ${debug_msvc8_redist_path})
 
     FIND_PATH(release_msvc8_redist_path msvcr80.dll
@@ -219,10 +361,43 @@ if (MSVC80)
             )
         set(all_targets ${all_targets} ${out_targets})
 
+        set(release_appconfig_file ${CMAKE_CURRENT_BINARY_DIR}/Release/Ascent.exe.config)
+        add_custom_command(
+            OUTPUT ${release_appconfig_file}
+            COMMAND ${PYTHON_EXECUTABLE}
+            ARGS
+              ${CMAKE_CURRENT_SOURCE_DIR}/build_win32_appConfig.py
+              ${CMAKE_CURRENT_BINARY_DIR}/Release/Microsoft.VC80.CRT.manifest
+              ${CMAKE_CURRENT_SOURCE_DIR}/SecondLife.exe.config
+              ${release_appconfig_file}
+            DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/Release/Microsoft.VC80.CRT.manifest
+            COMMENT "Creating release app config file"
+            )
+
+        set(relwithdebinfo_appconfig_file ${CMAKE_CURRENT_BINARY_DIR}/RelWithDebInfo/Ascent.exe.config)
+        add_custom_command(
+            OUTPUT ${relwithdebinfo_appconfig_file}
+            COMMAND ${PYTHON_EXECUTABLE}
+            ARGS
+              ${CMAKE_CURRENT_SOURCE_DIR}/build_win32_appConfig.py
+              ${CMAKE_CURRENT_BINARY_DIR}/RelWithDebInfo/Microsoft.VC80.CRT.manifest
+              ${CMAKE_CURRENT_SOURCE_DIR}/SecondLife.exe.config
+              ${relwithdebinfo_appconfig_file}
+            DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/RelWithDebInfo/Microsoft.VC80.CRT.manifest
+            COMMENT "Creating relwithdebinfo app config file"
+            )
+          
     endif (EXISTS ${release_msvc8_redist_path})
 endif (MSVC80)
 
-add_custom_target(copy_win_libs ALL DEPENDS ${all_targets})
+add_custom_target(copy_win_libs ALL
+  DEPENDS 
+    ${all_targets}
+    ${release_appconfig_file} 
+    ${relwithdebinfo_appconfig_file} 
+    ${debug_appconfig_file}
+  )
+add_dependencies(copy_win_libs prepare)
 
 if(EXISTS ${internal_llkdu_path})
     add_dependencies(copy_win_libs llkdu)

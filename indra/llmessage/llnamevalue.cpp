@@ -586,8 +586,8 @@ char	*LLNameValue::getString()
 	}
 	else
 	{
-		llinfos << mName << " not a string!" << llendl;
-		return (char*)"lol";//NULL;
+		llerrs << mName << " not a string!" << llendl;
+		return NULL;
 	}
 }
 

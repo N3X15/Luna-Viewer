@@ -177,7 +177,7 @@ void LLTexUnit::disable(void)
 	}
 }
 
-bool LLTexUnit::bind(LLImageGL* texture, bool forceBind)
+bool LLTexUnit::bind(LLImageGL* texture, bool for_rendering, bool forceBind)
 {
 	stop_glerror();
 	if (mIndex < 0) return false;
@@ -192,10 +192,23 @@ bool LLTexUnit::bind(LLImageGL* texture, bool forceBind)
 	
 	if (!texture->getTexName()) //if texture does not exist
 	{
-		//if deleted, will re-generate it immediately
-		texture->forceImmediateUpdate() ;
+		if (texture->isDeleted())
+		{
+			// This will re-generate the texture immediately.
+			texture->forceImmediateUpdate() ;
+		}
 
+		texture->forceUpdateBindStats() ;
 		return texture->bindDefaultImage(mIndex);
+	}
+
+	if(gAuditTexture && for_rendering && LLImageGL::sCurTexPickSize > 0)
+	{
+		if(texture->getWidth() * texture->getHeight() == LLImageGL::sCurTexPickSize)
+		{
+			texture->updateBindStats();
+			return bind(LLImageGL::sDefaultTexturep.get());
+		}
 	}
 
 	if ((mCurrTexture != texture->getTexName()) || forceBind)
@@ -214,6 +227,7 @@ bool LLTexUnit::bind(LLImageGL* texture, bool forceBind)
 			setTextureFilteringOption(texture->mFilterOption);
 		}
 	}
+
 	return true;
 }
 
@@ -785,6 +799,9 @@ void LLRender::setSceneBlendType(eBlendType type)
 		case BT_MULT:
 			glBlendFunc(GL_DST_COLOR, GL_ZERO);
 			break;
+		case BT_MULT_ALPHA:
+			glBlendFunc(GL_DST_ALPHA, GL_ZERO);
+			break;
 		case BT_MULT_X2:
 			glBlendFunc(GL_DST_COLOR, GL_SRC_COLOR);
 			break;
@@ -821,7 +838,7 @@ void LLRender::blendFunc(eBlendFactor sfactor, eBlendFactor dfactor)
 
 LLTexUnit* LLRender::getTexUnit(U32 index)
 {
-	if (index < mTexUnits.size())
+	if ((index >= 0) && (index < mTexUnits.size()))
 	{
 		return mTexUnits[index];
 	}

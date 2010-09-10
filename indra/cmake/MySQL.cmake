@@ -1,7 +1,6 @@
 # -*- cmake -*-
 include(Linking)
 include(Prebuilt)
-# We don't prebuild our own MySQL client library.
 
 use_prebuilt_binary(mysql)
 
@@ -11,8 +10,8 @@ if (LINUX)
     set(MYSQL_INCLUDE_DIR ${LIBS_PREBUILT_DIR}/${LL_ARCH_DIR}/include)
   else (WORD_SIZE EQUAL 32 OR DEBIAN_VERSION STREQUAL "3.1")
     # Use the native MySQL library on a 64-bit system.
-set(MYSQL_FIND_QUIETLY ON)
-set(MYSQL_FIND_REQUIRED ON)
+    set(MYSQL_FIND_QUIETLY ON)
+    set(MYSQL_FIND_REQUIRED ON)
     include(FindMySQL)
   endif (WORD_SIZE EQUAL 32 OR DEBIAN_VERSION STREQUAL "3.1")
 elseif (WINDOWS)

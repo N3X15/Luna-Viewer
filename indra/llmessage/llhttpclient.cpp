@@ -163,9 +163,10 @@ namespace
 				fstream.seekg(0, std::ios::end);
 				U32 fileSize = fstream.tellg();
 				fstream.seekg(0, std::ios::beg);
-				std::vector<char> fileBuffer(fileSize);
-				fstream.read(&fileBuffer[0], fileSize);
-				ostream.write(&fileBuffer[0], fileSize);
+				char* fileBuffer;
+				fileBuffer = new char [fileSize];
+				fstream.read(fileBuffer, fileSize);
+				ostream.write(fileBuffer, fileSize);
 				fstream.close();
 				eos = true;
 				return STATUS_DONE;
@@ -192,9 +193,10 @@ namespace
 			
 			LLVFile vfile(gVFS, mUUID, mAssetType, LLVFile::READ);
 			S32 fileSize = vfile.getSize();
-			std::vector<U8> fileBuffer(fileSize);
-			vfile.read(&fileBuffer[0], fileSize);
-			ostream.write((char*)&fileBuffer[0], fileSize);
+			U8* fileBuffer;
+			fileBuffer = new U8 [fileSize];
+            vfile.read(fileBuffer, fileSize);
+            ostream.write((char*)fileBuffer, fileSize);
 			eos = true;
 			return STATUS_DONE;
 		}
@@ -239,8 +241,8 @@ static void request(
             //the Pragma header it so gratuitously inserts
             //Before inserting the header, force libcurl
             //to not use the proxy (read: llurlrequest.cpp)
-  	static const std::string PRAGMA("Pragma");
-	if ((iter->first == PRAGMA) && (iter->second.asString().empty()))
+			static const std::string PRAGMA("Pragma");
+			if ((iter->first == PRAGMA) && (iter->second.asString().empty()))
             {
                 req->useProxy(false);
             }
@@ -290,7 +292,6 @@ static void request(
 		req->addHeader(llformat("X-SecondLife-UDP-Listen-Port: %d",
 								gMessageSystem->mPort).c_str());
    	}
-
 
 	if (method == LLURLRequest::HTTP_PUT || method == LLURLRequest::HTTP_POST)
 	{
@@ -362,19 +363,6 @@ void LLHTTPClient::get(const std::string& url, const LLSD& query, ResponderPtr r
 	uri = LLURI::buildHTTP(url, LLSD::emptyArray(), query);
 	get(uri.asString(), responder, headers, timeout);
 }
-class LLHTTPFileBuffer
-{
-public:
-	llofstream * stream;
-	LLHTTPFileBuffer(llofstream * fstream):stream(fstream){}
-	static size_t curl_write( void *ptr, size_t size, size_t nmemb, void *user_data)
-	{
-		LLHTTPFileBuffer* self = (LLHTTPFileBuffer*)user_data;
-		size_t bytes = (size * nmemb);
-		self->stream->write((char*)ptr,bytes);
-		return nmemb;
-	}
-};
 
 // A simple class for managing data returned from a curl http request.
 class LLHTTPBuffer
@@ -476,43 +464,6 @@ LLSD LLHTTPClient::blockingGet(const std::string& url)
 
 	return response;
 }
-
-void LLHTTPClient::downloadFile(const std::string& url,const std::string& destinationFile)
-{
-	llofstream export_file;
-	export_file.open(destinationFile);
-	llinfos << "blockingGet of " << url << llendl;
-	char curl_error_buffer[CURL_ERROR_SIZE];
-	CURL* curlp = curl_easy_init();
-	LLHTTPFileBuffer http_buffer(&export_file);
-	curl_easy_setopt(curlp, CURLOPT_NOSIGNAL, 1);	// don't use SIGALRM for timeouts
-	curl_easy_setopt(curlp, CURLOPT_TIMEOUT, 25);	// seconds
-
-	curl_easy_setopt(curlp, CURLOPT_WRITEFUNCTION, LLHTTPFileBuffer::curl_write);
-	curl_easy_setopt(curlp, CURLOPT_WRITEDATA, &http_buffer);
-	curl_easy_setopt(curlp, CURLOPT_URL, url.c_str());
-	curl_easy_setopt(curlp, CURLOPT_ERRORBUFFER, curl_error_buffer);
-	curl_easy_setopt(curlp, CURLOPT_FAILONERROR, 1);
-
-	struct curl_slist *header_list = NULL;
-	header_list = curl_slist_append(header_list, "Accept: */*");
-	CURLcode curl_result = curl_easy_setopt(curlp, CURLOPT_HTTPHEADER, header_list);
-	if ( curl_result != CURLE_OK )
-	{
-		llinfos << "Curl is hosed - can't add Accept header for */*" << llendl;
-	}
-	S32 curl_success = curl_easy_perform(curlp);
-	if (curl_success != 0)
-		llwarns << "CURL ERROR: " << curl_error_buffer << llendl;
-	if(header_list)
-	{
-		curl_slist_free_all(header_list); 
-		header_list = NULL;
-	}
-	curl_easy_cleanup(curlp);
-	export_file.close();
-}
-
 
 void LLHTTPClient::put(
 	const std::string& url,

@@ -140,8 +140,7 @@ public:
 		// | 4. ADD TO LLAssetType::mAssetTypeHumanNames |
 		// +*********************************************+
 
-		AT_SKY = 23,
-		AT_COUNT = 24,
+		AT_COUNT = 23,
 
 		AT_NONE = -1
 	};

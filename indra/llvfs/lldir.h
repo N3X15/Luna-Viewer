@@ -61,8 +61,6 @@ typedef enum ELLPath
 	FL_PATH_HOOKS = 17,
 	FL_PATH_LUA=18,
 	FL_PATH_MACROS=19,
-	FL_PATH_SKY=20,
-	MM_SNDLOC = 50,
 	LL_PATH_LAST
 } ELLPath;
 
@@ -72,7 +70,6 @@ class LLDir
  public:
 	LLDir();
 	virtual ~LLDir();
-	void mm_setsnddir(const std::string &path);//::MOYMOD::
 
 	virtual void initAppDirs(const std::string &app_name) = 0;
  public:	
@@ -84,11 +81,12 @@ class LLDir
 	virtual void getRandomFileInDir(const std::string &dirname, const std::string &mask, std::string &fname) = 0;
 	virtual std::string getCurPath() = 0;
 	virtual BOOL fileExists(const std::string &filename) const = 0;
-	int mm_usesnd();
-    int mm_usesndcache;
-    std::string mm_sndcacheloc;
 
 	const std::string findFile(const std::string &filename, const std::string searchPath1 = "", const std::string searchPath2 = "", const std::string searchPath3 = "") const;
+
+	virtual std::string getLLPluginLauncher() = 0; // full path and name for the plugin shell
+	virtual std::string getLLPluginFilename(std::string base_name) = 0; // full path and name to the plugin DSO for this base_name (i.e. 'FOO' -> '/bar/baz/libFOO.so')
+
 	const std::string &getExecutablePathAndName() const;	// Full pathname of the executable
 	const std::string &getAppName() const;			// install directory under progams/ ie "SecondLife"
 	const std::string &getExecutableDir() const;	// Directory where the executable is located
@@ -109,6 +107,7 @@ class LLDir
 	const std::string &getUserSkinDir() const;		// User-specified skin folder with user modifications. e.g. c:\documents and settings\username\application data\second life\skins\curskin
 	const std::string &getDefaultSkinDir() const;	// folder for default skin. e.g. c:\program files\second life\skins\default
 	const std::string getSkinBaseDir() const;		// folder that contains all installed skins (not user modifications). e.g. c:\program files\second life\skins
+	const std::string &getLLPluginDir() const;		// Directory containing plugins and plugin shell
 
 	// Expanded filename
 	std::string getExpandedFilename(ELLPath location, const std::string &filename) const;
@@ -135,11 +134,12 @@ class LLDir
 
 	virtual void setChatLogsDir(const std::string &path);		// Set the chat logs dir to this user's dir
 	virtual void setPerAccountChatLogsDir(const std::string &first, const std::string &last);		// Set the per user chat log directory.
-	virtual void setLindenUserDir(const std::string &grid, const std::string &first, const std::string &last);		// Set the linden user dir to this user's dir
+	virtual void setLindenUserDir(const std::string &first, const std::string &last);		// Set the linden user dir to this user's dir
 	virtual void setSkinFolder(const std::string &skin_folder);
 	virtual bool setCacheDir(const std::string &path);
 
 	virtual void dumpCurrentDirectories();
+	
 	// Utility routine
 	std::string buildSLOSCacheDir() const;
 
@@ -164,6 +164,7 @@ protected:
 	std::string mSkinDir;			// Location for current skin info.
 	std::string mDefaultSkinDir;			// Location for default skin info.
 	std::string mUserSkinDir;			// Location for user-modified skin info.
+	std::string mLLPluginDir;			// Location for plugins and plugin shell
 };
 
 void dir_exists_or_crash(const std::string &dir_name);

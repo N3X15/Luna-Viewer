@@ -305,7 +305,7 @@ BOOL LLCharacter::setVisualParamWeight(const char* param_name, F32 weight, BOOL 
 //-----------------------------------------------------------------------------
 // setVisualParamWeightNoClamp()
 //
-//  Allows FlexLife to distort the avatar without having to worry about clamping.  
+//  Allows Luna to distort the avatar without having to worry about clamping.  
 //  Want overly-huge boobs on your screen?  YES YOU CAN.
 //-----------------------------------------------------------------------------
 BOOL LLCharacter::setVisualParamWeightNoClamp(const char* param_name, F32 weight, BOOL set_by_user)

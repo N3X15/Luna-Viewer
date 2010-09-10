@@ -33,20 +33,18 @@
 
 #include "llaudiodecodemgr.h"
 
-#include "vorbisencode.h"
-#include "audioengine.h"
+#include "llvorbisdecode.h"
+#include "llaudioengine.h"
 #include "lllfsthread.h"
 #include "llvfile.h"
 #include "llstring.h"
 #include "lldir.h"
 #include "llendianswizzle.h"
-#include "audioengine.h"
 #include "llassetstorage.h"
 
 #include "vorbis/codec.h"
 #include "vorbis/vorbisfile.h"
-
-#include <string>
+#include "llvorbisencode.h"
 
 extern LLAudioEngine *gAudiop;
 
@@ -220,40 +218,58 @@ BOOL LLVorbisDecodeState::initDecode()
 		return(FALSE);
 	}
 	
-	size_t size_guess = (size_t)ov_pcm_total(&mVF, -1);
+	S32 sample_count = ov_pcm_total(&mVF, -1);
+	size_t size_guess = (size_t)sample_count;
 	vorbis_info* vi = ov_info(&mVF, -1);
 	size_guess *= vi->channels;
 	size_guess *= 2;
 	size_guess += 2048;
-
+	
+	bool abort_decode = false;
+	// <edit>
 	// This magic value is equivilent to 150MiB of data.
 	// Prevents griffers from utilizin a huge xbox sound the size of god to instafry the viewer
 	if(size_guess >= 157286400)
 	{
 		llwarns << "Bad sound caught by zmagic" << llendl;
-		delete mInFilep;
-		mInFilep = NULL;
-		return FALSE;
+		abort_decode = true;
 	}
-	bool abort_decode = false;
-	
-	if( vi->channels < 1 || vi->channels > LLVORBIS_CLIP_MAX_CHANNELS )
+
+	else /* </edit> */if( vi->channels < 1 || vi->channels > LLVORBIS_CLIP_MAX_CHANNELS )
 	{
 		abort_decode = true;
 		llwarns << "Bad channel count: " << vi->channels << llendl;
 	}
+
 	
 	if( abort_decode )
 	{
-		llwarns << "Canceling initDecode." << llendl;
+		llwarns << "Canceling initDecode. Bad asset: " << mUUID << llendl;
 		llwarns << "Bad asset encoded by: " << ov_comment(&mVF,-1)->vendor << llendl;
 		delete mInFilep;
 		mInFilep = NULL;
 		return FALSE;
 	}
 	
-	mWAVBuffer.reserve(size_guess);
-	mWAVBuffer.resize(WAV_HEADER_SIZE);
+	// <edit>
+	try
+	{
+	// </edit>
+		mWAVBuffer.reserve(size_guess);
+		mWAVBuffer.resize(WAV_HEADER_SIZE);
+	// <edit>
+	}
+	catch(std::bad_alloc)
+	{
+		llwarns << "bad_alloc" << llendl;
+		if(mInFilep)
+		{
+			delete mInFilep;
+			mInFilep = NULL;
+		}
+		return FALSE;
+	}
+	// </edit>
 
 	{
 		// write the .wav format header
@@ -426,7 +442,10 @@ BOOL LLVorbisDecodeState::finishDecode()
 			char pcmout[4096];		/*Flawfinder: ignore*/ 	
 
 			fade_length = llmin((S32)128,(S32)(data_length-36)/8);			
-			if((S32)mWAVBuffer.size() >= (WAV_HEADER_SIZE + 2* fade_length))
+			// <edit>
+			//if((S32)mWAVBuffer.size() >= (WAV_HEADER_SIZE + 2* fade_length))
+			if((S32)mWAVBuffer.size() > (WAV_HEADER_SIZE + 2* fade_length))
+			// </edit>
 			{
 				memcpy(pcmout, &mWAVBuffer[WAV_HEADER_SIZE], (2 * fade_length));	/*Flawfinder: ignore*/
 			}
@@ -445,7 +464,10 @@ BOOL LLVorbisDecodeState::finishDecode()
 				memcpy(&mWAVBuffer[WAV_HEADER_SIZE], pcmout, (2 * fade_length));	/*Flawfinder: ignore*/
 			}
 			S32 near_end = mWAVBuffer.size() - (2 * fade_length);
-			if ((S32)mWAVBuffer.size() >= ( near_end + 2* fade_length))
+			// <edit>
+			//if ((S32)mWAVBuffer.size() >= ( near_end + 2* fade_length))
+			if ((S32)mWAVBuffer.size() > ( near_end + 2* fade_length))
+			// </edit>
 			{
 				memcpy(pcmout, &mWAVBuffer[near_end], (2 * fade_length));	/*Flawfinder: ignore*/
 			}
@@ -544,13 +566,18 @@ void LLAudioDecodeMgr::Impl::processQueue(const F32 num_secs)
 	{
 		if (mCurrentDecodep)
 		{
-			BOOL res;
+			// <edit> rawrning
+			//BOOL res;
+			BOOL res = false;
+			// </edit>
 
 			// Decode in a loop until we're done or have run out of time.
+			/* <edit> */ try{ /* </edit> */
 			while(!(res = mCurrentDecodep->decodeSection()) && (decode_timer.getElapsedTimeF32() < num_secs))
 			{
 				// decodeSection does all of the work above
 			}
+			/* <edit> */ }catch(std::bad_alloc){llerrs<<"bad_alloc whilst decoding"<<llendl;} /* </edit> */
 
 			if (mCurrentDecodep->isDone() && !mCurrentDecodep->isValid())
 			{
@@ -620,12 +647,7 @@ void LLAudioDecodeMgr::Impl::processQueue(const F32 num_secs)
 				timer.reset();
 
 				uuid.toString(uuid_str);
-				//d_path = gDirUtilp->getExpandedFilename(LL_PATH_CACHE,uuid_str) + ".dsf";
-                if(gDirUtilp->mm_usesnd()) //::MODMOD::
-                    d_path = gDirUtilp->getExpandedFilename(MM_SNDLOC,uuid_str) + ".dsf";
-                else
-                    d_path = gDirUtilp->getExpandedFilename(LL_PATH_CACHE,uuid_str) + ".dsf";
-				
+				d_path = gDirUtilp->getExpandedFilename(LL_PATH_CACHE,uuid_str) + ".dsf";
 
 				mCurrentDecodep = new LLVorbisDecodeState(uuid, d_path);
 				if (!mCurrentDecodep->initDecode())
@@ -671,5 +693,3 @@ BOOL LLAudioDecodeMgr::addDecodeRequest(const LLUUID &uuid)
 
 	return FALSE;
 }
-
-

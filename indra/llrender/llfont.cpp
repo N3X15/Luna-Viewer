@@ -312,7 +312,7 @@ BOOL LLFont::addChar(const llwchar wch) const
 		// Try looking it up in the backup Unicode font
 		if (mFallbackFontp)
 		{
-			//llinfos << "Trying to add glyph from fallback font!" << llendl
+			//llinfos << "Trying to add glyph from fallback font!" << llendl;
 			LLFontList::iterator iter;
 			for(iter = mFallbackFontp->begin(); iter != mFallbackFontp->end(); iter++)
 			{
@@ -440,6 +440,7 @@ BOOL LLFont::addGlyphFromFont(const LLFont *fontp, const llwchar wch, const U32 
 			break;
 		}
 
+		if (tmp_graydata)
 			delete[] tmp_graydata;
 	} else {
 		// we don't know how to handle this pixel format from FreeType;
@@ -554,23 +555,6 @@ F32 LLFont::getXKerning(const llwchar char_left, const llwchar char_right) const
 	// Kern this puppy.
 	LLFontGlyphInfo* right_glyph_info = get_if_there(mCharGlyphInfoMap, char_right, (LLFontGlyphInfo*)NULL);
 	U32 right_glyph = right_glyph_info ? right_glyph_info->mGlyphIndex : 0;
-
-	FT_Vector  delta;
-
-	llverify(!FT_Get_Kerning(mFTFace, left_glyph, right_glyph, ft_kerning_unfitted, &delta));
-
-	return delta.x*(1.f/64.f);
-}
-
-//Zwag: My "optimised" version of the above function that takes known pointers.
-F32 LLFont::getXKerning(const LLFontGlyphInfo* left_fgi, const LLFontGlyphInfo* right_fgi) const
-{
-	if (mFTFace == NULL)
-		return 0.0;
-
-	llassert(!mIsFallback);
-	U32 left_glyph = left_fgi ? left_fgi->mGlyphIndex : 0;
-	U32 right_glyph = right_fgi ? right_fgi->mGlyphIndex : 0;
 
 	FT_Vector  delta;
 

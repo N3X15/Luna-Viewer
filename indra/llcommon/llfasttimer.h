@@ -161,6 +161,7 @@ public:
 		FTM_IMAGE_UPDATE,
 		FTM_IMAGE_CREATE,
 		FTM_IMAGE_DECODE,
+		FTM_IMAGE_READBACK,
 		FTM_IMAGE_MARK_DIRTY,
 		FTM_PIPELINE,
 		FTM_VFILE_WAIT,
@@ -194,7 +195,7 @@ public:
 	enum { FTM_MAX_DEPTH = 64 };
 	
 public:
-	static LLFastTimer::EFastTimerType sCurType;
+	static EFastTimerType sCurType;
 
 	LLFastTimer(EFastTimerType type)
 	{
@@ -249,6 +250,7 @@ public:
 	static int sPauseHistory;
 	static int sResetHistory;
 	static F64 sCPUClockFrequency;
+    static U64 sClockResolution;
 	
 private:
 	EFastTimerType mType;

@@ -37,10 +37,6 @@
 #include "llfile.h"
 #include "llrender.h"
 
-#include "llcontrol.h"
-
-extern LLControlGroup gSavedSettings;
-
 #if LL_DARWIN
 #include "OpenGL/OpenGL.h"
 #endif
@@ -269,7 +265,7 @@ BOOL LLShaderMgr::attachShaderFeatures(LLGLSLShader * shader)
 		
 		else 
 		{
-			if (!shader->attachObject((gSavedSettings.getBOOL("EmeraldNewShiny")) ? "lighting/lightShinyFNew.glsl" : "lighting/lightShinyF.glsl" ))
+			if (!shader->attachObject("lighting/lightShinyF.glsl"))
 			{
 				return FALSE;
 			}

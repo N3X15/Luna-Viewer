@@ -149,7 +149,6 @@ public:
 	const LLFontGlyphInfo &getMetrics(const llwchar wc) const;
 	F32 getXAdvance(const llwchar wc) const;
 	F32 getXKerning(const llwchar char_left, const llwchar char_right) const; // Get the kerning between the two characters
-	F32 getXKerning(const LLFontGlyphInfo* left_fgi, const LLFontGlyphInfo* right_fgi) const;
 	virtual void reset() = 0;
 
 protected:

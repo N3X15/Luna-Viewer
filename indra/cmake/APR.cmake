@@ -18,8 +18,8 @@ else (STANDALONE)
       optimized ${ARCH_PREBUILT_DIRS_RELEASE}/apr-1.lib
       )
     set(APRICONV_LIBRARIES 
-      debug ${ARCH_PREBUILT_DIRS_DEBUG}/apriconv-1.lib
-      optimized ${ARCH_PREBUILT_DIRS_RELEASE}/apriconv-1.lib
+      debug ${ARCH_PREBUILT_DIRS_DEBUG}/libapriconv-1.lib
+      optimized ${ARCH_PREBUILT_DIRS_RELEASE}/libapriconv-1.lib
       )
     set(APRUTIL_LIBRARIES 
       debug ${ARCH_PREBUILT_DIRS_DEBUG}/aprutil-1.lib ${APRICONV_LIBRARIES}
@@ -41,8 +41,9 @@ else (STANDALONE)
     set(APRICONV_LIBRARIES iconv)
   endif (WINDOWS)
   set(APR_INCLUDE_DIR ${LIBS_PREBUILT_DIR}/${LL_ARCH_DIR}/include/apr-1)
+  set(APRUTIL_INCLUDE_DIR ${LIBS_PREBUILT_DIR}/${LL_ARCH_DIR}/include/apr-1)
 
   if (LINUX AND VIEWER)
-    list(APPEND APRUTIL_LIBRARIES ${DB_LIBRARIES})
+    list(APPEND APRUTIL_LIBRARIES ${DB_LIBRARIES} uuid)
   endif (LINUX AND VIEWER)
 endif (STANDALONE)

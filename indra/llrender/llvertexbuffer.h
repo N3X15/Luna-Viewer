@@ -174,8 +174,6 @@ public:
 	bool getWeightStrider(LLStrider<F32>& strider, S32 index=0);
 	bool getClothWeightStrider(LLStrider<LLVector4>& strider, S32 index=0);
 	
-	const bool getImmediateMap() const		{ return mImmediateMap; }
-	void setImmediateMap(bool immediate_map){ mImmediateMap = immediate_map; }
 	BOOL isEmpty() const					{ return mEmpty; }
 	BOOL isLocked() const					{ return mLocked; }
 	S32 getNumVerts() const					{ return mNumVerts; }
@@ -223,7 +221,6 @@ protected:
 	S32		mOffsets[TYPE_MAX];
 	BOOL	mResized;		// if TRUE, client buffer has been resized and GL buffer has not
 	BOOL	mDynamicSize;	// if TRUE, buffer has been resized at least once (and should be padded)
-	bool	mImmediateMap;
 
 	class DirtyRegion
 	{

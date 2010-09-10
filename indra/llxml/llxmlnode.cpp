@@ -120,7 +120,6 @@ LLXMLNode::LLXMLNode(LLStringTableEntry* name, BOOL is_attribute) :
 // copy constructor (except for the children)
 LLXMLNode::LLXMLNode(const LLXMLNode& rhs) : 
 	mID(rhs.mID),
-	mParser(NULL),
 	mIsAttribute(rhs.mIsAttribute),
 	mVersionMajor(rhs.mVersionMajor), 
 	mVersionMinor(rhs.mVersionMinor), 

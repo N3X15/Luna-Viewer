@@ -100,11 +100,8 @@ LLButton::LLButton(	const std::string& name, const LLRect& rect, const std::stri
 	setImageDisabled(std::string("button_disabled_32x128.tga"));
 	setImageDisabledSelected(std::string("button_disabled_32x128.tga"));
 
-	static LLColor4 defaultImageColor = LLUI::sColorsGroup->getColor( "ButtonImageColor" );
-	static LLColor4 defaultDisabledImageColor = LLUI::sColorsGroup->getColor( "ButtonImageColor" );
-
-	mImageColor = defaultImageColor;
-	mDisabledImageColor = defaultDisabledImageColor;
+	mImageColor = LLUI::sColorsGroup->getColor( "ButtonImageColor" );
+	mDisabledImageColor = LLUI::sColorsGroup->getColor( "ButtonImageColor" );
 
 	init(click_callback, callback_data, NULL, control_name);
 }
@@ -153,11 +150,8 @@ LLButton::LLButton(const std::string& name, const LLRect& rect,
 	mSelectedLabel = selected_label;
 
 	// by default, disabled color is same as enabled
-	static LLColor4 defaultImageColor = LLUI::sColorsGroup->getColor( "ButtonImageColor" );
-	static LLColor4 defaultDisabledImageColor = LLUI::sColorsGroup->getColor( "ButtonImageColor" );
-
-	mImageColor = defaultImageColor;
-	mDisabledImageColor = defaultDisabledImageColor;
+	mImageColor = LLUI::sColorsGroup->getColor( "ButtonImageColor" );
+	mDisabledImageColor = LLUI::sColorsGroup->getColor( "ButtonImageColor" );
 
 	if( unselected_image_name != "" )
 	{
@@ -209,23 +203,14 @@ void LLButton::init(void (*click_callback)(void*), void *callback_data, const LL
 
 	setControlName(control_name, NULL);
 
-	static LLColor4 defaultUnselectedLabelColor = (			LLUI::sColorsGroup->getColor( "ButtonLabelColor" ) );
-	static LLColor4 defaultSelectedLabelColor = (			LLUI::sColorsGroup->getColor( "ButtonLabelSelectedColor" ) );
-	static LLColor4 defaultDisabledLabelColor = (			LLUI::sColorsGroup->getColor( "ButtonLabelDisabledColor" ) );
-	static LLColor4 defaultDisabledSelectedLabelColor = (	LLUI::sColorsGroup->getColor( "ButtonLabelSelectedDisabledColor" ) );
-	static LLColor4 defaultHighlightColor = (				LLUI::sColorsGroup->getColor( "ButtonUnselectedFgColor" ) );
-	static LLColor4 defaultUnselectedBgColor = (				LLUI::sColorsGroup->getColor( "ButtonUnselectedBgColor" ) );
-	static LLColor4 defaultSelectedBgColor = (				LLUI::sColorsGroup->getColor( "ButtonSelectedBgColor" ) );
-	static LLColor4 defaultFlashBgColor = (				LLUI::sColorsGroup->getColor( "ButtonFlashBgColor" ) );
-
-	mUnselectedLabelColor = defaultUnselectedLabelColor;
-	mSelectedLabelColor = defaultSelectedLabelColor;
-	mDisabledLabelColor = defaultDisabledLabelColor;
-	mDisabledSelectedLabelColor = defaultDisabledSelectedLabelColor;
-	mHighlightColor = defaultHighlightColor;
-	mUnselectedBgColor = defaultUnselectedBgColor;
-	mSelectedBgColor = defaultSelectedBgColor;
-	mFlashBgColor = defaultFlashBgColor;
+	mUnselectedLabelColor = (			LLUI::sColorsGroup->getColor( "ButtonLabelColor" ) );
+	mSelectedLabelColor = (			LLUI::sColorsGroup->getColor( "ButtonLabelSelectedColor" ) );
+	mDisabledLabelColor = (			LLUI::sColorsGroup->getColor( "ButtonLabelDisabledColor" ) );
+	mDisabledSelectedLabelColor = (	LLUI::sColorsGroup->getColor( "ButtonLabelSelectedDisabledColor" ) );
+	mHighlightColor = (				LLUI::sColorsGroup->getColor( "ButtonUnselectedFgColor" ) );
+	mUnselectedBgColor = (				LLUI::sColorsGroup->getColor( "ButtonUnselectedBgColor" ) );
+	mSelectedBgColor = (				LLUI::sColorsGroup->getColor( "ButtonSelectedBgColor" ) );
+	mFlashBgColor = (				LLUI::sColorsGroup->getColor( "ButtonFlashBgColor" ) );
 
 	mImageOverlayAlignment = LLFontGL::HCENTER;
 	mImageOverlayColor = LLColor4::white;
@@ -855,6 +840,11 @@ void LLButton::setColor(const LLColor4& color)
 	setImageColor(color);
 }
 
+void LLButton::setAlpha(F32 alpha)
+{
+	mImageColor.setAlpha(alpha);
+	mDisabledImageColor.setAlpha(alpha * 0.5f);
+}
 
 void LLButton::setImageDisabled(LLPointer<LLUIImage> image)
 {
@@ -994,6 +984,8 @@ void LLButton::addImageAttributeToXML(LLXMLNodePtr node,
 LLXMLNodePtr LLButton::getXML(bool save_children) const
 {
 	LLXMLNodePtr node = LLUICtrl::getXML();
+
+	node->setName(LL_BUTTON_TAG);
 
 	node->createChild("label", TRUE)->setStringValue(getLabelUnselected());
 	node->createChild("label_selected", TRUE)->setStringValue(getLabelSelected());

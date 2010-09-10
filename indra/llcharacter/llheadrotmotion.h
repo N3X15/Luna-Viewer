@@ -200,11 +200,6 @@ public:
 	LLPointer<LLJointState> mLeftEyeState;
 	LLPointer<LLJointState> mRightEyeState;
 
-
-	//LLFrameTimer		mEyeRefocusTimer;
-	LLVector3			mLastTargetPos;
-
-
 	LLFrameTimer		mEyeJitterTimer;
 	F32					mEyeJitterTime;
 	F32					mEyeJitterYaw;

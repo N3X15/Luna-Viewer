@@ -457,7 +457,7 @@ BOOL LLWindowSDL::createContext(int x, int y, int width, int height, int bits, B
 
 	// Set the application icon.
 	SDL_Surface *bmpsurface;
-	bmpsurface = Load_BMP_Resource("ll_icon.BMP");
+	bmpsurface = Load_BMP_Resource("snowglobe_icon.BMP");
 	if (bmpsurface)
 	{
 		// This attempts to give a black-keyed mask to the icon.
@@ -620,6 +620,15 @@ BOOL LLWindowSDL::createContext(int x, int y, int width, int height, int bits, B
 			mWindow = SDL_SetVideoMode(width, height, bits, sdlflags);
 		}
 
+		if (!mWindow && mFSAASamples > 0)
+		{
+			llwarns << "Window creating is failing, disabling FSAA and trying again"<<llendl;
+			SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 0);
+			SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 0);
+			mWindow = SDL_SetVideoMode(width, height, bits, sdlflags);
+		}
+
+
 		if (!mWindow)
 		{
 			llwarns << "createContext: window creation failure. SDL: " << SDL_GetError() << llendl;
@@ -664,12 +673,12 @@ BOOL LLWindowSDL::createContext(int x, int y, int width, int height, int bits, B
 	glGetIntegerv(GL_DEPTH_BITS, &depthBits);
 	glGetIntegerv(GL_STENCIL_BITS, &stencilBits);
 	
-	llinfos << "GL buffer:" << llendl
-        llinfos << "  Red Bits " << S32(redBits) << llendl
-        llinfos << "  Green Bits " << S32(greenBits) << llendl
-        llinfos << "  Blue Bits " << S32(blueBits) << llendl
-	llinfos	<< "  Alpha Bits " << S32(alphaBits) << llendl
-	llinfos	<< "  Depth Bits " << S32(depthBits) << llendl
+	llinfos << "GL buffer:" << llendl;
+        llinfos << "  Red Bits " << S32(redBits) << llendl;
+        llinfos << "  Green Bits " << S32(greenBits) << llendl;
+        llinfos << "  Blue Bits " << S32(blueBits) << llendl;
+	llinfos	<< "  Alpha Bits " << S32(alphaBits) << llendl;
+	llinfos	<< "  Depth Bits " << S32(depthBits) << llendl;
 	llinfos	<< "  Stencil Bits " << S32(stencilBits) << llendl;
 
 	GLint colorBits = redBits + greenBits + blueBits + alphaBits;
@@ -2192,6 +2201,7 @@ BOOL LLWindowSDL::dialog_color_picker ( F32 *r, F32 *g, F32 *b)
 		GtkColorSelection *colorsel = GTK_COLOR_SELECTION (GTK_COLOR_SELECTION_DIALOG(win)->colorsel);
 
 		GdkColor color, orig_color;
+		orig_color.pixel = 0;
 		orig_color.red = guint16(65535 * *r);
 		orig_color.green= guint16(65535 * *g);
 		orig_color.blue = guint16(65535 * *b);

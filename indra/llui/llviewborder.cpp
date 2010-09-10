@@ -41,24 +41,14 @@ LLViewBorder::LLViewBorder( const std::string& name, const LLRect& rect, EBevel 
 	LLView( name, rect, FALSE ),
 	mBevel( bevel ),
 	mStyle( style ),
-	//mHighlightLight( LLUI::sColorsGroup->getColor( "DefaultHighlightLight" ) ),
-	//mHighlightDark(	LLUI::sColorsGroup->getColor( "DefaultHighlightDark" ) ),
-	//mShadowLight( LLUI::sColorsGroup->getColor( "DefaultShadowLight" ) ),
-	//mShadowDark( LLUI::sColorsGroup->getColor( "DefaultShadowDark" ) ),
+	mHighlightLight( LLUI::sColorsGroup->getColor( "DefaultHighlightLight" ) ),
+	mHighlightDark(	LLUI::sColorsGroup->getColor( "DefaultHighlightDark" ) ),
+	mShadowLight( LLUI::sColorsGroup->getColor( "DefaultShadowLight" ) ),
+	mShadowDark( LLUI::sColorsGroup->getColor( "DefaultShadowDark" ) ),
 	mBorderWidth( width ),
 	mTexture( NULL ),
 	mHasKeyboardFocus( FALSE )
 {
-	static LLColor4 defaultHighlightLight = LLUI::sColorsGroup->getColor( "DefaultHighlightLight" );
-	static LLColor4 defaultHighlightDark = LLUI::sColorsGroup->getColor( "DefaultHighlightDark" );
-	static LLColor4 defaultShadowLight = LLUI::sColorsGroup->getColor( "DefaultShadowLight" );
-	static LLColor4 defaultShadowDark = LLUI::sColorsGroup->getColor( "DefaultShadowDark" );
-
-	mHighlightLight = defaultHighlightLight;//( LLUI::sColorsGroup->getColor( "DefaultHighlightLight" ) ),
-	mHighlightDark = defaultHighlightDark;//(	LLUI::sColorsGroup->getColor( "DefaultHighlightDark" ) ),
-	mShadowLight = defaultShadowLight;//( LLUI::sColorsGroup->getColor( "DefaultShadowLight" ) ),
-	mShadowDark = defaultShadowDark;//( LLUI::sColorsGroup->getColor( "DefaultShadowDark" ) ),
-
 	setFollowsAll();
 }
 
@@ -312,6 +302,16 @@ BOOL LLViewBorder::getBevelFromAttribute(LLXMLNodePtr node, LLViewBorder::EBevel
 	return FALSE;
 }
 
+
+// virtual
+LLXMLNodePtr LLViewBorder::getXML(bool save_children) const
+{
+	LLXMLNodePtr node = LLView::getXML();
+
+	node->setName(LL_VIEW_BORDER_TAG);
+
+	return node;
+}
 
 // static
 LLView* LLViewBorder::fromXML(LLXMLNodePtr node, LLView *parent, LLUICtrlFactory *factory)

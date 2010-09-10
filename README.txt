@@ -29,6 +29,10 @@ Same deal as the usual LL build, but there are additional packages you will need
 
 It should now build without issue.
 
+=== Debian (Squeeze) ===
+
+Coming soon.
+
 == Windoze ==
 
 No support for Windows yet, it's coming soon.

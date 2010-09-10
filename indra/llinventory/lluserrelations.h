@@ -144,7 +144,7 @@ public:
 	S32 getRightsGrantedFrom() const;
 
 	void setRightsTo(S32 to_agent) { mGrantToAgent = to_agent; mChangeSerialNum++; }
-	void setRightsFrom(S32 from_agent) { mGrantFromAgent = from_agent | (mGrantFromAgent & GRANT_ONLINE_STATUS); mChangeSerialNum++;}
+	void setRightsFrom(S32 from_agent) { mGrantFromAgent = from_agent; mChangeSerialNum++;}
 
 	/**
 	 * @brief Get the change count for this agent

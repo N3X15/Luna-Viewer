@@ -516,6 +516,7 @@ BOOL LLCacheName::getName(const LLUUID& id, std::string& first, std::string& las
 	}
 
 }
+
 BOOL LLCacheName::getFullName(const LLUUID& id, std::string& fullname)
 {
 	std::string first_name, last_name;
@@ -523,21 +524,7 @@ BOOL LLCacheName::getFullName(const LLUUID& id, std::string& fullname)
 	fullname = first_name + " " + last_name;
 	return res;
 }
-/*BOOL LLCacheName::getKey(const std::string& first_name,const std::string& last_name,LLUUID& id)//H4CK*
-{
-	BOOL rt = FALSE;
-	for(Cache::iterator itr = impl.mCache.begin();itr != impl.mCache.end();++itr)
-	{
-		LLCacheNameEntry* entry = itr->second;
-		if(entry->mFirstName == first_name && entry->mLastName == last_name)
-		{
-			rt=TRUE;
-			id=itr->first;
-			break;
-		}
-	}
-	return rt;
-}*/
+
 BOOL LLCacheName::getGroupName(const LLUUID& id, std::string& group)
 {
 	if(id.isNull())
@@ -612,7 +599,33 @@ void LLCacheName::get(const LLUUID& id, BOOL is_group, LLCacheNameCallback callb
 		impl.mReplyQueue.push_back(PendingReply(id, callback, user_data));
 	}
 }
+// <edit>
+BOOL LLCacheName::getIfThere(const LLUUID& id, std::string& fullname, BOOL& is_group)
+{
+	if(id.isNull())
+	{
+		fullname = "";
+		return FALSE;
+	}
 
+	LLCacheNameEntry* entry = get_ptr_in_map(impl.mCache, id );
+	if (entry)
+	{
+		if (entry->mIsGroup)
+		{
+			fullname = entry->mGroupName;
+		}
+		else
+		{
+			fullname = entry->mFirstName + " " + entry->mLastName;
+		}
+		is_group = entry->mIsGroup;
+		return TRUE;
+	}
+	fullname = "";
+	return FALSE;
+}
+// </edit>
 void LLCacheName::processPending()
 {
 	const F32 SECS_BETWEEN_PROCESS = 0.1f;

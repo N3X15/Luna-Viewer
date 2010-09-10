@@ -67,6 +67,7 @@
 #include <string>
 
 #ifdef LL_WINDOWS
+#pragma warning (3 : 4702) // we like level 3, not 4
 // level 4 warnings that we need to disable:
 #pragma warning (disable : 4100) // unreferenced formal parameter
 #pragma warning (disable : 4127) // conditional expression is constant (e.g. while(1) )
@@ -74,7 +75,6 @@
 #pragma warning (disable : 4396) // the inline specifier cannot be used when a friend declaration refers to a specialization of a function template
 #pragma warning (disable : 4512) // assignment operator could not be generated
 #pragma warning (disable : 4706) // assignment within conditional (even if((x = y)) )
-#pragma warning (disable : 4265) // boost 1.36.0, non-virtual destructor in boost::exception_detail::*
 #endif	//	LL_WINDOWS
 
 // Linden only libs in alpha-order other than stdtypes.h

@@ -1,4 +1,13 @@
 %{
+// We maintain a pre-generated parser source file to simplify user builds.
+// Before committing changes to this file, manually run
+//
+//   bison -d -o indra_generated.y.cpp indra.y
+//
+// to update the pre-generated parser.  Note that some versions of
+// bison use a different default file name for the parser token
+// header.  Make sure the file is called 'indra_generated.y.hpp'.
+// Then commit all files simultaneously.
 	#include "linden_common.h"
 	#include "lscript_tree.h"
 
@@ -18,8 +27,6 @@
     #ifdef LL_WINDOWS
 	#pragma warning (disable : 4702) // warning C4702: unreachable code
 	#pragma warning( disable : 4065 )	// warning: switch statement contains 'default' but no 'case' labels
-	#define YYMALLOC malloc
-	#define YYFREE free
 	#endif
 
     #ifdef __cplusplus

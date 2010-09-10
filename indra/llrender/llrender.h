@@ -148,7 +148,7 @@ public:
 	
 	// Binds the LLImageGL to this texture unit 
 	// (automatically enables the unit for the LLImageGL's texture type)
-	bool bind(LLImageGL* texture, bool forceBind = false);
+	bool bind(LLImageGL* texture, bool for_rendering = false, bool forceBind = false);
 
 	// Binds a cubemap to this texture unit 
 	// (automatically enables the texture unit for cubemaps)
@@ -252,6 +252,7 @@ public:
 		BT_ADD,
 		BT_ADD_WITH_ALPHA,	// Additive blend modulated by the fragment's alpha.
 		BT_MULT,
+		BT_MULT_ALPHA,
 		BT_MULT_X2,
 		BT_REPLACE
 	} eBlendType;

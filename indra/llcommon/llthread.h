@@ -83,7 +83,6 @@ public:
 	void start(void);
 
 	apr_pool_t *getAPRPool() { return mAPRPoolp; }
-	LLVolatileAPRPool* getLocalAPRFilePool() { return mLocalAPRFilePoolp ; }
 
 private:
 	BOOL				mPaused;
@@ -99,11 +98,6 @@ protected:
 	apr_pool_t			*mAPRPoolp;
 	BOOL				mIsLocalPool;
 	EThreadStatus		mStatus;
-
-	//a local apr_pool for APRFile operations in this thread. If it exists, LLAPRFile::sAPRFilePoolp should not be used.
-	//Note: this pool is used by APRFile ONLY, do NOT use it for any other purposes.
-	//      otherwise it will cause severe memory leaking!!! --bao
-	LLVolatileAPRPool  *mLocalAPRFilePoolp ; 
 
 	void setQuitting();
 	
@@ -137,10 +131,13 @@ public:
 	LLMutex(apr_pool_t *apr_poolp); // NULL pool constructs a new pool for the mutex
 	~LLMutex();
 	
-	void lock();		// blocks
-	void unlock();
+	void lock() { apr_thread_mutex_lock(mAPRMutexp); }
+	void unlock() { apr_thread_mutex_unlock(mAPRMutexp); }
+	// Returns true if lock was obtained successfully.
+	bool tryLock() { return !APR_STATUS_IS_EBUSY(apr_thread_mutex_trylock(mAPRMutexp)); }
+
 	bool isLocked(); 	// non-blocking, but does do a lock/unlock so not free
-	
+
 protected:
 	apr_thread_mutex_t *mAPRMutexp;
 	apr_pool_t			*mAPRPoolp;

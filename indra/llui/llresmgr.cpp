@@ -257,6 +257,8 @@ std::string LLResMgr::getMonetaryString( S32 input ) const
 	// On the Mac, locale support is broken before 10.4, which causes things to go all pear-shaped.
 	// Fake up a conv structure with some reasonable values for the fields this function uses.
 	struct lconv fakeconv;
+	char fake_neg[2] = "-";
+	char fake_mon_group[4] = "\x03\x03\x00"; // commas every 3 digits
 	if(conv->negative_sign[0] == 0)	// Real locales all seem to have something here...
 	{
 		fakeconv = *conv;	// start with what's there.
@@ -265,8 +267,8 @@ std::string LLResMgr::getMonetaryString( S32 input ) const
 			default:  			// Unknown -- use the US defaults.
 			case LLLOCALE_USA: 
 			case LLLOCALE_UK:	// UK ends up being the same as US for the items used here.
-				fakeconv.negative_sign = "-";
-				fakeconv.mon_grouping = "\x03\x03\x00";	// commas every 3 digits
+				fakeconv.negative_sign = fake_neg;
+				fakeconv.mon_grouping = fake_mon_group;
 				fakeconv.n_sign_posn = 1; // negative sign before the string
 			break;
 		}
@@ -451,17 +453,15 @@ const std::string LLLocale::USER_LOCALE("en_US.utf8");
 const std::string LLLocale::SYSTEM_LOCALE("C");
 #endif
 
-static std::string PrevFailedLocaleString = "";
 
 LLLocale::LLLocale(const std::string& locale_string)
 {
 	mPrevLocaleString = setlocale( LC_ALL, NULL );
 	char* new_locale_string = setlocale( LC_ALL, locale_string.c_str());
-	if ( new_locale_string == NULL && PrevFailedLocaleString != locale_string )
+	if ( new_locale_string == NULL)
 	{
 		llwarns << "Failed to set locale " << locale_string << llendl;
 		setlocale(LC_ALL, SYSTEM_LOCALE.c_str());
-		PrevFailedLocaleString = locale_string;
 	}
 	//else
 	//{

@@ -35,6 +35,7 @@ $/LicenseInfo$
 
 import sys
 import os.path
+import re
 
 # Look for indra/lib/python in all possible parent directories ...
 # This is an improvement over the setup-path.py method used previously:
@@ -62,6 +63,7 @@ def add_indra_lib_path():
         sys.exit(1)
 
 base_dir = add_indra_lib_path()
+defaultUserAgent = 'Lynx/2.8.6rel.5 libwww-FM/2.14' #pretend to be lynx because github sucks a fat dick
 
 import copy
 import optparse
@@ -74,27 +76,15 @@ import tempfile
 import urllib2
 import urlparse
 
-try:
-    # Python 2.6
-    from hashlib import md5
-except ImportError:
-    # Python 2.5 and earlier
-    from md5 import new as md5
-
 from indra.base import llsd
 from indra.util import helpformatter
 
-# *HACK: Necessary for python 2.3. Consider removing this code wart
-# after etch has deployed everywhere. 2008-12-23 Phoenix
+# *HACK: Necessary for python 2.4. Consider replacing this code wart
+# after python >=2.5 has deployed everywhere. 2009-10-05
 try:
-    sorted = sorted
-except NameError:
-    def sorted(in_list):
-        "Return a list which is a sorted copy of in_list."
-        # Copy the source to be more functional and side-effect free.
-        out_list = copy.copy(in_list)
-        out_list.sort()
-        return out_list
+    from hashlib import md5
+except ImportError:
+    from md5 import md5
 
 class InstallFile(object):
     "This is just a handy way to throw around details on a file in memory."
@@ -144,7 +134,13 @@ class InstallFile(object):
             print "Found matching package:", self.filename
             return
         print "Downloading",self.url,"to local file",self.filename
-        file(self.filename, 'wb').write(urllib2.urlopen(self.url).read())
+        
+        request = urllib2.Request(self.url)
+        
+        if re.match("/^http:\/\/github.com/", self.url):
+			request.add_header('User-agent', defaultUserAgent)
+        
+        file(self.filename, 'wb').write(urllib2.urlopen(request).read())
         if self.md5sum and not self._is_md5sum_match():
             raise RuntimeError("Error matching md5 for %s" % self.url)
 
@@ -416,8 +412,7 @@ linux -- specify a package for all arch and compilers on linux
 darwin/universal -- specify a mac os x universal
 windows/i686/vs/2003 -- specify a windows visual studio 2003 package"""
         if name not in self._installables:
-            print "Error: " + name + " not found in install.xml. " \
-                  +" Must add library with --add-installable or " \
+            print "Error: must add library with --add-installable or " \
                   +"--add-installable-metadata before using " \
                   +"--add-installable-package option"
             return False
@@ -648,6 +643,12 @@ windows/i686/vs/2003 -- specify a windows visual studio 2003 package"""
             install_dir,
             cache_dir)
         scp_or_http.cleanup()
+
+        # Verify that requested packages are installed
+        for pkg in installables:
+            if pkg not in self._installed:
+                raise RuntimeError("No '%s' available for '%s'." %
+                                   (pkg, platform))
     
     def do_uninstall(self, installables, install_dir):
         # Do not bother to check license if we're uninstalling.
@@ -693,7 +694,12 @@ class SCPOrHTTPHandler(urllib2.BaseHandler):
         url.insert(0, "http://")
         url = ''.join(url)
         print "Using HTTP:",url
-        return urllib2.urlopen(url)
+        request = urllib2.Request(url)
+        
+        if re.match("/^http:\/\/github.com/", self.url):
+			request.add_header('User-agent', defaultUserAgent)
+		
+        return urllib2.urlopen(request)
 
     def do_scp(self, remote):
         if not self._dir:

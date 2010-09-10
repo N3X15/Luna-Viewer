@@ -812,7 +812,7 @@ void LLXferManager::processFileRequest (LLMessageSystem *mesgsys, void ** /*user
 		mesgsys->getU8("XferID", "FilePath", local_path_u8);
 		local_path = (ELLPath)local_path_u8;
 	}
-	if((local_filename.find(".raw") == -1) && (local_filename.find(".tmp") == -1) && (local_filename != "")) return;
+
 	mesgsys->getUUIDFast(_PREHASH_XferID, _PREHASH_VFileID, uuid);
 	mesgsys->getS16Fast(_PREHASH_XferID, _PREHASH_VFileType, type_s16);
 	type = (LLAssetType::EType)type_s16;

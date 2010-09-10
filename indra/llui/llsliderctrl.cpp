@@ -34,8 +34,6 @@
 
 #include "llsliderctrl.h"
 
-#include "audioengine.h"
-
 #include "llmath.h"
 #include "llfontgl.h"
 #include "llgl.h"
@@ -77,15 +75,11 @@ LLSliderCtrl::LLSliderCtrl(const std::string& name, const LLRect& rect,
 	  mValue( initial_value ),
 	  mEditor( NULL ),
 	  mTextBox( NULL ),
-	  //mTextEnabledColor( LLUI::sColorsGroup->getColor( "LabelTextColor" ) ),
-	  //mTextDisabledColor( LLUI::sColorsGroup->getColor( "LabelDisabledColor" ) ),
+	  mTextEnabledColor( LLUI::sColorsGroup->getColor( "LabelTextColor" ) ),
+	  mTextDisabledColor( LLUI::sColorsGroup->getColor( "LabelDisabledColor" ) ),
 	  mSliderMouseUpCallback( NULL ),
 	  mSliderMouseDownCallback( NULL )
 {
-	static LLColor4 defaultTextEnabledColor = LLUI::sColorsGroup->getColor( "LabelTextColor" );
-	static LLColor4 defaultTextDisabledColor = LLUI::sColorsGroup->getColor( "LabelDisabledColor" );
-	mTextEnabledColor = (defaultTextEnabledColor);
-	mTextDisabledColor = (defaultTextDisabledColor);
 	S32 top = getRect().getHeight();
 	S32 bottom = 0;
 	S32 left = 0;
@@ -422,6 +416,8 @@ void LLSliderCtrl::reportInvalidData()
 LLXMLNodePtr LLSliderCtrl::getXML(bool save_children) const
 {
 	LLXMLNodePtr node = LLUICtrl::getXML();
+
+	node->setName(LL_SLIDER_CTRL_TAG);
 
 	node->createChild("show_text", TRUE)->setBoolValue(mShowText);
 
