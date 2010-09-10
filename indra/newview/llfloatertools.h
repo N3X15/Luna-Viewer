@@ -143,6 +143,7 @@ public:
 	LLComboBox*		mComboGridMode;
 	LLCheckBoxCtrl*	mCheckStretchUniform;
 	LLCheckBoxCtrl*	mCheckStretchTexture;
+	LLCheckBoxCtrl*	mCheckLimitDrag;
 
 	LLButton	*mBtnRotateLeft;
 	LLButton	*mBtnRotateReset;

@@ -55,7 +55,6 @@
 	<menu_item_call label="Активувати" name="Activate"/>
 	<menu_item_call label="Деактивувати" name="Deactivate"/>
 	<menu_item_call label="Зняти з себе" name="Detach From Yourself"/>
-	<menu_item_call label="Правка" name="Attachment Edit"/>
 	<menu_item_call label="Повернути на Попередню Позицію" name="Restore to Last Position"/>
 	<menu_item_call label="Одягти" name="Object Wear"/>
 	<menu label="Прикріпити до" name="Attach To"/>

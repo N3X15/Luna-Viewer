@@ -83,10 +83,6 @@
 #include "llwaterparammanager.h"
 #include "llpostprocess.h"
 
-// [RLVa:KB]
-#include "rlvhandler.h"
-// [/RLVa:KB]
-
 extern LLPointer<LLImageGL> gStartImageGL;
 
 LLPointer<LLImageGL> gDisconnectedImagep = NULL;
@@ -94,9 +90,11 @@ LLPointer<LLImageGL> gDisconnectedImagep = NULL;
 // used to toggle renderer back on after teleport
 const F32 TELEPORT_RENDER_DELAY = 20.f; // Max time a teleport is allowed to take before we raise the curtain
 const F32 TELEPORT_ARRIVAL_DELAY = 2.f; // Time to preload the world before raising the curtain after we've actually already arrived.
+const F32 TELEPORT_LOCAL_DELAY = 1.0f; // Delay to prevent teleports after starting an in-sim teleport.
 BOOL		 gTeleportDisplay = FALSE;
 LLFrameTimer gTeleportDisplayTimer;
 LLFrameTimer gTeleportArrivalTimer;
+F32			 gSavedDrawDistance = 0.0f;
 const F32		RESTORE_GL_TIME = 5.f;	// Wait this long while reloading textures before we raise the curtain
 
 BOOL gForceRenderLandFence = FALSE;
@@ -192,6 +190,13 @@ void display_update_camera()
 // Write some stats to llinfos
 void display_stats()
 {
+	if (gNoRender || !gViewerWindow->mWindow->getVisible() || !gFocusMgr.getAppHasFocus())
+	{
+		// Do not keep FPS statistics while yielding cooperatively
+		// (i;e. when not running as foreground window)
+		gRecentFrameCount = 0;
+		gRecentFPSTime.reset();
+	}
 	F32 fps_log_freq = gSavedSettings.getF32("FPSLogFrequency");
 	if (fps_log_freq > 0.f && gRecentFPSTime.getElapsedTimeF32() >= fps_log_freq)
 	{
@@ -351,7 +356,7 @@ void display(BOOL rebuild, F32 zoom_factor, int subfield, BOOL for_snapshot)
 			// Transition to REQUESTED.  Viewer has sent some kind
 			// of TeleportRequest to the source simulator
 			gTeleportDisplayTimer.reset();
-			if(!gSavedSettings.getBOOL("EmeraldDisableTeleportScreens"))gViewerWindow->setShowProgress(TRUE);
+			if(!gSavedSettings.getBOOL("AscentDisableTeleportScreens"))gViewerWindow->setShowProgress(TRUE);
 			gViewerWindow->setProgressPercent(0);
 			gAgent.setTeleportState( LLAgent::TELEPORT_REQUESTED );
 			gAgent.setTeleportMessage(
@@ -379,14 +384,14 @@ void display(BOOL rebuild, F32 zoom_factor, int subfield, BOOL for_snapshot)
 			gAgent.setTeleportMessage(
 				LLAgent::sTeleportProgressMessages["arriving"]);
 			gImageList.mForceResetTextureStats = TRUE;
-			if(!gSavedSettings.getBOOL("EmeraldDisableTeleportScreens"))gAgent.resetView(TRUE, TRUE);
+			if(!gSavedSettings.getBOOL("AscentDisableTeleportScreens"))gAgent.resetView(TRUE, TRUE);
 			break;
 
 		case LLAgent::TELEPORT_ARRIVING:
 			// Make the user wait while content "pre-caches"
 			{
 				F32 arrival_fraction = (gTeleportArrivalTimer.getElapsedTimeF32() / TELEPORT_ARRIVAL_DELAY);
-				if( arrival_fraction > 1.f || gSavedSettings.getBOOL("EmeraldDisableTeleportScreens"))
+				if( arrival_fraction > 1.f || gSavedSettings.getBOOL("AscentDisableTeleportScreens"))
 				{
 					arrival_fraction = 1.f;
 					LLFirstUse::useTeleport();
@@ -398,11 +403,30 @@ void display(BOOL rebuild, F32 zoom_factor, int subfield, BOOL for_snapshot)
 			}
 			break;
 
+		case LLAgent::TELEPORT_LOCAL:
+			// Short delay when teleporting in the same sim (progress screen active but not shown - did not
+			// fall-through from TELEPORT_START)
+			{
+				// <edit>
+				// is this really needed.... I say no.
+				//if( gTeleportDisplayTimer.getElapsedTimeF32() > TELEPORT_LOCAL_DELAY )
+				// </edit>
+				{
+					LLFirstUse::useTeleport();
+					gAgent.setTeleportState( LLAgent::TELEPORT_NONE );
+				}
+			}
+			break;
+
 		case LLAgent::TELEPORT_NONE:
 			// No teleport in progress
 			gViewerWindow->setShowProgress(FALSE);
 			gTeleportDisplay = FALSE;
+			gTeleportArrivalTimer.reset();
 			break;
+
+		default: 
+			 break;
 		}
 	}
     else if(LLAppViewer::instance()->logoutRequestSent())
@@ -440,6 +464,31 @@ void display(BOOL rebuild, F32 zoom_factor, int subfield, BOOL for_snapshot)
 			}
 			
 			gViewerWindow->setProgressPercent( percent_done );
+		}
+	}
+
+	// Progressively increase draw distance after TP when required.
+	if (gSavedDrawDistance > 0.0f && gAgent.getTeleportState() == LLAgent::TELEPORT_NONE)
+	{
+		if (gTeleportArrivalTimer.getElapsedTimeF32() >=
+			(F32)gSavedSettings.getU32("SpeedRezInterval"))
+		{
+			gTeleportArrivalTimer.reset();
+			F32 current = gSavedSettings.getF32("RenderFarClip");
+			if (gSavedDrawDistance > current)
+			{
+				current *= 2.0;
+				if (current > gSavedDrawDistance)
+				{
+					current = gSavedDrawDistance;
+				}
+				gSavedSettings.setF32("RenderFarClip", current);
+			}
+			if (current >= gSavedDrawDistance)
+			{
+				gSavedDrawDistance = 0.0f;
+				gSavedSettings.setF32("SavedRenderFarClip", 0.0f);
+			}
 		}
 	}
 
@@ -545,7 +594,8 @@ void display(BOOL rebuild, F32 zoom_factor, int subfield, BOOL for_snapshot)
 		gFrameStats.start(LLFrameStats::UPDATE_CULL);
 		S32 water_clip = 0;
 		if ((LLViewerShaderMgr::instance()->getVertexShaderLevel(LLViewerShaderMgr::SHADER_ENVIRONMENT) > 1) &&
-			 gPipeline.hasRenderType(LLPipeline::RENDER_TYPE_WATER))
+			 (gPipeline.hasRenderType(LLPipeline::RENDER_TYPE_WATER) ||
+			  gPipeline.hasRenderType(LLPipeline::RENDER_TYPE_VOIDWATER)))
 		{
 			if (LLViewerCamera::getInstance()->cameraUnderWater())
 			{
@@ -683,7 +733,8 @@ void display(BOOL rebuild, F32 zoom_factor, int subfield, BOOL for_snapshot)
 
 			gBumpImageList.updateImages();  // must be called before gImageList version so that it's textures are thrown out first.
 
-			const F32 max_image_decode_time = llmin(0.005f, 0.005f*10.f*gFrameIntervalSeconds); // 50 ms/second decode time (no more than 5ms/frame)
+			F32 max_image_decode_time = 0.050f*gFrameIntervalSeconds; // 50 ms/second decode time
+			max_image_decode_time = llclamp(max_image_decode_time, 0.001f, 0.005f ); // min 1ms/frame, max 5ms/frame)
 			gImageList.updateImages(max_image_decode_time);
 			stop_glerror();
 		}
@@ -723,10 +774,7 @@ void display(BOOL rebuild, F32 zoom_factor, int subfield, BOOL for_snapshot)
 			gSky.updateSky();
 		}
 
-//		if(gUseWireframe)
-// [RLVa:KB] - Checked: 2009-10-10 (RLVa-1.0.5a) | Modified: RLVa-1.0.5a
-		if ( (gUseWireframe) && ( (!rlv_handler_t::isEnabled()) || (!gRlvHandler.hasLockedAttachment(RLV_LOCK_REMOVE)) ) )
-// [/RLVa:KB]
+		if(gUseWireframe)
 		{
 			glClearColor(0.5f, 0.5f, 0.5f, 0.f);
 			glClear(GL_COLOR_BUFFER_BIT);
@@ -885,12 +933,7 @@ void render_hud_attachments()
 	glh::matrix4f current_mod = glh_get_current_modelview();
 
 	// clamp target zoom level to reasonable values
-// [RLVa:KB] - Checked: 2009-07-06 (RLVa-1.0.0c)
-	// TODO-RLVa: while hasLockedHUD() isn't slow this is called per frame so find a better way
-	gAgent.mHUDTargetZoom = llclamp(gAgent.mHUDTargetZoom, 
-		( (!rlv_handler_t::isEnabled()) || (!gRlvHandler.hasLockedHUD()) ) ? 0.1f : 0.85f, 1.f);
-// [/RLVa:KB]
-	//gAgent.mHUDTargetZoom = llclamp(gAgent.mHUDTargetZoom, 0.1f, 1.f);
+	gAgent.mHUDTargetZoom = llclamp(gAgent.mHUDTargetZoom, 0.1f, 1.f);
 	// smoothly interpolate current zoom level
 	gAgent.mHUDCurZoom = lerp(gAgent.mHUDCurZoom, gAgent.mHUDTargetZoom, LLCriticalDamp::getInterpolant(0.03f));
 
@@ -1300,7 +1343,7 @@ void render_disconnected_background()
 
 		
 		raw->expandToPowerOfTwo();
-		gDisconnectedImagep->createGLTexture(0, raw);
+		gDisconnectedImagep->createGLTexture(0, raw, 0, TRUE, LLViewerImageBoostLevel::OTHER);
 		gStartImageGL = gDisconnectedImagep;
 		gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
 	}

@@ -7,7 +7,7 @@
 ## - Avoids using any OpenAL audio driver.
 #export LL_BAD_OPENAL_DRIVER=x
 ## - Avoids using any FMOD audio driver.
-#export LL_BAD_FMOD_DRIVER=x
+export LL_BAD_FMOD_DRIVER=x
 
 ## - Avoids using the FMOD ESD audio driver.
 #export LL_BAD_FMOD_ESD=x
@@ -49,8 +49,8 @@
 ##   to common fatal incompatibilities; remove/comment these lines if you want
 ##   to try anyway.
 if [ "`uname -m`" = "x86_64" ]; then
-    export LL_DISABLE_GSTREAMER=x
-    echo '64-bit Linux detected: Disabling GStreamer (streaming video and music) by default; edit ./secondlife to re-enable.'
+#    export LL_DISABLE_GSTREAMER=x
+    echo '64-bit Linux detected: Disabling GStreamer (streaming video and music) by default; edit ./snowglobe to re-enable.'
 fi
 
 ## Everything below this line is just for advanced troubleshooters.
@@ -61,8 +61,15 @@ fi
 ##   you're building your own viewer, bear in mind that the executable
 ##   in the bin directory will be stripped: you should replace it with
 ##   an unstripped binary before you run.
-#export LL_WRAPPER='gdb --args'
-#export LL_WRAPPER='valgrind --smc-check=all --error-limit=no --log-file=secondlife.vg --leak-check=full --suppressions=/usr/lib/valgrind/glibc-2.5.supp --suppressions=secondlife-i686.supp'
+##
+##   I keep crashing without having GDB running, always run it if an
+##   environment variable is set.
+
+if [ $ASCENDED_DEVELOPER -eq 1 ]; then
+#	export LL_WRAPPER='cgdb --args'
+	export LL_WRAPPER='gdb --args'
+#	export LL_WRAPPER='valgrind --smc-check=all --error-limit=no --log-file=secondlife.vg --leak-check=full --suppressions=/usr/lib/valgrind/glibc-2.5.supp --suppressions=secondlife-i686.supp'
+fi
 
 ## - Avoids an often-buggy X feature that doesn't really benefit us anyway.
 export SDL_VIDEO_X11_DGAMOUSE=0
@@ -90,11 +97,6 @@ RUN_PATH=`dirname "${SCRIPTSRC}" || echo .`
 echo "Running from ${RUN_PATH}"
 cd "${RUN_PATH}"
 
-# This is an added utility script to grab voice and KDU components licensed for Emerald, as well as FMOD.
-# This is now automatically run on startup, due to how small the download and unpack time has become.
-# If you object to using voice, Kakadu image decoding, or FMOD audio, comment this script out. ~Disc
-./fetch_bins.sh
-
 # Re-register the secondlife:// protocol handler every launch, for now.
 ./register_secondlifeprotocol.sh
 ## Before we mess with LD_LIBRARY_PATH, save the old one to restore for
@@ -119,8 +121,9 @@ if [ -n "$LL_TCMALLOC" ]; then
     fi
 fi
 
+export VIEWER_BINARY='Luna-do-not-run-directly'
 export SL_ENV='LD_LIBRARY_PATH="`pwd`"/lib:"`pwd`"/app_settings/mozilla-runtime-linux-i686:"${LD_LIBRARY_PATH}"'
-export SL_CMD='$LL_WRAPPER bin/do-not-directly-run-secondlife-bin'
+export SL_CMD='$LL_WRAPPER bin/$VIEWER_BINARY'
 export SL_OPT="`cat gridargs.dat` $@"
 
 # Run the program
@@ -137,7 +140,7 @@ if [ -n "$LL_RUN_ERR" ]; then
 			cat << EOFMARKER
 You are running the Second Life Viewer on a x86_64 platform.  The
 most common problems when launching the Viewer (particularly
-'bin/do-not-directly-run-secondlife-bin: not found' and 'error while
+'bin/$VIEWER_BINARY: not found' and 'error while
 loading shared libraries') may be solved by installing your Linux
 distribution's 32-bit compatibility packages.
 For example, on Ubuntu and other Debian-based Linuxes you might run:

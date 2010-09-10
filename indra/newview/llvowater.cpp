@@ -70,7 +70,7 @@ const F32 WAVE_STEP_INV	= (1. / WAVE_STEP);
 
 
 LLVOWater::LLVOWater(const LLUUID &id, const LLPCode pcode, LLViewerRegion *regionp)
-:	LLStaticViewerObject(id, LL_VO_WATER, regionp)
+:	LLStaticViewerObject(id, pcode, regionp)
 {
 	// Terrain must draw during selection passes so it can block objects behind it.
 	mbCanSelect = FALSE;
@@ -78,8 +78,8 @@ LLVOWater::LLVOWater(const LLUUID &id, const LLPCode pcode, LLViewerRegion *regi
 
 	mUseTexture = TRUE;
 	mIsEdgePatch = FALSE;
+	mRenderType = LLPipeline::RENDER_TYPE_WATER;
 }
-
 
 void LLVOWater::markDead()
 {
@@ -101,7 +101,7 @@ void LLVOWater::setPixelAreaAndAngle(LLAgent &agent)
 
 
 // virtual
-void LLVOWater::updateTextures(LLAgent &agent)
+void LLVOWater::updateTextures()
 {
 }
 
@@ -123,7 +123,7 @@ LLDrawable *LLVOWater::createDrawable(LLPipeline *pipeline)
 {
 	pipeline->allocDrawable(this);
 	mDrawable->setLit(FALSE);
-	mDrawable->setRenderType(LLPipeline::RENDER_TYPE_WATER);
+	mDrawable->setRenderType(mRenderType);
 
 	LLDrawPoolWater *pool = (LLDrawPoolWater*) gPipeline.getPool(LLDrawPool::POOL_WATER);
 
@@ -159,7 +159,7 @@ BOOL LLVOWater::updateGeometry(LLDrawable *drawable)
 	LLStrider<U16> indicesp;
 	U16 index_offset;
 
-	S32 size = 1; //16 zwag
+	S32 size = 16;
 
 	S32 num_quads = size*size;	
 	face->setSize(4*num_quads, 6*num_quads);
@@ -275,6 +275,11 @@ U32 LLVOWater::getPartitionType() const
 	return LLViewerRegion::PARTITION_WATER; 
 }
 
+U32 LLVOVoidWater::getPartitionType() const
+{
+	return LLViewerRegion::PARTITION_VOIDWATER;
+}
+
 LLWaterPartition::LLWaterPartition()
 : LLSpatialPartition(0)
 {
@@ -282,4 +287,10 @@ LLWaterPartition::LLWaterPartition()
 	mInfiniteFarClip = TRUE;
 	mDrawableType = LLPipeline::RENDER_TYPE_WATER;
 	mPartitionType = LLViewerRegion::PARTITION_WATER;
+}
+
+LLVoidWaterPartition::LLVoidWaterPartition()
+{
+	mDrawableType = LLPipeline::RENDER_TYPE_VOIDWATER;
+	mPartitionType = LLViewerRegion::PARTITION_VOIDWATER;
 }

@@ -16,7 +16,9 @@
   <texture name="toolbar_btn_selected.tga" scale_left="7" scale_top="32" scale_right="121" scale_bottom="0" /> 
   
   <texture name="button_enabled_selected_32x128.tga" preload="true" scale_left="16" scale_top="16" scale_right="112" scale_bottom="16" />
-  
+
+  <texture name="media_panel_bg.png" preload="true" scale_left="9" scale_top="9" scale_right="9" scale_bottom="9" />
+  <texture name="media_panel_hoverrectangle.png" preload="true" scale_left="9" scale_top="9" scale_right="9" scale_bottom="9" />
   <texture name="checkbox_disabled_false.tga"	preload="true"/>
   <texture name="checkbox_disabled_true.tga"	preload="true"/>
   <texture name="checkbox_enabled_false.tga"	preload="true"/>
@@ -150,7 +152,6 @@
   
   <texture name="map_avatar_16.tga"/>
   <texture name="map_avatar_8.tga"/>
-  <texture name="map_avatar_you_8.tga"/>
   <texture name="map_event.tga"/>
   <texture name="map_event_mature.tga"/>
   <texture name="map_home.tga"/>
@@ -368,20 +369,24 @@
   <texture name="cloud-particle.j2c" use_mips="true"/>
   
   <texture name="skin_thumbnail_default.png" preload="true" />
-  <texture name="skin_thumbnail_silver.png" preload="true" />  
-  <texture name="skin_thumbnail_dark.png" preload="true" />
-  <texture name="skin_thumbnail_emerald.png" preload="true" />  
-  <texture name="skin_thumbnail_gred.png" preload="true" />
-  <texture name="skin_thumbnail_ruby.png" preload="true" />
-  <texture name="skin_thumbnail_pslgreen.png" preload="true" />
-  <texture name="skin_thumbnail_pslpurple.png" preload="true" />
-  <texture name="skin_thumbnail_sapphire.png" preload="true" />
-  <texture name="skin_thumbnail_white_emerald.png" preload="true" />
-  
-  <texture name="icon_avatar_expand.png" preload="true" />
-  
+  <texture name="skin_thumbnail_silver.png" preload="true" />
 
   <texture name="default_land_picture.j2c"/>
   <texture name="default_profile_picture.j2c"/>
   <texture name="locked_image.j2c"/>
+
+  <texture name="media_btn_back.png"/>
+  <texture name="media_btn_done.png"/>
+  <texture name="media_btn_forward.png"/>
+  <texture name="media_btn_home.png"/>
+  <texture name="media_btn_newwindow.png"/>
+  <texture name="media_btn_optimalzoom.png"/>
+  <texture name="media_btn_reload.png"/>
+  <texture name="media_btn_scrolldown.png"/>
+  <texture name="media_btn_scrollleft.png"/>
+  <texture name="media_btn_scrollright.png"/>
+  <texture name="media_btn_scrollup.png"/>
+  <texture name="media_btn_stoploading.png"/>
+  <texture name="media_panel_divider.png"/>
+
 </textures>

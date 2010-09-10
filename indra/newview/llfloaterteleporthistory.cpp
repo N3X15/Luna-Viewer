@@ -34,6 +34,11 @@
 
 #include "linden_common.h"
 
+//MK
+#include "llworld.h"
+#include "lleventpoll.h"
+#include "llagent.h"
+//mk
 #include "llfloaterteleporthistory.h"
 #include "llfloaterworldmap.h"
 #include "lltimer.h"
@@ -46,18 +51,12 @@
 
 #include "apr_time.h"
 
-// [RLVa:KB] - Emerald specific
-#include "rlvhandler.h"
-// [/RLVa:KB]
-
 // globals
 LLFloaterTeleportHistory* gFloaterTeleportHistory;
 
 LLFloaterTeleportHistory::LLFloaterTeleportHistory()
 :	LLFloater(std::string("teleporthistory")),
-	mPlacesInList(NULL),
-	mPlacesOutList(NULL),
-	pItem(NULL),
+	mPlacesList(NULL),
 	id(0)
 {
 	LLUICtrlFactory::getInstance()->buildFloater(this, "floater_teleport_history.xml", NULL);
@@ -72,7 +71,7 @@ LLFloaterTeleportHistory::~LLFloaterTeleportHistory()
 void LLFloaterTeleportHistory::onFocusReceived()
 {
 	// take care to enable or disable buttons depending on the selection in the places list
-	if(pItem)
+	if(mPlacesList->getFirstSelected())
 	{
 		setButtonsEnabled(TRUE);
 	}
@@ -86,24 +85,16 @@ void LLFloaterTeleportHistory::onFocusReceived()
 BOOL LLFloaterTeleportHistory::postBuild()
 {
 	// make sure the cached pointer to the scroll list is valid
-	mPlacesInList=getChild<LLScrollListCtrl>("places_list_in");
-	if(!mPlacesInList)
+	mPlacesList=getChild<LLScrollListCtrl>("places_list");
+	if(!mPlacesList)
 	{
-		llwarns << "coud not get pointer to places list in" << llendl;
-		return FALSE;
-	}
-	mPlacesOutList=getChild<LLScrollListCtrl>("places_list_out");
-	if(!mPlacesOutList)
-	{
-		llwarns << "coud not get pointer to places list out" << llendl;
+		llwarns << "coud not get pointer to places list" << llendl;
 		return FALSE;
 	}
 
 	// setup callbacks for the scroll list
-	mPlacesInList->setDoubleClickCallback(onTeleport);
-	mPlacesOutList->setDoubleClickCallback(onTeleport);
-	childSetCommitCallback("places_list_in", onInPlacesSelected, this);
-	childSetCommitCallback("places_list_out", onOutPlacesSelected, this);
+	mPlacesList->setDoubleClickCallback(onTeleport);
+	childSetCommitCallback("places_list", onPlacesSelected, this);
 	childSetAction("teleport", onTeleport, this);
 	childSetAction("show_on_map", onShowOnMap, this);
 	childSetAction("copy_slurl", onCopySLURL, this);
@@ -111,15 +102,16 @@ BOOL LLFloaterTeleportHistory::postBuild()
 	return TRUE;
 }
 
-void LLFloaterTeleportHistory::addEntry(std::string regionName, S16 x, S16 y, S16 z,bool outList)
+void LLFloaterTeleportHistory::addEntry(std::string regionName, S16 x, S16 y, S16 z)
 {
-	LLScrollListCtrl* pItemPointer;
-	if(outList)
-		pItemPointer=mPlacesOutList;
-	else
-		pItemPointer=mPlacesInList;
-	// only if the cached scroll list pointer is valid
-	if(pItemPointer)
+#ifdef LL_RRINTERFACE_H //MK
+	if (gRRenabled && gAgent.mRRInterface.mContainsShowloc)
+	{
+		return;
+	}
+#endif //mk
+ 	// only if the cached scroll list pointer is valid
+	if(mPlacesList)
 	{
 		// prepare display of position
 		std::string position=llformat("%d, %d, %d", x, y, z);
@@ -141,13 +133,10 @@ void LLFloaterTeleportHistory::addEntry(std::string regionName, S16 x, S16 y, S1
 		LLSD value;
 		value["id"] = id;
 		value["columns"][0]["column"] = "region";
-		value["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
 		value["columns"][0]["value"] = regionName;
 		value["columns"][1]["column"] = "position";
-		value["columns"][1]["color"] = gColors.getColor("DefaultListText").getValue();
 		value["columns"][1]["value"] = position;
 		value["columns"][2]["column"] = "visited";
-		value["columns"][2]["color"] = gColors.getColor("DefaultListText").getValue();
 		value["columns"][2]["value"] = timeString;
 
 		// these columns are hidden and serve as data storage for simstring and SLURL
@@ -156,19 +145,9 @@ void LLFloaterTeleportHistory::addEntry(std::string regionName, S16 x, S16 y, S1
 		value["columns"][4]["column"] = "simstring";
 		value["columns"][4]["value"] = simString;
 
-// [RLVa:KB] - Alternate: Emerald-370
-		if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC))
-		{
-			value["columns"][0]["value"] = RlvStrings::getString(RLV_STRING_HIDDEN_REGION);
-			value["columns"][1]["value"] = RlvStrings::getString(RLV_STRING_HIDDEN);
-			value["columns"][3]["value"] = RlvStrings::getString(RLV_STRING_HIDDEN);
-			value["columns"][4]["value"] = RlvStrings::getString(RLV_STRING_HIDDEN);
-		}
-// [/RLVa:KB]
-
 		// add the new list entry on top of the list, deselect all and disable the buttons
-		pItemPointer->addElement(value, ADD_TOP);
-		pItemPointer->deselectAllItems(TRUE);
+		mPlacesList->addElement(value, ADD_TOP);
+		mPlacesList->deselectAllItems(TRUE);
 		setButtonsEnabled(FALSE);
 		id++;
 	}
@@ -180,16 +159,6 @@ void LLFloaterTeleportHistory::addEntry(std::string regionName, S16 x, S16 y, S1
 
 void LLFloaterTeleportHistory::setButtonsEnabled(BOOL on)
 {
-// [RLVa:KB] - Alternate: Emerald-370
-	if (rlv_handler_t::isEnabled())
-	{
-		if ( (pItem) && (pItem->getColumn(4)) && (RlvStrings::getString(RLV_STRING_HIDDEN) == pItem->getColumn(4)->getValue().asString()) )
-		{
-			on = FALSE;
-		}
-	}
-// [/RLVa:K]
-
 	// enable or disable buttons
 	childSetEnabled("teleport", on);
 	childSetEnabled("show_on_map", on);
@@ -211,30 +180,12 @@ BOOL LLFloaterTeleportHistory::canClose()
 // callbacks
 
 // static
-void LLFloaterTeleportHistory::onInPlacesSelected(LLUICtrl* /* ctrl */, void* data)
+void LLFloaterTeleportHistory::onPlacesSelected(LLUICtrl* /* ctrl */, void* data)
 {
 	LLFloaterTeleportHistory* self = (LLFloaterTeleportHistory*) data;
-	self->mPlacesOutList->deselectAllItems();
-	self->pItem = self->mPlacesInList->getFirstSelected();
-	// on selection change check if we need to enable or disable buttons
-	if(self->pItem)
-	{
-		self->setButtonsEnabled(TRUE);
-	}
-	else
-	{
-		self->setButtonsEnabled(FALSE);
-	}
-}
 
-// static
-void LLFloaterTeleportHistory::onOutPlacesSelected(LLUICtrl* /* ctrl */, void* data)
-{
-	LLFloaterTeleportHistory* self = (LLFloaterTeleportHistory*) data;
-	self->mPlacesInList->deselectAllItems();
-	self->pItem = self->mPlacesOutList->getFirstSelected();
 	// on selection change check if we need to enable or disable buttons
-	if(self->pItem)
+	if(self->mPlacesList->getFirstSelected())
 	{
 		self->setButtonsEnabled(TRUE);
 	}
@@ -250,8 +201,9 @@ void LLFloaterTeleportHistory::onTeleport(void* data)
 	LLFloaterTeleportHistory* self = (LLFloaterTeleportHistory*) data;
 
 	// build secondlife::/app link from simstring for instant teleport to destination
-	std::string slapp="secondlife:///app/teleport/" + self->pItem->getColumn(4)->getValue().asString();
-	LLURLDispatcher::dispatch(slapp, NULL, true);
+	std::string slapp="secondlife:///app/teleport/" + self->mPlacesList->getFirstSelected()->getColumn(4)->getValue().asString();
+	LLMediaCtrl* web = NULL;
+	LLURLDispatcher::dispatch(slapp, web, TRUE);
 }
 
 // static
@@ -260,7 +212,7 @@ void LLFloaterTeleportHistory::onShowOnMap(void* data)
 	LLFloaterTeleportHistory* self = (LLFloaterTeleportHistory*) data;
 
 	// get simstring from selected entry and parse it for its components
-	std::string simString = self->pItem->getColumn(4)->getValue().asString();
+	std::string simString = self->mPlacesList->getFirstSelected()->getColumn(4)->getValue().asString();
 	std::string region = "";
 	S32 x = 128;
 	S32 y = 128;
@@ -279,6 +231,6 @@ void LLFloaterTeleportHistory::onCopySLURL(void* data)
 	LLFloaterTeleportHistory* self = (LLFloaterTeleportHistory*) data;
 
 	// get SLURL of the selected entry and copy it to the clipboard
-	std::string SLURL=self->pItem->getColumn(3)->getValue().asString();
+	std::string SLURL=self->mPlacesList->getFirstSelected()->getColumn(3)->getValue().asString();
 	gViewerWindow->mWindow->copyTextToClipboard(utf8str_to_wstring(SLURL));
 }

@@ -81,10 +81,6 @@
 #include "llviewerwindow.h"
 #include "llvlcomposition.h"
 
-// [RLVa:KB]
-#include "rlvhandler.h"
-// [/RLVa:KB]
-
 #define ELAR_ENABLED 0 // Enable when server support is implemented
 
 const S32 TERRAIN_TEXTURE_COUNT = 4;
@@ -576,7 +572,7 @@ bool LLPanelRegionGeneralInfo::refreshFromRegion(LLViewerRegion* region)
 	// now set in processRegionInfo for teen grid detection
 	childSetEnabled("kick_btn", allow_modify);
 	childSetEnabled("kick_all_btn", allow_modify);
-	childSetEnabled("im_btn", allow_modify);
+	childSetEnabled("assign_btn", allow_modify);
 	childSetEnabled("manage_telehub_btn", allow_modify);
 
 	// Data gets filled in by processRegionInfo
@@ -979,18 +975,17 @@ void LLPanelRegionDebugInfo::onClickTopScripts(void* data)
 // static
 void LLPanelRegionDebugInfo::onClickRestart(void* data)
 {
-	LLPanelRegionDebugInfo* self = (LLPanelRegionDebugInfo*)data;
 	LLNotifications::instance().add("ConfirmRestart", LLSD(), LLSD(), 
-		boost::bind(&LLPanelRegionDebugInfo::callbackRestart, (LLPanelRegionDebugInfo*)data, _1, _2, self->getChild<LLSpinCtrl>("rcount")->getValue().asInteger()));
+		boost::bind(&LLPanelRegionDebugInfo::callbackRestart, (LLPanelRegionDebugInfo*)data, _1, _2));
 }
 
-bool LLPanelRegionDebugInfo::callbackRestart(const LLSD& notification, const LLSD& response, S32 seconds)
+bool LLPanelRegionDebugInfo::callbackRestart(const LLSD& notification, const LLSD& response)
 {
 	S32 option = LLNotification::getSelectedOption(notification, response);
 	if (option != 0) return false;
 
-	strings_t strings; 
-	strings.push_back(llformat("%d",seconds));
+	strings_t strings;
+	strings.push_back("120");
 	LLUUID invoice(LLFloaterRegionInfo::getLastInvoice());
 	sendEstateOwnerMessage(gMessageSystem, "restart", invoice, strings);
 	return false;
@@ -1158,7 +1153,7 @@ BOOL LLPanelRegionTextureInfo::validateTextureSizes()
 			return FALSE;
 		}
 
-		if (width > 1024 || height > 1024)
+		if (width > 512 || height > 512)
 		{
 
 			LLSD args;
@@ -3094,8 +3089,8 @@ bool LLDispatchEstateUpdateInfo::operator()(
 		panel->setSunHour(sun_hour);
 	}
 
-	//bool visible_from_mainland = (bool)(flags & REGION_FLAGS_EXTERNALLY_VISIBLE);
-	//bool god = gAgent.isGodlike();
+	bool visible_from_mainland = (bool)(flags & REGION_FLAGS_EXTERNALLY_VISIBLE);
+	bool god = gAgent.isGodlike();
 	bool linden_estate = (estate_id <= ESTATE_LAST_LINDEN);
 
 	// If visible from mainland, disable the access allowed
@@ -3103,8 +3098,7 @@ bool LLDispatchEstateUpdateInfo::operator()(
 	// However, gods need to be able to edit the access list for
 	// linden estates, regardless of visibility, to allow object
 	// and L$ transfers.
-	//bool enable_agent = (!visible_from_mainland || (god && linden_estate));
-	bool enable_agent = true;
+	bool enable_agent = (!visible_from_mainland || (god && linden_estate));
 	bool enable_group = enable_agent;
 	bool enable_ban = !linden_estate;
 	panel->setAccessAllowedEnabled(enable_agent, enable_group, enable_ban);
@@ -3279,22 +3273,3 @@ bool LLDispatchSetEstateAccess::operator()(
 
 	return true;
 }
-
-// [RLVa:KB] - Checked: 2009-07-04 (RLVa-1.0.0a)
-void LLFloaterRegionInfo::open()
-{
-	// We'll allow access to the estate tools for estate managers (and for the sim owner)
-	if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC))
-	{
-		LLViewerRegion* pRegion = gAgent.getRegion();
-		if (!pRegion)
-			return;
-
-		// Should be able to call LLRegion::canManageEstate() but then we can fake god like
-		if ( (!pRegion->isEstateManager()) && (pRegion->getOwner() != gAgent.getID()) )
-			return;
-	}
-
-	LLFloater::open();
-}
-// [/RLVa:KB]

@@ -5,12 +5,4 @@
 	<menu_item_call label="Zoom Weit" name="Zoom Far"/>
 	<menu_item_call label="Verfolgung abschalten" name="Stop Tracking"/>
 	<menu_item_call label="Profil..." name="Profile"/>
-  <menu_item_call label="Kamera" name="Camfollow"/>
-	<menu name="Mark">
-		<menu_item_call label="Rot" name="Red"/>
-		<menu_item_call label="Grün" name="Green"/>
-		<menu_item_call label="Blau" name="Blue"/>
-		<menu_item_call label="Gelb" name="Yellow"/>
-		<menu_item_call label="benutzerdefiniert" name="Custom"/>
-	</menu>
 </menu>

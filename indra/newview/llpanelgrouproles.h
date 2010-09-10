@@ -248,9 +248,6 @@ public:
 	void handleRoleSelect();
 	void buildMembersList();
 
-	static void onMemberDoubleClick(void*);
-	void handleMemberDoubleClick();
-
 	static void onActionCheck(LLUICtrl*, void*);
 	void handleActionCheck(LLCheckBoxCtrl*, bool force=false);
 	bool addActionCB(const LLSD& notification, const LLSD& response, LLCheckBoxCtrl* check);

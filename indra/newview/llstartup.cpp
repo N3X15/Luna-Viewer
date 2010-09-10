@@ -40,25 +40,28 @@
 #	include <sys/stat.h>		// mkdir()
 #endif
 
-#include "audioengine.h"
+#include "llviewermedia_streamingaudio.h"
+#include "llaudioengine.h"
 
 #ifdef LL_FMOD
-# include "audioengine_fmod.h"
+# include "llaudioengine_fmod.h"
 #endif
 
 #ifdef LL_OPENAL
-#include "audioengine_openal.h"
+#include "llaudioengine_openal.h"
 #endif
 
 #include "llares.h"
 #include "llcachename.h"
 #include "llviewercontrol.h"
 #include "lldir.h"
+#include "lleventpoll.h" // OGPX for Agent Domain event queue
 #include "llerrorcontrol.h"
 #include "llfiltersd2xmlrpc.h"
 #include "llfocusmgr.h"
 #include "llhttpsender.h"
 #include "imageids.h"
+#include "llimageworker.h"
 #include "lllandmark.h"
 #include "llloginflags.h"
 #include "llmd5.h"
@@ -80,6 +83,7 @@
 
 #include "llagent.h"
 #include "llagentpilot.h"
+#include "llfloateravatarlist.h"
 #include "llfloateravatarpicker.h"
 #include "llcallbacklist.h"
 #include "llcallingcard.h"
@@ -94,7 +98,7 @@
 #include "llfeaturemanager.h"
 #include "llfirstuse.h"
 #include "llfloateractivespeakers.h"
-//#include "llfloaterbeacons.h"
+#include "llfloaterbeacons.h"
 #include "llfloatercamera.h"
 #include "llfloaterchat.h"
 #include "llfloatergesture.h"
@@ -130,6 +134,7 @@
 #include "llpreview.h"
 #include "llpreviewscript.h"
 #include "llproductinforequest.h"
+#include "llsdhttpserver.h" // OGPX might not need when EVENTHACK is sorted
 #include "llsecondlifeurls.h"
 #include "llselectmgr.h"
 #include "llsky.h"
@@ -168,8 +173,9 @@
 #include "llvoavatar.h"
 #include "llvoclouds.h"
 #include "llweb.h"
+#include "llwind.h"
 #include "llworld.h"
-#include "llworldmap.h"
+#include "llworldmapmessage.h"
 #include "llxfermanager.h"
 #include "pipeline.h"
 #include "llappviewer.h"
@@ -184,39 +190,39 @@
 #include "llwlparammanager.h"
 #include "llwaterparammanager.h"
 #include "llagentlanguage.h"
+#include "llsocks5.h"
+#include "jcfloaterareasearch.h"
 
-#include "floateravatarlist.h"
-#include "jcfloater_animation_list.h"
-#include "jcfloater_areasearch.h"
-#include "exporttracker.h"
-#include "llfloaterteleporthistory.h"
-#include "jc_lslviewerbridge.h"
-#include "wlfPanel_AdvSettings.h"
-#include "floaterao.h"
+// <edit>
+#include "llpanellogin.h"
+//#include "llfloateravatars.h"
+//#include "llactivation.h"
+#include "wlfPanel_AdvSettings.h" //Lower right Windlight and Rendering options
+#include "llao.h"
+#include "llfloaterblacklist.h"
 #include "scriptcounter.h"
+// </edit>
+
+
+
+
+
 
 #include "LunaVoxelSurface.h"
 
-// [RLVa:KB]
-#include "rlvhandler.h"
-// [/RLVa:KB]
-
-#if LL_LIBXUL_ENABLED
-#include "llmozlib.h"
-#endif // LL_LIBXUL_ENABLED
 
 #if LL_WINDOWS
 #include "llwindebug.h"
 #include "lldxhardware.h"
 #endif
 
-#include "hippogridmanager.h"
-//#include "hippoLimits.h"
-#if COMPILE_OTR          // [$PLOTR$]
-#include "otr_wrapper.h"
-#include "lggircgrouphandler.h"
-#include "lgghunspell_wrapper.h"
-#endif // COMPILE_OTR    // [/$PLOTR$]
+
+
+
+
+
+
+
 
 //
 // exported globals
@@ -233,6 +239,7 @@ std::string SCREEN_LAST_FILENAME = "screen_last.bmp";
 //
 extern S32 gStartImageWidth;
 extern S32 gStartImageHeight;
+extern bool gLLWindEnabled;
 
 //
 // local globals
@@ -250,13 +257,13 @@ static std::string sInitialOutfitGender;	// "male" or "female"
 static bool gUseCircuitCallbackCalled = false;
 
 EStartupState LLStartUp::gStartupState = STATE_FIRST;
-bool LLStartUp::s_re_login = false;
+
 
 //
 // local function declaration
 //
 
-void login_show();
+bool login_show(LLSavedLogins const& saved_logins);
 void login_callback(S32 option, void* userdata);
 void show_first_run_dialog();
 bool first_run_dialog_callback(const LLSD& notification, const LLSD& response);
@@ -274,6 +281,413 @@ void init_start_screen(S32 location_id);
 void release_start_screen();
 void reset_login();
 void apply_udp_blacklist(const std::string& csv);
+
+// OGPX TODO: what is the proper way to handle this? doesn't feel right.
+void login_error(std::string message)
+{
+	if (!(LLViewerLogin::getInstance()->tryNextURI()))
+	{
+		/* TODO::  we should have translations for all the various reasons,
+		   if no reason, then we display the message */
+
+		LLSD args = LLSD();
+		std::string emsg2 = message;
+		args["ERROR_MESSAGE"] = emsg2;
+		LLNotifications::instance().add("ErrorMessage",args);
+		// I miss alertXML, now I can't break when the dialog is actually 
+		// thrown and have something useful in my stack
+		
+		reset_login();
+	} 
+	else 
+	{
+		static int login_attempt_number = 0;
+		std::ostringstream s;
+		llinfos << "Previous login attempt failed: Logging in, attempt "
+			<< (++login_attempt_number) << "." << llendl;
+		// OGPX uses AUTHENTICATE state, and XMLRPC login uses XMLRPC_LEGACY
+		if (gSavedSettings.getBOOL("OpenGridProtocol"))
+		{ 
+			LLStartUp::setStartupState( STATE_LOGIN_AUTHENTICATE ); // OGPX 
+		}
+		else
+		{
+			LLStartUp::setStartupState( STATE_XMLRPC_LEGACY_LOGIN ); // XML-RPC
+		}
+		login_attempt_number++;
+	}            
+}
+
+class LLInventorySkeletonResponder :
+	public LLHTTPClient::Responder
+{
+public:
+	LLInventorySkeletonResponder()
+	{
+	}
+
+	~LLInventorySkeletonResponder()
+	{
+	}
+	
+	void error(U32 statusNum, const std::string& reason)
+	{		
+		LL_INFOS("Inventory") << " status = "
+				<< statusNum << " " << reason << " for cap " << gAgent.getCapability("agent/inventory-skeleton") << LL_ENDL;
+		// wasn't sure, but maybe we should continue in spite of error
+
+		LLStartUp::setStartupState( STATE_LOGIN_PROCESS_RESPONSE );
+	}
+
+	void result(const LLSD& content)
+	{
+
+		LLUserAuth::getInstance()->mResult["inventory-skeleton"] = content["Skeleton"];
+		// so this is nasty. it makes the assumption that the inventory-root is the first folder,
+		// which it is, but still don't like that
+		LLUserAuth::getInstance()->mResult["inventory-root"] = content["Skeleton"][0]["folder_id"];
+
+		
+		LL_DEBUGS("Inventory") << " All the inventory-skeleton content: \n " << ll_pretty_print_sd(content) << LL_ENDL;
+		LL_DEBUGS("Inventory") << " inventory-root: " << LLUserAuth::getInstance()->mResult["inventory-root"] << LL_ENDL;
+	}
+};
+
+//OGPX similar to LLInventorySkeletonResponder, except it sets Library instead of user skeleton values
+//TODO: OGPX make a scheme that allows more than one library
+class LLInventoryLibrarySkeletonResponder :
+	public LLHTTPClient::Responder
+{
+public:
+	LLInventoryLibrarySkeletonResponder()
+	{
+	}
+	~LLInventoryLibrarySkeletonResponder()
+	{
+	}
+	void error(U32 statusNum, const std::string& reason)
+	{		
+		LL_INFOS("Inventory") << " status = "
+				<< statusNum << " " << reason << " for cap " << gAgent.getCapability("agent/inventory_library_skeleton") << LL_ENDL;
+		// wasn't sure, but maybe we should continue in spite of error
+		LLStartUp::setStartupState( STATE_LOGIN_PROCESS_RESPONSE );
+	}
+	void result(const LLSD& content)
+	{
+		LLUserAuth::getInstance()->mResult["inventory-skel-lib"] = content["Skeleton"];
+		// so this is nasty. it makes the assumption that the inventory-skeleton-root is the first folder,
+		// which it is, but still don't like that
+		gInventoryLibraryOwner.set(content["Skeleton"][0]["owner_id"]);
+		gInventoryLibraryRoot.set(content["Skeleton"][0]["folder_id"]);
+		LL_DEBUGS("Inventory") << " All the inventory_library_skeleton content: \n " << ll_pretty_print_sd(content) << LL_ENDL;
+		LL_DEBUGS("Inventory") << " Library Owner: " << gInventoryLibraryOwner.asString() << LL_ENDL;
+	}
+};
+	
+	
+// OGPX : Responder for the HTTP post to rez_avatar/place in the agent domain.
+// OGPX TODO: refactor Place Avatar handling for both login and TP , and make result() smarter
+
+class LLPlaceAvatarLoginResponder :
+	public LLHTTPClient::Responder
+{
+public:
+	LLPlaceAvatarLoginResponder()
+	{
+	}
+
+	~LLPlaceAvatarLoginResponder()
+	{
+	}
+	
+	void error(U32 statusNum, const std::string& reason)
+	{		
+		LL_INFOS("OGPX") << "LLPlaceAvatarLoginResponder error "
+				<< statusNum << " " << reason << " for URI " << gSavedSettings.getString("CmdLineRegionURI") << LL_ENDL;
+
+		login_error("PlaceAvatarLoginResponder got an error "+reason);
+	}
+
+	void result(const LLSD& content)
+	{
+		LLSD result;
+		result["agent_id"] = content["agent_id"];  // need this for send_complete_agent_movement
+		result["region_x"] = content["region_x"];  // need these for making the first region
+		result["region_y"] = content["region_y"];	
+		result["login"]    = "true";
+		result["session_id"] = content["session_id"];
+		result["secure_session_id"] = content["secure_session_id"];
+		result["circuit_code"] = content["circuit_code"];
+		result["sim_port"] = content["sim_port"];
+        // need sim_ip field for legacy login
+		result["sim_ip"] = content["sim_ip"];
+		result["sim_host"] = content["sim_host"];
+		result["look_at"] = content["look_at"];
+		result["seed_capability"] = content["region_seed_capability"];
+		result["position"] = content["position"]; //  used by process_agent_movement_complete
+		result["udp_blacklist"] = content["udp_blacklist"];
+
+		// OGPX : Not what I had hoped. initial-outfit means *the* initial login... like first login ever
+		// It does not mean what you are currently wearing (except on that super special first login ever)
+		// In the viewer, initial-outfit includes your gender, and a folder name for the initial wearables that you
+		// want to start with. Unsure what this means in OGPX-land.
+		// result["initial-outfit"] = content["initial_outfit"];
+
+		LL_DEBUGS("OGPX") << "agent_id: " << content["agent_id"] << LL_ENDL;
+		LL_DEBUGS("OGPX") << "region_x: " << content["region_x"] << LL_ENDL;
+		LL_DEBUGS("OGPX") << "session_id: " << content["session_id"] << LL_ENDL;
+		LL_DEBUGS("OGPX") << "sim_port: " << content["sim_port"] << LL_ENDL;
+		// need sim_ip field for legacy login
+		LL_DEBUGS("OGPX") << "sim_ip: " << content["sim_ip"] << LL_ENDL;
+		LL_DEBUGS("OGPX") << "sim_host: " << content["sim_host"] << LL_ENDL;
+		LL_DEBUGS("OGPX") << "look_at: " << content["look_at"] << LL_ENDL;
+		LL_DEBUGS("OGPX") << "seed_capability: " << content["region_seed_capability"] << LL_ENDL;
+
+		// inventory-skeleton is now a proper cap on agentd, and the dangerous assumption that the
+		//    top of your inventory-skeleton is inventory-root is made. 
+		// LL_DEBUGS("OGPX") << "inventory-root" << result["inventory-root"] << LL_ENDL; // note the switch in - to _
+		// LL_INFOS("OGPX") << "inventory-lib-root" << result["inventory-lib-root"] << LL_ENDL;
+		// LL_INFOS("OGPX") << "inventory-lib-owner" << result["inventory-lib-owner"]  << LL_ENDL;
+		// LL_INFOS("OGPX") << "inventory-skel-lib" << result["inventory-skel-lib"] << LL_ENDL;
+		// LL_INFOS("OGPX") << "inventory-skeleton" << result["inventory-skeleton"] << LL_ENDL;
+	
+		LL_INFOS("OGPX") << " All the LLSD PlaceAvatar content: \n " << ll_pretty_print_sd(content) << LL_ENDL;
+
+		// check "connect" to make sure place_avatar fully successful
+		if (!content["connect"].asBoolean()) 
+		{
+			// place_avatar failed somewhere
+			LL_INFOS("OGPX") << "Login failed, connect false in PlaceAvatarResponder " << LL_ENDL;
+			
+			LLSD args;
+			args["ERROR_MESSAGE"] = "Place Avatar Failed, CONNECT=0";
+			LLNotifications::instance().add("ErrorMessage", args);
+		
+			reset_login();
+
+			return;
+		}
+		LLUserAuth::getInstance()->mAuthResponse = LLUserAuth::E_OK;
+		LLUserAuth::getInstance()->mResult = result;
+		LL_INFOS("OGPX") << "startup is "<< LLStartUp::getStartupState() << LL_ENDL;
+		// OGPX : fetch the library skeleton
+		std::string skeleton_cap = gAgent.getCapability("agent/inventory_library_skeleton");
+		if (!skeleton_cap.empty())
+		{
+			LLHTTPClient::get(skeleton_cap, new LLInventoryLibrarySkeletonResponder());
+		}
+		// OGPX : I think we only need the skeleton once 
+		// (in other words, it doesn't get refetched every time we TP).
+		skeleton_cap = gAgent.getCapability("agent/inventory_skeleton");
+		if (!skeleton_cap.empty())
+		{
+			// LLStartup state will be set in the skeleton responder so we know we have
+			// the inventory-skeleton before proceeding with the rest of the 
+			// login sequence. 
+			LLHTTPClient::get(skeleton_cap, new LLInventorySkeletonResponder());
+		}
+		else
+		{
+			// If there was no agent/inventory-skeleton cap given to us by agent domain (like in 
+			// the original POC vaak agent domain implementation), we still need to 
+			// progress with the login process. 
+			LLStartUp::setStartupState( STATE_LOGIN_PROCESS_RESPONSE );
+		}
+
+
+
+	}
+};
+
+
+// OGPX handles the agent domain seed cap response. This is the spot in the login sequence where we
+// tuck away caps that the agent domain gives us on authenticate.
+class LLAgentHostSeedCapResponder :
+	public LLHTTPClient::Responder
+{
+public:
+	LLAgentHostSeedCapResponder()
+	{
+	}
+
+	~LLAgentHostSeedCapResponder()
+	{
+	}
+	
+	void error(U32 statusNum, const std::string& reason)
+	{		
+		LL_INFOS("OGPX") << "LLAgentHostSeedCapResponder error "
+				<< statusNum << " " << reason << LL_ENDL;
+
+		login_error("Agent Domain seed cap responded with an error " + reason);
+	}
+
+	void result(const LLSD& content)
+	{
+		LL_DEBUGS("OGPX") << " Response to AgentHostSeedCap: " << LLSDOStreamer<LLSDXMLFormatter>(content) << LL_ENDL;
+		std::string agentEventQueue = content["capabilities"]["event_queue"].asString();
+
+		LL_INFOS("OGPX") << "Agent Event queue is:  " << agentEventQueue << LL_ENDL;
+
+		LLAgentEventPoll* agentPoll;
+		// OGPX TODO: should this be inside an if OGPX login type check??
+		if (!agentEventQueue.empty())
+		{
+			// OGPX TODO: figure out how to register certain services for certain eventqueues
+			// ... stated another way... we no longer trust anything from region and Agent Domain and XYZ eq
+			agentPoll = new LLAgentEventPoll(agentEventQueue);
+			// Note: host in eventpoll gets shoved in to message llsd in LLEventPollResponder::handleMessage 
+		}
+
+		std::string	regionuri	= gSavedSettings.getString("CmdLineRegionURI");
+		LL_INFOS("OGPX") << "llagenthostseedcapresponder content: " << LLSDOStreamer<LLSDXMLFormatter>(content) << LL_ENDL;
+		// Can't we assume OGP only inside the agent seed cap responder?
+		if (!regionuri.empty()&& gSavedSettings.getBOOL("OpenGridProtocol") )
+		{
+			// OGPX WFID grab the WFID cap (now called the agent/inventory cap) and skeleton cap
+			gAgent.setCapability("agent/inventory",content["capabilities"]["agent/inventory"].asString());
+			
+			//This allows both old and new namings for this cap. Moving towards underscore
+			if ( content["capabilities"]["agent/inventory-skeleton"].isDefined()) 
+			{
+				gAgent.setCapability("agent/inventory_skeleton",content["capabilities"]["agent/inventory-skeleton"].asString());
+			} else if ( content["capabilities"]["agent/inventory_skeleton"].isDefined()) 
+			{
+				gAgent.setCapability("agent/inventory_skeleton",content["capabilities"]["agent/inventory_skeleton"].asString());
+			}
+			gAgent.setCapability("agent/inventory_library",content["capabilities"]["agent/inventory_library"].asString());
+			gAgent.setCapability("agent/inventory_library_skeleton",content["capabilities"]["agent/inventory_library_skeleton"].asString());
+			std::string placeAvatarCap = content["capabilities"]["rez_avatar/place"].asString();
+			LLSD args;
+
+			// OGPX TODO: Q: aren't we in an OGPX only block? If so, we shouldn't be trying to parse the LLURLSimString
+			if (LLURLSimString::parse())
+			{
+				args["position"] = ll_sd_from_vector3(LLVector3(LLURLSimString::sInstance.mX, LLURLSimString::sInstance.mY, LLURLSimString::sInstance.mZ));
+			}
+			else
+			{
+				// OGPX : we don't currently have the /X/Y/Z semantics in our regionuris, so initial login always requests center
+				// OGPX TODO: note that we could add  X Y Z UI controls to the login panel and TP floater, or add logic to cope 
+				// with X/Y/Z being on the URI, if OGPX decides that is valid.
+				args["position"] = ll_sd_from_vector3(LLVector3(128, 128, 128));
+			}
+
+			args["public_region_seed_capability"] = regionuri;
+
+			if (placeAvatarCap.empty())
+			{
+				llwarns << "PlaceAvatarLogin capability not returned" << llendl;
+				LL_INFOS("OGPX") << " agenthostseedcap content: " << LLSDOStreamer<LLSDXMLFormatter>(content) << LL_ENDL;
+				login_error("Agent Domain didn't return a rez_avatar/place cap");
+			}
+			else
+			{
+				LLAppViewer::instance()->setPlaceAvatarCap(placeAvatarCap); // save so it can be used on tp
+				LLHTTPClient::post(placeAvatarCap, args, new LLPlaceAvatarLoginResponder());
+				LL_INFOS("OGPX") << " args to placeavatar on login: " << LLSDOStreamer<LLSDXMLFormatter>(args) << LL_ENDL;
+				// we should have gotten back both rez_avatar/place and agent/info 
+				// TODO: do a GET here using "agent/info" seed cap after agent domain implements it. 
+				//      after we are successfully getting agent,session,securesession via "agent/info"
+				//      we need to change login and teleport placeavatarresponders to not look for those
+
+			}
+		}
+		else
+		{
+			// Q: Is this leftover LLSD login path code? c'est possible, but i'm not sure. 
+			std::string legacyLoginCap = content["capabilities"]["legacy_login"].asString();
+			if (legacyLoginCap.empty())
+			{
+				llwarns << "LegacyLogin capability not returned" << llendl;
+				login_error("No Legacy login seed cap returned");
+			}
+			else
+			{
+				LLViewerLogin::getInstance()->setGridURIs(LLSRV::rewriteURI(content["capabilities"]["legacy_login"].asString()));
+				LLStartUp::setStartupState(STATE_XMLRPC_LEGACY_LOGIN);
+			}
+		}
+	}
+};
+
+
+class LLAgentHostAuthResponder :
+	public LLHTTPClient::Responder
+{
+public:
+	LLAgentHostAuthResponder()
+	{
+	}
+
+	~LLAgentHostAuthResponder()
+	{
+	}
+
+	void completed(U32 status, const std::string& reason, const LLSD& content) { 
+
+		LL_INFOS("OGPX") << " Response From AgentHostAuth: " << LLSDOStreamer<LLSDXMLFormatter>(content) << LL_ENDL;
+		if (content.has("authenticated") && (content["authenticated"].asBoolean() == true))
+		{
+			
+			if (content.has("agent_seed_capability"))
+			{  
+				LLSD args;
+				
+				// make sure content["agent_seed_capability"].asString() is a url
+				
+				args["capabilities"]["event_queue"] = true;
+				
+				if (gSavedSettings.getBOOL("OpenGridProtocol"))
+				{
+					args["capabilities"]["rez_avatar/place"] = true; // place_avatar
+					args["capabilities"]["agent/info"] = true;
+					args["capabilities"]["agent/inventory-skeleton"] = true;
+					args["capabilities"]["agent/inventory_skeleton"] = true; //allow both namings for now 
+					args["capabilities"]["agent/inventory_library"] = true; //new name for FetchLibDescendents
+					args["capabilities"]["agent/inventory_library_skeleton"] = true;
+					args["capabilities"]["agent/inventory"] = true; // OGPX get from Agent Domain was WebFetchInventoryDescendents
+				}
+				else
+				{
+					// OGPX is this leftover LLSD login cruft? 
+					args["capabilities"]["legacy_login"] = true;
+				}
+				
+				LL_INFOS("OGPX") << "completedHeader content: " << LLSDOStreamer<LLSDXMLFormatter>(content) << LL_ENDL;
+				LL_INFOS("OGPX") << " Post to AgentHostSeed Cap: " << LLSDOStreamer<LLSDXMLFormatter>(args) << LL_ENDL;
+				LLHTTPClient::post(content["agent_seed_capability"].asString(), args, new LLAgentHostSeedCapResponder());
+				
+				return;
+			}
+			   
+			if (content["reason"].asString() == "tos")
+			{
+				LL_DEBUGS("AppInit") << "Need tos agreement" << LL_ENDL;
+				LLStartUp::setStartupState( STATE_UPDATE_CHECK );
+				LLFloaterTOS* tos_dialog = LLFloaterTOS::show(LLFloaterTOS::TOS_TOS,
+															  content["message"].asString());
+				tos_dialog->startModal();
+				return;
+			}
+			
+			if (content["reason"].asString() == "critical")
+			{
+				LL_DEBUGS("AppInit") << "Need critical message" << LL_ENDL;
+				LLStartUp::setStartupState( STATE_UPDATE_CHECK );
+				LLFloaterTOS* tos_dialog = LLFloaterTOS::show(LLFloaterTOS::TOS_CRITICAL_MESSAGE,
+															  content["message"].asString());
+				tos_dialog->startModal();
+				return;
+			}
+	  }
+	    
+	  LL_INFOS("OGPX") << "LLAgentHostAuthResponder error " << status << " " << reason << LL_ENDL;
+	  LL_DEBUGS("OGPX") << "completedHeader content: " << LLSDOStreamer<LLSDXMLFormatter>(content) << LL_ENDL;
+	  login_error(reason+" "+content["reason"].asString()+": "+content["message"].asString());                                                                                                         
+	}
+};
+
 
 void callback_cache_name(const LLUUID& id, const std::string& firstname, const std::string& lastname, BOOL is_group, void* data)
 {
@@ -330,21 +744,19 @@ void update_texture_fetch()
 	gImageList.updateImages(0.10f);
 }
 
-static std::vector<std::string> sAuthUris;
-static S32 sAuthUriNum = -1;
-
-void pass_process_sound_trigger(LLMessageSystem* msg,void**)
+void hooked_process_sound_trigger(LLMessageSystem *msg, void **)
 {
-	process_sound_trigger(msg,0);
-	LLFloaterAvatarList::processSoundTrigger(msg,0);
-	JCLSLBridge::processSoundTrigger(msg,0);
+	process_sound_trigger(msg,NULL);
+	LLFloaterAvatarList::sound_trigger_hook(msg,NULL);
 }
+
 // Returns false to skip other idle processing. Should only return
 // true when all initialization done.
 bool idle_startup()
 {
 	LLMemType mt1(LLMemType::MTYPE_STARTUP);
-
+	
+	const F32 PRECACHING_DELAY = gSavedSettings.getF32("PrecachingDelay");
 	const F32 TIMEOUT_SECONDS = 5.f;
 	const S32 MAX_TIMEOUT_COUNT = 3;
 	static LLTimer timeout;
@@ -362,7 +774,6 @@ bool idle_startup()
 	static std::string firstname;
 	static std::string lastname;
 	static LLUUID web_login_key;
-	static std::string grid;
 	static std::string password;
 	static std::vector<const char*> requested_options;
 
@@ -380,7 +791,6 @@ bool idle_startup()
 	static S32  location_which = START_LOCATION_ID_LAST;
 
 	static bool show_connect_box = true;
-	static BOOL remember_password = TRUE;
 
 	static bool stipend_since_login = false;
 
@@ -414,15 +824,6 @@ bool idle_startup()
 		// Initialize stuff that doesn't need data from simulators
 		//
 
-		new JCLSLBridge();
-		new AOInvTimer();
-		lggHunSpell_Wrapper::initSettings();
-
-// [RLVa:KB] - Version: 1.23.4 | Checked: 2009-07-10 (RLVa-1.0.0g) | Modified: RLVa-0.2.1d
-		if ( (gSavedSettings.controlExists(RLV_SETTING_MAIN)) && (gSavedSettings.getBOOL(RLV_SETTING_MAIN)) )
-			rlv_handler_t::setEnabled(TRUE);
-// [/RLVa:KB]
-
 		if (LLFeatureManager::getInstance()->isSafe())
 		{
 			LLNotifications::instance().add("DisplaySetToSafe");
@@ -438,7 +839,7 @@ bool idle_startup()
 		}
 			
 
-		//LLNotifications::instance().add("3PVPWarning");
+		LLNotifications::instance().add("TPVNotification");
 			
 		gSavedSettings.setS32("LastFeatureVersion", LLFeatureManager::getInstance()->getVersion());
 
@@ -634,6 +1035,15 @@ bool idle_startup()
 		LL_INFOS("AppInit") << "Message System Initialized." << LL_ENDL;
 		
 		//-------------------------------------------------
+		// Init the socks 5 proxy and open the control TCP 
+		// connection if the user is using SOCKS5
+		// We need to do this early incase the user is using
+		// socks for http so we get the login screen via socks
+		//-------------------------------------------------
+
+		LLStartUp::handleSocksProxy(false);
+
+		//-------------------------------------------------
 		// Init audio, which may be needed for prefs dialog
 		// or audio cues in connection UI.
 		//-------------------------------------------------
@@ -641,39 +1051,6 @@ bool idle_startup()
 		if (FALSE == gSavedSettings.getBOOL("NoAudio"))
 		{
 			gAudiop = NULL;
-
-#ifdef LL_FMOD			
-			if (!gAudiop
-#if !LL_WINDOWS
-			    && NULL == getenv("LL_BAD_FMOD_DRIVER")
-#endif // !LL_WINDOWS
-			    )
-			{
-				gAudiop = (LLAudioEngine *) new LLAudioEngine_FMOD();
-
-			if (gAudiop)
-			{
-#if LL_WINDOWS
-				// FMOD on Windows needs the window handle to stop playing audio
-				// when window is minimized. JC
-				void* window_handle = (HWND)gViewerWindow->getPlatformWindow();
-#else
-				void* window_handle = NULL;
-#endif
-				bool init = gAudiop->init(kAUDIO_NUM_SOURCES, window_handle);
-				if(init)
-				{
-					gAudiop->setMuted(TRUE);
-				}
-				else
-				{
-					LL_WARNS("AppInit") << "Unable to initialize audio engine" << LL_ENDL;
-					delete gAudiop;
-					gAudiop = NULL;
-				}
-			}
-			}
-#endif
 
 #ifdef LL_OPENAL
 			if (!gAudiop
@@ -683,6 +1060,19 @@ bool idle_startup()
 			    )
 			{
 				gAudiop = (LLAudioEngine *) new LLAudioEngine_OpenAL();
+			}
+#endif
+
+#ifdef LL_FMOD			
+			if (!gAudiop
+#if !LL_WINDOWS
+			    && NULL == getenv("LL_BAD_FMOD_DRIVER")
+#endif // !LL_WINDOWS
+			    )
+			{
+				gAudiop = (LLAudioEngine *) new LLAudioEngine_FMOD();
+			}
+#endif
 
 			if (gAudiop)
 			{
@@ -704,9 +1094,17 @@ bool idle_startup()
 					delete gAudiop;
 					gAudiop = NULL;
 				}
+
+				if (gAudiop)
+				{
+					// if the audio engine hasn't set up its own preferred handler for streaming audio then set up the generic streaming audio implementation which uses media plugins
+					if (NULL == gAudiop->getStreamingAudioImpl())
+					{
+						LL_INFOS("AppInit") << "Using media plugins to render streaming audio" << LL_ENDL;
+						gAudiop->setStreamingAudioImpl(new LLStreamingAudio_MediaPlugins());
+					}
+				}
 			}
-			}
-#endif
 		}
 		
 		LL_INFOS("AppInit") << "Audio Engine Initialized." << LL_ENDL;
@@ -731,6 +1129,9 @@ bool idle_startup()
 			// We have at least some login information on a SLURL
 			firstname = gLoginHandler.getFirstName();
 			lastname = gLoginHandler.getLastName();
+			// <edit>
+			gFullName = utf8str_tolower(firstname + " " + lastname);
+			// </edit>
 			web_login_key = gLoginHandler.getWebLoginKey();
 
 			// Show the login screen if we don't have everything
@@ -742,12 +1143,14 @@ bool idle_startup()
             LLSD cmd_line_login = gSavedSettings.getLLSD("UserLoginInfo");
 			firstname = cmd_line_login[0].asString();
 			lastname = cmd_line_login[1].asString();
+			// <edit>
+			gFullName = utf8str_tolower(firstname + " " + lastname);
+			// </edit>
 
 			LLMD5 pass((unsigned char*)cmd_line_login[2].asString().c_str());
 			char md5pass[33];               /* Flawfinder: ignore */
 			pass.hex_digest(md5pass);
 			password = md5pass;
-			remember_password = gSavedSettings.getBOOL("RememberPassword");
 			
 #ifdef USE_VIEWER_AUTH
 			show_connect_box = true;
@@ -760,9 +1163,11 @@ bool idle_startup()
 		{
 			firstname = gSavedSettings.getString("FirstName");
 			lastname = gSavedSettings.getString("LastName");
+			// <edit>
+			gFullName = utf8str_tolower(firstname + " " + lastname);
+			// </edit>
 			password = LLStartUp::loadPasswordFromDisk();
 			gSavedSettings.setBOOL("RememberPassword", TRUE);
-			remember_password = TRUE;
 			
 #ifdef USE_VIEWER_AUTH
 			show_connect_box = true;
@@ -773,14 +1178,13 @@ bool idle_startup()
 		else
 		{
 			// if not automatically logging in, display login dialog
-			// a valid grid is selected (in llpanellogin, for some reason?)
-			// This should get the right values from the grid manager now -Patrick Sapinski (Monday, August 17, 2009)
-			HippoGridInfo *gridInfo = gHippoGridManager->getCurrentGrid();
-			firstname = gridInfo->getFirstName();
-			lastname = gridInfo->getLastName();
-			password = gridInfo->getAvatarPassword();
-			
-			remember_password = gSavedSettings.getBOOL("RememberPassword");
+			// a valid grid is selected
+			firstname = gSavedSettings.getString("FirstName");
+			lastname = gSavedSettings.getString("LastName");
+			// <edit>
+			gFullName = utf8str_tolower(firstname + " " + lastname);
+			// </edit>
+			password = LLStartUp::loadPasswordFromDisk();
 			show_connect_box = true;
 		}
 
@@ -797,7 +1201,7 @@ bool idle_startup()
 		std::string msg = LLTrans::getString("LoginInitializingBrowser");
 		set_startup_status(0.03f, msg.c_str(), gAgent.mMOTD.c_str());
 		display_startup();
-		LLViewerMedia::initBrowser();
+		// LLViewerMedia::initBrowser();
 
 		LLStartUp::setStartupState( STATE_LOGIN_SHOW );
 		return FALSE;
@@ -807,50 +1211,18 @@ bool idle_startup()
 	if (STATE_LOGIN_SHOW == LLStartUp::getStartupState())
 	{
 		LL_DEBUGS("AppInit") << "Initializing Window" << LL_ENDL;
-		sAuthUris.clear();
-		sAuthUriNum = -1;
 		
 		gViewerWindow->getWindow()->setCursor(UI_CURSOR_ARROW);
 
 		timeout_count = 0;
 
-		if (show_connect_box)
+		// OGPX : Load URL History File for saved user. Needs to happen *before* login panel is displayed.
+		//  Note: it only loads them if it can figure out the saved username. 
+		if (!firstname.empty() && !lastname.empty()) 
 		{
-			// Load all the name information out of the login view
-			// NOTE: Hits "Attempted getFields with no login view shown" warning, since we don't
-			// show the login view until login_show() is called below.  
-			// LLPanelLogin::getFields(firstname, lastname, password);
-
-			if (gNoRender)
-			{
-				LL_ERRS("AppInit") << "Need to autologin or use command line with norender!" << LL_ENDL;
-			}
-			// Make sure the process dialog doesn't hide things
-			gViewerWindow->setShowProgress(FALSE);
-			
-			// Show the login dialog
-			login_show();
-			// connect dialog is already shown, so fill in the names
-			LLPanelLogin::setFields( firstname, lastname, password, remember_password );
-
-			LLPanelLogin::giveFocus();
-
-			gSavedSettings.setBOOL("FirstRunThisInstall", FALSE);
-
-			LLStartUp::setStartupState( STATE_LOGIN_WAIT );		// Wait for user input
-			if(LLStartUp::s_re_login)
-			{
-				LLChat chat;
-				chat.mText = "Autorelogging";
-				LLFloaterChat::addChat(chat);
-//				LLPanelLogin::PublicConnect();
-			}
-		}
-		else
-		{
-			// skip directly to message template verification
-			LLStartUp::setStartupState( STATE_LOGIN_CLEANUP );
-		}
+			gDirUtilp->setLindenUserDir(firstname, lastname);
+			LLURLHistory::loadFile("url_history.xml");
+		} 
 
 		// *NOTE: This is where LLViewerParcelMgr::getInstance() used to get allocated before becoming LLViewerParcelMgr::getInstance().
 
@@ -868,7 +1240,57 @@ bool idle_startup()
 			// Quickly get something onscreen to look at.
 			gViewerWindow->initWorldUI();
 		}
-		
+
+		if (show_connect_box)
+		{
+			// Load all the name information out of the login view
+			// NOTE: Hits "Attempted getFields with no login view shown" warning, since we don't
+			// show the login view until login_show() is called below.  
+			// LLPanelLogin::getFields(firstname, lastname, password);
+
+			if (gNoRender)
+			{
+				LL_ERRS("AppInit") << "Need to autologin or use command line with norender!" << LL_ENDL;
+			}
+			// Make sure the process dialog doesn't hide things
+			gViewerWindow->setShowProgress(FALSE);
+
+			// Load login history
+			std::string login_hist_filepath = gDirUtilp->getExpandedFilename(LL_PATH_USER_SETTINGS, "saved_logins.xml");
+			LLSavedLogins login_history = LLSavedLogins::loadFile(login_hist_filepath);
+
+			// Show the login dialog.
+			bool have_loginuri = login_show(login_history);
+
+			// Connect dialog is already shown, so fill in the names
+			if (have_loginuri)
+			{
+			  	// We have a commandline -loginuri that was not recognized. Select it.
+				LLPanelLogin::selectFirstElement();
+			}
+			else if (login_history.size() > 0)
+			{
+				LLPanelLogin::setFields(*login_history.getEntries().rbegin());
+			}
+			else
+			{
+				LLPanelLogin::setFields(firstname, lastname, password, login_history);
+				// <edit>
+				gFullName = utf8str_tolower(firstname + " " + lastname);
+				// </edit>
+				LLPanelLogin::giveFocus();
+			}
+
+			gSavedSettings.setBOOL("FirstRunThisInstall", FALSE);
+
+			LLStartUp::setStartupState( STATE_LOGIN_WAIT );		// Wait for user input
+		}
+		else
+		{
+			// skip directly to message template verification
+			LLStartUp::setStartupState( STATE_LOGIN_CLEANUP );
+		}
+
 		gViewerWindow->setNormalControlsVisible( FALSE );	
 		gLoginMenuBarView->setVisible( TRUE );
 		gLoginMenuBarView->setEnabled( TRUE );
@@ -896,36 +1318,51 @@ bool idle_startup()
 		ms_sleep(1);
 		return FALSE;
 	}
-	
+
 	if (STATE_LOGIN_CLEANUP == LLStartUp::getStartupState())
 	{
+	
+		// Post login screen, we should see if any settings have changed that may
+		// require us to either start/stop or change the socks proxy. As various communications
+		// past this point may require the proxy to be up.
+		bool socks_enable_required = gSavedSettings.getBOOL("Socks5ProxyEnabled");
+		if ((LLSocks::getInstance()->isEnabled() != socks_enable_required) || LLSocks::getInstance()->needsUpdate())
+		{
+			if (socks_enable_required)
+			{
+				if (!LLStartUp::handleSocksProxy(false))
+				{
+					// Proxy start up failed, we should now bail the state machine
+					// HandleSocksProxy() will have reported an error to the user 
+					// already, so we just go back to the login screen. The user
+					// could then change the perferences to fix the issue. 
+					LLStartUp::setStartupState(STATE_LOGIN_SHOW);
+					return FALSE;
+				}
+			}
+			else
+			{
+				LLSocks::getInstance()->stopProxy();
+			}
+		}
+
 		//reset the values that could have come in from a slurl
 		if (!gLoginHandler.getWebLoginKey().isNull())
 		{
 			firstname = gLoginHandler.getFirstName();
 			lastname = gLoginHandler.getLastName();
+			// <edit>
+			gFullName = utf8str_tolower(firstname + " " + lastname);
+			// </edit>
 			web_login_key = gLoginHandler.getWebLoginKey();
 		}
-				
-		/* Jacek - Grid manager stuff that's changed with 1.23
-		if(!gLoginHandler.mPassword.empty())
-		{
-			firstname = gLoginHandler.mFirstName;
-			lastname = gLoginHandler.mLastName;
-			password = gLoginHandler.mPassword;
-			
-			gLoginHandler.mFirstName = "";
-			gLoginHandler.mLastName = "";
-			gLoginHandler.mPassword = "";
-			LLStartUp::setShouldAutoLogin(false);
-		}*/
 				
 		if (show_connect_box)
 		{
 			// TODO if not use viewer auth
 			// Load all the name information out of the login view
-			LLPanelLogin::getFields(firstname, lastname, password, remember_password);
-			// end TODO			
+			LLPanelLogin::getFields(&firstname, &lastname, &password);
+			// end TODO
 	 
 			// HACK: Try to make not jump on login
 			gKeyboard->resetKeys();
@@ -935,25 +1372,19 @@ bool idle_startup()
 		{
 			gSavedSettings.setString("FirstName", firstname);
 			gSavedSettings.setString("LastName", lastname);
+			// <edit>
+			gFullName = utf8str_tolower(firstname + " " + lastname);
+			// </edit>
+			if (!gSavedSettings.controlExists("RememberLogin")) gSavedSettings.declareBOOL("RememberLogin", false, "Remember login", false);
+			gSavedSettings.setBOOL("RememberLogin", LLPanelLogin::getRememberLogin());
 
-			if (remember_password)
-			{
-				LLStartUp::savePasswordToDisk(password);
-			}
-			else
-			{
-				LLStartUp::deletePasswordFromDisk();
-			}
-			gSavedSettings.setBOOL("RememberPassword", remember_password);
-
-			//LL_INFOS("AppInit") << "Attempting login as: " << firstname << " " << lastname << " " << password << LL_ENDL;
+			LL_INFOS("AppInit") << "Attempting login as: " << firstname << " " << lastname << LL_ENDL;
 			gDebugInfo["LoginName"] = firstname + " " + lastname;	
 		}
 
-        gHippoGridManager->setCurrentGridAsConnected();
 		// create necessary directories
 		// *FIX: these mkdir's should error check
-		gDirUtilp->setLindenUserDir("", firstname, lastname);
+		gDirUtilp->setLindenUserDir(firstname, lastname);
     	LLFile::mkdir(gDirUtilp->getLindenUserDir());
 
         // Set PerAccountSettingsFile to the default value.
@@ -973,14 +1404,8 @@ bool idle_startup()
 			gSavedPerAccountSettings.setU32("LastLogoff", time_corrected());
 		}
 
-		//Always use default in portable mode
-		if (gSavedSettings.getBOOL("PortableMode"))
-		{
-			gDirUtilp->setChatLogsDir(gDirUtilp->getOSUserAppDir());
-			gSavedPerAccountSettings.setString("InstantMessageLogPath",gDirUtilp->getChatLogsDir());
-		}
 		//Default the path if one isn't set.
-		else if (gSavedPerAccountSettings.getString("InstantMessageLogPath").empty())
+		if (gSavedPerAccountSettings.getString("InstantMessageLogPath").empty())
 		{
 			gDirUtilp->setChatLogsDir(gDirUtilp->getOSUserAppDir());
 			gSavedPerAccountSettings.setString("InstantMessageLogPath",gDirUtilp->getChatLogsDir());
@@ -989,7 +1414,7 @@ bool idle_startup()
 		{
 			gDirUtilp->setChatLogsDir(gSavedPerAccountSettings.getString("InstantMessageLogPath"));		
 		}
-		//gHippoGridManager->getCurrentGridNick() add this to it? breaks chat logs...
+		
 		gDirUtilp->setPerAccountChatLogsDir(firstname, lastname);
 
 		LLFile::mkdir(gDirUtilp->getChatLogsDir());
@@ -1007,28 +1432,14 @@ bool idle_startup()
 
 		std::string user_windlight_days_path_name(gDirUtilp->getExpandedFilename( LL_PATH_USER_SETTINGS , "windlight/days", ""));
 		LLFile::mkdir(user_windlight_days_path_name.c_str());
-
-		//guna make a beams directior here too /lgg		
-		std::string lgg_beams_path_name(gDirUtilp->getExpandedFilename( LL_PATH_USER_SETTINGS , "beams", ""));
-		LLFile::mkdir(lgg_beams_path_name.c_str());	
-
-		std::string lgg_beamscolors_path_name(gDirUtilp->getExpandedFilename( LL_PATH_USER_SETTINGS , "beamsColors", ""));
-		LLFile::mkdir(lgg_beamscolors_path_name.c_str());	
-
-		//guna make a ircgroups directior here too /lgg		
-		std::string lgg_ircgroups_path_name(gDirUtilp->getExpandedFilename( LL_PATH_PER_SL_ACCOUNT, "IRCGroups", ""));
-		LLFile::mkdir(lgg_ircgroups_path_name.c_str());	
-
+		
+		// <edit>
+		LLAO::refresh();
+		LLFloaterBlacklist::loadFromSave();
+		// </edit>
 
 		if (show_connect_box)
 		{
-			if ( LLPanelLogin::isGridComboDirty() )
-			{
-				// User picked a grid from the popup, so clear the 
-				// stored uris and they will be reacquired from the grid choice.
-				sAuthUris.clear();
-			}
-			
 			std::string location;
 			LLPanelLogin::getLocation( location );
 			LLURLSimString::setString( location );
@@ -1043,6 +1454,14 @@ bool idle_startup()
 
 		// Load URL History File
 		LLURLHistory::loadFile("url_history.xml");
+		// OGPX : Since loading the file wipes the new value that might have gotten added on
+		// the login panel, let's add it to URL history 
+		// (appendToURLCollection() only adds unique values to list)
+		// OGPX kind of ugly. TODO: figure out something less hacky
+		if (!gSavedSettings.getString("CmdLineRegionURI").empty())
+		{
+			LLURLHistory::appendToURLCollection("regionuri",gSavedSettings.getString("CmdLineRegionURI"));
+		}
 
 		//-------------------------------------------------
 		// Handle startup progress screen
@@ -1052,23 +1471,6 @@ bool idle_startup()
 		// their last location, or some URL "-url //sim/x/y[/z]"
 		// All accounts have both a home and a last location, and we don't support
 		// more locations than that.  Choose the appropriate one.  JC
-// [RLVa:KB] - Checked: 2009-07-08 (RLVa-1.0.0e) | Modified: RLVa-0.2.1d
-		#ifndef RLV_EXTENSION_STARTLOCATION
-		if (rlv_handler_t::isEnabled())
-		#else
-		if ( (rlv_handler_t::isEnabled()) && (RlvSettings::getLoginLastLocation()) )
-		#endif // RLV_EXTENSION_STARTLOCATION
-		{
-			// Force login at the last location
-			agent_location_id = START_LOCATION_ID_LAST;
-			location_which = START_LOCATION_ID_LAST;
-			gSavedSettings.setBOOL("LoginLastLocation", FALSE);
-			
-			// Clear some things that would cause us to divert to a user-specified location
-			LLURLSimString::setString(LLURLSimString::sLocationStringLast);
-			LLStartUp::sSLURLCommand.clear();
-		} else
-// [/RLVa:KB]
 		if (LLURLSimString::parse())
 		{
 			// a startup URL was specified
@@ -1098,7 +1500,9 @@ bool idle_startup()
 		}
 
 		// Display the startup progress bar.
-		gViewerWindow->setShowProgress(!gSavedSettings.getBOOL("EmeraldDisableLoginScreens"));
+		// <edit>
+		//gViewerWindow->setShowProgress(TRUE);
+		// </edit>
 		gViewerWindow->setProgressCancelButtonVisible(TRUE, std::string("Quit")); // *TODO: Translate
 
 		// Poke the VFS, which could potentially block for a while if
@@ -1162,29 +1566,137 @@ bool idle_startup()
 			gSavedSettings.setBOOL("UseDebugMenus", TRUE);
 			requested_options.push_back("god-connect");
 		}
-		std::vector<std::string> uris;
-		LLViewerLogin::getInstance()->getLoginURIs(uris);
-		std::vector<std::string>::const_iterator iter, end;
-		for (iter = uris.begin(), end = uris.end(); iter != end; ++iter)
-		{
-			std::vector<std::string> rewritten;
-			rewritten = LLSRV::rewriteURI(*iter);
-			sAuthUris.insert(sAuthUris.end(),
-							 rewritten.begin(), rewritten.end());
-		}
-		sAuthUriNum = 0;
 		auth_method = "login_to_simulator";
 		
 		LLStringUtil::format_map_t args;
 		args["[APP_NAME]"] = LLAppViewer::instance()->getSecondLifeTitle();
 		auth_desc = LLTrans::getString("LoginInProgress", args);
-		LLStartUp::setStartupState( STATE_LOGIN_AUTHENTICATE );
+		// OGPX uses AUTHENTICATE startup state, and XMLRPC uses XMLRPC_LEGACY
+		if ((!gSavedSettings.getString("CmdLineRegionURI").empty())&&gSavedSettings.getBOOL("OpenGridProtocol"))
+		{ 
+		    LLStartUp::setStartupState( STATE_LOGIN_AUTHENTICATE ); // OGPX
+		}
+		else
+		{
+			LLStartUp::setStartupState( STATE_XMLRPC_LEGACY_LOGIN ); // XMLRPC
+		}
 	}
+
+	// OGPX : Note that this uses existing STATE_LOGIN_AUTHENTICATE in viewer, 
+	// and also inserts two new states for LEGACY (where Legacy in this case
+	// was LLSD HTTP Post in OGP9, and not XML-RPC). 
+	//
+	// The OGP login daisy chains together several POSTs that must complete successfully 
+	// in order for startup state to finally get set to STATE_LOGIN_PROCESS_RESPONSE. 
+	//
 
 	if (STATE_LOGIN_AUTHENTICATE == LLStartUp::getStartupState())
 	{
 		LL_DEBUGS("AppInit") << "STATE_LOGIN_AUTHENTICATE" << LL_ENDL;
 		set_startup_status(progress, auth_desc, auth_message);
+		
+		LLSD args;
+		LLSD identifier;
+		LLSD authenticator;
+
+		identifier["type"] = "agent";
+		identifier["first_name"] = firstname;
+		identifier["last_name"] = lastname;
+		authenticator["type"] = "hash";
+		authenticator["algorithm"] = "md5";
+		authenticator["secret"] = password;
+		args["identifier"] = identifier;
+		args["authenticator"] = authenticator;
+	
+
+		//args["firstname"] = firstname;
+		//args["lastname"] = lastname;
+		//args["md5-password"] = password;
+		
+		// allows you to 'suggest' which agent service you'd like to use
+		std::string	agenturi = gSavedSettings.getString("CmdLineAgentURI");
+		if (!agenturi.empty())
+		{
+			 args["agent_url"] = agenturi;
+		}
+
+		char hashed_mac_string[MD5HEX_STR_SIZE];		/* Flawfinder: ignore */
+		LLMD5 hashed_mac;
+		hashed_mac.update( gMACAddress, MAC_ADDRESS_BYTES );
+		hashed_mac.finalize();
+		hashed_mac.hex_digest(hashed_mac_string);
+		args["mac_address"] = hashed_mac_string;
+
+		args["id0"] = LLAppViewer::instance()->getSerialNumber();
+
+		args["agree_to_tos"] = gAcceptTOS;
+		args["read_critical"] = gAcceptCriticalMessage;
+
+		LLViewerLogin* vl = LLViewerLogin::getInstance();
+		std::string grid_uri = vl->getCurrentGridURI();
+
+		LL_INFOS("OGPX") << " URI to POST to : " << grid_uri << LL_ENDL;
+
+		LL_INFOS("OGPX") << " Post to AgentHostAuth: " << LLSDOStreamer<LLSDXMLFormatter>(args) << LL_ENDL;
+		LLHTTPClient::post(
+			grid_uri,
+			args,
+			new LLAgentHostAuthResponder()
+		);
+
+		gAcceptTOS = FALSE;
+		gAcceptCriticalMessage = FALSE;
+
+		LLStartUp::setStartupState(STATE_WAIT_LEGACY_LOGIN);
+		return FALSE;
+	}
+
+	if (STATE_WAIT_LEGACY_LOGIN == LLStartUp::getStartupState())
+	{
+		//so in OGPX we get into this state really early, and if we start checking for caps 
+		// too early, then we end up advancing the startup state too early.
+		// So, don't start checking for the availability of caps being completed
+		// until the HTTP POST daisy chaining has made it through the successful
+		// completion of rez_avatar/place. mAuthResponse is set in 
+		// LLPlaceAvatarLoginResponder::result()
+		if (gSavedSettings.getBOOL("OpenGridProtocol") &&
+			(LLUserAuth::getInstance()->mAuthResponse == LLUserAuth::E_OK))
+		{
+			//OGPX in STATE_LOGIN_AUTHENTICATE, there is a daisy chain of POSTs/GETs and 
+			// responders. At the end we are waiting for the responders for 
+			// inventory skeleton GETs to complete. When those are done, we can advance to the
+			// next step. 
+			// TODO: Note that as we add more and more caps queries to replace the missing
+			// bits that we used to get in legacy authenticate return, we'll need a nicer way to 
+			// express this check
+			BOOL userInventorySkeletonComplete = FALSE;
+			BOOL libraryInventorySkeletonComplete = FALSE;
+			
+			//if we don't have a real user inventory or we have already gotten the skeleton
+			if ( gAgent.getCapability("agent/inventory_skeleton").empty() ||
+				( LLUserAuth::getInstance()->mResult["inventory-skeleton"]))
+			{
+				userInventorySkeletonComplete= TRUE;
+			}
+						//if we don't have a real user inventory or we have already gotten the skeleton
+			if ( gAgent.getCapability("agent/inventory_skeleton_library").empty() ||
+				( LLUserAuth::getInstance()->mResult["inventory-skel-lib"] ))
+			{
+				libraryInventorySkeletonComplete= TRUE;
+			}
+			if (userInventorySkeletonComplete&&libraryInventorySkeletonComplete)
+			{
+				//yay, all the HTTP requests are completed
+				LLStartUp::setStartupState(STATE_LOGIN_PROCESS_RESPONSE);
+			}
+		}
+
+		return FALSE;
+	}
+	
+	if (STATE_XMLRPC_LEGACY_LOGIN == LLStartUp::getStartupState())
+	{
+		lldebugs << "STATE_XMLRPC_LEGACY_LOGIN" << llendl;
 		progress += 0.02f;
 		display_startup();
 		
@@ -1215,17 +1727,21 @@ bool idle_startup()
 		hashed_mac.update( gMACAddress, MAC_ADDRESS_BYTES );
 		hashed_mac.finalize();
 		hashed_mac.hex_digest(hashed_mac_string);
-		
+
+
+		LLViewerLogin* vl = LLViewerLogin::getInstance();
+		std::string grid_uri = vl->getCurrentGridURI();
+
+		llinfos << "Authenticating with " << grid_uri << llendl;
+
 		// TODO if statement here to use web_login_key
-		if(web_login_key.isNull()){
-		sAuthUriNum = llclamp(sAuthUriNum, 0, (S32)sAuthUris.size()-1);
+	    // OGPX : which routine would this end up in? the LLSD or XMLRPC, or ....?
 		LLUserAuth::getInstance()->authenticate(
-			sAuthUris[sAuthUriNum],
+			grid_uri,
 			auth_method,
 			firstname,
 			lastname,			
-			password, 
-			//web_login_key,
+			password, // web_login_key,
 			start.str(),
 			gSkipOptionalUpdate,
 			gAcceptTOS,
@@ -1234,22 +1750,7 @@ bool idle_startup()
 			requested_options,
 			hashed_mac_string,
 			LLAppViewer::instance()->getSerialNumber());
-		} else {
-		LLUserAuth::getInstance()->authenticate(
-			sAuthUris[sAuthUriNum],
-			auth_method,
-			firstname,
-			lastname,			
-			web_login_key,
-			start.str(),
-			gSkipOptionalUpdate,
-			gAcceptTOS,
-			gAcceptCriticalMessage,
-			gLastExecEvent,
-			requested_options,
-			hashed_mac_string,
-			LLAppViewer::instance()->getSerialNumber());
-		}
+
 
 		// reset globals
 		gAcceptTOS = FALSE;
@@ -1309,7 +1810,7 @@ bool idle_startup()
 		LL_DEBUGS("AppInit") << "STATE_LOGIN_PROCESS_RESPONSE" << LL_ENDL;
 		std::ostringstream emsg;
 		bool quit = false;
-//		bool update = false;
+		bool update = false;
 		std::string login_response;
 		std::string reason_response;
 		std::string message_response;
@@ -1321,17 +1822,25 @@ bool idle_startup()
 		switch(error)
 		{
 		case LLUserAuth::E_OK:
+			if (gSavedSettings.getBOOL("OpenGridProtocol"))
+			{	
+				// OGPX : this field set explicitly in rez_av/place responder for OGP
+				login_response = LLUserAuth::getInstance()->mResult["login"].asString();
+			}
+			else
+			{
 			login_response = LLUserAuth::getInstance()->getResponse("login");
+			}
 			if(login_response == "true")
 			{
 				// Yay, login!
 				successful_login = true;
 			}
-			else if(login_response == "indeterminate")
+			else if (login_response == "indeterminate") // OGPX : this is XML-RPC auth only, PlaceAV bails with alert if not successful
 			{
 				LL_INFOS("AppInit") << "Indeterminate login..." << LL_ENDL;
-				sAuthUris = LLSRV::rewriteURI(LLUserAuth::getInstance()->getResponse("next_url"));
-				sAuthUriNum = 0;
+				LLViewerLogin::getInstance()->setGridURIs(LLSRV::rewriteURI(LLUserAuth::getInstance()->getResponse("next_url")));
+
 				auth_method = LLUserAuth::getInstance()->getResponse("next_method");
 				auth_message = LLUserAuth::getInstance()->getResponse("message");
 				if(auth_method.substr(0, 5) == "login")
@@ -1344,7 +1853,15 @@ bool idle_startup()
 				}
 				// ignoring the duration & options array for now.
 				// Go back to authenticate.
-				LLStartUp::setStartupState( STATE_LOGIN_AUTHENTICATE );
+				// OGPX hijacks AUTHENTICATE state, and XMLRPC uses XMLRPC_LEGACY
+				if (gSavedSettings.getBOOL("OpenGridProtocol"))
+				{ 
+					LLStartUp::setStartupState( STATE_LOGIN_AUTHENTICATE );
+				}
+				else
+				{
+					LLStartUp::setStartupState( STATE_XMLRPC_LEGACY_LOGIN );
+				}
 				return FALSE;
 			}
 			else
@@ -1411,16 +1928,7 @@ bool idle_startup()
 				if(reason_response == "update")
 				{
 					auth_message = LLUserAuth::getInstance()->getResponse("message");
-					if (show_connect_box)
-					{
-						update_app(TRUE, auth_message);
-						LLStartUp::setStartupState( STATE_UPDATE_CHECK );
-						return false;
-					}
-					else
-					{
-						quit = true;
-					}
+					update = true;
 				}
 				if(reason_response == "optional")
 				{
@@ -1442,20 +1950,38 @@ bool idle_startup()
 		case LLUserAuth::E_SSL_CACERT:
 		case LLUserAuth::E_SSL_CONNECT_ERROR:
 		default:
-			if (sAuthUriNum >= (int) sAuthUris.size() - 1)
+			if (LLViewerLogin::getInstance()->tryNextURI())
+			{
+				static int login_attempt_number = 0;
+				std::ostringstream s;
+				LLStringUtil::format_map_t args;
+				args["[NUMBER]"] = llformat("%d", ++login_attempt_number);
+				auth_desc = LLTrans::getString("LoginAttempt", args);
+				// OGPX hijacks AUTHENTICATE state, and XMLRPC uses XMLRPC_LEGACY
+				if (gSavedSettings.getBOOL("OpenGridProtocol"))
+				{ 
+					LLStartUp::setStartupState( STATE_LOGIN_AUTHENTICATE );
+				}
+				else
+				{
+					LLStartUp::setStartupState( STATE_XMLRPC_LEGACY_LOGIN );
+				}
+				return FALSE;
+			}
+			else
 			{
 				emsg << "Unable to connect to " << LLAppViewer::instance()->getSecondLifeTitle() << ".\n";
 				emsg << LLUserAuth::getInstance()->errorMessage();
-			} else {
-				sAuthUriNum++;
-				std::ostringstream s;
-				LLStringUtil::format_map_t args;
-				args["[NUMBER]"] = llformat("%d", sAuthUriNum + 1);
-				auth_desc = LLTrans::getString("LoginAttempt", args);
-				LLStartUp::setStartupState( STATE_LOGIN_AUTHENTICATE );
-				return FALSE;
 			}
 			break;
+		}
+
+		if (update || gSavedSettings.getBOOL("ForceMandatoryUpdate"))
+		{
+			gSavedSettings.setBOOL("ForceMandatoryUpdate", FALSE);
+			update_app(TRUE, auth_message);
+			LLStartUp::setStartupState( STATE_UPDATE_CHECK );
+			return false;
 		}
 
 		// Version update and we're not showing the dialog
@@ -1466,7 +1992,210 @@ bool idle_startup()
 			return false;
 		}
 
-		if(successful_login)
+		// OGPX : OGP successful login path here
+		if (successful_login && gSavedSettings.getBOOL("OpenGridProtocol"))
+		{
+			std::string text;
+			// OGPX : this block for OGPX
+			// could have tried to fit in with the rest of the auth response, but 
+			// I think (hope?) the two protocols will differ significantly as OGP evolves.
+			//
+			// For now OGP skipping/omitting getting the following values: 
+			// udp_blacklist, first/lastname, ao_transition, start_location(home,lst), home, global-textures
+			//
+			// At this point, we've gathered everything into LLUserAuth::getInstance()->mResult,
+			//   and we need to do similar things to what XMLRPC path does with the return from authenticate.
+			//   
+			// Q: sim_port, can it be smarter that strtoul in orig legacy? and can i skip c_str()?
+			// moved this up in the checking, since it might actually fail if we get an ugly ip
+			// skip all the checking of fields, if we are here, and have a horked ip, it should be caught by isOk()
+			first_sim.setHostByName(LLUserAuth::getInstance()->mResult["sim_host"].asString());
+            first_sim.setPort(LLUserAuth::getInstance()->mResult["sim_port"].asInteger());
+
+			if (!first_sim.isOk())
+			{
+				llwarns << " sim_host returned in PlaceAvatar FAIL "<< first_sim.getString() << llendl;
+				LLUserAuth::getInstance()->reset();
+				LLAppViewer::instance()->forceQuit();
+				return FALSE;
+			}	
+			// carefully trims circuit code to 10 chars
+			text = LLUserAuth::getInstance()->mResult["circuit_code"].asString();
+			if(!text.empty())
+			{
+				gMessageSystem->mOurCircuitCode = strtoul(text.c_str(), NULL, 10);
+			}
+
+			text = LLUserAuth::getInstance()->mResult["agent_id"].asString();
+			gAgentID.set(text); 		
+			gDebugInfo["AgentID"] = text;
+			text = LLUserAuth::getInstance()->mResult["session_id"].asString();
+			gAgentSessionID.set(text);
+			gDebugInfo["SessionID"] = text;
+
+			//text = LLUserAuth::getInstance()->mResult["secure_session_id"];
+			gAgent.mSecureSessionID.set(LLUserAuth::getInstance()->mResult["secure_session_id"]);
+
+
+			// OGPX TODO: I *do* actually get back my first/last name in LLAgentHostSeedCapResponder::result()
+			//   but I am pretty sure it gets overwritten by what the region tells me in UDP in the initial packets
+			//   that is where EXTERNAL gets appended, me thinks.
+			//   ...and should the region really be able to tell me my name??? 
+			//   I think that belongs to agent domain.
+
+
+			//text = LLUserAuth::getInstance()->mResult["first_name"];
+			//// Remove quotes from string.  Login.cgi sends these to force
+			//// names that look like numbers into strings.
+			//firstname.assign(text.asString());
+			//LLStringUtil::replaceChar(firstname, '"', ' ');
+			//LLStringUtil::trim(firstname);
+			//text = LLUserAuth::getInstance()->mResult["last_name"];
+			//lastname.assign(text.asString());
+
+			// hack: interop doesn't return name info in the
+			// login reply - we could add this to auth or just depend on the
+			// viewer to do proper formatting once we take out the old path
+			
+			//if (!firstname.empty() && !lastname.empty())
+			//{
+			//	gSavedSettings.setString("FirstName", firstname);
+			//	gSavedSettings.setString("LastName", lastname);
+			//}
+
+			if (gSavedSettings.getBOOL("RememberPassword"))
+			{
+				// Successful login means the password is valid, so save it.
+				LLStartUp::savePasswordToDisk(password);
+			}
+			else
+			{
+				// Don't leave password from previous session sitting around
+				// during this login session.
+				LLStartUp::deletePasswordFromDisk();
+			}
+			// this is their actual ability to access content
+			text = LLUserAuth::getInstance()->mResult["agent_access_max"].asString();
+			if (!text.empty())
+			{
+				// agent_access can be 'A', 'M', and 'PG'.
+				gAgent.setMaturity(text[0]);
+			}
+			// this is the value of their preference setting for that content
+			// which will always be <= agent_access_max
+			text = LLUserAuth::getInstance()->mResult["agent_region_access"].asString();
+			if (!text.empty())
+			{
+				int preferredMaturity = LLAgent::convertTextToMaturity(text[0]);
+				gSavedSettings.setU32("PreferredMaturity", preferredMaturity);
+			}
+			// OGPX TODO: so regionhandles need to change in the viewer. If two regions on two 
+			// unrelated grids send the same region_x / region_y back in rez_avatar/place
+			// the viewer will get very confused. The viewer depends in different 
+			// ways internally on the regionhandle really being x,y location in the "one" grid,
+			// so fixing it will be a non trivial task.
+			U32 region_x = strtoul(LLUserAuth::getInstance()->mResult["region_x"].asString().c_str(), NULL, 10);
+			U32 region_y = strtoul(LLUserAuth::getInstance()->mResult["region_y"].asString().c_str(), NULL, 10);
+
+			first_sim_handle = to_region_handle(region_x, region_y);
+
+			const std::string look_at_str = LLUserAuth::getInstance()->mResult["look_at"];
+			if (!look_at_str.empty())
+			{
+				size_t len = look_at_str.size();
+				LLMemoryStream mstr((U8*)look_at_str.c_str(), len);
+				LLSD sd = LLSDSerialize::fromNotation(mstr, len);
+				agent_start_look_at = ll_vector3_from_sd(sd);
+			}
+
+			text = LLUserAuth::getInstance()->mResult["seed_capability"].asString();
+			if (!text.empty())
+			{
+				first_sim_seed_cap = text;
+			}
+						
+			text = LLUserAuth::getInstance()->mResult["seconds_since_epoch"].asString();
+			if (!text.empty())
+			{
+				U32 server_utc_time = strtoul(text.c_str(), NULL, 10);
+				if (server_utc_time)
+				{
+					time_t now = time(NULL);
+					gUTCOffset = (server_utc_time - now);
+				}
+			}
+			gAgent.mMOTD.assign(LLUserAuth::getInstance()->mResult["message"]);
+			// OGPX : note: currently OGP strips out array/folder_id bits. 
+			if (!LLUserAuth::getInstance()->mResult["inventory-root"].asUUID().isNull())
+			{
+				gAgent.mInventoryRootID.set(
+					LLUserAuth::getInstance()->mResult["inventory-root"]);
+			}
+			// OGPX strips out array. string of initial outfit folder.
+			sInitialOutfit = LLUserAuth::getInstance()->mResult["initial-outfit"]["folder_name"].asString();
+
+			// OGPX : these are the OGP style calls to loadSkeleton. unsure what will happen to inventory-skel-lib, since we 
+			// haven't defined how libraries work. 
+			if (LLUserAuth::getInstance()->mResult["inventory-skel-lib"].isArray())
+ 			{
+ 				if (!gInventory.loadSkeleton(LLUserAuth::getInstance()->mResult["inventory-skel-lib"], gInventoryLibraryOwner))
+ 				{
+ 					LL_WARNS("AppInit") << "Problem loading inventory-skel-lib" << LL_ENDL;
+ 				}
+ 			}
+			if (LLUserAuth::getInstance()->mResult["inventory-skeleton"].isArray())
+ 			{	
+ 				if (!gInventory.loadSkeleton(LLUserAuth::getInstance()->mResult["inventory-skeleton"], gAgent.getID()))
+ 				{
+ 					LL_WARNS("AppInit") << "Problem loading inventory-skel-targets" << LL_ENDL;
+ 				}
+ 			}
+
+			// <edit> testing adding a local inventory folder...
+			LLViewerInventoryCategory* test_cat = new LLViewerInventoryCategory(gAgent.getID());
+			test_cat->rename(std::string("Pretend Inventory"));
+			LLUUID test_cat_id;
+			test_cat_id.generate();
+			test_cat->setUUID(test_cat_id);
+			gLocalInventoryRoot = test_cat_id;
+			test_cat->setParent(LLUUID::null);
+			test_cat->setPreferredType(LLAssetType::AT_NONE);
+
+			gInventory.addCategory(test_cat);
+			// </edit>
+
+			// OGPX login-flags : we don't currently get those passed back (there is a gendered hack in the code elsewhere)
+			// unsure if OGPX should be getting all these. 
+			if (LLUserAuth::getInstance()->mResult["login-flags"].isArray())
+			{
+				if (!LLUserAuth::getInstance()->mResult["login-flags"][0]["ever_logged_in"].asString().empty())
+				{
+					gAgent.setFirstLogin(LLUserAuth::getInstance()->mResult["login-flags"][0]["ever_logged_in"].asString() == "N");
+				}
+				if (!LLUserAuth::getInstance()->mResult["login-flags"][0]["stipend_since_login"].asString().empty() &&
+					 (LLUserAuth::getInstance()->mResult["login-flags"][0]["stipend_since_login"].asString() == "Y"))
+				{
+					stipend_since_login = true;
+				}
+				if (!LLUserAuth::getInstance()->mResult["login-flags"][0]["gendered"].asString().empty() &&
+					 (LLUserAuth::getInstance()->mResult["login-flags"][0]["gendered"].asString() == "Y"))
+				{
+					gAgent.setGenderChosen(TRUE);
+				}
+				if (!LLUserAuth::getInstance()->mResult["login-flags"][0]["daylight_savings"].asString().empty())
+				{
+					gPacificDaylightTime = (LLUserAuth::getInstance()->mResult["login-flags"][0]["daylight_savings"].asString() == "Y");
+				}
+			}
+			
+			// OGPX Note: strips out array that exists in non-OGP path
+			sInitialOutfitGender = LLUserAuth::getInstance()->mResult["initial-outfit"]["gender"].asString();
+			gAgent.setGenderChosen(TRUE); // OGPX TODO: remove this once we start sending back gendered flag
+
+		}
+
+		// XML-RPC successful login path here
+		if (successful_login  && !gSavedSettings.getBOOL("OpenGridProtocol"))
 		{
 			std::string text;
 			text = LLUserAuth::getInstance()->getResponse("udp_blacklist");
@@ -1500,8 +2229,11 @@ bool idle_startup()
 			if(!text.empty()) lastname.assign(text);
 			gSavedSettings.setString("FirstName", firstname);
 			gSavedSettings.setString("LastName", lastname);
+			// <edit>
+			gFullName = utf8str_tolower(firstname + " " + lastname);
+			// </edit>
 
-			if (remember_password)
+			if (gSavedSettings.getBOOL("RememberPassword"))
 			{
 				// Successful login means the password is valid, so save it.
 				LLStartUp::savePasswordToDisk(password);
@@ -1511,24 +2243,48 @@ bool idle_startup()
 				// Don't leave password from previous session sitting around
 				// during this login session.
 				LLStartUp::deletePasswordFromDisk();
+				password.assign(""); // clear the password so it isn't saved to login history either
 			}
-			gSavedSettings.setBOOL("RememberPassword", remember_password);
 
-			
+			{
+				// Save the login history data to disk
+				std::string history_file = gDirUtilp->getExpandedFilename(LL_PATH_USER_SETTINGS, "saved_logins.xml");
+
+				LLSavedLogins history_data = LLSavedLogins::loadFile(history_file);
+				LLViewerLogin* login_data = LLViewerLogin::getInstance();
+				EGridInfo grid_choice = login_data->getGridChoice();
+				history_data.deleteEntry(grid_choice, firstname, lastname, login_data->getCurrentGridURI());
+				if (gSavedSettings.getBOOL("RememberLogin"))
+				{
+					LLSavedLoginEntry login_entry(grid_choice, firstname, lastname, password);
+					if (grid_choice == GRID_INFO_OTHER)
+					{
+						std::string grid_uri = login_data->getCurrentGridURI();
+						std::string login_uri = login_data->getLoginPageURI();
+						std::string helper_uri = login_data->getHelperURI();
+
+						if (!grid_uri.empty()) login_entry.setGridURI(LLURI(grid_uri));
+						if (!login_uri.empty()) login_entry.setLoginPageURI(LLURI(login_uri));
+						if (!helper_uri.empty()) login_entry.setHelperURI(LLURI(helper_uri));
+					}
+					history_data.addEntry(login_entry);
+				}
+				else
+				{
+					// Clear the old-style login data as well
+					gSavedSettings.setString("FirstName", std::string(""));
+					gSavedSettings.setString("LastName", std::string(""));
+				}
+
+				LLSavedLogins::saveFile(history_data, history_file);
+			}
+
 			// this is their actual ability to access content
 			text = LLUserAuth::getInstance()->getResponse("agent_access_max");
 			if (!text.empty())
 			{
 				// agent_access can be 'A', 'M', and 'PG'.
 				gAgent.setMaturity(text[0]);
-			}
-			else // we're on an older sim version (prolly an opensim)
-				{
-				text = LLUserAuth::getInstance()->getResponse("agent_access");
-				if(!text.empty() && (text[0] == 'M'))
-					{
-					gAgent.setTeen(false);
-				}
 			}
 			
 			// this is the value of their preference setting for that content
@@ -1700,51 +2456,20 @@ bool idle_startup()
 				}
 			}
 
-            // Override grid info with anything sent in the login response
-			std::string tmp = LLUserAuth::getInstance()->getResponse("gridname");
-			if (!tmp.empty()) gHippoGridManager->getConnectedGrid()->setGridName(tmp);
-			tmp = LLUserAuth::getInstance()->getResponse("loginuri");
-			if (!tmp.empty()) gHippoGridManager->getConnectedGrid()->setLoginUri(tmp);
-			tmp = LLUserAuth::getInstance()->getResponse("welcome");
-			if (!tmp.empty()) gHippoGridManager->getConnectedGrid()->setLoginPage(tmp);
-			tmp = LLUserAuth::getInstance()->getResponse("loginpage");
-			if (!tmp.empty()) gHippoGridManager->getConnectedGrid()->setLoginPage(tmp);
-			tmp = LLUserAuth::getInstance()->getResponse("economy");
-			if (!tmp.empty()) gHippoGridManager->getConnectedGrid()->setHelperUri(tmp);
-			tmp = LLUserAuth::getInstance()->getResponse("helperuri");
-			if (!tmp.empty()) gHippoGridManager->getConnectedGrid()->setHelperUri(tmp);
-			tmp = LLUserAuth::getInstance()->getResponse("about");
-			if (!tmp.empty()) gHippoGridManager->getConnectedGrid()->setWebSite(tmp);
-			tmp = LLUserAuth::getInstance()->getResponse("website");
-			if (!tmp.empty()) gHippoGridManager->getConnectedGrid()->setWebSite(tmp);
-			tmp = LLUserAuth::getInstance()->getResponse("help");
-			if (!tmp.empty()) gHippoGridManager->getConnectedGrid()->setSupportUrl(tmp);
-			tmp = LLUserAuth::getInstance()->getResponse("support");
-			if (!tmp.empty()) gHippoGridManager->getConnectedGrid()->setSupportUrl(tmp);
-			tmp = LLUserAuth::getInstance()->getResponse("register");
-			if (!tmp.empty()) gHippoGridManager->getConnectedGrid()->setRegisterUrl(tmp);
-			tmp = LLUserAuth::getInstance()->getResponse("account");
-			if (!tmp.empty()) gHippoGridManager->getConnectedGrid()->setRegisterUrl(tmp);
-			tmp = LLUserAuth::getInstance()->getResponse("password");
-			if (!tmp.empty()) gHippoGridManager->getConnectedGrid()->setPasswordUrl(tmp);
-			tmp = LLUserAuth::getInstance()->getResponse("search");
-			if (!tmp.empty()) gHippoGridManager->getConnectedGrid()->setSearchUrl(tmp);
-            tmp = LLUserAuth::getInstance()->getResponse("currency");
-            if (!tmp.empty()) gHippoGridManager->getConnectedGrid()->setCurrencySymbol(tmp);
-            tmp = LLUserAuth::getInstance()->getResponse("real_currency");
-            if (!tmp.empty()) gHippoGridManager->getConnectedGrid()->setRealCurrencySymbol(tmp);
-            tmp = LLUserAuth::getInstance()->getResponse("directory_fee");
-            if (!tmp.empty()) gHippoGridManager->getConnectedGrid()->setDirectoryFee(atoi(tmp.c_str()));
-            gHippoGridManager->saveFile();
+		}
 
+		// OGPX : successful login path common to OGP and XML-RPC
+		if (successful_login)
+		{
 			// JC: gesture loading done below, when we have an asset system
 			// in place.  Don't delete/clear user_credentials until then.
 
 			if(gAgentID.notNull()
 			   && gAgentSessionID.notNull()
 			   && gMessageSystem->mOurCircuitCode
-			   && first_sim.isOk()
-			   && gAgent.mInventoryRootID.notNull())
+			   && first_sim.isOk())
+			// OGPX : Inventory root might be null in OGP.
+//			   && gAgent.mInventoryRootID.notNull())
 			{
 				LLStartUp::setStartupState( STATE_WORLD_INIT );
 			}
@@ -1759,7 +2484,7 @@ bool idle_startup()
 				// Bounce back to the login screen.
 				LLSD args;
 				args["ERROR_MESSAGE"] = emsg.str();
-				if(!LLStartUp::s_re_login) LLNotifications::instance().add("ErrorMessage", args, LLSD(), login_alert_done);
+				LLNotifications::instance().add("ErrorMessage", args, LLSD(), login_alert_done);
 				reset_login();
 				gSavedSettings.setBOOL("AutoLogin", FALSE);
 				show_connect_box = true;
@@ -1779,11 +2504,10 @@ bool idle_startup()
 			// Bounce back to the login screen.
 			LLSD args;
 			args["ERROR_MESSAGE"] = emsg.str();
-			if(!LLStartUp::s_re_login) LLNotifications::instance().add("ErrorMessage", args, LLSD(), login_alert_done);
+			LLNotifications::instance().add("ErrorMessage", args, LLSD(), login_alert_done);
 			reset_login();
 			gSavedSettings.setBOOL("AutoLogin", FALSE);
 			show_connect_box = true;
-			LLStartUp::deletePasswordFromDisk();
 		}
 		return FALSE;
 	}
@@ -1793,6 +2517,9 @@ bool idle_startup()
 	//---------------------------------------------------------------------
 	if (STATE_WORLD_INIT == LLStartUp::getStartupState())
 	{
+		//first of all, let's check if wind should be used
+		gLLWindEnabled = gSavedSettings.getBOOL("WindEnabled");
+		
 		set_startup_status(0.40f, LLTrans::getString("LoginInitializingWorld"), gAgent.mMOTD);
 		display_startup();
 		// We should have an agent id by this point.
@@ -1853,6 +2580,8 @@ bool idle_startup()
 		// object is created.  I think this must be done after setting the region.  JC
 		gAgent.setPositionAgent(agent_start_position_region);
 
+		wlfPanel_AdvSettings::fixPanel();
+
 		display_startup();
 		LLStartUp::setStartupState( STATE_MULTIMEDIA_INIT );
 		return FALSE;
@@ -1897,11 +2626,20 @@ bool idle_startup()
 		LLRect window(0, gViewerWindow->getWindowHeight(), gViewerWindow->getWindowWidth(), 0);
 		gViewerWindow->adjustControlRectanglesForFirstUse(window);
 
-		if(gSavedSettings.getBOOL("ShowMiniMap"))
+		if (gSavedSettings.getBOOL("ShowMiniMap"))
 		{
 			LLFloaterMap::showInstance();
 		}
-
+		if (gSavedSettings.getBOOL("ShowRadar"))
+		{
+			LLFloaterAvatarList::showInstance();
+		}
+		// <edit>
+		else if (gSavedSettings.getBOOL("RadarKeepOpen"))
+		{
+			LLFloaterAvatarList::createInstance(false);
+		}
+		// </edit>
 		if (gSavedSettings.getBOOL("ShowCameraControls"))
 		{
 			LLFloaterCamera::showInstance();
@@ -1916,14 +2654,14 @@ bool idle_startup()
 			LLFloaterActiveSpeakers::showInstance();
 		}
 
-		if (gSavedSettings.getBOOL("ShowAvatarList"))
+		/*if (gSavedSettings.getBOOL("BeaconAlwaysOn"))
 		{
-			LLFloaterAvatarList::showInstance();
-		}
-		else if (gSavedSettings.getBOOL("EmeraldAvatarListKeepOpen"))
+			LLFloaterBeacons::showInstance(); DIE
+		}*/
+		
+		if (!gSavedSettings.getBOOL("CloudsEnabled") && !gNoRender)
 		{
-			LLFloaterAvatarList::showInstance();
-			LLFloaterAvatarList::toggle(NULL);
+			LLPipeline::toggleRenderTypeControl((void*)LLPipeline::RENDER_TYPE_CLOUDS);
 		}
 
 		if (!gNoRender)
@@ -1932,6 +2670,7 @@ bool idle_startup()
 			gViewerWindow->moveProgressViewToFront();
 
 			LLError::logToFixedBuffer(gDebugView->mDebugConsolep);
+			
 			// set initial visibility of debug console
 			gDebugView->mDebugConsolep->setVisible(gSavedSettings.getBOOL("ShowDebugConsole"));
 			if (gSavedSettings.getBOOL("ShowDebugStats"))
@@ -2015,7 +2754,7 @@ bool idle_startup()
 			LLViewerCamera::getInstance()->setAspect( (F32) gViewerWindow->getWindowWidth() / (F32) gViewerWindow->getWindowHeight());
 		}
 		// Initialize FOV
-		LLViewerCamera::getInstance()->setDefaultFOV(1.047197551f); 
+		LLViewerCamera::getInstance()->setDefaultFOV(gSavedSettings.getF32("CameraAngle")); 
 
 		// Move agent to starting location. The position handed to us by
 		// the space server is in global coordinates, but the agent frame
@@ -2072,7 +2811,6 @@ bool idle_startup()
 		msg->addU32Fast(_PREHASH_Code, msg->mOurCircuitCode);
 		msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
 		msg->addUUIDFast(_PREHASH_ID, gAgent.getID());
-		
 		msg->sendReliable(
 			first_sim,
 			MAX_TIMEOUT_COUNT,
@@ -2080,10 +2818,8 @@ bool idle_startup()
 			TIMEOUT_SECONDS,
 			use_circuit_callback,
 			NULL);
-		LL_INFOS("AppInit") << "viewer: 6" <<LL_ENDL; 
 
 		timeout.reset();
-		LL_INFOS("AppInit") << "viewer: 7" <<LL_ENDL; 
 
 		return FALSE;
 	}
@@ -2183,6 +2919,9 @@ bool idle_startup()
 	//---------------------------------------------------------------------
 	if (STATE_INVENTORY_SEND == LLStartUp::getStartupState())
 	{
+		// Inform simulator of our language preference
+		LLAgentLanguage::update();
+
 		// unpack thin inventory
 		LLUserAuth::options_t options;
 		options.clear();
@@ -2366,14 +3105,6 @@ bool idle_startup()
 			LLInventoryView::toggleVisibility(NULL);
 		}
 
-// [RLVa:KB] - Checked: 2009-11-27 (RLVa-1.1.0f) | Added: RLVa-1.1.0f
-		if (rlv_handler_t::isEnabled())
-		{
-			// Regularly process a select subset of retained commands during logon
-			gIdleCallbacks.addFunction(RlvHandler::onIdleStartup, new LLTimer());
-		}
-// [/RLVa:KB]
-
 		LLStartUp::setStartupState( STATE_MISC );
 		return FALSE;
 	}
@@ -2435,14 +3166,6 @@ bool idle_startup()
 			// JC: Initializing audio requests many sounds for download.
 			init_audio();
 
-			// Zwag: Moving shader init here. LL picked a dumb spot.
-			// should fix all the shader loading problems.
-			if (!LLViewerShaderMgr::sInitialized)
-			{
-				LLViewerShaderMgr::sInitialized = TRUE;
-				LLViewerShaderMgr::instance()->setShaders();
-			}
-
 			// JC: Initialize "active" gestures.  This may also trigger
 			// many gesture downloads, if this is the user's first
 			// time on this machine or -purge has been run.
@@ -2498,25 +3221,31 @@ bool idle_startup()
 		gDisplaySwapBuffers = TRUE;
 
 		LLMessageSystem* msg = gMessageSystem;
-		msg->setHandlerFuncFast(_PREHASH_SoundTrigger,				pass_process_sound_trigger);
+		msg->setHandlerFuncFast(_PREHASH_SoundTrigger,				hooked_process_sound_trigger);
 		msg->setHandlerFuncFast(_PREHASH_PreloadSound,				process_preload_sound);
 		msg->setHandlerFuncFast(_PREHASH_AttachedSound,				process_attached_sound);
 		msg->setHandlerFuncFast(_PREHASH_AttachedSoundGainChange,	process_attached_sound_gain_change);
-
 
 		LL_DEBUGS("AppInit") << "Initialization complete" << LL_ENDL;
 
 		gRenderStartTime.reset();
 		gForegroundTime.reset();
 
+		if (gSavedSettings.getBOOL("FetchInventoryOnLogin")
+#ifdef LL_RRINTERFACE_H //MK
+			|| gRRenabled
+#endif //mk
+			)
+		{
+			// Fetch inventory in the background
+			gInventory.startBackgroundFetch();
+		}
+
 		// HACK: Inform simulator of window size.
 		// Do this here so it's less likely to race with RegisterNewAgent.
 		// TODO: Put this into RegisterNewAgent
 		// JC - 7/20/2002
 		gViewerWindow->sendShapeToSim();
-
-		// Inform simulator of our language preference
-		LLAgentLanguage::update();
 
 		
 		// Ignore stipend information for now.  Money history is on the web site.
@@ -2528,7 +3257,7 @@ bool idle_startup()
 		if (!gAgent.isFirstLogin())
 		{
 			bool url_ok = LLURLSimString::sInstance.parse();
-			if (!((agent_start_location == "url" && url_ok) ||
+			if ( (!gSavedSettings.getBOOL("OpenGridProtocol"))&&!((agent_start_location == "url" && url_ok) || // OGPX
                   (!url_ok && ((agent_start_location == "last" && gSavedSettings.getBOOL("LoginLastLocation")) ||
 							   (agent_start_location == "home" && !gSavedSettings.getBOOL("LoginLastLocation"))))))
 			{
@@ -2583,7 +3312,7 @@ bool idle_startup()
 
 	if (STATE_PRECACHE == LLStartUp::getStartupState())
 	{
-		F32 timeout_frac = timeout.getElapsedTimeF32()/(gSavedSettings.getF32("PrecachingDelay")+0.1f);
+		F32 timeout_frac = timeout.getElapsedTimeF32()/PRECACHING_DELAY;
 
 		// We now have an inventory skeleton, so if this is a user's first
 		// login, we can start setting up their clothing and avatar 
@@ -2627,6 +3356,11 @@ bool idle_startup()
 				LLTrans::getString("LoginPrecaching"),
 					gAgent.mMOTD);
 			display_startup();
+			if (!LLViewerShaderMgr::sInitialized)
+			{
+				LLViewerShaderMgr::sInitialized = TRUE;
+				LLViewerShaderMgr::instance()->setShaders();
+			}
 		}
 
 		return TRUE;
@@ -2697,15 +3431,6 @@ bool idle_startup()
 	{
 		set_startup_status(1.0, "", "");
 
-		LLFirstUse::ClientTags();
-		LLFirstUse::EmeraldOTR();
-		LLFirstUse::EmeraldBridge();
-
-		// Add login location to teleport history 'teleported-into'
-		LLVector3 agent_pos=gAgent.getPositionAgent();
-		LLViewerRegion* regionp = gAgent.getRegion();
-		gFloaterTeleportHistory->addEntry(regionp->getName(),(S16)agent_pos.mV[0],(S16)agent_pos.mV[1],(S16)agent_pos.mV[2],false);
-
 		// Let the map know about the inventory.
 		if(gFloaterWorldMap)
 		{
@@ -2724,20 +3449,12 @@ bool idle_startup()
 		// a while. JC
 		gAgent.clearAFK();
 
-		//lgg starting up auto connect irc things here
-		//but that crashed.. so i duno
-		glggIrcGroupHandler.startUpAutoRunIRC();
-
 		// Have the agent start watching the friends list so we can update proxies
 		gAgent.observeFriends();
 		if (gSavedSettings.getBOOL("LoginAsGod"))
 		{
 			gAgent.requestEnterGodMode();
 		}
-		gInventory.startBackgroundFetch();
-#if USE_OTR         // [$PLOTR$]
-        OTR_Wrapper::init();
-#endif // USE_OTR   // [/$PLOTR$]
 		
 		// Start automatic replay if the flag is set.
 		if (gSavedSettings.getBOOL("StatsAutoRun"))
@@ -2760,6 +3477,16 @@ bool idle_startup()
 
 		LLStartUp::setStartupState( STATE_STARTED );
 
+		if (gSavedSettings.getBOOL("SpeedRez"))
+		{
+			// Speed up rezzing if requested.
+			F32 dist1 = gSavedSettings.getF32("RenderFarClip");
+			F32 dist2 = gSavedSettings.getF32("SavedRenderFarClip");
+			gSavedDrawDistance = (dist1 >= dist2 ? dist1 : dist2);
+			gSavedSettings.setF32("SavedRenderFarClip", gSavedDrawDistance);
+			gSavedSettings.setF32("RenderFarClip", 32.0f);
+		}
+
 		// Unmute audio if desired and setup volumes.
 		// Unmute audio if desired and setup volumes.
 		// This is a not-uncommon crash site, so surround it with
@@ -2770,8 +3497,6 @@ bool idle_startup()
 
 		// reset keyboard focus to sane state of pointing at world
 		gFocusMgr.setKeyboardFocus(NULL);
-		//Fix this panel that refuses to obey the gods.
-		wlfPanel_AdvSettings::fixPanel();
 
 #if 0 // sjb: enable for auto-enabling timer display 
 		gDebugView->mFastTimerView->setVisible(TRUE);
@@ -2790,32 +3515,98 @@ bool idle_startup()
 // local function definition
 //
 
-void login_show()
+bool login_show(LLSavedLogins const& saved_logins)
 {
 	LL_INFOS("AppInit") << "Initializing Login Screen" << LL_ENDL;
 
-#ifdef LL_RELEASE_FOR_DOWNLOAD
-	BOOL bUseDebugLogin = gSavedSettings.getBOOL("UseDebugLogin");
-#else
-	BOOL bUseDebugLogin = TRUE;
-#endif
-
+	// Show server combo if there is a grid in saved_logins that isn't agni.
+	BOOL show_server = FALSE;
+	LLSavedLoginsList const& saved_login_entries = saved_logins.getEntries();
+	for (std::list<LLSavedLoginEntry>::const_iterator iter = saved_login_entries.begin();
+		iter != saved_login_entries.end(); ++iter)
+	{
+		if (iter->getGrid() != GRID_INFO_AGNI)
+		{
+			show_server = TRUE;
+			break;
+		}
+	}
+	
+	// This creates the LLPanelLogin instance.
 	LLPanelLogin::show(	gViewerWindow->getVirtualWindowRect(),
-						bUseDebugLogin,
+						show_server,
 						login_callback, NULL );
 
+	// Now that the LLPanelLogin instance is created,
+	// store the login history there.
+	LLPanelLogin::setLoginHistory(saved_logins);
+
 	// UI textures have been previously loaded in doPreloadImages()
-					
+
 	LL_DEBUGS("AppInit") << "Setting Servers" << LL_ENDL;
 
-	//KOW
-/*
+	// Remember which servers are already listed.
+	std::set<EGridInfo> listed;
+	std::set<std::string> listed_name;	// Only the 'other' grids.
+
+	// Add the commandline -loginuri's to the list at the top.
+	bool have_loginuri = false;
 	LLViewerLogin* vl = LLViewerLogin::getInstance();
-	for(int grid_index = 1; grid_index < GRID_INFO_OTHER; ++grid_index)
+	std::vector<std::string> const& commandLineURIs(vl->getCommandLineURIs());
+	for (std::vector<std::string>::const_iterator iter = commandLineURIs.begin(); iter != commandLineURIs.end(); ++iter)
 	{
-		LLPanelLogin::addServer(vl->getKnownGridLabel(grid_index), grid_index);
+	  	LLURI cli_uri(*iter);
+		std::string cli_grid_name = cli_uri.hostName();
+		LLStringUtil::toLower(cli_grid_name);
+		if (listed_name.insert(cli_grid_name).second)
+		{
+			// If the loginuri already exists in the saved logins
+			// then use just it's name, otherwise show the full uri.
+			bool exists = false;
+			for (LLSavedLoginsList::const_iterator saved_login_iter = saved_login_entries.begin();
+			     saved_login_iter != saved_login_entries.end(); ++saved_login_iter)
+			{
+				if (saved_login_iter->getGridName() == cli_grid_name)
+				{
+					exists = true;
+					break;
+				}
+			}
+			LLPanelLogin::addServer(exists ? cli_grid_name : *iter, GRID_INFO_OTHER);
+			have_loginuri = true;	// Causes the first server to be added here to be selected.
+		}
 	}
-*/
+	// Only look at the name for 'other' grids.
+	listed.insert(GRID_INFO_OTHER);
+
+	// Add the saved logins, last used grids first.
+	for (LLSavedLoginsList::const_reverse_iterator saved_login_iter = saved_login_entries.rbegin();
+	     saved_login_iter != saved_login_entries.rend(); ++saved_login_iter)
+	{
+		LLSavedLoginEntry const& entry = *saved_login_iter;
+		EGridInfo grid_index = entry.getGrid();
+		std::string grid_name = entry.getGridName();
+		// Only show non-duplicate entries. Duplicate entries can occur for ALTs.
+		if (listed.insert(grid_index).second ||
+		    (grid_index == GRID_INFO_OTHER && listed_name.insert(grid_name).second))
+		{
+			LLPanelLogin::addServer(grid_name, grid_index);
+		}
+	}
+
+	// Finally show the other (mostly LL internal) Linden servers.
+	for(int grid_index = GRID_INFO_ADITI; grid_index < GRID_INFO_OTHER; ++grid_index)
+	{
+		if (listed.find((EGridInfo)grid_index) == listed.end())
+		{
+			LLPanelLogin::addServer(vl->getKnownGridLabel((EGridInfo)grid_index), grid_index);
+		}
+	}
+
+	// Remember that the user didn't change anything yet.
+	vl->setNameEditted(false);
+
+	return have_loginuri;
 }
 
 // Callback for when login screen is closed.  Option 0 = connect, option 1 = quit.
@@ -2833,14 +3624,11 @@ void login_callback(S32 option, void *userdata)
 	{
 		// Make sure we don't save the password if the user is trying to clear it.
 		std::string first, last, password;
-		BOOL remember = TRUE;
-		LLPanelLogin::getFields(first, last, password, remember);
-		if (!remember)
+		LLPanelLogin::getFields(&first, &last, &password);
+		if (!gSavedSettings.getBOOL("RememberPassword"))
 		{
 			// turn off the setting and write out to disk
-			gSavedSettings.setBOOL("RememberPassword", FALSE);
 			gSavedSettings.saveToFile( gSavedSettings.getString("ClientSettingsFile") , TRUE );
-			LLStartUp::deletePasswordFromDisk();
 		}
 
 		// Next iteration through main loop should shut down the app cleanly.
@@ -2970,45 +3758,21 @@ bool first_run_dialog_callback(const LLSD& notification, const LLSD& response)
 	if (0 == option)
 	{
 		LL_DEBUGS("AppInit") << "First run dialog cancelling" << LL_ENDL;
-        const std::string &url = gHippoGridManager->getConnectedGrid()->getRegisterUrl();
-        if (!url.empty()) {
-		    LLWeb::loadURL(url);
-        } else {
-            llwarns << "Account creation URL is empty" << llendl;
+		LLWeb::loadURL( CREATE_ACCOUNT_URL );
 	}
-    }
+
 	LLPanelLogin::giveFocus();
 	return false;
 }
 
 
-std::string last_d;
+
 void set_startup_status(const F32 frac, const std::string& string, const std::string& msg)
 {
-	if(gSavedSettings.getBOOL("EmeraldDisableLoginScreens"))
-	{
-		std::string new_d = string;
-		if(new_d != last_d)
-		{
-			last_d = new_d;
-			LLChat chat;
-			chat.mText = new_d;
-			chat.mSourceType = (EChatSourceType)(CHAT_SOURCE_OBJECT+1);
-			LLFloaterChat::addChat(chat);
-			if(new_d == LLTrans::getString("LoginWaitingForRegionHandshake"))
-			{
-				chat.mText = "MOTD: "+msg;
-				chat.mSourceType = (EChatSourceType)(CHAT_SOURCE_OBJECT+1);
-				LLFloaterChat::addChat(chat);
-			}
-		}
-	}else
-	{
-		gViewerWindow->setProgressPercent(frac*100);
-		gViewerWindow->setProgressString(string);
+	gViewerWindow->setProgressPercent(frac*100);
+	gViewerWindow->setProgressString(string);
 
-		gViewerWindow->setProgressMessage(msg);
-	}
+	gViewerWindow->setProgressMessage(msg);
 }
 
 bool login_alert_status(const LLSD& notification, const LLSD& response)
@@ -3019,11 +3783,9 @@ bool login_alert_status(const LLSD& notification, const LLSD& response)
     {
         case 0:     // OK
             break;
-        case 1: {   // Help
-            const std::string &url = gHippoGridManager->getConnectedGrid()->getSupportUrl();
-            if (!url.empty()) LLWeb::loadURL(url);
+        case 1:     // Help
+            LLWeb::loadURL( SUPPORT_URL );
             break;
-        }
         case 2:     // Teleport
             // Restart the login process, starting at our home locaton
             LLURLSimString::setString(LLURLSimString::sLocationStringHome);
@@ -3140,12 +3902,14 @@ bool update_dialog_callback(const LLSD& notification, const LLSD& response)
 	// *TODO change userserver to be grid on both viewer and sim, since
 	// userserver no longer exists.
 	query_map["userserver"] = LLViewerLogin::getInstance()->getGridLabel();
-	query_map["channel"] = LL_DEFAULT_VIEWER_CHANNEL;
+	// <edit>
+	query_map["channel"] = LL_CHANNEL;
+
 	// *TODO constantize this guy
 	// *NOTE: This URL is also used in win_setup/lldownloader.cpp
 	LLURI update_url = LLURI::buildHTTP("secondlife.com", 80, "update.php", query_map);
 	
-/*	if(LLAppViewer::sUpdaterInfo)
+	if(LLAppViewer::sUpdaterInfo)
 	{
 		delete LLAppViewer::sUpdaterInfo ;
 	}
@@ -3213,21 +3977,21 @@ bool update_dialog_callback(const LLSD& notification, const LLSD& response)
 	LLAppViewer::sUpdaterInfo->mUpdateExePath += update_url.asString();
 	LLAppViewer::sUpdaterInfo->mUpdateExePath += "\" -name \"";
 	LLAppViewer::sUpdaterInfo->mUpdateExePath += LLAppViewer::instance()->getSecondLifeTitle();
+	LLAppViewer::sUpdaterInfo->mUpdateExePath += "\" -bundleid \"";
+	LLAppViewer::sUpdaterInfo->mUpdateExePath += LL_VERSION_BUNDLE_ID;
 	LLAppViewer::sUpdaterInfo->mUpdateExePath += "\" &";
 
 	LL_DEBUGS("AppInit") << "Calling updater: " << LLAppViewer::sUpdaterInfo->mUpdateExePath << LL_ENDL;
 
 	// Run the auto-updater.
-*/
-	//system(LLAppViewer::sUpdaterInfo->mUpdateExePath.c_str()); /* Flawfinder: ignore */
-/*
+	system(LLAppViewer::sUpdaterInfo->mUpdateExePath.c_str()); /* Flawfinder: ignore */
+
 #elif LL_LINUX || LL_SOLARIS
 	OSMessageBox("Automatic updating is not yet implemented for Linux.\n"
 		"Please download the latest version from www.secondlife.com.",
 		LLStringUtil::null, OSMB_OK);
 #endif
 	LLAppViewer::instance()->forceQuit();
-	*/
 	return false;
 }
 
@@ -3252,28 +4016,13 @@ void use_circuit_callback(void**, S32 result)
 	}
 }
 
-void pass_processAvatarPropertiesReply(LLMessageSystem *msg, void**)
-{
-	// send it to 'observers'
-	LLPanelAvatar::processAvatarPropertiesReply(msg,0);
-	LLFloaterAvatarList::processAvatarPropertiesReply(msg,0);
-}
 
 void pass_processObjectPropertiesFamily(LLMessageSystem *msg, void**)
 {
-	// send it to 'observers'
-	LLSelectMgr::processObjectPropertiesFamily(msg,0);
-	JCFloaterAnimList::processObjectPropertiesFamily(msg,0);
-	JCFloaterAreaSearch::processObjectPropertiesFamily(msg,0);
+	// Send the result to the corresponding requesters.
+	LLSelectMgr::processObjectPropertiesFamily(msg, NULL);
+	JCFloaterAreaSearch::processObjectPropertiesFamily(msg, NULL);
 	ScriptCounter::processObjectPropertiesFamily(msg,0);
-}
-
-void pass_processObjectProperties(LLMessageSystem *msg, void**)
-{
-	// send it to 'observers'
-	JCExportTracker::processObjectProperties(msg,0);
-	LLSelectMgr::processObjectProperties(msg,0);
-	ScriptCounter::processObjectProperties(msg,0);
 }
 
 void register_viewer_callbacks(LLMessageSystem* msg)
@@ -3318,7 +4067,7 @@ void register_viewer_callbacks(LLMessageSystem* msg)
 
 	msg->setHandlerFuncFast(_PREHASH_ImprovedInstantMessage,	process_improved_im);
 	msg->setHandlerFuncFast(_PREHASH_ScriptQuestion,			process_script_question);
-	msg->setHandlerFuncFast(_PREHASH_ObjectProperties,			pass_processObjectProperties, NULL);
+	msg->setHandlerFuncFast(_PREHASH_ObjectProperties,			LLSelectMgr::processObjectProperties, NULL);
 	msg->setHandlerFuncFast(_PREHASH_ObjectPropertiesFamily,	pass_processObjectPropertiesFamily, NULL);
 	msg->setHandlerFunc("ForceObjectSelect", LLSelectMgr::processForceObjectSelect);
 
@@ -3354,7 +4103,7 @@ void register_viewer_callbacks(LLMessageSystem* msg)
 		LLViewerParcelMgr::processParcelDwellReply);
 
 	msg->setHandlerFunc("AvatarPropertiesReply",
-						pass_processAvatarPropertiesReply);
+						LLPanelAvatar::processAvatarPropertiesReply);
 	msg->setHandlerFunc("AvatarInterestsReply",
 						LLPanelAvatar::processAvatarInterestsReply);
 	msg->setHandlerFunc("AvatarGroupsReply",
@@ -3436,9 +4185,8 @@ void register_viewer_callbacks(LLMessageSystem* msg)
 
 	msg->setHandlerFunc("AvatarPickerReply", LLFloaterAvatarPicker::processAvatarPickerReply);
 
-	msg->setHandlerFunc("MapLayerReply", LLWorldMap::processMapLayerReply);
-	msg->setHandlerFunc("MapBlockReply", LLWorldMap::processMapBlockReply);
-	msg->setHandlerFunc("MapItemReply", LLWorldMap::processMapItemReply);
+	msg->setHandlerFunc("MapBlockReply", LLWorldMapMessage::processMapBlockReply);
+	msg->setHandlerFunc("MapItemReply", LLWorldMapMessage::processMapItemReply);
 
 	msg->setHandlerFunc("EventInfoReply", LLPanelEvent::processEventInfoReply);
 	msg->setHandlerFunc("PickInfoReply", LLPanelPick::processPickInfoReply);
@@ -3461,6 +4209,7 @@ void register_viewer_callbacks(LLMessageSystem* msg)
 	msg->setHandlerFunc("GenericMessage", process_generic_message);
 
 	msg->setHandlerFuncFast(_PREHASH_FeatureDisabled, process_feature_disabled_message);
+}
 
 /*
 // VoxelLayer
@@ -3617,7 +4366,7 @@ void init_start_screen(S32 location_id)
 	}
 
 	raw->expandToPowerOfTwo();
-	gStartImageGL->createGLTexture(0, raw);
+	gStartImageGL->createGLTexture(0, raw, 0, TRUE, LLViewerImageBoostLevel::OTHER);
 }
 
 
@@ -3675,6 +4424,10 @@ void LLStartUp::setStartupState( EStartupState state )
 
 void reset_login()
 {
+	// OGPX : Save URL history file
+	// This needs to be done on login failure because it gets read on *every* login attempt 
+	LLURLHistory::saveFile("url_history.xml");
+
 	LLStartUp::setStartupState( STATE_LOGIN_SHOW );
 
 	if ( gViewerWindow )
@@ -3706,7 +4459,7 @@ void LLStartUp::multimediaInit()
 	set_startup_status(0.42f, msg.c_str(), gAgent.mMOTD.c_str());
 	display_startup();
 
-	LLViewerMedia::initClass();
+	// LLViewerMedia::initClass();
 	LLViewerParcelMedia::initClass();
 }
 
@@ -3715,7 +4468,7 @@ bool LLStartUp::dispatchURL()
 	// ok, if we've gotten this far and have a startup URL
 	if (!sSLURLCommand.empty())
 	{
-		LLWebBrowserCtrl* web = NULL;
+		LLMediaCtrl* web = NULL;
 		const bool trusted_browser = false;
 		LLURLDispatcher::dispatch(sSLURLCommand, web, trusted_browser);
 	}
@@ -3733,7 +4486,7 @@ bool LLStartUp::dispatchURL()
 			|| (dy*dy > SLOP*SLOP) )
 		{
 			std::string url = LLURLSimString::getURL();
-			LLWebBrowserCtrl* web = NULL;
+			LLMediaCtrl* web = NULL;
 			const bool trusted_browser = false;
 			LLURLDispatcher::dispatch(url, web, trusted_browser);
 		}
@@ -3771,4 +4524,103 @@ void apply_udp_blacklist(const std::string& csv)
 	}
 	while(comma < csv.length());
 	
+}
+
+bool LLStartUp::handleSocksProxy(bool reportOK)
+{
+	bool use_http_proxy = gSavedSettings.getBOOL("BrowserProxyEnabled");
+	if (use_http_proxy)
+	{
+		std::string httpProxyType = gSavedSettings.getString("Socks5HttpProxyType");
+
+		// Determine the http proxy type (if any)
+		if (httpProxyType.compare("Web") == 0)
+		{
+			LLHost httpHost;
+			httpHost.setHostByName(gSavedSettings.getString("BrowserProxyAddress"));
+			httpHost.setPort(gSavedSettings.getS32("BrowserProxyPort"));
+			LLSocks::getInstance()->EnableHttpProxy(httpHost,LLPROXY_HTTP);
+		}
+		else if (httpProxyType.compare("Socks") == 0)
+		{
+			LLHost httpHost;
+			httpHost.setHostByName(gSavedSettings.getString("Socks5ProxyHost"));
+			httpHost.setPort(gSavedSettings.getS32("Socks5ProxyPort"));
+			LLSocks::getInstance()->EnableHttpProxy(httpHost,LLPROXY_SOCKS);
+		}
+		else
+		{
+			LLSocks::getInstance()->DisableHttpProxy();
+		}
+	}
+	else
+	{
+		LLSocks::getInstance()->DisableHttpProxy();
+	}
+	
+	bool use_socks_proxy = gSavedSettings.getBOOL("Socks5ProxyEnabled");
+	if (use_socks_proxy)
+	{	
+
+		// Determine and update LLSocks with the saved authentication system
+		std::string auth_type = gSavedSettings.getString("Socks5AuthType");
+			
+		if (auth_type.compare("None") == 0)
+		{
+			LLSocks::getInstance()->setAuthNone();
+		}
+
+		if (auth_type.compare("UserPass") == 0)
+		{
+			LLSocks::getInstance()->setAuthPassword(gSavedSettings.getString("Socks5Username"),gSavedSettings.getString("Socks5Password"));
+		}
+
+		// Start the proxy and check for errors
+		int status = LLSocks::getInstance()->startProxy(gSavedSettings.getString("Socks5ProxyHost"), gSavedSettings.getU32("Socks5ProxyPort"));
+		LLSD subs;
+		subs["PROXY"] = gSavedSettings.getString("Socks5ProxyHost");
+
+		switch(status)
+		{
+			case SOCKS_OK:
+				if (reportOK == true)
+				{
+					LLNotifications::instance().add("SOCKS_CONNECT_OK", subs);
+				}
+				return true;
+				break;
+
+			case SOCKS_CONNECT_ERROR: // TCP Fail
+				LLNotifications::instance().add("SOCKS_CONNECT_ERROR", subs);
+				break;
+
+			case SOCKS_NOT_PERMITTED: // Socks5 server rule set refused connection
+				LLNotifications::instance().add("SOCKS_NOT_PERMITTED", subs);
+				break;
+					
+			case SOCKS_NOT_ACCEPTABLE: // Selected authentication is not acceptable to server
+				LLNotifications::instance().add("SOCKS_NOT_ACCEPTABLE", subs);
+				break;
+
+			case SOCKS_AUTH_FAIL: // Authentication failed
+				LLNotifications::instance().add("SOCKS_AUTH_FAIL", subs);
+				break;
+
+			case SOCKS_UDP_FWD_NOT_GRANTED: // UDP forward request failed
+				LLNotifications::instance().add("SOCKS_UDP_FWD_NOT_GRANTED", subs);
+				break;
+
+			case SOCKS_HOST_CONNECT_FAILED: // Failed to open a TCP channel to the socks server
+				LLNotifications::instance().add("SOCKS_HOST_CONNECT_FAILED", subs);
+				break;		
+		}
+
+		return false;
+	}
+	else
+	{
+		LLSocks::getInstance()->stopProxy(); //ensure no UDP proxy is running and its all cleaned up
+	}
+
+	return true;
 }

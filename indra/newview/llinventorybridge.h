@@ -64,6 +64,8 @@ enum EInventoryIcon
 	CLOTHING_UNDERSHIRT_ICON_NAME,
 	CLOTHING_UNDERPANTS_ICON_NAME,
 	CLOTHING_SKIRT_ICON_NAME,
+	CLOTHING_ALPHA_ICON_NAME,
+	CLOTHING_TATTOO_ICON_NAME,
 	
 	ANIMATION_ICON_NAME,
 	GESTURE_ICON_NAME,
@@ -92,41 +94,6 @@ struct LLAttachmentRezAction
 	S32		mAttachPt;
 };
 
-// [RLVa:KB] - Checked: 2009-12-18 (RLVa-1.1.0i) | Added: RLVa-1.1.0i
-// Moved from llinventorybridge.cpp because we need it in RlvForceWear
-struct LLFoundData
-{
-	LLFoundData(const LLUUID& item_id,
-				const LLUUID& asset_id,
-				const std::string& name,
-				LLAssetType::EType asset_type) :
-		mItemID(item_id),
-		mAssetID(asset_id),
-		mName(name),
-		mAssetType(asset_type),
-		mWearable( NULL ) {}
-	
-	LLUUID mItemID;
-	LLUUID mAssetID;
-	std::string mName;
-	LLAssetType::EType mAssetType;
-	LLWearable* mWearable;
-};
-
-struct LLWearableHoldingPattern
-{
-	LLWearableHoldingPattern(BOOL fAddToOutfit) : mResolved(0), mAddToOutfit(fAddToOutfit) {}
-	~LLWearableHoldingPattern()
-	{
-		for_each(mFoundList.begin(), mFoundList.end(), DeletePointer());
-		mFoundList.clear();
-	}
-	typedef std::list<LLFoundData*> found_list_t;
-	found_list_t mFoundList;
-	S32 mResolved;
-	BOOL mAddToOutfit;
-};
-// [/RLVa:KB]
 
 //helper functions
 class LLShowProps 
@@ -152,6 +119,41 @@ public:
 		}
 	}
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // Class LLInventoryPanelObserver
@@ -286,7 +288,7 @@ public:
 	virtual BOOL hasChildren() const { return FALSE; }
 	virtual BOOL isUpToDate() const { return TRUE; }
 
-	virtual LLFontGL::StyleFlags getLabelStyle() const;
+
 
 	// override for LLInvFVBridge
 	virtual void clearDisplayName() { mDisplayName.clear(); }
@@ -351,6 +353,8 @@ protected:
 	static void createNewGloves(void* user_data);
 	static void createNewUndershirt(void* user_data);
 	static void createNewUnderpants(void* user_data);
+	static void createNewAlpha(void* user_data);
+	static void createNewTattoo(void* user_data);
 	static void createNewShape(void* user_data);
 	static void createNewSkin(void* user_data);
 	static void createNewHair(void* user_data);
@@ -592,7 +596,7 @@ public:
 	virtual const std::string& getPrefix() { return sPrefix; }
 
 	virtual LLUIImagePtr getIcon() const;
-	virtual void	performAction(LLFolderView* folder, LLInventoryModel* model, std::string action);
+
 	virtual void openItem();
 
 protected:

@@ -85,16 +85,16 @@ public:
 	LLViewerRegion*			getRegionFromPosGlobal(const LLVector3d &pos);
 	LLViewerRegion*			getRegionFromPosAgent(const LLVector3 &pos);
 	LLViewerRegion*			getRegionFromHandle(const U64 &handle);
-	BOOL				positionRegionValidGlobal(const LLVector3d& pos);			// true if position is in valid region
-	LLVector3d			clipToVisibleRegions(const LLVector3d &start_pos, const LLVector3d &end_pos);
+	BOOL					positionRegionValidGlobal(const LLVector3d& pos);			// true if position is in valid region
+	LLVector3d				clipToVisibleRegions(const LLVector3d &start_pos, const LLVector3d &end_pos);
 
-	void				updateAgentOffset(const LLVector3d &offset);
+	void					updateAgentOffset(const LLVector3d &offset);
 
 	// All of these should be in the agent coordinate frame
 	LLViewerRegion*			resolveRegionGlobal(LLVector3 &localpos, const LLVector3d &position);
 	LLViewerRegion*			resolveRegionAgent(LLVector3 &localpos, const LLVector3 &position);
-	F32				resolveLandHeightGlobal(const LLVector3d &position);
-	F32				resolveLandHeightAgent(const LLVector3 &position);
+	F32						resolveLandHeightGlobal(const LLVector3d &position);
+	F32						resolveLandHeightAgent(const LLVector3 &position);
 
 	// Return the lowest allowed Z point to prevent objects from being moved
 	// underground.
@@ -146,6 +146,7 @@ public:
 
 	LLViewerImage *getDefaultWaterTexture();
 	void updateWaterObjects();
+	void waterHeightRegionInfo(std::string const& sim_name, F32 water_height);
 	void shiftRegions(const LLVector3& offset);
 
 	void setSpaceTimeUSec(const U64 space_time_usec);

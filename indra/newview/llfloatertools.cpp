@@ -80,7 +80,7 @@
 #include "llviewercontrol.h"
 #include "llviewerjoystick.h"
 #include "lluictrlfactory.h"
-#include "pipeline.h"
+
 
 // Globals
 LLFloaterTools *gFloaterTools = NULL;
@@ -233,6 +233,8 @@ BOOL	LLFloaterTools::postBuild()
 	childSetValue("checkbox uniform",(BOOL)gSavedSettings.getBOOL("ScaleUniform"));
 	mCheckStretchTexture = getChild<LLCheckBoxCtrl>("checkbox stretch textures");
 	childSetValue("checkbox stretch textures",(BOOL)gSavedSettings.getBOOL("ScaleStretchTextures"));
+	mCheckLimitDrag = getChild<LLCheckBoxCtrl>("checkbox limit drag distance");
+	childSetValue("checkbox limit drag distance",(BOOL)gSavedSettings.getBOOL("LimitDragDistance"));
 	mTextGridMode = getChild<LLTextBox>("text ruler mode");
 	mComboGridMode = getChild<LLComboBox>("combobox grid mode");
 	childSetCommitCallback("combobox grid mode",commit_grid_mode, this);
@@ -368,6 +370,7 @@ LLFloaterTools::LLFloaterTools()
 	mComboGridMode(NULL),
 	mCheckStretchUniform(NULL),
 	mCheckStretchTexture(NULL),
+	mCheckLimitDrag(NULL),
 
 	mBtnRotateLeft(NULL),
 	mBtnRotateReset(NULL),
@@ -459,9 +462,47 @@ void LLFloaterTools::refresh()
 
 	// Refresh object and prim count labels
 	LLLocale locale(LLLocale::USER_LOCALE);
-	std::string obj_count_string;
-	LLResMgr::getInstance()->getIntegerString(obj_count_string, LLSelectMgr::getInstance()->getSelection()->getRootObjectCount());
-	childSetTextArg("obj_count",  "[COUNT]", obj_count_string);	
+	// Added in Link Num value -HgB
+	S32 object_count = LLSelectMgr::getInstance()->getSelection()->getRootObjectCount();
+	S32 prim_count = LLSelectMgr::getInstance()->getEditSelection()->getObjectCount();
+	std::string value_string;
+	std::string desc_string;
+	if ((gSavedSettings.getBOOL("EditLinkedParts"))&&(prim_count == 1)) //Selecting a single prim in "Edit Linked" mode, show link number
+	{
+		desc_string = "Link number:";
+
+		LLViewerObject* selected = LLSelectMgr::getInstance()->getSelection()->getFirstObject();
+		if (selected && selected->getRootEdit())
+		{
+			LLViewerObject::child_list_t children = selected->getRootEdit()->getChildren();
+			if (children.empty())
+			{
+				value_string = "0"; // An unlinked prim is "link 0".
+			}
+			else 
+			{
+				children.push_front(selected->getRootEdit()); // need root in the list too
+				S32 index = 0;
+				for (LLViewerObject::child_list_t::iterator iter = children.begin(); iter != children.end(); ++iter)
+				{
+					index++;
+					if ((*iter)->isSelected())
+					{
+						LLResMgr::getInstance()->getIntegerString(value_string, index);
+						break;
+					}
+				}
+			}
+		}
+	}
+	else
+	{
+		desc_string = "Selected objects:";
+		LLResMgr::getInstance()->getIntegerString(value_string, object_count);
+	}
+	childSetTextArg("link_num_obj_count",  "[DESC]", desc_string);	
+	childSetTextArg("link_num_obj_count",  "[NUM]", value_string);
+	
 	std::string prim_count_string;
 	LLResMgr::getInstance()->getIntegerString(prim_count_string, LLSelectMgr::getInstance()->getSelection()->getObjectCount());
 	childSetTextArg("prim_count", "[COUNT]", prim_count_string);
@@ -644,6 +685,7 @@ void LLFloaterTools::updatePopup(LLCoordGL center, MASK mask)
 	//mCheckSelectLinked	->setVisible( edit_visible );
 	if (mCheckStretchUniform) mCheckStretchUniform->setVisible( edit_visible );
 	if (mCheckStretchTexture) mCheckStretchTexture->setVisible( edit_visible );
+	if (mCheckLimitDrag) mCheckLimitDrag->setVisible( edit_visible );
 
 	// Create buttons
 	BOOL create_visible = (tool == LLToolCompCreate::getInstance());
@@ -742,8 +784,8 @@ void LLFloaterTools::updatePopup(LLCoordGL center, MASK mask)
 		mSliderDozerForce	->setVisible( land_visible );
 		childSetVisible("Strength:", land_visible);
 	}
-
-	childSetVisible("obj_count", !land_visible);
+	
+	childSetVisible("link_num_obj_count", !land_visible);
 	childSetVisible("prim_count", !land_visible);
 	mTab->setVisible(!land_visible);
 	mPanelLandInfo->setVisible(land_visible);
@@ -791,20 +833,21 @@ void LLFloaterTools::onClose(bool app_quitting)
 	mParcelSelection = NULL;
 	mObjectSelection = NULL;
 
-	if (gAgent.cameraMouselook())
+	if (!gAgent.cameraMouselook())
+	{
+		// Switch back to basic toolset
+		LLToolMgr::getInstance()->setCurrentToolset(gBasicToolset);
+		// we were already in basic toolset, using build tools
+		// so manually reset tool to default (pie menu tool)
+		LLToolMgr::getInstance()->getCurrentToolset()->selectFirstTool();
+	}
+	else 
 	{
 		// Switch back to mouselook toolset
 		LLToolMgr::getInstance()->setCurrentToolset(gMouselookToolset);
+
 		gViewerWindow->hideCursor();
 		gViewerWindow->moveCursorToCenter();
-	}
-	else
-	{
-	// Switch back to basic toolset
-	LLToolMgr::getInstance()->setCurrentToolset(gBasicToolset);
-	// we were already in basic toolset, using build tools
-	// so manually reset tool to default (pie menu tool)
-	LLToolMgr::getInstance()->getCurrentToolset()->selectFirstTool();
 	}
 
 	// gMenuBarView->setItemVisible(std::string("Tools"), FALSE);
@@ -922,7 +965,7 @@ void click_apply_to_selection(void* user)
 
 void commit_select_tool(LLUICtrl *ctrl, void *data)
 {
-	S32 show_owners = LLPipeline::sShowParcelOwners;
+	S32 show_owners = gSavedSettings.getBOOL("ShowParcelOwners");
 	gFloaterTools->setEditTool(data);
 	gSavedSettings.setBOOL("ShowParcelOwners", show_owners);
 }

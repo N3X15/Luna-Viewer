@@ -132,6 +132,12 @@
 <NetMapOtherOwnAboveWater value="60, 60, 60, 255"/>
 <NetMapOtherOwnBelowWater value="30, 30, 30, 255"/>
 
+<!-- MAP -->
+<MapAvatar value="0, 255, 0, 255" />
+<MapFriend value="255, 255, 0, 255" />
+<MapLinden value="0, 0, 255, 255" />
+<MapMuted value="110, 110, 110, 255" />
+
 <!-- HELP WINDOW -->
 <HelpBgColor value="200, 209, 204, 255"/>
 <HelpFgColor value="0, 0, 0, 255"/>

@@ -55,9 +55,6 @@
 
 const U8  OVERLAY_IMG_COMPONENTS = 4;
 
-BOOL	LLViewerParcelOverlay::sShowPropertyLines = FALSE;
-
-
 LLViewerParcelOverlay::LLViewerParcelOverlay(LLViewerRegion* region, F32 region_width_meters)
 :	mRegion( region ),
 	mParcelGridsPerEdge( S32( region_width_meters / PARCEL_GRID_STEP_METERS ) ),
@@ -74,7 +71,7 @@ LLViewerParcelOverlay::LLViewerParcelOverlay(LLViewerRegion* region, F32 region_
 	// Use mipmaps = FALSE, clamped, NEAREST filter, for sharp edges
 	mTexture = new LLImageGL(FALSE);
 	mImageRaw = new LLImageRaw(mParcelGridsPerEdge, mParcelGridsPerEdge, OVERLAY_IMG_COMPONENTS);
-	mTexture->createGLTexture(0, mImageRaw);
+	mTexture->createGLTexture(0, mImageRaw, 0, TRUE, LLViewerImageBoostLevel::OTHER);
 	gGL.getTexUnit(0)->activate();
 	gGL.getTexUnit(0)->bind(mTexture);
 	mTexture->setAddressMode(LLTexUnit::TAM_CLAMP);
@@ -102,14 +99,6 @@ LLViewerParcelOverlay::LLViewerParcelOverlay(LLViewerRegion* region, F32 region_
 
 	// Make sure the texture matches the ownership information.
 	updateOverlayTexture();
-	sShowPropertyLines = gSavedSettings.getBOOL("ShowPropertyLines");
-	mPropertyColorAvail = gColors.getColor4U("PropertyColorAvail");
-	mPropertyColorOther = gColors.getColor4U("PropertyColorOther");
-	mPropertyColorGroup = gColors.getColor4U("PropertyColorGroup");
-	mPropertyColorSelf  = gColors.getColor4U("PropertyColorSelf");
-	mPropertyColorForSale  = gColors.getColor4U("PropertyColorForSale");
-	mPropertyColorAuction  = gColors.getColor4U("PropertyColorAuction");
-
 }
 
 
@@ -217,14 +206,12 @@ void LLViewerParcelOverlay::updateOverlayTexture()
 		return;
 	}
 	// Can do this because gColors are actually stored as LLColor4U
-	/*
 	const LLColor4U avail = gColors.getColor4U("PropertyColorAvail");
 	const LLColor4U owned = gColors.getColor4U("PropertyColorOther");
 	const LLColor4U group = gColors.getColor4U("PropertyColorGroup");
 	const LLColor4U self  = gColors.getColor4U("PropertyColorSelf");
 	const LLColor4U for_sale  = gColors.getColor4U("PropertyColorForSale");
 	const LLColor4U auction  = gColors.getColor4U("PropertyColorAuction");
-	*/
 
 	// Create the base texture.
 	U8 *raw = mImageRaw->getData();
@@ -243,46 +230,46 @@ void LLViewerParcelOverlay::updateOverlayTexture()
 		switch( ownership & 0x7 )
 		{
 		case PARCEL_PUBLIC:
-			r = mPropertyColorAvail.mV[VRED];
-			g = mPropertyColorAvail.mV[VGREEN];
-			b = mPropertyColorAvail.mV[VBLUE];
-			a = mPropertyColorAvail.mV[VALPHA];
+			r = avail.mV[VRED];
+			g = avail.mV[VGREEN];
+			b = avail.mV[VBLUE];
+			a = avail.mV[VALPHA];
 			break;
 		case PARCEL_OWNED:
-			r = mPropertyColorOther.mV[VRED];
-			g = mPropertyColorOther.mV[VGREEN];
-			b = mPropertyColorOther.mV[VBLUE];
-			a = mPropertyColorOther.mV[VALPHA];
+			r = owned.mV[VRED];
+			g = owned.mV[VGREEN];
+			b = owned.mV[VBLUE];
+			a = owned.mV[VALPHA];
 			break;
 		case PARCEL_GROUP:
-			r = mPropertyColorGroup.mV[VRED];
-			g = mPropertyColorGroup.mV[VGREEN];
-			b = mPropertyColorGroup.mV[VBLUE];
-			a = mPropertyColorGroup.mV[VALPHA];
+			r = group.mV[VRED];
+			g = group.mV[VGREEN];
+			b = group.mV[VBLUE];
+			a = group.mV[VALPHA];
 			break;
 		case PARCEL_SELF:
-			r = mPropertyColorSelf.mV[VRED];
-			g = mPropertyColorSelf.mV[VGREEN];
-			b = mPropertyColorSelf.mV[VBLUE];
-			a = mPropertyColorSelf.mV[VALPHA];
+			r = self.mV[VRED];
+			g = self.mV[VGREEN];
+			b = self.mV[VBLUE];
+			a = self.mV[VALPHA];
 			break;
 		case PARCEL_FOR_SALE:
-			r = mPropertyColorForSale.mV[VRED];
-			g = mPropertyColorForSale.mV[VGREEN];
-			b = mPropertyColorForSale.mV[VBLUE];
-			a = mPropertyColorForSale.mV[VALPHA];
+			r = for_sale.mV[VRED];
+			g = for_sale.mV[VGREEN];
+			b = for_sale.mV[VBLUE];
+			a = for_sale.mV[VALPHA];
 			break;
 		case PARCEL_AUCTION:
-			r = mPropertyColorAuction.mV[VRED];
-			g = mPropertyColorAuction.mV[VGREEN];
-			b = mPropertyColorAuction.mV[VBLUE];
-			a = mPropertyColorAuction.mV[VALPHA];
+			r = auction.mV[VRED];
+			g = auction.mV[VGREEN];
+			b = auction.mV[VBLUE];
+			a = auction.mV[VALPHA];
 			break;
 		default:
-			r = mPropertyColorSelf.mV[VRED];
-			g = mPropertyColorSelf.mV[VGREEN];
-			b = mPropertyColorSelf.mV[VBLUE];
-			a = mPropertyColorSelf.mV[VALPHA];
+			r = self.mV[VRED];
+			g = self.mV[VGREEN];
+			b = self.mV[VBLUE];
+			a = self.mV[VALPHA];
 			break;
 		}
 
@@ -322,19 +309,17 @@ void LLViewerParcelOverlay::uncompressLandOverlay(S32 chunk, U8 *packed_overlay)
 
 void LLViewerParcelOverlay::updatePropertyLines()
 {
-	if (!sShowPropertyLines)
+	if (!gSavedSettings.getBOOL("ShowPropertyLines"))
 		return;
 	
 	S32 row, col;
 
 	// Can do this because gColors are actually stored as LLColor4U
-	/*
 	const LLColor4U self_coloru  = gColors.getColor4U("PropertyColorSelf");
 	const LLColor4U other_coloru = gColors.getColor4U("PropertyColorOther");
 	const LLColor4U group_coloru = gColors.getColor4U("PropertyColorGroup");
 	const LLColor4U for_sale_coloru = gColors.getColor4U("PropertyColorForSale");
 	const LLColor4U auction_coloru = gColors.getColor4U("PropertyColorAuction");
-	*/
 
 	// Build into dynamic arrays, then copy into static arrays.
 	LLDynamicArray<LLVector3, 256> new_vertex_array;
@@ -365,23 +350,23 @@ void LLViewerParcelOverlay::updatePropertyLines()
 				{
 				case PARCEL_SELF:
 					addPropertyLine(new_vertex_array, new_color_array, new_coord_array,
-						left, bottom, WEST, mPropertyColorSelf);
+						left, bottom, WEST, self_coloru);
 					break;
 				case PARCEL_GROUP:
 					addPropertyLine(new_vertex_array, new_color_array, new_coord_array,
-						left, bottom, WEST, mPropertyColorGroup);
+						left, bottom, WEST, group_coloru);
 					break;
 				case PARCEL_OWNED:
 					addPropertyLine(new_vertex_array, new_color_array, new_coord_array,
-						left, bottom, WEST, mPropertyColorOther);
+						left, bottom, WEST, other_coloru);
 					break;
 				case PARCEL_FOR_SALE:
 					addPropertyLine(new_vertex_array, new_color_array, new_coord_array,
-						left, bottom, WEST, mPropertyColorForSale);
+						left, bottom, WEST, for_sale_coloru);
 					break;
 				case PARCEL_AUCTION:
 					addPropertyLine(new_vertex_array, new_color_array, new_coord_array,
-						left, bottom, WEST, mPropertyColorAuction);
+						left, bottom, WEST, auction_coloru);
 					break;
 				default:
 					break;
@@ -405,23 +390,23 @@ void LLViewerParcelOverlay::updatePropertyLines()
 				{
 				case PARCEL_SELF:
 					addPropertyLine(new_vertex_array, new_color_array, new_coord_array,
-						right, bottom, EAST, mPropertyColorSelf);
+						right, bottom, EAST, self_coloru);
 					break;
 				case PARCEL_GROUP:
 					addPropertyLine(new_vertex_array, new_color_array, new_coord_array,
-						right, bottom, EAST, mPropertyColorGroup);
+						right, bottom, EAST, group_coloru);
 					break;
 				case PARCEL_OWNED:
 					addPropertyLine(new_vertex_array, new_color_array, new_coord_array,
-						right, bottom, EAST, mPropertyColorOther);
+						right, bottom, EAST, other_coloru);
 					break;
 				case PARCEL_FOR_SALE:
 					addPropertyLine(new_vertex_array, new_color_array, new_coord_array,
-						right, bottom, EAST, mPropertyColorForSale);
+						right, bottom, EAST, for_sale_coloru);
 					break;
 				case PARCEL_AUCTION:
 					addPropertyLine(new_vertex_array, new_color_array, new_coord_array,
-						right, bottom, EAST, mPropertyColorAuction);
+						right, bottom, EAST, auction_coloru);
 					break;
 				default:
 					break;
@@ -435,23 +420,23 @@ void LLViewerParcelOverlay::updatePropertyLines()
 				{
 				case PARCEL_SELF:
 					addPropertyLine(new_vertex_array, new_color_array, new_coord_array,
-						left, bottom, SOUTH, mPropertyColorSelf);
+						left, bottom, SOUTH, self_coloru);
 					break;
 				case PARCEL_GROUP:
 					addPropertyLine(new_vertex_array, new_color_array, new_coord_array,
-						left, bottom, SOUTH, mPropertyColorGroup);
+						left, bottom, SOUTH, group_coloru);
 					break;
 				case PARCEL_OWNED:
 					addPropertyLine(new_vertex_array, new_color_array, new_coord_array,
-						left, bottom, SOUTH, mPropertyColorOther);
+						left, bottom, SOUTH, other_coloru);
 					break;
 				case PARCEL_FOR_SALE:
 					addPropertyLine(new_vertex_array, new_color_array, new_coord_array,
-						left, bottom, SOUTH, mPropertyColorForSale);
+						left, bottom, SOUTH, for_sale_coloru);
 					break;
 				case PARCEL_AUCTION:
 					addPropertyLine(new_vertex_array, new_color_array, new_coord_array,
-						left, bottom, SOUTH, mPropertyColorAuction);
+						left, bottom, SOUTH, auction_coloru);
 					break;
 				default:
 					break;
@@ -476,23 +461,23 @@ void LLViewerParcelOverlay::updatePropertyLines()
 				{
 				case PARCEL_SELF:
 					addPropertyLine(new_vertex_array, new_color_array, new_coord_array,
-						left, top, NORTH, mPropertyColorSelf);
+						left, top, NORTH, self_coloru);
 					break;
 				case PARCEL_GROUP:
 					addPropertyLine(new_vertex_array, new_color_array, new_coord_array,
-						left, top, NORTH, mPropertyColorGroup);
+						left, top, NORTH, group_coloru);
 					break;
 				case PARCEL_OWNED:
 					addPropertyLine(new_vertex_array, new_color_array, new_coord_array,
-						left, top, NORTH, mPropertyColorOther);
+						left, top, NORTH, other_coloru);
 					break;
 				case PARCEL_FOR_SALE:
 					addPropertyLine(new_vertex_array, new_color_array, new_coord_array,
-						left, top, NORTH, mPropertyColorForSale);
+						left, top, NORTH, for_sale_coloru);
 					break;
 				case PARCEL_AUCTION:
 					addPropertyLine(new_vertex_array, new_color_array, new_coord_array,
-						left, top, NORTH, mPropertyColorAuction);
+						left, top, NORTH, auction_coloru);
 					break;
 				default:
 					break;
@@ -752,7 +737,7 @@ void LLViewerParcelOverlay::idleUpdate(bool force_update)
 
 S32 LLViewerParcelOverlay::renderPropertyLines	() 
 {
-	if (!sShowPropertyLines)
+	if (!gSavedSettings.getBOOL("ShowPropertyLines"))
 	{
 		return 0;
 	}
@@ -857,9 +842,8 @@ S32 LLViewerParcelOverlay::renderPropertyLines	()
 
 		gGL.end();
 
-		//Always show property lines -Liny
-		//if (LLSelectMgr::sRenderHiddenSelections && gFloaterTools && gFloaterTools->getVisible())
-		//{
+		if (LLSelectMgr::sRenderHiddenSelections && gFloaterTools && gFloaterTools->getVisible())
+		{
 			LLGLDepthTest depth(GL_TRUE, GL_FALSE, GL_GREATER);
 			
 			colorp  = mColorArray  + BYTES_PER_COLOR   * i;
@@ -885,7 +869,7 @@ S32 LLViewerParcelOverlay::renderPropertyLines	()
 			drawn += vertex_per_edge;
 
 			gGL.end();
-		//}
+		}
 		
 	}
 

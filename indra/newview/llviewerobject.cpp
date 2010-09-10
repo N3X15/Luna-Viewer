@@ -34,7 +34,7 @@
 
 #include "llviewerobject.h"
 
-#include "audioengine.h"
+#include "llaudioengine.h"
 #include "imageids.h"
 #include "indra_constants.h"
 #include "llmath.h"
@@ -98,10 +98,6 @@
 #include "llvowlsky.h"
 #include "llmanip.h"
 
-// [RLVa:KB]
-#include "rlvhandler.h"
-// [/RLVa:KB]
-
 //#define DEBUG_UPDATE_TYPE
 
 BOOL gVelocityInterpolate = TRUE;
@@ -148,6 +144,8 @@ LLViewerObject *LLViewerObject::createObject(const LLUUID &id, const LLPCode pco
 	  res = new LLVOSurfacePatch(id, pcode, regionp); break;
 	case LL_VO_SKY:
 	  res = new LLVOSky(id, pcode, regionp); break;
+	case LL_VO_VOID_WATER:
+	  res = new LLVOVoidWater(id, pcode, regionp); break;
 	case LL_VO_WATER:
 	  res = new LLVOWater(id, pcode, regionp); break;
 	case LL_VO_GROUND:
@@ -256,6 +254,9 @@ LLViewerObject::~LLViewerObject()
 	{
 		if(iter->second != NULL)
 		{
+			// <edit>
+			// There was a crash here
+			// </edit>
 			delete iter->second->data;
 			delete iter->second;
 		}
@@ -510,8 +511,6 @@ void LLViewerObject::setParent(LLViewerObject* parent)
 
 void LLViewerObject::addChild(LLViewerObject *childp)
 {
-	BOOL result = TRUE;
-	
 	for (child_list_t::iterator i = mChildList.begin(); i != mChildList.end(); ++i)
 	{
 		if (*i == childp)
@@ -528,17 +527,6 @@ void LLViewerObject::addChild(LLViewerObject *childp)
 
 	childp->setParent(this);
 	mChildList.push_back(childp);
-
-	if (!result) 
-	{
-		llwarns << "Failed to attach child " << childp->getID() << " to object " << getID() << llendl;
-		removeChild(childp);
-		if (mJointInfo)
-		{
-			delete mJointInfo;
-			mJointInfo = NULL;
-		}
-	}
 }
 
 void LLViewerObject::removeChild(LLViewerObject *childp)
@@ -1011,12 +999,7 @@ U32 LLViewerObject::processUpdateMessage(LLMessageSystem *mesgsys,
 					coloru.mV[3] = 255 - coloru.mV[3];
 					mText->setColor(LLColor4(coloru));
 					mText->setStringUTF8(temp_string);
-// [RLVa:KB] - Checked: 2009-07-09 (RLVa-1.0.0f) | Added: RLVa-1.0.0f
-					if (rlv_handler_t::isEnabled())
-					{
-						mText->setObjectText(temp_string);
-					}
-// [/RLVa:KB]
+
 					// @hook OnSetText(id,string) Someone set this object's llSetText.
 					LUA_CALL("OnSetText") << getID() << temp_string << LUA_END;
 
@@ -1436,12 +1419,6 @@ U32 LLViewerObject::processUpdateMessage(LLMessageSystem *mesgsys,
 					coloru.mV[3] = 255 - coloru.mV[3];
 					mText->setColor(LLColor4(coloru));
 					mText->setStringUTF8(temp_string);
-// [RLVa:KB] - Version: 1.23.4 | Checked: 2009-07-09 (RLVa-1.0.0f) | Added: RLVa-1.0.0f
-					if (rlv_handler_t::isEnabled())
-					{
-						mText->setObjectText(temp_string);
-					}
-// [/RLVa:KB]
 
 					setChanged(TEXTURE);
 					LUA_CALL("OnSetText") << temp_string << getID() << LUA_END;
@@ -1632,24 +1609,6 @@ U32 LLViewerObject::processUpdateMessage(LLMessageSystem *mesgsys,
 								gObjectList.killObject(this);
 								return retval;
 							}
-// [RLVa:KB] - Checked: 2009-12-27 (RLVa-1.1.0k) | Added: RLVa-1.1.0k
-							if ( (rlv_handler_t::isEnabled()) && (sent_parentp->isAvatar()) && (sent_parentp->getID() == gAgent.getID()) )
-							{
-								// Rezzed object that's being worn as an attachment (we're assuming this will be due to llAttachToAvatar())
-								S32 idxAttachPt = ATTACHMENT_ID_FROM_STATE(getState());
-								if (gRlvHandler.isLockedAttachment(idxAttachPt, RLV_LOCK_ANY))
-								{
-									// If this will end up on an "add locked" attachment point then treat the attach as a user action
-									LLNameValue* nvItem = getNVPair("AttachItemID");
-									if (nvItem)
-									{
-										LLUUID idItem(nvItem->getString());
-										if (idItem.notNull())
-											gRlvHandler.onWearAttachment(idItem);
-									}
-								}
-							}
-// [/RLVa:KB]
 							sent_parentp->addChild(this);
 							// make sure this object gets a non-damped update
 							if (sent_parentp->mDrawable.notNull())
@@ -1839,7 +1798,7 @@ U32 LLViewerObject::processUpdateMessage(LLMessageSystem *mesgsys,
 		if (cdp)
 		{
 			F32 ping_delay = 0.5f * mTimeDilation * ( ((F32)cdp->getPingDelay()) * 0.001f + gFrameDTClamped);
-			LLVector3 diff = getVelocity() * (0.5f*mTimeDilation*(gFrameDTClamped + ((F32)ping_delay)*0.001f)); 
+			LLVector3 diff = getVelocity() * ping_delay; 
 			new_pos_parent += diff;
 		}
 		else
@@ -1925,8 +1884,11 @@ U32 LLViewerObject::processUpdateMessage(LLMessageSystem *mesgsys,
 
 	if ( gShowObjectUpdates )
 	{
-		if (!((mPrimitiveCode == LL_PCODE_LEGACY_AVATAR) && (((LLVOAvatar *) this)->isSelf()))
-			&& mRegionp)
+		// <edit> We want to see updates from our own avatar
+		//if (!((mPrimitiveCode == LL_PCODE_LEGACY_AVATAR) && (((LLVOAvatar *) this)->mIsSelf))
+		//	&& mRegionp)
+		if(mRegionp)
+		// </edit>
 		{
 			LLViewerObject* object = gObjectList.createObjectViewer(LL_PCODE_LEGACY_TEXT_BUBBLE, mRegionp);
 			LLVOTextBubble* bubble = (LLVOTextBubble*) object;
@@ -1977,6 +1939,11 @@ U32 LLViewerObject::processUpdateMessage(LLMessageSystem *mesgsys,
 
 	if (needs_refresh)
 	{
+		// <edit>
+		if(isChanged(MOVED))	// Update "center" if this or children are selected,
+								// and translate, scale, or rotate occurred on this.
+								// Leave dialog refresh to happen always, as before.
+		// </edit>
 		LLSelectMgr::getInstance()->updateSelectionCenter();
 		dialog_refresh_all();
 	} 
@@ -2925,7 +2892,7 @@ F32 LLViewerObject::getMidScale() const
 }
 
 
-void LLViewerObject::updateTextures(LLAgent &agent)
+void LLViewerObject::updateTextures()
 {
 }
 
@@ -2940,14 +2907,14 @@ void LLViewerObject::boostTexturePriority(BOOL boost_children /* = TRUE */)
 	S32 tex_count = getNumTEs();
 	for (i = 0; i < tex_count; i++)
 	{
- 		getTEImage(i)->setBoostLevel(LLViewerImage::BOOST_SELECTED);
+ 		getTEImage(i)->setBoostLevel(LLViewerImageBoostLevel::BOOST_SELECTED);
 	}
 
 	if (isSculpted())
 	{
 		LLSculptParams *sculpt_params = (LLSculptParams *)getParameterEntry(LLNetworkData::PARAMS_SCULPT);
 		LLUUID sculpt_id = sculpt_params->getSculptTexture();
-		gImageList.getImage(sculpt_id)->setBoostLevel(LLViewerImage::BOOST_SELECTED);
+		gImageList.getImage(sculpt_id)->setBoostLevel(LLViewerImageBoostLevel::BOOST_SELECTED);
 	}
 	
 	if (boost_children)
@@ -4124,6 +4091,14 @@ void LLViewerObject::setDebugText(const std::string &utf8text)
 	mText->setDoFade(FALSE);
 	updateText();
 }
+// <edit>
+std::string LLViewerObject::getDebugText()
+{
+	if(mText)
+		return mText->getStringUTF8();
+	return "";
+}
+// </edit>
 
 void LLViewerObject::setIcon(LLViewerImage* icon_image)
 {
@@ -4391,7 +4366,7 @@ void LLViewerObject::setAttachedSound(const LLUUID &audio_uuid, const LLUUID& ow
 			mAudioSourcep = NULL;
 		}
 		else if (flags & LL_SOUND_FLAG_STOP)
-        	{	
+        {
 			// Just shut off the sound
 			mAudioSourcep->play(LLUUID::null);
 		}
@@ -4870,10 +4845,7 @@ BOOL LLViewerObject::permTransfer() const
 // given you modify rights to.  JC
 BOOL LLViewerObject::allowOpen() const
 {
-// [RLVa:KB] - Checked: 2009-07-04 (RLVa-1.0.0b)
-	return !flagInventoryEmpty() && (permYouOwner() || permModify()) && (!gRlvHandler.hasBehaviour(RLV_BHVR_EDIT));
-// [/RLVa:KB]
-//	return !flagInventoryEmpty() && (permYouOwner() || permModify());
+	return !flagInventoryEmpty() && (permYouOwner() || permModify());
 }
 
 LLViewerObject::LLInventoryCallbackInfo::~LLInventoryCallbackInfo()
@@ -5198,3 +5170,20 @@ void LLViewerObject::resetChildrenPosition(const LLVector3& offset, BOOL simplif
 	return ;
 }
 
+
+// <edit>
+S32 LLViewerObject::getAttachmentPoint()
+{
+	return ((S32)((((U8)mState & AGENT_ATTACH_MASK) >> 4) | (((U8)mState & ~AGENT_ATTACH_MASK) << 4)));
+}
+
+std::string LLViewerObject::getAttachmentPointName()
+{
+	S32 point = getAttachmentPoint();
+	if((point > 0) && (point < 39))
+	{
+		return gAgent.getAvatarObject()->mAttachmentPoints[point]->getName();
+	}
+	return llformat("unsupported point %d", point);
+}
+// </edit>

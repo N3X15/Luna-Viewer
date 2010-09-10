@@ -52,8 +52,8 @@
 #include "lltextbox.h"
 
 #include "roles_constants.h"
-#include "llviewercontrol.h"
 #include "llviewerwindow.h"
+#include "llviewercontrol.h"
 #include "llviewermessage.h"
 #include "llnotifications.h"
 
@@ -129,7 +129,6 @@ BOOL LLGroupDropTarget::handleDragAndDrop(S32 x, S32 y, MASK mask, BOOL drop,
 		case DAD_TEXTURE:
 		case DAD_SOUND:
 		case DAD_LANDMARK:
-		case DAD_CALLINGCARD:
 		case DAD_SCRIPT:
 		case DAD_OBJECT:
 		case DAD_NOTECARD:
@@ -160,6 +159,7 @@ BOOL LLGroupDropTarget::handleDragAndDrop(S32 x, S32 y, MASK mask, BOOL drop,
 			break;
 		}
 		case DAD_CATEGORY:
+		case DAD_CALLINGCARD:
 		default:
 			*accept = ACCEPT_NO;
 			break;
@@ -171,17 +171,6 @@ BOOL LLGroupDropTarget::handleDragAndDrop(S32 x, S32 y, MASK mask, BOOL drop,
 //-----------------------------------------------------------------------------
 // LLPanelGroupNotices
 //-----------------------------------------------------------------------------
-std::string build_notice_date(const time_t& the_time)
-{
-	time_t t = the_time;
-	if (!t) time(&t);
-	tm* lt = localtime(&t);
-	//for some reason, the month is off by 1.  See other uses of
-	//"local" time in the code...
-	std::string buffer = llformat("%i/%i/%i", lt->tm_mon + 1, lt->tm_mday, lt->tm_year + 1900);
-	return buffer;
-}
-
 LLPanelGroupNotices::LLPanelGroupNotices(const std::string& name,
 									const LLUUID& group_id) :
 	LLPanelGroupTab(name,group_id),
@@ -476,7 +465,6 @@ void LLPanelGroupNotices::processNotices(LLMessageSystem* msg)
 		row["id"] = id;
 		
 		row["columns"][0]["column"] = "icon";
-		row["columns"][0]["color"] = gColors.getColor("DefaultListIcon").getValue();
 		if (has_attachment)
 		{
 			std::string icon_name = get_item_icon_name(
@@ -487,21 +475,18 @@ void LLPanelGroupNotices::processNotices(LLMessageSystem* msg)
 		}
 
 		row["columns"][1]["column"] = "subject";
-		row["columns"][1]["color"] = gColors.getColor("DefaultListText").getValue();
 		row["columns"][1]["value"] = subj;
 
 		row["columns"][2]["column"] = "from";
-		row["columns"][2]["color"] = gColors.getColor("DefaultListText").getValue();
 		row["columns"][2]["value"] = name;
 
-		std::string buffer = build_notice_date(t);
+		std::string buffer;
+		timeToFormattedString(t, gSavedSettings.getString("ShortDateFormat"), buffer);
 		row["columns"][3]["column"] = "date";
-		row["columns"][3]["color"] = gColors.getColor("DefaultListText").getValue();
 		row["columns"][3]["value"] = buffer;
 
 		buffer = llformat( "%u", timestamp);
 		row["columns"][4]["column"] = "sort";
-		row["columns"][4]["color"] = gColors.getColor("DefaultListText").getValue();
 		row["columns"][4]["value"] = buffer;
 
 		mNoticesList->addElement(row, ADD_BOTTOM);

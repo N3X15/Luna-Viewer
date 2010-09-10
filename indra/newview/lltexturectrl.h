@@ -79,6 +79,7 @@ public:
 	static LLView* fromXML(LLXMLNodePtr node, LLView *parent, LLUICtrlFactory *factory);
 
 	virtual BOOL	handleMouseDown(S32 x, S32 y, MASK mask);
+
 	virtual BOOL	handleDragAndDrop(S32 x, S32 y, MASK mask,
 						BOOL drop, EDragAndDropType cargo_type, void *cargo_data,
 						EAcceptance *accept,
@@ -109,6 +110,9 @@ public:
 
 	void			setAllowNoTexture( BOOL b )					{ mAllowNoTexture = b; }
 	bool			getAllowNoTexture() const					{ return mAllowNoTexture; }
+
+	void			setAllowInvisibleTexture(BOOL b)			{ mAllowInvisibleTexture = b; }
+	bool			getAllowInvisibleTexture() const			{ return mAllowInvisibleTexture; }
 
 	const LLUUID&	getImageItemID() { return mImageItemID; }
 
@@ -153,6 +157,9 @@ public:
 
 	void setShowLoadingPlaceholder(BOOL showLoadingPlaceholder);
 
+	static void handleClickOpenTexture(void* userdata);
+	static void handleClickCopyAssetID(void* userdata);
+
 private:
 	BOOL allowDrop(LLInventoryItem* item);
 	BOOL doDrop(LLInventoryItem* item);
@@ -174,6 +181,7 @@ private:
 	LLTextBox*				 mCaption;
 	std::string				 mLabel;
 	BOOL					 mAllowNoTexture; // If true, the user can select "none" as an option
+	BOOL					 mAllowInvisibleTexture; // If true, the user can select "Invisible" as an option
 	LLCoordGL				 mLastFloaterLeftTop;
 	PermissionMask			 mImmediateFilterPermMask;
 	PermissionMask			 mNonImmediateFilterPermMask;
@@ -183,6 +191,9 @@ private:
 	BOOL					 mValid;
 	BOOL					 mDirty;
 	BOOL					 mShowLoadingPlaceholder;
+	// <edit>
+	BOOL					 mEnable;
+	// </edit>
 	std::string				 mLoadingPlaceholderString;
 };
 

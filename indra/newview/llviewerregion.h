@@ -80,6 +80,7 @@ public:
 	{
 		PARTITION_HUD=0,
 		PARTITION_TERRAIN,
+		PARTITION_VOIDWATER,
 		PARTITION_WATER,
 		PARTITION_TREE,
 		PARTITION_PARTICLE,
@@ -123,11 +124,11 @@ public:
 	inline BOOL getAllowDamage()			const;
 	inline BOOL getAllowLandmark()			const;
 	inline BOOL getAllowSetHome()			const;
-	inline BOOL getResetHomeOnTeleport()		const;
-	inline BOOL getSunFixed()			const;
-	inline BOOL getBlockFly()			const;
-	inline BOOL getAllowDirectTeleport()		const;
-	inline BOOL isPrelude()				const;
+	inline BOOL getResetHomeOnTeleport()	const;
+	inline BOOL getSunFixed()				const;
+	inline BOOL getBlockFly()				const;
+	inline BOOL getAllowDirectTeleport()	const;
+	inline BOOL isPrelude()					const;
 	inline BOOL getAllowTerraform() 		const;
 	inline BOOL getRestrictPushObject()		const;
 	inline BOOL getReleaseNotesRequested()		const;

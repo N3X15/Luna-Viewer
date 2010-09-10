@@ -35,9 +35,16 @@
 
 #include "llassettype.h"
 #include "llinventorytype.h"
- 
-class LLTransactionID;
+// <edit>
+#include "llviewerinventory.h"
 
+class NewResourceItemCallback : public LLInventoryCallback
+{
+ void fire(const LLUUID& inv_item);
+};
+// </edit>
+
+class LLTransactionID;
 
 
 void init_menu_file();

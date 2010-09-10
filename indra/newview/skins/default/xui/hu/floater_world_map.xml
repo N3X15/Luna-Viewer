@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <floater name="worldmap" title="Világtérkép">
-	<tab_container name="maptab">
-		<panel label="Tárgyak" name="objects_mapview"/>
-		<panel label="Domborzat" name="terrain_mapview"/>
-	</tab_container>
 	<text name="you_label">
 		Itt vagy
 	</text>

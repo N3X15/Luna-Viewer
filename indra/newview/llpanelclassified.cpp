@@ -71,10 +71,6 @@
 #include "llviewerwindow.h"	// for window width, height
 #include "llappviewer.h"	// abortQuit()
 
-// [RLVa:KB]
-#include "rlvhandler.h"
-// [/RLVa:KB]
-
 const S32 MINIMUM_PRICE_FOR_LISTING = 50;	// L$
 const S32 MATURE_UNDEFINED = -1;
 const S32 MATURE_CONTENT = 1;
@@ -145,7 +141,7 @@ public:
 		const bool from_search = true;
 		LLPanelClassified::sendClassifiedClickMessage(classified_id, "teleport", from_search);
 		// Invoke teleport
-		LLWebBrowserCtrl* web = NULL;
+		LLMediaCtrl* web = NULL;
 		const bool trusted_browser = true;
 		return LLURLDispatcher::dispatch(url, web, trusted_browser);
 	}
@@ -678,7 +674,8 @@ void LLPanelClassified::processClassifiedInfoReply(LLMessageSystem *msg, void **
 			self->mAutoRenewCheck->set(auto_renew);
 		}
 
-		std::string datestr = llformat("%02d/%02d/%d", now->tm_mon+1, now->tm_mday, now->tm_year+1900);
+		std::string datestr;
+		timeStructToFormattedString(now, gSavedSettings.getString("ShortDateFormat"), datestr);
 		LLStringUtil::format_map_t string_args;
 		string_args["[DATE]"] = datestr;
 		string_args["[AMT]"] = llformat("%d", price_for_listing);
@@ -781,10 +778,7 @@ void LLPanelClassified::refresh()
 		mClickThroughText->setVisible(is_self);
 
 		mSetBtn->setVisible(is_self);
-		//mSetBtn->setEnabled(is_self);
-// [RLVa:KB] - Checked: 2009-07-04 (RLVa-1.0.0a)
-		mSetBtn->setEnabled(is_self && (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC)) );
-// [/RLVa:KB]
+		mSetBtn->setEnabled(is_self);
 
 		mUpdateBtn->setEnabled(is_self && checkDirty());
 		mUpdateBtn->setVisible(is_self);
@@ -985,12 +979,6 @@ void LLPanelClassified::onClickLandmark(void* data)
 // static
 void LLPanelClassified::onClickSet(void* data)
 {
-// [RLVa:KB] - Checked: 2009-07-04 (RLVa-1.0.0a)
-	if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC))
-	{
-		return;
-	}
-// [/RLVa:KB]
     LLPanelClassified* self = (LLPanelClassified*)data;
 
 	// Save location for later.

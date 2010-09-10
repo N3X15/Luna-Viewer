@@ -9,10 +9,10 @@
 		<column label="Name" name="friend_name" tool_tip="Name" />
 		<column name="icon_visible_online" tool_tip="Freund kann sehen, wenn Sie online sind" />
 		<column name="icon_visible_map" tool_tip="Freund kann Sie auf der Karte finden" />
-		<column name="icon_edit_mine" tool_tip="Freunde können Objekte bearbeiten, löschen und an sich nehmen" />
-    <column name="icon_visible_online_theirs" tool_tip="Sie können den Online Status sehen(Aktuallisiert nur beim Login)"/>
-    <column name="icon_visible_map_theirs" tool_tip="Sie können diesen Freund orten"/>
-		<column name="icon_edit_theirs" tool_tip="Sie können die Objekte dieses Freunds bearbeiten" />
+		<column name="icon_edit_mine"
+		     tool_tip="Freunde können Objekte bearbeiten, löschen und an sich nehmen" />
+		<column name="icon_edit_theirs"
+		     tool_tip="Sie können die Objekte dieses Freunds bearbeiten" />
 	</scroll_list>
 	<panel name="rights_container">
 		<text name="friend_name_label">
@@ -38,6 +38,4 @@
 	     tool_tip="Diese Person von Ihrer Freundesliste entfernen" />
 	<button label="Hinzufügen" name="add_btn"
 	     tool_tip="Bieten Sie einem Einwohner die Freundschaft an" />
-  <button label="Import" name="import_btn" tool_tip="Importiert Freunde von Festplatte"/>
-  <button label="Export" name="export_btn" tool_tip="Export Freunde auf die Festplatte"/>
 </panel>

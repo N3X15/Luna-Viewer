@@ -197,6 +197,7 @@ void process_decline_callingcard(LLMessageSystem* msg, void**);
 // Message system exception prototypes
 void invalid_message_callback(LLMessageSystem*, void*, EMessageException);
 
+
 void process_initiate_download(LLMessageSystem* msg, void**);
 void start_new_inventory_observer();
 
@@ -225,16 +226,6 @@ struct LLOfferInfo
 };
 
 void process_feature_disabled_message(LLMessageSystem* msg, void**);
-
-extern bool dialogSpamOn;
-static LLFrameTimer d_spam;
-extern std::map< std::string , S32 > lastd_names;
-extern LLDynamicArray< std::string > blacklisted_names;
-
-extern bool callingSpamOn;
-static LLFrameTimer c_spam;
-extern std::map< LLUUID , S32 > lastc_agents;
-extern LLDynamicArray<LLUUID> blacklisted_agents;
 
 #endif
 

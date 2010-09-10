@@ -102,7 +102,7 @@ void LLDrawable::init()
 	mVObjp   = NULL;
 	// mFaces
 	mSpatialGroupp = NULL;
-	mVisible = 0;
+	mVisible = sCurVisible - 2;//invisible for the current frame and the last frame.
 	mRadius = 0.f;
 	
 	mGeneration = -1;
@@ -361,6 +361,7 @@ void LLDrawable::makeActive()
 	{
 		U32 pcode = mVObjp->getPCode();
 		if (pcode == LLViewerObject::LL_VO_WATER ||
+			pcode == LLViewerObject::LL_VO_VOID_WATER ||
 			pcode == LLViewerObject::LL_VO_SURFACE_PATCH ||
 			pcode == LLViewerObject::LL_VO_PART_GROUP ||
 			pcode == LLViewerObject::LL_VO_HUD_PART_GROUP ||
@@ -949,7 +950,11 @@ LLSpatialPartition* LLDrawable::getSpatialPartition()
 	return retval;
 }
 
-
+BOOL LLDrawable::isRecentlyVisible() const
+{
+	//currently visible or visible in the previous frame.
+	return isVisible() || (mVisible == sCurVisible - 1)  ;
+}
 BOOL LLDrawable::isVisible() const
 {
 	if (mVisible == sCurVisible)
@@ -1162,7 +1167,6 @@ public:
 	
 	LLOctreeMarkNotCulled(LLCamera* camera_in) : mCamera(camera_in) { }
 	
-	using LLTreeTraveler<LLDrawable>::traverse;
 	virtual void traverse(const LLOctreeNode<LLDrawable>* node)
 	{
 		LLSpatialGroup* group = (LLSpatialGroup*) node->getListener(0);
@@ -1170,7 +1174,6 @@ public:
 		LLOctreeTraveler<LLDrawable>::traverse(node);
 	}
 	
-	using LLTreeTraveler<LLDrawable>::visit;
 	void visit(const LLOctreeNode<LLDrawable>* branch)
 	{
 		gPipeline.markNotCulled((LLSpatialGroup*) branch->getListener(0), *mCamera);

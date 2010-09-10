@@ -58,7 +58,6 @@ S32 LLViewerPartSim::sParticleCount2 = 0;
 // This controls how greedy individual particle burst sources are allowed to be, and adapts according to how near the particle-count limit we are.
 F32 LLViewerPartSim::sParticleAdaptiveRate = 0.0625f;
 F32 LLViewerPartSim::sParticleBurstRate = 0.5f;
-bool LLViewerPartSim::sUseNewFollowSourceLogic = true;
 
 //static
 const S32 LLViewerPartSim::MAX_PART_COUNT = 8192;
@@ -83,8 +82,7 @@ LLViewerPart::LLViewerPart() :
 	mPartID(0),
 	mLastUpdateTime(0.f),
 	mVPCallback(NULL),
-	mImagep(NULL),
-    mApplyFollowSource(true)
+	mImagep(NULL)
 {
 	LLMemType mt(LLMemType::MTYPE_PARTICLES);
 	mPartSourcep = NULL;
@@ -292,14 +290,7 @@ void LLViewerPartGroup::updateParticles(const F32 lastdt)
 		// "Drift" the object based on the source object
 		if (part->mFlags & LLPartData::LL_PART_FOLLOW_SRC_MASK)
 		{
-            if(part->mApplyFollowSource)
-            {
 			part->mPosAgent = part->mPartSourcep->mPosAgent;
-            }
-            else
-            {
-                part->mApplyFollowSource = true;
-            }
 			part->mPosAgent += part->mPosOffset;
 		}
 
@@ -475,8 +466,6 @@ void LLViewerPartGroup::removeParticlesByID(const U32 source_id)
 //static
 void LLViewerPartSim::checkParticleCount(U32 size)
 {
-	//Removed until a cause for the mismatch under linux can be identified.
-	/*
 	if(LLViewerPartSim::sParticleCount2 != LLViewerPartSim::sParticleCount)
 	{
 		llerrs << "sParticleCount: " << LLViewerPartSim::sParticleCount << " ; sParticleCount2: " << LLViewerPartSim::sParticleCount2 << llendl ;
@@ -486,14 +475,12 @@ void LLViewerPartSim::checkParticleCount(U32 size)
 	{
 		llerrs << "curren particle size: " << LLViewerPartSim::sParticleCount2 << " array size: " << size << llendl ;
 	}
-	*/ 
 }
 
 LLViewerPartSim::LLViewerPartSim()
 {
 	LLMemType mt(LLMemType::MTYPE_PARTICLES);
 	sMaxParticleCount = gSavedSettings.getS32("RenderMaxPartCount");
-	sUseNewFollowSourceLogic = (bool)gSavedSettings.getBOOL("EmeraldUseNewFollowSourceLogic");
 	static U32 id_seed = 0;
 	mID = ++id_seed;
 }

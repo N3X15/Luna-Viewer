@@ -91,22 +91,22 @@ do Chat:
 			Português - Beta
 		</combo_item>
 		<combo_item name="Russian">
-			� �?сскОй (Russo) - Beta
+			Русский (Russo) - Beta
 		</combo_item>
 		<combo_item name="Turkish">
-			TÌrkçe (Turco) - Beta
+			Türkçe (Turco) - Beta
 		</combo_item>
 		<combo_item name="Ukrainian">
-			Ук�?а�?Мс�?ка (Ucraniano) - Beta
+			Українська (Ucraniano) - Beta
 		</combo_item>
 		<combo_item name="Chinese">
-			䞭�?? (�?�?) (Chinês) - Beta
+			中文 (简体) (Chinês) - Beta
 		</combo_item>
 		<combo_item name="(Japanese)">
-			�?��?��? (Japonês) - Beta
+			日本語 (Japonês) - Beta
 		</combo_item>
 		<combo_item name="(Korean)">
-			�??국�?� (Coreano) - Beta
+			한국어 (Coreano) - Beta
 		</combo_item>
 	</combo_box>
 	<text type="string" length="1" name="text_chat_language">

@@ -226,6 +226,32 @@ void ImportTracker::get_update(S32 newid, BOOL justCreated, BOOL createSelected)
 						}
 				}
 				
+				msg->newMessageFast(_PREHASH_ObjectPermissions);
+				msg->nextBlockFast(_PREHASH_AgentData);
+				msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID());
+				msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
+				msg->nextBlockFast(_PREHASH_HeaderData);
+				msg->addBOOLFast(_PREHASH_Override, FALSE);
+				msg->nextBlockFast(_PREHASH_ObjectData);
+				msg->addU32Fast(_PREHASH_ObjectLocalID, (U32)newid);
+				msg->addU8Fast(_PREHASH_Field,	PERM_NEXT_OWNER);
+				msg->addBOOLFast(_PREHASH_Set,		PERM_ITEM_UNRESTRICTED);
+				U32 flags = 0;
+				if ( gSavedSettings.getBOOL("NextOwnerCopy") )
+				{
+					flags |= PERM_COPY;
+				}
+				if ( gSavedSettings.getBOOL("NextOwnerModify") )
+				{
+					flags |= PERM_MODIFY;
+				}
+				if ( gSavedSettings.getBOOL("NextOwnerTransfer") )
+				{
+					flags |= PERM_TRANSFER;
+				}
+				msg->addU32Fast(_PREHASH_Mask, flags);
+				msg->sendReliable(gAgent.getRegion()->getHost());				
+
 				//llinfos << "LGG SENDING CUBE TEXTURE.." << llendl;
 			}
 		break;
@@ -303,7 +329,7 @@ void insert(LLViewerInventoryItem* item, LLViewerObject* objectp, InventoryImpor
 							TRUE,
 							LLToolDragAndDrop::SOURCE_AGENT,
 							gAgent.getID());
-		cmdline_printchat("inserted.");
+		//cmdline_printchat("inserted.");
 	}
 	delete data;
 	gImportTracker.asset_insertions -= 1;
@@ -322,7 +348,7 @@ public:
 	}
 	void fire(const LLUUID &inv_item)
 	{
-		cmdline_printchat("fired transfer for "+inv_item.asString()+"|"+data->assetid.asString());
+		//cmdline_printchat("fired transfer for "+inv_item.asString()+"|"+data->assetid.asString());
 		LLViewerInventoryItem* item = (LLViewerInventoryItem*)gInventory.getItem(inv_item);
 		LLViewerObject* objectp = find(data->localid);
 		insert(item, objectp, data);
@@ -381,7 +407,7 @@ public:
 	}
 	virtual void uploadComplete(const LLSD& content)
 	{
-		cmdline_printchat("completed upload, inserting");
+		//cmdline_printchat("completed upload, inserting");
 		LLViewerInventoryItem* item = (LLViewerInventoryItem*)gInventory.getItem(item_id);
 		LLViewerObject* objectp = find(data->localid);
 		insert(item, objectp, data);
@@ -405,7 +431,7 @@ public:
 		infile.open(data->filename, LL_APR_RB, NULL, &file_size);
 		if (infile.getFileHandle())
 		{
-			cmdline_printchat("got file handle @ postinv");
+			//cmdline_printchat("got file handle @ postinv");
 			LLVFile file(gVFS, data->assetid, data->type, LLVFile::WRITE);
 			file.setMaxSize(file_size);
 			const S32 buf_size = 65536;
@@ -417,7 +443,7 @@ public:
 			switch(data->type)
 			{
 			case LLAssetType::AT_NOTECARD:
-				cmdline_printchat("case notecard @ postinv");
+				//cmdline_printchat("case notecard @ postinv");
 				{
 					/*LLViewerTextEditor* edit = new LLViewerTextEditor("",LLRect(0,0,0,0),S32_MAX,"");
 					S32 size = gVFS->getSize(data->assetid, data->type);
@@ -443,13 +469,13 @@ public:
 					std::string agent_url = gAgent.getRegion()->getCapability("UpdateNotecardAgentInventory");
 					LLSD body;
 					body["item_id"] = inv_item;
-					cmdline_printchat("posting content as " + data->assetid.asString());
+					//cmdline_printchat("posting content as " + data->assetid.asString());
 					LLHTTPClient::post(agent_url, body,
 								new JCPostInvUploadResponder(body, data->assetid, data->type,inv_item,data));
 				}
 				break;
 			case LLAssetType::AT_LSL_TEXT:
-				cmdline_printchat("case lsltext @ postinv");
+				//cmdline_printchat("case lsltext @ postinv");
 				{
 					std::string url = gAgent.getRegion()->getCapability("UpdateScriptAgent");
 					LLSD body;
@@ -469,7 +495,7 @@ public:
 					delete buffer;
 					buffer = 0;
 					body["target"] = (domono == TRUE) ? "mono" : "lsl2";
-					cmdline_printchat("posting content as " + data->assetid.asString());
+					//cmdline_printchat("posting content as " + data->assetid.asString());
 					LLHTTPClient::post(url, body, new JCPostInvUploadResponder(body, data->assetid, data->type,inv_item,data));
 				}
 				break;
@@ -486,7 +512,7 @@ void JCImportInventorycallback(const LLUUID& uuid, void* user_data, S32 result, 
 {
 	if(result == LL_ERR_NOERR)
 	{
-		cmdline_printchat("fired importinvcall for "+uuid.asString());
+		//cmdline_printchat("fired importinvcall for "+uuid.asString());
 		InventoryImportInfo* data = (InventoryImportInfo*)user_data;
 
 		LLPointer<LLInventoryCallback> cb = new JCImportTransferCallback(data);
@@ -524,7 +550,7 @@ void ImportTracker::send_inventory(LLSD& prim)
 			data->description = item["desc"].asString();
 			if(item.has("item_id"))
 			{
-				cmdline_printchat("item id found");
+				//cmdline_printchat("item id found");
 				std::string filename = assetpre + item["item_id"].asString() + "." + item["type"].asString();
 				//S32 file_size;
 				//LLAPRFile infile ;
@@ -533,18 +559,18 @@ void ImportTracker::send_inventory(LLSD& prim)
 				//if(fp)
 				if(LLFile::isfile(filename))
 				{
-					cmdline_printchat("file "+filename+" exists");
+					//cmdline_printchat("file "+filename+" exists");
 					data->filename = filename;
 					//infile.close();
 				}else
 				{
-					cmdline_printchat("file "+filename+" does not exist");
+					//cmdline_printchat("file "+filename+" does not exist");
 					delete data;
 					continue;
 				}
 			}else
 			{
-				cmdline_printchat("item id not found");
+				//cmdline_printchat("item id not found");
 				delete data;
 				continue;
 			}
@@ -561,7 +587,7 @@ void ImportTracker::send_inventory(LLSD& prim)
 				{
 				case LLAssetType::AT_TEXTURE:
 				case LLAssetType::AT_TEXTURE_TGA:
-					cmdline_printchat("case textures");
+					//cmdline_printchat("case textures");
 					{
 						std::string url = gAgent.getRegion()->getCapability("NewFileAgentInventory");
 						S32 file_size;
@@ -569,7 +595,7 @@ void ImportTracker::send_inventory(LLSD& prim)
 						infile.open(data->filename, LL_APR_RB, NULL, &file_size);
 						if (infile.getFileHandle())
 						{
-							cmdline_printchat("got file handle");
+							//cmdline_printchat("got file handle");
 							LLVFile file(gVFS, data->assetid, data->type, LLVFile::WRITE);
 							file.setMaxSize(file_size);
 							const S32 buf_size = 65536;
@@ -588,7 +614,7 @@ void ImportTracker::send_inventory(LLSD& prim)
 							body["group_mask"] = LLSD::Integer(U32_MAX);
 							body["everyone_mask"] = LLSD::Integer(U32_MAX);
 							body["expected_upload_cost"] = LLSD::Integer(LLGlobalEconomy::Singleton::getInstance()->getPriceUpload());
-							cmdline_printchat("posting "+ data->assetid.asString());
+							//cmdline_printchat("posting "+ data->assetid.asString());
 							LLHTTPClient::post(url, body, new JCImportInventoryResponder(body, data->assetid, data->type,data));
 							//error = TRUE;
 						}
@@ -596,14 +622,14 @@ void ImportTracker::send_inventory(LLSD& prim)
 					break;
 				case LLAssetType::AT_CLOTHING:
 				case LLAssetType::AT_BODYPART:
-					cmdline_printchat("case cloth/bodypart");
+					//cmdline_printchat("case cloth/bodypart");
 					{
 						S32 file_size;
 						LLAPRFile infile ;
 						infile.open(data->filename, LL_APR_RB, NULL, &file_size);
 						if (infile.getFileHandle())
 						{
-							cmdline_printchat("got file handle @ cloth");
+							//cmdline_printchat("got file handle @ cloth");
 							LLVFile file(gVFS, data->assetid, data->type, LLVFile::WRITE);
 							file.setMaxSize(file_size);
 							const S32 buf_size = 65536;
@@ -624,7 +650,7 @@ void ImportTracker::send_inventory(LLSD& prim)
 								}
 								delete wearable;
 							}
-							cmdline_printchat("storing "+data->assetid.asString());
+							//cmdline_printchat("storing "+data->assetid.asString());
 							gAssetStorage->storeAssetData(data->tid, data->type,
 												JCImportInventorycallback,
 												(void*)data,
@@ -635,7 +661,7 @@ void ImportTracker::send_inventory(LLSD& prim)
 					}
 					break;
 				case LLAssetType::AT_NOTECARD:
-					cmdline_printchat("case notecard");
+					//cmdline_printchat("case notecard");
 					{
 						//std::string agent_url = gAgent.getRegion()->getCapability("UpdateNotecardAgentInventory");
 						LLPointer<LLInventoryCallback> cb = new JCPostInvCallback(data);
@@ -885,11 +911,6 @@ void ImportTracker::send_extras(LLSD& prim)
 		}
 	}
 
-	if (prim.has("chat"))
-	{
-		send_chat_from_viewer(prim["chat"].asString(), CHAT_TYPE_SHOUT, 0);
-	}
-	
 	if (prim.has("sculpt"))
 	{
 		LLSculptParams sculpt;
@@ -940,7 +961,9 @@ void ImportTracker::send_namedesc(LLSD& prim)
 		msg->nextBlockFast(_PREHASH_AgentData);
 		msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID() );
 		msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
-		
+		LLVector3 scale = prim["scale"];
+		if((scale.mV[VX] > 10.) || (scale.mV[VY] > 10.) || (scale.mV[VZ] > 10.) )
+			prim["description"] = llformat("<%d, %d, %d>", (U8)scale.mV[VX], (U8)scale.mV[VY], (U8)scale.mV[VZ]);
 		msg->nextBlockFast(_PREHASH_ObjectData);
 		msg->addU32Fast(_PREHASH_LocalID, prim["LocalID"].asInteger());
 		msg->addStringFast(_PREHASH_Description, prim["description"]);

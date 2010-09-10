@@ -34,7 +34,7 @@
 #define LL_LLAPPVIEWER_H
 
 class LLTextureCache;
-class LLWorkerThread;
+class LLImageDecodeThread;
 class LLTextureFetch;
 class LLWatchdogTimeout;
 class LLCommandLineParser;
@@ -86,10 +86,10 @@ public:
 	static void handleViewerCrash(); // Hey! The viewer crashed. Do this, soon.
 	static void handleSyncViewerCrash(); // Hey! The viewer crashed. Do this right NOW in the context of the crashing thread.
     void checkForCrash();
-
+    
 	// Thread accessors
 	static LLTextureCache* getTextureCache() { return sTextureCache; }
-	static LLWorkerThread* getImageDecodeThread() { return sImageDecodeThread; }
+	static LLImageDecodeThread* getImageDecodeThread() { return sImageDecodeThread; }
 	static LLTextureFetch* getTextureFetch() { return sTextureFetch; }
 
 	const std::string& getSerialNumber() { return mSerialNumber; }
@@ -107,6 +107,13 @@ public:
 
     void loadNameCache();
     void saveNameCache();
+
+	// OGPX : rez_avatar/place cap is used on both initial login, and 
+	// ... then on teleports as well. The same cap should be good for the
+	// ... life of the connection to an agent domain. This cap is used by the viewer
+	// ... to request moving an agent between regions. 
+	void setPlaceAvatarCap(const std::string& uri);	// OGPX TODO: this should be refactored into own class that handles caps
+	const std::string& getPlaceAvatarCap() const;	// OGPX TODO: ...as above...
 
 	void removeMarkerFile(bool leave_logout_marker = false);
 	
@@ -210,7 +217,7 @@ private:
 
 	// Thread objects.
 	static LLTextureCache* sTextureCache; 
-	static LLWorkerThread* sImageDecodeThread; 
+	static LLImageDecodeThread* sImageDecodeThread; 
 	static LLTextureFetch* sTextureFetch;
 
 	S32 mNumSessions;
@@ -232,12 +239,7 @@ private:
 	bool mAgentRegionLastAlive;
 	LLUUID mAgentRegionLastID;
 
-	static void dSpam(const LLSD &data);
-	static void cSpam(const LLSD &data);
-
 public:
-	static F32 sMainLoopTimeOutDefault;
-	static BOOL sFreezeTime;
 	//some information for updater
 	typedef struct
 	{
@@ -305,11 +307,13 @@ extern F32 gSimFrames;
 
 extern LLUUID gInventoryLibraryOwner;
 extern LLUUID gInventoryLibraryRoot;
+// <edit>
+extern LLUUID gLocalInventoryRoot;
+// </edit>
 
 extern BOOL		gDisconnected;
 
-// Map scale in pixels per region
-extern F32 gMapScale;
+// Minimap scale in pixels per region
 
 extern LLFrameTimer	gRestoreGLTimer;
 extern BOOL			gRestoreGL;

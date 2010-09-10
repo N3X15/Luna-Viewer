@@ -33,52 +33,12 @@
 	<string name="unavailable_text_label">
 		Für diese Verbindung ist kein Text-Chat verfügbar.
 	</string>
-	<!--[$PLOTR$]-->
-	<string name="otr_empty_string"></string>
-	<string name="otr_gen_key_please_wait">OTR generiert Schlüssel.  Wird einmalig für jeden ihrer Avatare generiert und sollte weniger als 45 sec dauern.</string>
-	<string name="otr_generic_name">Ihr Freund</string>
-	<string name="otr_err_send_in_finished">[NAME] hat die private Konverstation beendet, Nachricht wurde nicht gesendet.  Sie sollten die private Konverstation beenden oder neustarten.</string>
-	<string name="otr_err_deacivated">OTR wurde deaktiviert (Bearbeiten > Einstellungen > Emerald > IM)</string>
-	<string name="otr_err_failed_sending">Nachricht nicht gesendet, konnte nicht verschlüsselt werden.</string>
-	<string name="otr_err_failed_starting">private Konverstation konnte nicht gestartet werden.</string>
-	<string name="otr_err_offline_start">[NAME] anscheinend offline; OTR startet keine private Konverstation.</string>
-	<string name="otr_err_offline_send">[NAME] anscheinend offline; Wählen sie "beende private Konverstation" und senden sie die Nachricht unverschlüsselt.</string>
-	<string name="otr_prog_I_start">Versuche eine private Konverstation zu starten mit [NAME].</string>
-	<string name="otr_prog_I_stop_unverified">Sie haben die unverifizierte Konversation mit [NAME] beendet.</string>
-	<string name="otr_prog_I_stop_private"   >Sie haben die private Konverstation mit [NAME] beendet.</string>
-	<string name="otr_prog_I_stop"           >Sie haben die OTR Konversation mit [NAME] beendet.</string>
-	<string name="otr_prog_they_start">[NAME] versucht private Konverstation zu starten.</string>
-	<string name="otr_prog_they_stop_unverified">[NAME] hat die unverifizierte Konversation beendet.</string>
-	<string name="otr_prog_they_stop_private"   >[NAME] hat die private Konverstation beendet.</string>
-	<string name="otr_prog_they_stop"           >[NAME] hat die OTR Konversation beendet.</string>
-	<string name="otr_log_authenticated"   >[NAME] ist jetzt authentifiziert.</string>
-	<string name="otr_log_start_private"   >private Konverstation mit [NAME] gestarted.</string>
-	<string name="otr_log_start_unverified">unverifizierte Konversation gestarted. [NAME] wurde nicht authentifiziert, sie sollten "authentifiziere Freund" ausführen, Details http://www.cypherpunks.ca/otr/help/3.2.0/authenticate.php</string>
-	<string name="otr_log_gone_insecure">private Konverstation beendet.</string>
-	<string name="otr_log_still_private"   >private Konverstation mit [NAME] wieder hergestellt.</string>
-	<string name="otr_log_still_unverified">unverifizierte Konversation wieder hergestellt. [NAME] wurde nicht authentifiziert, sie sollten "authentifiziere Freund" ausführen, Details http://www.cypherpunks.ca/otr/help/3.2.0/authenticate.php</string>
-	<string name="otr_not_private">OTR: nicht privat</string>
-	<string name="otr_unverified" >OTR: unverifiziert</string>
-	<string name="otr_private"    >OTR: Privat</string>
-	<string name="otr_finished"   >OTR: Beendet</string>
-	<string name="otr_start"  >Starte private Konverstation</string>
-	<string name="otr_refresh">Erneuere private Konverstation</string>
-	<string name="otr_restart">Neustart private Konverstation</string>
-	<string name="otr_stop"   >beende private Konverstation</string>
-	<string name="otr_auth"   >authentifiziere Freund</string>
-	<string name="otr_help"   >Was ist OTR?</string>
-	<string name="otr_levels" >Was ist das?</string>
-	<combo_box label="OTR: nicht privat" name="otr_combo"/>
-	<!--[/$PLOTR$]-->
 	<button label="Profil..." name="profile_callee_btn"/>
-	<button label="Teleport" name="profile_tele_btn"/>
-  <button label="Verlauf" name="history_btn"/>
 	<button label="Anrufen" name="start_call_btn" pad_right="7" width="115"/>
 	<button halign="right" label="Anruf beenden" name="end_call_btn" width="115"/>
 	<panel left_delta="111" name="speaker_controls">
 		<button label="" name="mute_btn" tool_tip="Voice stummschalten"/>
 	</panel>
-	<combo_box label="OTR: nicht privat" name="otr_combo"/>
 	<line_editor label="Für Instant Message hier klicken" name="chat_editor"/>
 	<button label="Senden" name="send_btn"/>
 	<string name="live_help_dialog">

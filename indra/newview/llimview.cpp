@@ -69,11 +69,6 @@
 #include "llviewerregion.h"
 
 #include "llfirstuse.h"
-#include "lggircgrouphandler.h"
-
-// [RLVa:KB]
-#include "rlvhandler.h"
-// [/RLVa:KB]
 
 //
 // Globals
@@ -203,10 +198,6 @@ LLUUID LLIMMgr::computeSessionID(
 	const LLUUID& other_participant_id)
 {
 	LLUUID session_id;
-	if( IM_SESSION_IRC_START == dialog)
-	{
-		session_id = other_participant_id;
-	}else
 	if (IM_SESSION_GROUP_START == dialog)
 	{
 		// slam group session_id to the group_id (other_participant_id)
@@ -215,7 +206,6 @@ LLUUID LLIMMgr::computeSessionID(
 	else if (IM_SESSION_CONFERENCE_START == dialog)
 	{
 		session_id.generate();
-		
 	}
 	else if (IM_SESSION_INVITE == dialog)
 	{
@@ -553,20 +543,6 @@ LLIMMgr::~LLIMMgr()
 	// Children all cleaned up by default view destructor.
 }
 
-// try to decrypt message, true if successful
-bool LLIMMgr::decryptMessage(
-	const LLUUID& session_id,
-	const LLUUID& target_id,
-	const std::string& msg,
-	std::string& decrypted_msg)
-{
-	LLFloaterIMPanel* floater = findFloaterBySession(session_id);
-	if(!floater)
-		return false;
-
-	return floater->decryptMsg(msg, decrypted_msg);
-}
-
 // Add a message to a session. 
 void LLIMMgr::addMessage(
 	const LLUUID& session_id,
@@ -618,33 +594,6 @@ void LLIMMgr::addMessage(
 	// create IM window as necessary
 	if(!floater)
 	{
-		BOOL all_groups_muted = gSavedSettings.getBOOL("EmeraldMuteAllGroups");
-		if (gSavedSettings.getBOOL("EmeraldMuteGroupWhenNoticesDisabled")
-			|| all_groups_muted)
-		{
-			LLGroupData *group_data = NULL;
-
-			// Search for this group in the agent's groups list
-			LLDynamicArray<LLGroupData>::iterator i;
-
-			for (i = gAgent.mGroups.begin(); i != gAgent.mGroups.end(); i++)
-			{
-				if (i->mID == session_id)
-				{
-					group_data = &*i;
-					break;
-				}
-			}
-
-			// If the group is in our list and set up to not accept notices, and the Emerald
-			// option to mute such is enabled, return.
-
-			if (group_data && (!group_data->mAcceptNotices || all_groups_muted))
-			{
-				return;
-			}
-		}
-
 		std::string name = from;
 		if(!session_name.empty() && session_name.size()>1)
 		{
@@ -685,11 +634,9 @@ void LLIMMgr::addMessage(
 
 	// now add message to floater
 	bool is_from_system = target_id.isNull() || (from == SYSTEM_FROM);
-	bool is_encrypted = (msg.substr(0, 3) == "\xe2\x80\xa7");
-	LLColor4 color = ( is_from_system ? 
+	const LLColor4& color = ( is_from_system ? 
 							  gSavedSettings.getColor4("SystemChatColor") : 
-							  ( is_encrypted ? gSavedSettings.getColor("IMEncryptedChatColor") :
-		                        gSavedSettings.getColor("IMChatColor") ) );
+							  gSavedSettings.getColor("IMChatColor"));
 	if ( !link_name )
 	{
 		floater->addHistoryLine(msg,color); // No name to prepend, so just add the message normally
@@ -812,6 +759,7 @@ LLUUID LLIMMgr::addSession(
 	const LLUUID& other_participant_id)
 {
 	LLUUID session_id = computeSessionID(dialog, other_participant_id);
+
 	LLFloaterIMPanel* floater = findFloaterBySession(session_id);
 	if(!floater)
 	{
@@ -841,7 +789,7 @@ LLUUID LLIMMgr::addSession(
 		floater->open();
 	}
 	//mTabContainer->selectTabPanel(panel);
-	if(gSavedPerAccountSettings.getBOOL("EmeraldInstantMessageAnnounceStealFocus"))floater->setInputFocus(TRUE);
+	floater->setInputFocus(TRUE);
 	return floater->getSessionID();
 }
 
@@ -873,7 +821,7 @@ LLUUID LLIMMgr::addSession(
 			name,
 			ids,
 			dialog,
-			TRUE);	
+			TRUE);
 
 		if ( !floater ) return LLUUID::null;
 
@@ -891,7 +839,7 @@ LLUUID LLIMMgr::addSession(
 		floater->open();
 	}
 	//mTabContainer->selectTabPanel(panel);
-	if(gSavedPerAccountSettings.getBOOL("EmeraldInstantMessageAnnounceStealFocus"))floater->setInputFocus(TRUE);
+	floater->setInputFocus(TRUE);
 	return floater->getSessionID();
 }
 
@@ -1203,10 +1151,6 @@ LLFloaterIMPanel* LLIMMgr::createFloater(
 	{
 		llwarns << "Creating LLFloaterIMPanel with null session ID" << llendl;
 	}
-	if(glggIrcGroupHandler.trySendPrivateImToID("",other_participant_id,true))
-	{
-		dialog = IM_PRIVATE_IRC;
-	}
 
 	llinfos << "LLIMMgr::createFloater: from " << other_participant_id 
 			<< " in session " << session_id << llendl;
@@ -1232,10 +1176,7 @@ LLFloaterIMPanel* LLIMMgr::createFloater(
 	{
 		llwarns << "Creating LLFloaterIMPanel with null session ID" << llendl;
 	}
-	if(glggIrcGroupHandler.trySendPrivateImToID("",other_participant_id,true))
-	{
-		dialog = IM_PRIVATE_IRC;
-	}
+
 	llinfos << "LLIMMgr::createFloater: from " << other_participant_id 
 			<< " in session " << session_id << llendl;
 	LLFloaterIMPanel* floater = new LLFloaterIMPanel(session_label,
@@ -1273,7 +1214,6 @@ void LLIMMgr::noteOfflineUsers(
 				offline.setArg("[FIRST]", first);
 				offline.setArg("[LAST]", last);
 				floater->addHistoryLine(offline, gSavedSettings.getColor4("SystemChatColor"));
-				floater->setOffline();
 			}
 		}
 	}
@@ -1575,19 +1515,6 @@ public:
 			{
 				return;
 			}
-// [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g)
-			// TODO-RLVa: duplicate from process_improved_im()?
-			if (gRlvHandler.hasBehaviour(RLV_BHVR_RECVIM))
-			{
-				if (gAgent.isInGroup(session_id))
-				{
-					if (!gRlvHandler.isException(RLV_BHVR_RECVIM, session_id))
-						return;
-				}
-				else if (!gRlvHandler.isException(RLV_BHVR_RECVIM, from_id))
-					message = message.substr(0, message_offset) + RlvStrings::getString(RLV_STRING_BLOCKED_RECVIM);
-			}
-// [/RLVa:KB]
 
 			// standard message, not from system
 			std::string saved;

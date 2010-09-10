@@ -53,7 +53,6 @@
 #include "llkeyboard.h"
 #include "lllineeditor.h"
 #include "llstatusbar.h"
-#include "llspinctrl.h"
 #include "lltextbox.h"
 #include "lluiconstants.h"
 #include "llviewergesture.h"			// for triggering gestures
@@ -68,11 +67,8 @@
 #include "llui.h"
 #include "llviewermenu.h"
 #include "lluictrlfactory.h"
-#include "chatbar_as_cmdline.h"
 
-// [RLVa:KB]
-#include "rlvhandler.h"
-// [/RLVa:KB]
+#include "chatbar_as_cmdline.h"
 
 //
 // Globals
@@ -83,11 +79,7 @@ LLChatBar *gChatBar = NULL;
 
 // legacy calllback glue
 void toggleChatHistory(void* user_data);
-void toggleChanSelect(void* user_data);
-//void send_chat_from_viewer(const std::string& utf8_out_text, EChatType type, S32 channel);
-// [RLVa:KB] - Alternate: Emerald-370 | Checked: 2009-07-07 (RLVa-1.0.0d) | Modified: RLVa-0.2.2a
-void send_chat_from_viewer(std::string utf8_out_text, EChatType type, S32 channel);
-// [/RLVa:KB]
+void send_chat_from_viewer(const std::string& utf8_out_text, EChatType type, S32 channel);
 
 
 class LLChatBarGestureObserver : public LLGestureManagerObserver
@@ -111,7 +103,6 @@ LLChatBar::LLChatBar()
 	mGestureLabelTimer(),
 	mLastSpecialChatChannel(0),
 	mIsBuilt(FALSE),
-	mChanSelectorExpanded(FALSE),
 	mGestureCombo(NULL),
 	mObserver(NULL)
 {
@@ -134,8 +125,6 @@ LLChatBar::~LLChatBar()
 BOOL LLChatBar::postBuild()
 {
 	childSetAction("History", toggleChatHistory, this);
-	//lgg
-	childSetAction("Expand",this->toggleChanSelect,this);
 	childSetCommitCallback("Say", onClickSay, this);
 
 	// attempt to bind to an existing combo box named gesture
@@ -160,7 +149,7 @@ BOOL LLChatBar::postBuild()
 		mInputEditor->setPassDelete(TRUE);
 		mInputEditor->setReplaceNewlinesWithSpaces(FALSE);
 
-		mInputEditor->setMaxTextLength(S32_MAX);
+		mInputEditor->setMaxTextLength(DB_CHAT_MSG_STR_LEN);
 		mInputEditor->setEnableLineHistory(TRUE);
 	}
 
@@ -179,10 +168,6 @@ BOOL LLChatBar::handleKeyHere( KEY key, MASK mask )
 	BOOL handled = FALSE;
 
 	// ALT-RETURN is reserved for windowed/fullscreen toggle
-
-	// not any more :p
-
-
 	if( KEY_RETURN == key )
 	{
 		if (mask == MASK_CONTROL)
@@ -191,47 +176,15 @@ BOOL LLChatBar::handleKeyHere( KEY key, MASK mask )
 			sendChat(CHAT_TYPE_SHOUT);
 			handled = TRUE;
 		}
-		else if (mask == MASK_SHIFT)
-		{
-			// whisper
-			sendChat( CHAT_TYPE_WHISPER );
-			handled = TRUE;
-		}
-		else if (mask == MASK_ALT)
-		{
-			// ooc chat
-
-			sendChat( CHAT_TYPE_OOC );
-			handled = TRUE;
-		}
 		else if (mask == MASK_NONE)
 		{
 			// say
 			sendChat( CHAT_TYPE_NORMAL );
 			handled = TRUE;
 		}
-		else if (mask == (MASK_ALT | MASK_SHIFT | MASK_CONTROL))
-		{
-			//Insert new line symbol after the current cursor pos, then increment the curser by 1.
-			if (mInputEditor)
-			{
-				std::string msg = mInputEditor->getText();
-				if (mInputEditor->getCursor() > 0)
-				{
-					if (msg[mInputEditor->getCursor() - 1] != '\n')
-					{
-						//For some reason you have to use a newline character, the ¶ wont show up in chat.
-						msg = msg.insert(mInputEditor->getCursor(), "\n");
-						mInputEditor->setText(msg);
-						mInputEditor->setCursor(mInputEditor->getCursor() + 1);
-					}
-				}
-				handled = true;
-			}
-		}
 	}
 	// only do this in main chatbar
-	else if ( KEY_ESCAPE == key && gChatBar == this)
+	else if (KEY_ESCAPE == key && mask == MASK_NONE && gChatBar == this)
 	{
 		stopChat();
 
@@ -258,8 +211,7 @@ void LLChatBar::refresh()
 	}
 
 	childSetValue("History", LLFloaterChat::instanceVisible(LLSD()));
-	
-	childSetValue("ChatChannel",( 1.f * ((S32)(getChild<LLSpinCtrl>("ChatChannel")->get()))) );
+
 	childSetEnabled("Say", mInputEditor->getText().size() > 0);
 	childSetEnabled("Shout", mInputEditor->getText().size() > 0);
 
@@ -389,11 +341,17 @@ LLWString LLChatBar::stripChannelNumber(const LLWString &mesg, S32* channel)
 	}
 	else if (mesg[0] == '/'
 			 && mesg[1]
-			 && LLStringOps::isDigit(mesg[1]))
+			 && ( LLStringOps::isDigit(mesg[1]) 
+				// <edit>
+				|| mesg[1] == '-' ))
+				// </edit>
 	{
 		// This a special "/20" speak on a channel
 		S32 pos = 0;
-
+		// <edit>
+		if(mesg[1] == '-')
+			pos++;
+		// </edit>
 		// Copy the channel number into a string
 		LLWString channel_string;
 		llwchar c;
@@ -415,18 +373,22 @@ LLWString LLChatBar::stripChannelNumber(const LLWString &mesg, S32* channel)
 		}
 		
 		mLastSpecialChatChannel = strtol(wstring_to_utf8str(channel_string).c_str(), NULL, 10);
+		// <edit>
+		if(mesg[1] == '-')
+			mLastSpecialChatChannel = -mLastSpecialChatChannel;
+		// </edit>
 		*channel = mLastSpecialChatChannel;
 		return mesg.substr(pos, mesg.length() - pos);
 	}
 	else
 	{
 		// This is normal chat.
-		//NO WHAT ARE YOU DOING!!! :(*channel = 0;
+		*channel = 0;
 		return mesg;
 	}
 }
 
-
+// <dogmode>
 void LLChatBar::sendChat( EChatType type )
 {
 	if (mInputEditor)
@@ -434,21 +396,10 @@ void LLChatBar::sendChat( EChatType type )
 		LLWString text = mInputEditor->getConvertedText();
 		if (!text.empty())
 		{
-			if(type == CHAT_TYPE_OOC)
-			{
-				std::string tempText=mInputEditor->getText();
-				tempText = gSavedSettings.getString("EmeraldOOCPrefix") + " " + tempText + " " + gSavedSettings.getString("EmeraldOOCPostfix");
-				mInputEditor->setText(tempText);
-				text = utf8str_to_wstring(tempText);
-			}
 			// store sent line in history, duplicates will get filtered
 			if (mInputEditor) mInputEditor->updateHistory();
-			// Check if this is destined for another channel
-			//greg changed channel here
-			//F32 readChan= getChild<LLSpinCtrl>("ChatChannel")->get();
-			//S32 undoneChan = (S32)readChan;
-			//S32 channel = undoneChan;
-			S32 channel = (S32)(getChild<LLSpinCtrl>("ChatChannel")->get());
+
+			S32 channel = 0;
 			stripChannelNumber(text, &channel);
 			
 			std::string utf8text = wstring_to_utf8str(text);//+" and read is "+llformat("%f",readChan)+" and undone is "+llformat("%d",undoneChan)+" but actualy channel is "+llformat("%d",channel);
@@ -456,55 +407,40 @@ void LLChatBar::sendChat( EChatType type )
 			std::string utf8_revised_text;
 			if (0 == channel)
 			{
-				if (gSavedSettings.getBOOL("EmeraldAutoCloseOOC"))
+				if (gSavedSettings.getBOOL("AscentAutoCloseOOC") && (utf8text.length() > 1))
 				{
 					// Chalice - OOC autoclosing patch based on code by Henri Beauchamp
 					int needsClosingType=0;
+					//Check if it needs the end-of-chat brackets -HgB
 					if (utf8text.find("((") == 0 && utf8text.find("))") == -1)
-						needsClosingType=1;
-					else if(utf8text.find("[[") == 0 && utf8text.find("]]") == -1)
-						needsClosingType=2;
-					if(needsClosingType==1)
 					{
-						// Chalice - OOC autoclosing patch based on code by Henri Beauchamp
-						int needsClosingType=0;
-						if (utf8text.find("((") == 0 && utf8text.find("))") == -1)
-							needsClosingType=1;
-						else if(utf8text.find("[[") == 0 && utf8text.find("]]") == -1)
-							needsClosingType=2;
-						if(needsClosingType==1)
-						{
-							if(utf8text.at(utf8text.length() - 1) == ')')
-								utf8text+=" ";
-							utf8text+="))";
-						}
-						else if(needsClosingType==2)
-						{
-							if(utf8text.at(utf8text.length() - 1) == ']')
-								utf8text+=" ";
-							utf8text+="]]";
-						}
-						needsClosingType=0;
-						if (utf8text.find("((") == -1 && utf8text.find("))") == (utf8text.length() - 2))
-							needsClosingType=1;
-						else if (utf8text.find("[[") == -1 && utf8text.find("]]") == (utf8text.length() - 2))
-							needsClosingType=2;
-						if(needsClosingType==1)
-						{
-							if(utf8text.at(0) == '(')
-								utf8text.insert(0," ");
-							utf8text.insert(0,"((");
-						}
-						else if(needsClosingType==2)
-						{
-							if(utf8text.at(0) == '[')
-								utf8text.insert(0," ");
-							utf8text.insert(0,"[[");
-						}
+						if(utf8text.at(utf8text.length() - 1) == ')')
+							utf8text+=" ";
+						utf8text+="))";
+					}
+					else if(utf8text.find("[[") == 0 && utf8text.find("]]") == -1)
+					{
+						if(utf8text.at(utf8text.length() - 1) == ']')
+							utf8text+=" ";
+						utf8text+="]]";
+					}
+					//Check if it needs the start-of-chat brackets -HgB
+					needsClosingType=0;
+					if (utf8text.find("((") == -1 && utf8text.find("))") == (utf8text.length() - 2))
+					{
+						if(utf8text.at(0) == '(')
+							utf8text.insert(0," ");
+						utf8text.insert(0,"((");
+					}
+					else if (utf8text.find("[[") == -1 && utf8text.find("]]") == (utf8text.length() - 2))
+					{
+						if(utf8text.at(0) == '[')
+							utf8text.insert(0," ");
+						utf8text.insert(0,"[[");
 					}
 				}
 				// Convert MU*s style poses into IRC emotes here.
-				if (gSavedSettings.getBOOL("EmeraldAllowMUpose") && utf8text.find(":") == 0 && utf8text.length() > 3)
+				if (gSavedSettings.getBOOL("AscentAllowMUpose") && utf8text.find(":") == 0 && utf8text.length() > 3)
 				{
 					if (utf8text.find(":'") == 0)
 					{
@@ -557,8 +493,6 @@ void LLChatBar::sendChat( EChatType type )
 // static 
 void LLChatBar::startChat(const char* line)
 {
-	if (gSavedSettings.getBOOL("EmeraldUseChatBar"))
-	{
 	gChatBar->setVisible(TRUE);
 	gChatBar->setKeyboardFocus(TRUE);
 	gSavedSettings.setBOOL("ChatVisible", TRUE);
@@ -570,7 +504,6 @@ void LLChatBar::startChat(const char* line)
 	}
 	// always move cursor to end so users don't obliterate chat when accidentally hitting WASD
 	gChatBar->mInputEditor->setCursorToEnd();
-	}
 }
 
 
@@ -609,10 +542,7 @@ void LLChatBar::onInputEditorKeystroke( LLLineEditor* caller, void* userdata )
 
 	S32 length = raw_text.length();
 
-	//if( (length > 0) && (raw_text[0] != '/') )  // forward slash is used for escape (eg. emote) sequences
-// [RLVa:KB] - Checked: 2009-07-07 (RLVa-1.0.0d)
-	if ( (length > 0) && (raw_text[0] != '/') && (!gRlvHandler.hasBehaviour(RLV_BHVR_REDIRCHAT)) )
-// [/RLVa:KB]
+	if( (length > 0) && (raw_text[0] != '/') )  // forward slash is used for escape (eg. emote) sequences
 	{
 		gAgent.startTyping();
 	}
@@ -706,33 +636,20 @@ void LLChatBar::sendChatFromViewer(const std::string &utf8text, EChatType type, 
 void LLChatBar::sendChatFromViewer(const LLWString &wtext, EChatType type, BOOL animate)
 {
 	// Look for "/20 foo" channel chats.
-	S32 channel = (S32)(getChild<LLSpinCtrl>("ChatChannel")->get());
-			
-	//todo 
+	S32 channel = 0;
 	LLWString out_text = stripChannelNumber(wtext, &channel);
 	std::string utf8_out_text = wstring_to_utf8str(out_text);
-	std::string utf8_text = wstring_to_utf8str(wtext)+" and chan is "+llformat("%d",channel);
+	if (!utf8_out_text.empty())
+	{
+		utf8_out_text = utf8str_truncate(utf8_out_text, MAX_MSG_STR_LEN);
+	}
 
+	std::string utf8_text = wstring_to_utf8str(wtext);
 	utf8_text = utf8str_trim(utf8_text);
 	if (!utf8_text.empty())
 	{
 		utf8_text = utf8str_truncate(utf8_text, MAX_STRING - 1);
 	}
-
-// [RLVa:KB] - Checked: 2010-03-27 (RLVa-1.1.1a) | Modified: RLVa-1.2.0b
-	if ( (0 == channel) && (rlv_handler_t::isEnabled()) )
-	{
-		// Adjust the (public) chat "volume" on chat and gestures (also takes care of playing the proper animation)
-		if ( ((CHAT_TYPE_SHOUT == type) || (CHAT_TYPE_NORMAL == type)) && (gRlvHandler.hasBehaviour(RLV_BHVR_CHATNORMAL)) )
-			type = CHAT_TYPE_WHISPER;
-		else if ( (CHAT_TYPE_SHOUT == type) && (gRlvHandler.hasBehaviour(RLV_BHVR_CHATSHOUT)) )
-			type = CHAT_TYPE_NORMAL;
-		else if ( (CHAT_TYPE_WHISPER == type) && (gRlvHandler.hasBehaviour(RLV_BHVR_CHATWHISPER)) )
-			type = CHAT_TYPE_NORMAL;
-
-		animate &= !gRlvHandler.hasBehaviour( (!rlvIsEmote(utf8_text)) ? RLV_BHVR_REDIRCHAT : RLV_BHVR_REDIREMOTE );
-	}
-// [/RLVa:KB]
 
 	// Don't animate for chats people can't hear (chat to scripts)
 	if (animate && (channel == 0))
@@ -769,98 +686,39 @@ void LLChatBar::sendChatFromViewer(const LLWString &wtext, EChatType type, BOOL 
 	send_chat_from_viewer(utf8_out_text, type, channel);
 }
 
-//void send_chat_from_viewer(const std::string& utf8_out_text, EChatType type, S32 channel)
-// [RLVa:KB] - Checked: 2009-07-07 (RLVa-1.0.0d) | Modified: RLVa-0.2.2a
-void send_chat_from_viewer(std::string utf8_out_text, EChatType type, S32 channel)
-// [/RLVa:KB]
+void send_chat_from_viewer(const std::string& utf8_out_text, EChatType type, S32 channel)
 {
-// [RLVa:KB] - Alternate: Emerald | Checked: 2010-02-27 (RLVa-1.1.1a) | Modified: RLVa-1.2.0a
-	// Only process chat messages (ie not CHAT_TYPE_START, CHAT_TYPE_STOP, etc)
-	if ( (rlv_handler_t::isEnabled()) && ( (CHAT_TYPE_WHISPER == type) || (CHAT_TYPE_NORMAL == type) || (CHAT_TYPE_SHOUT == type) ) )
+	LLMessageSystem* msg = gMessageSystem;
+	// <edit>
+	if(channel >= 0)
 	{
-		if (0 == channel)
-		{
-			// (We already did this before, but LLChatHandler::handle() calls this directly)
-			if ( ((CHAT_TYPE_SHOUT == type) || (CHAT_TYPE_NORMAL == type)) && (gRlvHandler.hasBehaviour(RLV_BHVR_CHATNORMAL)) )
-				type = CHAT_TYPE_WHISPER;
-			else if ( (CHAT_TYPE_SHOUT == type) && (gRlvHandler.hasBehaviour(RLV_BHVR_CHATSHOUT)) )
-				type = CHAT_TYPE_NORMAL;
-			else if ( (CHAT_TYPE_WHISPER == type) && (gRlvHandler.hasBehaviour(RLV_BHVR_CHATWHISPER)) )
-				type = CHAT_TYPE_NORMAL;
-
-			// Redirect chat if needed
-			if ( ( (gRlvHandler.hasBehaviour(RLV_BHVR_REDIRCHAT) || (gRlvHandler.hasBehaviour(RLV_BHVR_REDIREMOTE)) ) && 
-				 (gRlvHandler.redirectChatOrEmote(utf8_out_text)) ) )
-			{
-				return;
-			}
-
-			// Filter public chat if sendchat restricted
-			if (gRlvHandler.hasBehaviour(RLV_BHVR_SENDCHAT))
-				gRlvHandler.filterChat(utf8_out_text, true);
-		}
-		else
-		{
-			// Don't allow chat on a non-public channel if sendchannel restricted (unless the channel is an exception)
-			if ( (gRlvHandler.hasBehaviour(RLV_BHVR_SENDCHANNEL)) && (!gRlvHandler.isException(RLV_BHVR_SENDCHANNEL, channel)) )
-				return;
-
-			// Don't allow chat on debug channel if @sendchat, @redirchat or @rediremote restricted (shows as public chat on viewers)
-			if (CHAT_CHANNEL_DEBUG == channel)
-			{
-				bool fIsEmote = rlvIsEmote(utf8_out_text);
-				if ( (gRlvHandler.hasBehaviour(RLV_BHVR_SENDCHAT)) || 
-					 ((!fIsEmote) && (gRlvHandler.hasBehaviour(RLV_BHVR_REDIRCHAT))) || 
-					 ((fIsEmote) && (gRlvHandler.hasBehaviour(RLV_BHVR_REDIREMOTE))) )
-				{
-					return;
-				}
-			}
-		}
+	// </edit>
+	msg->newMessageFast(_PREHASH_ChatFromViewer);
+	msg->nextBlockFast(_PREHASH_AgentData);
+	msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID());
+	msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
+	msg->nextBlockFast(_PREHASH_ChatData);
+	msg->addStringFast(_PREHASH_Message, utf8_out_text);
+	msg->addU8Fast(_PREHASH_Type, type);
+	msg->addS32("Channel", channel);
+	// <edit>
 	}
-// [/RLVa:KB]
-
-	// same code like in llimpanel.cpp
-	U32 split = MAX_MSG_BUF_SIZE - 1;
-	U32 pos = 0;
-	U32 total = utf8_out_text.length();
-	while(pos < total)
+	else
 	{
-		U32 next_split = split;
-
-		if(pos + next_split > total) next_split = total - pos;
-
-		// don't split utf-8 bytes
-		while(U8(utf8_out_text[pos + next_split]) >= 0x80 && U8(utf8_out_text[pos + next_split]) < 0xC0
-			&& next_split > 0)
-		{
-			--next_split;
-		}
-
-		if(next_split == 0)
-		{
-			next_split = split;
-			LL_WARNS("Splitting") << "utf-8 couldn't be split correctly" << LL_ENDL;
-		}
-
-		std::string send = utf8_out_text.substr(pos, pos + next_split);
-		pos += next_split;
-
-		// *FIXME: Queue messages and wait for server
-		LLMessageSystem* msg = gMessageSystem;
-		msg->newMessageFast(_PREHASH_ChatFromViewer);
-		msg->nextBlockFast(_PREHASH_AgentData);
-		msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID());
-		msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
-		msg->nextBlockFast(_PREHASH_ChatData);
-		msg->addStringFast(_PREHASH_Message, send);
-		msg->addU8Fast(_PREHASH_Type, type);
-		msg->addS32("Channel", channel);
-
-		gAgent.sendReliableMessage();
-
-		LLViewerStats::getInstance()->incStat(LLViewerStats::ST_CHAT_COUNT);
+		msg->newMessage("ScriptDialogReply");
+		msg->nextBlock("AgentData");
+		msg->addUUID("AgentID", gAgent.getID());
+		msg->addUUID("SessionID", gAgent.getSessionID());
+		msg->nextBlock("Data");
+		msg->addUUID("ObjectID", gAgent.getID());
+		msg->addS32("ChatChannel", channel);
+		msg->addS32("ButtonIndex", 0);
+		msg->addString("ButtonLabel", utf8_out_text);
 	}
+	// </edit>
+	gAgent.sendReliableMessage();
+
+	LLViewerStats::getInstance()->incStat(LLViewerStats::ST_CHAT_COUNT);
 }
 
 
@@ -904,47 +762,6 @@ void toggleChatHistory(void* user_data)
 	LLFloaterChat::toggleInstance(LLSD());
 }
 
-//static
-void LLChatBar::toggleChanSelect(void* user_data)//lgg
-{
-	LLChatBar* self = (LLChatBar*) user_data;
-
-	//Rect code by Cryogenic
-	LLRect chatbar = self->mInputEditor->getRect();
-	LLRect chanselect;
-	LLRect expander;
-	S32 chatdelta;
-	if(self->childGetRect("ChatChannel",chanselect) && self->childGetRect("Expand",expander))
-	{
-
-		if(self->mChanSelectorExpanded)
-		{
-			self->mChanSelectorExpanded=false;
-			chatdelta = chanselect.getWidth();
-			
-			//self->childSetLabelArg("Expand","[NOTHING]",std::string("<"));
-			self->childSetToolTip("Expand",std::string("Show Channel Selector"));
-		}else
-		{
-			self->mChanSelectorExpanded=true;
-			
-			//self->childSetText("Expand",std::string(">"));
-			
-			//self->childSetLabelArg("Expand","[NOTHING]",std::string(">"));
-			self->childSetToolTip("Expand",std::string("Hide Channel Selector"));
-			chatdelta = -chanselect.getWidth();
-		}
-		expander.setCenterAndSize(expander.getCenterX() + chatdelta,expander.getCenterY(),expander.getWidth(),expander.getHeight());
-		chatbar.setCenterAndSize(chatbar.getCenterX() + chatdelta/2,chatbar.getCenterY(),chatbar.getWidth() + chatdelta,chatbar.getHeight());
-		self->childSetVisible("ChatChannel",self->mChanSelectorExpanded);
-		self->mInputEditor->setRect(chatbar);
-		self->childSetRect("Expand",expander);
-	}
-	else
-	{
-		llwarns << "ChatChannel or Expand could not be found in panel_chat_bar.xml" << llendl;
-	}
-}
 
 class LLChatHandler : public LLCommandHandler
 {
@@ -954,7 +771,7 @@ public:
 
     // Your code here
 	bool handle(const LLSD& tokens, const LLSD& query_map,
-				LLWebBrowserCtrl* web)
+				LLMediaCtrl* web)
 	{
 		if (tokens.size() < 2) return false;
 		S32 channel = tokens[0].asInteger();

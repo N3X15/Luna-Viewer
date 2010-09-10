@@ -40,7 +40,6 @@
 #include <vector>
 
 class LLButton;
-class LLTextEditor;  // HEWEE
 class LLNotifyBoxTemplate;
 
 // NotifyBox - for notifications that require a response from the user.  
@@ -103,8 +102,6 @@ private:
 
 protected:
 	std::string mMessage;
-
-	LLTextEditor* mUserInputBox;
 
 	LLNotificationPtr mNotification;
 	BOOL mIsTip;

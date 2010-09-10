@@ -88,7 +88,6 @@ typedef enum e_camera_position
 	CAMERA_POSITION_OBJECT /** Camera positioned at observed object's position */
 } ECameraPosition;
 
-
 typedef enum e_anim_request
 {
 	ANIM_REQUEST_START,
@@ -158,7 +157,7 @@ public:
 
 	void			sendMessage();						// Send message to this agent's region.
 	void			sendReliableMessage();
-
+	void			resetClientTag();
 	LLVector3d		calcCameraPositionTargetGlobal(BOOL *hit_limit = NULL); // Calculate the camera position target
 	LLVector3d		calcFocusPositionTargetGlobal();
 	LLVector3d		calcThirdPersonFocusOffset();
@@ -179,11 +178,6 @@ public:
 	void			setRenderState(U8 newstate);
 	void			clearRenderState(U8 clearstate);
 	U8				getRenderState();
-
-	// get/set last region data
-	std::string		getLastRegion();
-	LLVector3		getLastCoords();
-	void			setLastRegionData(std::string regionName,LLVector3 agentCoords);
 
 	// Set the home data
 	void			setRegion(LLViewerRegion *regionp);
@@ -377,6 +371,16 @@ public:
 
 	const LLColor4		&getEffectColor();
 	void				setEffectColor(const LLColor4 &color);
+
+	// OGPX : Moving capabilities off region to agent service means they end up in LLAgent
+    //    but, long term, this needs to be refactored into generalized Capabilities class
+    //    since we want more flexibility in gathering up where services come from.
+	//    Segmenting into region and agent domain caps might not make sense. Some implementations
+	//    might want to provide caps that are not on the region or the agent domain. This is
+	//    unsettled enough for now that we'll leave it as is.
+	void				setCapability(const std::string& name, const std::string& url);
+	std::string			getCapability(const std::string& name) const ; 
+
 	//
 	// UTILITIES
 	//
@@ -406,10 +410,13 @@ public:
 	void			setFlying(BOOL fly);
 	void			toggleFlying();
 
-	//lgg crap
-	static BOOL			getPhantom();// const				{ return emeraldPhantom; }
+	static BOOL			getPhantom();
 	static void			setPhantom(BOOL phantom);
 	static void			togglePhantom();
+
+	static BOOL			isTPosed() { return mForceTPose; }
+	static void			setTPosed(BOOL TPose) { mForceTPose = TPose; }
+	static void			toggleTPosed();
 
 	// Does this parcel allow you to fly?
 	BOOL canFly();
@@ -459,7 +466,7 @@ public:
 	void			moveLeftNudge(S32 direction);
 	void			moveUp(S32 direction);
 	void			moveYaw(F32 mag, bool reset_view = true);
-	void			movePitch(F32 mag);
+	void			movePitch(S32 direction);
 
 	void			setOrbitLeftKey(F32 mag)				{ mOrbitLeftKey = mag; }
 	void			setOrbitRightKey(F32 mag)				{ mOrbitRightKey = mag; }
@@ -500,7 +507,8 @@ public:
 	// go to a named location home
 	void teleportRequest(
 		const U64& region_handle,
-		const LLVector3& pos_local);
+		const LLVector3& pos_local,
+		bool look_at_from_camera = false);
 
 	// teleport to a landmark
 	void teleportViaLandmark(const LLUUID& landmark_id);
@@ -513,8 +521,11 @@ public:
 
 	// to a global location - this will probably need to be
 	// deprecated.
-	void teleportViaLocation(const LLVector3d& pos_global, bool go_to = false); 
+	void teleportViaLocation(const LLVector3d& pos_global); 
 
+	// to a global location, preserving camera rotation
+	void teleportViaLocationLookAt(const LLVector3d& pos_global);
+	
 	// cancel the teleport, may or may not be allowed by server
 	void teleportCancel();
 
@@ -522,6 +533,10 @@ public:
 	const LLVector3	&getTargetVelocity() const;
 
 	const std::string getTeleportSourceSLURL() const { return mTeleportSourceSLURL; }
+	// OGPX : setTeleportSourceURL() is only used in agent domain case, 
+	//     so also made function name go from SLURL->URL for OGPX.
+	//     This is what gets chatted into text chat when a teleport successfully completes.
+	void setTeleportSourceURL(const std::string agentdTeleportURL){ mTeleportSourceSLURL = agentdTeleportURL;};
 
 
 	// Setting the ability for this avatar to proxy for another avatar.
@@ -607,7 +622,9 @@ public:
 		TELEPORT_REQUESTED = 2,		// Waiting for source simulator to respond
 		TELEPORT_MOVING = 3,		// Viewer has received destination location from source simulator
 		TELEPORT_START_ARRIVAL = 4,	// Transition to ARRIVING.  Viewer has received avatar update, etc., from destination simulator
-		TELEPORT_ARRIVING = 5		// Make the user wait while content "pre-caches"
+		TELEPORT_ARRIVING = 5,		// Make the user wait while content "pre-caches"
+		TELEPORT_LOCAL = 6,			// Teleporting in-sim without showing the progress screen
+		TELEPORT_PLACE_AVATAR = 7	// OGPX : Separate agent domain TP using place_avatar from legacy
 	};
 
 	ETeleportState	getTeleportState() const			{ return mTeleportState; }
@@ -717,11 +734,14 @@ public:
 	//debug methods
 	static void		clearVisualParams(void *);
 
-protected:
+	// whether look-at reset after teleport
+	bool getTeleportKeepsLookAt()	{ return mbTeleportKeepsLookAt; }
+
 	// stuff to do for any sort of teleport. Returns true if the
 	// teleport can proceed.
-	bool teleportCore(bool is_local = false);
+	bool teleportCore(bool is_local = false); //OGPX : now public method so agent domain TP can call
 
+protected:
 	// helper function to prematurely age chat when agent is moving
 	void ageChat();
 
@@ -734,7 +754,7 @@ protected:
 						LLWearable* wearable, const LLUUID& category_id = LLUUID::null,
 						BOOL notify = TRUE);
 public:
-	// TODO: Make these private! 
+	// TODO: Make these private!
 	LLUUID			mSecureSessionID;			// secure token for this login session
 
 	F32				mDrawDistance;
@@ -763,6 +783,21 @@ public:
 
 	BOOL			mInitialized;
 
+	// <edit>
+	static BOOL lure_show;
+	static std::string lure_name;
+	static LLVector3d lure_posglobal;
+	static U16 lure_global_x;
+	static U16 lure_global_y;
+	static int lure_x;
+	static int lure_y;
+	static int lure_z;
+	static std::string lure_maturity;
+
+	static LLVector3 exlStartMeasurePoint;
+	static LLVector3 exlEndMeasurePoint;
+	// </edit>
+
 	S32				mNumPendingQueries;
 	S32*			mActiveCacheQueries;
 
@@ -777,19 +812,16 @@ public:
 
 	LLFrameTimer mDoubleTapRunTimer;
 	EDoubleTapRunMode mDoubleTapRunMode;
-
-	static BOOL sFirstPersonBtnState;
-	static BOOL sMouselookBtnState;
-	static BOOL sThirdPersonBtnState;
-	static BOOL sBuildBtnState;
+	
+	// <edit>
+	static void showLureDestination(const std::string fromname, const int global_x, const int global_y, const int x, const int y, const int z, const std::string maturity);
+	static void onFoundLureDestination();
+	// </edit>
 
 private:
-	static BOOL ignorePrejump;
-	static BOOL EmeraldForceFly;
-	static void updateIgnorePrejump(const LLSD &data);
-	static void	updateEmeraldForceFly(const LLSD &data);
-
-	static BOOL emeraldPhantom;
+	static BOOL exlPhantom;
+	static BOOL mForceTPose;
+	bool mbTeleportKeepsLookAt; // try to keep look-at after teleport is complete
 	bool mbAlwaysRun; // should the avatar run by default rather than walk
 	bool mbRunning;	// is the avatar trying to run right now
 
@@ -909,6 +941,11 @@ private:
 
 	std::set<LLUUID> mProxyForAgents;
 
+	 
+	//
+	typedef std::map<std::string, std::string> CapabilityMap; //OGPX TODO: refactor Caps to their own class
+	CapabilityMap 	mCapabilities; // for caps that we have on the agent domain.
+
 	LLColor4 mEffectColor;
 
 	BOOL mHaveHomePosition;
@@ -925,9 +962,6 @@ private:
 	BOOL			mFirstLogin;
 	BOOL			mGenderChosen;
 	
-	std::string		mLastRegion;
-	LLVector3		mLastCoordinates;
-
 	//--------------------------------------------------------------------
 	// Wearables
 	//--------------------------------------------------------------------
@@ -995,5 +1029,8 @@ private:
 };
 
 extern LLAgent gAgent;
-
+// <edit>
+extern LLUUID gReSitTargetID;
+extern LLVector3 gReSitOffset;
+// </edit>
 #endif

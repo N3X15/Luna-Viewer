@@ -86,9 +86,6 @@
 // system includes
 #include <iomanip>
 
-// [RLVa:KB]
-#include "rlvhandler.h"
-// [/RLVa:KB]
 
 //
 // Globals
@@ -237,14 +234,12 @@ void LLStatusBar::draw()
 {
 	refresh();
 
-	/*
 	if (isBackgroundVisible())
 	{
 		gl_drop_shadow(0, getRect().getHeight(), getRect().getWidth(), 0, 
 			LLUI::sColorsGroup->getColor("ColorDropShadow"), 
 			LLUI::sConfigGroup->getS32("DropShadowFloater") );
 	}
-	*/
 	LLPanel::draw();
 }
 
@@ -274,36 +269,21 @@ void LLStatusBar::refresh()
 	// it's daylight savings time there.
 	internal_time = utc_to_pacific_time(utc_time, gPacificDaylightTime);
 
-	S32 hour = internal_time->tm_hour;
-	S32 min  = internal_time->tm_min;
-
-	std::string am_pm = "AM";
-	if (hour > 11)
-	{
-		hour -= 12;
-		am_pm = "PM";
-	}
-
-	std::string tz = "PST";
+	std::string t;
+	timeStructToFormattedString(internal_time, gSavedSettings.getString("ShortTimeFormat"), t);
 	if (gPacificDaylightTime)
 	{
-		tz = "PDT";
+		t += " PDT";
 	}
-	// Zero hour is 12 AM
-	if (hour == 0) hour = 12;
-	std::ostringstream t;
-	t << std::setfill(' ') << std::setw(2) << hour << ":" 
-		<< std::setfill('0') << std::setw(2) << min 
-		<< " " << am_pm << " " << tz;
-	mTextTime->setText(t.str());
+	else
+	{
+		t += " PST";
+	}
+	mTextTime->setText(t);
 
-	// Year starts at 1900, set the tooltip to have the date
-	std::ostringstream date;
-	date	<< sDays[internal_time->tm_wday] << ", "
-		<< std::setfill('0') << std::setw(2) << internal_time->tm_mday << " "
-		<< sMonths[internal_time->tm_mon] << " "
-		<< internal_time->tm_year + 1900;
-	mTextTime->setToolTip(date.str());
+	std::string date;
+	timeStructToFormattedString(internal_time, gSavedSettings.getString("LongDateFormat"), date);
+	mTextTime->setToolTip(date);
 
 	LLRect r;
 	const S32 MENU_RIGHT = gMenuBarView->getRightmostMenuEdge();
@@ -577,16 +557,6 @@ void LLStatusBar::refresh()
 		mRegionDetails.mTraffic = 0.0f;
 	}
 
-// [RLVa:KB] - Checked: 2009-07-04 (RLVa-1.0.0a) | Modified: RLVa-1.0.0a
-	if ( (region) && (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC)) )	// region == NULL if we loose our connection to the grid
-	{
-		// TODO-RLVa: find out whether the LCD code is still used because if so then we need to filter that as well
-		location_name = llformat("%s (%s) - %s", 
-			RlvStrings::getString(RLV_STRING_HIDDEN_REGION).c_str(), region->getSimAccessString().c_str(), 
-			RlvStrings::getString(RLV_STRING_HIDDEN).c_str());
-	}
-// [/RLVa:KB]
-
 	mTextParcelName->setText(location_name);
 
 
@@ -848,12 +818,6 @@ static void onClickScripts(void*)
 
 static void onClickBuyLand(void*)
 {
-// [RLVa:KB] - Checked: 2009-07-04 (RLVa-1.0.0a)
-	if ( (rlv_handler_t::isEnabled()) && (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC)) )
-	{
-		return;
-	}
-// [/RLVa:KB]
 	LLViewerParcelMgr::getInstance()->selectParcelAt(gAgent.getPositionGlobal());
 	LLViewerParcelMgr::getInstance()->startBuyLand();
 }
@@ -955,7 +919,7 @@ class LLBalanceHandler : public LLCommandHandler
 public:
 	// Requires "trusted" browser/URL source
 	LLBalanceHandler() : LLCommandHandler("balance", true) { }
-	bool handle(const LLSD& tokens, const LLSD& query_map, LLWebBrowserCtrl* web)
+	bool handle(const LLSD& tokens, const LLSD& query_map, LLMediaCtrl* web)
 	{
 		if (tokens.size() == 1
 			&& tokens[0].asString() == "request")

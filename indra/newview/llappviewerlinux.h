@@ -33,12 +33,9 @@
 #ifndef LL_LLAPPVIEWERLINUX_H
 #define LL_LLAPPVIEWERLINUX_H
 
-extern "C" {
-# include <glib.h>
-}
-
 #if LL_DBUS_ENABLED
 extern "C" {
+# include <glib.h>
 # include <glib-object.h>
 # include <dbus/dbus-glib.h>
 }

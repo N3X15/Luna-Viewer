@@ -39,7 +39,6 @@
 
 #include "lluictrlfactory.h"
 #include "llviewermessage.h"
-#include "llviewercontrol.h"
 #include "llappviewer.h"		// gPacificDaylightTime
 
 ///----------------------------------------------------------------------------
@@ -89,7 +88,6 @@ void LLFloaterBump::show(void *contents)
 		std::string none_detected = sInstance->getString("none_detected");
 		LLSD row;
 		row["columns"][0]["value"] = none_detected;
-		row["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
 		row["columns"][0]["font"] = "SansSerifBold";
 		list->addElement(row);
 	}
@@ -160,7 +158,9 @@ void LLFloaterBump::add(LLScrollListCtrl* list, LLMeanCollisionData* mcd)
 	LLSD row;
 	row["id"] = mcd->mPerp;
 	row["columns"][0]["value"] = text;
-	row["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
 	row["columns"][0]["font"] = "SansSerifBold";
 	list->addElement(row);
+
+	//@hook OnBump(action,time,firstname,lastname) You were bumped by something
+	LUA_CALL("OnBump") << action << time << mcd->mFirstName << mcd->mLastName << LUA_END;
 }

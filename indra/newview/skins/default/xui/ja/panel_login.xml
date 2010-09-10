@@ -11,7 +11,7 @@
 	<text name="password_text">
 		パスワード：
 	</text>
-	<text name="start_location_text" left="20" >
+	<text left="485" name="start_location_text">
 		ログイン位置：
 	</text>
 	<combo_box name="start_location_combo" left_delta="92" width="172">

@@ -64,6 +64,7 @@
 #include "llpanelclassified.h"
 #include "llpanelpick.h"
 #include "llpreviewtexture.h"
+#include "llpluginclassmedia.h"
 #include "llscrolllistctrl.h"
 #include "llstatusbar.h"
 #include "lltabcontainer.h"
@@ -83,13 +84,13 @@
 #include "lluictrlfactory.h"
 #include "llviewermenu.h"
 
-#include "jc_lslviewerbridge.h"
+
 
 #include <iosfwd>
 
-// [RLVa:KB]
-#include "rlvhandler.h"
-// [/RLVa:KB]
+
+
+
 
 // Statics
 std::list<LLPanelAvatar*> LLPanelAvatar::sAllPanels;
@@ -270,6 +271,7 @@ void LLPanelAvatarSecondLife::enableControls(BOOL self)
 	childSetEnabled("?", self);
 }
 
+// static
 void LLPanelAvatarFirstLife::onClickImage(void* data)
 {
 	LLPanelAvatarFirstLife* self = (LLPanelAvatarFirstLife*)data;
@@ -299,7 +301,6 @@ void LLPanelAvatarFirstLife::onClickImage(void* data)
 
 	
 }
-
 
 // static
 void LLPanelAvatarSecondLife::onClickImage(void* data)
@@ -445,8 +446,8 @@ BOOL LLPanelAvatarSecondLife::postBuild(void)
 
 	childSetAction("Find on Map", LLPanelAvatar::onClickTrack, getPanelAvatar());
 	childSetAction("Instant Message...", LLPanelAvatar::onClickIM, getPanelAvatar());
-	childSetAction("EmeraldGroupInvite_Button", LLPanelAvatar::onClickGroupInvite, getPanelAvatar());
-	
+	childSetAction("GroupInvite_Button", LLPanelAvatar::onClickGroupInvite, getPanelAvatar());
+
 	childSetAction("Add Friend...", LLPanelAvatar::onClickAddFriend, getPanelAvatar());
 	childSetAction("Pay...", LLPanelAvatar::onClickPay, getPanelAvatar());
 	childSetAction("Mute", LLPanelAvatar::onClickMute, getPanelAvatar() );	
@@ -471,7 +472,6 @@ BOOL LLPanelAvatarFirstLife::postBuild(void)
 
 	getChild<LLTextureCtrl>("img")->setFallbackImageName("default_profile_picture.j2c");
 
-	
 	childSetAction("flbigimg", onClickImage, this);
 	return TRUE;
 }
@@ -496,16 +496,17 @@ BOOL LLPanelAvatarWeb::postBuild(void)
 
 	childSetControlName("auto_load","AutoLoadWebProfiles");
 
-	mWebBrowser = getChild<LLWebBrowserCtrl>("profile_html");
+	mWebBrowser = getChild<LLMediaCtrl>("profile_html");
+	mWebBrowser->addObserver(this);
 
 	// links open in internally 
 	mWebBrowser->setOpenInExternalBrowser( false );
 
-	// observe browser events
-	mWebBrowser->addObserver( this );
-
 	return TRUE;
 }
+
+
+
 
 BOOL LLPanelAvatarClassified::postBuild(void)
 {
@@ -518,7 +519,7 @@ BOOL LLPanelAvatarPicks::postBuild(void)
 {
 	childSetAction("New...",onClickNew,NULL);
 	childSetAction("Delete...",onClickDelete,NULL);
-
+	
 	//For pick import and export - RK
 	childSetAction("Import...",onClickImport,NULL);
 	childSetAction("Export...",onClickExport,NULL);
@@ -573,6 +574,17 @@ LLPanelAvatarWeb::~LLPanelAvatarWeb()
 	};
 }
 
+void LLPanelAvatarWeb::refresh()
+{
+	if (mNavigateTo != "")
+	{
+		llinfos << "Loading " << mNavigateTo << llendl;
+		mWebBrowser->navigateTo( mNavigateTo );
+		mNavigateTo = "";
+	}
+}
+
+
 void LLPanelAvatarWeb::enableControls(BOOL self)
 {	
 	childSetEnabled("url_edit",self);
@@ -601,12 +613,12 @@ void LLPanelAvatarWeb::setWebURL(std::string url)
 	else
 	{
 		childSetVisible("profile_html",false);
+		childSetVisible("status_text", false);
 	}
-
-	BOOL own_avatar = (getPanelAvatar()->getAvatarID() == gAgent.getID() );
+		BOOL own_avatar = (getPanelAvatar()->getAvatarID() == gAgent.getID() );
 	childSetVisible("status_text",!own_avatar && !mHome.empty());
-	
 }
+
 
 // static
 void LLPanelAvatarWeb::onCommitURL(LLUICtrl* ctrl, void* data)
@@ -628,14 +640,19 @@ void LLPanelAvatarWeb::load(std::string url)
 {
 	bool have_url = (!url.empty());
 
+	
+	childSetVisible("profile_html", have_url);
+	childSetVisible("status_text", have_url);
+	childSetText("status_text", LLStringUtil::null);
+
 	if (have_url)
 	{
-		llinfos << "Loading " << url << llendl;
-		mWebBrowser->navigateTo( url );
+		mNavigateTo = url;
 	}
-
-	childSetVisible("profile_html", have_url);
 }
+
+
+
 
 //static
 void LLPanelAvatarWeb::onURLKeystroke(LLLineEditor* editor, void* data)
@@ -676,15 +693,33 @@ void LLPanelAvatarWeb::onCommitLoad(LLUICtrl* ctrl, void* data)
 	}
 }
 
-void LLPanelAvatarWeb::onStatusTextChange( const EventType& eventIn )
+
+
+void LLPanelAvatarWeb::handleMediaEvent(LLPluginClassMedia* self, EMediaEvent event)
 {
-	childSetText("status_text", eventIn.getStringValue() );
+	switch(event)
+	{
+		case MEDIA_EVENT_STATUS_TEXT_CHANGED:
+			childSetText("status_text", self->getStatusText() );
+		break;
+		
+		case MEDIA_EVENT_LOCATION_CHANGED:
+			childSetText("url_edit", self->getLocation() );
+		break;
+		
+		default:
+			// Having a default case makes the compiler happy.
+		break;
+	}
 }
 
-void LLPanelAvatarWeb::onLocationChange( const EventType& eventIn )
-{
-	childSetText("url_edit", eventIn.getStringValue() );
-}
+
+
+
+
+
+
+
 
 
 //-----------------------------------------------------------------------------
@@ -821,9 +856,9 @@ void LLPanelAvatarClassified::refresh()
 	S32 tab_count = tabs ? tabs->getTabCount() : 0;
 
 	bool allow_new = tab_count < MAX_CLASSIFIEDS;
-// [RLVa:KB] - Checked: 2009-07-04 (RLVa-1.0.0a)
-	allow_new &= !gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC);
-// [/RLVa:KB]
+
+
+
 	bool allow_delete = (tab_count > 0);
 	bool show_help = (tab_count == 0);
 
@@ -959,12 +994,12 @@ void LLPanelAvatarClassified::processAvatarClassifiedReply(LLMessageSystem* msg,
 // static
 void LLPanelAvatarClassified::onClickNew(void* data)
 {
-// [RLVa:KB] - Version: 1.23.4 | Checked: 2009-07-04 (RLVa-1.0.0a)
-	if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC))
-	{
-		return;
-	}
-// [/RLVa:KB]
+
+
+
+
+
+
 	LLPanelAvatarClassified* self = (LLPanelAvatarClassified*)data;
 
 	LLNotifications::instance().add("AddClassified", LLSD(), LLSD(), boost::bind(&LLPanelAvatarClassified::callbackNew, self, _1, _2));
@@ -1060,14 +1095,14 @@ void LLPanelAvatarPicks::refresh()
 	BOOL self = (gAgent.getID() == getPanelAvatar()->getAvatarID());
 	LLTabContainer*	tabs = getChild<LLTabContainer>("picks tab");
 	S32 tab_count = tabs ? tabs->getTabCount() : 0;
-// [RLVa:KB] - Checked: 2009-07-04 (RLVa-1.0.0a)
-	childSetEnabled("New...", self && tab_count < MAX_AVATAR_PICKS && (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC)) );
-// [/RLVa:KB]
-	//childSetEnabled("New...",    self && tab_count < MAX_AVATAR_PICKS);
+
+	childSetEnabled("New...",    self && tab_count < MAX_AVATAR_PICKS);
+
+
 	childSetEnabled("Delete...", self && tab_count > 0);
 	childSetVisible("New...",    self && getPanelAvatar()->isEditable());
 	childSetVisible("Delete...", self && getPanelAvatar()->isEditable());
-	
+
 	//For pick import/export - RK
 	childSetVisible("Import...", self && getPanelAvatar()->isEditable());
 	childSetEnabled("Export...", self && tab_count > 0);
@@ -1155,12 +1190,12 @@ void LLPanelAvatarPicks::processAvatarPicksReply(LLMessageSystem* msg, void**)
 // static
 void LLPanelAvatarPicks::onClickNew(void* data)
 {
-// [RLVa:KB] - Checked: 2009-07-04 (RLVa-1.0.0a)
-	if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC))
-	{
-		return;
-	}
-// [/RLVa:KB]
+
+
+
+
+
+
 	LLPanelAvatarPicks* self = (LLPanelAvatarPicks*)data;
 	LLPanelPick* panel_pick = new LLPanelPick(FALSE);
 	LLTabContainer* tabs =  self->getChild<LLTabContainer>("picks tab");
@@ -1319,6 +1354,9 @@ BOOL LLPanelAvatar::postBuild(void)
 	childSetAction("OK", onClickOK, this);
 	childSetAction("Cancel", onClickCancel, this);
 
+	childSetAction("copy_key",onClickGetKey,this);
+	childSetCommitCallback("avatar_key",onCommitKey,this);
+
 	if(mTab && !sAllowFirstLife)
 	{
 		LLPanel* panel = mTab->getPanelByName("1st Life");
@@ -1373,43 +1411,53 @@ void LLPanelAvatar::setAvatar(LLViewerObject *avatarp)
 	setAvatarID(avatarp->getID(), name, ONLINE_STATUS_YES);
 }
 
-class JCProfileCallback : public JCBridgeCallback
+void LLPanelAvatar::onCommitKey(LLUICtrl* ctrl, void* data)
 {
-public:
-	JCProfileCallback(LLUUID avvie)
-	{
-		avatar = avvie;
-	}
+	LLPanelAvatar* self = (LLPanelAvatar*) data;
+	std::string keystring = self->getChild<LLLineEditor>("avater_key")->getText();
+	LLUUID av_key = LLUUID::null;
+	if(LLUUID::validate(keystring))	av_key = (LLUUID)keystring;
 
-	void fire(LLSD data)
-	{
-		//printchat("lol, \n"+std::string(LLSD::dumpXML(data)));
-		//LLPanelAvatar
-		for (std::list<LLPanelAvatar*>::iterator iter = LLPanelAvatar::sAllPanels.begin(); iter != LLPanelAvatar::sAllPanels.end(); ++iter)
-		{
-			LLPanelAvatar* panelp = *iter;
-			if (panelp->mAvatarID == avatar)
-			{
-				BOOL status = atoi(data[0].asString().c_str());
+	self->setAvatarID(av_key, LLStringUtil::null, ONLINE_STATUS_NO);
+}
 
-				panelp->childSetVisible("online_yes", TRUE);
-				if(status)
-				{
-					panelp->childSetColor("online_yes",LLColor4::green);
-					panelp->childSetValue("online_yes","Currently Online");
-				}else
-				{
-					panelp->childSetColor("online_yes",LLColor4::red);
-					panelp->childSetValue("online_yes","Currently Offline");
-				}
-			}
-		}
-		//printchat("lol, \n"+std::string(LLSD::dumpXML(data)));
-	}
 
-private:
-	LLUUID avatar;
-};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 void LLPanelAvatar::setOnlineStatus(EOnlineStatus online_status)
 {
@@ -1421,10 +1469,20 @@ void LLPanelAvatar::setOnlineStatus(EOnlineStatus online_status)
 	{
 		online_status = ONLINE_STATUS_YES;
 	}
+	
 
-	mPanelSecondLife->childSetVisible("online_yes", (online_status == ONLINE_STATUS_YES));
-    if(gSavedSettings.getBOOL("EmeraldUseBridgeOnline"))
-		JCLSLBridge::bridgetolsl("online_status|"+mAvatarID.asString(), new JCProfileCallback(mAvatarID));
+
+
+
+
+
+
+	if(online_status == ONLINE_STATUS_YES)
+	{
+		mPanelSecondLife->childSetVisible("online_yes", TRUE);
+		mPanelSecondLife->childSetColor("online_yes",LLColor4::green);
+		mPanelSecondLife->childSetValue("online_yes","Currently Online");
+	}
 
 	// Since setOnlineStatus gets called after setAvatarID
 	// need to make sure that "Offer Teleport" doesn't get set
@@ -1433,6 +1491,9 @@ void LLPanelAvatar::setOnlineStatus(EOnlineStatus online_status)
 	{
 		childSetVisible("Offer Teleport...",TRUE);
 	}
+
+
+
 
 	BOOL in_prelude = gAgent.inPrelude();
 	if(gAgent.isGodlike())
@@ -1503,7 +1564,7 @@ void LLPanelAvatar::setAvatarID(const LLUUID &avatar_id, const std::string &name
 			name_edit->setText(name);
 		}
 	}
-	LLNameEditor* key_edit = getChild<LLNameEditor>("key_");
+	LLNameEditor* key_edit = getChild<LLNameEditor>("avatar_key");
 	if(key_edit)
 	{
 		key_edit->setText(mAvatarID.asString());
@@ -1549,8 +1610,8 @@ void LLPanelAvatar::setAvatarID(const LLUUID &avatar_id, const std::string &name
 			}
 			childSetVisible("Instant Message...",FALSE);
 			childSetEnabled("Instant Message...",FALSE);
-			childSetVisible("EmeraldGroupInvite_Button",FALSE);
-			childSetEnabled("EmeraldGroupInvite_Button",FALSE);
+			childSetVisible("GroupInvite_Button",FALSE);
+			childSetEnabled("GroupInvite_Button",FALSE);
 			childSetVisible("Mute",FALSE);
 			childSetEnabled("Mute",FALSE);
 			childSetVisible("Offer Teleport...",FALSE);
@@ -1574,8 +1635,8 @@ void LLPanelAvatar::setAvatarID(const LLUUID &avatar_id, const std::string &name
 
 			childSetVisible("Instant Message...",TRUE);
 			childSetEnabled("Instant Message...",FALSE);
-			childSetVisible("EmeraldGroupInvite_Button",TRUE);
-			childSetEnabled("EmeraldGroupInvite_Button",FALSE);
+			childSetVisible("GroupInvite_Button",TRUE);
+			childSetEnabled("GroupInvite_Button",FALSE);
 			childSetVisible("Mute",TRUE);
 			childSetEnabled("Mute",FALSE);
 
@@ -1602,6 +1663,11 @@ void LLPanelAvatar::setAvatarID(const LLUUID &avatar_id, const std::string &name
 			childSetEnabled("Add Friend...", !avatar_is_friend);
 			childSetVisible("Pay...",TRUE);
 			childSetEnabled("Pay...",FALSE);
+		}
+		LLNameEditor* avatar_key = getChild<LLNameEditor>("avatar_key");
+		if (avatar_key)
+		{
+			avatar_key->setText(avatar_id.asString());
 		}
 	}
 	
@@ -1662,7 +1728,7 @@ void LLPanelAvatar::resetGroupList()
 				row["columns"][0]["font"] = "SANSSERIF_SMALL";
 				if (group_data.mListInProfile)
 				{
-				row["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
+					row["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
 				}
 				else
 				{
@@ -1706,7 +1772,18 @@ void LLPanelAvatar::onClickGroupInvite(void* userdata)
 		}
 	}
 }
+//static
+void LLPanelAvatar::onClickGetKey(void *userdata)
+{
+	LLPanelAvatar* self = (LLPanelAvatar*)userdata;
+	LLUUID agent_id = self->getAvatarID();
 
+	char buffer[UUID_STR_LENGTH];		/*Flawfinder: ignore*/
+	agent_id.toString(buffer);
+	llinfos << "Copy agent id: " << agent_id << " buffer: " << buffer << llendl;
+
+	gViewerWindow->mWindow->copyTextToClipboard(utf8str_to_wstring(buffer));
+}
 
 // static
 //-----------------------------------------------------------------------------
@@ -1924,7 +2001,7 @@ void LLPanelAvatar::processAvatarPropertiesReply(LLMessageSystem *msg, void**)
 			continue;
 		}
 		self->childSetEnabled("Instant Message...",TRUE);
-		self->childSetEnabled("EmeraldGroupInvite_Button",TRUE);
+		self->childSetEnabled("GroupInvite_Button",TRUE);
 		self->childSetEnabled("Pay...",TRUE);
 		self->childSetEnabled("Mute",TRUE);
 
@@ -1941,6 +2018,15 @@ void LLPanelAvatar::processAvatarPropertiesReply(LLMessageSystem *msg, void**)
 		msg->getStringFast(_PREHASH_PropertiesData, _PREHASH_BornOn, born_on);
 		msg->getString("PropertiesData","ProfileURL", profile_url);
 		msg->getU32Fast(_PREHASH_PropertiesData, _PREHASH_Flags, flags);
+
+		/*tm t;
+		if (sscanf(born_on.c_str(), "%u/%u/%u", &t.tm_mon, &t.tm_mday, &t.tm_year) == 3 && t.tm_year > 1900)
+		{
+			t.tm_year -= 1900;
+			t.tm_mon--;
+			t.tm_hour = t.tm_min = t.tm_sec = 0;
+			timeStructToFormattedString(&t, gSavedSettings.getString("ShortDateFormat"), born_on);
+		}*/
 
 		identified = (flags & AVATAR_IDENTIFIED);
 		transacted = (flags & AVATAR_TRANSACTED);
@@ -1993,8 +2079,8 @@ void LLPanelAvatar::processAvatarPropertiesReply(LLMessageSystem *msg, void**)
 				}
 				args["[PAYMENTINFO]"] = self->mPanelSecondLife->getString(payment_text);
 				std::string age_text = age_verified ? "AgeVerified" : "NotAgeVerified";
-				// Do not display age verification status at this time
-				//args["[[AGEVERIFICATION]]"] = self->mPanelSecondLife->getString(age_text);
+				// Do not display age verification status at this time - Mostly because it /doesn't work/. -HgB
+				//args["[AGEVERIFICATION]"] = self->mPanelSecondLife->getString(age_text);
 				args["[AGEVERIFICATION]"] = " ";
 			}
 			else
@@ -2177,16 +2263,16 @@ void LLPanelAvatar::processAvatarGroupsReply(LLMessageSystem *msg, void**)
 							break;
 						}
 					}
+					// Set normal color if not found or if group is visible in profile
+					if (!group_data || group_data->mListInProfile)
+					{
+						row["columns"][0]["font-style"] = "BOLD";
+					}
 				}
-				// Set normal color if not found or if group is visible in profile
-				if (!group_data || group_data->mListInProfile)
-				{
-				row["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
-				}
-				else
-				{
-					row["columns"][0]["color"] = gColors.getColor("ScrollUnselectedColor").getValue();
-				}
+				
+
+
+
 				if (group_list)
 				{
 					group_list->addElement(row);

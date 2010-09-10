@@ -6,7 +6,7 @@
 <FloaterFocusBorderColor value="0, 0, 0, 50" />
 <FloaterUnfocusBorderColor value="0, 0, 0, 80" />
 <FocusBackgroundColor value="33, 33, 33, 255" />	<!-- Background color of focused floaters -->
-<DefaultBackgroundColor value="33, 33, 33, 80" />	<!-- Background color for unfocused floaters -->
+<DefaultBackgroundColor value="33, 33, 33, 192" />	<!-- Background color for unfocused floaters -->
 <ColorDropShadow value="0, 0, 0, 180" />		<!-- The drop shadow behind windows and menus -->
 <DefaultHighlightDark value="26, 26, 26, 255" />
 <DefaultHighlightLight value="66, 66, 66, 255" />
@@ -17,7 +17,7 @@
 <LabelDisabledColor value="255, 255, 255, 30" />
 <LabelSelectedColor value="255, 255, 255, 128" />
 <LabelSelectedDisabledColor value="255, 255, 255, 80" />
-<LabelTextColor value="222, 222, 222, 80" />
+<LabelTextColor value="255, 255, 255, 90" />
 
 <!-- LOGIN -->
 <LoginProgressBarBgColor value="255, 255, 255, 255" />
@@ -56,7 +56,7 @@
 <TextFgReadOnlyColor value="255, 255, 255, 80" />
 <TextFgTentativeColor value="255, 255, 255, 80" />
 <TextEmbeddedItemReadOnlyColor value="255, 255, 255, 80" />	<!-- i.e. About Land name that you don't own -->
-<TextEmbeddedItemColor value="0, 0, 128, 255" />
+<TextEmbeddedItemColor value="0, 255, 128, 255" />
 <TextDefaultColor value="255, 255, 255, 222"/>
 <TextLinkColor value="144, 165, 208, 255"/>
 <TextLinkHoverColor value="255, 255, 255, 255"/>
@@ -79,11 +79,11 @@
 <MenuNonProductionGodBgColor value="0, 128, 0, 255" />
 <MenuNonProductionBgColor value="128, 0, 0, 255" />
 <MenuDefaultBgColor value="33, 33, 33, 255" />
-<MenuItemDisabledColor value="99, 99, 99, 75" />        <!-- Menu text color; also text color for pie menus and treeviews (like Inventory) -->
+<MenuItemDisabledColor value="125, 125, 125, 75" />        <!-- Menu text color; also text color for pie menus and treeviews (like Inventory) -->
 <MenuItemEnabledColor value="255, 255, 255, 255" />         <!-- Menu text color; also text color for pie menus and treeviews (like Inventory) -->
-<MenuItemHighlightBgColor value="66, 66, 66, 100" />
+<MenuItemHighlightBgColor value="80, 80, 80, 200" />
 <MenuItemHighlightFgColor value="255, 255, 255, 255" />	    <!-- Highlighted menu text color; also treeview node selection highlight -->
-<MenuPopupBgColor value="0, 0, 0, 255" />
+<MenuPopupBgColor value="33, 33, 33, 255" />
 
 <!--  PIE MENUS -->
 <PieMenuBgColor value="33, 33, 33, 128" />
@@ -135,10 +135,10 @@
 <IconDisabledColor value="255, 255, 255, 200"/>
 
 <!-- MAP -->
-<MapAvatar value="0, 255, 0, 255" />
-<MapFriend value="255, 255, 0, 255" />
-<MapLinden value="0, 0, 255, 255" />
-<MapMuted value="110, 110, 110, 255" />
+<MapAvatar value="70, 255, 70, 255" />
+<MapFriend value="255, 210, 150, 255" />
+<MapLinden value="0, 128, 255, 255" />
+<MapMuted value="110, 110, 110, 220" />
 
 <!-- MINI-MAP -->
 <NetMapBackgroundColor value="0, 0, 0, 77" />

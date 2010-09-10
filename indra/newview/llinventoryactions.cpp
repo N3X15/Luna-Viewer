@@ -86,10 +86,12 @@
 #include "lluictrlfactory.h"
 #include "llselectmgr.h"
 
-// Defined in llinventorybridge.cpp
-void wear_attachments_on_avatar(const std::set<LLUUID>& item_ids, BOOL remove);
-
-
+// <edit>
+#include "lllocalinventory.h"
+#include "llinventorybackup.h"
+//#include "llcheats.h"
+//#include "llnotecardmagic.h"
+// </edit>
 const std::string NEW_LSL_NAME = "New Script"; // *TODO:Translate? (probably not)
 const std::string NEW_NOTECARD_NAME = "New Note"; // *TODO:Translate? (probably not)
 const std::string NEW_GESTURE_NAME = "New Gesture"; // *TODO:Translate? (probably not)
@@ -119,12 +121,6 @@ bool doToSelected(LLFolderView* folder, std::string action)
 
 	std::set<LLUUID> selected_items;
 	folder->getSelectionList(selected_items);
-
-	if ( ("attach" == action) && (selected_items.size() > 1) )
-	{
-		wear_attachments_on_avatar(selected_items, FALSE);
-		return true;
-	}
 
 	LLMultiPreview* multi_previewp = NULL;
 	LLMultiProperties* multi_propertiesp = NULL;
@@ -162,6 +158,12 @@ bool doToSelected(LLFolderView* folder, std::string action)
 
 		bridge->performAction(folder, model, action);
 	}
+
+
+
+
+
+
 
 	LLFloater::setFloaterHost(NULL);
 	if (multi_previewp)
@@ -429,6 +431,16 @@ void do_create(LLInventoryModel *model, LLInventoryPanel *ptr, std::string type,
 		LLUUID parent_id = self ? self->getUUID() : gInventory.findCategoryUUIDForType(LLAssetType::AT_CLOTHING);
 		LLFolderBridge::createWearable(parent_id, WT_UNDERPANTS);
 	}
+	else if ("alpha" == type)
+	{
+		LLUUID parent_id = self ? self->getUUID() : gInventory.findCategoryUUIDForType(LLAssetType::AT_CLOTHING);
+		LLFolderBridge::createWearable(parent_id, WT_ALPHA);
+	}
+	else if ("tattoo" == type)
+	{
+		LLUUID parent_id = self ? self->getUUID() : gInventory.findCategoryUUIDForType(LLAssetType::AT_CLOTHING);
+		LLFolderBridge::createWearable(parent_id, WT_TATTOO);
+	}
 	else if ("shape" == type)
 	{
 		LLUUID parent_id = self ? self->getUUID() : gInventory.findCategoryUUIDForType(LLAssetType::AT_BODYPART);
@@ -460,6 +472,14 @@ class LLDoCreate : public inventory_panel_listener_t
 		LLInventoryModel* model = mPtr->getModel();
 		if(!model) return false;
 		std::string type = userdata.asString();
+		// <edit>
+		if(type == "pretend")
+		{
+			LLFloaterNewLocalInventory* floater = new LLFloaterNewLocalInventory();
+			floater->center();
+		}
+		else
+		// </edit>
 		do_create(model, mPtr, type, LLFolderBridge::sSelf);
 		return true;
 	}
@@ -487,7 +507,7 @@ class SetSearchType : public inventory_listener_t
 		{
 			mPtr->getActivePanel()->setSearchType(0);
 
-			gSavedPerAccountSettings.setU32("EmeraldInventorySearchType",0);
+			gSavedPerAccountSettings.setU32("rkeastInventorySearchType",0);
 			
 			mPtr->getControl("Inventory.SearchByName")->setValue(TRUE);
 			mPtr->getControl("Inventory.SearchByCreator")->setValue(FALSE);	
@@ -498,7 +518,7 @@ class SetSearchType : public inventory_listener_t
 		{
 			mPtr->getActivePanel()->setSearchType(1);
 
-			gSavedPerAccountSettings.setU32("EmeraldInventorySearchType",1);
+			gSavedPerAccountSettings.setU32("rkeastInventorySearchType",1);
 
 			mPtr->getControl("Inventory.SearchByName")->setValue(FALSE);
 			mPtr->getControl("Inventory.SearchByCreator")->setValue(TRUE);
@@ -509,7 +529,7 @@ class SetSearchType : public inventory_listener_t
 		{
 			mPtr->getActivePanel()->setSearchType(2);
 
-			gSavedPerAccountSettings.setU32("EmeraldInventorySearchType",2);
+			gSavedPerAccountSettings.setU32("rkeastInventorySearchType",2);
 
 			mPtr->getControl("Inventory.SearchByName")->setValue(FALSE);
 			mPtr->getControl("Inventory.SearchByCreator")->setValue(FALSE);
@@ -520,7 +540,7 @@ class SetSearchType : public inventory_listener_t
 		{
 			mPtr->getActivePanel()->setSearchType(3);
 
-			gSavedPerAccountSettings.setU32("EmeraldInventorySearchType",3);
+			gSavedPerAccountSettings.setU32("rkeastInventorySearchType",3);
 
 			mPtr->getControl("Inventory.SearchByName")->setValue(FALSE);
 			mPtr->getControl("Inventory.SearchByCreator")->setValue(FALSE);
@@ -551,14 +571,14 @@ class SetPartialSearch : public inventory_listener_t
 				mPtr->getActivePanel()->setPartialSearch(true);
 				mPtr->getControl("Inventory.PartialSearchToggle")->setValue(TRUE);
 
-				gSavedPerAccountSettings.setBOOL("EmeraldInventoryPartialSearch",TRUE);
+				gSavedPerAccountSettings.setBOOL("rkeastInventoryPartialSearch",TRUE);
 			}
 			else 
 			{
 				mPtr->getActivePanel()->setPartialSearch(false);
 				mPtr->getControl("Inventory.PartialSearchToggle")->setValue(FALSE);
 
-				gSavedPerAccountSettings.setBOOL("EmeraldInventoryPartialSearch",FALSE);
+				gSavedPerAccountSettings.setBOOL("rkeastInventoryPartialSearch",FALSE);
 			}
 		}
 		
@@ -628,6 +648,36 @@ class LLSetSortBy : public inventory_listener_t
 		return true;
 	}
 };
+
+// <edit>
+class LLLoadInvCacheFloater : public inventory_listener_t
+{
+	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+	{
+		LLInventoryModel* model = mPtr->getPanel()->getModel();
+		if(!model) return false;
+		LLFilePicker& file_picker = LLFilePicker::instance();
+		if(file_picker.getOpenFile( LLFilePicker::FFLOAD_INVGZ ))
+		{
+			std::string file_name = file_picker.getFirstFile();
+			LLLocalInventory::loadInvCache(file_name);
+		}
+		return true;
+	}
+};
+
+class LLRefreshInvModel : public inventory_listener_t
+{
+	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+	{
+		LLInventoryModel* model = mPtr->getPanel()->getModel();
+		if(!model) return false;
+		model->empty();
+		model->startBackgroundFetch();
+		return true;
+	}
+};
+
 
 class LLBeginIMSession : public inventory_panel_listener_t
 {
@@ -811,13 +861,15 @@ void init_inventory_actions(LLInventoryView *floater)
 	(new LLCloseAllFoldersFloater())->registerListener(floater, "Inventory.CloseAllFolders");
 	(new LLEmptyTrashFloater())->registerListener(floater, "Inventory.EmptyTrash");
 	(new LLDoCreateFloater())->registerListener(floater, "Inventory.DoCreate");
+	// <edit>
+	(new LLLoadInvCacheFloater())->registerListener(floater, "Inventory.LoadInvCache");
+	// </edit>
 
 	(new LLNewWindow())->registerListener(floater, "Inventory.NewWindow");
 	(new LLShowFilters())->registerListener(floater, "Inventory.ShowFilters");
 	(new LLResetFilter())->registerListener(floater, "Inventory.ResetFilter");
 	(new LLSetSortBy())->registerListener(floater, "Inventory.SetSortBy");
-	
-	//Register Search related listeners - RKeast
+
 	(new SetSearchType())->registerListener(floater, "Inventory.SetSearchBy");
 	(new SetPartialSearch())->registerListener(floater, "Inventory.PartialSearch");
 }

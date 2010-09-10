@@ -314,6 +314,7 @@ public:
 		RENDER_TYPE_AVATAR		= LLDrawPool::POOL_AVATAR,
 		RENDER_TYPE_TREE		= LLDrawPool::POOL_TREE,
 		RENDER_TYPE_INVISIBLE	= LLDrawPool::POOL_INVISIBLE,
+		RENDER_TYPE_VOIDWATER	= LLDrawPool::POOL_VOIDWATER,
 		RENDER_TYPE_WATER		= LLDrawPool::POOL_WATER,
  		RENDER_TYPE_ALPHA		= LLDrawPool::POOL_ALPHA,
 		RENDER_TYPE_GLOW		= LLDrawPool::POOL_GLOW,
@@ -417,12 +418,6 @@ public:
 	static BOOL				sRenderAttachedParticles;
 	static BOOL				sRenderDeferred;
 	static S32				sVisibleLightCount;
-	static BOOL				sRenderDelayCreation;
-	static BOOL				sRenderAnimateRes;
-	static BOOL				sRenderUnloadedAvatar;
-	static U32				sRenderMaxNodeSize;
-	static U32				sRenderMaxVBOSize;
-	static BOOL				sShowParcelOwners;
 
 	//screen texture
 	LLRenderTarget			mScreen;

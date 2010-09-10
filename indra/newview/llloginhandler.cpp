@@ -75,13 +75,12 @@ void LLLoginHandler::parse(const LLSD& queryMap)
 	mFirstName = queryMap["first_name"].asString();
 	mLastName = queryMap["last_name"].asString();
 	
-	// Deprecated in favor of the new grid manager - MC
-	/*EGridInfo grid_choice = GRID_INFO_NONE;
-	if (queryMap["grid"].asString() == "sl beta grid")
+	EGridInfo grid_choice = GRID_INFO_NONE;
+	if (queryMap["grid"].asString() == "aditi")
 	{
 		grid_choice = GRID_INFO_ADITI;
 	}
-	else if (queryMap["grid"].asString() == "sl main grid")
+	else if (queryMap["grid"].asString() == "agni")
 	{
 		grid_choice = GRID_INFO_AGNI;
 	}
@@ -149,7 +148,7 @@ void LLLoginHandler::parse(const LLSD& queryMap)
 	if(grid_choice != GRID_INFO_NONE)
 	{
 		LLViewerLogin::getInstance()->setGridChoice(grid_choice);
-	}*/
+	}
 
 	std::string startLocation = queryMap["location"].asString();
 
@@ -171,7 +170,7 @@ void LLLoginHandler::parse(const LLSD& queryMap)
 
 bool LLLoginHandler::handle(const LLSD& tokens,
 							const LLSD& query_map,
-							LLWebBrowserCtrl* web)
+							LLMediaCtrl* web)
 {	
 	parse(query_map);
 	
@@ -204,7 +203,7 @@ bool LLLoginHandler::handle(const LLSD& tokens,
 		if (!mFirstName.empty() || !mLastName.empty())
 		{
 			// Fill in the name, and maybe the password
-			LLPanelLogin::setFields(mFirstName, mLastName, password,false);
+			LLPanelLogin::setFields(mFirstName, mLastName, password);
 		}
 
 		if (mWebLoginKey.isNull())

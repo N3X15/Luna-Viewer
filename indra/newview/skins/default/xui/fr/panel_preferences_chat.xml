@@ -92,22 +92,22 @@ du chat :
 			Portugués (Portugais) - Bêta
 		</combo_item>
 		<combo_item name="Russian">
-			� �?сскОй (Russe) - Bêta
+			Русский (Russe) - Bêta
 		</combo_item>
 		<combo_item name="Turkish">
-			TÌrkçe (Turc) - Bêta
+			Türkçe (Turc) - Bêta
 		</combo_item>
 		<combo_item name="Ukrainian">
-			Ук�?а�?Мс�?ка (Ukrainien) - Bêta
+			Українська (Ukrainien) - Bêta
 		</combo_item>
 		<combo_item length="1" name="Chinese" type="string">
-			䞭�?? (�?�?) (Chinois) - Bêta
+			中文 (简体) (Chinois) - Bêta
 		</combo_item>
 		<combo_item length="1" name="(Japanese)" type="string">
-			�?��?��? (Japonais) - Bêta
+			日本語 (Japonais) - Bêta
 		</combo_item>
 		<combo_item length="1" name="(Korean)" type="string">
-			�??국�?� (Coréen) - Bêta
+			한국어 (Coréen) - Bêta
 		</combo_item>
 	</combo_box>
 	<text type="string" length="1" name="text_chat_language">

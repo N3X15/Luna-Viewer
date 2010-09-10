@@ -3,8 +3,6 @@
 	<panel/>
 	<button label="Lokaler Chat" name="History" tool_tip="Klicken Sie hier zur Anzeige des Gesprächs"/>
 	<line_editor label="Zum Chatten hier klicken." name="Chat Editor" tool_tip="Eingabe für Sprechen, Strg-Eingabe für Rufen."/>
-  <button label="&lt;" name="Expand" tool_tip="zeige Channel Auswahl"/>
-  <spinner label="Chan" label_width="29" left_delta="-50" name="ChatChannel" tool_tip="Ändert den Channel auf dem sie sprechen (0 ist der normale Chat)"/>  
 	<flyout_button label="Sagen" name="Say" tool_tip="(Eingabe)">
 		<flyout_button_item name="shout_item">
 			Rufen

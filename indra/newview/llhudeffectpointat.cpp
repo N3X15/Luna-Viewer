@@ -202,7 +202,6 @@ void LLHUDEffectPointAt::unpackData(LLMessageSystem *mesgsys, S32 blocknum)
 
 //	mKillTime = mTimer.getElapsedTimeF32() + mDuration;
 	update();
-	//LUA_CALL("OnPointAt") << source_id << target_id << new_target << pointAtTypeUnpacked << LUA_END;
 }
 
 //-----------------------------------------------------------------------------
@@ -450,7 +449,9 @@ bool LLHUDEffectPointAt::calcTargetPosition()
 
 	if (mSourceObject->isAvatar())
 	{
-		((LLVOAvatar*)(LLViewerObject*)mSourceObject)->setAnimationData("PointAtPoint", (void *)&mTargetPos);
+		LLVOAvatar* avatarp = ((LLVOAvatar*)(LLViewerObject*)mSourceObject);
+		avatarp->setAnimationData("PointAtPoint", (void *)&mTargetPos);
+		avatarp->mIdleTimer.reset();
 	}
 
 	return true;

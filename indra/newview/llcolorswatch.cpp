@@ -59,13 +59,11 @@ LLColorSwatchCtrl::LLColorSwatchCtrl(const std::string& name, const LLRect& rect
 :	LLUICtrl(name, rect, TRUE, commit_callback, userdata, FOLLOWS_LEFT | FOLLOWS_TOP),
 	mValid( TRUE ),
 	mColor( color ),
-	//mBorderColor( gColors.getColor("DefaultHighlightLight") ),
+	mBorderColor( gColors.getColor("DefaultHighlightLight") ),
 	mCanApplyImmediately(FALSE),
 	mOnCancelCallback(NULL),
 	mOnSelectCallback(NULL)
 {
-	static LLColor4 defaultBorderColor = gColors.getColor("DefaultHighlightLight");
-	mBorderColor = defaultBorderColor;
 	mCaption = new LLTextBox( name,
 		LLRect( 0, BTN_HEIGHT_SMALL, getRect().getWidth(), 0 ),
 		name,
@@ -88,14 +86,11 @@ LLColorSwatchCtrl::LLColorSwatchCtrl(const std::string& name, const LLRect& rect
 :	LLUICtrl(name, rect, TRUE, commit_callback, userdata, FOLLOWS_LEFT | FOLLOWS_TOP),
 	mValid( TRUE ),
 	mColor( color ),
-	//mBorderColor( gColors.getColor("DefaultHighlightLight") ),
+	mBorderColor( gColors.getColor("DefaultHighlightLight") ),
 	mCanApplyImmediately(FALSE),
 	mOnCancelCallback(NULL),
 	mOnSelectCallback(NULL)
 {
-	static LLColor4 defaultBorderColor = gColors.getColor("DefaultHighlightLight");
-	mBorderColor = defaultBorderColor;
-
 	mCaption = new LLTextBox( label,
 		LLRect( 0, BTN_HEIGHT_SMALL, getRect().getWidth(), 0 ),
 		label,
@@ -352,6 +347,8 @@ void LLColorSwatchCtrl::showPicker(BOOL take_focus)
 LLXMLNodePtr LLColorSwatchCtrl::getXML(bool save_children) const
 {
 	LLXMLNodePtr node = LLUICtrl::getXML();
+
+	node->setName(LL_COLOR_SWATCH_CTRL_TAG);
 
 	node->createChild("color", TRUE)->setFloatValue(4, mColor.mV);
 

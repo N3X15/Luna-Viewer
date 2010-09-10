@@ -55,7 +55,6 @@
 #include "llagent.h"
 #include "llfloatertools.h"
 #include "llviewercontrol.h"
-#include "llviewercamera.h" //::MOYMOD::
 
 const S32 BUTTON_HEIGHT = 16;
 const S32 BUTTON_WIDTH_SMALL = 32;
@@ -767,10 +766,6 @@ void LLToolCompGun::onMouseCaptureLost()
 		return;
 	}
 	mCur->onMouseCaptureLost();
-
-	// JC - I don't know if this is necessary.  Maybe we could lose capture
-	// if someone ALT-Tab's out when in mouselook.
-	setCurrentTool( (LLTool*) mGun );
 }
 
 void	LLToolCompGun::handleSelect()
@@ -788,13 +783,6 @@ void	LLToolCompGun::handleDeselect()
 
 BOOL LLToolCompGun::handleScrollWheel(S32 x, S32 y, S32 clicks)
 {
-     //::MOYMOD::
-    if(gSavedSettings.getBOOL("zmm_isinml")==1){
-        if(clicks>0)gSavedSettings.setF32("zmm_mlfov",gSavedSettings.getF32("zmm_mlfov")/1.1);
-        if(clicks<0)gSavedSettings.setF32("zmm_mlfov",gSavedSettings.getF32("zmm_mlfov")*1.1);
-        LLViewerCamera::getInstance()->setDefaultFOV(gSavedSettings.getF32("zmm_deffov")/gSavedSettings.getF32("zmm_mlfov"));
-        return TRUE;
-    }
 	if (clicks > 0)
 	{
 		gAgent.changeCameraToDefault();

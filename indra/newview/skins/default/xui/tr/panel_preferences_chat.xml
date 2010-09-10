@@ -86,22 +86,22 @@
 			Portugués (Portekizce) - Beta
 		</combo_item>
 		<combo_item name="Russian">
-			� �?сскОй (Rusça) - Beta
+			Русский (Rusça) - Beta
 		</combo_item>
 		<combo_item length="1" name="Turkish" type="string">
-			TÌrkçe - Beta
+			Türkçe - Beta
 		</combo_item>
 		<combo_item name="Ukrainian">
-			Ук�?а�?Мс�?ка (Ukraynaca) - Beta
+			Українська (Ukraynaca) - Beta
 		</combo_item>
 		<combo_item length="1" name="Chinese" type="string">
-			䞭�?? (�?�?) (�?ince) - Beta
+			中文 (简体) (Çince) - Beta
 		</combo_item>
 		<combo_item length="1" name="(Japanese)" type="string">
-			�?��?��? (Japonca) - Beta
+			日本語 (Japonca) - Beta
 		</combo_item>
 		<combo_item length="1" name="(Korean)" type="string">
-			�??국�?� (Korece) - Beta
+			한국어 (Korece) - Beta
 		</combo_item>
 	</combo_box>
 	<text type="string" length="1" name="text_chat_language">

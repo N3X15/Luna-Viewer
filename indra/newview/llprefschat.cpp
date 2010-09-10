@@ -64,7 +64,6 @@ private:
 	LLColor4 mBGChatColor;
 	LLColor4 mScriptErrorColor;
 	LLColor4 mHTMLLinkColor;
-	LLColor4 mIMEncryptedChatColor;
 	BOOL mChatFullWidth;
 	BOOL mCloseChatOnReturn;
 	BOOL mArrowKeysMoveAvatar;
@@ -99,7 +98,6 @@ LLPrefsChatImpl::LLPrefsChatImpl()
 	getChild<LLColorSwatchCtrl>("owner")->set(gSavedSettings.getColor4("llOwnerSayChatColor"));
 	getChild<LLColorSwatchCtrl>("background")->set(gSavedSettings.getColor4("BackgroundChatColor"));
 	getChild<LLColorSwatchCtrl>("links")->set(gSavedSettings.getColor4("HTMLLinkColor"));
-	getChild<LLColorSwatchCtrl>("encrypted")->set(gSavedSettings.getColor4("IMEncryptedChatColor"));
 
 	childSetValue("arrow_keys_move_avatar_check", gSavedSettings.getBOOL("ArrowKeysMoveAvatar"));
 	childSetValue("show_timestamps_check", gSavedSettings.getBOOL("ChatShowTimestamps"));
@@ -141,7 +139,6 @@ void LLPrefsChatImpl::refreshValues()
 	mBubbleOpacity = gSavedSettings.getF32("ChatBubbleOpacity");
 	mTranslateLanguage = gSavedSettings.getString("TranslateLanguage");
 	mTranslateChat = gSavedSettings.getBOOL("TranslateChat");
-	mIMEncryptedChatColor = gSavedSettings.getColor4("IMEncryptedChatColor");
 }
 
 void LLPrefsChatImpl::cancel()
@@ -166,10 +163,9 @@ void LLPrefsChatImpl::cancel()
 	gSavedSettings.setBOOL("CloseChatOnReturn", mCloseChatOnReturn);
 	gSavedSettings.setBOOL("PlayTypingAnim", mPlayTypingAnim); 
 	gSavedSettings.setF32("ConsoleBackgroundOpacity", mConsoleOpacity);
-	gSavedSettings.setF32("ChatBubbleOpacity", mBubbleOpacity);
-	gSavedSettings.setString("TranslateLanguage", mTranslateLanguage);
+	gSavedSettings.setF32("ChatBubbleOpacity", mBubbleOpacity);	
+	gSavedSettings.setString("TranslateLanguage", mTranslateLanguage);	
 	gSavedSettings.setBOOL("TranslateChat", mTranslateChat);
-	gSavedSettings.setColor4("IMEncryptedChatColor", mIMEncryptedChatColor);
 }
 
 void LLPrefsChatImpl::apply()
@@ -186,7 +182,6 @@ void LLPrefsChatImpl::apply()
 	gSavedSettings.setColor4("ObjectChatColor", childGetValue("objects"));
 	gSavedSettings.setColor4("llOwnerSayChatColor", childGetValue("owner"));
 	gSavedSettings.setColor4("BackgroundChatColor", childGetValue("background"));
-	gSavedSettings.setColor4("IMEncryptedChatColor", childGetValue("encrypted"));
 
 	gSavedSettings.setColor4("HTMLLinkColor", childGetValue("links"));
 	LLTextEditor::setLinkColor(childGetValue("links"));
@@ -204,7 +199,7 @@ void LLPrefsChatImpl::apply()
 
 	gSavedSettings.setString("TranslateLanguage", childGetValue("translate_language_combobox"));
 	gSavedSettings.setBOOL("TranslateChat", childGetValue("translate_chat"));
-	
+
 	refreshValues(); // member values become the official values and cancel becomes a no-op.
 }
 

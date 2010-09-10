@@ -63,7 +63,7 @@ BOOL LLPanelSkins::postBuild()
 {
 	mSkin = gSavedSettings.getString("SkinCurrent");
 	oldSkin=mSkin;
-	getChild<LLComboBox>("emrd_skin_combo")->setCommitCallback(onComboBoxCommit);
+	getChild<LLComboBox>("custom_skin_combo")->setCommitCallback(onComboBoxCommit);
 	refresh();
 	return TRUE;
 }
@@ -75,7 +75,7 @@ void LLPanelSkins::refresh()
 		oldSkin=mSkin="default";
 		gSavedSettings.setString("SkinCurrent",mSkin);
 	}
-	LLComboBox* comboBox = getChild<LLComboBox>("emrd_skin_combo");
+	LLComboBox* comboBox = getChild<LLComboBox>("custom_skin_combo");
 
 	if(comboBox != NULL) 
 	{
@@ -85,12 +85,13 @@ void LLPanelSkins::refresh()
 		datas.clear();
 		//comboBox->add("===OFF===");
 		std::string path_name(gDirUtilp->getSkinBaseDir()+gDirUtilp->getDirDelimiter());
+		llinfos << "Reading skin listing from " << path_name << llendl;
 		bool found = true;	
 		std::string currentSkinName("");
 		while(found) 
 		{
 			found = gDirUtilp->getNextFileInDir(path_name, "*.xml", name, false);
-			llinfos << "path name " << path_name << " and name " << name << " and found " << found << llendl;
+			//llinfos << "path name " << path_name << " and name " << name << " and found " << found << llendl;
 			if(found)
 			{
 				LLSD data;
@@ -101,25 +102,27 @@ void LLPanelSkins::refresh()
 				{
 					datas.push_back(data);
 					comboBox->add(data["skin_name"].asString());
-					llinfos << "data is length " << datas.size() << " foldername field is "
-						<< data["folder_name"].asString() << " and looking for " << gSavedSettings.getString("SkinCurrent") <<llendl;
+					/*llinfos << "data is length " << datas.size() << " foldername field is "
+						<< data["folder_name"].asString() << " and looking for " << gSavedSettings.getString("SkinCurrent") <<llendl;*/
 					if(data["folder_name"].asString()==mSkin)
 					{
-						llinfos << "found!!!!!!1!1" << llendl;
+						//llinfos << "found!!!!!!1!1" << llendl;
 						currentSkinName = data["skin_name"].asString();
 
 						//LLButton* b;
 						//b.setImageOverlay()
-						childSetValue("emrd_skin_author",data["author_name"].asString());
-						childSetValue("emrd_skin_ad_authors",data["additional_author_names"].asString());
-						childSetValue("emrd_skin_info",data["skin_info"].asString());
-						childSetValue("emrd_skin_folder",data["folder_name"].asString());
-						LLButton* b = getChild<LLButton>("emrd_skin_preview");
+						childSetValue("custom_skin_author",data["author_name"].asString());
+						childSetValue("custom_skin_ad_authors",data["additional_author_names"].asString());
+						childSetValue("custom_skin_info",data["skin_info"].asString());
+						childSetValue("custom_skin_folder",data["folder_name"].asString());
+						LLButton* b = getChild<LLButton>("custom_skin_preview");
+						std::string imagename = data["preview_image"].asString();
+						if(imagename == "" || imagename == " " || !LLFile::isfile(imagename)) imagename = "preview.png";
 						std::string imageprev(".."+gDirUtilp->getDirDelimiter()+
 							".."+gDirUtilp->getDirDelimiter()+
 							data["folder_name"].asString()+gDirUtilp->getDirDelimiter()+
 							"textures"+gDirUtilp->getDirDelimiter()+
-							"preview.png");
+							imagename);
 						b->setImages(imageprev,imageprev);
 						b->setHoverImages(imageprev,imageprev);
 						b->setScaleImage(TRUE);

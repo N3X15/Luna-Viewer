@@ -48,7 +48,6 @@
 #include "llscrolllistctrl.h"
 #include "llviewerobject.h"
 #include "lluictrlfactory.h"
-#include "llviewercontrol.h"
 #include "llviewerwindow.h"
 
 LLFloaterBuy* LLFloaterBuy::sInstance = NULL;
@@ -159,7 +158,6 @@ void LLFloaterBuy::show(const LLSaleInfo& sale_info)
 
 	row["columns"][0]["column"] = "icon";
 	row["columns"][0]["type"] = "icon";
-	row["columns"][0]["color"] = gColors.getColor("DefaultListIcon").getValue();
 	row["columns"][0]["value"] = icon_name;
 	
 	// Append the permissions that you will acquire (not the current
@@ -180,7 +178,6 @@ void LLFloaterBuy::show(const LLSaleInfo& sale_info)
 	}
 
 	row["columns"][1]["column"] = "text";
-	row["columns"][1]["color"] = gColors.getColor("DefaultListText").getValue();
 	row["columns"][1]["value"] = text;
 	row["columns"][1]["font"] = "SANSSERIF";
 
@@ -265,7 +262,6 @@ void LLFloaterBuy::inventoryChanged(LLViewerObject* obj,
 							 item_is_multi);
 		row["columns"][0]["column"] = "icon";
 		row["columns"][0]["type"] = "icon";
-		row["columns"][0]["color"] = gColors.getColor("DefaultListIcon").getValue();
 		row["columns"][0]["value"] = icon_name;
 				
 		// Append the permissions that you will acquire (not the current
@@ -286,7 +282,6 @@ void LLFloaterBuy::inventoryChanged(LLViewerObject* obj,
 		}
 
 		row["columns"][1]["column"] = "text";
-		row["columns"][1]["color"] = gColors.getColor("DefaultListText").getValue();
 		row["columns"][1]["value"] = text;
 		row["columns"][1]["font"] = "SANSSERIF";
 

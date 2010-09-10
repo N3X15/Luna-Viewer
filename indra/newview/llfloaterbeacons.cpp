@@ -38,13 +38,10 @@
 #include "llcheckboxctrl.h"
 #include "pipeline.h"
 
-// [RLVa:KB]
-#include "rlvhandler.h"
-// [/RLVa:KB]
 
 LLFloaterBeacons::LLFloaterBeacons(const LLSD& seed)
 {
-	LLUICtrlFactory::getInstance()->buildFloater(this, "floater_beacons.xml");
+	LLUICtrlFactory::getInstance()->buildFloater(this, "floater_dickdongs.xml");
 
 	// Initialize pipeline states from saved settings.
 	// OK to do at floater constructor time because beacons do not display unless the floater is open
@@ -76,13 +73,6 @@ BOOL LLFloaterBeacons::postBuild()
 // Too bad we can't just add control_name="BeaconAlwaysOn" to the XML.
 void LLFloaterBeacons::open()
 {
-// [RLVa:KB] - Checked: 2009-07-04 (RLVa-1.0.0b)
-	if (gRlvHandler.hasBehaviour(RLV_BHVR_EDIT))
-	{
-		return;
-	}
-// [/RLVa:KB]
-
 	LLFloater::open();
 	gSavedSettings.setBOOL( "BeaconAlwaysOn", TRUE);
 }

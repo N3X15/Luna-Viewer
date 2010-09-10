@@ -261,7 +261,7 @@ bool LLCrashLoggerWindows::init(void)
 	/*
 	mbstowcs( gProductName, mProductName.c_str(), LL_ARRAY_SIZE(gProductName) );
 	gProductName[ LL_ARRY_SIZE(gProductName) - 1 ] = 0;
-	swprintf(gProductName, L"Emerald Viewer");
+	swprintf(gProductName, L"Second Life");
 	*/
 
 	llinfos << "Loading dialogs" << llendl;

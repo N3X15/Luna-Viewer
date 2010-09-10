@@ -70,6 +70,8 @@ const std::string LLWearable::sTypeName[ WT_COUNT+1 ] =
 	"undershirt",
 	"underpants",
 	"skirt",
+	"alpha",
+	"tattoo",
 	"invalid"
 };
 
@@ -89,6 +91,8 @@ const std::string LLWearable::sTypeLabel[ WT_COUNT+1 ] =
 	"Undershirt",
 	"Underpants",
 	"Skirt",
+	"Alpha",
+	"Tattoo",
 	"invalid"
 };
 
@@ -112,6 +116,8 @@ LLAssetType::EType LLWearable::typeToAssetType(EWearableType wearable_type)
 	case WT_UNDERSHIRT:
 	case WT_UNDERPANTS:
 	case WT_SKIRT:
+	case WT_ALPHA:
+	case WT_TATTOO:
 		return LLAssetType::AT_CLOTHING;
 	default:
 		return LLAssetType::AT_NONE;
@@ -554,11 +560,11 @@ BOOL LLWearable::isDirty()
 			if(avatar->getAppearanceFlag() == true)
 			{
 				//boob
-			if(param->getID() == 507)
-			{
-					weight = get_if_there(mVisualParamMap, param->getID(), avatar->getActualBoobGrav());
-					weight = llclamp( weight, param->getMinWeight(), param->getMaxWeight() );
-			}
+				if(param->getID() == 507)
+				{
+						weight = get_if_there(mVisualParamMap, param->getID(), avatar->getActualBoobGrav());
+						weight = llclamp( weight, param->getMinWeight(), param->getMaxWeight() );
+				}
 				/*//butt
 				if(param->getID() == 795)
 				{
@@ -594,7 +600,7 @@ BOOL LLWearable::isDirty()
 			}
 
 			
-			U8 b = F32_to_U8( weight,             param->getMinWeight(), param->getMaxWeight() );
+			U8 b = F32_to_U8( weight, param->getMinWeight(), param->getMaxWeight() );
 			if( a != b  )
 			{
 				llwarns << "param ID " << param->getID() << " was changed." << llendl;
@@ -676,11 +682,6 @@ void LLWearable::writeToAvatar( BOOL set_by_user )
 
 	ESex old_sex = avatar->getSex();
 
-
-	llwarns << "-----------------------------" << llendl;
-	llwarns << "writeToAvatar" << llendl;
-	llwarns << "-----------------------------" << llendl;
-
 	// Pull params
 	for( LLVisualParam* param = avatar->getFirstVisualParam(); param; param = avatar->getNextVisualParam() )
 	{
@@ -758,7 +759,7 @@ void LLWearable::writeToAvatar( BOOL set_by_user )
 
 //	if( set_by_user )
 //	{
-		gAgent.sendAgentSetAppearance();
+//		gAgent.sendAgentSetAppearance();
 //	}
 }
 
@@ -782,17 +783,12 @@ void LLWearable::removeFromAvatar( EWearableType type, BOOL set_by_user )
 		return;
 	}
 
-	llwarns << "-----------------------------" << llendl;
-	llwarns << "removeFromAvatar" << llendl;
-	llwarns << "-----------------------------" << llendl;
-
 	// Pull params
 	for( LLVisualParam* param = avatar->getFirstVisualParam(); param; param = avatar->getNextVisualParam() )
 	{
 		if( (((LLViewerVisualParam*)param)->getWearableType() == type) && (param->getGroup() == VISUAL_PARAM_GROUP_TWEAKABLE ) )
 		{
 			S32 param_id = param->getID();
-			//if(param->getID() != 507)
 			avatar->setVisualParamWeight( param_id, param->getDefaultWeight(), set_by_user );
 		}
 	}
@@ -832,10 +828,6 @@ void LLWearable::readFromAvatar()
 	{
 		return;
 	}
-
-	llwarns << "-----------------------------" << llendl;
-	llwarns << "READ FROM AVATAR" << llendl;
-	llwarns << "-----------------------------" << llendl;
 
 	mDefinitionVersion = LLWearable::sCurrentDefinitionVersion;
 

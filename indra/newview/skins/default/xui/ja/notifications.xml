@@ -71,7 +71,7 @@
     </form>
   </template>
 	<notification functor="GenericAcknowledge" label="不明な警告メッセージ" name="MissingAlert">
-		あなたの Second Life のバージョンでは、
+		あなたの Snowglobe のバージョンでは、
 今受け取った警告メッセージを表示することができません。
 
 エラー詳細： 「[_NAME]」という警告は notifications.xml にありませんでした。

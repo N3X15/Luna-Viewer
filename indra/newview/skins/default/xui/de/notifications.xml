@@ -22,20 +22,6 @@
       <ignore text="$ignoretext"/>
     </form>
   </template>
-  
-  <template name="okcancelbuttonscanceldefault">
-    <form>
-      <button
-       index="0"
-       name="OK"
-       text="$yestext"/>
-      <button
-       default="true"
-       index="1"
-       name="Cancel"
-       text="$notext"/>
-    </form>
-  </template>
 
   <template name="okcancelbuttons">
     <form>
@@ -1198,13 +1184,13 @@ Wählen Sie ein einzelnes Objekt aus und versuchen Sie es erneut.
 		Die Regionstexturen konnten nicht festgelegt werden:
 Die Terraintextur [TEXTURE_NUM] hat eine ungültige Bit-Tiefe [TEXTURE_BIT_DEPTH].
 
-Ersetzen Sie die Textur [TEXTURE_NUM] mit einer Bilddatei von maximal 1024x1024 und 24 Bit und klicken Sie dann erneut auf „Übernehmen“.
+Ersetzen Sie die Textur [TEXTURE_NUM] mit einer Bilddatei von maximal 512x512 und 24 Bit und klicken Sie dann erneut auf „Übernehmen“.
 	</notification>
 	<notification name="InvalidTerrainSize">
 		Die Regionstexturen konnten nicht festgelegt werden:
 Die Terraintextur [TEXTURE_NUM] ist mit [TEXTURE_SIZE_X]x[TEXTURE_SIZE_Y] zu groß.
 
-Ersetzen Sie die Textur [TEXTURE_NUM] mit einer Bilddatei von maximal 1024x1024 und 24 Bit und klicken Sie dann erneut auf „Übernehmen“.
+Ersetzen Sie die Textur [TEXTURE_NUM] mit einer Bilddatei von maximal 512x512 und 24 Bit und klicken Sie dann erneut auf „Übernehmen“.
 	</notification>
 	<notification name="RawUploadStarted">
 		Hochladen gestartet. Je nach Verbindungsgeschwindigkeit kann der Vorgang bis zu 2 Minuten dauern.
@@ -1507,20 +1493,6 @@ Tausende Regionen werden verändert und der Spaceserver wird dadurch stark belas
 		Benutzer [EVIL_USER] von diesem Grundstück werfen?
 		<usetemplate name="okcancelbuttons" notext="Abbrechen" yestext="OK"/>
 	</notification>
-<notification name="EmeraldIRCInfo">
-IRC Profile -- [NICK]
-Nick:       [NICK]
-User:       [USER]
-Host:       [HOST]
-Real Name:  [REALNAME]
-Channels:   [CHANNELS]
-Servers:    [SERVERS]
-Idle Time:  [IDLE]
-    <usetemplate
-     name="okcancelbuttons"
-     notext="Schliessen"
-     yestext="Private IM"/>
-  </notification>
 	<notification name="EstateChangeCovenant">
 		Möchten Sie den Grundstücksvertrag wirklich ändern?
 		<usetemplate name="okcancelbuttons" notext="Abbrechen" yestext="OK"/>
@@ -2761,7 +2733,6 @@ Versuchen Sie es in einigen Minuten erneut.
 		<form name="form">
 			<button name="Accept" text="Akzeptieren"/>
 			<button name="Decline" text="Ablehnen"/>
-      <button name="Ignore" text="Ignorieren"/>
 		</form>
 	</notification>
 	<notification name="FriendshipAccepted">
@@ -2776,7 +2747,6 @@ Dies erstellt ein Lesezeichen in Ihrem Inventar, damit Sie diesen Einwohner jede
 		<form name="form">
 			<button name="Accept" text="Akzeptieren"/>
 			<button name="Decline" text="Ablehnen"/>
-      <button name="Ignore" text="Ignorieren"/>
 		</form>
 	</notification>
 	<notification name="RegionRestartMinutes">
@@ -2845,17 +2815,6 @@ Anfrage gestatten?
 			<button name="Ignore" text="Ignorieren"/>
 		</form>
 	</notification>
-  <notification name="ScriptTextBoxDialog">
-    [FIRST] [LAST]&apos;s &apos;[TITLE]&apos;
-    [MESSAGE]
-    <form name="form">
-      <input name="message" type="text">
-        [DEFAULT]
-      </input>
-      <button name="Ignore" text="Ignorieren"/>
-      <button name="Send" text="Abschicken"/>
-    </form>
-  </notification>
 	<notification name="FirstBalanceIncrease">
 		Sie haben gerade [AMOUNT] L$ erhalten.
 Objekte und andere Benutzer können Ihnen L$ geben.
@@ -2932,31 +2891,6 @@ Beispiele für Formtexturen finden Sie in der Inventarbibliothek.
 	<notification name="FirstMedia">
 		Sie haben die Medienwiedergabe gestartet.  Unter „Audio und Video“ im Fenster „Einstellungen“ können Sie festlegen, dass Medien automatisch wiedergegeben werden. Beachten Sie, dass dies bei nicht vertrauenswürdigen Medienseiten ein Sicherheitsrisiko darstellen kann.
 	</notification>
-  <notification name="FirstRLVDetach">
-Restrained Life hat eines ihrer Attachments als nicht abnehmbar markiert.
-Achtung das deaktiviert auch das &apos;Anhängen&apos; aller Prims in ihrem Inventar ausser sie sind richtig benannt.
-
-Für mehr Informationen suchen sie nach &apos;Restrained Life&apos; in der SL Wiki.
-  </notification>
-
-  <notification name="FirstRLVFartouch">
-Berühren auf grössere Entfernung wurde gesperrt: Sie können kein Objekt das weiter als 1,5m entfernt ist mehr berühren bis die Sperre entfernt wurde.
-
-Tip: Bei Objekten ausserhalb der Reichweite ändert sich der Cursor nicht mehr und bei rechtsklick ertönt ein Fehler Sound.
-  </notification>
-
-  <notification name="FirstRLVGiveToRLV">
-Ordner die mit &apos;#RLV/~&apos; anfangen können automatisch im #RLV shared folder abgelegt werden nachdem sie die Ordner akzeptiert haben.
-
-Achtung! wenn aktiviert sind diese Ordner direkt für Scripte verfügbar und haben vollen Zugriff auf die RLV API. Dies kann ungewollte und erwartete Folgen haben.
-
-Soll diese Funktion aktiviert werden?
-    <usetemplate
-     name="okcancelbuttonscanceldefault"
-     notext="No"
-     yestext="Yes"/>
-  </notification>
-  
 	<notification name="MaxListSelectMessage">
 		Sie können maximal [MAX_SELECT] Objekte
 von der Liste auswählen.
@@ -3051,80 +2985,6 @@ Klicken Sie auf „Akzeptieren“, um dem Chat beizutreten, oder auf „Ablehnen
 	<notification name="UnableToOpenCommandURL">
 		Die URL, die Sie angeklickt haben, kann in diesem Web Browser nicht geöffnet werden.
 	</notification>
-<notification name="QueryClientTags">
-    Soll die client tag Datenbank automatisch von modularsystems.sl aktuallisiert werden?
-    Damit wird sicher gestellt das sie immer die neuesten Informationen über andere Clients haben.
-    <form name="form">
-      <button name="Yes" text="Ja"/>
-      <button name="No" text="Nein"/>
-    </form>
-  </notification>
-  
-   <notification name="QueryEmeraldBuildBridge">
-    Emerald has a feature to create and attach an full perm item.
-    This allows it to get better online data and radar data.
-    Would you like to permit this?
-    <form name="form">
-      <button name="Yes" text="Ja"/>
-      <button name="No" text="Nein"/>
-    </form>
-  </notification>
-  
-  <notification name="QueryEmeraldOTR">
-    OTR kann ihre Instant Messages verschlüsseln, damit kann ihre Privatssphäre geschützt werden da niemand ausser dem Empfänger ihre Instant Message lesen kann.
-    Da verhindert wird das dritte ihre Nachrichten mitlesen können kann auch Linden Labs diese Nachrichten lesen und damit nicht bestätigen wenn nötig (z.b. Abuse Report).
-    Soll OTR automatisch benutzt werden wenn möglich?
-    <form name="form">
-      <button name="Yes" text="Ja"/>
-      <button name="No" text="Nein"/>
-    </form>
-  </notification>
-  <notification name="QueryEmeraldNCreatorExport">
-    Sie exportieren ein Objekt dessen Ersteller sie nicht sind;
-    Sie sollten immer sicher sein das sie die nötigen Rechte dazu haben.
-    <form name="form">
-      <button name="Ok" text="Ok"/>
-    </form>
-  </notification>
-  <notification name="EmeraldStealth">
-    Deaktiviert alle Funktionen durch die andere erkennen können das sie Emerald benutzen.
-    Es gibt keine Warnung wenn sie einzelne Funktionen selber wieder reaktivieren durch die Emerald erkannt werden kann!
-    Folgende Funktionen werden deaktiviert
-    * OTR automatische Antwort
-    * Regenbogen Effekt
-    * Eigene Effekt Partikel
-    * verbesserte CryoLife Erkennung
-    * Aktuelle KLeidung schützen
-    * GUS
-    * Auswahl Effekt Daten per Chat senden
-    * Viewer Radar Daten per Chat senden
-    Möchten sie den Stealth Modus aktivieren?
-    <form name="form">
-      <button name="Yes" text="Ja"/>
-      <button name="No" text="Nein"/>
-    </form>
-  </notification>
-  <notification name="EmeraldNoStealth">
-    Reaktiviert alle Einstellungen die durch den Stealth Modus abgeschaltet wurden. Reaktiviert möglicherweise Funktionen die sie vor dem Stealth Modus deaktiviert hatten. Reaktivieren?
-    <form name="form">
-      <button name="Yes" text="Ja"/>
-      <button name="No" text="Nein"/>
-    </form>
-  </notification>
-  <notification name="EmeraldRadarChat">
-    Eines ihrer Scripte möchte gern auf die Daten ihres Viewer Radars zugreifen um weniger Lag zu verursachen.
-    <form name="form">
-      <button name="Yes" text="Ja"/>
-      <button name="No" text="Nein"/>
-    </form>
-  </notification>  
-  <notification name="BlockedDialogs">
-	Blockierte Dialoge von [FIRST] [LAST]'s Objekt ([KEY])
-  </notification>
-  
-  <notification name="BlockedCards">
-	Blockierte Visitinkarten von [FIRST] [LAST]
-  </notification>
 	<global name="UnsupportedCPU">
 		- Ihre CPU-Geschwindigkeit entspricht nicht den Mindestanforderungen.
 	</global>
@@ -3151,159 +3011,4 @@ Sollte das Problem fortbestehen, finden Sie weitere Hilfestellung unter: http://
 	<global name="PermNo">
 		Nein
 	</global>
-	
-  <notification label="Emerald Help"
-   name="EmeraldHelp_TeleportLogin">
-  Doppelklick TP - Bei Doppelklick auf etwas wird man dorthin tped.
-  Doppelklick Autopilot - Bei Doppelklick auf etwas läuft man automatisch an diese Position.
-  Velocity Interpolate - Die Geschwindigkeit die man vor einem TP hatte wird nach dem TP beibehalten.
-
-  Neue Client Definitionen runterladen - Eine kleine XML Datei mit den aktuellsten Viewer Signaturen wird von modularsystems heruntergeladen.
-  Client Info anzeigen - Benutzt diese Datei um Viewer zu erkennen und neben dem Namen anzuzeigen.
-
-  Login Ladeverzögerung - Wie lange soll der Login verzögert werden um Texturen zu laden.  (Höher als 0)
-  </notification>
-  <notification label="Emerald Help" name="EmeraldHelp_Voice">
-  Die Voice Server Einstellungen sind für Erfahrene Benutzer!
-  
-  Wenn sie einen Proxy benutzen (PAR, Gridproxy) aber Voice verwenden wollen
-  sollten sie beide auf bhr.vivox.com ändern.
-  </notification>
-  <notification label="Emerald Help" name="EmeraldHelp_Shields">
-    
-  Aktuelle kleidung schützen - Maskiert ihre individuelen Textur Schichten um sie vor Diebstahl zu schützen.
-  (Info: Dadurch können andere Viewer auch erkennen welchen Viewer sie benutzen)
-  Stealth Modus und Alle Extras Modus - Klicken sie auf einen der Buttons für mehr Informationen.
-  Dialog Spam Schutz - Legt fest wieviele Dialoge sie maximal pro zeitspanne empfangen können.
-    Verhindert das sie mit Dialogen angegriffen werden und möglicherweise abstürzen.
-  Rechte Entziehen - Entzieht einem Objekt Animations oder Steuerungs Rechte.
-    Objekte behalten für immer diese Rechte sollten sie nicht entzogen werden.
-  URL laden Dialog anzeigen - Deaktivieren sie diese sollte sie jemand damit angreifen.
-  LLMapDestination verbieten - Blockiert das Scripte die Karte öffnen können.
-  Viewer Effekte übertragen - Erlaubt anderen Viewern zu fest zu stellen wohin ihr Avatar zeigt oder sieht.
-    (Muss aktiviert sein da sonst der Auswahlstrahl zur Hüfte geht)
-  Kamera Ziel übertragen - Erlaubt anderen fest zu stellen wohin sie sehen per Blickziel.
-  Aktieviere aktive Cryolife Erkennung - Sendet anderen Avataren einen unsichtbaren Ping um fest zu stellen 
-    ob sie den Copybot Viewer CryoLife benutzen.
-  </notification>
-  <notification label="Emerald Help" name="EmeraldHelp_IM">
-  Help text will go here, please update notifications.xml
-  the related entries are at the bottom of the file.
-
-  IM
-
-  </notification>
-  <notification label="Emerald Help" name="EmeraldHelp_Chat">    
-    Radar Infos im Chat anzeigen - Info im Chat wenn ein Avatar die gleiche Sim betritt oder verlässt.
-    Info bei Sim Script Anzahl Änderung - Info wenn sich die Sim Script Anzahl deutlich ändert.
-    Kombiniert mit Radar Infos lässt sich abschätzen wer möglicherweise für Lag verantworlich ist.
-    OOC automatisch schliessen - Chat der mit (( anfängt wird automatisch mit )) geschlossen.
-    Erlaube MU* Befehl - Doppelpunkt funktioniert wie /me.
-    L$ Veränderung im Chat anzeigen - Info im Chat wenn sich ihr Kontostand ändert.
-    Log Zeitstempel mit Sekunden - fügt Sekunden dem Zeitstempel in Log Dateien hinzu.
-  </notification>
-  <notification label="Emerald Help" name="EmeraldHelp_Misc">
-    Fliegen immer erlauben - Fliegen ist überall erlaubt, ignoriert Flugverbote.
-    Aktiviere STRG-Alt-P für phantom - Macht ihren Avatar durchlässig, Objekte fliegen direkt durch sie hindurch.
-    Aktiviere STRG-Alt-S um überall auf den Boden zu sitzen - Sie können sich überall hinsetzen.
-    Blockiere automatisches sitzen bei Linksklick - Kein automatisches sitzen bei Linksklick auf ein Objekt.
-    Zeige Avatarname bei Blickziel Markierung - Zeigt an wo Avatare hin sehen.
-    Escape setzt Kamera zurück auf Standard im Kameramodus - Escape zentriert die Kamera direkt hinter ihnen.
-    Suchleiste anzeigen - Versteckt die Lag Anzeige und zeigt dafür die Suchleiste.
-    Aktiviere Restrained Life [RLV] Funktionen - Aktiviert eine ganze Menge Funktionen die es LSL Scripten erlaubt ihren Viewer zu kontrollieren.
-  </notification>
-  <notification label="Emerald Help" name="EmeraldHelp_CmdLine">
-    Verschiende Optionen für Kommandozeilen Funktionen.
-    Befehle direkt im normalen Chat eingeben und abschicken.
-  </notification>
-  <notification label="Emerald Help" name="EmeraldHelp_Avatar">    
-    X,Y und Z - Manipuliert die Bounding Box bis zu einem gewissen Grad.
-    Praktisch wenn sie z.B. die Höhe ihrer Füsse über dem Boden verändern wollen.
-    Agent updates pro Sekunde - Gibt an wieviel Updates pro Sekunde gesendet werden sollen.
-    Erhöhen kann die Leistung verbessern, aber niemals mehr als 20!
-    Verringern hilft den Sim Lag zu vermindern.
-    Emerald Kleidungs Modus - Aktiviert Modus für unendliche Kleidungsschichten
-    Auswahlpartikeleffekt
-    Das sind die Partikel die erscheinen wenn sie ein Objekt bearbeiten.
-    Linke Seite:
-    Wählen sie ein Farbwechsel Muster wenn sie keine einfarbigen Partikel wollen.
-    Neuer Farbwechsel - Hier können sie eine neue Palette Farben für den Farbwechsel auswählen.
-    Erst speichern und dann in der Liste auswählen.
-    Rechte Seite:
-    Erlaubt ihnen die Form der Partikel anzupassen.
-    Wählen sie eine Form aus der Liste oder erstellen sie eine neue.
-    Beim erstellen einer neuen Form klicken sie auf die Farbauswahl um die nächste Farbe fest zu legen.
-    
-    Größe - Erhöht die Größe der Form (Entfernung ändert automatisch die Größe)
-    Updates/sec - geringer Wert vermindert Lag.
-    Sende Zielposition per Chat - Sendet Infos per Chat für Scripte die diese Daten benutzen.
-  </notification>
-  <notification label="Emerald Help" name="EmeraldHelp_Build">
-    Einstellungen für neue Objekte - Erlaubt ihnen eigene Einstellungen für neue Prims.
-    Pivot Punkt - Erlaubt die Änderung des Pivot Punkt eines Objektes.
-    Ermöglicht erweiterte Rotationen und Erstellungsmöglichkeiten.
-    Ausgewählten Prims hervorheben - Zeigt die (lag verursachenden) gelben Markierungen bei ausgewählten Objekten.
-    Zeige Achsenpfeile an der Root Prim Position - Zeigt die Achsenpfeile an der Root Mitte anstatt der Objekt Mitte an.
-    Megaprim Unterstützung - Erlaubt die Erstellung von Objekten grösser als 10m auf kompatiblen Grids.
-  </notification>
-  <notification label="Emerald Help" name="EmeraldHelp_IRC">
-    Benutzen sie die Farbfelder um eine Farbe für die jeweilige Nachrichten Art festzulegen.
-    
-    Aktivieren/Deaktivieren sie Nachrichten Arten um festzulegen welche im Chat angezeigt werden sollen.
-  </notification>
-  <notification label="Emerald Help" name="EmeraldHelp_UtilityStream">
-    Utility Stream kann Daten an spezielle LSL Scripte schicken.
-    Information wie den Zustand ihrer Augenlider können per Chat gesendet werden
-    damit Scripte die auf diese Information warten darauf reagiern können.
-  </notification>
-  <notification label="Emerald Help" name="EmeraldHelp_Inventory">
-    Aktiviere Spiegeln  -
-    Erlaubt ihnen ihr Inventar auf ihre Festplatte zu speichern.
-    Nachdem sie einen Speicherort festgelegt haben klicken sie mit
-    rechts auf etwas in ihrem Inventar und dann auf die Export Funktion.    
-    Aktviere Inventarobjekt anziehen per Doppelklick - Doppelklick zieht das Objekt an anstatt die Eigenschaften anzuzeigen.
-  </notification>
-<notification label="Emerald Help" name="EmeraldHelp_IRCSettings">
-    IRC ist eine Alternative zum SL Gruppenchat.
-    IRC Chat findet in IRC Channels statt, alle User auf dem selben Server und Channel können miteinander reden.
-    
-    Um einem Chat beizutreten, klicken sie auf "Neu" im IRC Fenster.
-    Geben sie einen Nick, den Server und den Channel ein mit dem sie verbunden werden wollen, dann speichern.
-    
-    Um einen neuen Chat zu erstellen folgen sie den gleichen Anweisungen aber nutzen sie einen Channel der nicht benutzt wird.
-    Geben sie allen die den gleichen Chat benutzen sollen die gleichen Channel und Server Daten.    
-    
-    Settings Tag: Name für den Chat, wird als Name für das Chat Fenster benutzt.
-    Nick: Ihr Name den sie in diesem Chat benutzen wollen.
-    Nick Password: NICHT SL PASSWORT!!! Einige IRC Server erlauben das sichern von Namen mit einem Passwort (Für mehr Informationen /msg nickserv help im IRC chat eingeben)
-    Server: Der Server den sie benutzen wollen. Standard ist der modular systems Server aber sie können jeden anderen benutzen.
-    Server Password: Einige Server verlangen ein Passwort um sich anzumelden.
-    Channel: Der Name des Chats dem sie beitreten wollen.
-    Channel Password: Sie können einen Channel mit einem Password sichern (Für mehr Informationen /msg ChanServ)
-  </notification>
-  <notification label="Emerald Help" name="EmeraldHelp_Effects">
-    Aktiviert physikalisches Verhalten von Brüsten bei ihrem und anderen Avataren. Ändern sie die Einstellungen nach ihren Vorstellungen.
-    - Masse
-      ein höherer Wert erhöht den Gesamt Effekt.
-    - Rückprall
-      Kontrolliert wie schnell die Brüste wieder zur Ruhe kommen.
-    - max Z
-      Maximum Wert der Richtung wo sich die Brüste bewegen können.
-    - max vel
-      Maximale Dynamik der Brüste. Weniger für weniger hüpfen.
-    - Reibung
-      Kontrolliert die Reibung und damit wann die Brüste zur Ruhe kommen. Umso höher der Wert umso schneller.
-    - Z Einfluss
-      Kontrolliert den Einfluss der Avatar Bewegung. Höherer Wert erhöht den Effekt.
-  </notification>
-  <notification label="Emerald Help" name="EmeraldHelp_SpellCheck">
-    Rechtsklick auf ein Wort zeigt die Auswahlliste an.
-    Wählen sie ein Standard Wörterbuch das den Sprachstil und die Basis Wörter enthält.
-    Sie können auch andere Wörterbücher nutzen durch auswählen von der Liste und "Hinzufügen".
-    Eigene Wörter können sie dem individuellem Wörterbuch hinzufügen.
-    Die Rechtschreibhilfe basiert auf Hunspell, mehr Informationen finden sie im Internet.
-  </notification>
-  <notification name="NoShadows">
-  Schatten können nicht aktiviert werden da ihre Grafik Einstellungen zu niedrig sind. Stellen sie sicher das ihre Einstellungen auf Ultra sind und alle Schatten Optionen aktiviert.
-  </notification>
 </notifications>

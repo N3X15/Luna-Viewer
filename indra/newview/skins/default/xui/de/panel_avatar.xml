@@ -137,8 +137,6 @@
 			</text>
 			<button label="Neu..." label_selected="Neu..." name="New..."/>
 			<button label="Löschen..." label_selected="Löschen..." name="Delete..."/>
-      <button label="Import..." label_selected="Import..." name="Import..."/>
-      <button label="Export..." label_selected="Export..."/>
 			<tab_container name="picks tab" width="452" />
 			<text name="loading_text">
 				Wird geladen...

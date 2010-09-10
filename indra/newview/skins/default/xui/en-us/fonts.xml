@@ -10,11 +10,13 @@
       <file>ArialUni.ttf</file>
     </os>
     <os name="Mac">
-      <file>ヒラギノ角ゴ Pro W3.otf</file>
-      <file>ヒラギノ角ゴ ProN W3.otf</file>
-      <file>AppleGothic.dfont</file>
+      <file>ヒラギノ角ゴ ProN W3.otf</file>
+      <file>ヒラギノ角ゴ Pro W3.otf</file>
       <file>AppleGothic.ttf</file>
+      <file>AppleGothic.dfont</file>
       <file>华文细黑.ttf</file>
+      <file>儷黑 Pro.ttf</file>
+      <file>Apple Symbols.ttf</file>
     </os>
   </font>
 

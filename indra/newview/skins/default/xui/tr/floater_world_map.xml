@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <floater name="worldmap" title="Dünya haritası">
-	<tab_container name="maptab">
-		<panel label="Objeler" name="objects_mapview"/>
-		<panel label="Zemin" name="terrain_mapview"/>
-	</tab_container>
 	<text name="you_label">
 		Siz
 	</text>

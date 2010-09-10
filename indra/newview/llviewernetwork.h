@@ -35,7 +35,7 @@
 #define LL_LLVIEWERNETWORK_H
 
 class LLHost;
-/*
+
 enum EGridInfo
 {
 	GRID_INFO_NONE,
@@ -65,7 +65,7 @@ enum EGridInfo
 	GRID_INFO_OTHER, // IP address set via command line option
 	GRID_INFO_COUNT
 };
-*/
+
 /**
  * @brief A class to manage the viewer's login state.
  * 
@@ -73,18 +73,60 @@ enum EGridInfo
 class LLViewerLogin : public LLSingleton<LLViewerLogin>
 {
 public:
-	void getLoginURIs(std::vector<std::string>& uris) const;
-	const std::string &getGridLabel() const; 
-	const std::string &getLoginPage() const;
-	const std::string &getHelperURI() const;
+	LLViewerLogin();
 
-	bool isOpenSimulator();
-	bool isSecondLife();
+	void setGridChoice(EGridInfo grid);
+	void setGridChoice(const std::string& grid_name);
+	void setGridURI(const std::string& uri);
+	void setGridURIs(const std::vector<std::string>& urilist);
+
+	/**
+	* @brief Get the enumeration of the grid choice.
+	* Should only return values > 0 && < GRID_INFO_COUNT
+	**/
+	EGridInfo getGridChoice() const;
+
+	/**
+	* @brief Get a readable label for the grid choice.
+	* Returns the readable name for the grid choice. 
+	* If the grid is 'other', returns something
+	* the string used to specifiy the grid.
+	**/
+	std::string getGridLabel();
+
+	std::string getKnownGridLabel(EGridInfo grid_index) const; 
+
+	const std::string getCurrentGridURI();
+	bool tryNextURI();
+
+	const std::vector<std::string>& getCommandLineURIs();
+	const std::vector<std::string>& getGridURIs();
+	const std::string getHelperURI() const;
+	void setHelperURI(const std::string& uri);
+	const std::string getLoginPageURI() const;
+	void setLoginPageURI(const std::string& uri);
+	void setNameEditted(bool value) { mNameEditted = value; }
 
 	bool isInProductionGrid();
+	bool nameEditted(void) const { return mNameEditted; }
+
+private:
+	void parseCommandLineURIs();
+	const std::string getStaticGridURI(const EGridInfo grid) const;
+	const std::string getStaticGridHelperURI(const EGridInfo grid) const;
+
+	EGridInfo mGridChoice;
+	std::string mGridName;
+	std::string mHelperURI;
+	std::string mLoginPageURI;
+	std::vector<std::string> mCommandLineURIs;
+	std::vector<std::string> mGridURIs;
+
+	int mCurrentURI;	// Index into mGridURIs.
+	bool mNameEditted;	// Set if the user edits/sets the First or Last name field.
 };
 
-//const EGridInfo DEFAULT_GRID_CHOICE = GRID_INFO_AGNI;
+const EGridInfo DEFAULT_GRID_CHOICE = GRID_INFO_AGNI;
 
 const S32 MAC_ADDRESS_BYTES = 6;
 extern unsigned char gMACAddress[MAC_ADDRESS_BYTES];		/* Flawfinder: ignore */

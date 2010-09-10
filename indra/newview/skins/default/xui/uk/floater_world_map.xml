@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <floater name="worldmap" title="Карта світу">
-	<tab_container name="maptab">
-		<panel label="Об&apos;єкти" name="objects_mapview"/>
-		<panel label="Місцевість" name="terrain_mapview"/>
-	</tab_container>
 	<text name="you_label">
 		Ви
 	</text>

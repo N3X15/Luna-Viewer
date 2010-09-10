@@ -37,7 +37,8 @@
 
 #include "lloverlaybar.h"
 
-#include "audioengine.h"
+#include "llaudioengine.h"
+#include "importtracker.h"
 #include "llrender.h"
 #include "llagent.h"
 #include "llbutton.h"
@@ -58,17 +59,19 @@
 #include "llviewerparcelmedia.h"
 #include "llviewerparcelmgr.h"
 #include "lluictrlfactory.h"
+#include "llviewercontrol.h"
 #include "llviewerwindow.h"
 #include "llvoiceclient.h"
 #include "llvoavatar.h"
 #include "llvoiceremotectrl.h"
-#include "llwebbrowserctrl.h"
+#include "llmediactrl.h"
 #include "llselectmgr.h"
 #include "wlfPanel_AdvSettings.h"
 
-// [RLVa:KB]
-#include "rlvhandler.h"
-// [/RLVa:KB]
+
+
+
+#include "llcontrol.h"
 
 //
 // Globals
@@ -77,6 +80,7 @@
 LLOverlayBar *gOverlayBar = NULL;
 
 extern S32 MENU_BAR_HEIGHT;
+extern ImportTracker gImportTracker;
 
 BOOL LLOverlayBar::sAdvSettingsPopup;
 BOOL LLOverlayBar::sChatVisible;
@@ -118,13 +122,12 @@ LLOverlayBar::LLOverlayBar()
 	:	LLPanel(),
 		mMediaRemote(NULL),
 		mVoiceRemote(NULL),
-		mAdvSettings(NULL),
 		mMusicState(STOPPED),
 		mOriginalIMLabel("")
 {
 	setMouseOpaque(FALSE);
 	setIsChrome(TRUE);
-
+	
 	mBuilt = false;
 
 	LLCallbackMap::map_t factory_map;
@@ -134,6 +137,20 @@ LLOverlayBar::LLOverlayBar()
 	factory_map["chat_bar"] = LLCallbackMap(LLOverlayBar::createChatBar, this);
 	
 	LLUICtrlFactory::getInstance()->buildPanel(this, "panel_overlaybar.xml", &factory_map);
+}
+
+bool updateAdvSettingsPopup(const LLSD &data)
+{
+	LLOverlayBar::sAdvSettingsPopup = gSavedSettings.getBOOL("wlfAdvSettingsPopup");
+	gOverlayBar->childSetVisible("AdvSettings_container", !LLOverlayBar::sAdvSettingsPopup);
+	gOverlayBar->childSetVisible("AdvSettings_container_exp", LLOverlayBar::sAdvSettingsPopup);
+	return true;
+}
+
+bool updateChatVisible(const LLSD &data)
+{
+	LLOverlayBar::sChatVisible = data.asBoolean();
+	return true;
 }
 
 BOOL LLOverlayBar::postBuild()
@@ -163,18 +180,6 @@ BOOL LLOverlayBar::postBuild()
 	childSetVisible("AdvSettings_container_exp", sAdvSettingsPopup);
 
 	return TRUE;
-}
-
-void LLOverlayBar::updateAdvSettingsPopup(const LLSD &data)
-{
-	sAdvSettingsPopup = data.asBoolean();
-	gOverlayBar->childSetVisible("AdvSettings_container", !sAdvSettingsPopup);
-	gOverlayBar->childSetVisible("AdvSettings_container_exp", sAdvSettingsPopup);
-}
-
-void LLOverlayBar::updateChatVisible(const LLSD &data)
-{
-	sChatVisible = data.asBoolean();
 }
 
 LLOverlayBar::~LLOverlayBar()
@@ -297,10 +302,7 @@ void LLOverlayBar::refresh()
 	BOOL sitting = FALSE;
 	if (gAgent.getAvatarObject())
 	{
-//		sitting = gAgent.getAvatarObject()->mIsSitting;
-// [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g)
-		sitting = gAgent.getAvatarObject()->mIsSitting && !gRlvHandler.hasBehaviour(RLV_BHVR_UNSIT);
-// [/RLVa:KB]
+		sitting = gAgent.getAvatarObject()->mIsSitting;
 	}
 	button = getChild<LLButton>("Stand Up");
 
@@ -318,10 +320,7 @@ void LLOverlayBar::refresh()
 		(gAgent.getTeleportState() == LLAgent::TELEPORT_MOVING) ||
 		(gAgent.getTeleportState() == LLAgent::TELEPORT_START))
 	{
-		//teleporting = TRUE;
-// [RLVa:KB] - Checked: 2009-10-15 (RLVa-1.0.5e)
-		teleporting = (!rlv_handler_t::isEnabled()) || (gRlvHandler.getCanCancelTp());
-// [/RLVa:KB]
+		teleporting = TRUE;
 	}
 	else
 	{
@@ -341,7 +340,6 @@ void LLOverlayBar::refresh()
 
 	moveChildToBackOfTabGroup(mMediaRemote);
 	moveChildToBackOfTabGroup(mVoiceRemote);
-	moveChildToBackOfTabGroup(mAdvSettings);
 
 	// turn off the whole bar in mouselook
 	static BOOL last_mouselook = FALSE;
@@ -352,27 +350,28 @@ void LLOverlayBar::refresh()
 	{
 		last_mouselook = in_mouselook;
 		if (in_mouselook)
-	{
-		childSetVisible("media_remote_container", FALSE);
-		childSetVisible("voice_remote_container", FALSE);
-		childSetVisible("AdvSettings_container", FALSE);
-		childSetVisible("AdvSettings_container_exp", FALSE);
-		childSetVisible("state_buttons", FALSE);
-	}
-	else
-	{
-		// update "remotes"
-		childSetVisible("media_remote_container", TRUE);
-			//childSetVisible("voice_remote_container", LLVoiceClient::voiceEnabled());
+		{
+			childSetVisible("media_remote_container", FALSE);
+			childSetVisible("voice_remote_container", FALSE);
+			childSetVisible("AdvSettings_container", FALSE);
+			childSetVisible("AdvSettings_container_exp", FALSE);
+			childSetVisible("state_buttons", FALSE);
+		}
+		else
+		{
+			// update "remotes"
+			childSetVisible("media_remote_container", TRUE);
+			childSetVisible("voice_remote_container", LLVoiceClient::voiceEnabled());
 			childSetVisible("AdvSettings_container", !sAdvSettingsPopup);//!gSavedSettings.getBOOL("wlfAdvSettingsPopup")); 
 			childSetVisible("AdvSettings_container_exp", sAdvSettingsPopup);//gSavedSettings.getBOOL("wlfAdvSettingsPopup")); 
-		childSetVisible("state_buttons", TRUE);
+			childSetVisible("state_buttons", TRUE);
+		}
 	}
-	}
-	if(!in_mouselook)childSetVisible("voice_remote_container", LLVoiceClient::voiceEnabled());
+	if(!in_mouselook)
+		childSetVisible("voice_remote_container", LLVoiceClient::voiceEnabled());
 
 	// always let user toggle into and out of chatbar
-	childSetVisible("chat_bar", sChatVisible);//gSavedSettings.getBOOL("ChatVisible"));
+	childSetVisible("chat_bar", gSavedSettings.getBOOL("ChatVisible"));
 
 	if (buttons_changed)
 	{
@@ -419,13 +418,6 @@ void LLOverlayBar::onClickMouselook(void*)
 //static
 void LLOverlayBar::onClickStandUp(void*)
 {
-// [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g)
-	if ( (gRlvHandler.hasBehaviour(RLV_BHVR_UNSIT)) && (gAgent.getAvatarObject()) && (gAgent.getAvatarObject()->mIsSitting) )
-	{
-		return;
-	}
-// [/RLVa:KB]
-
 	LLSelectMgr::getInstance()->deselectAllForStandingUp();
 	gAgent.setControlFlags(AGENT_CONTROL_STAND_UP);
 }
@@ -469,11 +461,11 @@ void LLOverlayBar::toggleMediaPlay(void*)
 	}
 
 	
-	if (LLViewerMedia::isMediaPaused())
+	if (LLViewerParcelMedia::getStatus() == LLViewerMediaImpl::MEDIA_PAUSED)
 	{
 		LLViewerParcelMedia::start();
 	}
-	else if(LLViewerMedia::isMediaPlaying())
+	else if(LLViewerParcelMedia::getStatus() == LLViewerMediaImpl::MEDIA_PLAYING)
 	{
 		LLViewerParcelMedia::pause();
 	}

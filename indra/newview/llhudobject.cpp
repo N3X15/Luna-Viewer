@@ -306,15 +306,8 @@ void LLHUDObject::renderAllForSelect()
 		}
 	}
 }
-
 // static
-void LLHUDObject::sortObjects()
-{
-	sHUDObjects.sort(hud_object_further_away());	
-}
-
-//static
-void LLHUDObject::markViewerEffectsDead()
+void LLHUDObject::renderAllForTimer()
 {
 	LLHUDObject *hud_objp;
 	
@@ -323,15 +316,19 @@ void LLHUDObject::markViewerEffectsDead()
 	{
 		hud_object_list_t::iterator cur_it = object_it++;
 		hud_objp = (*cur_it);
-		U8 type = hud_objp->getType();
-		if (hud_objp->isVisible() && (type & LL_HUD_EFFECT_LOOKAT || 
-			type & LL_HUD_EFFECT_POINTAT || type & LL_HUD_EFFECT_SPIRAL || 
-			type & LL_HUD_EFFECT_POINT || type & LL_HUD_EFFECT_EDIT || 
-			type & LL_HUD_EFFECT_BEAM || type & LL_HUD_EFFECT_SPHERE ) )
+		if (hud_objp->getNumRefs() == 1)
 		{
-			hud_objp->markDead();
+			sHUDObjects.erase(cur_it);
+		}
+		else if (hud_objp->isVisible())
+		{
+			hud_objp->renderForTimer();
 		}
 	}
+}
 
-	LLVertexBuffer::unbind();
+// static
+void LLHUDObject::sortObjects()
+{
+	sHUDObjects.sort(hud_object_further_away());	
 }

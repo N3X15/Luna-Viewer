@@ -76,7 +76,6 @@ public:
 	void	setDirty();
 
 	void	idleUpdate(bool update_now = false);
-	static BOOL		sShowPropertyLines;
 
 private:
 	// This is in parcel rows and columns, not grid rows and columns
@@ -116,13 +115,6 @@ private:
 	S32				mVertexCount;
 	F32*			mVertexArray;
 	U8*				mColorArray;
-	
-	LLColor4U	mPropertyColorSelf;
-	LLColor4U	mPropertyColorAuction;
-	LLColor4U	mPropertyColorOther;
-	LLColor4U	mPropertyColorGroup;
-	LLColor4U	mPropertyColorForSale;
-	LLColor4U	mPropertyColorAvail;
 };
 
 #endif

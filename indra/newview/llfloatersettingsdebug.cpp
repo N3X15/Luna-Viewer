@@ -40,11 +40,6 @@
 #include "llcolorswatch.h"
 #include "llviewercontrol.h"
 
-// [RLVa:KB]
-#include "rlvhandler.h"
-#include "rlvextensions.h"
-// [/RLVa:KB]
-
 LLFloaterSettingsDebug* LLFloaterSettingsDebug::sInstance = NULL;
 
 LLFloaterSettingsDebug::LLFloaterSettingsDebug() : LLFloater(std::string("Configuration Editor"))
@@ -152,12 +147,10 @@ void LLFloaterSettingsDebug::onCommitSettings(LLUICtrl* ctrl, void* user_data)
 	switch(controlp->type())
 	{		
 	  case TYPE_U32:
-		//controlp->set(floaterp->childGetValue("val_spinner_1"));
-		controlp->set(LLSD(floaterp->childGetValue("val_text").asInteger()));
+		controlp->set(floaterp->childGetValue("val_spinner_1"));
 		break;
 	  case TYPE_S32:
-		//controlp->set(floaterp->childGetValue("val_spinner_1"));
-		controlp->set(LLSD(floaterp->childGetValue("val_text").asInteger()));
+		controlp->set(floaterp->childGetValue("val_spinner_1"));
 		break;
 	  case TYPE_F32:
 		controlp->set(LLSD(floaterp->childGetValue("val_spinner_1").asReal()));
@@ -250,32 +243,6 @@ void LLFloaterSettingsDebug::updateControl(LLControlVariable* controlp)
 
 	if (controlp)
 	{
-// [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g) | Modified: RLVa-0.2.1d
-		if (rlv_handler_t::isEnabled())
-		{
-			// Don't allow changing DBG_WRITE debug settings under @setdebug=n
-			bool fEnable = !( (gRlvHandler.hasBehaviour(RLV_BHVR_SETDEBUG)) && 
-				(RlvExtGetSet::getDebugSettingFlags(controlp->getName()) & RlvExtGetSet::DBG_WRITE) );
-			// Don't allow toggling "Basic Shaders" and/or "Atmopsheric Shaders" through the debug settings under @setenv=n
-			fEnable &= !((gRlvHandler.hasBehaviour(RLV_BHVR_SETENV)) && 
-				(("VertexShaderEnable" == controlp->getName()) || ("WindLightUseAtmosShaders" == controlp->getName())));
-			#ifdef RLV_EXTENSION_STARTLOCATION
-				// Don't allow toggling RestrainedLifeLoginLastLocation
-				fEnable &= !(RLV_SETTING_LOGINLASTLOCATION == controlp->getName());
-			#endif // RLV_EXTENSION_STARTLOCATION
-
-			// NOTE: this runs per-frame so there's no need to explictly handle onCommitSettings() or onClickDefault()
-			spinner1->setEnabled(fEnable);
-			spinner2->setEnabled(fEnable);
-			spinner3->setEnabled(fEnable);
-			spinner4->setEnabled(fEnable);
-			color_swatch->setEnabled(fEnable);
-			childSetEnabled("val_text", fEnable);
-			childSetEnabled("boolean_combo", fEnable);
-			childSetEnabled("default_btn", fEnable);
-		}
-// [/RLVa:KB]
-
 		eControlType type = controlp->type();
 
 		//hide combo box only for non booleans, otherwise this will result in the combo box closing every frame
@@ -311,7 +278,6 @@ void LLFloaterSettingsDebug::updateControl(LLControlVariable* controlp)
 		LLSD sd = controlp->get();
 		switch(type)
 		{
-			/*
 		  case TYPE_U32:
 			spinner1->setVisible(TRUE);
 			spinner1->setLabel(std::string("value")); // Debug, don't translate
@@ -336,7 +302,6 @@ void LLFloaterSettingsDebug::updateControl(LLControlVariable* controlp)
 				spinner1->setPrecision(0);
 			}
 			break;
-			*/
 		  case TYPE_F32:
 			spinner1->setVisible(TRUE);
 			spinner1->setLabel(std::string("value")); // Debug, don't translate
@@ -359,14 +324,6 @@ void LLFloaterSettingsDebug::updateControl(LLControlVariable* controlp)
 				}
 			}
 			break;
-		  case TYPE_U32:
-		    childSetVisible("val_text", TRUE);
-			if (!childHasFocus("val_text"))
-			{
-				childSetText("val_text", llformat("%u", sd.asInteger()));
-			}
-			break;
-		  case TYPE_S32:
 		  case TYPE_STRING:
 			childSetVisible("val_text", TRUE);
 			if (!childHasFocus("val_text"))

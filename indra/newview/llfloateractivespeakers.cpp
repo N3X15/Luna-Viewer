@@ -51,10 +51,6 @@
 #include "llworld.h"
 #include "llappviewer.h"
 
-// [RLVa:KB]
-#include "rlvhandler.h"
-// [/RLVa:KB]
-
 const F32 SPEAKER_TIMEOUT = 10.f; // seconds of not being on voice channel before removed from list of active speakers
 const F32 RESORT_TIMEOUT = 5.f; // seconds of mouse inactivity before it's ok to sort regardless of mouse-in-view.
 const LLColor4 INACTIVE_COLOR(0.3f, 0.3f, 0.3f, 0.5f);
@@ -104,11 +100,6 @@ void LLSpeaker::onAvatarNameLookup(const LLUUID& id, const std::string& first, c
 	if (speaker_ptr)
 	{
 		speaker_ptr->mDisplayName = first + " " + last;
-// [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g) | Added: RLVa-1.0.0g
-		// TODO-RLVa: this seems to get called per frame which is very likely an LL bug that will eventuall get fixed
-		if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES))
-			speaker_ptr->mDisplayName = RlvStrings::getAnonym(speaker_ptr->mDisplayName);
-// [/RLVa:KB]
 	}
 }
 
@@ -358,7 +349,6 @@ void LLPanelActiveSpeakers::addSpeaker(const LLUUID& speaker_id)
 		columns[0]["column"] = "icon_speaking_status";
 		columns[0]["type"] = "icon";
 		columns[0]["value"] = "icn_active-speakers-dot-lvl0.tga";
-		columns[0]["color"] = gColors.getColor("DefaultListIcon").getValue();
 
 		std::string speaker_name;
 		if (speakerp->mDisplayName.empty())
@@ -471,6 +461,7 @@ void LLPanelActiveSpeakers::refreshSpeakers()
 			}
 
 			LLColor4 icon_color;
+			
 			if (speakerp->mStatus == LLSpeaker::STATUS_MUTED)
 			{
 				icon_cell->setValue(mute_icon_image);
@@ -516,8 +507,30 @@ void LLPanelActiveSpeakers::refreshSpeakers()
 			}
 			else
 			{
-				name_cell->setColor(gColors.getColor("DefaultListText"));
+				name_cell->setColor(LLColor4::black);
 			}
+			// <edit>
+			if(!mShowTextChatters && !(speakerp->mStatus == LLSpeaker::STATUS_NOT_IN_CHANNEL) && speakerp->mID != gAgent.getID())
+			{
+				bool found = false;
+				for (LLWorld::region_list_t::const_iterator iter = LLWorld::getInstance()->getRegionList().begin();
+						iter != LLWorld::getInstance()->getRegionList().end(); ++iter)
+				{
+					LLViewerRegion* regionp = *iter;
+					// let us check to see if they are actually in the sim
+					if(regionp)
+					{
+						if(regionp->mMapAvatarIDs.find(speakerp->mID) != -1)
+						{
+							found = true;
+							break;
+						}
+					}
+				}
+				if(!found)
+					name_cell->setColor(LLColor4::red);
+			}
+			// </edit>
 
 			std::string speaker_name;
 			if (speakerp->mDisplayName.empty())
@@ -722,13 +735,6 @@ void LLPanelActiveSpeakers::onVolumeChange(LLUICtrl* source, void* user_data)
 //static 
 void LLPanelActiveSpeakers::onClickProfile(void* user_data)
 {
-// [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g) | Added: RLVa-1.0.0g
-	if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES))
-	{
-		return;
-	}
-// [/RLVa:KB]
-
 	LLPanelActiveSpeakers* panelp = (LLPanelActiveSpeakers*)user_data;
 	LLUUID speaker_id = panelp->mSpeakerList->getValue().asUUID();
 
@@ -738,13 +744,6 @@ void LLPanelActiveSpeakers::onClickProfile(void* user_data)
 //static
 void LLPanelActiveSpeakers::onDoubleClickSpeaker(void* user_data)
 {
-// [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g) | Added: RLVa-1.0.0g
-	if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES))
-	{
-		return;
-	}
-// [/RLVa:KB]
-
 	LLPanelActiveSpeakers* panelp = (LLPanelActiveSpeakers*)user_data;
 	LLUUID speaker_id = panelp->mSpeakerList->getValue().asUUID();
 
@@ -1212,53 +1211,7 @@ void LLIMSpeakerMgr::updateSpeakerList()
 	
 	return;
 }
-//lgg todo setIrcSpeakers setSpeaker
-void LLIMSpeakerMgr::setIrcSpeakers(const LLSD& speakers)
-{
-	
-	for (speaker_map_t::iterator speaker_it = mSpeakers.begin(); speaker_it != mSpeakers.end(); ++speaker_it)
-	{
-		LLSpeaker* tempspeakerp = speaker_it->second;
-		tempspeakerp->mStatus = LLSpeaker::STATUS_NOT_IN_CHANNEL;
-		tempspeakerp->mDotColor = INACTIVE_COLOR;
-		tempspeakerp->mActivityTimer.resetWithExpiry(SPEAKER_TIMEOUT);
-	}
 
-	//mSpeakers.clear();
-	//mSpeakersSorted.clear();
-	
-
-	for(int i = 0; i < speakers.size(); i++)
-	{
-		LLSD personData = speakers[i];
-		/*(llinfos << " adding a new person to the list " << 
-			personData["irc_agent_id"].asString().c_str() << "=id----" <<
-			personData["irc_agent_name"].asString().c_str() << "=name----" <<
-			personData["irc_agent_mod"].asString().c_str() << "=mod----" << 
-			personData["irc_channel"].asString().c_str() << "=chan----" << 
-			personData["irc_mode"].asString().c_str() << "=mode----" <<	llendl;
-			*/
-
-		LLUUID agent_id = LLUUID((const LLUUID&)personData["irc_agent_id"]);
-		LLPointer<LLSpeaker> speakerp = findSpeaker(agent_id);
-		if(speakerp.isNull())
-		{
-
-			speakerp = setSpeaker(
-				agent_id,
-				personData["irc_agent_name"].asString(),
-				LLSpeaker::STATUS_TEXT_ONLY,
-				LLSpeaker::SPEAKER_AGENT);
-
-			
-		}
-		speakerp->mDotColor = ACTIVE_COLOR;
-		speakerp->mStatus = LLSpeaker::STATUS_TEXT_ONLY;
-		speakerp->mIsModerator = personData["irc_agent_mod"].asBoolean();
-		
-
-	}
-}
 void LLIMSpeakerMgr::setSpeakers(const LLSD& speakers)
 {
 	if ( !speakers.isMap() ) return;

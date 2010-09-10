@@ -212,7 +212,7 @@ void LLFloaterNewIM::onClickClose(void *userdata)
 BOOL LLFloaterNewIM::handleKeyHere(KEY key, MASK mask)
 {
 	BOOL handled = LLFloater::handleKeyHere(key, mask);
-	if ( KEY_ESCAPE == key )
+	if (KEY_ESCAPE == key && mask == MASK_NONE)
 	{
 		handled = TRUE;
 		// Close talk panel on escape

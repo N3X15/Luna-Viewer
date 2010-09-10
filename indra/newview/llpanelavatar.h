@@ -36,7 +36,7 @@
 #include "llpanel.h"
 #include "v3dmath.h"
 #include "lluuid.h"
-#include "llwebbrowserctrl.h"
+#include "llmediactrl.h"
 
 class LLButton;
 class LLCheckBoxCtrl;
@@ -55,7 +55,7 @@ class LLViewerImage;
 class LLViewerObject;
 class LLMessageSystem;
 class LLIconCtrl;
-class LLWebBrowserCtrl;
+class LLMediaCtrl;
 
 enum EOnlineStatus
 {
@@ -100,7 +100,7 @@ public:
 
 	/*virtual*/ BOOL postBuild(void);
 	static void onClickImage(			void *userdata);
-	
+
 
 	void enableControls(BOOL own_avatar);
 };
@@ -139,12 +139,14 @@ private:
 // WARNING!  The order of the inheritance here matters!!  Do not change.  - KLW
 class LLPanelAvatarWeb : 
 	public LLPanelAvatarTab
-	, public LLWebBrowserCtrlObserver
+	, public LLViewerMediaObserver
 {
 public:
 	LLPanelAvatarWeb(const std::string& name, const LLRect& rect, LLPanelAvatar* panel_avatar);
 	/*virtual*/ ~LLPanelAvatarWeb();
 	/*virtual*/ BOOL	postBuild(void);
+
+	/*virtual*/ void refresh();
 
 	void enableControls(BOOL own_avatar);
 
@@ -156,13 +158,13 @@ public:
 	static void onCommitURL(LLUICtrl* ctrl, void* data);
 	static void onClickWebProfileHelp(void *);
 
-	// browser observer impls
-	virtual void onStatusTextChange( const EventType& eventIn );
-	virtual void onLocationChange( const EventType& eventIn );
+	// inherited from LLViewerMediaObserver
+	/*virtual*/ void handleMediaEvent(LLPluginClassMedia* self, EMediaEvent event);
 
 private:
 	std::string			mHome;
-	LLWebBrowserCtrl*	mWebBrowser;
+	std::string         mNavigateTo;
+	LLMediaCtrl*		mWebBrowser;
 };
 
 
@@ -270,7 +272,7 @@ private:
 
 class LLPanelAvatar : public LLPanel
 {
-	friend class JCProfileCallback;
+
 public:
 	LLPanelAvatar(const std::string& name, const LLRect &rect, BOOL allow_edit);
 	/*virtual*/ ~LLPanelAvatar();
@@ -322,6 +324,7 @@ public:
 	static void onClickGroupInvite( void *userdata);
 	static void onClickOfferTeleport(	void *userdata);
 	static void onClickPay(	void *userdata);
+	static void onClickGetKey(void *userdata);
 	static void onClickAddFriend(void* userdata);
 	static void onClickOK(		void *userdata);
 	static void onClickCancel(	void *userdata);
@@ -330,6 +333,7 @@ public:
 	static void onClickUnfreeze(void *userdata);
 	static void onClickCSR(		void *userdata);
 	static void onClickMute(	void *userdata);
+	static void onCommitKey(LLUICtrl* ctrl, void* data);
 
 private:
 	void enableOKIfReady();

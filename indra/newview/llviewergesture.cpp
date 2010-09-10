@@ -34,7 +34,7 @@
 
 #include "llviewergesture.h"
 
-#include "audioengine.h"
+#include "llaudioengine.h"
 #include "lldir.h"
 #include "llviewerinventory.h"
 #include "sound_ids.h"		// for testing
@@ -47,6 +47,7 @@
 #include "llviewermessage.h" // send_guid_sound_trigger
 #include "llviewernetwork.h"
 #include "llagent.h"
+
 #include "chatbar_as_cmdline.h"
 
 // Globals

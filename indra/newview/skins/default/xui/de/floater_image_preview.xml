@@ -47,7 +47,6 @@
 Speichern Sie das Bild als 24 Bit Targa (.tga).
 	</text>
 	<check_box label="Verlustfreie Komprimierung verwenden" name="lossless_check" />
-  <check_box label="Temporär (kostenlos)" name="temp_check" tooltip="Läd die Textur temporär hoch, das ist zwar kostenlos aber nicht dauerhaft!" />
 	<button label="Abbrechen" name="cancel_btn" />
 	<button label="Hochladen ([AMOUNT] L$)" name="ok_btn" />
 </floater>

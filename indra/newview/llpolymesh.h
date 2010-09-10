@@ -174,24 +174,6 @@ public:
 	// otherwise it is loaded from file, added to the table, and returned.
 	static LLPolyMesh *getMesh( const std::string &name, LLPolyMesh* reference_mesh = NULL);
 
-	// Saves the mesh information as a binary Linden Lab Mesh file.
-	BOOL saveLLM(LLFILE *fp);
-
-	// Saves the mesh information as an OBJ file.
-	BOOL saveOBJ(LLFILE *fp);
-
-	// Loads new mesh information from an OBJ file.
-	BOOL loadOBJ(LLFILE *fp);
-
-	// Copies the current mesh to the base mesh.
-	BOOL setSharedFromCurrent();
-
-	// Gets the name of the mesh corresponding to the shared data
-	static const std::string* getSharedMeshName(LLPolyMeshSharedData* shared);
-
-	// Requests mesh data by name.  Returns null if not found.
-	static LLPolyMeshSharedData *getMeshData( const std::string &name );
-
 	// Frees all loaded meshes.
 	// This should only be called once you know there are no outstanding
 	// references to these objects.  Generally, upon exit of the application.
@@ -330,9 +312,6 @@ public:
 		return mSharedData->mJointNames;
 	}
 
-	typedef std::map<std::string,LLPolyMorphData*> morph_list_t;
-	static void getMorphList (const std::string& mesh_name, morph_list_t* morph_list);
-
 	LLPolyMorphData*	getMorphData(const std::string& morph_name);
 // 	void	removeMorphData(LLPolyMorphData *morph_target);
 // 	void	deleteAllMorphData();
@@ -355,12 +334,11 @@ public:
 	U32				mFaceIndexOffset;
 	U32				mFaceIndexCount;
 	U32				mCurVertexCount;
-
-	// Dumps diagnostic information about the global mesh table
-	static void dumpDiagInfo(void*);
-
 private:
 	void initializeForMorph();
+
+	// Dumps diagnostic information about the global mesh table
+	static void dumpDiagInfo();
 
 protected:
 	// mesh data shared across all instances of a given mesh

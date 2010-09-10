@@ -120,6 +120,7 @@ public:
 		
 		childSetAction("Save", LLWearableSaveAsDialog::onSave, this );
 		childSetAction("Cancel", LLWearableSaveAsDialog::onCancel, this );
+
 		childSetTextArg("name ed", "[DESC]", desc);
 	}
 
@@ -297,12 +298,6 @@ public:
 		}
 	}
 
-	static void onCancel( void* userdata )
-	{
-		LLMakeOutfitDialog* self = (LLMakeOutfitDialog*) userdata;
-		self->close(); // destroys this object
-	}
-
 	static void onCheckAll( void* userdata )
 	{
 		LLMakeOutfitDialog* self = (LLMakeOutfitDialog*) userdata;
@@ -321,6 +316,12 @@ public:
 			std::string name = self->mCheckBoxList[i].first;
 			if(self->childIsEnabled(name))self->childSetValue(name,FALSE);
 		}
+	}
+
+	static void onCancel( void* userdata )
+	{
+		LLMakeOutfitDialog* self = (LLMakeOutfitDialog*) userdata;
+		self->close(); // destroys this object
 	}
 };
 
@@ -355,7 +356,9 @@ enum ESubpart {
 	SUBPART_GLOVES,
 	SUBPART_UNDERSHIRT,
 	SUBPART_UNDERPANTS,
-	SUBPART_SKIRT
+	SUBPART_SKIRT,
+	SUBPART_ALPHA,
+	SUBPART_TATTOO
  };
 
 struct LLSubpart
@@ -384,6 +387,7 @@ public:
 	
 	void				addSubpart(const std::string& name, ESubpart id, LLSubpart* part );
 	void				addTextureDropTarget( ETextureIndex te, const std::string& name, const LLUUID& default_image_id, BOOL allow_no_texture );
+	void				addInvisibilityCheckbox(ETextureIndex te, const std::string& name);
 	void				addColorSwatch( ETextureIndex te, const std::string& name );
 
 	const std::string&	getLabel()	{ return LLWearable::typeToTypeLabel( mType ); }
@@ -397,6 +401,11 @@ public:
 	void 				setWearable(LLWearable* wearable, U32 perm_mask, BOOL is_complete);
 
 	void 				setUIPermissions(U32 perm_mask, BOOL is_complete);
+
+	void				hideTextureControls();
+	bool				textureIsInvisible(ETextureIndex te);
+	void				initPreviousTextureList();
+	void				initPreviousTextureListEntry(ETextureIndex te);
 	
 	virtual void		setVisible( BOOL visible );
 
@@ -412,6 +421,7 @@ public:
 	static void			onBtnTakeOffDialog( S32 option, void* userdata );
 	static void			onBtnCreateNew( void* userdata );
 	static void			onTextureCommit( LLUICtrl* ctrl, void* userdata );
+	static void			onInvisibilityCommit( LLUICtrl* ctrl, void* userdata );
 	static void			onColorCommit( LLUICtrl* ctrl, void* userdata );
 	static void			onCommitSexChange( LLUICtrl*, void* userdata );
 	static bool			onSelectAutoWearOption(const LLSD& notification, const LLSD& response);
@@ -422,8 +432,10 @@ private:
 	EWearableType		mType;
 	BOOL				mCanTakeOff;
 	std::map<std::string, S32> mTextureList;
+	std::map<std::string, S32> mInvisibilityList;
 	std::map<std::string, S32> mColorList;
 	std::map<ESubpart, LLSubpart*> mSubpartList;
+	std::map<S32, LLUUID> mPreviousTextureList;
 	ESubpart			mCurrentSubpart;
 };
 
@@ -465,6 +477,12 @@ LLPanelEditWearable::~LLPanelEditWearable()
 {
 	std::for_each(mSubpartList.begin(), mSubpartList.end(), DeletePairedPointer());
 
+	// Clear colorswatch commit callbacks that point to this object.
+	for( std::map<std::string, S32>::iterator iter = mColorList.begin();
+			 iter != mColorList.end(); ++iter )
+	{
+		childSetCommitCallback(iter->first, NULL, NULL);		
+	}
 }
 
 void LLPanelEditWearable::addSubpart( const std::string& name, ESubpart id, LLSubpart* part )
@@ -641,6 +659,71 @@ bool LLPanelEditWearable::onSelectAutoWearOption(const LLSD& notification, const
 	}
 	return false;
 }
+
+bool LLPanelEditWearable::textureIsInvisible(ETextureIndex te)
+{
+	if (gAgent.getWearable(mType))
+	{
+		LLVOAvatar *avatar = gAgent.getAvatarObject();
+		if (avatar)
+		{
+			const LLTextureEntry* current_te = avatar->getTE(te);
+			return (current_te && current_te->getID() == IMG_INVISIBLE);
+		}
+	}
+	return false;
+}
+
+void LLPanelEditWearable::addInvisibilityCheckbox(ETextureIndex te, const std::string& name)
+{
+	childSetCommitCallback(name, LLPanelEditWearable::onInvisibilityCommit, this);
+
+	mInvisibilityList[name] = te;
+}
+
+// static
+void LLPanelEditWearable::onInvisibilityCommit(LLUICtrl* ctrl, void* userdata)
+{
+	LLPanelEditWearable* self = (LLPanelEditWearable*) userdata;
+	LLCheckBoxCtrl* checkbox_ctrl = (LLCheckBoxCtrl*) ctrl;
+	LLVOAvatar *avatar = gAgent.getAvatarObject();
+	if (!avatar)
+	{
+		return;
+	}
+
+	ETextureIndex te = (ETextureIndex)(self->mInvisibilityList[ctrl->getName()]);
+
+	bool new_invis_state = checkbox_ctrl->get();
+	if (new_invis_state)
+	{
+		LLViewerImage* image = gImageList.getImage(IMG_INVISIBLE);
+		const LLTextureEntry* current_te = avatar->getTE(te);
+		if (current_te)
+		{
+			self->mPreviousTextureList[(S32)te] = current_te->getID();
+		}
+		avatar->setLocTexTE(te, image, TRUE);
+		avatar->wearableUpdated(self->mType, FALSE);
+	}
+	else
+	{
+		// Try to restore previous texture, if any.
+		LLUUID prev_id = self->mPreviousTextureList[(S32)te];
+		if (prev_id.isNull() || (prev_id == IMG_INVISIBLE))
+		{
+			prev_id = LLUUID(gSavedSettings.getString("UIImgDefaultAlphaUUID"));
+		}
+		if (prev_id.notNull())
+		{
+			LLViewerImage* image = gImageList.getImage(prev_id);
+			avatar->setLocTexTE(te, image, TRUE);
+			avatar->wearableUpdated(self->mType, FALSE);
+		}
+		
+	}
+}
+
 void LLPanelEditWearable::addColorSwatch( ETextureIndex te, const std::string& name )
 {
 	childSetCommitCallback(name, LLPanelEditWearable::onColorCommit, this);
@@ -654,22 +737,49 @@ void LLPanelEditWearable::onColorCommit( LLUICtrl* ctrl, void* userdata )
 	LLColorSwatchCtrl* color_ctrl = (LLColorSwatchCtrl*) ctrl;
 
 	LLVOAvatar* avatar = gAgent.getAvatarObject();
-	if( avatar )
+	if( self && color_ctrl && avatar )
 	{
-		ETextureIndex te = (ETextureIndex)(self->mColorList[ctrl->getName()]);
-
-		LLColor4 old_color = avatar->getClothesColor( te );
-		const LLColor4& new_color = color_ctrl->get();
-		if( old_color != new_color )
+		std::map<std::string, S32>::const_iterator cl_itr = self->mColorList.find(ctrl->getName());
+		if(cl_itr != self->mColorList.end())
 		{
-			// Set the new version
-			avatar->setClothesColor( te, new_color, TRUE );
+			ETextureIndex te = (ETextureIndex)cl_itr->second;
 
-			LLVisualParamHint::requestHintUpdates();
+			LLColor4 old_color = avatar->getClothesColor( te );
+			const LLColor4& new_color = color_ctrl->get();
+			if( old_color != new_color )
+			{
+				// Set the new version
+				avatar->setClothesColor( te, new_color, TRUE );
+
+				LLVisualParamHint::requestHintUpdates();
+				avatar->wearableUpdated(self->mType, FALSE);
+			}
 		}
 	}
 }
 
+void LLPanelEditWearable::initPreviousTextureList()
+{
+	initPreviousTextureListEntry(TEX_LOWER_ALPHA);
+	initPreviousTextureListEntry(TEX_UPPER_ALPHA);
+	initPreviousTextureListEntry(TEX_HEAD_ALPHA);
+	initPreviousTextureListEntry(TEX_EYES_ALPHA);
+	initPreviousTextureListEntry(TEX_LOWER_ALPHA);
+}
+
+void LLPanelEditWearable::initPreviousTextureListEntry(ETextureIndex te)
+{
+	LLVOAvatar* avatar = gAgent.getAvatarObject();
+	if (!avatar)
+	{
+		return;
+	}
+	const LLTextureEntry* current_te = avatar->getTE(te);
+	if (current_te)
+	{
+		mPreviousTextureList[te] = current_te->getID();
+	}
+}
 
 void LLPanelEditWearable::addTextureDropTarget( ETextureIndex te, const std::string& name,
 												const LLUUID& default_image_id, BOOL allow_no_texture )
@@ -685,6 +795,19 @@ void LLPanelEditWearable::addTextureDropTarget( ETextureIndex te, const std::str
 		texture_ctrl->setNonImmediateFilterPermMask(PERM_NONE);//PERM_COPY | PERM_TRANSFER);
 	}
 	mTextureList[name] = te;
+	LLVOAvatar* avatar = gAgent.getAvatarObject();
+	if (avatar)
+	{
+		LLWearable* wearable = gAgent.getWearable(mType);
+		if (wearable && mType == WT_ALPHA)
+		{
+			const LLTextureEntry* current_te = avatar->getTE(te);
+			if (current_te)
+			{
+				mPreviousTextureList[te] = current_te->getID();
+			}
+		}
+	}
 }
 
 // static
@@ -700,11 +823,20 @@ void LLPanelEditWearable::onTextureCommit( LLUICtrl* ctrl, void* userdata )
 
 		// Set the new version
 		LLViewerImage* image = gImageList.getImage( texture_ctrl->getImageAssetID() );
-		if( image->getID().isNull() )
+		if (image->getID().isNull())
 		{
 			image = gImageList.getImage(IMG_DEFAULT_AVATAR);
 		}
-		avatar->setLocTexTE( te, image, TRUE );
+		self->mTextureList[ctrl->getName()] = te;
+		if (gAgent.getWearable(self->mType))
+		{
+			avatar->setLocTexTE(te, image, TRUE);
+			avatar->wearableUpdated(self->mType, FALSE);
+		}
+		if (self->mType == WT_ALPHA && image->getID() != IMG_INVISIBLE)
+		{
+			self->mPreviousTextureList[te] = image->getID();
+		}
 	}
 }
 
@@ -726,6 +858,8 @@ ESubpart LLPanelEditWearable::getDefaultSubpart()
 		case WT_UNDERSHIRT:	return SUBPART_UNDERSHIRT;
 		case WT_UNDERPANTS:	return SUBPART_UNDERPANTS;
 		case WT_SKIRT:		return SUBPART_SKIRT;
+		case WT_ALPHA:		return SUBPART_ALPHA;
+		case WT_TATTOO:		return SUBPART_TATTOO;
 
 		default:	llassert(0);		return SUBPART_SHAPE_WHOLE;
 	}
@@ -792,6 +926,23 @@ void LLPanelEditWearable::draw()
 	childSetVisible("title_loading", FALSE);
 
 	childSetVisible("path", FALSE);
+
+	{
+		// Display the shape's nominal height.
+		//
+		// The value for avsize is the best available estimate from
+		// measuring against prims.
+		float avsize = avatar->mBodySize.mV[VZ] + .195;
+		int inches = (int)(avsize / .0254f);
+		int feet = inches / 12;
+		inches %= 12;
+
+		std::ostringstream avheight(std::ostringstream::trunc);
+		avheight << std::fixed << std::setprecision(2) << avsize << " m ("
+			<< feet << "' " << inches << "\")";
+		childSetVisible("avheight", TRUE);
+		childSetTextArg("avheight", "[AVHEIGHT]", avheight.str());
+	}
 	
 	if(has_wearable && !is_modifiable)
 	{
@@ -799,16 +950,7 @@ void LLPanelEditWearable::draw()
 		childSetVisible("title_no_modify", TRUE);
 		childSetTextArg("title_no_modify", "[DESC]", std::string(LLWearable::typeToTypeLabel( mType )));
 		
-		for( std::map<std::string, S32>::iterator iter = mTextureList.begin();
-			 iter != mTextureList.end(); ++iter )
-		{
-			childSetVisible(iter->first, FALSE );
-		}
-		for( std::map<std::string, S32>::iterator iter = mColorList.begin();
-			 iter != mColorList.end(); ++iter )
-		{
-			childSetVisible(iter->first, FALSE );
-		}
+		hideTextureControls();
 	}
 	else if(has_wearable && !is_complete)
 	{
@@ -822,16 +964,7 @@ void LLPanelEditWearable::draw()
 		childSetVisible("path", TRUE);
 		childSetTextArg("path", "[PATH]", path);
 
-		for( std::map<std::string, S32>::iterator iter = mTextureList.begin();
-			 iter != mTextureList.end(); ++iter )
-		{
-			childSetVisible(iter->first, FALSE );
-		}
-		for( std::map<std::string, S32>::iterator iter = mColorList.begin();
-			 iter != mColorList.end(); ++iter )
-		{
-			childSetVisible(iter->first, FALSE );
-		}
+		hideTextureControls();
 	}
 	else if(has_wearable && is_modifiable)
 	{
@@ -891,6 +1024,34 @@ void LLPanelEditWearable::draw()
 				ctrl->set(avatar->getClothesColor( (ETextureIndex)te_index ) );
 			}
 		}
+
+		for (std::map<std::string, S32>::iterator iter = mInvisibilityList.begin();
+			 iter != mInvisibilityList.end(); ++iter)
+		{
+			std::string name = iter->first;
+			ETextureIndex te = (ETextureIndex)iter->second;
+			childSetVisible(name, is_copyable && is_modifiable && is_complete);
+			childSetEnabled(name, is_copyable && is_modifiable && is_complete);
+			LLCheckBoxCtrl* ctrl = getChild<LLCheckBoxCtrl>(name);
+			if (ctrl)
+			{
+				ctrl->set(textureIsInvisible(te));
+			}
+		}
+
+		for (std::map<std::string, S32>::iterator iter = mInvisibilityList.begin();
+			 iter != mInvisibilityList.end(); ++iter)
+		{
+			std::string name = iter->first;
+			ETextureIndex te = (ETextureIndex)iter->second;
+			childSetVisible(name, is_copyable && is_modifiable && is_complete);
+			childSetEnabled(name, is_copyable && is_modifiable && is_complete);
+			LLCheckBoxCtrl* ctrl = getChild<LLCheckBoxCtrl>(name);
+			if (ctrl)
+			{
+				ctrl->set(textureIsInvisible(te));
+			}
+		}
 	}
 	else
 	{
@@ -898,16 +1059,7 @@ void LLPanelEditWearable::draw()
 		childSetVisible("title_not_worn", TRUE);
 		childSetTextArg("title_not_worn", "[DESC]", std::string(LLWearable::typeToTypeLabel( mType )));
 
-		for( std::map<std::string, S32>::iterator iter = mTextureList.begin();
-			 iter != mTextureList.end(); ++iter )
-		{
-			childSetVisible(iter->first, FALSE );
-		}
-		for( std::map<std::string, S32>::iterator iter = mColorList.begin();
-			 iter != mColorList.end(); ++iter )
-		{
-			childSetVisible(iter->first, FALSE );
-		}
+		hideTextureControls();
 	}
 	
 	childSetVisible("icon", has_wearable && is_modifiable);
@@ -915,11 +1067,34 @@ void LLPanelEditWearable::draw()
 	LLPanel::draw();
 }
 
+void LLPanelEditWearable::hideTextureControls()
+{
+	for (std::map<std::string, S32>::iterator iter = mTextureList.begin();
+			 iter != mTextureList.end(); ++iter)
+	{
+		childSetVisible(iter->first, FALSE);
+	}
+	for (std::map<std::string, S32>::iterator iter = mColorList.begin();
+			 iter != mColorList.end(); ++iter)
+	{
+		childSetVisible(iter->first, FALSE);
+	}
+	for (std::map<std::string, S32>::iterator iter = mInvisibilityList.begin();
+		 iter != mInvisibilityList.end(); ++iter)
+	{
+		childSetVisible(iter->first, FALSE);
+	}
+}
+
 void LLPanelEditWearable::setWearable(LLWearable* wearable, U32 perm_mask, BOOL is_complete)
 {
 	if( wearable )
 	{
 		setUIPermissions(perm_mask, is_complete);
+		if (mType == WT_ALPHA)
+		{
+			initPreviousTextureList();
+		}
 	}
 }
 
@@ -1011,6 +1186,16 @@ void LLPanelEditWearable::setUIPermissions(U32 perm_mask, BOOL is_complete)
 		 iter != mColorList.end(); ++iter )
 	{
 		childSetVisible(iter->first, is_modifiable && is_complete );
+	}
+	for (std::map<std::string, S32>::iterator iter = mInvisibilityList.begin();
+		 iter != mInvisibilityList.end(); ++iter)
+	{
+		childSetVisible(iter->first, is_copyable && is_modifiable && is_complete);
+	}
+	for (std::map<std::string, S32>::iterator iter = mInvisibilityList.begin();
+		 iter != mInvisibilityList.end(); ++iter)
+	{
+		childSetVisible(iter->first, is_copyable && is_modifiable && is_complete);
 	}
 }
 
@@ -1199,6 +1384,19 @@ void LLScrollingPanelParam::draw()
 	drawChild(getChild<LLView>("max param text"), BTN_BORDER, BTN_BORDER);
 }
 
+void updateAvatarHeightDisplay()
+{
+       if (gFloaterCustomize)
+        {
+               LLVOAvatar* avatar = gAgent.getAvatarObject();
+               F32 avatar_size = (avatar->mBodySize.mV[VZ]) + (F32)0.17; //mBodySize is actually quite a bit off.
+               gFloaterCustomize->getChild<LLTextBox>("HeightTextM")->setValue(llformat("%.2f", avatar_size) + "m");
+               F32 feet = avatar_size / 0.3048;
+               F32 inches = (feet - (F32)((U32)feet)) * 12.0;
+               gFloaterCustomize->getChild<LLTextBox>("HeightTextI")->setValue(llformat("%d'%d\"", (U32)feet, (U32)inches));
+        }
+ }
+
 // static
 void LLScrollingPanelParam::onSliderMoved(LLUICtrl* ctrl, void* userdata)
 {
@@ -1210,18 +1408,7 @@ void LLScrollingPanelParam::onSliderMoved(LLUICtrl* ctrl, void* userdata)
 	F32 new_weight = self->percentToWeight( (F32)slider->getValue().asReal() );
 	if (current_weight != new_weight )
 	{
-		LLFloaterCustomize* floater_customize = gFloaterCustomize;
-		if (!floater_customize) return;
-
-		//KOWs avatar height stuff
-		LLVOAvatar* avatar = gAgent.getAvatarObject();
-		F32 avatar_size = (avatar->mBodySize.mV[VZ]) + (F32)0.17; //mBodySize is actually quite a bit off.
-		avatar_size += (F32)99; //mBodySize is actually quite a bit off.
-		
-		floater_customize->getChild<LLTextBox>("HeightText")->setValue(llformat("%.2f", avatar_size) + "m");
-		floater_customize->getChild<LLTextBox>("HeightText2")->setValue(llformat("%.2f",llround(avatar_size / 0.3048)) + "'"
-																	  + llformat("%.2f",llround(avatar_size * 39.37) % 12) + "\"");
-
+		updateAvatarHeightDisplay();
 		gAgent.getAvatarObject()->setVisualParamWeight( param, new_weight, FALSE);
 		gAgent.getAvatarObject()->updateVisualParams();
 	}
@@ -1453,6 +1640,8 @@ LLFloaterCustomize::LLFloaterCustomize()
 	factory_map["Undershirt"] = LLCallbackMap(createWearablePanel, (void*)(new WearablePanelData(this, WT_UNDERSHIRT) ) );
 	factory_map["Underpants"] = LLCallbackMap(createWearablePanel, (void*)(new WearablePanelData(this, WT_UNDERPANTS) ) );
 	factory_map["Skirt"] = LLCallbackMap(createWearablePanel, (void*)(new WearablePanelData(this, WT_SKIRT) ) );
+	factory_map["Alpha"] = LLCallbackMap(createWearablePanel, (void*)(new WearablePanelData(this, WT_ALPHA)));
+	factory_map["Tattoo"] = LLCallbackMap(createWearablePanel, (void*)(new WearablePanelData(this, WT_TATTOO)));
 
 	LLUICtrlFactory::getInstance()->buildFloater(this, "floater_customize.xml", &factory_map);
 }
@@ -1462,6 +1651,16 @@ BOOL LLFloaterCustomize::postBuild()
 	childSetAction("Make Outfit", LLFloaterCustomize::onBtnMakeOutfit, (void*)this);
 	childSetAction("Ok", LLFloaterCustomize::onBtnOk, (void*)this);
 	childSetAction("Cancel", LLFloater::onClickClose, (void*)this);
+	// OGPX : if using agent domain, disable saving appearance until inventory and assets is working
+	// since it doesn't work in OGP right now, disable it, since enabling it hits an error case.
+	// OGPX TODO: test with it enabled with Agent Domain that manages Inventory and Assets
+    //    This was originally added as part of OGP9 svn branch because the viewer deeply deeply 
+	//    assumes that there *will* be an inventory there. If you never get an inventory, 
+	//    Make Outfit breaks badly. 
+	//if (!gSavedSettings.getString("CmdLineRegionURI").empty()) 
+	//{
+	//	childSetEnabled("Make Outfit", FALSE);
+	//}
 
 	// Wearable panels
 	initWearablePanels();
@@ -1480,6 +1679,8 @@ BOOL LLFloaterCustomize::postBuild()
 	childSetTabChangeCallback("customize tab container", "Undershirt", onTabChanged, (void*)WT_UNDERSHIRT, onTabPrecommit );
 	childSetTabChangeCallback("customize tab container", "Underpants", onTabChanged, (void*)WT_UNDERPANTS, onTabPrecommit );
 	childSetTabChangeCallback("customize tab container", "Skirt", onTabChanged, (void*)WT_SKIRT, onTabPrecommit );
+	childSetTabChangeCallback("customize tab container", "Alpha", onTabChanged, (void*)WT_ALPHA, onTabPrecommit);
+	childSetTabChangeCallback("customize tab container", "Tattoo", onTabChanged, (void*)WT_TATTOO, onTabPrecommit);
 
 	// Remove underwear panels for teens
 	if (gAgent.isTeen())
@@ -1506,6 +1707,7 @@ void LLFloaterCustomize::open()
 	LLFloater::open();
 	// childShowTab depends on gFloaterCustomize being defined and therefore must be called after the constructor. - Nyx
 	childShowTab("customize tab container", "Shape", true);
+	setCurrentWearableType(WT_SHAPE);
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -1959,6 +2161,126 @@ void LLFloaterCustomize::initWearablePanels()
 
 		panel->addColorSwatch( TEX_LOWER_UNDERPANTS, "Color/Tint" );
 	}
+
+	/////////////////////////////////////////
+	// Alpha
+	panel = mWearablePanelList[WT_ALPHA];
+
+	if (panel)
+	{
+		part = new LLSubpart();
+		part->mTargetJoint = "mPelvis";
+		part->mEditGroup = "alpha";
+		part->mTargetOffset.setVec(0.f, 0.f, 0.1f);
+		part->mCameraOffset.setVec(-2.5f, 0.5f, 0.8f);
+		panel->addSubpart(LLStringUtil::null, SUBPART_ALPHA, part);
+
+		panel->addTextureDropTarget(TEX_LOWER_ALPHA, "Lower Alpha",
+									LLUUID(gSavedSettings.getString("UIImgDefaultAlphaUUID")),
+									TRUE);
+		panel->addTextureDropTarget(TEX_UPPER_ALPHA, "Upper Alpha",
+									LLUUID(gSavedSettings.getString("UIImgDefaultAlphaUUID")),
+									TRUE);
+		panel->addTextureDropTarget(TEX_HEAD_ALPHA, "Head Alpha",
+									LLUUID(gSavedSettings.getString("UIImgDefaultAlphaUUID")),
+									TRUE);
+		panel->addTextureDropTarget(TEX_EYES_ALPHA, "Eye Alpha",
+									LLUUID(gSavedSettings.getString("UIImgDefaultAlphaUUID")),
+									TRUE);
+		panel->addTextureDropTarget(TEX_HAIR_ALPHA, "Hair Alpha",
+									LLUUID(gSavedSettings.getString("UIImgDefaultAlphaUUID")),
+									TRUE);
+
+		panel->addInvisibilityCheckbox(TEX_LOWER_ALPHA, "lower alpha texture invisible");
+		panel->addInvisibilityCheckbox(TEX_UPPER_ALPHA, "upper alpha texture invisible");
+		panel->addInvisibilityCheckbox(TEX_HEAD_ALPHA, "head alpha texture invisible");
+		panel->addInvisibilityCheckbox(TEX_EYES_ALPHA, "eye alpha texture invisible");
+		panel->addInvisibilityCheckbox(TEX_HAIR_ALPHA, "hair alpha texture invisible");
+	}
+
+	/////////////////////////////////////////
+	// Tattoo
+	panel = mWearablePanelList[WT_TATTOO];
+
+	if (panel)
+	{
+		part = new LLSubpart();
+		part->mTargetJoint = "mPelvis";
+		part->mEditGroup = "tattoo";
+		part->mTargetOffset.setVec(0.f, 0.f, 0.1f);
+		part->mCameraOffset.setVec(-2.5f, 0.5f, 0.8f);
+		panel->addSubpart(LLStringUtil::null, SUBPART_TATTOO, part);
+
+		panel->addTextureDropTarget(TEX_LOWER_TATTOO, "Lower Tattoo",
+									LLUUID::null,
+									TRUE);
+		panel->addTextureDropTarget(TEX_UPPER_TATTOO, "Upper Tattoo",
+									LLUUID::null,
+									TRUE);
+		panel->addTextureDropTarget(TEX_HEAD_TATTOO, "Head Tattoo",
+									LLUUID::null,
+									TRUE);
+	}
+
+	/////////////////////////////////////////
+	// Alpha
+	panel = mWearablePanelList[WT_ALPHA];
+
+	if (panel)
+	{
+		part = new LLSubpart();
+		part->mTargetJoint = "mPelvis";
+		part->mEditGroup = "alpha";
+		part->mTargetOffset.setVec(0.f, 0.f, 0.1f);
+		part->mCameraOffset.setVec(-2.5f, 0.5f, 0.8f);
+		panel->addSubpart(LLStringUtil::null, SUBPART_ALPHA, part);
+
+		panel->addTextureDropTarget(TEX_LOWER_ALPHA, "Lower Alpha",
+									LLUUID(gSavedSettings.getString("UIImgDefaultAlphaUUID")),
+									TRUE);
+		panel->addTextureDropTarget(TEX_UPPER_ALPHA, "Upper Alpha",
+									LLUUID(gSavedSettings.getString("UIImgDefaultAlphaUUID")),
+									TRUE);
+		panel->addTextureDropTarget(TEX_HEAD_ALPHA, "Head Alpha",
+									LLUUID(gSavedSettings.getString("UIImgDefaultAlphaUUID")),
+									TRUE);
+		panel->addTextureDropTarget(TEX_EYES_ALPHA, "Eye Alpha",
+									LLUUID(gSavedSettings.getString("UIImgDefaultAlphaUUID")),
+									TRUE);
+		panel->addTextureDropTarget(TEX_HAIR_ALPHA, "Hair Alpha",
+									LLUUID(gSavedSettings.getString("UIImgDefaultAlphaUUID")),
+									TRUE);
+
+		panel->addInvisibilityCheckbox(TEX_LOWER_ALPHA, "lower alpha texture invisible");
+		panel->addInvisibilityCheckbox(TEX_UPPER_ALPHA, "upper alpha texture invisible");
+		panel->addInvisibilityCheckbox(TEX_HEAD_ALPHA, "head alpha texture invisible");
+		panel->addInvisibilityCheckbox(TEX_EYES_ALPHA, "eye alpha texture invisible");
+		panel->addInvisibilityCheckbox(TEX_HAIR_ALPHA, "hair alpha texture invisible");
+	}
+
+	/////////////////////////////////////////
+	// Tattoo
+	panel = mWearablePanelList[WT_TATTOO];
+
+	if (panel)
+	{
+		part = new LLSubpart();
+		part->mTargetJoint = "mPelvis";
+		part->mEditGroup = "tattoo";
+		part->mTargetOffset.setVec(0.f, 0.f, 0.1f);
+		part->mCameraOffset.setVec(-2.5f, 0.5f, 0.8f);
+		panel->addSubpart(LLStringUtil::null, SUBPART_TATTOO, part);
+
+		panel->addTextureDropTarget(TEX_LOWER_TATTOO, "Lower Tattoo",
+									LLUUID::null,
+									TRUE);
+		panel->addTextureDropTarget(TEX_UPPER_TATTOO, "Upper Tattoo",
+									LLUUID::null,
+									TRUE);
+		panel->addTextureDropTarget(TEX_HEAD_TATTOO, "Head Tattoo",
+									LLUUID::null,
+									TRUE);
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -1975,14 +2297,6 @@ void LLFloaterCustomize::switchToDefaultSubpart()
 {
 	getCurrentWearablePanel()->switchToDefaultSubpart();
 }
-/* From Z, if the above ever causes crashes
-void LLFloaterCustomize::switchToDefaultSubpart()
-{
-    if(sCurrentWearableType == WT_INVALID)
-        setCurrentWearableType(WT_SHAPE);
-    getCurrentWearablePanel()->switchToDefaultSubpart();
-}
-*/
 
 void LLFloaterCustomize::draw()
 {
@@ -1998,21 +2312,8 @@ void LLFloaterCustomize::draw()
 	// to be called when the tabs change or an inventory item
 	// arrives. Figure out some way to avoid this if possible.
 	updateInventoryUI();
-
-	LLFloaterCustomize* floater_customize = gFloaterCustomize;
-	if (!floater_customize) return;
-
-	//KOWs avatar height stuff
-	LLVOAvatar* avatar = gAgent.getAvatarObject();
-	F32 avatar_size = (avatar->mBodySize.mV[VZ]) + (F32)0.17; //mBodySize is actually quite a bit off.
-		
-	floater_customize->getChild<LLTextBox>("HeightText")->setValue(llformat("%.2f", avatar_size) + "m");
-	//inches = avatar_size * 39.37
-	//round(inches) + inches % 12
-	std::string temp = llformat("%.0f",(F32)llfloor(avatar_size / 0.3048));
-	std::string temp2 = llformat("%.0f",(F32)(llround(avatar_size * 39.37) % 12));
-	floater_customize->getChild<LLTextBox>("HeightText2")->setValue(temp + "'"
-																  + temp2 + "\"");
+	
+	updateAvatarHeightDisplay();
 
 	LLScrollingPanelParam::sUpdateDelayFrames = 0;
 	
@@ -2035,7 +2336,8 @@ BOOL LLFloaterCustomize::isDirty() const
 // static
 void LLFloaterCustomize::onTabPrecommit( void* userdata, bool from_click )
 {
-	if (gFloaterCustomize && gFloaterCustomize->getCurrentWearableType() != (EWearableType)(intptr_t) userdata)
+	EWearableType type = (EWearableType)(intptr_t) userdata;
+	if (type != WT_INVALID && gFloaterCustomize && gFloaterCustomize->getCurrentWearableType() != type)
 	{
 		gFloaterCustomize->askToSaveIfDirty(onCommitChangeTab, userdata);
 	}
@@ -2050,7 +2352,10 @@ void LLFloaterCustomize::onTabPrecommit( void* userdata, bool from_click )
 void LLFloaterCustomize::onTabChanged( void* userdata, bool from_click )
 {
 	EWearableType wearable_type = (EWearableType) (intptr_t)userdata;
-	LLFloaterCustomize::setCurrentWearableType( wearable_type );
+	if (wearable_type != WT_INVALID)
+	{
+		LLFloaterCustomize::setCurrentWearableType(wearable_type);
+	}
 }
 
 void LLFloaterCustomize::onClose(bool app_quitting)
@@ -2274,6 +2579,14 @@ void LLFloaterCustomize::updateInventoryUI()
 			childSetVisible("panel_container", is_vis);
 		}
 	}
+
+	// OGPX : In place because Assets are not currently supported in OGPX. 
+	//    This was originally added as part of OGP9 svn branch because the viewer deeply deeply 
+	//     assumes that there *will* be an inventory there. If you never get an inventory, 
+	//     Make Outfit breaks badly. 
+	// OGPX TODO: When assets/inventory are supported, the check below can be removed.
+	// OGPX test if (!gSavedSettings.getString("CmdLineRegionURI").empty()) {all_complete = FALSE;}
+
 	childSetEnabled("Make Outfit", all_complete);
 }
 

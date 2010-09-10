@@ -53,6 +53,7 @@
 #include "llfloaterchatterbox.h"
 #include "llfloaterfriends.h"
 #include "llfloatersnapshot.h"
+#include "llfloateravatarlist.h"
 #include "lltoolmgr.h"
 #include "llui.h"
 #include "llviewermenu.h"
@@ -66,11 +67,6 @@
 #include "llfloatermute.h"
 #include "llimpanel.h"
 #include "llscrolllistctrl.h"
-#include "floateravatarlist.h"
-
-// [RLVa:KB]
-#include "rlvhandler.h"
-// [/RLVa:KB]
 
 #if LL_DARWIN
 
@@ -101,9 +97,6 @@
 
 LLToolBar *gToolBar = NULL;
 S32 TOOL_BAR_HEIGHT = 20;
-
-BOOL LLToolBar::sShowToolBar;
-
 
 //
 // Statics
@@ -136,8 +129,8 @@ BOOL LLToolBar::postBuild()
 	childSetAction("appearance_btn", onClickAppearance, this);
 	childSetControlName("appearance_btn", "");
 
-	childSetAction("fly_btn", onClickFly, this);
-	childSetControlName("fly_btn", "FlyBtnState");
+	childSetAction("radar_list_btn", onClickRadarList, this);
+	childSetControlName("radar_list_btn", "RadarListBtnState");
 
 	childSetAction("sit_btn", onClickSit, this);
 	childSetControlName("sit_btn", "SitBtnState");
@@ -159,9 +152,6 @@ BOOL LLToolBar::postBuild()
 
 	childSetAction("inventory_btn", onClickInventory, this);
 	childSetControlName("inventory_btn", "ShowInventory");
-
-	childSetAction("avatar_list_btn", onClickAvatarList, this);
-	childSetControlName("avatar_list_btn", "ShowAvatarList");
 
 	for (child_list_const_iter_t child_iter = getChildList()->begin();
 		 child_iter != getChildList()->end(); ++child_iter)
@@ -186,9 +176,6 @@ BOOL LLToolBar::postBuild()
 #endif // LL_DARWIN
 
 	layoutButtons();
-
-	sShowToolBar = gSavedSettings.getBOOL("ShowToolBar");
-	setVisible(sShowToolBar);
 
 	return TRUE;
 }
@@ -237,10 +224,9 @@ BOOL LLToolBar::handleDragAndDrop(S32 x, S32 y, MASK mask, BOOL drop,
 // static
 void LLToolBar::toggle(void*)
 {
-	BOOL show = !gToolBar->getVisible();                      
-	gSavedSettings.setBOOL("ShowToolBar", show); 
-	sShowToolBar = show;
-	gToolBar->setVisible(show);
+	BOOL show = gSavedSettings.getBOOL("ShowToolBar");                      
+	gSavedSettings.setBOOL("ShowToolBar", !show);                           
+	gToolBar->setVisible(!show);
 }
 
 
@@ -295,7 +281,7 @@ void LLToolBar::reshape(S32 width, S32 height, BOOL called_from_parent)
 // Per-frame updates of visibility
 void LLToolBar::refresh()
 {
-	BOOL show = sShowToolBar;
+	BOOL show = gSavedSettings.getBOOL("ShowToolBar");
 	BOOL mouselook = gAgent.cameraMouselook();
 	setVisible(show && !mouselook);
 
@@ -305,9 +291,9 @@ void LLToolBar::refresh()
 		sitting = gAgent.getAvatarObject()->mIsSitting;
 	}
 
-	childSetEnabled("fly_btn", (gAgent.canFly() || gAgent.getFlying()) && !sitting );
+	childSetEnabled("fly_btn", (gAgent.canFly() || gAgent.getFlying() || gSavedSettings.getBOOL("AscentFlyAlwaysEnabled")) && !sitting );
 
-	childSetEnabled("build_btn", LLViewerParcelMgr::getInstance()->agentCanBuild() );
+	childSetEnabled("build_btn", (LLViewerParcelMgr::getInstance()->agentCanBuild() || gSavedSettings.getBOOL("AscentBuildAlwaysEnabled")) );
 
 	// Check to see if we're in build mode
 	BOOL build_mode = LLToolMgr::getInstance()->inEdit();
@@ -316,25 +302,7 @@ void LLToolBar::refresh()
 	{
 		build_mode = FALSE;
 	}
-	//gSavedSettings.setBOOL("BuildBtnState", build_mode);
-	LLAgent::sBuildBtnState = build_mode;
-
-// [RLVa:KB] - Version: 1.23.4 | Alternate: Emerald-370 | Checked: 2009-07-10 (RLVa-1.0.0g)
-	// Called per-frame so this really can't be slow
-	if (rlv_handler_t::isEnabled())
-	{
-		// If we're rez-restricted, we can still edit => allow build floater
-		// If we're edit-restricted, we can still rez => allow build floater
-		childSetEnabled("build_btn", !(gRlvHandler.hasBehaviour(RLV_BHVR_REZ) && gRlvHandler.hasBehaviour(RLV_BHVR_EDIT)) );
-
-		childSetEnabled("map_btn", !gRlvHandler.hasBehaviour(RLV_BHVR_SHOWWORLDMAP) );
-		childSetEnabled("radar_btn", !gRlvHandler.hasBehaviour(RLV_BHVR_SHOWMINIMAP) );
-		childSetEnabled("inventory_btn", !gRlvHandler.hasBehaviour(RLV_BHVR_SHOWINV) );
-
-		// Emerald-specific
-		childSetEnabled("avatar_list_btn", !gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES));
-	}
-// [/RLVa:KB]
+	gSavedSettings.setBOOL("BuildBtnState", build_mode);
 
 	if (isInVisibleChain())
 	{
@@ -482,6 +450,17 @@ void LLToolBar::onClickAppearance(void*)
 	}
 }
 
+// static
+void LLToolBar::onClickRadarList(void*)
+{
+	LLFloaterAvatarList::toggle(0);
+	bool vis = false;
+	if(LLFloaterAvatarList::getInstance())
+	{
+		vis = (bool)LLFloaterAvatarList::getInstance()->getVisible();
+	}
+}
+
 
 // static
 void LLToolBar::onClickFly(void*)
@@ -504,14 +483,6 @@ void LLToolBar::onClickSit(void*)
 	}
 	else
 	{
-// [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g)
-		// NOTE-RLVa: dead code?
-		if (gRlvHandler.hasBehaviour(RLV_BHVR_UNSIT))
-		{
-			return;
-		}
-// [/RLVa:KB]
-
 		// stand up
 		gAgent.setFlying(FALSE);
 		gAgent.setControlFlags(AGENT_CONTROL_STAND_UP);
@@ -560,8 +531,3 @@ void LLToolBar::onClickInventory(void*)
 	handle_inventory(NULL);
 }
 
-// static
-void LLToolBar::onClickAvatarList(void*)
-{
-	LLFloaterAvatarList::toggle(NULL);
-}

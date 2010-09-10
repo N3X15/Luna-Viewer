@@ -83,10 +83,6 @@
 // parent
 #include "llfloaterpreference.h"
 
-// [RLVa:KB]
-#include "rlvhandler.h"
-// [/RLVa:KB]
-
 #include <boost/regex.hpp>
 
 const F32 MAX_USER_FAR_CLIP = 512.f;
@@ -382,7 +378,7 @@ void LLPanelDisplay::refresh()
 	mCustomSettings = gSavedSettings.getBOOL("RenderCustomSettings");
 
 	// shader settings
-	mBumpShiny = LLPipeline::sRenderBump;
+	mBumpShiny = gSavedSettings.getBOOL("RenderObjectBump");
 	mShaderEnable = gSavedSettings.getBOOL("VertexShaderEnable");
 	mWindLight = gSavedSettings.getBOOL("WindLightUseAtmosShaders");
 	mReflections = gSavedSettings.getBOOL("RenderWaterReflections");
@@ -480,12 +476,7 @@ void LLPanelDisplay::refreshEnabledState()
 	}
 
 	// Vertex Shaders
-//	mCtrlShaderEnable->setEnabled(LLFeatureManager::getInstance()->isFeatureAvailable("VertexShaderEnable"));
-// [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g) | Modified: RLVa-0.2.0a
-	// "Basic Shaders" can't be disabled - but can be enabled - under @setenv=n
-	bool fCtrlShaderEnable = LLFeatureManager::getInstance()->isFeatureAvailable("VertexShaderEnable");
-	mCtrlShaderEnable->setEnabled(fCtrlShaderEnable && (!gRlvHandler.hasBehaviour(RLV_BHVR_SETENV) || !mShaderEnable));
-// [/RLVa:KB]
+	mCtrlShaderEnable->setEnabled(LLFeatureManager::getInstance()->isFeatureAvailable("VertexShaderEnable"));
 
 	BOOL shaders = mCtrlShaderEnable->get();
 	if (shaders)
@@ -500,12 +491,7 @@ void LLPanelDisplay::refreshEnabledState()
 
 	// *HACK just checks to see if we can use shaders... 
 	// maybe some cards that use shaders, but don't support windlight
-//	mCtrlWindLight->setEnabled(mCtrlShaderEnable->getEnabled() && shaders);
-// [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g) | Modified: RLVa-0.2.0a
-	// "Atmospheric Shaders" can't be disabled - but can be enabled - under @setenv=n
-	bool fCtrlWindLightEnable = fCtrlShaderEnable && shaders;
-	mCtrlWindLight->setEnabled(fCtrlWindLightEnable && (!gRlvHandler.hasBehaviour(RLV_BHVR_SETENV) || !mWindLight));
-// [/RLVa:KB]
+	mCtrlWindLight->setEnabled(mCtrlShaderEnable->getEnabled() && shaders);
 
 	// turn off sky detail if atmostpherics isn't on
 	mCtrlSkyFactor->setEnabled(gSavedSettings.getBOOL("WindLightUseAtmosShaders"));

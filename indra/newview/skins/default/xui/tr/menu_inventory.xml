@@ -55,7 +55,6 @@
 	<menu_item_call label="Aktif et" name="Activate"/>
 	<menu_item_call label="Devre dışı bırak" name="Deactivate"/>
 	<menu_item_call label="Kendinizden çıkarın" name="Detach From Yourself"/>
-	<menu_item_call label="Düzenle" name="Attachment Edit"/>
 	<menu_item_call label="Son pozisyona geri al" name="Restore to Last Position"/>
 	<menu_item_call label="Giy" name="Object Wear"/>
 	<menu label="Ekle" name="Attach To"/>

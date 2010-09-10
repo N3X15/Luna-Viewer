@@ -53,7 +53,6 @@
 
 #include "llstatusbar.h"
 #include "llfloaterworldmap.h"
-#include "llviewercontrol.h"
 #include "llviewermessage.h"
 
 ////////////////////////////////////////////////////////////////////////////
@@ -461,21 +460,17 @@ void LLPanelGroupLandMoney::impl::processGroupLand(LLMessageSystem* msg)
 
 			row["columns"][0]["column"] = "name";
 			row["columns"][0]["value"] = name;
-			row["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
 			row["columns"][0]["font"] = "SANSSERIFSMALL";
 
 			row["columns"][1]["column"] = "location";
 			row["columns"][1]["value"] = location;
-			row["columns"][1]["color"] = gColors.getColor("DefaultListText").getValue();
 			row["columns"][1]["font"] = "SANSSERIFSMALL";
 			
 			row["columns"][2]["column"] = "area";
 			row["columns"][2]["value"] = area;
-			row["columns"][2]["color"] = gColors.getColor("DefaultListText").getValue();
 			row["columns"][2]["font"] = "SANSSERIFSMALL";
 			
 			row["columns"][3]["column"] = "type";
-			row["columns"][3]["color"] = gColors.getColor("DefaultListText").getValue();
 			row["columns"][3]["value"] = land_type;
 			row["columns"][3]["font"] = "SANSSERIFSMALL";
 			

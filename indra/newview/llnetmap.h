@@ -41,8 +41,13 @@
 #include "llimage.h"
 #include "llimagegl.h"
 
-
 class LLTextBox;
+
+typedef enum e_minimap_center
+{
+	MAP_CENTER_NONE = 0,
+	MAP_CENTER_CAMERA = 1
+} EMiniMapCenter;
 
 class LLNetMap : public LLPanel
 {
@@ -52,6 +57,9 @@ public:
 
 	virtual void	draw();
 	virtual void	reshape(S32 width, S32 height, BOOL called_from_parent = TRUE);
+	virtual BOOL	handleMouseDown( S32 x, S32 y, MASK mask );
+	virtual BOOL	handleMouseUp( S32 x, S32 y, MASK mask );
+	virtual BOOL	handleHover( S32 x, S32 y, MASK mask );
 	virtual BOOL	handleDoubleClick( S32 x, S32 y, MASK mask );
 	virtual BOOL	handleRightMouseDown( S32 x, S32 y, MASK mask );
 	virtual BOOL	handleScrollWheel(S32 x, S32 y, S32 clicks);
@@ -59,13 +67,11 @@ public:
 
 	void			renderScaledPointGlobal( const LLVector3d& pos, const LLColor4U &color, F32 radius );
 
-	static void mm_setcolor(LLUUID key,LLColor4 col); //moymod
-
 private:
 
 	void			setScale( F32 scale );
 
-	// *TODO: Enable panning of the mini-map
+	// Not used at present
 	void			translatePan( F32 delta_x, F32 delta_y );
 	void			setPan( F32 x, F32 y )			{ mTargetPanX = x; mTargetPanY = y; }
 
@@ -89,11 +95,18 @@ private:
 	F32				mPixelsPerMeter;		// world meters to map pixels
 	F32				mObjectMapTPM;			// texels per meter on map
 	F32				mObjectMapPixels;		// Width of object map in pixels
-	S32				mDotRadius;				// Size of avatar markers
+	F32				mDotRadius;				// Size of avatar markers
 	F32				mTargetPanX;
 	F32				mTargetPanY;
 	F32				mCurPanX;
 	F32				mCurPanY;
+
+	BOOL			mPanning;			// map has been dragged
+	S32				mMouseDownPanX;		// value at start of drag
+	S32				mMouseDownPanY;		// value at start of drag
+	S32				mMouseDownX;
+	S32				mMouseDownY;
+
 	BOOL			mUpdateNow;
 	LLVector3d		mObjectImageCenterGlobal;
 	LLPointer<LLImageRaw> mObjectRawImagep;
@@ -101,16 +114,29 @@ private:
 
 private:
 	LLUUID			mClosestAgentToCursor;
-	LLVector3d		mClosestAgentPosition;
 	LLUUID			mClosestAgentAtLastRightClick;
 
 	static BOOL		sRotateMap;
 	static LLNetMap*	sInstance;
 	static BOOL isAgentUnderCursor(void*) { return sInstance && sInstance->mClosestAgentToCursor.notNull(); }
+	static BOOL outsideSlop(S32 x, S32 y, S32 start_x, S32 start_y, S32 slop);
+
 	static void showAgentProfile(void*);
 	BOOL isAgentUnderCursor() { return mClosestAgentToCursor.notNull(); }
 
 	class LLScaleMap : public LLMemberListener<LLNetMap>
+	{
+	public:
+		/*virtual*/ bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata);
+	};
+
+	class LLCenterMap : public LLMemberListener<LLNetMap>
+	{
+	public:
+		/*virtual*/ bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata);
+	};
+
+	class LLCheckCenterMap : public LLMemberListener<LLNetMap>
 	{
 	public:
 		/*virtual*/ bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata);
@@ -133,47 +159,6 @@ private:
 	public:
 		/*virtual*/ bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata);
 	};
-
-	class LLCamFollow : public LLMemberListener<LLNetMap> //moymod
-	{
-	public:
-		/*virtual*/ bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata);
-	};
-
-
-
-	//moymod - Custom minimap markers :o
-
-	class mmsetred : public LLMemberListener<LLNetMap> //moymod
-	{
-	public:
-		/*virtual*/ bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata);
-	};
-	class mmsetgreen : public LLMemberListener<LLNetMap> //moymod
-	{
-	public:
-		/*virtual*/ bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata);
-	};
-	class mmsetblue : public LLMemberListener<LLNetMap> //moymod
-	{
-	public:
-		/*virtual*/ bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata);
-	};
-	class mmsetyellow : public LLMemberListener<LLNetMap> //moymod
-	{
-	public:
-		/*virtual*/ bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata);
-	};
-	class mmsetcustom : public LLMemberListener<LLNetMap> //moymod
-	{
-	public:
-		/*virtual*/ bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata);
-	};
-
-
-
-
-
 
 	class LLEnableProfile : public LLMemberListener<LLNetMap>
 	{

@@ -169,8 +169,8 @@ void LLStatBar::draw()
 	S32 left, top, right, bottom;
 
 	F32 value_scale = max_width/(mMaxBar - mMinBar);
-	//Chalice - Smaller stats fonts
-	LLFontGL::getFontSansSerifSmall()->renderUTF8(mLabel, 0, 0, getRect().getHeight(), LLColor4(1.f, 1.f, 1.f, 1.f),
+
+	LLFontGL::getFontMonospace()->renderUTF8(mLabel, 0, 0, getRect().getHeight(), LLColor4(1.f, 1.f, 1.f, 1.f),
 							LLFontGL::LEFT, LLFontGL::TOP);
 
 	std::string value_format;
@@ -187,7 +187,7 @@ void LLStatBar::draw()
 	}
 
 	// Draw the value.
-	LLFontGL::getFontSansSerifSmall()->renderUTF8(value_str, 0, width, getRect().getHeight(), 
+	LLFontGL::getFontMonospace()->renderUTF8(value_str, 0, width, getRect().getHeight(), 
 		LLColor4(1.f, 1.f, 1.f, 0.5f),
 		LLFontGL::RIGHT, LLFontGL::TOP);
 
@@ -220,7 +220,7 @@ void LLStatBar::draw()
 
 			tick_label = llformat( value_format.c_str(), tick_value);
 			// draw labels for the tick marks
-			LLFontGL::getFontSansSerifSmall()->renderUTF8(tick_label, 0, left - 1, bar_top - bar_height - tick_height,
+			LLFontGL::getFontMonospace()->renderUTF8(tick_label, 0, left - 1, bar_top - bar_height - tick_height,
 											 LLColor4(1.f, 1.f, 1.f, 0.5f),
 											 LLFontGL::LEFT, LLFontGL::TOP);
 		}

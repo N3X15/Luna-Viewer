@@ -937,6 +937,23 @@ void LLPanelGroupVoting::impl::addPendingHistoryScrollListItem(unsigned int curr
 //static
 std::map<LLUUID, LLPanelGroupVoting::impl*> LLPanelGroupVoting::impl::sGroupIDs;
 
+static std::string format_date(std::string date)
+{
+	tm t;
+	if (sscanf(date.c_str(), "%u/%u/%u %u:%u",
+		&t.tm_mon, &t.tm_mday, &t.tm_year, &t.tm_hour, &t.tm_min) == 5
+		&& t.tm_year > 1900)
+	{
+		t.tm_year -= 1900;
+		t.tm_mon--;
+		t.tm_sec = 0;
+		std::string format = gSavedSettings.getString("ShortDateFormat");
+		format += " " + gSavedSettings.getString("ShortTimeFormat");
+		timeStructToFormattedString(&t, format, date);
+	}
+	return date;
+}
+
 //static
 void LLPanelGroupVoting::impl::processGroupActiveProposalItemReply(LLMessageSystem *msg, void**)
 {
@@ -1016,61 +1033,51 @@ void LLPanelGroupVoting::impl::processGroupActiveProposalItemReply(LLMessageSyst
 		row["columns"][0]["column"] = "item_num";
 		row["columns"][0]["value"] = item_num_string;
 		row["columns"][0]["font"] = "SANSSERIF_SMALL";
-		row["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
 		row["columns"][0]["width"] = self->mProposalColumnWidths[index++];
 
 		row["columns"][1]["column"] = "proposal_text";
 		row["columns"][1]["value"] = proposal_text;
 		row["columns"][1]["font"] = "SANSSERIF_SMALL";
-		row["columns"][1]["color"] = gColors.getColor("DefaultListText").getValue();
 		row["columns"][1]["width"] = self->mProposalColumnWidths[index++];
 
 		row["columns"][2]["column"] = "end_datetime";
-		row["columns"][2]["value"] = end_datetime;
+		row["columns"][2]["value"] = format_date(end_datetime);
 		row["columns"][2]["font"] = "SANSSERIF_SMALL";
-		row["columns"][2]["color"] = gColors.getColor("DefaultListText").getValue();
 		row["columns"][2]["width"] = self->mProposalColumnWidths[index++];
 
 		row["columns"][3]["column"] = "vote_type";
 		row["columns"][3]["value"] = vote_type;
 		row["columns"][3]["font"] = "SANSSERIF_SMALL";
-		row["columns"][3]["color"] = gColors.getColor("DefaultListText").getValue();
 		row["columns"][3]["width"] = self->mProposalColumnWidths[index++];
 
 		row["columns"][4]["column"] = "already_voted";
 		row["columns"][4]["value"] = already_voted ? "Yes" : "No";
 		row["columns"][4]["font"] = "SANSSERIF_SMALL";
-		row["columns"][4]["color"] = gColors.getColor("DefaultListText").getValue();
 		row["columns"][4]["width"] = self->mProposalColumnWidths[index++];
 
 		row["columns"][5]["column"] = "start_datetime";
-		row["columns"][5]["value"] = start_datetime;
+		row["columns"][5]["value"] = format_date(start_datetime);
 		row["columns"][5]["font"] = "SANSSERIF_SMALL";
-		row["columns"][5]["color"] = gColors.getColor("DefaultListText").getValue();
 		row["columns"][5]["width"] = self->mProposalColumnWidths[index++];
 
 		row["columns"][6]["column"] = "vote_cast";
 		row["columns"][6]["value"] = vote_cast;
 		row["columns"][6]["font"] = "SANSSERIF_SMALL";
-		row["columns"][6]["color"] = gColors.getColor("DefaultListText").getValue();
 		row["columns"][6]["width"] = self->mProposalColumnWidths[index++];
 
 		row["columns"][7]["column"] = "vote_initator_string";
 		row["columns"][7]["value"] = vote_initiator_string;
 		row["columns"][7]["font"] = "SANSSERIF_SMALL";
-		row["columns"][7]["color"] = gColors.getColor("DefaultListText").getValue();
 		row["columns"][7]["width"] = self->mProposalColumnWidths[index++];
 
 		row["columns"][8]["column"] = "quorum_text";
 		row["columns"][8]["value"] = quorum_text;
 		row["columns"][8]["font"] = "SANSSERIF_SMALL";
-		row["columns"][8]["color"] = gColors.getColor("DefaultListText").getValue();
 		row["columns"][8]["width"] = self->mProposalColumnWidths[index++];
 
 		row["columns"][9]["column"] = "majority_text";
 		row["columns"][9]["value"] = majority_text;
 		row["columns"][9]["font"] = "SANSSERIF_SMALL";
-		row["columns"][9]["color"] = gColors.getColor("DefaultListText").getValue();
 		row["columns"][9]["width"] = self->mProposalColumnWidths[index++];
 		
 		self->mActiveReceived.push_back(row);
@@ -1197,7 +1204,6 @@ void LLPanelGroupVoting::impl::processGroupVoteHistoryItemReply(LLMessageSystem 
 			row["columns"][0]["column"] = "item_num";
 			row["columns"][0]["value"] = item_num_string;
 			row["columns"][0]["font"] = "SANSSERIF_SMALL";
-			row["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
 			row["columns"][0]["width"] = self->mHistoryColumnWidths[index++];
 			
 			vote_text.assign(proposal_text);
@@ -1230,31 +1236,26 @@ void LLPanelGroupVoting::impl::processGroupVoteHistoryItemReply(LLMessageSystem 
 			row["columns"][1]["column"] = "vote_text_stripped";
 			row["columns"][1]["value"] = vote_text_stripped;
 			row["columns"][1]["font"] = "SANSSERIF_SMALL";
-			row["columns"][1]["color"] = gColors.getColor("DefaultListText").getValue();
 			row["columns"][1]["width"] = self->mHistoryColumnWidths[index++];
 
 			row["columns"][2]["column"] = "end_datetime";
-			row["columns"][2]["value"] = end_datetime;
+			row["columns"][2]["value"] = format_date(end_datetime);
 			row["columns"][2]["font"] = "SANSSERIF_SMALL";
-			row["columns"][2]["color"] = gColors.getColor("DefaultListText").getValue();
 			row["columns"][2]["width"] = self->mHistoryColumnWidths[index++];
 
 			row["columns"][3]["column"] = "vote_type";
 			row["columns"][3]["value"] = vote_type;
 			row["columns"][3]["font"] = "SANSSERIF_SMALL";
-			row["columns"][3]["color"] = gColors.getColor("DefaultListText").getValue();
 			row["columns"][3]["width"] = self->mHistoryColumnWidths[index++];
 
 			row["columns"][4]["column"] = "vote_result";
 			row["columns"][4]["value"] = vote_result;
 			row["columns"][4]["font"] = "SANSSERIF_SMALL";
-			row["columns"][4]["color"] = gColors.getColor("DefaultListText").getValue();
 			row["columns"][4]["width"] = self->mHistoryColumnWidths[index++];
 
 			row["columns"][5]["column"] = "vote_text";
 			row["columns"][5]["value"] = vote_text;
 			row["columns"][5]["font"] = "SANSSERIF_SMALL";
-			row["columns"][5]["color"] = gColors.getColor("DefaultListText").getValue();
 			row["columns"][5]["width"] = self->mHistoryColumnWidths[index++];
 
 			//row->addColumn(vote_text_stripped, font, self->mHistoryColumnWidths[1]);

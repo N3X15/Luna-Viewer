@@ -36,11 +36,11 @@
 
 #include "indra_constants.h"
 #include "llclickaction.h"
-#include "llmediabase.h"	// for status codes
 #include "llparcel.h"
 
 #include "llagent.h"
 #include "llviewercontrol.h"
+#include "llfocusmgr.h"
 #include "llfirstuse.h"
 #include "llfloateravatarinfo.h"
 #include "llfloaterland.h"
@@ -63,27 +63,25 @@
 #include "llviewerparcelmgr.h"
 #include "llviewerwindow.h"
 #include "llviewermedia.h"
+#include "llviewermediafocus.h"
 #include "llvoavatar.h"
 #include "llworld.h"
 #include "llui.h"
 #include "llweb.h"
-#include "llfloaterchat.h"
-
-// [RLVa:KB]
-#include "rlvhandler.h"
-// [/RLVa:KB]
 
 extern void handle_buy(void*);
 
 extern BOOL gDebugClicks;
 
+static bool handle_media_click(const LLPickInfo& info);
+static bool handle_media_hover(const LLPickInfo& info);
 static void handle_click_action_play();
 static void handle_click_action_open_media(LLPointer<LLViewerObject> objectp);
 static ECursorType cursor_from_parcel_media(U8 click_action);
 
 
 LLToolPie::LLToolPie()
-:	LLTool(std::string("Select")),
+:	LLTool(std::string("Pie")),
 	mPieMouseButtonDown( FALSE ),
 	mGrabMouseButtonDown( FALSE ),
 	mMouseOutsideSlop( FALSE ),
@@ -93,9 +91,6 @@ LLToolPie::LLToolPie()
 
 BOOL LLToolPie::handleMouseDown(S32 x, S32 y, MASK mask)
 {
-	//{LLChat chat;
-	//chat.mText = "LLToolPie::handleMouseDown(S32 x, S32 y, MASK mask)";
-	//LLFloaterChat::addChat(chat);}
 	//left mouse down always picks transparent
 	gViewerWindow->pickAsync(x, y, mask, leftMouseCallback, TRUE, TRUE);
 	mGrabMouseButtonDown = TRUE;
@@ -107,26 +102,6 @@ void LLToolPie::leftMouseCallback(const LLPickInfo& pick_info)
 {
 	LLToolPie::getInstance()->mPick = pick_info;
 	LLToolPie::getInstance()->pickAndShowMenu(FALSE);
-	if(gSavedSettings.getBOOL("EmeraldClickSendTouchPos"))
-	{
-		//if(gKeyboard->getKeyDown(KEY_CONTROL))
-		{
-			LLVector3d pos = LLToolPie::getInstance()->getPick().mPosGlobal;
-			std::string message = llformat("<%.6f, %.6f, %.6f>",(F32)(pos.mdV[VX]),(F32)(pos.mdV[VY]),(F32)(pos.mdV[VZ]));
-			LLMessageSystem* msg = gMessageSystem;
-			msg->newMessage(_PREHASH_ScriptDialogReply);
-			msg->nextBlock(_PREHASH_AgentData);
-			msg->addUUID(_PREHASH_AgentID, gAgent.getID());
-			msg->addUUID(_PREHASH_SessionID, gAgent.getSessionID());
-			msg->nextBlock(_PREHASH_Data);
-			msg->addUUID(_PREHASH_ObjectID, gAgent.getID());
-			msg->addS32(_PREHASH_ChatChannel, -65536);
-			msg->addS32(_PREHASH_ButtonIndex, 0);
-			msg->addString(_PREHASH_ButtonLabel, message);
-			gAgent.sendReliableMessage();
-
-		}
-	}
 }
 
 BOOL LLToolPie::handleRightMouseDown(S32 x, S32 y, MASK mask)
@@ -138,6 +113,10 @@ BOOL LLToolPie::handleRightMouseDown(S32 x, S32 y, MASK mask)
 	return FALSE;
 }
 
+BOOL LLToolPie::handleScrollWheel(S32 x, S32 y, S32 clicks)
+{
+	return LLViewerMediaFocus::getInstance()->handleScrollWheel(x, y, clicks);
+}
 // static
 void LLToolPie::rightMouseCallback(const LLPickInfo& pick_info)
 {
@@ -171,6 +150,7 @@ BOOL LLToolPie::pickAndShowMenu(BOOL always_show)
 			}
 		}
 
+		gFocusMgr.setKeyboardFocus(NULL);
 		return LLTool::handleMouseDown(x, y, mask);
 	}
 
@@ -188,21 +168,14 @@ BOOL LLToolPie::pickAndShowMenu(BOOL always_show)
 		parent = object->getRootEdit();
 	}
 
+
 	BOOL touchable = (object && object->flagHandleTouch()) 
 					 || (parent && parent->flagHandleTouch());
+
 
 	// If it's a left-click, and we have a special action, do it.
 	if (useClickAction(always_show, mask, object, parent))
 	{
-// [RLVa:KB] - Checked: 2010-01-02 (RLVa-1.1.0l) | Modified: RLVa-1.1.0l
-		// Block left-click special actions when fartouch restricted
-		if ( (rlv_handler_t::isEnabled()) && 
-			 (gRlvHandler.hasBehaviour(RLV_BHVR_FARTOUCH)) && (!gRlvHandler.canTouch(object, mPick.mObjectOffset)) )
-		{
-			return TRUE;
-		}
-// [/RLVa:KB]
-
 		mClickAction = 0;
 		if (object && object->getClickAction()) 
 		{
@@ -219,9 +192,14 @@ BOOL LLToolPie::pickAndShowMenu(BOOL always_show)
 			// touch behavior down below...
 			break;
 		case CLICK_ACTION_SIT:
-			if ((gAgent.getAvatarObject() != NULL) && (!gAgent.getAvatarObject()->mIsSitting) && !gSavedSettings.getBOOL("EmeraldBlockClickSit")) // agent not already sitting
+			if ((gAgent.getAvatarObject() != NULL) && (!gAgent.getAvatarObject()->mIsSitting)) // agent not already sitting
 			{
+				// <edit>
+				if(!gSavedSettings.getBOOL("DisableClickSit"))
+				// </edit>
 				handle_sit_or_stand();
+				// put focus in world when sitting on an object
+				gFocusMgr.setKeyboardFocus(NULL);
 				return TRUE;
 			} // else nothing (fall through to touch)
 			
@@ -274,20 +252,20 @@ BOOL LLToolPie::pickAndShowMenu(BOOL always_show)
 		}
 	}
 
+	if (!always_show && handle_media_click(mPick))
+	{
+		return FALSE;
+	}
+
+	// put focus back "in world"
+	gFocusMgr.setKeyboardFocus(NULL);
+
 	// Switch to grab tool if physical or triggerable
 	if (object && 
 		!object->isAvatar() && 
 		((object->usePhysics() || (parent && !parent->isAvatar() && parent->usePhysics())) || touchable) && 
 		!always_show)
 	{
-// [RLVa:KB] - Checked: 2010-01-02 (RLVa-1.1.0l) | Modified: RLVa-1.1.0l
-		// Triggered by left-clicking on a touchable object
-		if ( (rlv_handler_t::isEnabled()) && (!gRlvHandler.canTouch(object, mPick.mObjectOffset)) )
-		{
-			return LLTool::handleMouseDown(x, y, mask);
-		}
-// [/RLVa:KB]
-
 		gGrabTransientTool = this;
 		LLToolMgr::getInstance()->getCurrentToolset()->selectTool( LLToolGrab::getInstance() );
 		return LLToolGrab::getInstance()->handleObjectHit( mPick );
@@ -326,10 +304,7 @@ BOOL LLToolPie::pickAndShowMenu(BOOL always_show)
 			gViewerWindow->hideCursor();
 			LLToolCamera::getInstance()->setMouseCapture(TRUE);
 			LLToolCamera::getInstance()->pickCallback(mPick);
-			if(gSavedSettings.getBOOL("ResetFocusOnSelfClick"))
-			{
-				gAgent.setFocusOnAvatar(TRUE, TRUE);
-			}
+			gAgent.setFocusOnAvatar(TRUE, TRUE);
 
 			return TRUE;
 		}
@@ -356,11 +331,17 @@ BOOL LLToolPie::pickAndShowMenu(BOOL always_show)
 		gMenuHolder->setParcelSelection(selection);
 		gPieLand->show(x, y, mPieMouseButtonDown);
 
+		if(!gSavedSettings.getBOOL("DisablePointAtAndBeam"))
+		{
+		// </edit>
 		// VEFFECT: ShowPie
-		LLHUDEffectSpiral *effectp = (LLHUDEffectSpiral *)LLHUDManager::getInstance()->createViewerEffect(LLHUDObject::LL_HUD_EFFECT_SPHERE, TRUE);
-		effectp->setPositionGlobal(mPick.mPosGlobal);
-		effectp->setColor(LLColor4U(gAgent.getEffectColor()));
-		effectp->setDuration(0.25f);
+			LLHUDEffectSpiral *effectp = (LLHUDEffectSpiral *)LLHUDManager::getInstance()->createViewerEffect(LLHUDObject::LL_HUD_EFFECT_SPHERE, TRUE);
+			effectp->setPositionGlobal(mPick.mPosGlobal);
+			effectp->setColor(LLColor4U(gAgent.getEffectColor()));
+			effectp->setDuration(0.25f);
+		// <edit>
+		}
+		// </edit>
 	}
 	else if (mPick.mObjectID == gAgent.getID() )
 	{
@@ -400,35 +381,11 @@ BOOL LLToolPie::pickAndShowMenu(BOOL always_show)
 				//gMutePieMenu->setLabel("Mute");
 			}
 
-			//gPieAvatar->show(x, y, mPieMouseButtonDown);
-// [RLVa:KB] - Checked: 2010-01-02 (RLVa-1.1.0l) | Modified: RLVa-1.1.0l
-			// Don't show the pie menu on empty selection when fartouch/interaction restricted [see LLToolSelect::handleObjectSelection()]
-			if ( (!rlv_handler_t::isEnabled()) || (!LLSelectMgr::getInstance()->getSelection()->isEmpty()) ||
-				 (!gRlvHandler.hasBehaviour(RLV_BHVR_FARTOUCH)) )
-			{
-				gPieAvatar->show(x, y, mPieMouseButtonDown);
-			}
-			else
-			{
-				make_ui_sound("UISndInvalidOp");
-			}
-// [/RLVa:KB]
+			gPieAvatar->show(x, y, mPieMouseButtonDown);
 		}
 		else if (object->isAttachment())
 		{
-			//gPieAttachment->show(x, y, mPieMouseButtonDown);
-// [RLVa:KB] - Checked: 2010-01-02 (RLVa-1.1.0l) | Modified: RLVa-1.1.0l
-			// Don't show the pie menu on empty selection when fartouch/interaction restricted [see LLToolSelect::handleObjectSelection()]
-			if ( (!rlv_handler_t::isEnabled()) || (!LLSelectMgr::getInstance()->getSelection()->isEmpty()) ||
-				 (!gRlvHandler.hasBehaviour(RLV_BHVR_FARTOUCH)) )
-			{
-				gPieAttachment->show(x, y, mPieMouseButtonDown);
-			}
-			else
-			{
-				make_ui_sound("UISndInvalidOp");
-			}
-// [/RLVa:KB]
+			gPieAttachment->show(x, y, mPieMouseButtonDown);
 		}
 		else
 		{
@@ -450,15 +407,11 @@ BOOL LLToolPie::pickAndShowMenu(BOOL always_show)
 				//gMuteObjectPieMenu->setLabel("Mute");
 			}
 			
-// [RLVa:KB] - Checked: 2010-01-02 (RLVa-1.1.0l) | Modified: RLVa-1.1.0l
-			// Don't show the pie menu on empty selection when fartouch/interaction restricted
-			// (not entirely accurate in case of Tools / Select Only XXX [see LLToolSelect::handleObjectSelection()]
-			if ( (!rlv_handler_t::isEnabled()) || (!LLSelectMgr::getInstance()->getSelection()->isEmpty()) ||
-				 (!gRlvHandler.hasBehaviour(RLV_BHVR_FARTOUCH)) )
-			{
-// [/RLVa:KB]
-				gPieObject->show(x, y, mPieMouseButtonDown);
+			gPieObject->show(x, y, mPieMouseButtonDown);
 
+			if(!gSavedSettings.getBOOL("DisablePointAtAndBeam"))
+			{
+				// </edit>
 				// VEFFECT: ShowPie object
 				// Don't show when you click on someone else, it freaks them
 				// out.
@@ -466,13 +419,9 @@ BOOL LLToolPie::pickAndShowMenu(BOOL always_show)
 				effectp->setPositionGlobal(mPick.mPosGlobal);
 				effectp->setColor(LLColor4U(gAgent.getEffectColor()));
 				effectp->setDuration(0.25f);
-// [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g) | Added: RLVa-0.2.0f
+				// <edit>
 			}
-			else
-			{
-				make_ui_sound("UISndInvalidOp");
-			}
-// [/RLVa:KB]
+			// </edit>
 		}
 	}
 
@@ -540,11 +489,7 @@ ECursorType cursor_from_object(LLViewerObject* object)
 	switch(click_action)
 	{
 	case CLICK_ACTION_SIT:
-//		if ((gAgent.getAvatarObject() != NULL) && (!gAgent.getAvatarObject()->mIsSitting)) // not already sitting?
-// [RLVa:KB] - Checked: 2009-12-22 (RLVa-1.1.0k) | Added: RLVa-1.1.0j
-		if ( ((gAgent.getAvatarObject() != NULL) && (!gAgent.getAvatarObject()->mIsSitting)) && // not already sitting?
-			 ((!rlv_handler_t::isEnabled()) || (gRlvHandler.canSit(object, gViewerWindow->getHoverPick().mObjectOffset))) )
-// [/RLVa:KB]
+		if ((gAgent.getAvatarObject() != NULL) && (!gAgent.getAvatarObject()->mIsSitting)) // not already sitting?
 		{
 			cursor = UI_CURSOR_TOOLSIT;
 		}
@@ -644,62 +589,46 @@ BOOL LLToolPie::handleHover(S32 x, S32 y, MASK mask)
 		mMouseOutsideSlop = TRUE;
 	}
 	*/
+
 	
+	gViewerWindow->getWindow()->setCursor(UI_CURSOR_ARROW);
+
 	LLViewerObject *object = NULL;
 	LLViewerObject *parent = NULL;
-	if (gHoverView)
-	{
-// [RLVa:KB] - Checked: 2010-01-02 (RLVa-1.1.0l) | Modified: RLVa-1.1.0l
-		// Block all special click action cursors when:
-		//   - @fartouch=n restricted and the object is out of range
-		//   - @interact=n restricted and the object isn't a HUD attachment
-		const LLPickInfo& pick = gViewerWindow->getHoverPick();
-		object = pick.getObject();
-		if ( (object) && (rlv_handler_t::isEnabled()) && 
-			( ((gRlvHandler.hasBehaviour(RLV_BHVR_FARTOUCH))) && (!gRlvHandler.canTouch(object, pick.mObjectOffset)) || 
-			  ((gRlvHandler.hasBehaviour(RLV_BHVR_INTERACT)) && (!object->isHUDAttachment())) ) )
-		{
-			gViewerWindow->getWindow()->setCursor(UI_CURSOR_ARROW);
-			return TRUE;
-		}
-// [/RLVa:KB]
-//		object = gViewerWindow->getHoverPick().getObject();
-	}
+	object = gViewerWindow->getHoverPick().getObject();
 
 	if (object)
 	{
 		parent = object->getRootEdit();
-	}
 
-	if (object && useClickAction(FALSE, mask, object, parent))
-	{
-		ECursorType cursor = cursor_from_object(object);
-		gViewerWindow->getWindow()->setCursor(cursor);
-		lldebugst(LLERR_USER_INPUT) << "hover handled by LLToolPie (inactive)" << llendl;
-	}
-// [RLVa:KB] - Checked: 2010-01-02 (RLVa-1.1.0l) | Added: RLVa-1.1.0l
-	else if ( (rlv_handler_t::isEnabled()) && (!gRlvHandler.canTouch(object)) )
-	{
-		// Block showing the "grab" or "touch" cursor if we can't touch the object (@fartouch=n is handled above)
-		gViewerWindow->getWindow()->setCursor(UI_CURSOR_ARROW);
-	}
-// [/RLVa:KB]
-	else if ((object && !object->isAvatar() && object->usePhysics()) 
-			 || (parent && !parent->isAvatar() && parent->usePhysics()))
-	{
-		gViewerWindow->getWindow()->setCursor(UI_CURSOR_TOOLGRAB);
-		lldebugst(LLERR_USER_INPUT) << "hover handled by LLToolPie (inactive)" << llendl;
-	}
-	else if ( (object && object->flagHandleTouch()) 
-			  || (parent && parent->flagHandleTouch()))
-	{
-		gViewerWindow->getWindow()->setCursor(UI_CURSOR_HAND);
-		lldebugst(LLERR_USER_INPUT) << "hover handled by LLToolPie (inactive)" << llendl;
+		if (object && useClickAction(FALSE, mask, object, parent))
+		{
+			ECursorType cursor = cursor_from_object(object);
+			gViewerWindow->getWindow()->setCursor(cursor);
+		}
+		else if (handle_media_hover(gViewerWindow->getHoverPick()))
+		{
+			// cursor set by media object
+		}
+		else if ((object && !object->isAvatar() && object->usePhysics()) 
+				 || (parent && !parent->isAvatar() && parent->usePhysics()))
+		{
+			gViewerWindow->getWindow()->setCursor(UI_CURSOR_TOOLGRAB);
+		}
+		else if ( (object && object->flagHandleTouch()) 
+				  || (parent && parent->flagHandleTouch()))
+		{
+			gViewerWindow->getWindow()->setCursor(UI_CURSOR_HAND);
+		}
 	}
 	else
 	{
-		gViewerWindow->getWindow()->setCursor(UI_CURSOR_ARROW);
-		lldebugst(LLERR_USER_INPUT) << "hover handled by LLToolPie (inactive)" << llendl;
+		// We need to clear media hover flag
+		if (LLViewerMediaFocus::getInstance()->getMouseOverFlag())
+		{
+			LLViewerMediaFocus::getInstance()->setMouseOverFlag(false);
+		}
+
 	}
 
 	return TRUE;
@@ -750,7 +679,7 @@ BOOL LLToolPie::handleDoubleClick(S32 x, S32 y, MASK mask)
 		llinfos << "LLToolPie handleDoubleClick (becoming mouseDown)" << llendl;
 	}
 
-	if (gSavedSettings.getBOOL("DoubleClickAutoPilot") || gSavedSettings.getBOOL("EmeraldDoubleClickTeleport"))
+	if (gSavedSettings.getBOOL("DoubleClickAutoPilot") || gSavedSettings.getBOOL("DoubleClickTeleport"))
 	{
 		if (mPick.mPickType == LLPickInfo::PICK_LAND
 			&& !mPick.mPosGlobal.isExactlyZero())
@@ -761,16 +690,61 @@ BOOL LLToolPie::handleDoubleClick(S32 x, S32 y, MASK mask)
 		else if (mPick.mObjectID.notNull()
 				 && !mPick.mPosGlobal.isExactlyZero())
 		{
-			//Zwagoth: No more teleport to HUD attachments. >:o
-			if(mPick.getObject().notNull() && mPick.getObject()->isHUDAttachment())
-				return FALSE;
-
-			handle_go_to();
+			// Hit an object
+			// Do not go to attachments...
+			if (!mPick.getObject()->isHUDAttachment())
+			{
+				// HACK: Call the last hit position the point we hit on the object
+				//gLastHitPosGlobal += gLastHitObjectOffset;
+				handle_go_to();
+				return TRUE;
+			}
+		}
+	} else
+	/* code added to support double click teleports */
+	if (gSavedSettings.getBOOL("DoubleClickTeleport"))
+	{
+		LLViewerObject* objp = mPick.getObject();
+		LLViewerObject* parentp = objp ? objp->getRootEdit() : NULL;
+		bool is_in_world = mPick.mObjectID.notNull() && objp && !objp->isHUDAttachment();
+		bool is_land = mPick.mPickType == LLPickInfo::PICK_LAND;
+		bool pos_non_zero = !mPick.mPosGlobal.isExactlyZero();
+		bool has_touch_handler = (objp && objp->flagHandleTouch()) || (parentp && parentp->flagHandleTouch());
+		bool has_click_action = final_click_action(objp);
+		if (pos_non_zero && (is_land || (is_in_world && !has_touch_handler && !has_click_action)))
+		{
+			LLVector3d pos = mPick.mPosGlobal;
+			pos.mdV[VZ] += gAgent.getAvatarObject()->getPelvisToFoot();
+			gAgent.teleportViaLocationLookAt(pos);
 			return TRUE;
 		}
 	}
 
 	return FALSE;
+
+	/* JC - don't do go-there, because then double-clicking on physical
+	objects gets you into trouble.
+
+	// If double-click on object or land, go there.
+	LLViewerObject *object = gViewerWindow->getLastPick().getObject();
+	if (object)
+	{
+		if (object->isAvatar())
+		{
+			LLFloaterAvatarInfo::showFromAvatar(object->getID());
+		}
+		else
+		{
+			handle_go_to(NULL);
+		}
+	}
+	else if (!gLastHitPosGlobal.isExactlyZero())
+	{
+		handle_go_to(NULL);
+	}
+
+	return TRUE;
+	*/
 }
 
 
@@ -832,14 +806,14 @@ static void handle_click_action_play()
 	LLParcel* parcel = LLViewerParcelMgr::getInstance()->getAgentParcel();
 	if (!parcel) return;
 
-	LLMediaBase::EStatus status = LLViewerParcelMedia::getStatus();
+	LLViewerMediaImpl::EMediaStatus status = LLViewerParcelMedia::getStatus();
 	switch(status)
 	{
-		case LLMediaBase::STATUS_STARTED:
+		case LLViewerMediaImpl::MEDIA_PLAYING:
 			LLViewerParcelMedia::pause();
 			break;
 
-		case LLMediaBase::STATUS_PAUSED:
+		case LLViewerMediaImpl::MEDIA_PAUSED:
 			LLViewerParcelMedia::start();
 			break;
 
@@ -848,6 +822,111 @@ static void handle_click_action_play()
 			break;
 	}
 }
+
+static bool handle_media_click(const LLPickInfo& pick)
+{
+	//FIXME: how do we handle object in different parcel than us?
+	LLParcel* parcel = LLViewerParcelMgr::getInstance()->getAgentParcel();
+	LLPointer<LLViewerObject> objectp = pick.getObject();
+
+
+	if (!parcel ||
+		objectp.isNull() ||
+		pick.mObjectFace < 0 || 
+		pick.mObjectFace >= objectp->getNumTEs()) 
+	{
+		LLSelectMgr::getInstance()->deselect();
+		LLViewerMediaFocus::getInstance()->clearFocus();
+
+		return false;
+	}
+
+
+
+	// HACK: This is directly referencing an impl name.  BAD!
+	// This can be removed when we have a truly generic media browser that only 
+	// builds an impl based on the type of url it is passed.
+
+	// is media playing on this face?
+	const LLTextureEntry* tep = objectp->getTE(pick.mObjectFace);
+
+	viewer_media_t media_impl = LLViewerMedia::getMediaImplFromTextureID(tep->getID());
+	if (tep
+		&& media_impl.notNull()
+		&& media_impl->hasMedia()
+		&& gSavedSettings.getBOOL("MediaOnAPrimUI"))
+	{
+		LLObjectSelectionHandle selection = LLViewerMediaFocus::getInstance()->getSelection(); 
+		if (! selection->contains(pick.getObject(), pick.mObjectFace))
+		{
+			LLViewerMediaFocus::getInstance()->setFocusFace(TRUE, pick.getObject(), pick.mObjectFace, media_impl);
+		}
+		else
+		{
+			media_impl->mouseDown(pick.mXYCoords.mX, pick.mXYCoords.mY);
+			media_impl->mouseCapture(); // the mouse-up will happen when capture is lost
+		}
+
+		return true;
+	}
+
+	LLSelectMgr::getInstance()->deselect();
+	LLViewerMediaFocus::getInstance()->clearFocus();
+
+	return false;
+}
+
+static bool handle_media_hover(const LLPickInfo& pick)
+{
+	//FIXME: how do we handle object in different parcel than us?
+	LLParcel* parcel = LLViewerParcelMgr::getInstance()->getAgentParcel();
+	if (!parcel) return false;
+
+	LLPointer<LLViewerObject> objectp = pick.getObject();
+
+	// Early out cases.  Must clear mouse over media focus flag
+	// did not hit an object or did not hit a valid face
+	if ( objectp.isNull() ||
+		pick.mObjectFace < 0 || 
+		pick.mObjectFace >= objectp->getNumTEs() )
+	{
+		LLViewerMediaFocus::getInstance()->setMouseOverFlag(false);
+		return false;
+	}
+
+
+	// HACK: This is directly referencing an impl name.  BAD!
+	// This can be removed when we have a truly generic media browser that only 
+	// builds an impl based on the type of url it is passed.
+
+	// is media playing on this face?
+	const LLTextureEntry* tep = objectp->getTE(pick.mObjectFace);
+	viewer_media_t media_impl = LLViewerMedia::getMediaImplFromTextureID(tep->getID());
+	if (tep
+		&& media_impl.notNull()
+		&& media_impl->hasMedia()
+		&& gSavedSettings.getBOOL("MediaOnAPrimUI"))
+	{
+		if(LLViewerMediaFocus::getInstance()->getFocus())
+		{
+			media_impl->mouseMove(pick.mXYCoords.mX, pick.mXYCoords.mY);
+		}
+
+		// Set mouse over flag if unset
+		if (! LLViewerMediaFocus::getInstance()->getMouseOverFlag())
+		{
+			LLSelectMgr::getInstance()->setHoverObject(objectp, pick.mObjectFace);
+			LLViewerMediaFocus::getInstance()->setMouseOverFlag(true, media_impl);
+			LLViewerMediaFocus::getInstance()->setPickInfo(pick);
+		}
+
+		return true;
+	}
+	LLViewerMediaFocus::getInstance()->setMouseOverFlag(false);
+
+	return false;
+}
+
 
 static void handle_click_action_open_media(LLPointer<LLViewerObject> objectp)
 {
@@ -863,7 +942,7 @@ static void handle_click_action_open_media(LLPointer<LLViewerObject> objectp)
 	if( face < 0 || face >= objectp->getNumTEs() ) return;
 		
 	// is media playing on this face?
-	if (!LLViewerMedia::isActiveMediaTexture(objectp->getTE(face)->getID()))
+	if (LLViewerMedia::getMediaImplFromTextureID(objectp->getTE(face)->getID()) != NULL)
 	{
 		handle_click_action_play();
 		return;
@@ -881,10 +960,7 @@ static void handle_click_action_open_media(LLPointer<LLViewerObject> objectp)
 	// This can be removed when we have a truly generic media browser that only 
 	// builds an impl based on the type of url it is passed.
 
-	if(	LLMediaManager::getInstance()->supportsMediaType( "LLMediaImplLLMozLib", media_scheme, media_type ) )
-	{
-		LLWeb::loadURL(media_url);
-	}
+	LLWeb::loadURL(media_url);
 }
 
 static ECursorType cursor_from_parcel_media(U8 click_action)
@@ -902,19 +978,12 @@ static ECursorType cursor_from_parcel_media(U8 click_action)
 	std::string media_type = std::string ( parcel->getMediaType() );
 	LLStringUtil::trim(media_url);
 
-	// Get the scheme, see if that is handled as well.
-	LLURI uri(media_url);
-	std::string media_scheme = uri.scheme() != "" ? uri.scheme() : "http";
+	open_cursor = UI_CURSOR_TOOLMEDIAOPEN;
 
-	if(	LLMediaManager::getInstance()->supportsMediaType( "LLMediaImplLLMozLib", media_scheme, media_type ) )
-	{
-		open_cursor = UI_CURSOR_TOOLMEDIAOPEN;
-	}
-
-	LLMediaBase::EStatus status = LLViewerParcelMedia::getStatus();
+	LLViewerMediaImpl::EMediaStatus status = LLViewerParcelMedia::getStatus();
 	switch(status)
 	{
-		case LLMediaBase::STATUS_STARTED:
+		case LLViewerMediaImpl::MEDIA_PLAYING:
 			return click_action == CLICK_ACTION_PLAY ? UI_CURSOR_TOOLPAUSE : open_cursor;
 		default:
 			return UI_CURSOR_TOOLPLAY;

@@ -1,34 +1,49 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <panel name="panel_login">
-	<web_browser name="login_html"/>
-	<string name="real_url">http://modularsystems.sl/app/login/</string>
-	<string name="forgot_password_url">http://secondlife.com/account/request.php</string>
-	<!-- START LOCATION -->
-	<text name="start_location_text">Startposition:</text>
+	<text name="first_name_text">
+		Vorname:
+	</text>
+	<text name="last_name_text">
+		Nachname:
+	</text>
+	<text name="password_text">
+		Kennwort:
+	</text>
+	<text name="start_location_text">
+		Startposition:
+	</text>
 	<combo_box name="start_location_combo">
-		<combo_item name="MyHome">Mein Heimatort</combo_item>
-		<combo_item name="MyLastLocation">Mein letzter Standort</combo_item>
-		<combo_item name="Typeregionname">&lt;Region eingeben&gt;</combo_item>
+		<combo_item name="MyHome">
+			Mein Heimatort
+		</combo_item>
+		<combo_item name="MyLastLocation">
+			Mein letzter Standort
+		</combo_item>
+		<combo_item name="Typeregionname">
+			&lt;Region eingeben&gt;
+		</combo_item>
 	</combo_box>
-	<!-- FIRST NAME -->
-	<text name="first_name_text">Vorname:</text>
-	<line_editor name="first_name_edit"/>
-	<!-- LAST NAME -->
-	<text name="last_name_text">Nachname:</text>
-	<line_editor name="last_name_edit"/>
-	<!-- PASSWORD -->
-	<text name="password_text">Kennwort:</text>
-	<line_editor name="password_edit"/>
-	<check_box name="remember_check" label="Account Daten speichern"/>
-	<!-- LOG IN -->
-	<button name="connect_btn" label="Anmelden"/>
-	<!-- GRIDS -->
-	<text name="grid_text">Accounts:</text>
-	<combo_box name="server_combo"/>
-	<button name="grid_btn" label="Login Manager"/>
-	<!-- ACCOUNT / FORGOT PASSWORD -->
-	<text name="create_new_account_text" font-style="UNDERLINE" hover="true" hover_>Konto erstellen</text>
-	<text name="forgot_password_text" font-style="UNDERLINE" hover="true" hover_>Namen oder Kennwort vergessen?</text>
-	<!-- CHANNEL & VERSION -->
-	<text name="channel_text" hover="true" hover_>[VERSION]</text>
+	<check_box label="Kennwort merken" name="remember_check"/>
+	<text name="full_screen_text">
+		Die Anzeige schaltet bei Anmeldung auf Vollbild um.
+	</text>
+	<button label="Neues Konto..." label_selected="Neues Konto..." name="new_account_btn"/>
+	<button label="Einstellungen..." label_selected="Einstellungen..." name="preferences_btn"/>
+	<button label="Anmelden" label_selected="Anmelden" name="connect_btn"/>
+	<button label="Beenden" label_selected="Beenden" name="quit_btn"/>
+	<text name="version_text">
+		1.23.4 (5)
+	</text>
+	<text name="create_new_account_text">
+		Konto erstellen
+	</text>
+	<text name="channel_text">
+		[VERSION]
+	</text>
+	<text name="forgot_password_text">
+		Namen oder Kennwort vergessen?
+	</text>
+	<text name="forgot_password_url">
+		http://secondlife.com/account/request.php
+	</text>
 </panel>

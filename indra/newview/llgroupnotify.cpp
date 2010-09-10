@@ -105,6 +105,11 @@ LLGroupNotifyBox::LLGroupNotifyBox(const std::string& subject,
 	const S32 LABEL_WIDTH = 64;
 	const S32 ICON_WIDTH = 64;
 
+  	time_t timestamp = (time_t)time_stamp.secondsSinceEpoch();
+ 	if (!timestamp) time(&timestamp);
+
+	std::string time_buf;
+	timeToFormattedString(timestamp, gSavedSettings.getString("TimestampFormat"), time_buf);
 
 	if (mHasInventory)
 	{
@@ -185,8 +190,7 @@ LLGroupNotifyBox::LLGroupNotifyBox(const std::string& subject,
 
 	text->appendStyledText(subject + "\n",false,false,headerstyle);
 
-	LLDate notice_date = time_stamp.notNull() ? time_stamp : LLDate::now();
-	text->appendStyledText(notice_date.asRFC1123(),false,false,datestyle);
+	text->appendStyledText(time_buf,false,false,datestyle);
 	// Sadly, our LLTextEditor can't handle both styled and unstyled text
 	// at the same time.  Hence this space must be styled. JC
 	text->appendColoredText(std::string(" "),false,false,LLColor4::grey4);

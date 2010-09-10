@@ -50,7 +50,6 @@
 #include "v3dmath.h"
 #include "v3math.h"
 #include "llvertexbuffer.h"
-#include "llpartdata.h"
 
 class LLAgent;			// TODO: Get rid of this.
 class LLAudioSource;
@@ -190,7 +189,7 @@ public:
 	S32 getNumFaces() const { return mNumFaces; }
 
 	// Graphical stuff for objects - maybe broken out into render class later?
-	virtual void updateTextures(LLAgent &agent);
+	virtual void updateTextures();
 	virtual void boostTexturePriority(BOOL boost_children = TRUE);	// When you just want to boost priority of this object
 	
 	virtual LLDrawable* createDrawable(LLPipeline *pipeline);
@@ -354,6 +353,9 @@ public:
 	void setCanSelect(BOOL canSelect);
 
 	void setDebugText(const std::string &utf8text);
+	// <edit>
+	std::string getDebugText();
+	// </edit>
 	void setIcon(LLViewerImage* icon_image);
 	void clearIcon();
 
@@ -482,7 +484,7 @@ public:
 	
 	friend class LLViewerObjectList;
 	friend class LLViewerMediaList;
-//	friend class LuaViewerObject;
+
 public:
 	//counter-translation
 	void resetChildrenPosition(const LLVector3& offset, BOOL simplified = FALSE) ;
@@ -507,14 +509,14 @@ public:
 	{
 		LL_VO_CLOUDS =				LL_PCODE_APP | 0x20,
 		LL_VO_SURFACE_PATCH =		LL_PCODE_APP | 0x30,
-		//LL_VO_STARS =				LL_PCODE_APP | 0x40,
+		LL_VO_WL_SKY =				LL_PCODE_APP | 0x40,
 		LL_VO_SQUARE_TORUS =		LL_PCODE_APP | 0x50,
 		LL_VO_SKY =					LL_PCODE_APP | 0x60,
-		LL_VO_WATER =				LL_PCODE_APP | 0x70,
-		LL_VO_GROUND =				LL_PCODE_APP | 0x80,
-		LL_VO_PART_GROUP =			LL_PCODE_APP | 0x90,
-		LL_VO_TRIANGLE_TORUS =		LL_PCODE_APP | 0xa0,
-		LL_VO_WL_SKY =				LL_PCODE_APP | 0xb0, // should this be moved to 0x40?
+		LL_VO_VOID_WATER =			LL_PCODE_APP | 0x70,
+		LL_VO_WATER =				LL_PCODE_APP | 0x80,
+		LL_VO_GROUND =				LL_PCODE_APP | 0x90,
+		LL_VO_PART_GROUP =			LL_PCODE_APP | 0xa0,
+		LL_VO_TRIANGLE_TORUS =		LL_PCODE_APP | 0xb0,
 		LL_VO_HUD_PART_GROUP =		LL_PCODE_APP | 0xc0,
 	} EVOType;
 
@@ -554,8 +556,6 @@ public:
 
 	static			BOOL		sUseSharedDrawables;
 
-	void setParticleSource(const LLPartSysData& particle_parameters, const LLUUID& owner_id);
-	void deleteParticleSource();
 protected:
 	// delete an item in the inventory, but don't tell the
 	// server. This is used internally by remove, update, and
@@ -587,6 +587,8 @@ protected:
 
 	void unpackParticleSource(const S32 block_num, const LLUUID& owner_id);
 	void unpackParticleSource(LLDataPacker &dp, const LLUUID& owner_id);
+	void deleteParticleSource();
+	void setParticleSource(const LLPartSysData& particle_parameters, const LLUUID& owner_id);
 
 private:
 	void setNameValueList(const std::string& list);		// clears nv pairs and then individually adds \n separated NV pairs from \0 terminated string
@@ -604,9 +606,7 @@ protected:
 	// extra data sent from the sim...currently only used for tree species info
 	U8* mData;
 
-public:
 	LLPointer<LLViewerPartSourceScript>		mPartSourcep;	// Particle source associated with this object.
-protected:
 	LLAudioSourceVO* mAudioSourcep;
 	F32				mAudioGain;
 	
@@ -662,6 +662,11 @@ protected:
 
 private:	
 	static S32 sNumObjects;
+// <edit>
+public:
+	S32 getAttachmentPoint();
+	std::string getAttachmentPointName();
+// </edit>
 };
 
 ///////////////////
@@ -716,8 +721,8 @@ public:
 class LLStaticViewerObject : public LLViewerObject
 {
 public:
-	LLStaticViewerObject(const LLUUID& id, const LLPCode type, LLViewerRegion* regionp, BOOL is_global = FALSE)
-		: LLViewerObject(id,type,regionp, is_global)
+	LLStaticViewerObject(const LLUUID& id, const LLPCode pcode, LLViewerRegion* regionp, BOOL is_global = FALSE)
+		: LLViewerObject(id, pcode, regionp, is_global)
 	{ }
 
 	virtual void updateDrawable(BOOL force_damped);

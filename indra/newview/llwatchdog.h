@@ -64,7 +64,6 @@ public:
 
 	/* virtual */ bool isAlive() const;
 	/* virtual */ void reset();
-	using LLWatchdogEntry::start;
 	/* virtual */ void start(const std::string& state); 
 	/* virtual */ void stop();
 

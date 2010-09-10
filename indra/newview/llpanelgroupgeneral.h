@@ -92,6 +92,7 @@ private:
 
 	// Group information (include any updates in updateChanged)
 	LLLineEditor		*mGroupNameEditor;
+	LLTextBox			*mGroupName;
 	LLNameBox			*mFounderName;
 	LLTextureCtrl		*mInsignia;
 	LLTextEditor		*mEditCharter;

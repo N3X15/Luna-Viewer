@@ -127,7 +127,6 @@ void LLAssetUploadResponder::error(U32 statusNum, const std::string& reason)
 			break;
 	}
 	LLUploadDialog::modalUploadFinished();
-	LLFilePicker::instance().reset(); //Coaldust Numbers' fix for bulk upload failure relog bug
 }
 
 //virtual 
@@ -286,7 +285,8 @@ void LLNewAgentInventoryResponder::uploadComplete(const LLSD& content)
 		LLInventoryView* view = LLInventoryView::getActiveInventory();
 		if(view)
 		{
-			LLUICtrl* focus_ctrl = gFocusMgr.getKeyboardFocus();
+			LLFocusableElement* focus = gFocusMgr.getKeyboardFocus();
+
 			view->getPanel()->setSelection(content["new_inventory_item"].asUUID(), TAKE_FOCUS_NO);
 			if((LLAssetType::AT_TEXTURE == asset_type || LLAssetType::AT_SOUND == asset_type)
 				&& LLFilePicker::instance().getFileCount() <= FILE_COUNT_DISPLAY_THRESHOLD)
@@ -295,7 +295,7 @@ void LLNewAgentInventoryResponder::uploadComplete(const LLSD& content)
 			}
 			//LLInventoryView::dumpSelectionInformation((void*)view);
 			// restore keyboard focus
-			gFocusMgr.setKeyboardFocus(focus_ctrl);
+			gFocusMgr.setKeyboardFocus(focus);
 		}
 	}
 	else
@@ -379,6 +379,14 @@ void LLSendTexLayerResponder::uploadComplete(const LLSD& content)
 	}
 }
 
+void LLSendTexLayerResponder::error(U32 statusNum, const std::string& reason)
+{
+	llinfos << "status: " << statusNum << " reason: " << reason << llendl;
+	
+	// Invoke the original callback with an error result
+	LLTexLayerSetBuffer::onTextureUploadComplete(LLUUID(), (void*) mBakedUploadData, -1, LL_EXSTAT_NONE);
+	mBakedUploadData = NULL;	// deleted in onTextureUploadComplete()
+}
 
 LLUpdateAgentInventoryResponder::LLUpdateAgentInventoryResponder(const LLSD& post_data,
 																 const LLUUID& vfile_id,
@@ -525,7 +533,6 @@ void LLUpdateTaskInventoryResponder::uploadComplete(const LLSD& content)
 	{
 		case LLAssetType::AT_NOTECARD:
 			{
-
 				// Update the UI with the new asset.
 				LLPreviewNotecard* nc;
 				nc = (LLPreviewNotecard*)LLPreview::find(item_id);
@@ -543,6 +550,7 @@ void LLUpdateTaskInventoryResponder::uploadComplete(const LLSD& content)
 							content["new_asset"].asUUID(),
 							LLAssetType::AT_NOTECARD);
 					}
+
 					nc->setAssetId(content["new_asset"].asUUID());
 					nc->refreshFromInventory();
 				}

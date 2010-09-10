@@ -41,8 +41,6 @@
 #include "llfocusmgr.h"
 #include "llrender.h"
 
-#include "floateravatarlist.h"
-
 #include "llagent.h"
 #include "llcallingcard.h"
 #include "llcolorscheme.h"
@@ -70,22 +68,20 @@
 
 #include "llglheaders.h"
 
+//<edit>
 #include "llmutelist.h"
-
-// [RLVa:KB]
-#include "rlvhandler.h"
-// [/RLVa:KB]
+//</edit>
 
 const F32 MAP_SCALE_MIN = 32;
-const F32 MAP_SCALE_MID = 172;
+const F32 MAP_SCALE_MID = 1024;
 const F32 MAP_SCALE_MAX = 4096;
 const F32 MAP_SCALE_INCREMENT = 16;
-const F32 MAP_MIN_PICK_DIST = 8;
+const F32 MAP_SCALE_ZOOM_FACTOR = 1.04f;	// Zoom in factor per click of the scroll wheel (4%)
 const F32 MAP_MINOR_DIR_THRESHOLD = 0.08f;
-
-const S32 TRACKING_RADIUS = 3;
-const S32 MIN_DOT_RADIUS = 4;
-const F32 DOT_SCALE = 0.75;
+const F32 MIN_DOT_RADIUS = 3.5f;
+const F32 DOT_SCALE = 0.75f;
+const F32 MIN_PICK_SCALE = 2.f;
+const S32 MOUSE_DRAG_SLOP = 2;				// How far the mouse needs to move before we think it's a drag
 
 LLNetMap::LLNetMap(const std::string& name) :
 	LLPanel(name),
@@ -100,27 +96,18 @@ LLNetMap::LLNetMap(const std::string& name) :
 {
 	mScale = gSavedSettings.getF32("MiniMapScale");
 	mPixelsPerMeter = mScale / LLWorld::getInstance()->getRegionWidthInMeters();
-
-	mDotRadius = llround(DOT_SCALE * mPixelsPerMeter);
-	if (mDotRadius < MIN_DOT_RADIUS)
-	{
-		mDotRadius = MIN_DOT_RADIUS;
-	}
+	mDotRadius = llmax(DOT_SCALE * mPixelsPerMeter, MIN_DOT_RADIUS);
 
 	mObjectImageCenterGlobal = gAgent.getCameraPositionGlobal();
 	
 	// Register event listeners for popup menu
 	(new LLScaleMap())->registerListener(this, "MiniMap.ZoomLevel");
+	(new LLCenterMap())->registerListener(this, "MiniMap.Center");
+	(new LLCheckCenterMap())->registerListener(this, "MiniMap.CheckCenter");
 	(new LLStopTracking())->registerListener(this, "MiniMap.StopTracking");
 	(new LLEnableTracking())->registerListener(this, "MiniMap.EnableTracking");
 	(new LLShowAgentProfile())->registerListener(this, "MiniMap.ShowProfile");
 	(new LLEnableProfile())->registerListener(this, "MiniMap.EnableProfile");
-	(new LLCamFollow())->registerListener(this, "MiniMap.CamFollow"); //moymod - add cam follow crap thingie
-	(new mmsetred())->registerListener(this, "MiniMap.setred");
-	(new mmsetgreen())->registerListener(this, "MiniMap.setgreen");
-	(new mmsetblue())->registerListener(this, "MiniMap.setblue");
-	(new mmsetyellow())->registerListener(this, "MiniMap.setyellow");
-	(new mmsetcustom())->registerListener(this, "MiniMap.setcustom");
 
 	LLUICtrlFactory::getInstance()->buildPanel(this, "panel_mini_map.xml");
 
@@ -161,12 +148,7 @@ void LLNetMap::setScale( F32 scale )
 	}
 
 	mPixelsPerMeter = mScale / LLWorld::getInstance()->getRegionWidthInMeters();
-
-	mDotRadius = llround(DOT_SCALE * mPixelsPerMeter);
-	if (mDotRadius < MIN_DOT_RADIUS)
-	{
-		mDotRadius = MIN_DOT_RADIUS;
-	}
+	mDotRadius = llmax(DOT_SCALE * mPixelsPerMeter, MIN_DOT_RADIUS);
 
 	mUpdateNow = TRUE;
 }
@@ -179,23 +161,9 @@ void LLNetMap::translatePan( F32 delta_x, F32 delta_y )
 
 
 ///////////////////////////////////////////////////////////////////////////////////
-LLColor4 mm_mapcols[1024];
-LLUUID mm_mapkeys[1024];
-U32 mm_netmapnum;
 
-void LLNetMap::mm_setcolor(LLUUID key,LLColor4 col){
-	if(mm_netmapnum>1023){
-		llinfos << "Minimap color buffer filled, lol, relog or something to clear it" << llendl;
-		return;
-	}
-	mm_mapcols[mm_netmapnum]=col;
-	mm_mapkeys[mm_netmapnum]=key;
-	mm_netmapnum+=1;
-}
 void LLNetMap::draw()
 {
-	// @hook NetMapDraw( ) Tells Lua that it's time to update any rendering-related stuff to do with the minimap (DEPRECIATED!)
-	LUA_CALL0("NetMapDraw");
  	static LLFrameTimer map_timer;
 
 	if (mObjectImagep.isNull())
@@ -203,8 +171,11 @@ void LLNetMap::draw()
 		createObjectImage();
 	}
 
-	mCurPanX = lerp(mCurPanX, mTargetPanX, LLCriticalDamp::getInterpolant(0.1f));
-	mCurPanY = lerp(mCurPanY, mTargetPanY, LLCriticalDamp::getInterpolant(0.1f));
+	if (gSavedSettings.getS32( "MiniMapCenter" ) != MAP_CENTER_NONE)
+	{
+		mCurPanX = lerp(mCurPanX, mTargetPanX, LLCriticalDamp::getInterpolant(0.1f));
+		mCurPanY = lerp(mCurPanY, mTargetPanY, LLCriticalDamp::getInterpolant(0.1f));
+	}
 
 	F32 rotation = 0;
 
@@ -304,32 +275,25 @@ void LLNetMap::draw()
 			}
 			gGL.setAlphaRejectSettings(LLRender::CF_DEFAULT);
 		}
-		
 
-		LLVector3d old_center = mObjectImageCenterGlobal;
-		LLVector3d new_center = gAgent.getCameraPositionGlobal();
-
-		new_center.mdV[0] = (5.f/mObjectMapTPM)*floor(0.2f*mObjectMapTPM*new_center.mdV[0]);
-		new_center.mdV[1] = (5.f/mObjectMapTPM)*floor(0.2f*mObjectMapTPM*new_center.mdV[1]);
-		new_center.mdV[2] = 0.f;
-
+		// Redraw object layer periodically
 		if (mUpdateNow || (map_timer.getElapsedTimeF32() > 0.5f))
 		{
 			mUpdateNow = FALSE;
-			mObjectImageCenterGlobal = new_center;
 
-			// Center moved enough.
+			// Locate the centre of the object layer, accounting for panning
+			LLVector3 new_center = globalPosToView(gAgent.getCameraPositionGlobal(), rotate_map);	
+			new_center.mV[0] -= mCurPanX;
+			new_center.mV[1] -= mCurPanY;
+			new_center.mV[2] = 0.f;
+			mObjectImageCenterGlobal = viewPosToGlobal(llround(new_center.mV[0]), llround(new_center.mV[1]), rotate_map);
+
 			// Create the base texture.
 			U8 *default_texture = mObjectRawImagep->getData();
 			memset( default_texture, 0, mObjectImagep->getWidth() * mObjectImagep->getHeight() * mObjectImagep->getComponents() );
 
-			// Draw buildings
-			//gObjectList.renderObjectsForMap(*this);
-			if(!gSavedSettings.getBOOL("mm_fastminimap"))
-			{
-				gObjectList.renderObjectsForMap(*this);
-				mObjectImagep->setSubImage(mObjectRawImagep, 0, 0, mObjectImagep->getWidth(), mObjectImagep->getHeight());
-			}
+			// Draw objects
+			gObjectList.renderObjectsForMap(*this);
 
 			mObjectImagep->setSubImage(mObjectRawImagep, 0, 0, mObjectImagep->getWidth(), mObjectImagep->getHeight());
 			
@@ -367,54 +331,72 @@ void LLNetMap::draw()
 		LLUI::getCursorPositionLocal(this, &local_mouse_x, &local_mouse_y);
 		mClosestAgentToCursor.setNull();
 		F32 closest_dist = F32_MAX;
+		F32 min_pick_dist = mDotRadius * MIN_PICK_SCALE; 
 
 		// Draw avatars
-//		LLColor4 mapcolor = gAvatarMapColor;
-		LLColor4 avatar_color = gColors.getColor( "MapAvatar" );
-
-		LLColor4 standard_color = gColors.getColor( "MapAvatar" );
-		LLColor4 friend_color = gColors.getColor( "MapFriend" );
-		LLColor4 linden_color = gColors.getColor( "MapLinden" );
-		LLColor4 muted_color = gColors.getColor( "MapMuted" );
-
+		//<edit>
 		std::vector<LLUUID> avatar_ids;
 		std::vector<LLVector3d> positions;
 		LLWorld::getInstance()->getAvatars(&avatar_ids, &positions);
-		U32 a;
 		for(U32 i=0; i<avatar_ids.size(); i++)
 		{
-			avatar_color = standard_color;
 			// TODO: it'd be very cool to draw these in sorted order from lowest Z to highest.
 			// just be careful to sort the avatar IDs along with the positions. -MG
 			pos_map = globalPosToView(positions[i], rotate_map);
 
-				
-					std::string first, last;
-					gCacheName->getName(avatar_ids[i], first, last);
+			//Default to boring green for random schlubs
+			LLColor4 avColor = gColors.getColor( "MapAvatar" );
 
-			if(LLMuteList::getInstance()->isMuted(avatar_ids[i])) avatar_color = muted_color;
-			if(is_agent_friend(avatar_ids[i])) avatar_color = friend_color;
-			if((last == "Linden") || (last == "Tester")) avatar_color = linden_color;
-			
-			// MOYMOD Minimap custom av colors.
-			for(a=0;a<mm_netmapnum;a+=1)if(avatar_ids[i]==mm_mapkeys[a])avatar_color=mm_mapcols[a];
+			std::string avName;
 
-// [RLVa:KB] - Alternate: Emerald-370 | Checked: 2009-07-21 (RLVa-1.0.0) | Added: RLVa-1.0.0
-			// Emerald-specific: shouldn't be able to tell anything "personal" about anyone from the minimap under @shownames=n
+			gCacheName->getFullName(avatar_ids[i], avName);
+
+			LLUUID estate_owner = LLWorld::getInstance()->getRegionFromPosGlobal(positions[i])->getOwner();
+
+			//Lindens are always more Linden than your friend, make that take precedence
+			if(LLMuteList::getInstance()->isLinden(avName))
+			{
+				if (!gSavedSettings.getBOOL("AscentStoreSettingsPerAccount"))
+					avColor = gSavedSettings.getColor4("AscentLindenColor");
+				else
+					avColor = gSavedPerAccountSettings.getColor4("AscentLindenColor");
+			}
+			//check if they are an estate owner at their current position
+			else if(estate_owner.notNull() && avatar_ids[i] == estate_owner)
+			{
+				if (!gSavedSettings.getBOOL("AscentStoreSettingsPerAccount"))
+					avColor = gSavedSettings.getColor4("AscentEstateOwnerColor");
+				else
+					avColor = gSavedPerAccountSettings.getColor4("AscentEstateOwnerColor");
+			}
+			//without these dots, SL would suck.
+			else if(is_agent_friend(avatar_ids[i]))
+			{
+				if (!gSavedSettings.getBOOL("AscentStoreSettingsPerAccount"))
+					avColor = gSavedSettings.getColor4("AscentFriendColor");
+				else
+					avColor = gSavedPerAccountSettings.getColor4("AscentFriendColor");
+			}
+			//big fat jerkface who is probably a jerk, display them as such.
+			else if(LLMuteList::getInstance()->isMuted(avatar_ids[i]))
+			{
+				if (!gSavedSettings.getBOOL("AscentStoreSettingsPerAccount"))
+					avColor = gSavedSettings.getColor4("AscentMutedColor");
+				else
+					avColor = gSavedPerAccountSettings.getColor4("AscentMutedColor");
+			}
+
 			LLWorldMapView::drawAvatar(
 				pos_map.mV[VX], pos_map.mV[VY], 
-				(!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES)) ? avatar_color : standard_color, 
-				pos_map.mV[VZ],mDotRadius);
-// [/RLVa:KB]
-//			LLWorldMapView::drawAvatar(
-//				pos_map.mV[VX], pos_map.mV[VY], avatar_color, pos_map.mV[VZ],mDotRadius);
+				avColor,
+				pos_map.mV[VZ],
+				mDotRadius);
 
 			F32	dist_to_cursor = dist_vec(LLVector2(pos_map.mV[VX], pos_map.mV[VY]), LLVector2(local_mouse_x,local_mouse_y));
-			if(dist_to_cursor < MAP_MIN_PICK_DIST && dist_to_cursor < closest_dist)
+			if(dist_to_cursor < min_pick_dist && dist_to_cursor < closest_dist)
 			{
 				closest_dist = dist_to_cursor;
 				mClosestAgentToCursor = avatar_ids[i];
-				mClosestAgentPosition = positions[i];
 			}
 		}
 
@@ -441,10 +423,10 @@ void LLNetMap::draw()
 		pos_global = gAgent.getPositionGlobal();
 		pos_map = globalPosToView(pos_global, rotate_map);
 		LLUIImagePtr you = LLWorldMapView::sAvatarYouLargeImage;
-		S32 dot_width = mDotRadius * 2;
+		S32 dot_width = llround(mDotRadius * 2.f);
 		you->draw(
-			llround(pos_map.mV[VX]) - mDotRadius,
-			llround(pos_map.mV[VY]) - mDotRadius,
+			llround(pos_map.mV[VX] - mDotRadius),
+			llround(pos_map.mV[VY] - mDotRadius),
 			dot_width,
 			dot_width);
 
@@ -508,6 +490,7 @@ void LLNetMap::draw()
 void LLNetMap::reshape(S32 width, S32 height, BOOL called_from_parent)
 {
 	LLPanel::reshape(width, height, called_from_parent);
+	createObjectImage();
 	updateMinorDirections();
 }
 
@@ -585,8 +568,12 @@ LLVector3d LLNetMap::viewPosToGlobal( S32 x, S32 y, BOOL rotated )
 
 BOOL LLNetMap::handleScrollWheel(S32 x, S32 y, S32 clicks)
 {
-	// note that clicks are reversed from what you'd think
-	setScale(llclamp(mScale - clicks*MAP_SCALE_INCREMENT, MAP_SCALE_MIN, MAP_SCALE_MAX));
+	// note that clicks are reversed from what you'd think: i.e. > 0  means zoom out, < 0 means zoom in
+	F32 scale = mScale;
+	
+	scale *= pow(MAP_SCALE_ZOOM_FACTOR, -clicks);
+	setScale(llclamp(scale, MAP_SCALE_MIN, MAP_SCALE_MAX));
+
 	return TRUE;
 }
 
@@ -604,36 +591,10 @@ BOOL LLNetMap::handleToolTip( S32 x, S32 y, std::string& msg, LLRect* sticky_rec
 		std::string fullname;
 		if(mClosestAgentToCursor.notNull() && gCacheName->getFullName(mClosestAgentToCursor, fullname))
 		{
-//			msg.append(fullname);
-// [RLVa:KB] - Version: 1.23.4 | Alternate: Emerald-370 | Checked: 2009-07-08 (RLVa-1.0.0e) | Modified: RLVa-0.2.0b
-			msg.append( (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES)) ? fullname : RlvStrings::getAnonym(fullname) );
-// [/RLVa:KB]
-
-			LLVector3d mypos = gAgent.getPositionGlobal();
-			LLVector3d position = mClosestAgentPosition;
-
-			if ( LLFloaterAvatarList::getInstance() )
-			{
-				LLAvatarListEntry *ent = LLFloaterAvatarList::getInstance()->getAvatarEntry(mClosestAgentToCursor);
-				if ( NULL != ent )
-				{
-					//position = LLFloaterAvatarList::AvatarPosition(mClosestAgentToCursor);
-					position = ent->getPosition();
-				}
-			}
-
-			LLVector3d delta = position - mypos;
-			F32 distance = (F32)delta.magVec();
-
-
-			//llinfos << distance << " - " << position << llendl;
-
-			msg.append( llformat("\n(Distance: %.02fm)\n\n",distance) );
+			msg.append(fullname);
+			msg.append("\n");
 		}
-// [RLVa:KB] - Version: 1.23.4 | Alternate: Emerald-370 | Checked: 2009-07-04 (RLVa-1.0.0a) | Modified: RLVa-0.2.0b
-		msg.append( (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC)) ? region->getName() : RlvStrings::getString(RLV_STRING_HIDDEN) );
-// [/RLVa:KB]
-//		msg.append( region->getName() );
+		msg.append( region->getName() );
 
 #ifndef LL_RELEASE_FOR_DOWNLOAD
 		std::string buffer;
@@ -701,11 +662,7 @@ void LLNetMap::renderScaledPointGlobal( const LLVector3d& pos, const LLColor4U &
 	LLVector3 local_pos;
 	local_pos.setVec( pos - mObjectImageCenterGlobal );
 
-	// DEV-17370 - megaprims of size > 4096 cause lag.  (go figger.)
-	const F32 MAX_RADIUS = 256.0f;
-	F32 radius_clamped = llmin(radius_meters, MAX_RADIUS);
-	
-	S32 diameter_pixels = llround(2 * radius_clamped * mObjectMapTPM);
+	S32 diameter_pixels = llround(2 * radius_meters * mObjectMapTPM);
 	renderPoint( local_pos, color, diameter_pixels );
 }
 
@@ -804,7 +761,7 @@ void LLNetMap::createObjectImage()
 	S32 square_size = llround( sqrt(width*width + height*height) );
 
 	// Find the least power of two >= the minimum size.
-	const S32 MIN_SIZE = 32;
+	const S32 MIN_SIZE = 64;
 	const S32 MAX_SIZE = 256;
 	S32 img_size = MIN_SIZE;
 	while( (img_size*2 < square_size ) && (img_size < MAX_SIZE) )
@@ -820,14 +777,128 @@ void LLNetMap::createObjectImage()
 		U8* data = mObjectRawImagep->getData();
 		memset( data, 0, img_size * img_size * 4 );
 		mObjectImagep = new LLImageGL( mObjectRawImagep, FALSE);
-		setScale(mScale);
 	}
+	setScale(mScale);
 	mUpdateNow = TRUE;
+}
+
+BOOL LLNetMap::handleMouseDown( S32 x, S32 y, MASK mask )
+{
+	if (!(mask & MASK_SHIFT)) return FALSE;
+
+	// Start panning
+	gFocusMgr.setMouseCapture(this);
+
+	mMouseDownPanX = llround(mCurPanX);
+	mMouseDownPanY = llround(mCurPanY);
+	mMouseDownX = x;
+	mMouseDownY = y;
+	return TRUE;
+}
+
+BOOL LLNetMap::handleMouseUp( S32 x, S32 y, MASK mask )
+{
+	if (hasMouseCapture())
+	{
+		if (mPanning)
+		{
+			// restore mouse cursor
+			S32 local_x, local_y;
+			local_x = mMouseDownX + llfloor(mCurPanX - mMouseDownPanX);
+			local_y = mMouseDownY + llfloor(mCurPanY - mMouseDownPanY);
+			LLRect clip_rect = getRect();
+			clip_rect.stretch(-8);
+			clip_rect.clipPointToRect(mMouseDownX, mMouseDownY, local_x, local_y);
+			LLUI::setCursorPositionLocal(this, local_x, local_y);
+
+			// finish the pan
+			mPanning = FALSE;
+
+			mMouseDownX = 0;
+			mMouseDownY = 0;
+
+			// auto centre
+			mTargetPanX = 0;
+			mTargetPanY = 0;
+		}
+		gViewerWindow->showCursor();
+		gFocusMgr.setMouseCapture(NULL);
+		return TRUE;
+	}
+	return FALSE;
+}
+
+// static
+BOOL LLNetMap::outsideSlop( S32 x, S32 y, S32 start_x, S32 start_y, S32 slop )
+{
+	S32 dx = x - start_x;
+	S32 dy = y - start_y;
+
+	return (dx <= -slop || slop <= dx || dy <= -slop || slop <= dy);
+}
+
+BOOL LLNetMap::handleHover( S32 x, S32 y, MASK mask )
+{
+	if (hasMouseCapture())
+	{
+		if (mPanning || outsideSlop(x, y, mMouseDownX, mMouseDownY, MOUSE_DRAG_SLOP))
+		{
+			if (!mPanning)
+			{
+				// just started panning, so hide cursor
+				mPanning = TRUE;
+				gViewerWindow->hideCursor();
+			}
+
+			F32 delta_x = (F32)(gViewerWindow->getCurrentMouseDX());
+			F32 delta_y = (F32)(gViewerWindow->getCurrentMouseDY());
+
+			// Set pan to value at start of drag + offset
+			mCurPanX += delta_x;
+			mCurPanY += delta_y;
+			mTargetPanX = mCurPanX;
+			mTargetPanY = mCurPanY;
+
+			gViewerWindow->moveCursorToCenter();
+		}
+
+		// Doesn't really matter, cursor should be hidden
+		gViewerWindow->setCursor( UI_CURSOR_TOOLPAN );
+	}
+	else
+	{
+		if (mask & MASK_SHIFT)
+		{
+			// If shift is held, change the cursor to hint that the map can be dragged
+			gViewerWindow->setCursor( UI_CURSOR_TOOLPAN );
+		}
+		else 
+		{
+			gViewerWindow->setCursor( UI_CURSOR_CROSS );
+		}
+	}
+	
+	return TRUE;
 }
 
 BOOL LLNetMap::handleDoubleClick( S32 x, S32 y, MASK mask )
 {
-	LLFloaterWorldMap::show(NULL, FALSE);
+	LLVector3d pos_global = viewPosToGlobal( x, y , gSavedSettings.getBOOL( "MiniMapRotate" ) );
+	BOOL new_target = FALSE;
+	if (!LLTracker::isTracking(NULL))
+	{
+		gFloaterWorldMap->trackLocation(pos_global);
+		new_target = TRUE;
+	}
+
+	if (gSavedSettings.getBOOL("DoubleClickTeleport"))
+	{
+		gAgent.teleportViaLocationLookAt(pos_global);
+	}
+	else 
+	{
+		LLFloaterWorldMap::show(NULL, new_target);
+	}
 	return TRUE;
 }
 
@@ -870,6 +941,32 @@ bool LLNetMap::LLScaleMap::handleEvent(LLPointer<LLEvent> event, const LLSD& use
 	return true;
 }
 
+bool LLNetMap::LLCenterMap::handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+{
+	EMiniMapCenter center = (EMiniMapCenter)userdata.asInteger();
+
+	if (gSavedSettings.getS32("MiniMapCenter") == center)
+	{
+		gSavedSettings.setS32("MiniMapCenter", MAP_CENTER_NONE);
+	}
+	else
+	{
+		gSavedSettings.setS32("MiniMapCenter", userdata.asInteger());
+	}
+
+	return true;
+}
+
+bool LLNetMap::LLCheckCenterMap::handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+{
+	LLNetMap *self = mPtr;
+	EMiniMapCenter center = (EMiniMapCenter)userdata["data"].asInteger();
+	BOOL enabled = (gSavedSettings.getS32("MiniMapCenter") == center);
+
+	self->findControl(userdata["control"].asString())->setValue(enabled);
+	return true;
+}
+
 bool LLNetMap::LLStopTracking::handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
 {
 	LLTracker::stopTracking(NULL);
@@ -883,86 +980,16 @@ bool LLNetMap::LLEnableTracking::handleEvent(LLPointer<LLEvent> event, const LLS
 	return true;
 }
 
-
-bool LLNetMap::LLCamFollow::handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
-{
-	LLNetMap *self = mPtr;
-	LLFloaterAvatarList::lookAtAvatar(self->mClosestAgentAtLastRightClick);
-	return true;
-}
-
-
-
-//moymod - minimap color shit
-
-
-
-bool LLNetMap::mmsetred::handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
-{
-	LLNetMap *self = mPtr;
-	//if(self->mClosestAgentAtLastRightClick){
-		mm_setcolor(self->mClosestAgentAtLastRightClick,LLColor4(1.0,0.0,0.0,1.0));
-	//}
-	return true;
-}
-bool LLNetMap::mmsetgreen::handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
-{
-	LLNetMap *self = mPtr;
-	//if(self->mClosestAgentAtLastRightClick){
-		mm_setcolor(self->mClosestAgentAtLastRightClick,LLColor4(0.0,1.0,0.0,1.0));
-	//}
-	return true;
-}
-bool LLNetMap::mmsetblue::handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
-{
-	LLNetMap *self = mPtr;
-	//if(self->mClosestAgentAtLastRightClick){
-		mm_setcolor(self->mClosestAgentAtLastRightClick,LLColor4(0.0,0.0,1.0,1.0));
-	//}
-	return true;
-}
-bool LLNetMap::mmsetyellow::handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
-{
-	LLNetMap *self = mPtr;
-	//if(self->mClosestAgentAtLastRightClick){
-		mm_setcolor(self->mClosestAgentAtLastRightClick,LLColor4(1.0,1.0,0.0,1.0));
-	//}
-	return true;
-}
-bool LLNetMap::mmsetcustom::handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
-{
-	LLNetMap *self = mPtr;
-	//if(self->mClosestAgentAtLastRightClick){
-		mm_setcolor(self->mClosestAgentAtLastRightClick,gSavedSettings.getColor4("mm_customminimapcolor"));
-	//}
-	return true;
-}
-
-
-//end minimapshti
-
-
-
 bool LLNetMap::LLShowAgentProfile::handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
 {
 	LLNetMap *self = mPtr;
-// [RLVa:KB] - Version: 1.23.4 | Checked: 2009-07-08 (RLVa-1.0.0e) | Modified: RLVa-0.2.0b
-	if (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES))
-	{
-		LLFloaterAvatarInfo::show(self->mClosestAgentAtLastRightClick);
-	}
-// [/RLVa:KB]
-	//LLFloaterAvatarInfo::show(self->mClosestAgentAtLastRightClick);
+	LLFloaterAvatarInfo::show(self->mClosestAgentAtLastRightClick);
 	return true;
 }
 
 bool LLNetMap::LLEnableProfile::handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
 {
 	LLNetMap *self = mPtr;
-// [RLVa:KB] - Version: 1.23.4 | Checked: 2009-07-08 (RLVa-1.0.0e) | Modified: RLVa-0.2.0b
-	self->findControl(userdata["control"].asString())->setValue(
-		(self->isAgentUnderCursor()) && (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES)) );
-// [/RLVa:KB]
-	//self->findControl(userdata["control"].asString())->setValue(self->isAgentUnderCursor());
+	self->findControl(userdata["control"].asString())->setValue(self->isAgentUnderCursor());
 	return true;
 }

@@ -56,6 +56,7 @@
 #include "lllineeditor.h"
 #include "llnamelistctrl.h"
 #include "llnotify.h"
+#include "llpanellandaudio.h"
 #include "llpanellandmedia.h"
 #include "llradiogroup.h"
 #include "llscrolllistctrl.h"
@@ -77,13 +78,14 @@
 #include "roles_constants.h"
 #include "llworld.h"
 
-// [RLVa:KB]
-#include "rlvhandler.h"
-// [/RLVa:KB]
+
+
+
 
 static std::string OWNER_ONLINE 	= "0";
 static std::string OWNER_OFFLINE	= "1";
 static std::string OWNER_GROUP 		= "2";
+static std::string OWNER_INSIM	 	= "4";
 
 // constants used in callbacks below - syntactic sugar.
 static const BOOL BUY_GROUP_LAND = TRUE;
@@ -207,6 +209,7 @@ LLFloaterLand::LLFloaterLand(const LLSD& seed)
 	factory_map["land_covenant_panel"] = LLCallbackMap(createPanelLandCovenant, this);
 	factory_map["land_objects_panel"] = LLCallbackMap(createPanelLandObjects, this);
 	factory_map["land_options_panel"] = LLCallbackMap(createPanelLandOptions, this);
+	factory_map["land_audio_panel"] =	LLCallbackMap(createPanelLandAudio, this);
 	factory_map["land_media_panel"] =	LLCallbackMap(createPanelLandMedia, this);
 	factory_map["land_access_panel"] =	LLCallbackMap(createPanelLandAccess, this);
 
@@ -242,6 +245,7 @@ void LLFloaterLand::refresh()
 	mPanelGeneral->refresh();
 	mPanelObjects->refresh();
 	mPanelOptions->refresh();
+	mPanelAudio->refresh();
 	mPanelMedia->refresh();
 	mPanelAccess->refresh();
 }
@@ -278,6 +282,14 @@ void* LLFloaterLand::createPanelLandOptions(void* data)
 	LLFloaterLand* self = (LLFloaterLand*)data;
 	self->mPanelOptions = new LLPanelLandOptions(self->mParcel);
 	return self->mPanelOptions;
+}
+
+// static
+void* LLFloaterLand::createPanelLandAudio(void* data)
+{
+	LLFloaterLand* self = (LLFloaterLand*)data;
+	self->mPanelAudio = new LLPanelLandAudio(self->mParcel);
+	return self->mPanelAudio;
 }
 
 // static
@@ -342,7 +354,6 @@ BOOL LLPanelLandGeneral::postBuild()
 
 	getChild<LLButton>("group_profile")->setClickedCallback(onClickInfoGroup, this);
 
-	
 	mCheckDeedToGroup = getChild<LLCheckBoxCtrl>( "check deed");
 	childSetCommitCallback("check deed", onCommitAny, this);
 
@@ -837,15 +848,15 @@ void LLPanelLandGeneral::setGroup(const LLUUID& group_id)
 // static
 void LLPanelLandGeneral::onClickBuyLand(void* data)
 {
-// [RLVa:KB] - Checked: 2009-07-04 (RLVa-1.0.0a)
-	if ( (rlv_handler_t::isEnabled()) && (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC)) )
-	{
-		return;
-	}
-// [/RLVa:KB]
 	BOOL* for_group = (BOOL*)data;
 	LLViewerParcelMgr::getInstance()->startBuyLand(*for_group);
 }
+
+
+
+
+
+
 
 BOOL LLPanelLandGeneral::enableDeedToGroup(void* data)
 {
@@ -1049,6 +1060,7 @@ BOOL LLPanelLandObjects::postBuild()
 	mBtnReturnOwnerList->setClickedCallback(onClickReturnOwnerList, this);
 
 	mIconAvatarOnline = LLUIImageList::getInstance()->getUIImage("icon_avatar_online.tga");
+	mIconAvatarInSim = LLUIImageList::getInstance()->getUIImage("ff_visible_map.tga");
 	mIconAvatarOffline = LLUIImageList::getInstance()->getUIImage("icon_avatar_offline.tga");
 	mIconGroup = LLUIImageList::getInstance()->getUIImage("icon_group.tga");
 
@@ -1505,6 +1517,11 @@ void LLPanelLandObjects::processParcelObjectOwnersReply(LLMessageSystem *msg, vo
 			row->addColumn(OWNER_GROUP, FONT);
 		}
 		else if (in_sim)
+		{
+			row->addColumn(self->mIconAvatarInSim);
+			row->addColumn(OWNER_INSIM, FONT);
+		}
+		else if (is_online)
 		{
 			row->addColumn(self->mIconAvatarOnline);
 			row->addColumn(OWNER_ONLINE, FONT);
@@ -2908,41 +2925,3 @@ void LLPanelLandCovenant::updateEstateOwnerName(const std::string& name)
 		if (editor) editor->setText(name);
 	}
 }
-
-// [RLVa:KB] - Checked: 2009-07-04 (RLVa-1.0.0a)
-void LLFloaterLand::open()
-{
-	// We'll allow "About Land" as long as you have the ability to return prims (through ownership or through group powers)
-	if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC))
-	{
-		LLParcelSelection* pParcelSel = LLViewerParcelMgr::getInstance()->getFloatingParcelSelection();
-		if ( (!pParcelSel) || (pParcelSel->hasOthersSelected()) )
-			return;
-		LLParcel* pParcel = pParcelSel->getParcel();
-		if (!pParcel)
-			return;
-
-		// Ideally we could just use LLViewerParcelMgr::isParcelOwnedByAgent(), but that has that sneaky exemption
-		// for fake god like (aka View Admin Options)
-		const LLUUID& idOwner = pParcel->getOwnerID();
-		if ( (idOwner != gAgent.getID()) )
-		{
-			// *sighs* LLAgent::hasPowerInGroup() has it too so copy/paste from there
-			S32 count = gAgent.mGroups.count(); bool fShow = false;
-			for (S32 i = 0; i < count; ++i)
-			{
-				if (gAgent.mGroups.get(i).mID == idOwner)
-				{
-					fShow |= ((gAgent.mGroups.get(i).mPowers & GP_LAND_RETURN) > 0);
-					break;
-				}
-			}
-
-			if (!fShow)
-				return;
-		}
-	}
-
-	LLFloater::open();
-}
-// [/RLVa:KB]

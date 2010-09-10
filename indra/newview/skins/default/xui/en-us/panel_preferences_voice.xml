@@ -13,11 +13,8 @@
 	     follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
 	     label="Enable voice chat" left="8" mouse_opaque="true"
 	     name="enable_voice_check" radio_style="false" width="200" />
-	<button bottom_delta="0" follows="left|top" font="SansSerif" halign="center" height="20"
-         label="Reset Voice" left_delta="150" mouse_opaque="true"
-         name="reset_voice" width="100" />
 	<radio_group bottom_delta="-40" draw_border="false" follows="left|top" height="40"
-	     left_delta="-130" name="ear_location" width="364">
+	     left_delta="20" name="ear_location" width="364">
 		<radio_item type="string" length="1" bottom="-19" follows="left|top" height="16" left="3" name="0" width="315">
 			Hear Voice Chat from camera position.
 		</radio_item>
@@ -61,6 +58,16 @@
 	<button bottom_delta="0" follows="left|top" font="SansSerif" halign="center" height="20"
 	     label="Middle Mouse Button" left_delta="120" mouse_opaque="true"
 	     name="set_voice_middlemouse_button" width="160" />
+	<text allow_html="false" bg_readonly_color="0 0 0 0" bottom_delta="-25"
+	     embedded_items="false" enabled="true" follows="left|top" height="16"
+	     left="28" name="lip_sync_heading" width="445">
+		Lip Sync Mouth Animation
+	</text>
+	<check_box bottom_delta="-20" enabled="true"
+	     follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+	     label="Enable lip sync animation"
+	     left_delta="20" mouse_opaque="true" name="enable_lip_sync_check"
+	     radio_style="false" width="200" />
 	<text allow_html="false" bg_readonly_color="0 0 0 0" bottom_delta="-25"
 	     embedded_items="false" enabled="true" follows="left|top" height="16"
 	     left="28" name="privacy_heading" width="445">

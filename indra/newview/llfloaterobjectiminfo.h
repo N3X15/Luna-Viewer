@@ -40,9 +40,7 @@ namespace LLObjectIMInfo
 						const std::string& name, 
 						const std::string& location, 
 						const LLUUID& owner_id, 
-						bool owner_is_group,
-						const LLUUID& region_id,
-						const std::string& localpart);
+						bool owner_is_group);
 };
 
 #endif // LL_LLFLOATERURLDISPLAY_H

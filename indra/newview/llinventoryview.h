@@ -70,6 +70,7 @@ class LLInventoryPanel : public LLPanel
 public:
 	static const std::string DEFAULT_SORT_ORDER;
 	static const std::string RECENTITEMS_SORT_ORDER;
+	static const std::string WORNITEMS_SORT_ORDER;
 	static const std::string INHERIT_SORT_ORDER;
 
 	LLInventoryPanel(const std::string& name,
@@ -79,6 +80,10 @@ public:
 			BOOL allow_multi_select,
 			LLView *parent_view = NULL);
 	~LLInventoryPanel();
+
+	// <edit>
+	static std::list<LLInventoryPanel*> sInstances;
+	// </edit>
 
 	LLInventoryModel* getModel() { return mInventory; }
 
@@ -118,7 +123,7 @@ public:
 	const std::string getFilterSubString() { return mFolders->getFilterSubString(); }
 	void setFilterWorn(bool worn);
 	bool getFilterWorn() const { return mFolders->getFilterWorn(); }
-
+	
 	void setSortOrder(U32 order);
 	U32 getSortOrder() { return mFolders->getSortOrder(); }
 	void setSinceLogoff(BOOL sl);
@@ -144,6 +149,9 @@ protected:
 	// Given the id and the parent, build all of the folder views.
 	void rebuildViewsFor(const LLUUID& id, U32 mask);
 	void buildNewViews(const LLUUID& id);
+	// <edit>
+	void buildNewViews(const LLInventoryObject* objectp);
+	// </edit>
 
 public:
 	// TomY TODO: Move this elsewhere?
@@ -228,35 +236,35 @@ public:
 	static void toggleVisibility();
 	static void toggleVisibility(void*) { toggleVisibility(); }
 
-// [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g)
-	static void closeAll() 
-	{
-		// If there are mulitple inventory floaters open then clicking the "Inventory" button will close
-		// them one by one (see LLToolBar::onClickInventory() => toggleVisibility() ) until we get to the
-		// last one which will just be hidden instead of closed/destroyed (see LLInventoryView::onClose)
-		//
-		// However the view isn't removed from sActiveViews until its destructor is called and since
-		// 'LLMortician::sDestroyImmediate == FALSE' while the viewer is running the destructor won't be 
-		// called right away
-		//
-		// Result: we can't call close() on the last (sActiveViews.count() will still be > 1) because
-		//         onClose() would take the wrong branch and destroy() it as well
-		//
-		// Workaround: "fix" onClose() to count only views that aren't marked as "dead"
+	
 
-		LLInventoryView* pView; U8 flagsSound;
-		for (S32 idx = sActiveViews.count() - 1; idx >= 0; idx--)
-		{
-			pView = sActiveViews.get(idx);
-			flagsSound = pView->getSoundFlags();
-			pView->setSoundFlags(LLView::SILENT);	// Suppress the window close sound
-			pView->close();							// onClose() protects against closing the last inventory floater
-			pView->setSoundFlags(flagsSound);		// One view won't be destroy()'ed so it needs its sound flags restored
-		}
-	}
-// [/RLVa:KB]
 
-	// Final cleanup, destroy all open inventory views.
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Final cleanup, destroy all open inventory views.
 	static void cleanup();
 
 	// LLView & LLFloater functionality
@@ -285,6 +293,8 @@ public:
     static void refreshQuickFilter(LLUICtrl* ctrl);
 
 	static void onFilterSelected(void* userdata, bool from_click);
+	static void onResetAll(void* userdata);
+	static void onExpandAll(void* userdata);
 	static void onSelectionChange(const std::deque<LLFolderViewItem*> &items, BOOL user_action, void* data);
 
 	const std::string getFilterSubString() { return mActivePanel->getFilterSubString(); }
@@ -295,6 +305,7 @@ public:
 	static LLUUID sWearNewClothingTransactionID;	// wear all clothing in this transaction
 
 	void toggleFindOptions();
+	void updateSortControls();
 
 	LLInventoryViewFinder* getFinder() { return (LLInventoryViewFinder*)mFinderHandle.get(); }
 
@@ -304,9 +315,9 @@ protected:
 
 protected:
 	LLSearchEditor*				mSearchEditor;
-	LLComboBox*						mQuickFilterCombo;
+	LLComboBox*					mQuickFilterCombo;
 	LLTabContainer*				mFilterTabs;
-	LLHandle<LLFloater>				mFinderHandle;
+	LLHandle<LLFloater>			mFinderHandle;
 	LLInventoryPanel*			mActivePanel;
 	LLSaveFolderState*			mSavedFolderState;
 

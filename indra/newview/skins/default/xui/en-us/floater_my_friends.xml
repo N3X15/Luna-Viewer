@@ -9,7 +9,5 @@
 		     name="friends_panel" width="370" />
 		<panel bottom="0" filename="panel_groups.xml" label="Groups" left="0"
 		     name="groups_panel" width="370" />
-		<panel bottom="0" filename="panel_IRC.xml" label="IRC" left="0"
-		     name="irc_panel" width="370" />
 	</tab_container>
 </floater>

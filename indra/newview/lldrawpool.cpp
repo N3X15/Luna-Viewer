@@ -95,6 +95,7 @@ LLDrawPool *LLDrawPool::createPool(const U32 type, LLViewerImage *tex0)
 	case POOL_SKY:
 		poolp = new LLDrawPoolSky();
 		break;
+	case POOL_VOIDWATER:
 	case POOL_WATER:
 		poolp = new LLDrawPoolWater();
 		break;
@@ -279,7 +280,7 @@ S32 LLFacePool::drawLoopSetTex(face_array_t& face_list, S32 stage)
 			 iter != face_list.end(); iter++)
 		{
 			LLFace *facep = *iter;
-			gGL.getTexUnit(stage)->bind(facep->getTexture());
+			gGL.getTexUnit(stage)->bind(facep->getTexture(), TRUE);
 			gGL.getTexUnit(0)->activate();
 			res += facep->renderIndexed();
 		}
@@ -481,14 +482,13 @@ void LLRenderPass::pushBatch(LLDrawInfo& params, U32 mask, BOOL texture)
 	{
 		if (params.mTexture.notNull())
 		{
-			gGL.getTexUnit(0)->bind(params.mTexture.get());
+			gGL.getTexUnit(0)->bind(params.mTexture.get(), TRUE);
 			if (params.mTextureMatrix)
 			{
 				glMatrixMode(GL_TEXTURE);
 				glLoadMatrixf((GLfloat*) params.mTextureMatrix->mMatrix);
 				gPipeline.mTextureMatrixOps++;
 			}
-			params.mTexture->addTextureStats(params.mVSize);
 		}
 		else
 		{

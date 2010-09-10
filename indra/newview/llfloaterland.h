@@ -64,6 +64,7 @@ class LLParcelSelection;
 class LLPanelLandGeneral;
 class LLPanelLandObjects;
 class LLPanelLandOptions;
+class LLPanelLandAudio;
 class LLPanelLandMedia;
 class LLPanelLandAccess;
 class LLPanelLandBan;
@@ -85,9 +86,9 @@ public:
 	virtual void onOpen();
 	virtual BOOL postBuild();
 
-// [RLVa:KB] - Checked: 2009-07-04 (RLVa-1.0.0a)
-	virtual void open();
-// [/RLVa:KB]
+
+
+
 
 protected:
 
@@ -102,10 +103,10 @@ protected:
 	static void* createPanelLandCovenant(void* data);
 	static void* createPanelLandObjects(void* data);
 	static void* createPanelLandOptions(void* data);
+	static void* createPanelLandAudio(void* data);
 	static void* createPanelLandMedia(void* data);
 	static void* createPanelLandAccess(void* data);
 	static void* createPanelLandBan(void* data);
-
 
 protected:
 	static LLParcelSelectionObserver* sObserver;
@@ -115,6 +116,7 @@ protected:
 	LLPanelLandGeneral*		mPanelGeneral;
 	LLPanelLandObjects*		mPanelObjects;
 	LLPanelLandOptions*		mPanelOptions;
+	LLPanelLandAudio*		mPanelAudio;
 	LLPanelLandMedia*		mPanelMedia;
 	LLPanelLandAccess*		mPanelAccess;
 	LLPanelLandCovenant*	mPanelCovenant;
@@ -291,6 +293,7 @@ protected:
 	LLNameListCtrl	*mOwnerList;
 
 	LLPointer<LLUIImage>	mIconAvatarOnline;
+	LLPointer<LLUIImage>	mIconAvatarInSim;
 	LLPointer<LLUIImage>	mIconAvatarOffline;
 	LLPointer<LLUIImage>	mIconGroup;
 

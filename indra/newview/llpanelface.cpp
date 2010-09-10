@@ -36,7 +36,6 @@
 #include "llpanelface.h"
  
 // library includes
-#include "llcalc.h"
 #include "llerror.h"
 #include "llfocusmgr.h"
 #include "llrect.h"
@@ -63,6 +62,7 @@
 #include "llviewerobject.h"
 #include "llviewerstats.h"
 #include "lluictrlfactory.h"
+#include "llpluginclassmedia.h"
 
 //
 // Methods
@@ -74,7 +74,6 @@ BOOL	LLPanelFace::postBuild()
 	LLTextureCtrl*	mTextureCtrl;
 	LLColorSwatchCtrl*	mColorSwatch;
 
-	LLTextBox*		mLabelTexGen;
 	LLComboBox*		mComboTexGen;
 
 	LLCheckBoxCtrl	*mCheckFullbright;
@@ -82,7 +81,6 @@ BOOL	LLPanelFace::postBuild()
 	LLTextBox*		mLabelColorTransp;
 	LLSpinCtrl*		mCtrlColorTransp;		// transparency = 1 - alpha
 
-	LLTextBox*      mLabelGlow;
 	LLSpinCtrl*     mCtrlGlow;
 
 	setMouseOpaque(FALSE);
@@ -153,7 +151,7 @@ BOOL	LLPanelFace::postBuild()
 		mCheckFullbright->setCommitCallback(LLPanelFace::onCommitFullbright);
 		mCheckFullbright->setCallbackUserData( this );
 	}
-	mLabelTexGen = getChild<LLTextBox>("tex gen");
+
 	mComboTexGen = getChild<LLComboBox>("combobox texgen");
 	if(mComboTexGen)
 	{
@@ -162,7 +160,6 @@ BOOL	LLPanelFace::postBuild()
 		mComboTexGen->setCallbackUserData( this );
 	}
 
-	mLabelGlow = getChild<LLTextBox>("glow label");
 	mCtrlGlow = getChild<LLSpinCtrl>("glow");
 	if(mCtrlGlow)
 	{
@@ -383,12 +380,13 @@ void LLPanelFace::sendTextureInfo()
 void LLPanelFace::getState()
 {
 	LLViewerObject* objectp = LLSelectMgr::getInstance()->getSelection()->getFirstObject();
-	LLCalc* calcp = LLCalc::getInstance();
+
 	if( objectp
 		&& objectp->getPCode() == LL_PCODE_VOLUME
 		&& objectp->permModify())
 	{
 		BOOL editable = objectp->permModify();
+
 
 		// only turn on auto-adjust button if there is a media renderer and the media is loaded
 		childSetEnabled("textbox autofix",FALSE);
@@ -396,11 +394,6 @@ void LLPanelFace::getState()
 		childSetEnabled("button align",FALSE);
 		//mBtnAutoFix->setEnabled ( FALSE );
 		
-		if(LLViewerMedia::hasMedia())
-		{
-			childSetEnabled("textbox autofix",editable);
-			childSetEnabled("button align",editable);
-		}
 		//if ( LLMediaEngine::getInstance()->getMediaRenderer () )
 		//	if ( LLMediaEngine::getInstance()->getMediaRenderer ()->isLoaded () )
 		//	{	
@@ -457,7 +450,15 @@ void LLPanelFace::getState()
 					}
 				}
 			}
+
+			if(LLViewerMedia::textureHasMedia(id))
+			{
+				childSetEnabled("textbox autofix",editable);
+				childSetEnabled("button align",editable);
+			}
+
 		}
+
 		
 		LLAggregatePermissions texture_perms;
 		if(texture_ctrl)
@@ -756,15 +757,6 @@ void LLPanelFace::getState()
 				childSetEnabled("button apply",enabled);
 			}
 		}
-
-		// Set variable values for numeric expressions
-		calcp->setVar(LLCalc::TEX_U_SCALE, childGetValue("TexScaleU").asReal());
-		calcp->setVar(LLCalc::TEX_V_SCALE, childGetValue("TexScaleV").asReal());
-		calcp->setVar(LLCalc::TEX_U_OFFSET, childGetValue("TexOffsetU").asReal());
-		calcp->setVar(LLCalc::TEX_V_OFFSET, childGetValue("TexOffsetV").asReal());
-		calcp->setVar(LLCalc::TEX_ROTATION, childGetValue("TexRot").asReal());
-		calcp->setVar(LLCalc::TEX_TRANSPARENCY, childGetValue("ColorTrans").asReal());
-		calcp->setVar(LLCalc::TEX_GLOW, childGetValue("glow").asReal());
 	}
 	else
 	{
@@ -800,16 +792,6 @@ void LLPanelFace::getState()
 
 		childSetEnabled("button align",FALSE);
 		childSetEnabled("button apply",FALSE);
-
-
-		// Set variable values for numeric expressions
-		calcp->clearVar(LLCalc::TEX_U_SCALE);
-		calcp->clearVar(LLCalc::TEX_V_SCALE);
-		calcp->clearVar(LLCalc::TEX_U_OFFSET);
-		calcp->clearVar(LLCalc::TEX_V_OFFSET);
-		calcp->clearVar(LLCalc::TEX_ROTATION);
-		calcp->clearVar(LLCalc::TEX_TRANSPARENCY);
-		calcp->clearVar(LLCalc::TEX_GLOW);		
 	}
 }
 
@@ -962,14 +944,18 @@ struct LLPanelFaceSetMediaFunctor : public LLSelectedTEFunctor
 {
 	virtual bool apply(LLViewerObject* object, S32 te)
 	{
+		// TODO: the media impl pointer should actually be stored by the texture
+		viewer_media_t pMediaImpl = LLViewerMedia::getMediaImplFromTextureID(object->getTE ( te )->getID());
 		// only do this if it's a media texture
-		if ( object->getTE ( te )->getID() == LLViewerMedia::getMediaTextureID() )
+		if ( pMediaImpl.notNull())
 		{
-			S32 media_width, media_height;
-			S32 texture_width, texture_height;
-			if ( LLViewerMedia::getMediaSize( &media_width, &media_height )
-				&& LLViewerMedia::getTextureSize( &texture_width, &texture_height ) )
+			LLPluginClassMedia *media = pMediaImpl->getMediaPlugin();
+			if(media)
 			{
+				S32 media_width = media->getWidth();
+				S32 media_height = media->getHeight();
+				S32 texture_width = media->getTextureWidth();
+				S32 texture_height = media->getTextureHeight();
 				F32 scale_s = (F32)media_width / (F32)texture_width;
 				F32 scale_t = (F32)media_height / (F32)texture_height;
 

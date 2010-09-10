@@ -47,7 +47,6 @@
 #include "lltabcontainer.h"
 #include "lltextbox.h"
 #include "lltexteditor.h"
-#include "llviewercontrol.h"
 #include "llviewerimagelist.h"
 #include "llviewerwindow.h"
 #include "llfocusmgr.h"
@@ -710,7 +709,6 @@ void LLPanelGroupSubTab::buildActionCategory(LLScrollListCtrl* ctrl,
 		LLSD row;
 
 		row["columns"][0]["column"] = "icon";
-		row["columns"][0]["color"] = gColors.getColor("DefaultListIcon").getValue();
 		icon_map_t::iterator iter = icons.find("folder");
 		if (iter != icons.end())
 		{
@@ -719,7 +717,6 @@ void LLPanelGroupSubTab::buildActionCategory(LLScrollListCtrl* ctrl,
 		}
 
 		row["columns"][1]["column"] = "action";
-		row["columns"][1]["color"] = gColors.getColor("DefaultListText").getValue();
 		row["columns"][1]["value"] = action_set->mActionSetData->mName;
 		row["columns"][1]["font-style"] = "BOLD";
 
@@ -762,7 +759,6 @@ void LLPanelGroupSubTab::buildActionCategory(LLScrollListCtrl* ctrl,
 
 			S32 column_index = 0;
 			row["columns"][column_index]["column"] = "icon";
-			row["columns"][column_index]["color"] = gColors.getColor("DefaultListIcon").getValue();
 			++column_index;
 
 			
@@ -784,7 +780,6 @@ void LLPanelGroupSubTab::buildActionCategory(LLScrollListCtrl* ctrl,
 						row["columns"][column_index]["column"] = "checkbox";
 						row["columns"][column_index]["type"] = "icon";
 						row["columns"][column_index]["value"] = (*iter).second;
-						row["columns"][column_index]["color"] = gColors.getColor("DefaultListIcon").getValue();
 						++column_index;
 					}
 				}
@@ -795,7 +790,6 @@ void LLPanelGroupSubTab::buildActionCategory(LLScrollListCtrl* ctrl,
 					{
 						row["columns"][column_index]["column"] = "checkbox";
 						row["columns"][column_index]["type"] = "icon";
-						row["columns"][column_index]["color"] = gColors.getColor("DefaultListIcon").getValue();
 						row["columns"][column_index]["value"] = (*iter).second;
 						++column_index;
 					}
@@ -806,7 +800,6 @@ void LLPanelGroupSubTab::buildActionCategory(LLScrollListCtrl* ctrl,
 			row["columns"][column_index]["column"] = "action";
 			row["columns"][column_index]["value"] = (*ra_it)->mDescription;
 			row["columns"][column_index]["font"] = "SANSSERIFSMALL";
-			row["columns"][column_index]["color"] = gColors.getColor("DefaultListText").getValue();
 
 			LLScrollListItem* item = ctrl->addElement(row, ADD_BOTTOM, (*ra_it));
 
@@ -1089,10 +1082,8 @@ void LLPanelGroupMembersSubTab::handleMemberSelect()
 
 				row["columns"][0]["column"] = "checkbox";
 				row["columns"][0]["type"] = "checkbox";
-				//row["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
 
 				row["columns"][1]["column"] = "role";
-				row["columns"][1]["color"] = gColors.getColor("DefaultListText").getValue();
 				row["columns"][1]["value"] = label.str();
 
 				if (row["id"].asUUID().isNull())
@@ -1693,15 +1684,12 @@ void LLPanelGroupMembersSubTab::updateMembers()
 			row["id"] = (*mMemberProgress).first;
 
 			row["columns"][0]["column"] = "name";
-			row["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
 			// value is filled in by name list control
 
 			row["columns"][1]["column"] = "donated";
-			row["columns"][1]["color"] = gColors.getColor("DefaultListText").getValue();
 			row["columns"][1]["value"] = donated.str();
 
 			row["columns"][2]["column"] = "online";
-			row["columns"][2]["color"] = gColors.getColor("DefaultListText").getValue();
 			row["columns"][2]["value"] = mMemberProgress->second->getOnlineStatus();
 			row["columns"][2]["font"] = "SANSSERIFSMALL";
 
@@ -1781,10 +1769,6 @@ BOOL LLPanelGroupRolesSubTab::postBuildSubTab(LLView* root)
 		return FALSE;
 	}
 
-	mAssignedMembersList->setCallbackUserData(this);
-	// Show the member's profile on double click.
-	mAssignedMembersList->setDoubleClickCallback(onMemberDoubleClick);
-
 	mRemoveEveryoneTxt = getString("cant_delete_role");
 
 	mCreateRoleButton = 
@@ -1831,22 +1815,6 @@ BOOL LLPanelGroupRolesSubTab::postBuildSubTab(LLView* root)
 	setFooterEnabled(FALSE);
 
 	return TRUE;
-}
-
-// static
-void LLPanelGroupRolesSubTab::onMemberDoubleClick(void* user_data)
-{
-	LLPanelGroupRolesSubTab* self = static_cast<LLPanelGroupRolesSubTab*>(user_data);
-	self->handleMemberDoubleClick();
-}
-
-void LLPanelGroupRolesSubTab::handleMemberDoubleClick()
-{
-	LLScrollListItem* selected = mAssignedMembersList->getFirstSelected();
-	if (selected)
-	{
-		LLFloaterAvatarInfo::showFromDirectory( selected->getUUID() );
-	}
 }
 
 void LLPanelGroupRolesSubTab::activate()
@@ -1912,15 +1880,12 @@ LLSD LLPanelGroupRolesSubTab::createRoleItem(const LLUUID& role_id,
 	row["id"] = role_id;
 
 	row["columns"][0]["column"] = "name";
-	row["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
 	row["columns"][0]["value"] = name;
 
 	row["columns"][1]["column"] = "title";
-	row["columns"][1]["color"] = gColors.getColor("DefaultListText").getValue();
 	row["columns"][1]["value"] = title;
 
 	row["columns"][2]["column"] = "members";
-	row["columns"][2]["color"] = gColors.getColor("DefaultListText").getValue();
 	row["columns"][2]["value"] = members;
 	
 	return row;
@@ -2392,7 +2357,6 @@ void LLPanelGroupRolesSubTab::handleCreateRole()
 	LLSD row;
 	row["id"] = new_role_id;
 	row["columns"][0]["column"] = "name";
-	row["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
 	row["columns"][0]["value"] = rd.mRoleName;
 	mRolesList->addElement(row, ADD_BOTTOM, this);
 	mRolesList->selectByID(new_role_id);

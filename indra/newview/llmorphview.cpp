@@ -115,7 +115,6 @@ void	LLMorphView::shutdown()
 	LLVOAvatar *avatarp = gAgent.getAvatarObject();
 	if(avatarp && !avatarp->isDead())
 	{
-		avatarp->setAppearanceFlag(false);
 		avatarp->startMotion( ANIM_AGENT_BODY_NOISE );
 		avatarp->mSpecialRenderMode = 0;
 		// reset camera

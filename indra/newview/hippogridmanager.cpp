@@ -1,3 +1,5 @@
+
+
 #include "llviewerprecompiledheaders.h"
 
 #include "hippogridmanager.h"
@@ -455,7 +457,6 @@ void HippoGridManager::loadFromFile()
 	setDefaultGrid(last_grid);
 	setCurrentGrid(last_grid);
 }
-
 
 void HippoGridManager::parseFile(const std::string &fileName, bool mergeIfNewer)
 {

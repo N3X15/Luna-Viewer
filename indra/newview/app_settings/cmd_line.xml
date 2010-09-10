@@ -87,7 +87,7 @@
       <key>count</key>
       <integer>1</integer>
       <key>map-to</key>
-      <string>skinCurrent</string>
+      <string>SkinFolder</string>
     </map>
 
     <key>autologin</key>
@@ -275,6 +275,35 @@
       <!-- Special case. Not mapped to a setting. -->
     </map>
 
+    <key>regionuri</key>
+    <map>
+      <key>desc</key>
+      <string>URL of region to connect to through Agent Domain.</string>            
+      <key>count</key>
+      <integer>1</integer>
+      <key>map-to</key>
+      <string>CmdLineRegionURI</string>
+    </map>
+    
+
+    <key>agenturi</key>
+    <map>
+      <key>desc</key>
+      <string>URL of agent host to connect to in Agent Domain.</string>            
+      <key>count</key>
+      <integer>1</integer>
+      <key>map-to</key>
+      <string>CmdLineAgentURI</string>
+    </map>
+
+    <key>ogp</key>
+    <map>
+      <key>desc</key>
+      <string>enable OGPX protocol</string>            
+      <key>map-to</key>
+      <string>OpenGridProtocol</string>
+    </map>
+
     <key>ignorepixeldepth</key>
     <map>
       <key>desc</key>
@@ -333,30 +362,13 @@
       <string>CrashOnStartup</string>
     </map>
 
-    <key>coreoncrash</key>
+    <key>disablecrashlogger</key>
     <map>
       <key>desc</key>
-      <string>Disables the crash logger and creates a core file in the event of a crash</string>
+      <string>Disables the crash logger and lets the OS handle crashes</string>
       <key>map-to</key>
-      <string>CoreOnCrash</string>
-    </map>
+      <string>DisableCrashLogger</string>
+	</map>
 
-    <key>appname</key>
-    <map>
-      <key>desc</key>
-      <string>Set another name for AppData directory</string>
-      <key>count</key>
-      <integer>1</integer>
-      <key>map-to</key>
-      <string>AppName</string>
-    </map>
-
-    <key>portable</key>
-    <map>
-      <key>desc</key>
-      <string>Start emerald in portable mode</string>
-      <key>map-to</key>
-      <string>PortableMode</string>
-    </map>
   </map>
 </llsd>

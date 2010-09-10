@@ -136,11 +136,9 @@ void LLPanelDirEvents::setDay(S32 day)
 	// Convert to Pacific, based on server's opinion of whether
 	// it's daylight savings time there.
 	internal_time = utc_to_pacific_time(utc_time, gPacificDaylightTime);
-
-	std::string buffer = llformat("%d/%d",
-			1 + internal_time->tm_mon,		// Jan = 0
-			internal_time->tm_mday);	// 2001 = 101
-	childSetValue("date_text", buffer);
+	std::string date;
+	timeStructToFormattedString(internal_time, "%m-%d", date);
+	childSetValue("date_text", date);
 }
 
 // virtual
@@ -168,11 +166,9 @@ void LLPanelDirEvents::performQueryOrDelete(U32 event_id)
 	// Convert to Pacific, based on server's opinion of whether
 	// it's daylight savings time there.
 	internal_time = utc_to_pacific_time(utc_time, gPacificDaylightTime);
-
-	std::string buffer = llformat("%d/%d",
-			1 + internal_time->tm_mon,		// Jan = 0
-			internal_time->tm_mday);	// 2001 = 101
-	childSetValue("date_text", buffer);
+	std::string date;
+	timeStructToFormattedString(internal_time, "%m-%d", date);
+	childSetValue("date_text", date);
 
 	// Record the relative day so back and forward buttons
 	// offset from this day.

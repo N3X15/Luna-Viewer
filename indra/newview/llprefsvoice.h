@@ -50,7 +50,6 @@ public:
 
 private:
 	static void onCommitEnableVoiceChat(LLUICtrl* ctrl, void* user_data);
-	static void onClickResetVoice(void* user_data);
 	static void onClickSetKey(void* user_data);
 	static void onClickSetMiddleMouse(void* user_data);
 	static void onClickVoiceDeviceSettings(void* user_data);

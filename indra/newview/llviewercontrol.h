@@ -62,8 +62,6 @@ extern LLControlGroup gColors;
 // Saved at end of session
 extern LLControlGroup gCrashSettings;
 
-extern LLColor4 DefaultListText;
-
 // Set after settings loaded
 extern std::string gLastRunVersion;
 extern std::string gCurrentVersion;

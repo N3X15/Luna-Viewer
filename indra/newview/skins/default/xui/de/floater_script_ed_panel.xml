@@ -25,11 +25,8 @@
 		</menu>
 		<menu name="Help">
 			<menu_item_call label="Hilfe..." name="Help..." />
-			<menu_item_call label="LSL Wiki-Hilfe..." name="LSL Wiki Help..." />			
+			<menu_item_call label="LSL Wiki-Hilfe..." name="LSL Wiki Help..." />
 		</menu>
-    <menu name="Advanced">
-      <menu_item_check label="Aktiviere Preprocessing" name="preproc_on"/>
-    </menu>
 	</menu_bar>
 	<text name="loading">
 		Wird geladen...

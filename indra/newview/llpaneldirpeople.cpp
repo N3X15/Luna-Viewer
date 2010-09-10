@@ -77,9 +77,7 @@ void LLPanelDirPeople::performQuery()
 	// filter short words out of the query string
 	// and indidate if we did have to filter it
 	// The shortest username is 2 characters long.
-	// *fix This is no longer true, M Linden is a exception that demonstrates the invalidity of this assumption.
-	std::string query_string = childGetValue("name").asString();
-	/*const S32 SHORTEST_WORD_LEN = 2;
+	const S32 SHORTEST_WORD_LEN = 2;
 	bool query_was_filtered = false;
 	std::string query_string = LLPanelDirBrowser::filterShortWords( 
 			childGetValue("name").asString(), 
@@ -99,7 +97,7 @@ void LLPanelDirPeople::performQuery()
 		LLSD args;
 		args["FINALQUERY"] = query_string;
 		LLNotifications::instance().add("SeachFilteredOnShortWords", args);
-	};*/
+	};
 
 	setupNewSearch();
 

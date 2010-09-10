@@ -59,19 +59,16 @@
 #include "llvolumemessage.h"
 #include "llhudmanager.h"
 #include "llagent.h"
-#include "audioengine.h"
+#include "llaudioengine.h"
 #include "llhudeffecttrail.h"
 #include "llviewerobjectlist.h"
 #include "llviewercamera.h"
 #include "llviewerstats.h"
-#include "importtracker.h"
 
-#include "llparcel.h" // moymod
-#include "llviewerparcelmgr.h" // moymod
-
-// [RLVa:KB]
-#include "rlvhandler.h"
-// [/RLVa:KB]
+// <edit>
+#include "llparcel.h" // always rez
+#include "llviewerparcelmgr.h" // always rez
+// </edit>
 
 const LLVector3 DEFAULT_OBJECT_SCALE(0.5f, 0.5f, 0.5f);
 
@@ -132,14 +129,6 @@ BOOL LLToolPlacer::raycastForNewObjPos( S32 x, S32 y, LLViewerObject** hit_obj, 
 	{
 		return FALSE;
 	}
-
-// [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g) | Modified: RLVa-0.2.0f
-	// NOTE: don't use surface_pos_global since for prims it will be the center of the prim while we need center + offset
-	if ( (gRlvHandler.hasBehaviour(RLV_BHVR_FARTOUCH)) && (dist_vec_squared(gAgent.getPositionGlobal(), pick.mPosGlobal) > 1.5f * 1.5f) )
-	{
-		return FALSE;
-	}
-// [/RLVa:KB]
 
 	// Find the sim where the surface lives.
 	LLViewerRegion *regionp = LLWorld::getInstance()->getRegionFromPosGlobal(surface_pos_global);
@@ -207,22 +196,8 @@ BOOL LLToolPlacer::addObject( LLPCode pcode, S32 x, S32 y, U8 use_physics )
 
 	// Set params for new object based on its PCode.
 	LLQuaternion	rotation;
-	LLVector3		scale = LLVector3(
-		gSavedSettings.getF32("EmeraldBuildPrefs_Xsize"),
-		gSavedSettings.getF32("EmeraldBuildPrefs_Ysize"),
-		gSavedSettings.getF32("EmeraldBuildPrefs_Zsize"));
-	
+	LLVector3		scale = DEFAULT_OBJECT_SCALE;
 	U8				material = LL_MCODE_WOOD;
-	if(gSavedSettings.getString("EmeraldBuildPrefs_Material")== "Stone") material = LL_MCODE_STONE;
-	if(gSavedSettings.getString("EmeraldBuildPrefs_Material")== "Metal") material = LL_MCODE_METAL;
-	if(gSavedSettings.getString("EmeraldBuildPrefs_Material")== "Wood") material = LL_MCODE_WOOD;
-	if(gSavedSettings.getString("EmeraldBuildPrefs_Material")== "Flesh") material = LL_MCODE_FLESH;
-	if(gSavedSettings.getString("EmeraldBuildPrefs_Material")== "Rubber") material = LL_MCODE_RUBBER;
-	if(gSavedSettings.getString("EmeraldBuildPrefs_Material")== "Plastic") material = LL_MCODE_PLASTIC;
-		
-
-	
-
 	BOOL			create_selected = FALSE;
 	LLVolumeParams	volume_params;
 	
@@ -263,32 +238,30 @@ BOOL LLToolPlacer::addObject( LLPCode pcode, S32 x, S32 y, U8 use_physics )
 	gMessageSystem->nextBlockFast(_PREHASH_AgentData);
 	gMessageSystem->addUUIDFast(_PREHASH_AgentID, gAgent.getID());
 	gMessageSystem->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
-	//MOYMOD 2009-05, If avatar is in land group/land owner group,
-	//	it rezzes it with it to prevent autoreturn/whatever
-	if(gSavedSettings.getBOOL("mm_alwaysRezWithLandGroup")){
+
+	// Alway rez objects as land group if available.
+	if (gSavedSettings.getBOOL("AscentAlwaysRezInGroup"))
+	{
 		LLParcel *parcel = LLViewerParcelMgr::getInstance()->getAgentParcel();
-		if(gAgent.isInGroup(parcel->getGroupID())){
+		if(gAgent.isInGroup(parcel->getGroupID()))
 			gMessageSystem->addUUIDFast(_PREHASH_GroupID, parcel->getGroupID());
-		}else if(gAgent.isInGroup(parcel->getOwnerID())){
+		else if(gAgent.isInGroup(parcel->getOwnerID()))
 			gMessageSystem->addUUIDFast(_PREHASH_GroupID, parcel->getOwnerID());
-		}else gMessageSystem->addUUIDFast(_PREHASH_GroupID, gAgent.getGroupID());
-	}else gMessageSystem->addUUIDFast(_PREHASH_GroupID, gAgent.getGroupID());
+		else gMessageSystem->addUUIDFast(_PREHASH_GroupID, gAgent.getGroupID());
+	} else gMessageSystem->addUUIDFast(_PREHASH_GroupID, gAgent.getGroupID());
+
 	gMessageSystem->nextBlockFast(_PREHASH_ObjectData);
 	gMessageSystem->addU8Fast(_PREHASH_Material,	material);
 
 	U32 flags = 0;		// not selected
-	if (use_physics || gSavedSettings.getBOOL("EmeraldBuildPrefs_Physical"))
+	if (use_physics)
 	{
 		flags |= FLAGS_USE_PHYSICS;
 	}
-//	if (create_selected)
-// [RLVa:KB] - Alternate: Emerald-370 | Checked: 2009-07-04 (RLVa-1.0.0b) | Added: RLVa-1.0.0b
-	if ( (create_selected) && (!gRlvHandler.hasBehaviour(RLV_BHVR_EDIT)) )
-// [/RLVa:KB]
+	if (create_selected)
 	{
 		flags |= FLAGS_CREATE_SELECTED;
 	}
-	
 	gMessageSystem->addU32Fast(_PREHASH_AddFlags, flags );
 
 	LLPCode volume_pcode;	// ...PCODE_VOLUME, or the original on error
@@ -463,8 +436,7 @@ BOOL LLToolPlacer::addObject( LLPCode pcode, S32 x, S32 y, U8 use_physics )
 	
 	// Pack in name value pairs
 	gMessageSystem->sendReliable(regionp->getHost());
-	//lgg set flag to set texture here
-	gImportTracker.expectRez();
+
 	// Spawns a message, so must be after above send
 	if (create_selected)
 	{
@@ -544,13 +516,6 @@ BOOL LLToolPlacer::placeObject(S32 x, S32 y, MASK mask)
 {
 	BOOL added = TRUE;
 	
-// [RLVa:KB] - Checked: 2010-01-02 (RLVa-1.1.0l) | Modified: RLVa-1.1.0l
-	if ( (rlv_handler_t::isEnabled()) && ((gRlvHandler.hasBehaviour(RLV_BHVR_REZ)) || (gRlvHandler.hasBehaviour(RLV_BHVR_INTERACT))) )
-	{
-		return TRUE; // Callers seem to expect a "did you handle it?" so we return TRUE rather than FALSE
-	}
-// [/RLVa:KB]
-
 	if (gSavedSettings.getBOOL("CreateToolCopySelection"))
 	{
 		added = addDuplicate(x, y);

@@ -52,11 +52,20 @@
 	#include <windows.h>
 #endif
 
+// Work around stupid Microsoft STL warning
+#ifdef LL_WINDOWS
+#pragma warning (disable : 4702) // warning C4702: unreachable code
+#endif
+
 #include <algorithm>
 #include <deque>
 #include <functional>
 #include <map>
 #include <set>
+
+#ifdef LL_WINDOWS
+#pragma warning (3 : 4702) // we like level 3, not 4
+#endif
 
 // Library headers from llcommon project:
 #include "bitpack.h"
@@ -75,7 +84,6 @@
 #include "llendianswizzle.h"
 #include "llerror.h"
 #include "llfasttimer.h"
-#include "llfixedbuffer.h"
 #include "llframetimer.h"
 #include "llhash.h"
 #include "lllocalidhashmap.h"
@@ -109,7 +117,7 @@
 #include "llimage.h"
 #include "llimagebmp.h"
 #include "llimagepng.h"
-//#include "llimagej2c.h"
+#include "llimagej2c.h"
 #include "llimagejpeg.h"
 #include "llimagetga.h"
 #include "llmapimagetype.h"

@@ -43,12 +43,9 @@
 
 // project includes
 #include "llviewerobject.h"
-#include "llvoavatar.h"
 
 class LLNetMap;
 class LLDebugBeacon;
-
-
 
 const U32 CLOSE_BIN_SIZE = 10;
 const U32 NUM_BINS = 16;
@@ -67,12 +64,6 @@ public:
 	~LLViewerObjectList();
 
 	void destroy();
-
-	// FLEXLIFE HACK.  
-	//
-	// Find an avatar by name. 
-	//
-	inline LLVOAvatar *findAvatar(const std::string &name);
 
 	// For internal use only.  Does NOT take a local id, takes an index into
 	// an internal dynamic array.
@@ -125,6 +116,8 @@ public:
 	LLViewerObject *getSelectedObject(const U32 object_id);
 
 	inline S32 getNumObjects() { return mObjects.count(); }
+
+	LLDynamicArrayPtr<LLPointer<LLViewerObject> > getObjectMap(){ return mMapObjects; }
 
 	void addToMap(LLViewerObject *objectp);
 	void removeFromMap(LLViewerObject *objectp);
@@ -262,21 +255,6 @@ inline LLViewerObject *LLViewerObjectList::findObject(const LLUUID &id)
 	{
 		return NULL;
 	}
-}
-
-inline LLVOAvatar *LLViewerObjectList::findAvatar(const std::string &name)
-{
-	std::map<LLUUID, LLPointer<LLViewerObject> >::iterator iter = mUUIDObjectMap.begin();
-	while(iter != mUUIDObjectMap.end())
-	{
-		if(iter->second->isAvatar())
-		{
-			LLVOAvatar* av=(LLVOAvatar*)iter->second.get();
-			if(av->getFullname()==name)
-				return av;
-		}
-	}
-	return NULL;
 }
 
 inline LLViewerObject *LLViewerObjectList::getObject(const S32 index)

@@ -42,7 +42,6 @@
 class LLHomeLocationResponder : public LLHTTPClient::Responder
 {
 	virtual void result( const LLSD& content );
-	using LLCurl::Responder::error;
 	virtual void error( const LLSD& content );
 };
 

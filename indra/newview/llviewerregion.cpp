@@ -132,7 +132,6 @@ public:
 		
 		if (STATE_SEED_GRANTED_WAIT == LLStartUp::getStartupState())
 		{
-			
 			LLStartUp::setStartupState( STATE_SEED_CAP_GRANTED );
 		}
 	}
@@ -223,13 +222,14 @@ LLViewerRegion::LLViewerRegion(const U64 &handle,
 	
 	//create object partitions
 	//MUST MATCH declaration of eObjectPartitions
-	mObjectPartition.push_back(new LLHUDPartition());	//PARTITION_HUD
+	mObjectPartition.push_back(new LLHUDPartition());		//PARTITION_HUD
 	mObjectPartition.push_back(new LLTerrainPartition());	//PARTITION_TERRAIN
-	mObjectPartition.push_back(new LLWaterPartition());	//PARTITION_WATER
-	mObjectPartition.push_back(new LLTreePartition());	//PARTITION_TREE
+	mObjectPartition.push_back(new LLVoidWaterPartition());		//PARTITION_VOIDWATER
+	mObjectPartition.push_back(new LLWaterPartition());		//PARTITION_WATER
+	mObjectPartition.push_back(new LLTreePartition());		//PARTITION_TREE
 	mObjectPartition.push_back(new LLParticlePartition());	//PARTITION_PARTICLE
-	mObjectPartition.push_back(new LLCloudPartition());	//PARTITION_CLOUD
-	mObjectPartition.push_back(new LLGrassPartition());	//PARTITION_GRASS
+	mObjectPartition.push_back(new LLCloudPartition());		//PARTITION_CLOUD
+	mObjectPartition.push_back(new LLGrassPartition());		//PARTITION_GRASS
 	mObjectPartition.push_back(new LLVolumePartition());	//PARTITION_VOLUME
 	mObjectPartition.push_back(new LLBridgePartition());	//PARTITION_BRIDGE
 	mObjectPartition.push_back(new LLHUDParticlePartition());//PARTITION_HUD_PARTICLE
@@ -332,7 +332,7 @@ void LLViewerRegion::loadCache()
 
 	LLUUID cache_id;
 	nread = fread(&cache_id.mData, 1, UUID_BYTES, fp);
-	if (nread != UUID_BYTES || mCacheID != cache_id)
+	if (nread != (size_t)UUID_BYTES || mCacheID != cache_id)
 	{
 		llinfos << "Cache ID doesn't match for this region, discarding"
 			<< llendl;
@@ -408,7 +408,7 @@ void LLViewerRegion::saveCache()
 	}
 
 	// write the cache id for this sim
-	if (fwrite(&mCacheID.mData, 1, UUID_BYTES, fp) != UUID_BYTES)
+	if (fwrite(&mCacheID.mData, 1, UUID_BYTES, fp) != (size_t)UUID_BYTES)
 	{
 		llwarns << "Short write" << llendl;
 	}
@@ -545,16 +545,61 @@ const std::string LLViewerRegion::getSimAccessString() const
 std::string LLViewerRegion::regionFlagsToString(U32 flags)
 {
 	std::string result;
-
 	if (flags & REGION_FLAGS_SANDBOX)
 	{
+		if(!result.empty()) result += ", ";
 		result += "Sandbox";
 	}
 
 	if (flags & REGION_FLAGS_ALLOW_DAMAGE)
 	{
-		result += " Not Safe";
+		if(!result.empty()) result += ", ";
+		result += "Not Safe";
 	}
+	// <edit>
+	//These dont seem to have value anymore.
+	/*if (!(flags & REGION_FLAGS_PUBLIC_ALLOWED))
+	{
+		if(!result.empty()) result += ", ";
+		result += "Private";
+	}
+
+	if (!(flags & REGION_FLAGS_ALLOW_VOICE))
+	{
+		if(!result.empty()) result += ", ";
+		result += "Voice Disabled";
+	}*/
+	if (flags & REGION_FLAGS_ALLOW_LANDMARK)
+	{
+		if(!result.empty()) result += ", ";
+		result += "Create Landmarks";
+	}
+
+	if (flags & REGION_FLAGS_ALLOW_DIRECT_TELEPORT)
+	{
+		if(!result.empty()) result += ", ";
+		result += "Direct Teleport";
+	}
+	
+	if (flags & REGION_FLAGS_DENY_ANONYMOUS)
+	{
+		if(!result.empty()) result += ", ";
+		result += "Payment Info needed";
+	}
+	
+	if (flags & REGION_FLAGS_DENY_AGEUNVERIFIED)
+	{
+		if(!result.empty()) result += ", ";
+		result += "Age Verified";
+	}
+
+	if (flags & REGION_FLAGS_BLOCK_FLY)
+	{
+		if(!result.empty()) result += ", ";
+		result += "No Fly";
+	}
+
+	// </edit>
 
 	return result;
 }
@@ -764,97 +809,7 @@ F32 LLViewerRegion::getCompositionXY(const S32 x, const S32 y) const
 
 	return getComposition()->getValueScaled((F32)x, (F32)y);
 }
-/*
-F32 LLViewerRegion::getCompositionXYZ(const S32 x, const S32 y,const S32 z) const
-{
-	if (x >= 256)
-	{
-		if (y >= 256)
-		{
-			LLVector3d center = getCenterGlobal() + LLVector3d(256.f, 256.f, 0.f);
-			LLViewerRegion *regionp = LLWorld::getInstance()->getRegionFromPosGlobal(center);
-			if (regionp)
-			{
-				// OK, we need to do some hackery here - different simulators no longer use
-				// the same composition values, necessarily.
-				// If we're attempting to blend, then we want to make the fractional part of
-				// this region match the fractional of the adjacent.  For now, just minimize
-				// the delta.
-				F32 our_comp = getComposition()->getValueScaled(255, 255);
-				F32 adj_comp = regionp->getComposition()->getValueScaled(x - 256.f, y - 256.f);
-				while (llabs(our_comp - adj_comp) >= 1.f)
-				{
-					if (our_comp > adj_comp)
-					{
-						adj_comp += 1.f;
-					}
-					else
-					{
-						adj_comp -= 1.f;
-					}
-				}
-				return adj_comp;
-			}
-		}
-		else
-		{
-			LLVector3d center = getCenterGlobal() + LLVector3d(256.f, 0, 0.f);
-			LLViewerRegion *regionp = LLWorld::getInstance()->getRegionFromPosGlobal(center);
-			if (regionp)
-			{
-				// OK, we need to do some hackery here - different simulators no longer use
-				// the same composition values, necessarily.
-				// If we're attempting to blend, then we want to make the fractional part of
-				// this region match the fractional of the adjacent.  For now, just minimize
-				// the delta.
-				F32 our_comp = getComposition()->getValueScaled(255.f, (F32)y);
-				F32 adj_comp = regionp->getComposition()->getValueScaled(x - 256.f, (F32)y);
-				while (llabs(our_comp - adj_comp) >= 1.f)
-				{
-					if (our_comp > adj_comp)
-					{
-						adj_comp += 1.f;
-					}
-					else
-					{
-						adj_comp -= 1.f;
-					}
-				}
-				return adj_comp;
-			}
-		}
-	}
-	else if (y >= 256)
-	{
-		LLVector3d center = getCenterGlobal() + LLVector3d(0.f, 256.f, 0.f);
-		LLViewerRegion *regionp = LLWorld::getInstance()->getRegionFromPosGlobal(center);
-		if (regionp)
-		{
-			// OK, we need to do some hackery here - different simulators no longer use
-			// the same composition values, necessarily.
-			// If we're attempting to blend, then we want to make the fractional part of
-			// this region match the fractional of the adjacent.  For now, just minimize
-			// the delta.
-			F32 our_comp = getComposition()->getValueScaled((F32)x, 255.f);
-			F32 adj_comp = regionp->getComposition()->getValueScaled((F32)x, y - 256.f);
-			while (llabs(our_comp - adj_comp) >= 1.f)
-			{
-				if (our_comp > adj_comp)
-				{
-					adj_comp += 1.f;
-				}
-				else
-				{
-					adj_comp -= 1.f;
-				}
-			}
-			return adj_comp;
-		}
-	}
 
-	return getComposition()->getValueScaled((F32)x, (F32)y);
-}
-*/
 void LLViewerRegion::calculateCenterGlobal() 
 {
 	mCenterGlobal = mOriginGlobal;
@@ -1509,16 +1464,17 @@ void LLViewerRegion::setSeedCapability(const std::string& url)
 	capabilityNames.append("EstateChangeInfo");
 	capabilityNames.append("EventQueueGet");
 	capabilityNames.append("FetchInventory");
-	capabilityNames.append("WebFetchInventoryDescendents");
 	capabilityNames.append("FetchLib");
 	capabilityNames.append("FetchLibDescendents");
+	capabilityNames.append("GetTexture");
 	capabilityNames.append("GroupProposalBallot");
 	capabilityNames.append("HomeLocation");
 	capabilityNames.append("MapLayer");
 	capabilityNames.append("MapLayerGod");
-	capabilityNames.append("NewAgentInventory");
 	capabilityNames.append("NewFileAgentInventory");
 	capabilityNames.append("ParcelPropertiesUpdate");
+	capabilityNames.append("ParcelMediaURLFilterList");
+	capabilityNames.append("ParcelNavigateMedia");
 	capabilityNames.append("ParcelVoiceInfoRequest");
 	capabilityNames.append("ProductInfoRequest");
 	capabilityNames.append("ProvisionVoiceAccountRequest");
@@ -1533,6 +1489,7 @@ void LLViewerRegion::setSeedCapability(const std::string& url)
 	capabilityNames.append("SendUserReportWithScreenshot");
 	capabilityNames.append("ServerReleaseNotes");
 	capabilityNames.append("StartGroupProposal");
+	capabilityNames.append("TextureStats");
 	capabilityNames.append("UntrustedSimulatorMessage");
 	capabilityNames.append("UpdateAgentInformation");
 	capabilityNames.append("UpdateAgentLanguage");
@@ -1545,6 +1502,10 @@ void LLViewerRegion::setSeedCapability(const std::string& url)
 	capabilityNames.append("UploadBakedTexture");
 	capabilityNames.append("ViewerStartAuction");
 	capabilityNames.append("ViewerStats");
+	capabilityNames.append("WebFetchInventoryDescendents"); // OGPX : since this is asking the region
+															// leave the old naming in place, on agent domain
+															// it is now called agent/inventory. Both
+															// caps have the same LLSD returned.
 	// Please add new capabilities alphabetically to reduce
 	// merge conflicts.
 	// No one's listening to this :/

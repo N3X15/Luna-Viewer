@@ -61,7 +61,6 @@ public:
 	void moveObjects(bool reset = false);
 	void moveAvatar(bool reset = false);
 	void moveFlycam(bool reset = false);
-	void streamData(bool reset = false);
 	F32 getJoystickAxis(U32 axis) const;
 	U32 getJoystickButton(U32 button) const;
 	bool isJoystickInitialized() const {return (mDriverState==JDS_INITIALIZED);}
@@ -74,23 +73,16 @@ public:
 	bool toggleFlycam();
 	void setSNDefaults();
 	std::string getDescription();
-	void cansend() { mSendStream = true; }
-	static bool streamEnabled;
-	static F32 streamRefresh;
+	
 protected:
-	static void initStream();
-	static void updateStreamEnabled(const LLSD &data);
-	static void updateStreamRefresh(const LLSD &data);
-
 	void updateEnabled(bool autoenable);
 	void terminate();
 	void handleRun(F32 inc);
 	void agentSlide(F32 inc);
 	void agentPush(F32 inc);
 	void agentFly(F32 inc);
-	void agentPitch(F32 pitch_inc);
-	void agentYaw(F32 yaw_inc);
-	void agentJump();
+	void agentRotate(F32 pitch_inc, F32 turn_inc);
+    void agentJump();
 	void resetDeltas(S32 axis[]);
 #if LIB_NDOF
 	static NDOF_HotPlugResult HotPlugAddCallback(NDOF_Device *dev);
@@ -107,12 +99,9 @@ private:
 	bool					mCameraUpdated;
 	bool 					mOverrideCamera;
 	U32						mJoystickRun;
-	bool					mSendStream;
 	
 	static F32				sLastDelta[7];
 	static F32				sDelta[7];
-	static F32				sStreamLastDelta[6];
-	static F32				sStreamDelta[6];
 };
 
 #endif

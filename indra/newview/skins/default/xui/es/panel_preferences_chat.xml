@@ -90,22 +90,22 @@ del chat:
 			Portugués (Portugués) - Beta
 		</combo_item>
 		<combo_item name="Russian">
-			� �?сскОй (Ruso) - Beta
+			Русский (Ruso) - Beta
 		</combo_item>
 		<combo_item name="Turkish">
-			TÌrkçe (Turco) - Beta
+			Türkçe (Turco) - Beta
 		</combo_item>
 		<combo_item name="Ukrainian">
-			Ук�?а�?Мс�?ка (Ucraniano) - Beta
+			Українська (Ucraniano) - Beta
 		</combo_item>
 		<combo_item length="1" name="Chinese" type="string">
-			䞭�?? (�?�?) (Chino) - Beta
+			中文 (简体) (Chino) - Beta
 		</combo_item>
 		<combo_item length="1" name="(Japanese)" type="string">
-			�?��?��? (Japonés) - Beta
+			日本語 (Japonés) - Beta
 		</combo_item>
 		<combo_item length="1" name="(Korean)" type="string">
-			�??국�?� (Coreano) - Beta
+			한국어 (Coreano) - Beta
 		</combo_item>
 	</combo_box>
 	<text type="string" length="1" name="text_chat_language">

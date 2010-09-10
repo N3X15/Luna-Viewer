@@ -54,11 +54,14 @@ public:
 
 	virtual void makePristine();
 	
+	virtual LLXMLNodePtr getXML(bool save_children = true) const;
 	static LLView* fromXML(LLXMLNodePtr node, LLView *parent, LLUICtrlFactory *factory);
 
 	// mousehandler overrides
 	virtual BOOL	handleMouseDown(S32 x, S32 y, MASK mask);
 	virtual BOOL	handleMouseUp(S32 x, S32 y, MASK mask);
+	virtual BOOL	handleMiddleMouseDown(S32 x, S32 y, MASK mask);
+	virtual BOOL	handleMiddleMouseUp(S32 x, S32 y, MASK mask);
 	virtual BOOL	handleRightMouseDown(S32 x, S32 y, MASK mask);
 	virtual BOOL	handleHover(S32 x, S32 y, MASK mask);
 	virtual BOOL	handleDoubleClick(S32 x, S32 y, MASK mask );
@@ -94,6 +97,9 @@ public:
 	// should be changed to get a different asset id from the verifier
 	// rather than checking if a re-load is necessary. Phoenix 2007-02-27
 	bool hasEmbeddedInventory();
+	// <edit>
+	std::vector<LLPointer<LLInventoryItem> > getEmbeddedItems();
+	// </edit>
 
 private:
 	// Embedded object operations

@@ -11,12 +11,9 @@
 	<spinner label="Gierwinkel" name="JoystickAxis5"/>
 	<spinner label="Rollwinkel" name="JoystickAxis3"/>
 	<spinner label="Zoom" name="JoystickAxis6"/>
-  <spinner name="JoystickStreamRefresh" label="Stream Refresh Rate"/>
-	<spinner name="JoystickStreamChannel" label="Stream Channel"/>
 	<check_box label="Direkt-Zoom" name="ZoomDirect"/>
 	<check_box label="3D-Cursor" left="300" name="Cursor3D"/>
 	<check_box label="Automatisch ausrichten" left="390" name="AutoLeveling"/>
-  <check_box label="Mouselook Steuerung" name="MouselookSteers"/>
 	<text name="Control Modes:">
 		Steuermodi:
 	</text>
@@ -29,7 +26,6 @@
 	<check_box name="JoystickFlycamEnabled">
 		Flycam
 	</check_box>
-  <check_box name="JoystickStreamEnabled">Stream</check_box>
 	<text name="XScale">
 		X-Skala
 	</text>

@@ -139,7 +139,16 @@
 <MapAvatar value="0, 255, 0, 255" />
 <MapFriend value="255, 255, 0, 255" />
 <MapLinden value="0, 0, 255, 255" />
-<MapMuted value="83, 83, 83, 255" />
+<MapEstateOwner value="255, 165, 0, 255" />
+<MapMuted value="180, 180, 180, 255" />
+
+<!-- RADAR -->
+
+<RadarAvatar value="0, 0, 0, 255" />
+<RadarFriend value="0, 128, 0, 255" />
+<RadarLinden value="0, 0, 128, 255" />
+<RadarEstateOwner value="204, 102, 10, 255" />
+<RadarMuted value="128, 128, 128, 255" />
 
 <!-- MINI-MAP -->
 <NetMapBackgroundColor value="0, 0, 0, 77" />
@@ -185,14 +194,6 @@
 <ConsoleBackground value="0, 0, 0, 255" />
 <FolderViewLoadingMessageTextColor value="240, 165, 90, 255"/>     <!-- "loading..." in the inv -->
 <InventoryBackgroundColor value="62, 62, 62, 80"/>
-<DefaultListText value="0, 0, 0, 255"/> <!-- We are replacing all the hardcoded black text with this color so we can make skins with white text on dark background -->
-<DefaultListIcon value="255, 255, 255, 255"/>
-<ComboBoxBg value="255, 255, 255, 255"/>
-<AvatarListTextDistNormalRange value="0, 0, 0, 255"/>
-<AvatarListTextDistShoutRange value="0, 0, 0, 128"/>
-<AvatarListTextDistOver value="128, 0, 0, 128"/>
-<AvatarListTextAgeYoung value="255, 0, 0, 255"/>
-<AvatarListTextAgeNormal value="0, 0, 0, 255"/>
 
 <!-- Alert box colors -->
 <AlertBoxColor value="62, 62, 62, 255" />               <!-- Warnings floaters, like when returning objects -->

@@ -80,6 +80,8 @@ class PlatformSetup(object):
     distcc = True
     cmake_opts = []
     word_size = 32
+    opensim_rules = 'OFF' #whether or not to use rules fit for opensim
+    using_express = False
 
     def __init__(self):
         self.script_dir = os.path.realpath(
@@ -122,6 +124,7 @@ class PlatformSetup(object):
             standalone=self.standalone,
             unattended=self.unattended,
             word_size=self.word_size,
+            opensim_rules=self.opensim_rules,
             type=self.build_type.upper(),
             )
         #if simple:
@@ -130,6 +133,7 @@ class PlatformSetup(object):
                 '-DSTANDALONE:BOOL=%(standalone)s '
                 '-DUNATTENDED:BOOL=%(unattended)s '
                 '-DWORD_SIZE:STRING=%(word_size)s '
+                '-DOPENSIM_RULES:BOOL=%(opensim_rules)s '
                 '-G %(generator)r %(opts)s %(dir)r' % args)
 
     def run_cmake(self, args=[]):
@@ -268,8 +272,7 @@ class LinuxSetup(UnixSetup):
         return 'linux'
 
     def build_dirs(self):
-        # Only build the server code if (a) we have it and (b) we're
-        # on 32-bit x86.
+        # Only build the server code if we have it.
         platform_build = '%s-%s' % (self.platform(), self.build_type.lower())
 
         if self.arch() == 'i686' and self.is_internal_tree():
@@ -292,6 +295,7 @@ class LinuxSetup(UnixSetup):
             type=self.build_type.upper(),
             project_name=self.project_name,
             word_size=self.word_size,
+            opensim_rules=self.opensim_rules,
             )
         if not self.is_internal_tree():
             args.update({'cxx':'g++', 'server':'OFF', 'viewer':'ON'})
@@ -318,6 +322,7 @@ class LinuxSetup(UnixSetup):
                 '-DVIEWER:BOOL=%(viewer)s -DSTANDALONE:BOOL=%(standalone)s '
                 '-DUNATTENDED:BOOL=%(unattended)s '
                 '-DWORD_SIZE:STRING=%(word_size)s '
+                '-DOPENSIM_RULES:BOOL=%(opensim_rules)s '
                 '-DROOT_PROJECT_NAME:STRING=%(project_name)s '
                 '%(opts)s %(dir)r')
                % args)
@@ -371,22 +376,29 @@ class LinuxSetup(UnixSetup):
                 cpus += m and int(m.group(1)) or 1
             return hosts, cpus
 
-        def mk_distcc_hosts():
+        def mk_distcc_hosts(basename, range, num_cpus):
             '''Generate a list of LL-internal machines to build on.'''
             loc_entry, cpus = localhost()
             hosts = [loc_entry]
             dead = []
-            stations = [s for s in xrange(36) if s not in dead]
+            stations = [s for s in xrange(range) if s not in dead]
             random.shuffle(stations)
-            hosts += ['station%d.lindenlab.com/2,lzo' % s for s in stations]
+            hosts += ['%s%d.lindenlab.com/%d,lzo' % (basename, s, num_cpus) for s in stations]
             cpus += 2 * len(stations)
             return ' '.join(hosts), cpus
 
         if job_count is None:
             hosts, job_count = count_distcc_hosts()
-            if hosts == 1 and socket.gethostname().startswith('station'):
-                hosts, job_count = mk_distcc_hosts()
-                os.putenv('DISTCC_HOSTS', hosts)
+            if hosts == 1:
+                hostname = socket.gethostname()
+                if hostname.startswith('station'):
+                    hosts, job_count = mk_distcc_hosts('station', 36, 2)
+                    os.environ['DISTCC_HOSTS'] = hosts
+                if hostname.startswith('eniac'):
+                    hosts, job_count = mk_distcc_hosts('eniac', 71, 2)
+                    os.environ['DISTCC_HOSTS'] = hosts
+            if job_count > 4:
+                job_count = 4;
             opts.extend(['-j', str(job_count)])
 
         if targets:
@@ -424,6 +436,7 @@ class DarwinSetup(UnixSetup):
             unattended=self.unattended,
             project_name=self.project_name,
             universal='',
+            opensim_rules=self.opensim_rules,
             type=self.build_type.upper(),
             )
         if self.unattended == 'ON':
@@ -435,6 +448,7 @@ class DarwinSetup(UnixSetup):
                 '-DSTANDALONE:BOOL=%(standalone)s '
                 '-DUNATTENDED:BOOL=%(unattended)s '
                 '-DWORD_SIZE:STRING=%(word_size)s '
+                '-DOPENSIM_RULES:BOOL=%(opensim_rules)s '
                 '-DROOT_PROJECT_NAME:STRING=%(project_name)s '
                 '%(universal)s '
                 '%(opts)s %(dir)r' % args)
@@ -495,11 +509,12 @@ class WindowsSetup(PlatformSetup):
                 for version in 'vc80 vc90 vc71'.split():
                     if self.find_visual_studio_express(version):
                         self._generator = version
+                        self.using_express = True
                         print 'Building with ', self.gens[version]['gen'] , "Express edition"
                         break
-                else:
-                    print >> sys.stderr, 'Cannot find any Visual Studio installation'
-                    eys.exit(1)
+                    else:
+                        print >> sys.stderr, 'Cannot find any Visual Studio installation'
+                        sys.exit(1)
         return self._generator
 
     def _set_generator(self, gen):
@@ -522,6 +537,7 @@ class WindowsSetup(PlatformSetup):
             unattended=self.unattended,
             project_name=self.project_name,
             word_size=self.word_size,
+            opensim_rules=self.opensim_rules,
             )
         #if simple:
         #    return 'cmake %(opts)s "%(dir)s"' % args
@@ -529,30 +545,38 @@ class WindowsSetup(PlatformSetup):
                 '-DSTANDALONE:BOOL=%(standalone)s '
                 '-DUNATTENDED:BOOL=%(unattended)s '
                 '-DWORD_SIZE:STRING=%(word_size)s '
+                '-DOPENSIM_RULES:BOOL=%(opensim_rules)s '
                 '-DROOT_PROJECT_NAME:STRING=%(project_name)s '
                 '%(opts)s "%(dir)s"' % args)
 
+    def get_HKLM_registry_value(self, key_str, value_str):
+        import _winreg
+        reg = _winreg.ConnectRegistry(None, _winreg.HKEY_LOCAL_MACHINE)
+        key = _winreg.OpenKey(reg, key_str)
+        value = _winreg.QueryValueEx(key, value_str)[0]
+        print 'Found: %s' % value
+        return value
+        
     def find_visual_studio(self, gen=None):
         if gen is None:
             gen = self._generator
         gen = gen.lower()
+        value_str = (r'EnvironmentDirectory')
+        key_str = (r'SOFTWARE\Microsoft\VisualStudio\%s\Setup\VS' %
+                   self.gens[gen]['ver'])
+        print ('Reading VS environment from HKEY_LOCAL_MACHINE\%s\%s' %
+               (key_str, value_str))
         try:
-            import _winreg
-            key_str = (r'SOFTWARE\Microsoft\VisualStudio\%s\Setup\VS' %
-                       self.gens[gen]['ver'])
-            value_str = (r'EnvironmentDirectory')
-            print ('Reading VS environment from HKEY_LOCAL_MACHINE\%s\%s' %
-                   (key_str, value_str))
-            print key_str
-
-            reg = _winreg.ConnectRegistry(None, _winreg.HKEY_LOCAL_MACHINE)
-            key = _winreg.OpenKey(reg, key_str)
-            value = _winreg.QueryValueEx(key, value_str)[0]
-            print 'Found: %s' % value
-            return value
+            return self.get_HKLM_registry_value(key_str, value_str)           
         except WindowsError, err:
+            key_str = (r'SOFTWARE\Wow6432Node\Microsoft\VisualStudio\%s\Setup\VS' %
+                       self.gens[gen]['ver'])
+
+        try:
+            return self.get_HKLM_registry_value(key_str, value_str)
+        except:
             print >> sys.stderr, "Didn't find ", self.gens[gen]['gen']
-            return ''
+        return ''
         
     def find_visual_studio_express(self, gen=None):
         if gen is None:
@@ -583,23 +607,21 @@ class WindowsSetup(PlatformSetup):
                 config = '\"%s|Win32\"' % config
 
             return "buildconsole %s.sln /build %s" % (self.project_name, config)
-
         environment = self.find_visual_studio()
         if environment == '':
             environment = self.find_visual_studio_express()
             if environment == '':
                  print >> sys.stderr, "Something went very wrong during build stage, could not find a Visual Studio?"
             else:
-                 print >> sys.stderr, "\nSolution generation complete, as you are using an express edition the final\n stages will need to be completed by hand"
-                 build_dirs=self.build_dirs();
-                 print >> sys.stderr, "Solution can now be found in:", build_dirs[0]
-                 print >> sys.stderr, "Set secondlife-bin as startup project"
-                 print >> sys.stderr, "Set build target is Release or RelWithDbgInfo"
+                 build_dirs=self.build_dirs()
+                 print >> sys.stderr, "\nSolution generation complete, it can can now be found in:", build_dirs[0]    
+                 print >> sys.stderr, "\nAs you are using an Express Visual Studio, the build step cannot be automated"
+		 print >> sys.stderr, "\nPlease see https://wiki.secondlife.com/wiki/Microsoft_Visual_Studio#Extra_steps_for_Visual_Studio_Express_editions for Visual Studio Express specific information"
                  exit(0)
     
         # devenv.com is CLI friendly, devenv.exe... not so much.
         return ('"%sdevenv.com" %s.sln /build %s' % 
-                (environment, self.build_type))
+                (self.find_visual_studio(), self.project_name, self.build_type))
 
     def run(self, command, name=None):
         '''Run a program.  If the program fails, raise an exception.'''
@@ -619,7 +641,8 @@ class WindowsSetup(PlatformSetup):
         '''Override to add the vstool.exe call after running cmake.'''
         PlatformSetup.run_cmake(self, args)
         if self.unattended == 'OFF':
-            self.run_vstool()
+            if self.using_express == False:
+                self.run_vstool()
 
     def run_vstool(self):
         for build_dir in self.build_dirs():
@@ -674,6 +697,7 @@ class CygwinSetup(WindowsSetup):
             unattended=self.unattended,
             project_name=self.project_name,
             word_size=self.word_size,
+            opensim_rules=self.opensim_rules,
             )
         #if simple:
         #    return 'cmake %(opts)s "%(dir)s"' % args
@@ -681,6 +705,7 @@ class CygwinSetup(WindowsSetup):
                 '-DUNATTENDED:BOOl=%(unattended)s '
                 '-DSTANDALONE:BOOL=%(standalone)s '
                 '-DWORD_SIZE:STRING=%(word_size)s '
+                '-DOPENSIM_RULES:BOOL=%(opensim_rules)s '
                 '-DROOT_PROJECT_NAME:STRING=%(project_name)s '
                 '%(opts)s "%(dir)s"' % args)
 
@@ -711,7 +736,7 @@ Options:
   -p | --project=NAME   set the root project name. (Doesn't effect makefiles)
                         
 Commands:
-  build       configure and build default target
+  build      configure and build default target
   clean      delete all build directories, does not affect sources
   configure  configure project by running cmake (default command if none given)
 
@@ -731,6 +756,15 @@ Examples:
 '''
 
 def main(arguments):
+    if os.getenv('DISTCC_DIR') is None:
+        distcc_dir = os.path.join(getcwd(), '.distcc')
+        if not os.path.exists(distcc_dir):
+            os.mkdir(distcc_dir)
+        print "setting DISTCC_DIR to %s" % distcc_dir
+        os.environ['DISTCC_DIR'] = distcc_dir
+    else:
+        print "DISTCC_DIR is set to %s" % os.getenv('DISTCC_DIR')
+ 
     setup = setup_platform[sys.platform]()
     try:
         opts, args = getopt.getopt(

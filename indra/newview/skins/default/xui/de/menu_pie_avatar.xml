@@ -11,12 +11,8 @@
 		<menu_item_call label="Karte geben" name="Give Card"/>
 		<menu_item_call label="Gruppeneinladung..." name="Invite..."/>
 		<menu_item_call label="Ausschließen..." name="Eject..."/>
-    <pie_menu label="Mehr &gt;" name="More &gt;">
 		<menu_item_call label="Debug..." name="Debug..."/>
-    <menu_item_call label="S. Anzahl"/>
-		</pie_menu>
 		<menu_item_call label="Untersuchen" name="Object Inspect"/>
-    <menu_item_call label="Nicht anzeigen" name="Derender"/>
 	</pie_menu>
 	<menu_item_call label="IM senden..." name="Send IM..."/>
 </pie_menu>

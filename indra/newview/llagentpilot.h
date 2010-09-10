@@ -83,9 +83,10 @@ private:
 	BOOL	mPlaying;
 	S32		mCurrentAction;
 
-	struct Action
+	class Action
 	{
 	public:
+
 		EActionType		mType;
 		LLVector3d		mTarget;
 		F64				mTime;

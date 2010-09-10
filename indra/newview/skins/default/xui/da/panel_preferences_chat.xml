@@ -93,27 +93,27 @@
 			Portugués (Portugisisk) - Beta
 		</combo_item>
 		<combo_item name="Russian">
-			� �?сскОй (Russisk) - Beta
+			Русский (Russisk) - Beta
 		</combo_item>
 		<combo_item name="Turkish">
-			TÌrkçe (Tyrkisk) - Beta
+			Türkçe (Tyrkisk) - Beta
 		</combo_item>
 		<combo_item name="Ukrainian">
-			Ук�?а�?Мс�?ка (Ukrainsk) - Beta
+			Українська (Ukrainsk) - Beta
 		</combo_item>
 		<combo_item length="1" name="Chinese" type="string">
-			䞭�?? (�?�?) (Kinesisk) - Beta
+			中文 (简体) (Kinesisk) - Beta
 		</combo_item>
 		<combo_item length="1" name="(Japanese)" type="string">
-			�?��?��? (Japansk) - Beta
+			日本語 (Japansk) - Beta
 		</combo_item>
 		<combo_item length="1" name="(Korean)" type="string">
-			�??국�?� (Koreansk) - Beta
+			한국어 (Koreansk) - Beta
 		</combo_item>
 	</combo_box>
 	<text type="string" length="1" name="text_chat_language">
 		Chat Sprog:
 	</text>
-	<text type="string" length="1" name="translate_chat" label="Overs�?t Chat">
+	<text type="string" length="1" name="translate_chat" label="OversÃ¦t Chat">
 	</text>
 </panel>

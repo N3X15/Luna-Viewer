@@ -30,7 +30,7 @@
  * COMPLETENESS OR PERFORMANCE.
  * $/LicenseInfo$
  */
- 
+
 #include "llviewerprecompiledheaders.h"
 
 #include "llfloaterabout.h"
@@ -42,7 +42,7 @@
 
 #include "llcurl.h"
 #include "llimagej2c.h"
-#include "audioengine.h"
+#include "llaudioengine.h"
 
 #include "llviewertexteditor.h"
 #include "llviewercontrol.h"
@@ -58,16 +58,16 @@
 #include "lltrans.h"
 #include "llappviewer.h" 
 #include "llglheaders.h"
-#include "llmediamanager.h"
 #include "llwindow.h"
-
-// [RLVa:KB]
-#include "rlvhandler.h"
-// [/RLVa:KB]
 
 #if LL_WINDOWS
 #include "lldxhardware.h"
 #endif
+
+
+
+
+
 
 extern LLCPUInfo gSysCPU;
 extern LLMemoryInfo gSysMemory;
@@ -119,21 +119,11 @@ LLFloaterAbout::LLFloaterAbout()
 	viewer_link_style->setColor(gSavedSettings.getColor4("HTMLLinkColor"));
 
 	// Version string
-#ifdef EMERALD_BRANCH
-#define LITERAL(x) #x
-#define ASSTRING(x) LITERAL(x)
-	std::string version = LLAppViewer::instance()->getSecondLifeTitle()
-		+ llformat(" %d.%d.%d (%d) %s %s (%s) %s\n",
-			LL_VERSION_MAJOR, LL_VERSION_MINOR, LL_VERSION_PATCH, LL_VIEWER_BUILD,
-			__DATE__, __TIME__,
-			LL_DEFAULT_VIEWER_CHANNEL, ASSTRING(EMERALD_BRANCH));
-#else
-	std::string version = LLAppViewer::instance()->getSecondLifeTitle()
+	std::string version = std::string(LLAppViewer::instance()->getSecondLifeTitle()
 		+ llformat(" %d.%d.%d (%d) %s %s (%s)\n",
-			LL_VERSION_MAJOR, LL_VERSION_MINOR, LL_VERSION_PATCH, LL_VERSION_BUILD,
-			__DATE__, __TIME__,
-			LL_DEFAULT_VIEWER_CHANNEL);
-#endif
+		LL_VERSION_MAJOR, LL_VERSION_MINOR, LL_VERSION_PATCH, LL_VIEWER_BUILD,
+		__DATE__, __TIME__,
+		LL_CHANNEL));
 	support_widget->appendColoredText(version, FALSE, FALSE, gColors.getColor("TextFgReadOnlyColor"));
 	support_widget->appendStyledText(LLTrans::getString("ReleaseNotes"), false, false, viewer_link_style);
 
@@ -150,15 +140,7 @@ LLFloaterAbout::LLFloaterAbout()
 
 	// Position
 	LLViewerRegion* region = gAgent.getRegion();
-// [RLVa:KB] - Version: 1.23.4 | Checked: 2009-07-04 (RLVa-1.0.0a)
-	if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC))
-	{
-		support.append(RlvStrings::getString(RLV_STRING_HIDDEN));
-		support.append("\n\n");
-	}
-	else if (region)
-// [/RLVa:KB]
-//	if (region)
+	if (region)
 	{
 		LLStyleSP server_link_style(new LLStyle);
 		server_link_style->setVisible(true);
@@ -252,18 +234,10 @@ LLFloaterAbout::LLFloaterAbout()
 	support.append( gAudiop ? gAudiop->getDriverName(want_fullname) : "(none)" );
 	support.append("\n");
 
-	LLMediaManager *mgr = LLMediaManager::getInstance();
-	if (mgr)
-	{
-		LLMediaBase *media_source = mgr->createSourceFromMimeType("http", "text/html");
-		if (media_source)
-		{
-			support.append("LLMozLib Version: ");
-			support.append(media_source->getVersion());
-			support.append("\n");
-			mgr->destroySource(media_source);
-		}
-	}
+	// TODO: Implement media plugin version query
+
+	support.append("Qt Webkit Version: 4.5.2 ");
+	support.append("\n");
 
 	if (gPacketsIn > 0)
 	{
@@ -314,13 +288,14 @@ void LLFloaterAbout::show(void*)
 static std::string get_viewer_release_notes_url()
 {
 	std::ostringstream version;
-	version << LL_VERSION_MAJOR << "."
-		<< LL_VERSION_MINOR << "."
-		<< LL_VERSION_PATCH << "."
-		<< LL_VERSION_BUILD;
-
+	version <<  LL_VERSION_MAJOR
+		<< "." << LL_VERSION_MINOR
+		<< "." << LL_VERSION_PATCH
+		<< "." << LL_VERSION_BUILD;
 	LLSD query;
-	query["channel"] = LL_DEFAULT_VIEWER_CHANNEL;
+
+	query["channel"] = LL_CHANNEL;
+
 	query["version"] = version.str();
 
 	std::ostringstream url;

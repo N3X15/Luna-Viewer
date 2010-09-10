@@ -4,7 +4,6 @@
 		Voice-Chat ist nicht verfügbar
 	</text_editor>
 	<check_box label="Voice-Chat aktivieren" name="enable_voice_check"/>
-  <button label="Zurücksetzen" name="reset_voice"/>
 	<radio_group name="ear_location">
 		<radio_item name="0">
 			Voice-Chat von Kameraposition aus hören.

@@ -108,7 +108,7 @@ void LLVOPartGroup::setPixelAreaAndAngle(LLAgent &agent)
 	}
 }
 
-void LLVOPartGroup::updateTextures(LLAgent &agent)
+void LLVOPartGroup::updateTextures()
 {
 	// Texture stats for particles need to be updated in a different way...
 }
@@ -438,13 +438,11 @@ void LLParticlePartition::getGeometry(LLSpatialGroup* group)
 	LLStrider<LLVector2> texcoordsp;
 	LLStrider<LLColor4U> colorsp;
 
-	buffer->setImmediateMap(true);
 	buffer->getVertexStrider(verticesp);
 	buffer->getNormalStrider(normalsp);
 	buffer->getColorStrider(colorsp);
 	buffer->getTexCoord0Strider(texcoordsp);
 	buffer->getIndexStrider(indicesp);
-	buffer->setImmediateMap(false);
 
 	LLSpatialGroup::drawmap_elem_t& draw_vec = group->mDrawMap[mRenderPass];	
 

@@ -51,6 +51,10 @@
 #include "llpreviewgesture.h"
 #include "llviewerwindow.h"
 
+// <edit>
+#include "llappviewer.h" // gLocalInventoryRoot
+// </edit>
+
 ///----------------------------------------------------------------------------
 /// Local function declarations, constants, enums, and typedefs
 ///----------------------------------------------------------------------------
@@ -74,12 +78,6 @@ LLViewerInventoryItem::LLViewerInventoryItem(const LLUUID& uuid,
 					name, desc, sale_info, flags, creation_date_utc),
 	mIsComplete(TRUE)
 {
-	LLUUID creator = mPermissions.getCreator();
-	std::string ignored;
-	if(creator.notNull())
-	{
-		gCacheName->getFullName(creator, ignored);
-	}
 }
 
 LLViewerInventoryItem::LLViewerInventoryItem(const LLUUID& item_id,
@@ -105,11 +103,12 @@ LLViewerInventoryItem::LLViewerInventoryItem(const LLViewerInventoryItem* other)
 	LLInventoryItem()
 {
 	copyViewerItem(other);
-	if (!mIsComplete)
-	{
-		llwarns << "LLViewerInventoryItem copy constructor for incomplete item"
-			<< mUUID << llendl;
-	}
+	// <edit>
+	//if (!mIsComplete)
+	//{
+	//	llwarns << "LLViewerInventoryItem copy constructor for incomplete item"
+	//		<< mUUID << llendl;
+	//}
 }
 
 LLViewerInventoryItem::LLViewerInventoryItem(const LLInventoryItem *other) :
@@ -151,6 +150,12 @@ void LLViewerInventoryItem::cloneViewerItem(LLPointer<LLViewerInventoryItem>& ne
 
 void LLViewerInventoryItem::removeFromServer()
 {
+	// <edit> this check is ghetto
+	if((mParentUUID == gLocalInventoryRoot) || (gInventory.isObjectDescendentOf(mUUID, gLocalInventoryRoot)))
+	{
+		return;
+	}
+	// </edit>
 	llinfos << "Removing inventory item " << mUUID << " from server."
 			<< llendl;
 
@@ -169,19 +174,23 @@ void LLViewerInventoryItem::removeFromServer()
 
 void LLViewerInventoryItem::updateServer(BOOL is_new) const
 {
+	// <edit>
+	//if(gAgent.getID() != mPermissions.getOwner())
+	//{
+	//	// *FIX: deal with this better.
+	//	llwarns << "LLViewerInventoryItem::updateServer() - for unowned item"
+	//			<< llendl;
+	if((mParentUUID == gLocalInventoryRoot) || (gInventory.isObjectDescendentOf(mUUID, gLocalInventoryRoot)))
+	{
+	// </edit>
+		return;
+	}
 	if(!mIsComplete)
 	{
 		// *FIX: deal with this better.
 		// If we're crashing here then the UI is incorrectly enabled.
-		llerrs << "LLViewerInventoryItem::updateServer() - for incomplete item"
+		llwarns << "LLViewerInventoryItem::updateServer() - for incomplete item"
 			   << llendl;
-		return;
-	}
-	if(gAgent.getID() != mPermissions.getOwner())
-	{
-		// *FIX: deal with this better.
-		llwarns << "LLViewerInventoryItem::updateServer() - for unowned item"
-				<< llendl;
 		return;
 	}
 	LLInventoryModel::LLCategoryUpdate up(mParentUUID, is_new ? 1 : 0);
@@ -252,12 +261,6 @@ BOOL LLViewerInventoryItem::unpackMessage(
 	LLMessageSystem* msg, const char* block, S32 block_num)
 {
 	BOOL rv = LLInventoryItem::unpackMessage(msg, block, block_num);
-	LLUUID creator = mPermissions.getCreator();
-	std::string ignored;
-	if(creator.notNull())
-	{
-		gCacheName->getFullName(creator, ignored);
-	}
 	mIsComplete = TRUE;
 	return rv;
 }
@@ -269,6 +272,7 @@ void LLViewerInventoryItem::setTransactionID(const LLTransactionID& transaction_
 // virtual
 void LLViewerInventoryItem::packMessage(LLMessageSystem* msg) const
 {
+	LL_INFOS("Inventory") << " UDP Rez/UpdateObject of UUID " << mUUID << " parent = " << mParentUUID << " type= " << mType << " transaction= "<< mTransactionID << LL_ENDL; // OGPX
 	msg->addUUIDFast(_PREHASH_ItemID, mUUID);
 	msg->addUUIDFast(_PREHASH_FolderID, mParentUUID);
 	mPermissions.packMessage(msg);
@@ -289,12 +293,6 @@ void LLViewerInventoryItem::packMessage(LLMessageSystem* msg) const
 BOOL LLViewerInventoryItem::importFile(LLFILE* fp)
 {
 	BOOL rv = LLInventoryItem::importFile(fp);
-	LLUUID creator = mPermissions.getCreator();
-	std::string ignored;
-	if(creator.notNull())
-	{
-		gCacheName->getFullName(creator, ignored);
-	}
 	mIsComplete = TRUE;
 	return rv;
 }
@@ -311,12 +309,6 @@ bool LLViewerInventoryItem::importFileLocal(LLFILE* fp)
 {
 	// TODO: convert all functions that return BOOL to return bool
 	bool rv = (LLInventoryItem::importFile(fp) ? true : false);
-	LLUUID creator = mPermissions.getCreator();
-	std::string ignored;
-	if(creator.notNull())
-	{
-		gCacheName->getFullName(creator, ignored);
-	}
 	mIsComplete = false;
 	return rv;
 }
@@ -341,6 +333,9 @@ bool LLViewerInventoryItem::exportFileLocal(LLFILE* fp) const
 
 void LLViewerInventoryItem::updateParentOnServer(BOOL restamp) const
 {
+	// <edit>
+	if(gInventory.isObjectDescendentOf(mUUID, gLocalInventoryRoot)) return;
+	// </edit>
 	LLMessageSystem* msg = gMessageSystem;
 	msg->newMessageFast(_PREHASH_MoveInventoryItem);
 	msg->nextBlockFast(_PREHASH_AgentData);
@@ -410,6 +405,9 @@ void LLViewerInventoryCategory::copyViewerCategory(const LLViewerInventoryCatego
 
 void LLViewerInventoryCategory::updateParentOnServer(BOOL restamp) const
 {
+	// <edit>
+	if(gInventory.isObjectDescendentOf(mUUID, gLocalInventoryRoot)) return;
+	// </edit>
 	LLMessageSystem* msg = gMessageSystem;
 	msg->newMessageFast(_PREHASH_MoveInventoryFolder);
 	msg->nextBlockFast(_PREHASH_AgentData);
@@ -471,6 +469,9 @@ void LLViewerInventoryCategory::removeFromServer( void )
 
 bool LLViewerInventoryCategory::fetchDescendents()
 {
+	// <edit>
+	if((mUUID == gLocalInventoryRoot) || (gInventory.isObjectDescendentOf(mUUID, gLocalInventoryRoot))) return false;
+	// </edit>
 	if((VERSION_UNKNOWN == mVersion)
 	   && mDescendentsRequested.hasExpired())	//Expired check prevents multiple downloads.
 	{
@@ -485,16 +486,19 @@ bool LLViewerInventoryCategory::fetchDescendents()
 		// This comes from LLInventoryFilter from llfolderview.h
 		U32 sort_order = gSavedSettings.getU32("InventorySortOrder") & 0x1;
 
-		std::string url = gAgent.getRegion()->getCapability("WebFetchInventoryDescendents");
-   
+		std::string url = gAgent.getCapability("agent/inventory"); // OGPX : was WebFetchInventoryDescendents
+		if (url.empty()) //OGPX : agent/inventory Capability not found on agent domain.  See if the region has one.
+		{
+			llinfos << " agent/inventory not on AD, checking fallback to region " << llendl; //OGPX
+			url = gAgent.getRegion()->getCapability("WebFetchInventoryDescendents");
+		}
 		if (!url.empty()) //Capability found.  Build up LLSD and use it.
 		{
 			LLInventoryModel::startBackgroundFetch(mUUID);			
 		}
 		else
 		{	//Deprecated, but if we don't have a capability, use the old system.
-			//Great, but we don't need to know about it, removed this info message.
-			//llinfos << "WebFetchInventoryDescendents capability not found.  Using deprecated UDP message." << llendl;
+			llinfos << "WebFetchInventoryDescendents or agent/inventory capability not found.  Using deprecated UDP message." << llendl;
 			LLMessageSystem* msg = gMessageSystem;
 			msg->newMessage("FetchInventoryDescendents");
 			msg->nextBlock("AgentData");

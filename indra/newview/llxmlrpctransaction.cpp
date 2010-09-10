@@ -225,15 +225,20 @@ void LLXMLRPCTransaction::Impl::init(XMLRPC_REQUEST request, bool useGzip)
 		mCurlRequest = new LLCurlEasyRequest();
 	}
 	
-	if (gSavedSettings.getBOOL("BrowserProxyEnabled"))
+	if (LLSocks::getInstance()->isHttpProxyEnabled())
 	{
-		mProxyAddress = gSavedSettings.getString("BrowserProxyAddress");
-		S32 port = gSavedSettings.getS32 ( "BrowserProxyPort" );
-
-		// tell curl about the settings
-		mCurlRequest->setoptString(CURLOPT_PROXY, mProxyAddress);
+		std::string address = LLSocks::getInstance()->getHTTPProxy().getIPString();
+		U16 port = LLSocks::getInstance()->getHTTPProxy().getPort();
+		mCurlRequest->setoptString(CURLOPT_PROXY, address.c_str());
 		mCurlRequest->setopt(CURLOPT_PROXYPORT, port);
-		mCurlRequest->setopt(CURLOPT_PROXYTYPE, CURLPROXY_HTTP);
+		if (LLSocks::getInstance()->getHttpProxyType() == LLPROXY_SOCKS)
+		{
+			mCurlRequest->setopt(CURLOPT_PROXYTYPE, CURLPROXY_SOCKS5);
+		}
+		else
+		{
+			mCurlRequest->setopt(CURLOPT_PROXYTYPE, CURLPROXY_HTTP);
+		}
 	}
 
 //	mCurlRequest->setopt(CURLOPT_VERBOSE, 1); // usefull for debugging

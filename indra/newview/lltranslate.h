@@ -90,7 +90,7 @@ public :
 			stringReplaceAll( translation, "&quot;","\"");
 			stringReplaceAll( translation, "&#39;","'");
 			stringReplaceAll( translation, "&amp;","&");
-			stringReplaceAll( translation, "&apos;","\\");
+			stringReplaceAll( translation, "&apos;","'");
 
 			handleResponse(translation, detectedLanguage);
 		}

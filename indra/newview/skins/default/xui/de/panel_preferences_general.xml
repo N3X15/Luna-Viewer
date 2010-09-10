@@ -76,15 +76,29 @@ Alterseinstufung zugreifen:
 	<text left_delta="313" name="language_textbox2">
 		(Erfordert Neustart)
 	</text>
-  <combo_box name="language_combobox" width="166">
-    <combo_item name="System Default Language">
+	<string name="region_name_prompt">
+		&lt;Region eingeben&gt;
+	</string>
+	<combo_box name="crash_behavior_combobox" width="166">
+		<combo_item name="Askbeforesending">
+			Vor dem Senden fragen
+		</combo_item>
+		<combo_item name="Alwayssend">
+			Immer senden
+		</combo_item>
+		<combo_item name="Neversend">
+			Nie senden
+		</combo_item>
+	</combo_box>
+	<combo_box name="language_combobox" width="166">
+		<combo_item name="System Default Language">
 			Betriebssystem-Einstellung
 		</combo_item>
 		<combo_item name="English">
 			English (Englisch)
 		</combo_item>
 		<combo_item name="Danish">
-			Danks (DÀnisch) - Beta
+			Danks (Dänisch) - Beta
 		</combo_item>
 		<combo_item name="Deutsch(German)">
 			Deutsch - Beta
@@ -102,7 +116,7 @@ Alterseinstufung zugreifen:
 			Magyar (Ungarisch) - Beta
 		</combo_item>
 		<combo_item name="Dutch">
-			Nederlands (NiederlÀndisch) - Beta
+			Nederlands (Niederländisch) - Beta
 		</combo_item>
 		<combo_item name="Polish">
 			Polski (Polnisch) - Beta
@@ -111,36 +125,22 @@ Alterseinstufung zugreifen:
 			Português (Portugiesisch) - Beta
 		</combo_item>
 		<combo_item name="Russian">
-			� �?сскОй (Russian) - Beta
+			Русский (Russian) - Beta
 		</combo_item>
 		<combo_item name="Turkish">
-			TÌrkçe (TÌrkisch) - Beta
+			Türkçe (Türkisch) - Beta
 		</combo_item>
 		<combo_item name="Ukrainian">
-			Ук�?а�?Мс�?ка (Ukrainisch) - Beta
+			Українська (Ukrainisch) - Beta
 		</combo_item>
 		<combo_item name="Chinese">
-			䞭�?? (�?�?) (Chinesisch) - Beta
+			中文 (简体) (Chinesisch) - Beta
 		</combo_item>
 		<combo_item name="(Japanese)">
-			�?��?��? (Japanisch) - Beta
+			日本語 (Japanisch) - Beta
 		</combo_item>
 		<combo_item name="(Korean)">
-			�??국�?� (Koreanisch) - Beta
-		</combo_item>
-	</combo_box>
-	<string name="region_name_prompt">
-		&lt;Region eingeben&gt;
-	</string>
-	<combo_box name="crash_behavior_combobox" width="166">
-		<combo_item name="Askbeforesending">
-			Vor dem Senden fragen
-		</combo_item>
-		<combo_item name="Alwayssend">
-			Immer senden
-		</combo_item>
-		<combo_item name="Neversend">
-			Nie senden
+			한국어 (Koreanisch) - Beta
 		</combo_item>
 	</combo_box>
 	<check_box label="Objekten Sprache mitteilen" name="language_is_public" tool_tip="In-Welt-Objekten wird Ihre bevorzugte Spracheinstellung mitgeteilt."/>

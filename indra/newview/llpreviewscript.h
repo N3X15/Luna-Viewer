@@ -40,6 +40,7 @@
 #include "llcombobox.h"
 #include "lliconctrl.h"
 #include "llframetimer.h"
+#include "lltimer.h"
 
 
 class LLMessageSystem;
@@ -50,16 +51,16 @@ class LLScrollListCtrl;
 class LLViewerObject;
 struct 	LLEntryAndEdCore;
 class LLMenuBarGL;
+class LLFloaterScriptSearch;
 class LLKeywordToken;
-class JCLSLPreprocessor;
 
 // Inner, implementation class.  LLPreviewScript and LLLiveLSLEditor each own one of these.
-class LLScriptEdCore : public LLPanel
+class LLScriptEdCore : public LLPanel, public LLEventTimer
 {
 	friend class LLPreviewScript;
 	friend class LLPreviewLSL;
 	friend class LLLiveLSLEditor;
-	friend class JCLSLPreprocessor;
+	friend class LLFloaterScriptSearch;
 
 public:
 	LLScriptEdCore(
@@ -74,8 +75,6 @@ public:
 		void* userdata,
 		S32 bottom_pad = 0);	// pad below bottom row of buttons
 	~LLScriptEdCore();
-
-	static void		updateResizer(void* userdata);
 	
 	void			initMenu();
 
@@ -85,15 +84,11 @@ public:
 
 	void            setScriptText(const std::string& text, BOOL is_valid);
 
-	std::string		getScriptText();
-
 	bool			handleSaveChangesDialog(const LLSD& notification, const LLSD& response);
 	bool			handleReloadFromServerDialog(const LLSD& notification, const LLSD& response);
 
 	static bool		onHelpWebDialog(const LLSD& notification, const LLSD& response);
 	static void		onBtnHelp(void* userdata);
-	static void		onToggleProc(void* userdata);
-	static void		onSyntaxCheck(void* userdata);
 	static void		onBtnDynamicHelp(void* userdata);
 	static void		onCheckLock(LLUICtrl*, void*);
 	static void		onHelpComboCommit(LLUICtrl* ctrl, void* userdata);
@@ -102,11 +97,10 @@ public:
 	static void		onBtnInsertSample(void*);
 	static void		onBtnInsertFunction(LLUICtrl*, void*);
 	static void		doSave( void* userdata, BOOL close_after_save );
-	static void		doSaveComplete( void* userdata, BOOL close_after_save );
 	static void		onBtnSave(void*);
 	static void		onBtnUndoChanges(void*);
 	static void		onSearchMenu(void* userdata);
-
+	
 	static void		onUndoMenu(void* userdata);
 	static void		onRedoMenu(void* userdata);
 	static void		onCutMenu(void* userdata);
@@ -126,8 +120,12 @@ public:
 	static BOOL		hasChanged(void* userdata);
 
 	void selectFirstError();
+	
+	void autoSave();
 
 	virtual BOOL handleKeyHere(KEY key, MASK mask);
+	
+	virtual BOOL tick();
 	
 	void enableSave(BOOL b) {mEnableSave = b;}
 
@@ -142,10 +140,9 @@ protected:
 
 private:
 	std::string		mSampleText;
+	std::string		mAutosaveFilename;
 	std::string		mHelpURL;
 	LLTextEditor*	mEditor;
-	LLTextEditor*	mPostEditor;
-	std::string		mPostScript;
 	void			(*mLoadCallback)(void* userdata);
 	void			(*mSaveCallback)(void* userdata, BOOL close_after_save);
 	void			(*mSearchReplaceCallback) (void* userdata);
@@ -154,8 +151,6 @@ private:
 	BOOL			mForceClose;
 	//LLPanel*		mGuiPanel;
 	LLPanel*		mCodePanel;
-	LLResizeBar* mErrorListResizer;
-	LLRect mErrorOldRect;
 	LLScrollListCtrl* mErrorList;
 	LLDynamicArray<LLEntryAndEdCore*> mBridges;
 	LLHandle<LLFloater>	mLiveHelpHandle;
@@ -164,7 +159,6 @@ private:
 	S32				mLiveHelpHistorySize;
 	BOOL			mEnableSave;
 	BOOL			mHasScriptData;
-	JCLSLPreprocessor* mLSLProc;
 };
 
 
@@ -188,10 +182,14 @@ protected:
 	void saveIfNeeded();
 	void uploadAssetViaCaps(const std::string& url,
 							const std::string& filename, 
-							const LLUUID& item_id, BOOL mono = TRUE);
+							const LLUUID& item_id);
 	void uploadAssetLegacy(const std::string& filename,
 							const LLUUID& item_id,
 							const LLTransactionID& tid);
+	// <edit>
+	virtual BOOL canSaveAs() const;
+	virtual void saveAs();
+	// </edit>
 
 	static void onSearchReplace(void* userdata);
 	static void onLoad(void* userdata);
@@ -204,7 +202,6 @@ protected:
 	static void onSaveBytecodeComplete(const LLUUID& asset_uuid, void* user_data, S32 status, LLExtStat ext_status);
 public:
 	static LLPreviewLSL* getInstance(const LLUUID& uuid);
-	LLTextEditor* getEditor() { return mScriptEd->mEditor; }
 protected:
 	static void* createScriptEdPanel(void* userdata);
 
@@ -261,6 +258,10 @@ protected:
 						   LLViewerObject* object,
 						   const LLTransactionID& tid,
 						   BOOL is_running);
+	// <edit>
+	virtual BOOL canSaveAs() const;
+	virtual void saveAs();
+	// </edit>
 
 	static void onSearchReplace(void* userdata);
 	static void onLoad(void* userdata);

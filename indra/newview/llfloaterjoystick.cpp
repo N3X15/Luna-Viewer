@@ -90,14 +90,14 @@ BOOL LLFloaterJoystick::postBuild()
 
 	// use this child to get relative positioning info; we'll place the
 	// joystick monitor on its right, vertically aligned to it.
-	LLView* child = getChild<LLView>("JoystickStreamAxisScale1");
+	LLView* child = getChild<LLView>("FlycamAxisScale1");
 	LLRect rect;
 
 	if (child)
 	{
 		LLRect r = child->getRect();
 		LLRect f = getRect();
-		rect = LLRect(r.mRight+10, r.mTop, r.mRight + 181, 0); //Shifted further right for JoystickStream settings -tG
+		rect = LLRect(350, r.mTop, r.mRight + 200, 0);
 	}
 
 	mAxisStatsView = new LLStatView("axis values", joystick, "", rect);
@@ -155,13 +155,11 @@ void LLFloaterJoystick::refresh()
 	
 	m3DCursor = gSavedSettings.getBOOL("Cursor3D");
 	mAutoLeveling = gSavedSettings.getBOOL("AutoLeveling");
-	mMouselookYaw = gSavedSettings.getBOOL("JoystickMouselookYaw");
 	mZoomDirect  = gSavedSettings.getBOOL("ZoomDirect");
 
 	mAvatarEnabled = gSavedSettings.getBOOL("JoystickAvatarEnabled");
 	mBuildEnabled = gSavedSettings.getBOOL("JoystickBuildEnabled");
 	mFlycamEnabled = gSavedSettings.getBOOL("JoystickFlycamEnabled");
-	mJoystickStreamEnabled = gSavedSettings.getBOOL("JoystickStreamEnabled");
 	
 	mAvatarAxisScale[0] = gSavedSettings.getF32("AvatarAxisScale0");
 	mAvatarAxisScale[1] = gSavedSettings.getF32("AvatarAxisScale1");
@@ -185,13 +183,6 @@ void LLFloaterJoystick::refresh()
 	mFlycamAxisScale[5] = gSavedSettings.getF32("FlycamAxisScale5");
 	mFlycamAxisScale[6] = gSavedSettings.getF32("FlycamAxisScale6");
 
-	mJoystickStreamAxisScale[0] = gSavedSettings.getF32("JoystickStreamAxisScale0");
-	mJoystickStreamAxisScale[1] = gSavedSettings.getF32("JoystickStreamAxisScale1");
-	mJoystickStreamAxisScale[2] = gSavedSettings.getF32("JoystickStreamAxisScale2");
-	mJoystickStreamAxisScale[3] = gSavedSettings.getF32("JoystickStreamAxisScale3");
-	mJoystickStreamAxisScale[4] = gSavedSettings.getF32("JoystickStreamAxisScale4");
-	mJoystickStreamAxisScale[5] = gSavedSettings.getF32("JoystickStreamAxisScale5");
-
 	mAvatarAxisDeadZone[0] = gSavedSettings.getF32("AvatarAxisDeadZone0");
 	mAvatarAxisDeadZone[1] = gSavedSettings.getF32("AvatarAxisDeadZone1");
 	mAvatarAxisDeadZone[2] = gSavedSettings.getF32("AvatarAxisDeadZone2");
@@ -214,21 +205,9 @@ void LLFloaterJoystick::refresh()
 	mFlycamAxisDeadZone[5] = gSavedSettings.getF32("FlycamAxisDeadZone5");
 	mFlycamAxisDeadZone[6] = gSavedSettings.getF32("FlycamAxisDeadZone6");
 
-	mJoystickStreamAxisDeadZone[0] = gSavedSettings.getF32("JoystickStreamAxisDeadZone0");
-	mJoystickStreamAxisDeadZone[1] = gSavedSettings.getF32("JoystickStreamAxisDeadZone1");
-	mJoystickStreamAxisDeadZone[2] = gSavedSettings.getF32("JoystickStreamAxisDeadZone2");
-	mJoystickStreamAxisDeadZone[3] = gSavedSettings.getF32("JoystickStreamAxisDeadZone3");
-	mJoystickStreamAxisDeadZone[4] = gSavedSettings.getF32("JoystickStreamAxisDeadZone4");
-	mJoystickStreamAxisDeadZone[5] = gSavedSettings.getF32("JoystickStreamAxisDeadZone5");
-
 	mAvatarFeathering = gSavedSettings.getF32("AvatarFeathering");
 	mBuildFeathering = gSavedSettings.getF32("BuildFeathering");
 	mFlycamFeathering = gSavedSettings.getF32("FlycamFeathering");
-	mJoystickStreamFeathering = gSavedSettings.getF32("JoystickStreamFeathering");
-
-	mJoystickStreamRefresh = gSavedSettings.getF32("JoystickStreamRefresh");
-	mJoystickStreamChannel = gSavedSettings.getS32("JoystickStreamChannel");
-
 }
 
 void LLFloaterJoystick::cancel()
@@ -245,13 +224,11 @@ void LLFloaterJoystick::cancel()
 
 	gSavedSettings.setBOOL("Cursor3D", m3DCursor);
 	gSavedSettings.setBOOL("AutoLeveling", mAutoLeveling);
-	gSavedSettings.setBOOL("JoystickMouselookYaw", mMouselookYaw);
 	gSavedSettings.setBOOL("ZoomDirect", mZoomDirect );
 
 	gSavedSettings.setBOOL("JoystickAvatarEnabled", mAvatarEnabled);
 	gSavedSettings.setBOOL("JoystickBuildEnabled", mBuildEnabled);
 	gSavedSettings.setBOOL("JoystickFlycamEnabled", mFlycamEnabled);
-	gSavedSettings.setBOOL("JoystickStreamEnabled", mJoystickStreamEnabled);
 	
 	gSavedSettings.setF32("AvatarAxisScale0", mAvatarAxisScale[0]);
 	gSavedSettings.setF32("AvatarAxisScale1", mAvatarAxisScale[1]);
@@ -275,13 +252,6 @@ void LLFloaterJoystick::cancel()
 	gSavedSettings.setF32("FlycamAxisScale5", mFlycamAxisScale[5]);
 	gSavedSettings.setF32("FlycamAxisScale6", mFlycamAxisScale[6]);
 
-	gSavedSettings.setF32("JoystickStreamAxisScale0", mJoystickStreamAxisScale[0]);
-	gSavedSettings.setF32("JoystickStreamAxisScale1", mJoystickStreamAxisScale[1]);
-	gSavedSettings.setF32("JoystickStreamAxisScale2", mJoystickStreamAxisScale[2]);
-	gSavedSettings.setF32("JoystickStreamAxisScale3", mJoystickStreamAxisScale[3]);
-	gSavedSettings.setF32("JoystickStreamAxisScale4", mJoystickStreamAxisScale[4]);
-	gSavedSettings.setF32("JoystickStreamAxisScale5", mJoystickStreamAxisScale[5]);
-
 	gSavedSettings.setF32("AvatarAxisDeadZone0", mAvatarAxisDeadZone[0]);
 	gSavedSettings.setF32("AvatarAxisDeadZone1", mAvatarAxisDeadZone[1]);
 	gSavedSettings.setF32("AvatarAxisDeadZone2", mAvatarAxisDeadZone[2]);
@@ -304,20 +274,9 @@ void LLFloaterJoystick::cancel()
 	gSavedSettings.setF32("FlycamAxisDeadZone5", mFlycamAxisDeadZone[5]);
 	gSavedSettings.setF32("FlycamAxisDeadZone6", mFlycamAxisDeadZone[6]);
 
-	gSavedSettings.setF32("JoystickStreamAxisDeadZone0", mJoystickStreamAxisDeadZone[0]);
-	gSavedSettings.setF32("JoystickStreamAxisDeadZone1", mJoystickStreamAxisDeadZone[1]);
-	gSavedSettings.setF32("JoystickStreamAxisDeadZone2", mJoystickStreamAxisDeadZone[2]);
-	gSavedSettings.setF32("JoystickStreamAxisDeadZone3", mJoystickStreamAxisDeadZone[3]);
-	gSavedSettings.setF32("JoystickStreamAxisDeadZone4", mJoystickStreamAxisDeadZone[4]);
-	gSavedSettings.setF32("JoystickStreamAxisDeadZone5", mJoystickStreamAxisDeadZone[5]);
-
 	gSavedSettings.setF32("AvatarFeathering", mAvatarFeathering);
 	gSavedSettings.setF32("BuildFeathering", mBuildFeathering);
 	gSavedSettings.setF32("FlycamFeathering", mFlycamFeathering);
-	gSavedSettings.setF32("JoystickStreamFeathering", mJoystickStreamFeathering);
-
-	gSavedSettings.setF32("JoystickStreamRefresh", mJoystickStreamRefresh);
-	gSavedSettings.setS32("JoystickStreamChannel", mJoystickStreamChannel);
 }
 
 void LLFloaterJoystick::onCommitJoystickEnabled(LLUICtrl*, void *joy_panel)

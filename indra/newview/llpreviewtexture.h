@@ -38,6 +38,7 @@
 #include "llframetimer.h"
 #include "llviewerimage.h"
 
+class LLComboBox;
 class LLImageRaw;
 
 class LLPreviewTexture : public LLPreview
@@ -55,14 +56,17 @@ public:
 		const LLRect& rect,
 		const std::string& title,
 		const LLUUID& asset_id,
-		BOOL copy_to_inv = FALSE);
+		BOOL copy_to_inv = FALSE,
+		BOOL copyable = TRUE);
 	~LLPreviewTexture();
 
 	virtual void		draw();
 
 	virtual BOOL		canSaveAs() const;
 	virtual void		saveAs();
-
+	virtual LLUUID		getItemID();
+	virtual std::string	getItemCreatorName();
+	virtual std::string	getItemCreationDate();
 	virtual void		loadAsset();
 	virtual EAssetStatus	getAssetStatus();
 
@@ -75,10 +79,13 @@ public:
 							S32 discard_level, 
 							BOOL final,
 							void* userdata );
-
+	static LLPreviewTexture* getInstance(){ return sInstance; }
+	LLUUID mCreatorKey;
 
 protected:
 	void				init();
+	bool				setAspectRatio(const F32 width, const F32 height);
+	static void			onAspectRatioCommit(LLUICtrl*,void* userdata);
 
 	virtual const char *getTitleName() const { return "Texture"; }
 	
@@ -91,13 +98,18 @@ private:
 	LLFrameTimer		mSavedFileTimer;
 	BOOL                mShowKeepDiscard;
 	BOOL                mCopyToInv;
+	
+	static LLPreviewTexture* sInstance;
+	static void			onClickProfile(void* userdata);
+	static void callbackLoadAvatarName(const LLUUID& id, const std::string& first, const std::string& last, BOOL is_group, void* data);
 
 	// This is stored off in a member variable, because the save-as
 	// button and drag and drop functionality need to know.
 	BOOL mIsCopyable;
-
+	
 	S32 mLastHeight;
 	S32 mLastWidth;
+	F32 mAspectRatio;	// 0 = Unconstrained
 };
 
 

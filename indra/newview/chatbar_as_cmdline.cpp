@@ -50,8 +50,7 @@
 #include "llurldispatcher.h"
 #include "llworld.h"
 #include "llworldmap.h"
-#include "floateravatarlist.h"
-#include "floaterao.h"
+#include "llfloateravatarlist.h"
 #include "llviewerobjectlist.h"
 #include "llviewertexteditor.h"
 #include "llvoavatar.h"
@@ -67,7 +66,6 @@
 
 #include "llfloaterchat.h"
 
-#include "jclslpreproc.h"
 
 void cmdline_printchat(std::string message);
 void cmdline_rezplat(bool use_saved_value = true, F32 visual_radius = 30.0);
@@ -141,46 +139,46 @@ public:
 	BOOL tick()
 	{
 		{
-				LLMessageSystem    *msg = gMessageSystem;
+			LLMessageSystem *msg = gMessageSystem;
 			for(LLObjectSelection::iterator itr=LLSelectMgr::getInstance()->getSelection()->begin();
 				itr!=LLSelectMgr::getInstance()->getSelection()->end();++itr)
-				{
+			{
 				LLSelectNode* node = (*itr);
 				LLViewerObject* object = node->getObject();
-					U32 localid=object->getLocalID();
-					if(done_prims.find(localid) == done_prims.end())
-					{
-						done_prims.insert(localid);
+				U32 localid=object->getLocalID();
+				if(done_prims.find(localid) == done_prims.end())
+				{
+					done_prims.insert(localid);
 					std::string name = llformat("%fx%fx%f",object->getScale().mV[VX],object->getScale().mV[VY],object->getScale().mV[VZ]);
-						cmdline_printchat(std::string("Rename&take ")+name);
-						msg->newMessageFast(_PREHASH_ObjectName);
-						msg->nextBlockFast(_PREHASH_AgentData);
-						msg->addUUIDFast(_PREHASH_AgentID,gAgent.getID());
-						msg->addUUIDFast(_PREHASH_SessionID,gAgent.getSessionID());
-						msg->nextBlockFast(_PREHASH_ObjectData);
-						msg->addU32Fast(_PREHASH_LocalID,localid);
-						msg->addStringFast(_PREHASH_Name,name);
-						gAgent.sendReliableMessage();
+					cmdline_printchat(std::string("Rename&take ")+name);
+					msg->newMessageFast(_PREHASH_ObjectName);
+					msg->nextBlockFast(_PREHASH_AgentData);
+					msg->addUUIDFast(_PREHASH_AgentID,gAgent.getID());
+					msg->addUUIDFast(_PREHASH_SessionID,gAgent.getSessionID());
+					msg->nextBlockFast(_PREHASH_ObjectData);
+					msg->addU32Fast(_PREHASH_LocalID,localid);
+					msg->addStringFast(_PREHASH_Name,name);
+					gAgent.sendReliableMessage();
 
-						msg->newMessageFast(_PREHASH_DeRezObject);
-						msg->nextBlockFast(_PREHASH_AgentData);
-						msg->addUUIDFast(_PREHASH_AgentID,gAgent.getID());
-						msg->addUUIDFast(_PREHASH_SessionID,gAgent.getSessionID());
-						msg->nextBlockFast(_PREHASH_AgentBlock);
-						msg->addUUIDFast(_PREHASH_GroupID,LLUUID::null);
-						msg->addU8Fast(_PREHASH_Destination,4);
-						msg->addUUIDFast(_PREHASH_DestinationID,LLUUID::null);
-						LLUUID rand;
-						rand.generate();
-						msg->addUUIDFast(_PREHASH_TransactionID,rand);
-						msg->addU8Fast(_PREHASH_PacketCount,1);
-						msg->addU8Fast(_PREHASH_PacketNumber,0);
-						msg->nextBlockFast(_PREHASH_ObjectData);
-						msg->addU32Fast(_PREHASH_ObjectLocalID,localid);
-						gAgent.sendReliableMessage();
-					}
+					msg->newMessageFast(_PREHASH_DeRezObject);
+					msg->nextBlockFast(_PREHASH_AgentData);
+					msg->addUUIDFast(_PREHASH_AgentID,gAgent.getID());
+					msg->addUUIDFast(_PREHASH_SessionID,gAgent.getSessionID());
+					msg->nextBlockFast(_PREHASH_AgentBlock);
+					msg->addUUIDFast(_PREHASH_GroupID,LLUUID::null);
+					msg->addU8Fast(_PREHASH_Destination,4);
+					msg->addUUIDFast(_PREHASH_DestinationID,LLUUID::null);
+					LLUUID rand;
+					rand.generate();
+					msg->addUUIDFast(_PREHASH_TransactionID,rand);
+					msg->addU8Fast(_PREHASH_PacketCount,1);
+					msg->addU8Fast(_PREHASH_PacketNumber,0);
+					msg->nextBlockFast(_PREHASH_ObjectData);
+					msg->addU32Fast(_PREHASH_ObjectLocalID,localid);
+					gAgent.sendReliableMessage();
 				}
 			}
+		}
 		return ztakeon;
 	}
 
@@ -204,14 +202,14 @@ void invrepair()
 
 bool cmd_line_chat(std::string revised_text, EChatType type)
 {
-	if(gSavedSettings.getBOOL("EmeraldCmdLine"))
+	if(gSavedSettings.getBOOL("AscentCmdLine"))
 	{
 		std::istringstream i(revised_text);
 		std::string command;
 		i >> command;
 		if(command != "")
 		{
-			if(command == gSavedSettings.getString("EmeraldCmdLinePos"))
+			if(command == gSavedSettings.getString("AscentCmdLinePos"))
 			{
 				F32 x,y,z;
 				if (i >> x)
@@ -234,7 +232,7 @@ bool cmd_line_chat(std::string revised_text, EChatType type)
 					}
 				}
 			}
-			else if(command == gSavedSettings.getString("EmeraldCmdLineDrawDistance"))
+			else if(command == gSavedSettings.getString("AscentCmdLineDrawDistance"))
 			{
                 int drawDist;
                 if(i >> drawDist)
@@ -247,31 +245,12 @@ bool cmd_line_chat(std::string revised_text, EChatType type)
 					return false;
                 }
 			}
-			else if(command == gSavedSettings.getString("EmeraldCmdTeleportToCam"))
+			else if(command == gSavedSettings.getString("AscentCmdTeleportToCam"))
             {
 				gAgent.teleportViaLocation(gAgent.getCameraPositionGlobal());
 				return false;
             }
-			else if(command == gSavedSettings.getString("EmeraldCmdLineAO"))
-            {
-				std::string status;
-                if(i >> status)
-                {
-					if (status == "on" )
-					{
-						gSavedSettings.setBOOL("EmeraldAOEnabled",TRUE);
-						LLFloaterAO::init();
-						LLFloaterAO::run();
-					}
-					else if (status == "off" )
-					{
-						gSavedSettings.setBOOL("EmeraldAOEnabled",FALSE);
-						LLFloaterAO::run();
-					}
-				}
-				return false;
-            }
-			else if(command == gSavedSettings.getString("EmeraldCmdLineKeyToName"))
+			else if(command == gSavedSettings.getString("AscentCmdLineKeyToName"))
             {
                 LLUUID targetKey;
                 if(i >> targetKey)
@@ -284,7 +263,7 @@ bool cmd_line_chat(std::string revised_text, EChatType type)
                 }
 				return false;
             }
-			else if(command == gSavedSettings.getString("EmeraldCmdLineOfferTp"))
+			else if(command == gSavedSettings.getString("AscentCmdLineOfferTp"))
             {
                 std::string avatarKey;
 //				llinfos << "CMD DEBUG 0 " << command << " " << avatarName << llendl;
@@ -320,16 +299,16 @@ bool cmd_line_chat(std::string revised_text, EChatType type)
                 }
             }
 			
-			else if(command == gSavedSettings.getString("EmeraldCmdLineGround"))
+			else if(command == gSavedSettings.getString("AscentCmdLineGround"))
 			{
 				LLVector3 agentPos = gAgent.getPositionAgent();
 				U64 agentRegion = gAgent.getRegion()->getHandle();
 				LLVector3 targetPos(agentPos.mV[0],agentPos.mV[1],LLWorld::getInstance()->resolveLandHeightAgent(agentPos));
 				LLVector3d pos_global = from_region_handle(agentRegion);
 				pos_global += LLVector3d((F64)targetPos.mV[0],(F64)targetPos.mV[1],(F64)targetPos.mV[2]);
-				gAgent.teleportViaLocation(pos_global, true);
+				gAgent.teleportViaLocation(pos_global);
 				return false;
-			}else if(command == gSavedSettings.getString("EmeraldCmdLineHeight"))
+			}else if(command == gSavedSettings.getString("AscentCmdLineHeight"))
 			{
 				F32 z;
 				if(i >> z)
@@ -342,17 +321,17 @@ bool cmd_line_chat(std::string revised_text, EChatType type)
 					gAgent.teleportViaLocation(pos_global);
 					return false;
 				}
-			}else if(command == gSavedSettings.getString("EmeraldCmdLineTeleportHome"))
+			}else if(command == gSavedSettings.getString("AscentCmdLineTeleportHome"))
 			{
 				gAgent.teleportHome();
 				return false;
-            }else if(command == gSavedSettings.getString("EmeraldCmdLineRezPlatform"))
+            }else if(command == gSavedSettings.getString("AscentCmdLineRezPlatform"))
             {
 				F32 width;
 				if (i >> width) cmdline_rezplat(false, width);
 				else cmdline_rezplat();
 				return false;
-			}else if(command == gSavedSettings.getString("EmeraldCmdLineMapTo"))
+			}else if(command == gSavedSettings.getString("AscentCmdLineMapTo"))
 			{
 				if (revised_text.length() > command.length() + 1) //Typing this command with no argument was causing a crash. -Madgeek
 				{
@@ -363,7 +342,7 @@ bool cmd_line_chat(std::string revised_text, EChatType type)
 					std::string region_name = LLWeb::escapeURL(revised_text.substr(command.length()+1));
 					std::string url;
 
-					if(!gSavedSettings.getBOOL("EmeraldMapToKeepPos"))
+					if(!gSavedSettings.getBOOL("AscentMapToKeepPos"))
 					{
 						agent_x = 128;
 						agent_y = 128;
@@ -374,7 +353,7 @@ bool cmd_line_chat(std::string revised_text, EChatType type)
 					LLURLDispatcher::dispatch(url, NULL, true);
 				}
 				return false;
-			}else if(command == gSavedSettings.getString("EmeraldCmdLineCalc"))//Cryogenic Blitz
+			}else if(command == gSavedSettings.getString("AscentCmdLineCalc"))//Cryogenic Blitz
 			{
 				bool success;
 				F32 result = 0.f;
@@ -403,7 +382,7 @@ bool cmd_line_chat(std::string revised_text, EChatType type)
 					cmdline_printchat(out);
 					return false;
 				}
-			}else if(command == gSavedSettings.getString("EmeraldCmdLineTP2"))
+			}else if(command == gSavedSettings.getString("AscentCmdLineTP2"))
 			{
 				if (revised_text.length() > command.length() + 1) //Typing this command with no argument was causing a crash. -Madgeek
 				{
@@ -422,9 +401,9 @@ bool cmd_line_chat(std::string revised_text, EChatType type)
 				if(i >> text)
 				{
 					gChatBar->sendChatFromViewer(text, CHAT_TYPE_STOP, FALSE);
-				} 
+				}
 			}
-			else if(command == gSavedSettings.getString("EmeraldCmdLineClearChat"))
+			else if(command == gSavedSettings.getString("AscentCmdLineClearChat"))
 			{
 				LLFloaterChat* chat = LLFloaterChat::getInstance(LLSD());
 				if(chat)
@@ -467,11 +446,11 @@ bool cmd_line_chat(std::string revised_text, EChatType type)
 				invrepair();
 			}
 			//
-			// FlexLife
+			// Luna
 			//
 			else if(command == "/lua")
 			{
-				// FLEXLIFE:  Raw Lua Command from chatbar.
+				// Luna:  Raw Lua Command from chatbar.
 				// And yes, it currently just shoves the command into the same queue as a macro.
 				int sz = 4;
 				FLLua::callCommand(revised_text.substr(sz));
@@ -479,7 +458,7 @@ bool cmd_line_chat(std::string revised_text, EChatType type)
 			}
 			else if(command == "/m" || command=="/macro")
 			{
-				// FLEXLIFE:  Macros
+				// Luna:  Macros
 				//  /m MacroName arg u ments
 
 				FLLua::callCommand(revised_text); //revised_text already includes /m 
@@ -591,7 +570,7 @@ void cmdline_rezplat(bool use_saved_value, F32 visual_radius) //cmdline_rezplat(
     LLQuaternion rotation;
     rotation.setQuat(90.f * DEG_TO_RAD, LLVector3::y_axis);
 
-	if (use_saved_value) visual_radius = gSavedSettings.getF32("EmeraldPlatformSize");
+	if (use_saved_value) visual_radius = gSavedSettings.getF32("AscentPlatformSize");
 	F32 realsize = visual_radius / 3.0f;
 	if (realsize < 0.01f) realsize = 0.01f;
 	else if (realsize > 10.0f) realsize = 10.0f;

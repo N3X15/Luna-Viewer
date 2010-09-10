@@ -6,9 +6,12 @@
 	<button label="Előre" name="forward_btn" />
 	<button label="Menj" name="go_btn" />
 	<text name="home_page_url">
-		http://www.google.com
-	</text>
-	<text name="in-world_help_title">
+    http://www.secondlife.com
+  </text>
+  <string name="support_page_url">
+    http://wiki.secondlife.com/wiki/Knowledge_Base
+  </string>
+  <text name="in-world_help_title">
 		In-World segítség
 	</text>
 	<text name="in-world_help_url">

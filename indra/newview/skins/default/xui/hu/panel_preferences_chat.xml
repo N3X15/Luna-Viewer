@@ -94,27 +94,27 @@
 			Portugués (Portugál) - Beta
 		</combo_item>
 		<combo_item name="Russian">
-			� �?сскОй (Orosz) - Beta
+			Русский (Orosz) - Beta
 		</combo_item>
 		<combo_item name="Turkish">
-			TÌrkçe (Török) - Beta
+			Türkçe (Török) - Beta
 		</combo_item>
 		<combo_item name="Ukrainian">
-			Ук�?а�?Мс�?ка (Ukrán) - Beta
+			Українська (Ukrán) - Beta
 		</combo_item>
 		<combo_item length="1" name="Chinese" type="string">
-			䞭�?? (�?�?) (Kínai) - Beta
+			中文 (简体) (Kínai) - Beta
 		</combo_item>
 		<combo_item length="1" name="(Japanese)" type="string">
-			�?��?��? (Japanese) - Beta
+			日本語 (Japanese) - Beta
 		</combo_item>
 		<combo_item length="1" name="(Korean)" type="string">
-			�??국�?� (Korean) - Beta
+			한국어 (Korean) - Beta
 		</combo_item>
 	</combo_box>
 	<text type="string" length="1" name="text_chat_language">
 		Chat Nyelv:
 	</text>
-	<text type="string" length="1" name="translate_chat" label="Ford�?­t�?¡s Chat">
+	<text type="string" length="1" name="translate_chat" label="FordÃ­tÃ¡s Chat">
 	</text>
 </panel>

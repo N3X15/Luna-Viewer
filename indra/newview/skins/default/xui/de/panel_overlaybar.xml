@@ -9,15 +9,8 @@
 					<button label="Flycam" label_selected="Flycam" name="Flycam" tool_tip="Ihre Kamera wird vom Joystick gesteuert, hier klicken, um dies abzuschalten."/>
 					<button label="Mouselook" label_selected="Mouselook" name="Mouselook" tool_tip="Mit der Maus steuern Sie die Anzeige. Wenn Sie eine Waffe haben, klicken Sie, um zu schießen."/>
 					<button label="Aufstehen" label_selected="Aufstehen" name="Stand Up" tool_tip="Klicken Sie hier, um aufzustehen."/>
-          <button label="TP Abbrechen" label_selected="TP Abbrechen" name="Cancel TP" tool_tip="Bricht den aktuellen TP ab."/>
 				</layout_panel>
 			</layout_stack>
-		</layout_panel>
-    <layout_panel name="AdvSettings_container">
-			<panel name="Adv_Settings"/>
-		</layout_panel>
-		<layout_panel name="AdvSettings_container_exp">
-			<panel name="Adv_Settings"/>
 		</layout_panel>
 	</layout_stack>
 </panel>

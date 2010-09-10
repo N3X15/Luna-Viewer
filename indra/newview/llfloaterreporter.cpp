@@ -85,9 +85,9 @@
 
 #include "llassetuploadresponders.h"
 
-// [RLVa:KB]
-#include "rlvhandler.h"
-// [/RLVa:KB]
+// <edit>
+#include "llviewercontrol.h"
+// </edit>
 
 const U32 INCLUDE_SCREENSHOT  = 0x01 << 0;
 
@@ -136,23 +136,6 @@ LLFloaterReporter::LLFloaterReporter(
 	}
 
 	childSetText("abuse_location_edit", gAgent.getSLURL() );
-
-// [RLVa:KB] - Checked: 2009-07-08 (RLVa-1.0.0e) | Modified: RLVa-1.0.0a
-	if (rlv_handler_t::isEnabled())
-	{
-		// Can't filter these since they get sent as part of the report so just hide them instead
-		if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC))
-		{
-			childSetVisible("abuse_location_edit", false);
-			childSetVisible("pos_field", false);
-		}
-		if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES))
-		{
-			childSetVisible("owner_name", false);
-			childSetVisible("abuser_name_edit", false);
-		}
-	}
-// [/RLVa:KB]
 
 	LLButton* pick_btn = getChild<LLButton>("pick_btn");
 	if (pick_btn)
@@ -321,12 +304,6 @@ void LLFloaterReporter::getObjectInfo(const LLUUID& object_id)
 			if (regionp)
 			{
 				childSetText("sim_field", regionp->getName());
-// [RLVa:KB] - Checked: 2009-07-04 (RLVa-1.0.0a)
-				if ( (rlv_handler_t::isEnabled()) && (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC)) )
-				{
-					childSetText("sim_field", RlvStrings::getString(RLV_STRING_HIDDEN_REGION));
-				}
-// [/RLVa:KB]
 				LLVector3d global_pos;
 				global_pos.setVec(objectp->getPositionRegion());
 				setPosBox(global_pos);
@@ -350,12 +327,6 @@ void LLFloaterReporter::getObjectInfo(const LLUUID& object_id)
 					object_owner.append("Unknown");
 				}
 				childSetText("object_name", object_owner);
-// [RLVa:KB] - Checked: 2009-07-08 (RLVa-1.0.0e) | Added: RVLa-1.0.0e
-				if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES))
-				{
-					childSetVisible("object_name", false);	// Hide the object name if the picked object represents an avataz
-				}
-// [/RLVa:KB]
 				childSetText("owner_name", object_owner);
 				childSetText("abuser_name_edit", object_owner);
 				mAbuserID = object_id;
@@ -573,7 +544,7 @@ void LLFloaterReporter::showFromMenu(EReportType report_type)
 
 
 // static
-LLFloaterReporter* LLFloaterReporter::showFromObject(const LLUUID& object_id)
+void LLFloaterReporter::showFromObject(const LLUUID& object_id)
 {
 	LLFloaterReporter* f = createNewAbuseReporter();
 	f->center();
@@ -591,8 +562,6 @@ LLFloaterReporter* LLFloaterReporter::showFromObject(const LLUUID& object_id)
 	f->mDeselectOnClose = TRUE;
 
 	f->open();		/* Flawfinder: ignore */
-
-	return f;
 }
 
 
@@ -630,12 +599,6 @@ LLFloaterReporter* LLFloaterReporter::createNewBugReporter()
 void LLFloaterReporter::setPickedObjectProperties(const std::string& object_name, const std::string& owner_name, const LLUUID owner_id)
 {
 	childSetText("object_name", object_name);
-// [RLVa:KB] - Checked: 2009-07-08 (RLVa-1.0.0e) | Added: RVLa-1.0.0e
-	if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES))
-	{
-		childSetVisible("object_name", true);	// Show the object name if the picked object is actually an object
-	}
-// [/RLVa:KB]
 	childSetText("owner_name", owner_name);
 	childSetText("abuser_name_edit", owner_name);
 	mAbuserID = owner_id;
@@ -765,7 +728,7 @@ LLSD LLFloaterReporter::gatherReport()
 	std::ostringstream details;
 	if (mReportType != BUG_REPORT)
 	{
-		details << "V" << LL_VERSION_MAJOR << "."								// client version moved to body of email for abuse reports
+		details << "V" << LL_VERSION_MAJOR << "."	// client version moved to body of email for abuse reports
 			<< LL_VERSION_MINOR << "."
 			<< LL_VERSION_PATCH << "."
 			<< LL_VERSION_BUILD << std::endl << std::endl;
@@ -958,8 +921,8 @@ void LLFloaterReporter::takeScreenshot()
 						mResourceDatap->mAssetInfo.mType);
 
 	// store in the image list so it doesn't try to fetch from the server
-	LLPointer<LLViewerImage> image_in_list = new LLViewerImage(mResourceDatap->mAssetInfo.mUuid, TRUE);
-	image_in_list->createGLTexture(0, raw);
+	LLPointer<LLViewerImage> image_in_list = new LLViewerImage(mResourceDatap->mAssetInfo.mUuid);
+	image_in_list->createGLTexture(0, raw, 0, TRUE, LLViewerImageBoostLevel::OTHER);
 	gImageList.addImage(image_in_list); 
 
 	// the texture picker then uses that texture

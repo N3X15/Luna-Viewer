@@ -43,11 +43,11 @@
 #include "llviewerbuild.h"
 #include "llviewercontrol.h"
 #include "llxmlrpctransaction.h"
+#include "llsdutil.h"
 
 // NOTE: MUST include these after otherincludes since queue gets redefined!?!!
 #include <curl/curl.h>
 #include <xmlrpc-epi/xmlrpc.h>
-
 
 
 // Don't define PLATFORM_STRING for unknown platforms - they need
@@ -70,7 +70,8 @@ static const char* PLATFORM_STRING = "Sol";
 
 LLUserAuth::LLUserAuth() :
 	mTransaction(NULL),
-	mLastTransferRateBPS(0)
+	mLastTransferRateBPS(0),
+	mResult(LLSD())
 {
 	mAuthResponse = E_NO_RESPONSE_YET;
 }
@@ -86,6 +87,7 @@ void LLUserAuth::reset()
 	mTransaction = NULL;
 	mResponses.clear();
 	mOptions.clear();
+	mResult.clear();
 }
 
 
@@ -128,11 +130,27 @@ void LLUserAuth::authenticate(
 	XMLRPC_VectorAppendString(params, "last", lastname.c_str(), 0);
 	XMLRPC_VectorAppendString(params, "web_login_key", web_login_key.getString().c_str(), 0);
 	XMLRPC_VectorAppendString(params, "start", start.c_str(), 0);
-	XMLRPC_VectorAppendString(params, "version", gCurrentVersion.c_str(), 0); // Includes channel name
-	XMLRPC_VectorAppendString(params, "channel","Emerald Viewer", 0);
+	// <edit>
+	//XMLRPC_VectorAppendString(params, "version", gCurrentVersion.c_str(), 0); // Includes channel name
+	//XMLRPC_VectorAppendString(params, "channel", gSavedSettings.getString("VersionChannelName").c_str(), 0);
+	
+	//WOW NEIL YOU ARE SO AWESOME!!
+	
+	XMLRPC_VectorAppendString(params, "version", std::string(
+		gSavedSettings.getString("SpecifiedChannel") + " " +
+		llformat("%d", LL_VERSION_MAJOR) + "." +
+		llformat("%d", LL_VERSION_MINOR) + "." +
+		llformat("%d", LL_VERSION_PATCH) + "." +
+		llformat("%d", LL_VERSION_BUILD)
+	).c_str(), 0); // Includes channel name
+	
+	XMLRPC_VectorAppendString(params, "channel", gSavedSettings.getString("SpecifiedChannel").c_str(), 0);
+	// </edit>
 	XMLRPC_VectorAppendString(params, "platform", PLATFORM_STRING, 0);
+
 	XMLRPC_VectorAppendString(params, "mac", hashed_mac.c_str(), 0);
 	// A bit of security through obscurity: id0 is volume_serial
+
 	XMLRPC_VectorAppendString(params, "id0", hashed_volume_serial.c_str(), 0);
 	if (skip_optional)
 	{
@@ -214,11 +232,29 @@ void LLUserAuth::authenticate(
 	XMLRPC_VectorAppendString(params, "last", lastname.c_str(), 0);
 	XMLRPC_VectorAppendString(params, "passwd", dpasswd.c_str(), 0);
 	XMLRPC_VectorAppendString(params, "start", start.c_str(), 0);
-	XMLRPC_VectorAppendString(params, "version", gCurrentVersion.c_str(), 0); // Includes channel name
-	XMLRPC_VectorAppendString(params, "channel", LL_DEFAULT_VIEWER_CHANNEL, 0);
+	// <edit>
+	//XMLRPC_VectorAppendString(params, "version", gCurrentVersion.c_str(), 0); // Includes channel name
+	//XMLRPC_VectorAppendString(params, "channel", gSavedSettings.getString("VersionChannelName").c_str(), 0);
+	
+	//WOW NEIL YOU ARE SO AWESOME!!
+	
+	XMLRPC_VectorAppendString(params, "version", std::string(
+		gSavedSettings.getString("SpecifiedChannel") + " " +
+		llformat("%d", LL_VERSION_MAJOR) + "." +
+		llformat("%d", LL_VERSION_MINOR) + "." +
+		llformat("%d", LL_VERSION_PATCH) + "." +
+		llformat("%d", LL_VERSION_BUILD)
+	).c_str(), 0); // Includes channel name
+	
+	XMLRPC_VectorAppendString(params, "channel", gSavedSettings.getString("SpecifiedChannel").c_str(), 0);
+	// </edit>
 	XMLRPC_VectorAppendString(params, "platform", PLATFORM_STRING, 0);
+
 	XMLRPC_VectorAppendString(params, "mac", hashed_mac.c_str(), 0);
 	// A bit of security through obscurity: id0 is volume_serial
+	// ^^^^^^^^^^^^^^^^^^^^
+	// you fucking idiot - charbl
+
 	XMLRPC_VectorAppendString(params, "id0", hashed_volume_serial.c_str(), 0);
 	if (skip_optional)
 	{

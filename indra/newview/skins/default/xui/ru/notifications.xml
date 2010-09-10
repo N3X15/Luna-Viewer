@@ -72,7 +72,7 @@
   </template>
 
 	<notification functor="GenericAcknowledge" label="Неизвестное предупреждение" name="MissingAlert">
-		Ваша версия Second Life не знает как отобразить предупреждение, которое она получила.
+		Ваша версия Snowglobe не знает как отобразить предупреждение, которое она получила.
 
 Подробности: Предупреждение &apos;[_NAME]&apos; не найдено в файле notifications.xml.
 		<usetemplate name="okbutton" yestext="OK"/>

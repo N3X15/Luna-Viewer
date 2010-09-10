@@ -69,13 +69,6 @@ public:
 					const LLVector3& position = LLVector3::zero,
 					bool link_name = false);
 
-	// try to decrypt a Message, returns true if decrypted_msg has been set
-	// and message was encrypted
-	bool decryptMessage(const LLUUID& session_id,
-						const LLUUID& target_id,
-						const std::string& msg,
-						std::string& decrypted_msg);
-
 	void addSystemMessage(const LLUUID& session_id, const std::string& message_name, const LLSD& args);
 
 	// This method returns TRUE if the local viewer has a session

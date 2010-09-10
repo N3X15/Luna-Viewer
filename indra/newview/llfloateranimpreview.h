@@ -71,7 +71,9 @@ protected:
 class LLFloaterAnimPreview : public LLFloaterNameDesc
 {
 public:
-	LLFloaterAnimPreview(const std::string& filename);
+	//<edit>
+	LLFloaterAnimPreview(const std::string& filename, void* item = NULL);
+	//<edit>
 	virtual ~LLFloaterAnimPreview();
 	
 	BOOL postBuild();
@@ -103,7 +105,6 @@ public:
 	static BOOL validateEaseIn(LLUICtrl*, void*);
 	static BOOL validateEaseOut(LLUICtrl*, void*);
 	static void	onBtnOK(void*);
-	static void	onBtnCancel(void*);
 	static void onSaveComplete(const LLUUID& asset_uuid,
 									   LLAssetType::EType type,
 									   void* user_data,
@@ -112,7 +113,7 @@ private:
 	void setAnimCallbacks() ;
 	
 protected:
-	//void			draw();
+	void			draw();
 	void			resetMotion();
 
 	LLPreviewAnimation* mAnimPreview;
@@ -125,11 +126,16 @@ protected:
 	LLAssetID			mMotionID;
 	LLTransactionID		mTransactionID;
 	BOOL				mEnabled;
+	BOOL				mInWorld;
 	LLAnimPauseRequest	mPauseRequest;
 
 	std::map<std::string, LLUUID>	mIDList;
 
 	static S32 sUploadAmount;
+
+	//<edit>
+	void* mItem;
+	//</edit>
 };
 
 #endif  // LL_LLFLOATERANIMPREVIEW_H

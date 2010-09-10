@@ -46,37 +46,6 @@
 #include "lluictrlfactory.h"
 #include "llurldispatcher.h"
 #include "llviewercontrol.h"
-#include "lllandmark.h"
-#include "llagent.h"
-#include "llworldmap.h"
-#include "llregionhandle.h"
-
-// [RLVa:KB] - Version: 1.23.4
-#include "rlvhandler.h"
-// [/RLVa:KB]
-
-class LLFloaterObjectIMInfo;
-
-class LLFloaterObjectIMInfoRegionHandleCallback : public LLRegionHandleCallback
-{
-private:
-	bool mCallbackActive;
-	LLFloaterObjectIMInfo *mFloater;
-
-public:
-	LLFloaterObjectIMInfoRegionHandleCallback(LLFloaterObjectIMInfo *floater) { mCallbackActive = TRUE; mFloater = floater; }
-	virtual ~LLFloaterObjectIMInfoRegionHandleCallback() {}
-	virtual bool dataReady(
-		const LLUUID& region_id,
-		const U64& region_handle);
-	void detach() {
-		mFloater = NULL;
-		if(!mCallbackActive) delete this;
-		//A true callback or event handler would support removing from the queue
-		//as this is not possible we'll keep this object alife till dataReady is
-		//called. Which may never happen and can lead into a memory leak.
-	}
-};
 
 ////////////////////////////////////////////////////////////////////////////
 // LLFloaterObjectIMInfo
@@ -84,13 +53,11 @@ class LLFloaterObjectIMInfo : public LLFloater, public LLFloaterSingleton<LLFloa
 {
 public:
 	LLFloaterObjectIMInfo(const LLSD& sd);
-	virtual ~LLFloaterObjectIMInfo();
+	virtual ~LLFloaterObjectIMInfo() { };
 
 	BOOL postBuild(void);
 
-	void update(const LLUUID& id, const std::string& name, const std::string& slurl, const LLUUID& owner, bool owner_is_group, const LLUUID& region_id, const std::string& localpart);
-
-	void draw();
+	void update(const LLUUID& id, const std::string& name, const std::string& slurl, const LLUUID& owner, bool owner_is_group);
 
 	// UI Handlers
 	static void onClickMap(void* data);
@@ -99,8 +66,6 @@ public:
 
 	static void nameCallback(const LLUUID& id, const std::string& first, const std::string& last, BOOL is_group, void* data);
 
-	void regionhandle(const U64& region_handle);
-
 private:
 	LLUUID mObjectID;
 	std::string mObjectName;
@@ -108,67 +73,10 @@ private:
 	LLUUID mOwnerID;
 	std::string mOwnerName;
 	bool mOwnerIsGroup;
-	U64 mRegionHandle;
-	std::string mRegionName;
-	bool lookingforRegion;
-	std::string mPosPart;
-	LLFloaterObjectIMInfoRegionHandleCallback *mCallback;
 };
 
-bool LLFloaterObjectIMInfoRegionHandleCallback::dataReady(const LLUUID &region_id, const U64 &region_handle)
-{
-	llinfos << "Resolved region_id " << region_id.asString() << " to handle " << region_handle << llendl;
-	if(mFloater) {
-		mFloater->regionhandle(region_handle);
-		mCallbackActive = FALSE;
-	} else {
-		delete this;
-	}
-	return true;
-}
-
-void LLFloaterObjectIMInfo::regionhandle(const U64& region_handle)
-{
-	mRegionHandle = region_handle;
-	if(LLWorldMap::getInstance()->simNameFromPosGlobal(from_region_handle(region_handle), mRegionName)) {
-		lookingforRegion = FALSE;
-		mSlurl = mRegionName + mPosPart;
-		childSetVisible("Unknown_Slurl",false);
-		childSetVisible("Slurl",true);
-		childSetText("Slurl",mSlurl);
-	} else {
-		U32 global_x;
-		U32 global_y;
-		from_region_handle(region_handle, &global_x, &global_y);
-		U16 grid_x = (U16)(global_x / REGION_WIDTH_UNITS);
-		U16 grid_y = (U16)(global_y / REGION_WIDTH_UNITS);
-		lookingforRegion = TRUE;
-		llinfos << "region name for (" << grid_x << ", " << grid_y << ") not cached, requesting" << llendl;
-		LLWorldMap::getInstance()->sendMapBlockRequest(grid_x, grid_y, grid_x, grid_y, true);
-	}
-}
-
-void LLFloaterObjectIMInfo::draw()
-{
-	if(lookingforRegion) {
-		if(LLWorldMap::getInstance()->simNameFromPosGlobal(from_region_handle(mRegionHandle), mRegionName)) {
-			lookingforRegion = FALSE;
-			mSlurl = mRegionName + mPosPart;
-			childSetVisible("Unknown_Slurl",false);
-			childSetVisible("Slurl",true);
-			childSetText("Slurl",mSlurl);
-		}
-	}
-	LLFloater::draw();
-}
-
-LLFloaterObjectIMInfo::~LLFloaterObjectIMInfo()
-{
-	if(mCallback) mCallback->detach();
-}
-
 LLFloaterObjectIMInfo::LLFloaterObjectIMInfo(const LLSD& seed)
-: mObjectID(), mObjectName(), mSlurl(), mOwnerID(), mOwnerName(), mOwnerIsGroup(false), lookingforRegion(false), mRegionName()
+: mObjectID(), mObjectName(), mSlurl(), mOwnerID(), mOwnerName(), mOwnerIsGroup(false)
 {
 	LLUICtrlFactory::getInstance()->buildFloater(this, "floater_object_im_info.xml");
 	
@@ -177,8 +85,6 @@ LLFloaterObjectIMInfo::LLFloaterObjectIMInfo(const LLSD& seed)
 	{
 		center();
 	}
-
-	mCallback = NULL;
 }
 
 BOOL LLFloaterObjectIMInfo::postBuild(void)
@@ -190,14 +96,11 @@ BOOL LLFloaterObjectIMInfo::postBuild(void)
 	return true;
 }
 
-void LLFloaterObjectIMInfo::update(const LLUUID& object_id, const std::string& name, const std::string& slurl, const LLUUID& owner_id, bool owner_is_group, const LLUUID &region_id, const std::string& localpart)
+void LLFloaterObjectIMInfo::update(const LLUUID& object_id, const std::string& name, const std::string& slurl, const LLUUID& owner_id, bool owner_is_group)
 {
 	// When talking to an old region we won't have a slurl.
 	// The object id isn't really the object id either but we don't use it so who cares.
-//	bool have_slurl = !slurl.empty();
-// [RLVa:KB] - Version: 1.23.4 | Checked: 2009-07-04 (RLVa-1.0.0a) | Added: RLVa-0.2.0g
-	bool have_slurl = (!slurl.empty()) && (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC));
-// [/RLVa:KB]
+	bool have_slurl = !slurl.empty();
 	childSetVisible("Unknown_Slurl",!have_slurl);
 	childSetVisible("Slurl",have_slurl);
 
@@ -205,10 +108,7 @@ void LLFloaterObjectIMInfo::update(const LLUUID& object_id, const std::string& n
 	childSetText("Slurl",slurl);
 	childSetText("OwnerName",std::string(""));
 
-//	bool my_object = (owner_id == gAgentID);
-// [RLVa:KB] - Version: 1.23.4 | Checked: 2009-07-08 (RLVa-1.0.0e) | Added: RLVa-0.2.0g
-	bool my_object = (owner_id == gAgentID) || ((gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES)) && (gRlvHandler.isAgentNearby(owner_id)));
-// [/RLVa:KB]
+	bool my_object = (owner_id == gAgentID);
 	childSetEnabled("Mute",!my_object);
 	
 	mObjectID = object_id;
@@ -217,33 +117,7 @@ void LLFloaterObjectIMInfo::update(const LLUUID& object_id, const std::string& n
 	mOwnerID = owner_id;
 	mOwnerIsGroup = owner_is_group;
 
-	std::string tempname = name;
-
-	size_t found = tempname.find(" ");
-	while(found != std::string::npos)
-	{
-		tempname.replace(found, 1, "");
-		found = tempname.find(" ");
-	}
-
-	if (tempname.length() < 1)
-	{
-		tempname = ">>";
-//		chat.mFromName = name;
-		childSetText("ObjectName",tempname);
-	}
-
 	if (gCacheName) gCacheName->get(owner_id,owner_is_group,nameCallback,this);
-
-	// If we do not have slurl, try resolving using the region_id and localpos
-	// (but don't resolve if there was a slurl but RLVa ate it because the avie isn't supposed to be able to see where they are -- Kitty)
-	//if(!have_slurl) {
-	if (slurl.empty()) {
-		mPosPart = localpart;
-		mCallback = new LLFloaterObjectIMInfoRegionHandleCallback(this);
-		LLLandmark::requestRegionHandle(gMessageSystem, gAgent.getRegionHost(), region_id, mCallback);
-		llinfos << "URL had no slurl, resolving region_id " << region_id.asString() << llendl;
-	}
 }
 
 //static 
@@ -253,7 +127,8 @@ void LLFloaterObjectIMInfo::onClickMap(void* data)
 
 	std::ostringstream link;
 	link << "secondlife://" << self->mSlurl;
-	LLURLDispatcher::dispatch(link.str(), NULL, true);
+	class LLMediaCtrl* web = NULL;
+	LLURLDispatcher::dispatch(link.str(), web, true);
 }
 
 //static 
@@ -264,10 +139,7 @@ void LLFloaterObjectIMInfo::onClickOwner(void* data)
 	{
 		LLFloaterGroupInfo::showFromUUID(self->mOwnerID);
 	}
-//	else
-// [RLVa:KB] - Version: 1.23.4 | Checked: 2009-07-08 (RLVa-1.0.0e) | Added: RLVa-0.2.0g
-	else if ( (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES)) || (!gRlvHandler.isAgentNearby(self->mOwnerID)) )
-// [/RLVa:KB]
+	else
 	{
 		LLFloaterAvatarInfo::showFromObject(self->mOwnerID);
 	}
@@ -279,13 +151,6 @@ void LLFloaterObjectIMInfo::onClickMute(void* data)
 	LLFloaterObjectIMInfo* self = (LLFloaterObjectIMInfo*)data;
 
 	LLMute::EType mute_type = (self->mOwnerIsGroup) ? LLMute::GROUP : LLMute::AGENT;
-// [RLVa:KB] - Version: 1.23.4 | Checked: 2009-07-08 (RLVa-1.0.0e) | Added: RLVa-0.2.0g
-	if ( (LLMute::GROUP != mute_type) && (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES)) && (gRlvHandler.isAgentNearby(self->mOwnerID)) )
-	{
-		return;
-	}
-// [/RLVa:KB]
-
 	LLMute mute(self->mOwnerID, self->mOwnerName, mute_type);
 	LLMuteList::getInstance()->add(mute);
 	LLFloaterMute::showInstance();
@@ -302,22 +167,15 @@ void LLFloaterObjectIMInfo::nameCallback(const LLUUID& id, const std::string& fi
 		self->mOwnerName += " " + last;
 	}
 
-// [RLVa:KB] - Version: 1.23.4 | Checked: 2009-07-08 (RLVa-1.0.0e) | Added: RLVa-0.2.0g
-	if ( (!is_group) && (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES)) && (gRlvHandler.isAgentNearby(id)) )
-	{
-		self->mOwnerName = RlvStrings::getAnonym(self->mOwnerName);
-	}
-// [/RLVa:KB]
-
 	self->childSetText("OwnerName",self->mOwnerName);
 }
 
 ////////////////////////////////////////////////////////////////////////////
 // LLObjectIMInfo
-void LLObjectIMInfo::show(const LLUUID &object_id, const std::string &name, const std::string &location, const LLUUID &owner_id, bool owner_is_group, const LLUUID &region_id, const std::string& localpart)
+void LLObjectIMInfo::show(const LLUUID &object_id, const std::string &name, const std::string &location, const LLUUID &owner_id, bool owner_is_group)
 {
 	LLFloaterObjectIMInfo* im_info_floater = LLFloaterObjectIMInfo::showInstance();
-	im_info_floater->update(object_id,name,location,owner_id,owner_is_group,region_id,localpart);
+	im_info_floater->update(object_id,name,location,owner_id,owner_is_group);
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -327,24 +185,23 @@ class LLObjectIMInfoHandler : public LLCommandHandler
 public:
 	LLObjectIMInfoHandler() : LLCommandHandler("objectim", true) { }
 
-	bool handle(const LLSD& tokens, const LLSD& query_map, LLWebBrowserCtrl *);
+	bool handle(const LLSD& tokens, const LLSD& query_map,
+				LLMediaCtrl* web);
 };
 
 // Creating the object registers with the dispatcher.
 LLObjectIMInfoHandler gObjectIMHandler;
 
 // ex. secondlife:///app/objectim/9426adfc-9c17-8765-5f09-fdf19957d003?owner=a112d245-9095-4e9c-ace4-ffa31717f934&groupowned=true&slurl=ahern/123/123/123&name=Object
-bool LLObjectIMInfoHandler::handle(const LLSD &tokens, const LLSD &query_map, LLWebBrowserCtrl *brws)
+bool LLObjectIMInfoHandler::handle(const LLSD &tokens, const LLSD &query_map, LLMediaCtrl* web)
 {
 	LLUUID task_id = tokens[0].asUUID();
 	std::string name = query_map["name"].asString();
 	std::string slurl = query_map["slurl"].asString();
 	LLUUID owner = query_map["owner"].asUUID();
 	bool group_owned = query_map.has("groupowned");
-	LLUUID region_id = query_map["regionid"].asUUID();
-	std::string localpart = query_map["localpos"].asString();
 	
-	LLObjectIMInfo::show(task_id,name,slurl,owner,group_owned,region_id,localpart);
+	LLObjectIMInfo::show(task_id,name,slurl,owner,group_owned);
 
 	return true;
 }

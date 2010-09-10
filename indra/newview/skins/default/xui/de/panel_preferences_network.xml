@@ -18,16 +18,6 @@
 	</text>
 	<button label="Festlegen" label_selected="Festlegen" name="set_cache"/>
 	<button label="Zurücksetzen" label_selected="Festlegen" name="reset_cache"/>
-	<text height="10" left="12" mouse_opaque="false" name="sound_cache_location_label">
-		Sound-Cache-Verzeichnis:
-	</text>
-	<line_editor name="sound_cache_location"/>
-	<button label="Festlegen" label_selected="Festlegen" name="set_sound_cache"/>
-	<button label="Zurücksetzen" label_selected="Set" name="reset_sound_cache"/>
 	<check_box label="Benutzerdefinierter Port" name="connection_port_enabled"/>
 	<spinner label="Port-Nummer:" name="connection_port"/>
-  <button label="Lösche Inventar Cache" name="clear_inv_cache"/>
-  <text name="o.o">
-    Sie müssen eingeloggt sein um den Inventar Cache zu löschen.
-  </text>
 </panel>

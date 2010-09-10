@@ -108,8 +108,7 @@ BOOL LLFeatureList::isFeatureAvailable(const std::string& name)
 		return mFeatures[name].mAvailable;
 	}
 
-	//LL_WARNS("RenderInit") << "Feature " << name << " not on feature list!" << LL_ENDL;
-	//Removing due to spamlol
+	LL_WARNS("RenderInit") << "Feature " << name << " not on feature list!" << LL_ENDL;
 	
 	// changing this to TRUE so you have to explicitly disable 
 	// something for it to be disabled

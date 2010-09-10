@@ -65,9 +65,9 @@
 #include "lluictrlfactory.h"
 #include "roles_constants.h"
 
-// [RLVa:KB]
-#include "rlvhandler.h"
-// [/RLVa:KB]
+
+
+
 
 ///----------------------------------------------------------------------------
 /// Class llpanelpermissions
@@ -93,6 +93,7 @@ BOOL LLPanelPermissions::postBuild()
 	this->childSetAction("button creator profile",LLPanelPermissions::onClickCreator,this);
 
 	this->childSetAction("button set group",LLPanelPermissions::onClickGroup,this);
+	this->childSetAction("button open group",LLPanelPermissions::onClickOpenGroup,this);
 
 	this->childSetCommitCallback("checkbox share with group",LLPanelPermissions::onCommitGroupShare,this);
 
@@ -194,6 +195,7 @@ void LLPanelPermissions::refresh()
 		childSetText("Group Name",LLStringUtil::null);
 		childSetEnabled("Group Name",false);
 		childSetEnabled("button set group",false);
+		childSetEnabled("button open group",false);
 
 		childSetText("Object Name",LLStringUtil::null);
 		childSetEnabled("Object Name",false);
@@ -268,7 +270,7 @@ void LLPanelPermissions::refresh()
 	BOOL is_perm_modify = (LLSelectMgr::getInstance()->getSelection()->getFirstRootNode() 
 							&& LLSelectMgr::getInstance()->selectGetRootsModify()) 
 							|| LLSelectMgr::getInstance()->selectGetModify();
-	const LLView* keyboard_focus_view = gFocusMgr.getKeyboardFocus();
+	const LLFocusableElement* keyboard_focus_view = gFocusMgr.getKeyboardFocus();
 	S32 string_index = 0;
 	std::string MODIFY_INFO_STRINGS[] =
 	{
@@ -321,8 +323,8 @@ void LLPanelPermissions::refresh()
 		else
 		{
 			// Display last owner if public
-			//std::string last_owner_name;
-			//LLSelectMgr::getInstance()->selectGetLastOwner(mLastOwnerID, last_owner_name);
+			std::string last_owner_name;
+			LLSelectMgr::getInstance()->selectGetLastOwner(mLastOwnerID, last_owner_name);
 
 			// It should never happen that the last owner is null and the owner
 			// is null, but it seems to be a bug in the simulator right now. JC
@@ -334,41 +336,41 @@ void LLPanelPermissions::refresh()
 		}
 	}
 
-// [RLVa:KB] - Alternate: Emerald-1345 | Checked: 2009-07-08 (RLVa-1.0.0e)
-	bool fRlvEnableOwner = true; bool fRlvEnableLastOwner = true;
-	if ( (rlv_handler_t::isEnabled()) && (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES)) )
-	{
-		// Only filter the owner name if: the selection is all owned by the same avie and not group owned
-		if ( (owners_identical) && (!LLSelectMgr::getInstance()->selectIsGroupOwned()) )
-		{
-			owner_name = RlvStrings::getAnonym(owner_name);
-			fRlvEnableOwner = false;
-		}
 
-		// Emerald specific code
-		// TODO-RLVa: need to test the last owner filtering more
-		if ( (owners_identical) && (mLastOwnerID.notNull()) && (!last_owner_name.empty()) )
-		{
-			last_owner_name = RlvStrings::getAnonym(last_owner_name);
-			fRlvEnableLastOwner = false;
-		}
-	}
-// [/RLVa:KB]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	childSetText("Owner Name",owner_name);
 	childSetEnabled("Owner Name",TRUE);
-//	childSetEnabled("button owner profile",owners_identical && (mOwnerID.notNull() || LLSelectMgr::getInstance()->selectIsGroupOwned()));
-// [RLVa:KB] - Alternate: Emerald-370 | Checked: 2009-07-08 (RLVa-1.0.0e)
-	childSetEnabled("button owner profile",
-		fRlvEnableOwner && owners_identical && (mOwnerID.notNull() || LLSelectMgr::getInstance()->selectIsGroupOwned()));
-// [/RLVa:KB]
+	childSetEnabled("button owner profile",owners_identical && (mOwnerID.notNull() || LLSelectMgr::getInstance()->selectIsGroupOwned()));
+
+
+
+
 
 	childSetText("Last Owner Name",last_owner_name);
 	childSetEnabled("Last Owner Name",TRUE);
-//	childSetEnabled("button last owner profile",owners_identical && mLastOwnerID.notNull());
-// [RLVa:KB] - Alternate: Emerald-370
-	childSetEnabled("button last owner profile", fRlvEnableLastOwner && owners_identical && mLastOwnerID.notNull());
-// [/RLVa:KB]
+	childSetEnabled("button last owner profile",owners_identical && mLastOwnerID.notNull());
+
+
+
 
 	// update group text field
 	childSetEnabled("Group:",true);
@@ -394,6 +396,7 @@ void LLPanelPermissions::refresh()
 	}
 	
 	childSetEnabled("button set group",owners_identical && (mOwnerID == gAgent.getID()));
+	childSetEnabled("button open group", group_id.notNull());
 
 	// figure out the contents of the name, description, & category
 	BOOL edit_name_desc = FALSE;
@@ -885,27 +888,21 @@ void LLPanelPermissions::onClickOwner(void *data)
 	}
 	else
 	{
-// [RLVa:KB] - Alternate: Emerald-370 | Checked: 2009-07-08 (RLVa-1.0.0e)
-		if (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES))
-		{
-			LLFloaterAvatarInfo::showFromObject(self->mOwnerID);
-		}
-// [/RLVa:KB]
-//		LLFloaterAvatarInfo::showFromObject(self->mOwnerID);
+		LLFloaterAvatarInfo::showFromObject(self->mOwnerID);
 	}
 }
+
+
+
+
+
+
 
 void LLPanelPermissions::onClickLastOwner(void *data)
 {
 	LLPanelPermissions *self = (LLPanelPermissions *)data;
-
-// [RLVa:KB] - Alternate: Emerald-370
-	if ( (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES)) && (self->mLastOwnerID.notNull()) )
-	{
+	if(self->mLastOwnerID.notNull())
 		LLFloaterAvatarInfo::showFromObject(self->mLastOwnerID);
-	}
-// [/RLVa:KB]
-//	if(self->mLastOwnerID.notNull())LLFloaterAvatarInfo::showFromObject(self->mLastOwnerID);
 }
 
 void LLPanelPermissions::onClickGroup(void* data)
@@ -929,6 +926,14 @@ void LLPanelPermissions::onClickGroup(void* data)
 			parent_floater->addDependentFloater(fg);
 		}
 	}
+}
+
+void LLPanelPermissions::onClickOpenGroup(void* data)
+{
+	LLUUID group_id;
+	LLSelectMgr::getInstance()->selectGetGroup(group_id);
+	
+	LLFloaterGroupInfo::showFromUUID(group_id);
 }
 
 // static
@@ -968,8 +973,9 @@ void LLPanelPermissions::onClickCopyObjKey(void* data)
 	//NAMESHORT - Was requested on the forums, was going to integrate a textbox with the ID, but due to lack of room on the floater,
 	//We now have a copy button :>
 	//Madgeek - Hacked together method to copy more than one key, separated by comma.
+	//At some point the separator was changed to read from the xml settings - I'll probably try to make this openly changable from settings. -HgB
 	std::string output;
-	std::string separator = gSavedSettings.getString("EmeraldCopyObjKeySeparator");
+	std::string separator = gSavedSettings.getString("AscentDataSeparator");
 	for (LLObjectSelection::root_iterator iter = LLSelectMgr::getInstance()->getSelection()->root_begin();
 		iter != LLSelectMgr::getInstance()->getSelection()->root_end(); iter++)
 	{
@@ -1120,7 +1126,7 @@ void LLPanelPermissions::setAllSaleInfo()
 	{
 		// Don't extract the price if it's labeled as MIXED or is empty.
 		const std::string& editPriceString = editPrice->getText();
-		if (editPriceString != getString("Cost Mixed") &&
+		if (editPriceString != getString("Cost Mixed") && editPriceString != getString("Sale Mixed") &&
 			!editPriceString.empty())
 		{
 			price = atoi(editPriceString.c_str());

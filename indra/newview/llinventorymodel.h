@@ -130,7 +130,7 @@ public:
 
 	// This is a convenience function to check if one object has a
 	// parent chain up to the category specified by UUID.
-	BOOL isObjectDescendentOf(const LLUUID& obj_id, const LLUUID& cat_id);
+	BOOL isObjectDescendentOf(const LLUUID& obj_id, const LLUUID& cat_id, const BOOL break_on_recursion=FALSE);
 
 	// Get the object by id. Returns NULL if not found.
 	// * WARNING: use the pointer returned for read operations - do
@@ -318,7 +318,12 @@ public:
 	// during authentication. return true if everything parsed.
 	typedef std::map<std::string, std::string> response_t;
 	typedef std::vector<response_t> options_t;
+	// OGPX : Two loadSkeleton(), one for the XML-RPC logins, one for LLSD
+	//... The concept of a skeleton being different from the cap that 
+	//... we do inventory queries on should be examined, and the usage of
+	//... the skeleton in querying the wearables needs to be examined as well.
 	bool loadSkeleton(const options_t& options, const LLUUID& owner_id);
+	bool loadSkeleton(const LLSD& options, const LLUUID& owner_id); 
 	bool loadMeat(const options_t& options, const LLUUID& owner_id);
 
 	// This is a brute force method to rebuild the entire parent-child
@@ -382,13 +387,18 @@ protected:
 	// the internal data structures are consistent. These methods
 	// should be passed pointers of newly created objects, and the
 	// instance will take over the memory management from there.
+// <edit>
+public:
+// </edit>
 	void addCategory(LLViewerInventoryCategory* category);
 	void addItem(LLViewerInventoryItem* item);
+// <edit>
+//protected:
+// </edit>
 
 	// Internal method which looks for a category with the specified
 	// preferred type. Returns LLUUID::null if not found
  	LLUUID findCatUUID(LLAssetType::EType preferred_type);
-
 
 	// Empty the entire contents
 	void empty();
@@ -400,12 +410,18 @@ protected:
 	//void recalculateCloneInformation();
 
 	// file import/export.
+// <edit>
+public:
+// </edit>
 	static bool loadFromFile(const std::string& filename,
 							 cat_array_t& categories,
 							 item_array_t& items); 
 	static bool saveToFile(const std::string& filename,
 						   const cat_array_t& categories,
 						   const item_array_t& items); 
+// <edit>
+protected:
+// </edit>
 
 	// message handling functionality
 	//static void processUseCachedInventory(LLMessageSystem* msg, void**);

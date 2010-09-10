@@ -872,7 +872,6 @@ void LLGestureManager::runStep(LLMultiGesture* gesture, LLGestureStep* step)
 			// other playing animations.
 			const BOOL animate = FALSE;
 
-
 			if ( cmd_line_chat(chat_text, CHAT_TYPE_NORMAL))
 			{
 				gChatBar->sendChatFromViewer(chat_text, CHAT_TYPE_NORMAL, animate);

@@ -9,7 +9,7 @@
 			Use external web browser (Firefox, Safari, Internet Explorer)
 		</radio_item>
 		<radio_item bottom="-40" height="20" left="0" name="internal" width="480" 
-		  tool_tip="Use the built-in web browser for help, web links, etc. This browser opens as a new window inside Second Life.">
+		  tool_tip="Use the built-in web browser for help, web links, etc. This browser opens as a new window inside Ascent.">
 			Use built-in web browser
 		</radio_item>
 	</radio_group>
@@ -20,7 +20,7 @@
 	     v_pad="0" width="128">
 		Browser cache:
 	</text>
-	<button bottom_delta="-1" enabled="true" follows="left|top" font="SansSerif"
+	<button bottom_delta="-10" enabled="true" follows="left|top" font="SansSerif"
 	     halign="center" height="22" label="Clear Now" left="140"
 	     mouse_opaque="true" name="clear_cache" scale_image="true" width="85" />
 	<text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"

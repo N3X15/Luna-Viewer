@@ -289,7 +289,7 @@ void LLSkyTex::create(const F32 brightness)
 
 void LLSkyTex::createGLImage(S32 which)
 {	
-	mImageGL[which]->createGLTexture(0, mImageRaw[which]);
+	mImageGL[which]->createGLTexture(0, mImageRaw[which], 0, TRUE, LLViewerImageBoostLevel::OTHER);
 	mImageGL[which]->setAddressMode(LLTexUnit::TAM_CLAMP);
 }
 
@@ -374,7 +374,7 @@ LLVOSky::LLVOSky(const LLUUID &id, const LLPCode pcode, LLViewerRegion *regionp)
 	mFogRatio = 1.2f;
 
 	mSun.setIntensity(SUN_INTENSITY);
-	mMoon.setIntensity(0.3f * SUN_INTENSITY);
+	mMoon.setIntensity(0.1f * SUN_INTENSITY);
 
 	mSunTexturep = gImageList.getImage(gSunTextureID, TRUE, TRUE);
 	mSunTexturep->setAddressMode(LLTexUnit::TAM_CLAMP);
@@ -1180,7 +1180,7 @@ BOOL LLVOSky::updateSky()
 	return TRUE;
 }
 
-void LLVOSky::updateTextures(LLAgent &agent)
+void LLVOSky::updateTextures()
 {
 	if (mSunTexturep)
 	{

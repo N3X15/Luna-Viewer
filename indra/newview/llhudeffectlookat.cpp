@@ -33,7 +33,6 @@
 #include "llviewerprecompiledheaders.h"
 
 #include "llhudeffectlookat.h"
-#include "llhudrender.h"
 
 #include "llrender.h"
 
@@ -42,21 +41,21 @@
 #include "llvoavatar.h"
 #include "lldrawable.h"
 #include "llviewerobjectlist.h"
-#include "llviewerwindow.h"
 #include "llrendersphere.h"
 #include "llselectmgr.h"
-#include "llviewercontrol.h"
 #include "llglheaders.h"
-#include "llresmgr.h"
 
 
 #include "llxmltree.h"
+// <edit>
+#include "llresmgr.h"
+#include "llhudrender.h"
+#include "llviewerwindow.h"
+#include "llviewercontrol.h"
+// </edit>
 
-// [RLVa:KB] - Emerald specific
-#include "rlvhandler.h"
-// [/RLVa:KB]
 
-BOOL LLHUDEffectLookAt::sDebugLookAt = FALSE;
+BOOL LLHUDEffectLookAt::sDebugLookAt = TRUE;
 
 // packet layout
 const S32 SOURCE_AVATAR = 0;
@@ -379,8 +378,6 @@ void LLHUDEffectLookAt::unpackData(LLMessageSystem *mesgsys, S32 blocknum)
 	{
 		clearLookAtTarget();
 	}
-
-	//LUA_CALL("OnLookAt") << source_id << target_id << new_target << (int)lookAtTypeUnpacked << LUA_END;
 }
 
 //-----------------------------------------------------------------------------
@@ -507,7 +504,7 @@ void LLHUDEffectLookAt::setSourceObject(LLViewerObject* objectp)
 //-----------------------------------------------------------------------------
 void LLHUDEffectLookAt::render()
 {
-    if (gSavedSettings.getBOOL("EmeraldDontShowMyLookAt") &&
+    if (gSavedSettings.getBOOL("PrivateLookAt") &&
         (gAgent.getAvatarObject() == ((LLVOAvatar*)(LLViewerObject*)mSourceObject))) return;
 	if (sDebugLookAt && mSourceObject.notNull())
 	{
@@ -532,43 +529,34 @@ void LLHUDEffectLookAt::render()
 			gGL.vertex3f(0.f, 0.f, 1.f);
 		} gGL.end();
 		gGL.popMatrix();
-		if( gSavedSettings.getBOOL("EmeraldShowLookAtNames") )
-		{
-			//const LLFontGL* fontp = LLFontGL::sSansSerifSmall;
-			const LLFontGL* fontp = LLResMgr::getInstance()->getRes( LLFONT_SANSSERIF_SMALL );
-			LLGLEnable color_mat(GL_COLOR_MATERIAL);
-			LLGLDepthTest gls_depth(GL_TRUE, GL_FALSE);
-			LLGLState gls_blend(GL_BLEND, TRUE);
-			LLGLState gls_alpha(GL_ALPHA_TEST, TRUE);
-			glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-			gGL.getTexUnit(0)->setTextureBlendType(LLTexUnit::TB_MULT);
-			gGL.getTexUnit(0)->enable(LLTexUnit::TT_TEXTURE);
-
-			// Well.. after that nasty complex try at somehow getting it to work initialising all sorts of stuff
-			// It seems to work and fix the previous bug of merely displaying untextured cubes, 
-			// probably due to the helpful getTexUnit->enable. - Nexii
-			glMatrixMode(GL_MODELVIEW);
-			glPushMatrix();
-			LLVector3 render_pos = target + LLVector3( 0.f, 0.f, 0.25f );
-			LLColor4 Color = LLColor4( (*mAttentions)[mTargetType].mColor, 1.0f ); 
-			std::string text = ((LLVOAvatar*)(LLViewerObject*)mSourceObject)->getFullname();
-			
-// [RLVa:KB] - Alternate: Emerald-370
-			// Show anonyms in place of actual names when @shownames=n restricted
-			if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES))
-			{
-				text = RlvStrings::getAnonym(text);
-			}
-// [/RLVa:KB]
-
-			// render shadow first
-//			gViewerWindow->setupViewport(1, -1);
-//			hud_render_utf8text(text, render_pos, *fontp, LLFontGL::NORMAL, -0.5f * fontp->getWidthF32(text), 3.f, LLColor4( 0.f, 0.f, 0.f, 0.5f ), FALSE );
-			gViewerWindow->setupViewport();
-			hud_render_utf8text(text, render_pos, *fontp, LLFontGL::NORMAL, -0.5f * fontp->getWidthF32(text), 3.f, Color, FALSE );
-			
-			glPopMatrix();
-		}
+		// <edit>
+		const std::string text = ((LLVOAvatar*)(LLViewerObject*)mSourceObject)->getFullname();
+		LLVector3 offset = gAgent.getCameraPositionAgent() - target;
+		offset.normalize();
+		LLVector3 shadow_offset = offset * 0.49f;
+		offset *= 0.5f;
+		const LLFontGL* font = LLResMgr::getInstance()->getRes(LLFONT_SANSSERIF);
+		LLGLEnable gl_blend(GL_BLEND);
+		glPushMatrix();
+		gViewerWindow->setupViewport();
+		hud_render_utf8text(text,
+			target + shadow_offset,
+			*font,
+			LLFontGL::NORMAL,
+			-0.5f * font->getWidthF32(text) + 2.0f,
+			-2.0f,
+			LLColor4::black,
+			FALSE);
+		hud_render_utf8text(text,
+			target + offset,
+			*font,
+			LLFontGL::NORMAL,
+			-0.5f * font->getWidthF32(text),
+			0.0f,
+			(*mAttentions)[mTargetType].mColor,
+			FALSE);
+		glPopMatrix();
+		// </edit>
 	}
 }
 
@@ -577,8 +565,6 @@ void LLHUDEffectLookAt::render()
 //-----------------------------------------------------------------------------
 void LLHUDEffectLookAt::update()
 {
-	LLHUDEffectLookAt::sDebugLookAt = gSavedSettings.getBOOL("PersistShowLookAt");
-
 	// If the target object is dead, set the target object to NULL
 	if (!mTargetObject.isNull() && mTargetObject->isDead())
 	{
@@ -724,6 +710,6 @@ bool LLHUDEffectLookAt::calcTargetPosition()
 		return false;
 
 	source_avatar->setAnimationData("LookAtPoint", (void *)&mTargetPos);
-
+	source_avatar->mIdleTimer.reset();
 	return true;
 }

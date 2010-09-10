@@ -58,7 +58,9 @@
 #include "lluictrlfactory.h"
 #include "llviewerimagelist.h"
 #include "llstring.h"
+// <edit>
 #include "llviewercontrol.h"
+// </edit>
 
 //static
 S32 LLFloaterImagePreview::sUploadAmount = 10;
@@ -83,6 +85,17 @@ LLFloaterImagePreview::LLFloaterImagePreview(const std::string& filename) :
 	mImagep = NULL ;
 	loadImage(mFilenameAndPath);
 }
+
+// <edit>
+LLFloaterImagePreview::LLFloaterImagePreview(const std::string& filename, void* item) : 
+	LLFloaterNameDesc(filename, item)
+{
+	mLastMouseX = 0;
+	mLastMouseY = 0;
+	mImagep = NULL ;
+	loadImage(mFilenameAndPath);
+}
+// </edit>
 
 //-----------------------------------------------------------------------------
 // postBuild()
@@ -122,8 +135,10 @@ BOOL LLFloaterImagePreview::postBuild()
 		if (mRawImagep->getWidth() * mRawImagep->getHeight () <= LL_IMAGE_REZ_LOSSLESS_CUTOFF * LL_IMAGE_REZ_LOSSLESS_CUTOFF)
 			childEnable("lossless_check");
 
-		gSavedSettings.setBOOL("EmeraldTemporaryUpload",FALSE);
+		// <edit>
+		gSavedSettings.setBOOL("TemporaryUpload",FALSE);
 		childSetValue("temp_check",FALSE);
+		// </edit>
 	}
 	else
 	{

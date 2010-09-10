@@ -26,8 +26,6 @@
 	<color_swatch label="Eigentümer" name="owner" width="58"/>
 	<color_swatch label="Blase" left_delta="62" name="background"/>
 	<color_swatch label="URLs" name="links"/>
-  <text name="EmeraldEncrypted">Encrypted</text>
-	<color_swatch label="" name="encrypted"/>	
 	<text length="1" name="text_box3" type="string">
 		Chat-Konsole:
 	</text>
@@ -57,14 +55,7 @@
 		Skriptfehler:
 	</text>
 	<check_box label="Skriptfehler und Warnungen als normalen Chat anzeigen" name="script_errors_as_chat"/>
-	<color_swatch label="Fehler" name="script_error"/>	
-	<text type="string" length="1" name="text_translate_chat">
-		Chat übersetzen:
-	</text>
-  <check_box label="Maschinen Übersetzung(powered by Google)" name="translate_chat"/>
-  <text name="text_translate_language">
-    In diese Sprache:
-  </text>
+	<color_swatch label="Fehler" name="script_error"/>
 	<combo_box name="translate_language_combobox" width="166">
 		<combo_item name="System Default Language">
 			Betriebssystem-Einstellung
@@ -73,7 +64,7 @@
 			English (Englisch)
 		</combo_item>
 		<combo_item name="Danish">
-			Danks (DÀnisch) - Beta
+			Danks (Dänisch) - Beta
 		</combo_item>
 		<combo_item name="Deutsch(German)">
 			Deutsch - Beta
@@ -91,7 +82,7 @@
 			Magyar (Ungarisch) - Beta
 		</combo_item>
 		<combo_item name="Dutch">
-			Nederlands (NiederlÀndisch) - Beta
+			Nederlands (Niederländisch) - Beta
 		</combo_item>
 		<combo_item name="Polish">
 			Polski (Polnisch) - Beta
@@ -100,22 +91,27 @@
 			Português (Portugiesisch) - Beta
 		</combo_item>
 		<combo_item name="Russian">
-			� �?сскОй (Russian) - Beta
+			Русский (Russian) - Beta
 		</combo_item>
 		<combo_item name="Turkish">
-			TÌrkçe (TÌrkisch) - Beta
+			Türkçe (Türkisch) - Beta
 		</combo_item>
 		<combo_item name="Ukrainian">
-			Ук�?а�?Мс�?ка (Ukrainisch) - Beta
+			Українська (Ukrainisch) - Beta
 		</combo_item>
 		<combo_item name="Chinese">
-			䞭�?? (�?�?) (Chinesisch) - Beta
+			中文 (简体) (Chinesisch) - Beta
 		</combo_item>
 		<combo_item name="(Japanese)">
-			�?��?��? (Japanisch) - Beta
+			日本語 (Japanisch) - Beta
 		</combo_item>
 		<combo_item name="(Korean)">
-			�??국�?� (Koreanisch) - Beta
+			한국어 (Koreanisch) - Beta
 		</combo_item>
 	</combo_box>
+	<text type="string" length="1" name="text_chat_language">
+		Chat-Sprache:
+	</text>
+	<text type="string" length="1" name="translate_chat" label="Übersetzen Chat">
+	</text>
 </panel>

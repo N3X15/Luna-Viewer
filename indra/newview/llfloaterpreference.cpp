@@ -62,10 +62,11 @@
 #include "llpanelmsgs.h"
 #include "llpanelweb.h"
 #include "llpanelskins.h"
-#include "llpanelemerald.h"
 #include "llprefschat.h"
 #include "llprefsvoice.h"
 #include "llprefsim.h"
+#include "ascentprefssys.h"
+#include "ascentprefsvan.h"
 #include "llresizehandle.h"
 #include "llresmgr.h"
 #include "llassetstorage.h"
@@ -77,10 +78,6 @@
 #include "llkeyboard.h"
 #include "llscrollcontainer.h"
 #include "llfloaterhardwaresettings.h"
-
-#if USE_OTR        // [$PLOTR$]
-#include "otr_wrapper.h"
-#endif // USE_OTR  // [/$PLOTR$]
 
 const S32 PREF_BORDER = 4;
 const S32 PREF_PAD = 5;
@@ -98,7 +95,7 @@ public:
 	// requires trusted browser
 	LLPreferencesHandler() : LLCommandHandler("preferences", true) { }
 	bool handle(const LLSD& tokens, const LLSD& query_map,
-				LLWebBrowserCtrl* web)
+				LLMediaCtrl* web)
 	{
 		LLFloaterPreference::show(NULL);
 		return true;
@@ -137,8 +134,9 @@ LLPreferenceCore::LLPreferenceCore(LLTabContainer* tab_container, LLButton * def
 	mAudioPanel(NULL),
 	mMsgPanel(NULL),
 	mSkinsPanel(NULL),
-	mEmeraldPanel(NULL),
-	mLCDPanel(NULL)
+	mLCDPanel(NULL),
+	mPrefsAscentSys(NULL),
+	mPrefsAscentVan(NULL)
 {
 	mGeneralPanel = new LLPanelGeneral();
 	mTabContainer->addTabPanel(mGeneralPanel, mGeneralPanel->getLabel(), FALSE, onTabChanged, mTabContainer);
@@ -198,9 +196,13 @@ LLPreferenceCore::LLPreferenceCore(LLTabContainer* tab_container, LLButton * def
 	mTabContainer->addTabPanel(mSkinsPanel, mSkinsPanel->getLabel(), FALSE, onTabChanged, mTabContainer);
 	mSkinsPanel->setDefaultBtn(default_btn);
 
-	mEmeraldPanel = new LLPanelEmerald();
-	mTabContainer->addTabPanel(mEmeraldPanel, mEmeraldPanel->getLabel(), FALSE, onTabChanged, mTabContainer);
-	mEmeraldPanel->setDefaultBtn(default_btn);
+	mPrefsAscentSys = new LLPrefsAscentSys();
+	mTabContainer->addTabPanel(mPrefsAscentSys->getPanel(), mPrefsAscentSys->getPanel()->getLabel(), FALSE, onTabChanged, mTabContainer);
+	mPrefsAscentSys->getPanel()->setDefaultBtn(default_btn);
+
+	mPrefsAscentVan = new LLPrefsAscentVan();
+	mTabContainer->addTabPanel(mPrefsAscentVan->getPanel(), mPrefsAscentVan->getPanel()->getLabel(), FALSE, onTabChanged, mTabContainer);
+	mPrefsAscentVan->getPanel()->setDefaultBtn(default_btn);
 
 	if (!mTabContainer->selectTab(gSavedSettings.getS32("LastPrefTab")))
 	{
@@ -261,13 +263,16 @@ LLPreferenceCore::~LLPreferenceCore()
 		delete mSkinsPanel;
 		mSkinsPanel = NULL;
 	}
-	if (mEmeraldPanel)
+	if (mPrefsAscentSys)
 	{
-		delete mEmeraldPanel;
-		mEmeraldPanel = NULL;
+		delete mPrefsAscentSys;
+		mPrefsAscentSys = NULL;
 	}
-
-
+	if (mPrefsAscentVan)
+	{
+		delete mPrefsAscentVan;
+		mPrefsAscentVan = NULL;
+	}
 }
 
 
@@ -283,7 +288,8 @@ void LLPreferenceCore::apply()
 	mPrefsIM->apply();
 	mMsgPanel->apply();
 	mSkinsPanel->apply();
-	mEmeraldPanel->apply();
+	mPrefsAscentSys->apply();
+	mPrefsAscentVan->apply();
 
 	// hardware menu apply
 	LLFloaterHardwareSettings::instance()->apply();
@@ -312,7 +318,8 @@ void LLPreferenceCore::cancel()
 	mPrefsIM->cancel();
 	mMsgPanel->cancel();
 	mSkinsPanel->cancel();
-	mEmeraldPanel->cancel();
+	mPrefsAscentSys->cancel();
+	mPrefsAscentVan->cancel();
 
 	// cancel hardware menu
 	LLFloaterHardwareSettings::instance()->cancel();
@@ -401,11 +408,6 @@ LLFloaterPreference::~LLFloaterPreference()
 void LLFloaterPreference::apply()
 {
 	this->mPreferenceCore->apply();
-#if USE_OTR        // [$PLOTR$]
-    U32 otrpref = gSavedSettings.getU32("EmeraldUseOTR");
-    // otrpref: 0 == Require OTR, 1 == Request OTR, 2 == Accept OTR, 3 == Decline OTR
-    if (3 == otrpref) OTR_Wrapper::stopAll();
-#endif // USE_OTR  // [/$PLOTR$]
 }
 
 
@@ -454,7 +456,7 @@ void LLFloaterPreference::onBtnOK( void* userdata )
 	// commit any outstanding text entry
 	if (fp->hasFocus())
 	{
-		LLUICtrl* cur_focus = gFocusMgr.getKeyboardFocus();
+		LLUICtrl* cur_focus = dynamic_cast<LLUICtrl*>(gFocusMgr.getKeyboardFocus());
 		if (cur_focus->acceptsTextInput())
 		{
 			cur_focus->onCommit();
@@ -464,14 +466,7 @@ void LLFloaterPreference::onBtnOK( void* userdata )
 	if (fp->canClose())
 	{
 		fp->apply();
-
-#if USE_OTR        // [$PLOTR$]
-        U32 otrpref = gSavedSettings.getU32("EmeraldUseOTR");
-        // otrpref: 0 == Require OTR, 1 == Request OTR, 2 == Accept OTR, 3 == Decline OTR
-        if (3 == otrpref) OTR_Wrapper::stopAll();
-#endif // USE_OTR  // [/$PLOTR$]
-
-        fp->close(false);
+		fp->close(false);
 
 		gSavedSettings.saveToFile( gSavedSettings.getString("ClientSettingsFile"), TRUE );
 		
@@ -495,18 +490,13 @@ void LLFloaterPreference::onBtnApply( void* userdata )
 	LLFloaterPreference *fp =(LLFloaterPreference *)userdata;
 	if (fp->hasFocus())
 	{
-		LLUICtrl* cur_focus = gFocusMgr.getKeyboardFocus();
+		LLUICtrl* cur_focus = dynamic_cast<LLUICtrl*>(gFocusMgr.getKeyboardFocus());
 		if (cur_focus->acceptsTextInput())
 		{
 			cur_focus->onCommit();
 		}
 	}
 	fp->apply();
-#if USE_OTR        // [$PLOTR$]
-    U32 otrpref = gSavedSettings.getU32("EmeraldUseOTR");
-    // otrpref: 0 == Require OTR, 1 == Request OTR, 2 == Accept OTR, 3 == Decline OTR
-    if (3 == otrpref) OTR_Wrapper::stopAll();
-#endif // USE_OTR  // [/$PLOTR$]
 
 	LLPanelLogin::refreshLocation( false );
 }
@@ -526,7 +516,7 @@ void LLFloaterPreference::onBtnCancel( void* userdata )
 	LLFloaterPreference *fp =(LLFloaterPreference *)userdata;
 	if (fp->hasFocus())
 	{
-		LLUICtrl* cur_focus = gFocusMgr.getKeyboardFocus();
+		LLUICtrl* cur_focus = dynamic_cast<LLUICtrl*>(gFocusMgr.getKeyboardFocus());
 		if (cur_focus->acceptsTextInput())
 		{
 			cur_focus->onCommit();

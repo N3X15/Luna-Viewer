@@ -6,7 +6,7 @@
 	     left="470" name="GraphicsPreferencesHelpButton" width="22" />
 	<check_box bottom="-23" enabled="true" follows="left|top" font="SansSerifSmall"
 	     height="16" initial_value="false"
-	     label="Run Second Life in a window" left="10" mouse_opaque="true"
+	     label="Run Ascent in a window" left="10" mouse_opaque="true"
 	     name="windowed mode" radio_style="false" width="100" />
 	<text_editor type="string" length="1" allow_html="false" bg_readonly_color="0 0 0 0" bottom="-43"
 	     embedded_items="false" enabled="false" follows="left|top"
@@ -136,16 +136,16 @@
 	     name="QualityText2" v_pad="0" width="95">
 		Quality
 	</text>
-	<icon bottom="-89" color="0.12 0.12 0.12 1.0" height="14"
+	<icon bottom="-89" color="0.12 0.12 0.12 1.0" height="14" follows="left|top"
 	     image_name="rounded_square.tga" left="173" name="LowGraphicsDivet"
 	     width="2" />
-	<icon bottom="-89" color="0.12 0.12 0.12 1.0" height="14"
+	<icon bottom_delta="0" color="0.12 0.12 0.12 1.0" height="14" follows="left|top"
 	     image_name="rounded_square.tga" left_delta="44" name="MidGraphicsDivet"
 	     width="2" />
-	<icon bottom="-89" color="0.12 0.12 0.12 1.0" height="14"
+	<icon bottom_delta="0" color="0.12 0.12 0.12 1.0" height="14" follows="left|top"
 	     image_name="rounded_square.tga" left_delta="44" name="HighGraphicsDivet"
 	     width="2" />
-	<icon bottom="-89" color="0.12 0.12 0.12 1.0" height="14"
+	<icon bottom_delta="0" color="0.12 0.12 0.12 1.0" height="14" follows="left|top"
 	     image_name="rounded_square.tga" left_delta="44" name="UltraGraphicsDivet"
 	     width="2" />
 	<slider bottom="-90" can_edit_text="false" control_name="RenderQualityPerformance"
@@ -233,22 +233,22 @@
 	<text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
 	     bottom="-131" drop_shadow_visible="true" enabled="true" follows="left|top"
 	     font="SansSerifSmall" h_pad="0" halign="left" height="12"
-	     left="478" mouse_opaque="true" name="DrawDistanceMeterText1" v_pad="0"
+	     left="457" mouse_opaque="true" name="DrawDistanceMeterText1" v_pad="0"
 	     width="128">
 		m
 	</text>
 	<text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
 	     bottom="-131" drop_shadow_visible="true" enabled="true" follows="left|top"
 	     font="SansSerifSmall" h_pad="0" halign="left" height="12"
-	     left="478" mouse_opaque="true" name="DrawDistanceMeterText2" v_pad="0"
+	     left="463" mouse_opaque="true" name="DrawDistanceMeterText2" v_pad="0"
 	     width="128">
 		m
 	</text>
-	<slider bottom="-135" can_edit_text="true" control_name="RenderFarClip"
+	<slider bottom="-135" can_edit_text="false" control_name="RenderFarClip"
 	     decimal_digits="0" enabled="true" follows="left|top" height="16"
 	     increment="8" initial_val="160" label="Draw Distance:"
-	     label_width="140" left="215" max_val="1024" min_val="24" mouse_opaque="true"
-	     name="DrawDistance" show_text="true" width="262" />
+	     label_width="140" left="215" max_val="1024" min_val="64" mouse_opaque="true"
+	     name="DrawDistance" show_text="true" width="255" />
 	<slider bottom_delta="-20" can_edit_text="false" control_name="RenderMaxPartCount"
 	     decimal_digits="0" enabled="true" follows="left|top" height="16"
 	     increment="256" initial_val="4096"

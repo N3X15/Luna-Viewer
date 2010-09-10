@@ -277,8 +277,7 @@ LLCloudLayer::LLCloudLayer()
 	mMetersPerEdge(1.0f),
 	mMetersPerGrid(1.0f),
 	mWindp(NULL),
-	mDensityp(NULL),
-	mRegionp(NULL)
+	mDensityp(NULL)
 {
 	S32 i, j;
 	for (i = 0; i < 4; i++)

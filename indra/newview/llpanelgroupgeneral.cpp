@@ -79,6 +79,7 @@ LLPanelGroupGeneral::LLPanelGroupGeneral(const std::string& name,
 	mGroupNameEditor(NULL),
 	mFounderName(NULL),
 	mInsignia(NULL),
+	mGroupName(NULL),
 	mEditCharter(NULL),
 	mBtnJoinGroup(NULL),
 	mListVisibleMembers(NULL),
@@ -107,6 +108,7 @@ BOOL LLPanelGroupGeneral::postBuild()
 
 	// General info
 	mGroupNameEditor = getChild<LLLineEditor>("group_name_editor", recurse);
+	mGroupName = getChild<LLTextBox>("group_name", recurse);
 	
 	mInsignia = getChild<LLTextureCtrl>("insignia", recurse);
 	if (mInsignia)
@@ -252,11 +254,11 @@ BOOL LLPanelGroupGeneral::postBuild()
 
 		mBtnJoinGroup->setVisible(FALSE);
 		mBtnInfo->setVisible(FALSE);
+		mGroupName->setVisible(FALSE);
 	}
-	else
-	{
-		mGroupNameEditor->setEnabled(FALSE);
-	}
+
+
+
 
 	return LLPanelGroupTab::postBuild();
 }
@@ -757,15 +759,15 @@ void LLPanelGroupGeneral::update(LLGroupChange gc)
 	if (mInsignia) mInsignia->setEnabled(mAllowEdit && can_change_ident);
 	if (mEditCharter) mEditCharter->setEnabled(mAllowEdit && can_change_ident);
 	
-	if (mGroupNameEditor) mGroupNameEditor->setVisible(TRUE);
-	if (mGroupNameEditor) mGroupNameEditor->setText(gdatap->mName);
+	if (mGroupName) mGroupName->setText(gdatap->mName);
+	if (mGroupNameEditor) mGroupNameEditor->setVisible(FALSE);
 	if (mFounderName) mFounderName->setNameID(gdatap->mFounderID,FALSE);
-	
-	LLNameEditor* key_edit = getChild<LLNameEditor>("groupkey_");
-	if(key_edit)
-	{
-		key_edit->setText(gdatap->getID().asString());
-	}
+
+
+
+
+
+
 	if (mInsignia)
 	{
 		if (gdatap->mInsigniaID.notNull())
@@ -852,18 +854,18 @@ void LLPanelGroupGeneral::updateMembers()
 
 		row["columns"][0]["column"] = "name";
 		row["columns"][0]["font-style"] = style;
-		row["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
+
 		// value is filled in by name list control
 
 		row["columns"][1]["column"] = "title";
 		row["columns"][1]["value"] = member->getTitle();
 		row["columns"][1]["font-style"] = style;
-		row["columns"][1]["color"] = gColors.getColor("DefaultListText").getValue();
 		
+
 		row["columns"][2]["column"] = "online";
 		row["columns"][2]["value"] = member->getOnlineStatus();
 		row["columns"][2]["font-style"] = style;
-		row["columns"][2]["color"] = gColors.getColor("DefaultListText").getValue();
+
 
 		sSDTime += sd_timer.getElapsedTimeF32();
 
@@ -896,6 +898,7 @@ void LLPanelGroupGeneral::updateChanged()
 	LLUICtrl *check_list[] =
 	{
 		mGroupNameEditor,
+		mGroupName,
 		mFounderName,
 		mInsignia,
 		mEditCharter,
