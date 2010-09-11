@@ -44,13 +44,11 @@
 #include "v3dmath.h"
 #include "llhost.h"
 #include "llstring.h"
-#include "llhttpclient.h"
 #include "llregionflags.h"
 #include "lluuid.h"
 #include "lldatapacker.h"
 #include "llvocache.h"
 #include "llweb.h"
-#include "m4math.h"
 
 //#include "VolumeClouds.h"
 

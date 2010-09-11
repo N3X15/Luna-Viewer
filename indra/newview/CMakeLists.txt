@@ -998,18 +998,6 @@ set(viewer_HEADER_FILES
     LuaWindlight.h
     lunaconsole.h
     LunaLua.h
-    rlvdefines.h
-    rlvhandler.h
-    rlvhelper.h
-    rlvcommon.h
-    rlvmultistringsearch.h
-    rlvextensions.h
-    rlvfloaterbehaviour.h
-	scriptcounter.h
-    otr_wrapper.h
-    otr_floater_smp_dialog.h
-    otr_floater_smp_progress.h
-    greenlife_utility_stream.h
     )
 
 source_group("CMake Rules" FILES ViewerInstall.cmake)
@@ -1412,8 +1400,7 @@ if (WINDOWS)
     endif (PACKAGE)
 endif (WINDOWS)
 
-if (WINDOWS)
-	target_link_libraries(${VIEWER_BINARY_NAME}
+target_link_libraries(${VIEWER_BINARY_NAME}
     ${LLAUDIO_LIBRARIES}
     ${LLCHARACTER_LIBRARIES}
     ${LLIMAGE_LIBRARIES}

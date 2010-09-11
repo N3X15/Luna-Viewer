@@ -247,7 +247,6 @@
 #include "llao.h"
 #include "llfloatervfs.h"
 #include "llfloatervfsexplorer.h"
-#include "llfloaterexportregion.h"
 // </edit>
 
 #include "scriptcounter.h"
@@ -419,7 +418,7 @@ void handle_leave_god_mode(void*);
 
 // <edit>
 void handle_fake_away_status(void*);
-
+void handle_area_search(void*);
 void handle_pose_stand_ltao(void*);
 void handle_pose_stand_ltah(void*);
 void handle_pose_stand_ltad(void*);
@@ -750,6 +749,7 @@ void init_menus()
 	LLMenuGL*menu;
 
 	menu = new LLMenuGL("Ascent");
+	menu->append(new LLMenuItemCallGL(	"Object Area Search", &handle_area_search, NULL));
 	menu->append(new LLMenuItemCallGL(  "Fake Away Status", &handle_fake_away_status, NULL));
 	menu->append(new LLMenuItemCallGL(  "Force Ground Sit", &handle_force_ground_sit, NULL));
 	menu->append(new LLMenuItemCallGL(  "Phantom Avatar", &handle_phantom_avatar, NULL));
@@ -2948,6 +2948,21 @@ class LLAvatarCopyUUID : public view_listener_t
 	}
 };
 
+class LLAvatarClientUUID : public view_listener_t
+{
+	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+	{
+		LLVOAvatar* avatar = find_avatar_from_object( LLSelectMgr::getInstance()->getSelection()->getPrimaryObject() );
+		if(!avatar) return true;
+		
+		std::string clientID;
+		LLColor4 color;
+		avatar->getClientInfo(clientID, color, false);
+		gViewerWindow->mWindow->copyTextToClipboard(utf8str_to_wstring(clientID));
+		return true;
+	}
+};
+
 class LLAvatarEnableFreezeEject : public view_listener_t
 {
 	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
@@ -3481,6 +3496,10 @@ void handle_pose_stand_stop(void*)
 	}
 }
 // </dogmode> ---------------------------------------------------
+void handle_area_search(void*)
+{
+	JCFloaterAreaSearch::toggle();
+}
 
 void handle_fake_away_status(void*)
 {
@@ -9790,6 +9809,7 @@ void initialize_menus()
 	addMenu(new LLAvatarEnableAddFriend(), "Avatar.EnableAddFriend");
 	addMenu(new LLAvatarEnableFreezeEject(), "Avatar.EnableFreezeEject");
 	addMenu(new LLAvatarCopyUUID(), "Avatar.CopyUUID");
+	addMenu(new LLAvatarClientUUID(), "Avatar.ClientID");
 
 	// Object pie menu
 	addMenu(new LLObjectOpen(), "Object.Open");

@@ -369,7 +369,7 @@ class WindowsManifest(ViewerManifest):
                 installer_file = "Second_Life_%(version_dashes)s_Setup.exe"
                 grid_vars_template = """
                 OutFile "%(installer_file)s"
-                !define VIEWERNAME "Luna"
+                !define VIEWERNAME "Second Life"
                 !define INSTFLAGS "%(flags)s"
                 !define INSTNAME   "SecondLife"
                 !define SHORTCUT   "Second Life"

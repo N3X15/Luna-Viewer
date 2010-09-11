@@ -1,12 +1,3 @@
-echo "*************************************************************"
-echo "* WARNING: LUNA IS NOT TPV COMPLIANT. USE AT YOUR OWN RISK! *"
-echo "*************************************************************"
-echo ""
-echo "See NOT_TPV_COMPLIANT.txt for more details."
-echo ""
-echo "Press any key to continue, CTRL+C to exit. >"
-read
-
 BUILDTYPE="Release"
 #BUILDTYPE="RelWithDebInfo"
 #BUILDTYPE="Debug"
