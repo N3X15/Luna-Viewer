@@ -328,7 +328,8 @@ BOOL LLFloaterAO::postBuild(void)
 	combo->setCallbackUserData(this);
 	combo->selectFirstItem();
 	mAnimTypeCombo = combo;
-	mCurrentAnimType = mAnimTypeCombo->getValue();
+	// Luna:  Cast required or the compile will shit itself on Linux.
+	mCurrentAnimType = (std::string)mAnimTypeCombo->getValue();
 	
 	combo = getChild<LLComboBox>( "combo_anim_list");
 	mAnimListCombo = combo;
@@ -362,7 +363,8 @@ void LLFloaterAO::refresh()
 void LLFloaterAO::onCommitType(LLUICtrl* ctrl, void* user_data)
 {
 	LLFloaterAO* floater = (LLFloaterAO*)user_data;
-	floater->mCurrentAnimType = floater->mAnimTypeCombo->getValue();
+	// LUNA:  Needs the cast or the whole compile will shit itself since GCC 4.4 is dumb
+	floater->mCurrentAnimType = (std::string)floater->mAnimTypeCombo->getValue();
 	floater->refresh();
 }
 
