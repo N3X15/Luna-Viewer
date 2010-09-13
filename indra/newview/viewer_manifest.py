@@ -567,7 +567,7 @@ class DarwinManifest(ViewerManifest):
     def info_plist_name(self):
         mapping={"secondlife":"Info-SecondLife.plist",
                  "snowglobe":"Info-Snowglobe.plist",
-                 "Luna":"Info-Ascent.plist"}
+                 "Luna":"Info-Luna.plist"}
         return mapping[self.viewer_branding_id()]
 
     def package_finish(self):
@@ -682,7 +682,7 @@ class LinuxManifest(ViewerManifest):
             self.path("secondlife-stripped","bin/"+self.binary_name())
             self.path("../linux_crash_logger/linux-crash-logger-stripped","linux-crash-logger.bin")
         else:
-            self.path("Ascent","bin/"+self.binary_name())
+            self.path("Luna","bin/"+self.binary_name())
             self.path("../linux_crash_logger/linux-crash-logger","linux-crash-logger.bin")
 
         self.path("linux_tools/launch_url.sh","launch_url.sh")
@@ -706,19 +706,19 @@ class LinuxManifest(ViewerManifest):
     def wrapper_name(self):
         mapping={"secondlife":"secondlife",
                  "snowglobe":"snowglobe",
-                 "Ascent":"Ascent"}
+                 "Luna":"Luna"}
         return mapping[self.viewer_branding_id()]
 
     def binary_name(self):
-        mapping={"secondlife":"Ascent-do-not-run-directly",
-                 "snowglobe":"Ascent-do-not-run-directly",
-                 "Ascent":"Ascent-do-not-run-directly"}
+        mapping={"secondlife":"Luna-do-not-run-directly",
+                 "snowglobe":"Luna-do-not-run-directly",
+                 "Luna":"Luna-do-not-run-directly"}
         return mapping[self.viewer_branding_id()]
     
     def icon_name(self):
         mapping={"secondlife":"secondlife_icon.png",
                  "snowglobe":"snowglobe_icon.png",
-                 "Ascent":"Ascent_icon.png"}
+                 "Luna":"Luna_icon.png"}
         return mapping[self.viewer_branding_id()]
 
     def package_finish(self):
@@ -734,7 +734,7 @@ class LinuxManifest(ViewerManifest):
             else:
                 installer_name += '_' + self.channel_oneword().upper()
 
-	installer_name = 'Luna'
+#	installer_name = 'Luna-git'
 
         # Fix access permissions
         self.run_command("""
@@ -755,11 +755,12 @@ class LinuxManifest(ViewerManifest):
             # --numeric-owner hides the username of the builder for
             # security etc.
             # I'm leaving this disabled for speed
-            #self.run_command("tar -C '%(dir)s' --numeric-owner -cjf "
-            #                 "'%(inst_path)s.tar.bz2' %(inst_name)s" % {
-            #    'dir': self.get_build_prefix(),
-            #    'inst_name': installer_name,
-            #    'inst_path':self.build_path_of(installer_name)})
+            # Eat 12 dicks, I have patience.
+            self.run_command("tar -C '%(dir)s' --numeric-owner -cjf "
+                             "'%(inst_path)s.tar.bz2' %(inst_name)s" % {
+                'dir': self.get_build_prefix(),
+                'inst_name': installer_name,
+                'inst_path':self.build_path_of(installer_name)})
             print ''
         finally:
             self.run_command("mv '%(inst)s' '%(dst)s'" % {

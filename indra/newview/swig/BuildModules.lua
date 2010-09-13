@@ -52,8 +52,18 @@ function exists(filename)
 	end
 end
 
-i=1
-for i=1,#arg,1 do
---	print(i,arg[i])
-	BuildModule(arg[i])
+local returncode = 256
+if exists(SWIGPATH.."CHECKSUMS.md5") then
+	returncode = os.execute("md5sum -c "..SWIGPATH.."CHECKSUMS.md5")
+	print("Return code: "..returncode)
+end
+if not returncode == 0 then
+	i=1
+	for i=1,#arg,1 do
+--		print(i,arg[i])
+		BuildModule(arg[i])
+	end
+	os.execute("md5sum "..SWIGPATH.."*.swig "..SWIGPATH.."*.i > "..SWIGPATH.."CHECKSUMS.md5")
+else
+	print "Skipping module build."
 end
