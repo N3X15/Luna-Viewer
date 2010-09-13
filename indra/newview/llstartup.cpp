@@ -4209,7 +4209,6 @@ void register_viewer_callbacks(LLMessageSystem* msg)
 	msg->setHandlerFunc("GenericMessage", process_generic_message);
 
 	msg->setHandlerFuncFast(_PREHASH_FeatureDisabled, process_feature_disabled_message);
-}
 
 /*
 // VoxelLayer
@@ -4228,7 +4227,7 @@ void register_viewer_callbacks(LLMessageSystem* msg)
 	}
 }
 */
-	msg->setHandlerFunc("VoxelLayer",LunaVoxelSurface::HandleLayerPacket);
+//	msg->setHandlerFunc("VoxelLayer",LunaVoxelSurface::HandleLayerPacket);
 }
 
 void init_stat_view()

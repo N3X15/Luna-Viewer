@@ -6285,7 +6285,7 @@ class LLFloaterVisible : public view_listener_t
 		}
 		else if (floater_name == "lua console")
 		{
-			new_value = LLFloaterConsole::isVisible();
+			new_value = LLFloaterLuaConsole::isVisible();
 		}
 		gMenuHolder->findControl(control_name)->setValue(new_value);
 		return true;

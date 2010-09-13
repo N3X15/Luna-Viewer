@@ -50,7 +50,9 @@
 #include "llvocache.h"
 #include "llweb.h"
 
+#include "llhttpclient.h"
 //#include "VolumeClouds.h"
+#include "m4math.h"
 
 // Surface id's
 #define LAND  1
@@ -65,7 +67,7 @@ class LLMessageSystem;
 class LLNetMap;
 class LLViewerParcelOverlay;
 class LLSurface;
-class LunaVoxelSurface;
+//class LunaVoxelSurface;
 class LLVOCache;
 class LLVOCacheEntry;
 class LLSpatialPartition;
@@ -322,7 +324,7 @@ public:
 private:
 	// The surfaces and other layers
 	LLSurface*		mLandp;
-	LunaVoxelSurface*	mVoxels;
+//	LunaVoxelSurface*	mVoxels;
 
 	// Region geometry data
 	LLVector3d	mOriginGlobal;	// Location of southwest corner of region (meters)

@@ -494,8 +494,8 @@ set(viewer_SOURCE_FILES
 	scriptcounter.cpp
 	wlfPanel_AdvSettings.cpp
     lunaconsole.cpp
-    LunaVoxelSurface.cpp
-    LunaVOVoxelSurface.cpp
+#    LunaVoxelSurface.cpp
+#    LunaVOVoxelSurface.cpp
     LuaUI.cpp
 # SL module -----------------
     LuaAgent_f.cpp
@@ -972,9 +972,9 @@ set(viewer_HEADER_FILES
 	scriptcounter.h
     VertexCache.h
     VorbisFramework.h
-	wlfPanel_AdvSettings.h
-    LunaVoxelSurface.h
-    LunaVOVoxelSurface.h
+    wlfPanel_AdvSettings.h
+#    LunaVoxelSurface.h
+#    LunaVOVoxelSurface.h
     LunaLua.h
 # Base Module ------------
     LuaAgent_f.h

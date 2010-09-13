@@ -384,7 +384,7 @@ bool FLLua::load()
 
 	LL_INFOS("Lua") << __LINE__ << ": Assigning _SLUA_CHANNEL" << llendl;	
 	// Assign _SLUA_CHANNEL, which contains the channel name of the host client.
-	version = llformat("_SLUA_CHANNEL=\"%s\"",LL_DEFAULT_VIEWER_CHANNEL);
+	version = llformat("_SLUA_CHANNEL=\"%s\"",LL_CHANNEL);
 	if(luaL_dostring(pLuaStack, version.c_str()))
 	{
 		LuaError(Lua_getErrorMessage(pLuaStack).c_str());

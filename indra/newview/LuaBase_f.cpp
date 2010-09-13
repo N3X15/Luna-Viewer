@@ -229,7 +229,7 @@ LLViewerRegion* LuaRegionFromName(const char *msg)
 		LuaError("Sim Not Found");
 		return NULL;
 	}
-	return LLWorld::getInstance()->getRegionFromHandle(sim->mHandle);
+	return LLWorld::getInstance()->getRegionFromHandle(sim->getHandle());
 }
 
 LLViewerRegion* LuaGetCurrentRegion()

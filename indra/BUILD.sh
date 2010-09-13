@@ -2,7 +2,7 @@ BUILDTYPE="Release"
 #BUILDTYPE="RelWithDebInfo"
 #BUILDTYPE="Debug"
 
-export DISTCC_HOSTS="localhost/2 192.168.9.5/2 192.168.9.203/4"
+export DISTCC_HOSTS="localhost/2 192.168.9.5/2 192.168.9.170/4"
 
 MODULES=""
 MODULES="${MODULES} SL" 	# Base module (handles types and stuff)

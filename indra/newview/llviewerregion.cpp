@@ -66,6 +66,7 @@
 #include "llworld.h"
 #include "llspatialpartition.h"
 
+//#include "LunaVoxelSurface.h"
 //#include "VolumeClouds.h"
 //#include "flsky.h"
 
@@ -182,7 +183,7 @@ LLViewerRegion::LLViewerRegion(const U64 &handle,
 	updateRenderMatrix();
 
 	mLandp = new LLSurface('l', NULL);
-	mVoxels = new LunaVoxelSurface(NULL);
+//	mVoxels = new LunaVoxelSurface(NULL);
 	//mVolumeClouds=NULL;
 	if (!gNoRender)
 	{
@@ -196,11 +197,11 @@ LLViewerRegion::LLViewerRegion(const U64 &handle,
 						grids_per_patch_edge,
 						mOriginGlobal,
 						mWidth);
-		mVoxels->setRegion(this);
-		mVoxels->create(grids_per_region_edge,
-						grids_per_patch_edge, 100,
-						mOriginGlobal,
-						mWidth);
+//		mVoxels->setRegion(this);
+//		mVoxels->create(grids_per_region_edge,
+//						grids_per_patch_edge, 100,
+//						mOriginGlobal,
+//						mWidth);
 	}
 
 	if (!gNoRender)
@@ -274,7 +275,7 @@ LLViewerRegion::~LLViewerRegion()
 	delete mCompositionp;
 	delete mParcelOverlay;
 	delete mLandp;
-	delete mVoxels;
+//	delete mVoxels;
 	delete mEventPoll;
 	LLHTTPSender::clearSender(mHost);
 	

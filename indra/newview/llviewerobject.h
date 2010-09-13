@@ -74,6 +74,7 @@ class LLViewerPartSourceScript;
 class LLViewerRegion;
 class LLViewerObjectMedia;
 class LLVOInventoryListener;
+class LLPartSysData;
 
 typedef enum e_object_update_type
 {
@@ -582,7 +583,7 @@ protected:
 	static void processTaskInvFile(void** user_data, S32 error_code, LLExtStat ext_status);
 	void loadTaskInvFile(const std::string& filename);
 	void doInventoryCallback();
-	
+public:	
 	BOOL isOnMap();
 
 	void unpackParticleSource(const S32 block_num, const LLUUID& owner_id);

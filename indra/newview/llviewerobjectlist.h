@@ -43,6 +43,8 @@
 
 // project includes
 #include "llviewerobject.h"
+#include "llvoavatar.h"
+#include "llhttpclient.h"
 
 class LLNetMap;
 class LLDebugBeacon;
@@ -64,6 +66,12 @@ public:
 	~LLViewerObjectList();
 
 	void destroy();
+
+	// LUNA HACK.  
+	//
+	// Find an avatar by name. 
+	//
+	inline LLVOAvatar *findAvatar(const std::string &name);
 
 	// For internal use only.  Does NOT take a local id, takes an index into
 	// an internal dynamic array.
@@ -257,6 +265,21 @@ inline LLViewerObject *LLViewerObjectList::findObject(const LLUUID &id)
 	}
 }
 
+inline LLVOAvatar *LLViewerObjectList::findAvatar(const std::string &name)
+{
+	std::map<LLUUID, LLPointer<LLViewerObject> >::iterator iter = mUUIDObjectMap.begin();
+	while(iter != mUUIDObjectMap.end())
+	{
+		if(iter->second->isAvatar())
+		{
+			LLVOAvatar* av=(LLVOAvatar*)iter->second.get();
+			if(av->getFullname()==name)
+				return av;
+		}
+	}
+	return NULL;
+}
+
 inline LLViewerObject *LLViewerObjectList::getObject(const S32 index)
 {
 	LLViewerObject *objectp;
@@ -281,3 +304,4 @@ inline void LLViewerObjectList::removeFromMap(LLViewerObject *objectp)
 
 
 #endif // LL_VIEWER_OBJECT_LIST_H
+
