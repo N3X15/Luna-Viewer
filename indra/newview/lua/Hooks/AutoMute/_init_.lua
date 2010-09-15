@@ -92,7 +92,7 @@ local AMCheckSetText = function(text,object_id)
 	if isInTable(gAutoMuteText,text)==true then
 		if isInTable(gAutoMuted,owner_id) then return end
 		if muteAvatar(owner_id) then
-			error("AutoMute has automatically muted "..key2name(owner_id).." for playing a sound on FlexLife's automute list.")
+			error("AutoMute has automatically muted "..key2name(owner_id).." for playing a sound on Luna's automute list.")
 		end
 	end	
 end

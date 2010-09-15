@@ -278,7 +278,7 @@ std::string toLuaString(F32 t)
 Program received signal SIGSEGV, Segmentation fault.
 [Switching to Thread 0x881f3b70 (LWP 10962)]
 0x084e28c9 in LLUUID (this=0x881f2920, rhs=...)
-    at /root/FlexLife/trunk/indra/llcommon/lluuid.h:210
+    at /root/Luna/trunk/indra/llcommon/lluuid.h:210
 */
 bool muteAvatar(const LLUUID& derp)
 {

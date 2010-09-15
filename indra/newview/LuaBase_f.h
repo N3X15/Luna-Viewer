@@ -5,10 +5,10 @@
 
 /**
  * @file LuaBase_f.h
- * @brief FlexLife Viewer Lua Integration Framework
+ * @brief Luna Viewer Lua Integration Framework
  * @author N3X15
  *
- *  Copyright (C) 2008 FlexLife Contributors
+ *  Copyright (C) 2008 Luna Contributors
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by

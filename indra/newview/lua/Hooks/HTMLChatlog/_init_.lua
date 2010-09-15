@@ -2,7 +2,7 @@
 	HTML Chat Logs
 		Generates an HTML Chat Log
 	 
-	 Copyright (C) 2008-2009 FlexLife Contributors
+	 Copyright (C) 2008-2009 Luna Contributors
 	 
 	 This program is free software; you can redistribute it and/or modify
 	 it under the terms of the GNU General Public License as published by
@@ -27,12 +27,12 @@ function chtmBegin(name,_)
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 	<head>
-		<title>FlexLife :: Your World, Evolved</title>
-		<link href="http://flexlife.nexisonline.net/style.css" type="text/css" rel="stylesheet" />
+		<title>Luna :: Your World, Evolved</title>
+		<link href="http://luna.nexisonline.net/style.css" type="text/css" rel="stylesheet" />
 	</head>
 	<body>
 		<div id="gWrap">
-			<a href="http://flexlife.nexisonline.net/" id="header"><h1>FlexLife</h1></a>
+			<a href="http://luna.nexisonline.net/" id="header"><h1>Luna</h1></a>
 
 			<h2 style="display:none;">
 				Navigation

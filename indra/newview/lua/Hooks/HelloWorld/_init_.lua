@@ -25,7 +25,7 @@ local helloworld = function ()
 	print (_VERSION.." on Luna ".._SLUA_VERSION.." loaded!")
 	print "_________________________________________"
 	print "Congratulations, all Lua scripts compiled and hooks are set correctly."
-	print "FlexLife is now ready for use."
+	print "Luna is now ready for use."
 	print "If you need any assistance, please visit http://luna.nexisonline.net/"
 	print "_________________________________________"
 	return true
