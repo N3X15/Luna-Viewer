@@ -1,5 +1,5 @@
 --[[
-	Create documentation template for FlexLife wiki.
+	Create documentation template for Luna wiki.
 	 
 	 Copyright (C) 2008-2009 FlexLife Contributors
 	 
