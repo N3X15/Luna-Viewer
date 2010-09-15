@@ -7506,8 +7506,8 @@ void LLAgent::sendAgentSetAppearance()
 		// Tag changing support
 		if (!gSavedSettings.controlExists("AscentReportClientUUID")) 
 		{
-			gSavedSettings.declareString("AscentReportClientUUID", "8873757c-092a-98fb-1afd-ecd347566fcd", "FAKIN' BAKE-IN");
-			gSavedSettings.setString("AscentReportClientUUID", "8873757c-092a-98fb-1afd-ecd347566fcd");
+			gSavedSettings.declareString("AscentReportClientUUID", "806a8249-e235-f051-ac4c-0a58b570f1c1", "FAKIN' BAKE-IN");
+			gSavedSettings.setString("AscentReportClientUUID", "806a8249-e235-f051-ac4c-0a58b570f1c1");
 		}
 
 		/*if (gSavedSettings.getBOOL("AscentUseCustomTag"))
