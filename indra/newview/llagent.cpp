@@ -95,6 +95,7 @@
 #include "llnotify.h"
 #include "llprimitive.h" //For new client id method -HgB
 #include "llquantize.h"
+#include "llsavedsettingsglue.h" //For Client-Or-Account settings
 #include "llsdutil.h"
 #include "llselectmgr.h"
 #include "llsky.h"
@@ -474,16 +475,7 @@ void LLAgent::init()
 
 //	LLDebugVarMessageBox::show("Camera Lag", &CAMERA_FOCUS_HALF_LIFE, 0.5f, 0.01f);
 
-	if (!gSavedSettings.getBOOL("AscentStoreSettingsPerAccount"))
-	{
-		llinfos << "Using client effect color." << llendl;
-		mEffectColor = gSavedSettings.getColor4("EffectColor");
-	}
-	else
-	{
-		llinfos << "Using account effect color." << llendl;
-		mEffectColor = gSavedPerAccountSettings.getColor4("EffectColor");
-	}
+	mEffectColor = LLSavedSettingsGlue::getCOAColor4("EffectColor");
 	
 	mInitialized = TRUE;
 
@@ -7503,19 +7495,12 @@ void LLAgent::sendAgentSetAppearance()
 		}
 		msg->nextBlockFast(_PREHASH_ObjectData);
 
-		// Tag changing support
-		if (!gSavedSettings.controlExists("AscentReportClientUUID")) 
-		{
-			gSavedSettings.declareString("AscentReportClientUUID", "806a8249-e235-f051-ac4c-0a58b570f1c1", "FAKIN' BAKE-IN");
-			gSavedSettings.setString("AscentReportClientUUID", "806a8249-e235-f051-ac4c-0a58b570f1c1");
-		}
-
 		/*if (gSavedSettings.getBOOL("AscentUseCustomTag"))
 		{
 			LLColor4 color;
 			if (!gSavedSettings.getBOOL("AscentStoreSettingsPerAccount"))
 			{
-				color = gSavedSettings.getColor4("AscentCustomTagColor");
+				color = LLSavedSettingsGlue::setCOAColor4("AscentCustomTagColor");
 			}
 			else
 			{
@@ -7541,7 +7526,10 @@ void LLAgent::sendAgentSetAppearance()
 		}
 		else
 		{*/
-			mAvatarObject->packTEMessage( gMessageSystem, 1, gSavedSettings.getString("AscentReportClientUUID") );
+			if (gSavedSettings.getBOOL("AscentUseTag"))
+				mAvatarObject->packTEMessage( gMessageSystem, 1, gSavedSettings.getString("AscentReportClientUUID"));
+			else
+				mAvatarObject->packTEMessage( gMessageSystem, 1, "c228d1cf-4b5d-4ba8-84f4-899a0796aa97");
 		//}
 		resetClientTag();
 		

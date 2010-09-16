@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-<floater name="floater_motd" title="Nachricht des Tages">
-	<text name="motd">
-		MOTD:
-	</text>
-	<text name="motd_text">
-	</text>
-  <button label="OK" label_selected="OK" name="OK"/>
-</floater>

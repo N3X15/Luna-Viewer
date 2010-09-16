@@ -175,6 +175,7 @@ struct WaterFloatControl
 		return *this;
 	}
 
+	// LUNA
 	inline WaterFloatControl & operator = (float const & val) 
 	{
 		mX = val;

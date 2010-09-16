@@ -154,6 +154,7 @@ class LLVector3
 		static BOOL parseVector3(const std::string& buf, LLVector3* value);
 };
 
+// LUNA
 std::ostream& operator<<(std::ostream& s, const LLVector3 &a);
 
 

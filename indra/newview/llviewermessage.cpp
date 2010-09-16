@@ -1874,6 +1874,7 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 
 	case IM_INVENTORY_ACCEPTED:
 	{
+		args["NAME"] = name;
 		// Anti-neillife spam patch, lol
 		if(!is_busy)
 			LLNotifications::instance().add("InventoryAccepted", args);
@@ -1881,6 +1882,7 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 	}
 	case IM_INVENTORY_DECLINED:
 	{
+		args["NAME"] = name;
 		// Anti-neillife spam patch, lol
 		if(!is_busy)
 			LLNotifications::instance().add("InventoryDeclined", args);

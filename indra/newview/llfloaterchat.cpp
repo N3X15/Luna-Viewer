@@ -207,14 +207,6 @@ void add_timestamped_line(LLViewerTextEditor* edit, LLChat chat, const LLColor4&
 	if (chat.mSourceType == CHAT_SOURCE_AGENT &&
 		chat.mFromID != LLUUID::null)
 	{
-		/// LUNA
-		// Group chat fuckups on Linux
-		// Check if name == me, if so, set fromID to my UUID
-		std::string myname("");
-		gAgent.getName(myname);
-		if(chat.mFromName==myname)
-			chat.mFromID=gAgent.getID();
-		/// END LUNA
 		chat.mURL = llformat("secondlife:///app/agent/%s/about",chat.mFromID.asString().c_str());
 	}
 
@@ -530,12 +522,6 @@ LLColor4 get_text_color(const LLChat& chat)
 			{
 				text_color = gSavedSettings.getColor4("ObjectChatColor");
 			}
-			break;
-		case CHAT_SOURCE_LUA:
-			if(chat.mChatType==CHAT_TYPE_ERROR)
-				text_color = gSavedSettings.getColor4("ScriptErrorColor");
-			else
-				text_color = gSavedSettings.getColor4("ObjectChatColor");
 			break;
 		default:
 			text_color.setToWhite();
