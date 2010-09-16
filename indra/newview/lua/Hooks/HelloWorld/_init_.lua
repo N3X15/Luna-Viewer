@@ -2,7 +2,7 @@
 	Hello World Extension
 		Displays Lua startup banner.
 	 
-	 Copyright (C) 2008-2009 FlexLife COntributors
+	 Copyright (C) 2008-2009 Luna Contributors
 	 
 	 This program is free software; you can redistribute it and/or modify
 	 it under the terms of the GNU General Public License as published by
@@ -22,11 +22,11 @@
 ]]--
 
 local helloworld = function ()
-	print (_VERSION.." on FlexLife ".._SLUA_VERSION.." loaded!")
+	print (_VERSION.." on Luna ".._SLUA_VERSION.." loaded!")
 	print "_________________________________________"
 	print "Congratulations, all Lua scripts compiled and hooks are set correctly."
-	print "FlexLife is now ready for use."
-	print "If you need any assistance, please visit http://flexlife.nexisonline.net/"
+	print "Luna is now ready for use."
+	print "If you need any assistance, please visit http://luna.nexisonline.net/"
 	print "_________________________________________"
 	return true
 end;

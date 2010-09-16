@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" ?><notifications>
+<?xml version="1.0" ?><notifications>
 
   <global name="skipnexttime">
 
@@ -108,12 +108,12 @@
   <notification
    functor="GenericAcknowledge"
    icon="alertmodal.tga"
-   name="3PVPNotification"
+   name="TPVNotification"
    label="Unknown Alert Message"
    type="alertmodal">
-      Luna may not be TPV compliant (see README for details).
+Luna may not be TPV compliant (see README for details).
 
-      By connecting to any Linden Lab grid with Luna, you accept any risks that you may incur by using any TPV-incompliant viewer, up to and including permanent banishment.
+By connecting to any Linden Lab grid with Luna, you accept any risks that you may incur by using any TPV-incompliant viewer, up to and including permanent banishment.
     <usetemplate
      name="okbutton"
      yestext="OK"/>

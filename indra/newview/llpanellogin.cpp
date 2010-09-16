@@ -1079,12 +1079,12 @@ void LLPanelLogin::loadLoginPage()
 	
 
 	/**
-	* FlexLife Splash Screen version auto-append
+	* Luna Splash Screen version auto-append
 	*
 	*
 	* http://example.com/login/index.php/os/major/minor/patch/build
 	* Working example: 
-	* http://flexlife.nexisonline.net/login/index2.php/ (etc)
+	* http://luna.nexisonline.net/login/index2.php/ (etc)
 	*/
 	std::string login_splash( "http://luna.nexisonline.net/login/index.php" );
 /*

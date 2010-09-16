@@ -57,7 +57,8 @@ if exists(SWIGPATH.."CHECKSUMS.md5") then
 	returncode = os.execute("md5sum -c "..SWIGPATH.."CHECKSUMS.md5")
 	print("Return code: "..returncode)
 end
-if not returncode == 0 then
+
+if returncode ~= 0 then
 	i=1
 	for i=1,#arg,1 do
 --		print(i,arg[i])

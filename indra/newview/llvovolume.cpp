@@ -68,8 +68,6 @@ const S32 MIN_QUIET_FRAMES_COALESCE = 30;
 const F32 FORCE_SIMPLE_RENDER_AREA = 512.f;
 const F32 FORCE_CULL_AREA = 8.f;
 
-const F32 SCULPT_MAX_AREA = 300.000f; // TEST!
-
 BOOL gAnimateTextures = TRUE;
 extern BOOL gHideSelectedObjects;
 
@@ -751,20 +749,6 @@ void LLVOVolume::sculpt()
 			sculpt_data = raw_image->getData();
 		}
 		getVolume()->sculpt(sculpt_width, sculpt_height, sculpt_components, sculpt_data, discard_level);
-// LUNA DEBUGGING CRAP
-		//setDebugText(llformat("[LLVOVolume.cpp:%d]\nTris: %d\nArea: %f", __LINE__,getVolume()->getNumTriangleIndices(),getVolume()->sculptGetSurfaceArea() ));
-		if(getVolume()->sculptGetSurfaceArea()>SCULPT_MAX_AREA)
-		{
-			LUA_CALL("OnSculptTooBig") << getID() << mSculptTexture->getID() << getVolume()->sculptGetSurfaceArea() << LUA_END;
-			
-			LLVolumeParams volume_params = getVolume()->getParams();
-			volume_params.setSculptID(LLUUID::null, LL_SCULPT_TYPE_NONE);
-
-			if (setVolume(volume_params, 0))
-			{
-				markForUpdate(TRUE);
-			}
-		}
 	}
 }
 

@@ -3,7 +3,7 @@
 
 #include "LuaUI.h"
 
-// FlexLife UI management.
+// Luna UI management.
 
 #include "FlexUI.h"
 

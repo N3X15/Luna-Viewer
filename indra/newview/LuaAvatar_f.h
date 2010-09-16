@@ -1,9 +1,9 @@
 /**
  * @file LuaAvatar_f.h
- * @brief FlexLife Viewer Lua Framework:  Appearance bindings
+ * @brief Luna Viewer Lua Framework:  Appearance bindings
  * @author N3X15
  *
- *  Copyright (C) 2008-2009 FlexLife Contributors
+ *  Copyright (C) 2008-2009 Luna Contributors
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by

@@ -165,6 +165,7 @@ public:
 	//static U32 mMultCount;
 };
 
+/// LUNA
 std::ostream& operator<<(std::ostream &s, const LLQuaternion &a);
 
 // checker
