@@ -26,14 +26,11 @@
 
 //Fixed for Visual Studio
 //Has to be in begin section. VS will choke if this include isn't the very
-//first thing in the file. If GCC doesn't like it, encapsulate in 
-//#ifdef _WIN32 and include it be in #infdef _WIN32 in the header section
-//http://www.swig.org/Doc1.3/SWIG.html  5.6 Code Insertion
-#ifdef _WIN32
+//first thing in the file.
 %begin %{
 #include "llviewerprecompiledheaders.h"
 %}
-#endif
+
 %{
 
 

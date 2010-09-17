@@ -504,12 +504,12 @@ set(viewer_SOURCE_FILES
     _LuaSL.cpp 
 # GL Module -----------------
     swig/GL.cpp
-    _LuaGL.cpp
+#    _LuaGL.cpp
 # Region Module -------------
-    _LuaRegion.cpp
+#    _LuaRegion.cpp
     swig/Region/Region.cpp
 # Object Module -------------
-    _LuaObject.cpp
+#    _LuaObject.cpp
 #    swig/Object/Object.cpp
 #----------------------------
     LunaLua.cpp
@@ -984,13 +984,13 @@ set(viewer_HEADER_FILES
     _LuaSL.h
 # GL Module --------------
     swig/GL.h
-    _LuaGL.h
+#    _LuaGL.h
 # Region module ----------
     swig/Region/Region.h
-    _LuaRegion.h
+#    _LuaRegion.h
 # Object Module
     swig/Object/Object.h
-    _LuaObject.h
+#    _LuaObject.h
 # ------------------------
     LuaWindlight.h
     lunaconsole.h

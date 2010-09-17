@@ -3,17 +3,20 @@ set BUILDTYPE=Release
 :set BUILDTYPE=RelWithDebInfo
 :set BUILDTYPE=Debug
 
+: Clean out unused _Lua* files
+rm newview/_Lua*
+
 set MODULES=
 set MODULES=%MODULES% SL
-set MODULES=%MODULES% GL
-set MODULES=%MODULES% Region
-set MODULES=%MODULES% Object
-set MODULES=%MODULES% HUDEffects
+:set MODULES=%MODULES% GL
+:set MODULES=%MODULES% Region
+:set MODULES=%MODULES% Object
+:set MODULES=%MODULES% HUDEffects
 
 :Build the SL and GL Lua modules.
 lua5.1 newview/swig/BuildModules.lua %MODULES%
 
-set GEN="VC80"
+set GEN="VC90"
 python ./develop.py --type=%BUILDTYPE% -G "%GEN%" configure
 :python ./develop.py --type=%BUILDTYPE% -G "%GEN%" build
 rem VERBOSE=1

@@ -1,0 +1,13 @@
+Luna 1.4.2.5
+============
+
+### Lua Bindings
+* Bindings combined to facilitate a working build on Windows.
+* Latest Lua library included.
+
+### General
+* Tests disabled since they're just damn annoying.
+* Client tags should be downloaded properly now.
+* Client tags updated to latest Ascent list + Luna.
+* Windows build should work now under VS2008.  Maybe.
+* Imported a few buildscript tweaks from Snowglobe.

@@ -63,15 +63,11 @@ extern "C" {
 
 /* Lua classes */
 #include "_LuaSL.h"	// SL module
-#include "_LuaGL.h"	// GL module
-#include "_LuaRegion.h"	// Region module
-#include "_LuaObject.h"	// Object module
+//#include "_LuaGL.h"	// GL module
+//#include "_LuaRegion.h"	// Region module
+//#include "_LuaObject.h"	// Object module
 
 #include "LuaBase_f.h"
-
-#ifdef _WITH_CEGUI
-	#include "FlexUI.h"
-#endif
 
 //#define LUA_HOOK_SPAM 
 
@@ -79,9 +75,6 @@ extern LLAgent gAgent;
 
 extern "C" {
 	extern int luaopen_SL(lua_State* L); 	// SL module
-	extern int luaopen_GL(lua_State* L); 	// GL module
-	extern int luaopen_Region(lua_State* L);// Region module
-	extern int luaopen_Object(lua_State* L);// Object module
 }
 
 ///////////////////////////////////////////////
@@ -362,14 +355,9 @@ bool FLLua::load()
 
 	LL_INFOS("Lua") << __LINE__ << ": *** LOADING SWIG BINDINGS ***" << llendl;
 	luaopen_SL(pLuaStack);
-	luaopen_GL(pLuaStack);
-	luaopen_Region(pLuaStack);
-	luaopen_Object(pLuaStack);
-
-#ifdef _WITH_CEGUI
-	LL_INFOS("Lua") << __LINE__ << ": *** LOADING Crazy Eddie's GUI BINDINGS ***" << llendl;
-	initUI(pLuaStack);
-#endif
+//	luaopen_GL(pLuaStack);
+//	luaopen_Region(pLuaStack);
+//	luaopen_Object(pLuaStack);
 
 	std::string  version; 
 
@@ -405,10 +393,6 @@ bool FLLua::load()
 
 	if(!LoadFile(gDirUtilp->getExpandedFilename(FL_PATH_LUA,"_init_.lua")))
 		return false;
-#if 0
-	if(!LoadFile(gDirUtilp->getExpandedFilename(FL_PATH_MACROS,"unit_tests.lua")))
-		return false;
-#endif
 	return true;
 }
 /// Run the interpreter.

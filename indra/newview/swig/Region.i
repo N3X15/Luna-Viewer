@@ -1,9 +1,9 @@
 /**
- * @file LuaObject.swig
- * @brief FlexLife Lua Integration Framework
+ * @file LuaBase.swig
+ * @brief Luna Lua Integration Framework
  * @author N3X15
  *
- *  Copyright (C) 2008-2009 N3X15
+ *  Copyright (C) 2008-2010 Luna Contributors
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -22,12 +22,32 @@
  * $Id$
  */
 
-%module Object
-
 %{
-#include "llviewerobject.h"
+
+
+#include "stdtypes.h"
+
+#include "llviewerregion.h"
+
+//#include "llprimitive.h"
+//#include "llviewerobject.h"
+//#include "llvovolume.h"
+#include "v2math.h"
+#include "v3math.h"
+#include "v4math.h"
+#include "v4color.h"
+#include "llhttpclient.h"
+#include "m4math.h"
+#include "llvoclouds.h"
+
+#include "swig/Region/Region.h"
 %}
+%include <std_string.i>
+%include "LLUUID.i"
+//%include "LLVector.i" // Getting lots of redefinition errors...
 
-%include "llviewerobject.h"
+%include "../llviewerregion.h"
 
-%rename (Object) LLViewerObject;
+%rename (Region) LLViewerRegion;
+
+%include "Region/Region.h"

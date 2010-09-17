@@ -3,7 +3,7 @@ SWIGPATH="newview/swig/"
 licensing=[[
 /**
  * @brief Luna Lua Integration Framework
- * @author N3X15
+ * @author Luna Contributors
  *
  *  Copyright (C) 2008-2010 Luna Contributors
  *
@@ -36,9 +36,7 @@ function BuildModule(name)
 	print(cl)
 	os.execute(cl);
 	if not exists(outfile..".h") then
-		print("touch "..outfile..".h")
-		os.execute("touch "..outfile..".h")
-		io.open(outfile..".h"):write(licensing.."\n// This file is purposefully empty because swig is dumb.")
+		io.open(outfile..".h","w"):write(licensing.."\n// This file is purposefully empty because swig is dumb.")
 	end
 end
 
@@ -52,19 +50,25 @@ function exists(filename)
 	end
 end
 
-local returncode = 256
-if exists(SWIGPATH.."CHECKSUMS.md5") then
-	returncode = os.execute("md5sum -c "..SWIGPATH.."CHECKSUMS.md5")
-	print("Return code: "..returncode)
+function Changed(name)
+	local inf=SWIGPATH..name..".swig"
+	local outf=SWIGPATH.."."..name..".swig"
+	if not exists(inf) then
+		return false
+	end
+	if not exists(outf) then
+		return true
+	end
+	local in_c=io.open(inf):read("*a")
+	local out_c=io.open(outf):read("*a")
+	io.open(outf,"w"):write(in_c)
+	return (in_c ~= out_c)
 end
 
-if returncode ~= 0 then
-	i=1
-	for i=1,#arg,1 do
---		print(i,arg[i])
+i=1
+for i=1,#arg,1 do
+	local modname = arg[i]
+	if Changed(modname) then
 		BuildModule(arg[i])
 	end
-	os.execute("md5sum "..SWIGPATH.."*.swig "..SWIGPATH.."*.i > "..SWIGPATH.."CHECKSUMS.md5")
-else
-	print "Skipping module build."
 end

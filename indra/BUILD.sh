@@ -6,12 +6,15 @@ BUILDTYPE="Release"
 # IP/(Cores*2)
 export DISTCC_HOSTS="localhost/2 192.168.9.5/2 192.168.9.170/4"
 
+rm newview/_Lua*
+
+# Modules have been combined until I figure out why the hell swig is a dick
 MODULES=""
 MODULES="${MODULES} SL" 	# Base module (handles types and stuff)
-MODULES="${MODULES} GL" 	# GL module (rendering)
-MODULES="${MODULES} Region"	# Region module
-MODULES="${MODULES} Object"	# Object manipulation module.
-MODULES="${MODULES} HUDEffects"	# HUD Effects module.
+#MODULES="${MODULES} GL" 	# GL module (rendering)
+#MODULES="${MODULES} Region"	# Region module
+#MODULES="${MODULES} Object"	# Object manipulation module.
+#MODULES="${MODULES} HUDEffects"	# HUD Effects module.
 
 #Build the SL and GL Lua modules.
 lua newview/swig/BuildModules.lua ${MODULES}

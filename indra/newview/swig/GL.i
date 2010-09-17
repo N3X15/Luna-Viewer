@@ -1,5 +1,5 @@
 /**
- * @file LLUI.swig
+ * @file GL.swig
  * @brief Luna Lua Integration Framework
  * @author N3X15
  *
@@ -22,33 +22,35 @@
  * $Id$
  */
 
-%module LLUI
-
-//Fixed for Visual Studio
-//Has to be in begin section. VS will choke if this include isn't the very
-//first thing in the file.
-#ifdef _WIN32
-%begin %{
-#include "llviewerprecompiledheaders.h"
-%}
-#endif
-
 %{
 #include "stdtypes.h"
 
-// Only things we NEED.
-#include "LuaUI.h"
-#include "llfloater.h"
-#include "lllineeditor.h"
-#include "llpanel.h"
-#include "llbutton.h"
-#include "lliconctrl.h"
+// Utilities functions the user interface needs
+
+#include "linden_common.h"
+
+#include <string>
+#include <map>
+
+// Linden library includes
+// MIA: #include "audioengine.h"
 #include "v2math.h"
-#include "v3math.h"
-#include "v4math.h"
 #include "v4color.h"
+#include "llrender.h"
+#include "llrect.h"
+#include "llimagegl.h"
+#include "lldir.h"
+#include "llfontgl.h"
+
+#include "swig/GL.h"
 %}
 
-%import "LLUI/LLUI.h"	  // Interfaces with LL UI controls
-%import "../../llui/ui.h" // GL drawing methods for custom UI :D
+%include <std_string.i>
+%include "LLUUID.i"
+//%include "LLVector.i" // Getting lots of redefinition errors...
+
+//%include "../../llrender/llrender.h" // GL drawing methods
+//%include "../../llrender/llglheaders.h" // GL drawing methods
+
+%include "GL.h"
 

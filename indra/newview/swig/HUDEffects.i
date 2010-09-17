@@ -1,5 +1,5 @@
 /**
- * @file LuaBase.swig
+ * @file Object.swig
  * @brief Luna Lua Integration Framework
  * @author N3X15
  *
@@ -19,47 +19,41 @@
  *  with this program; if not, write to the Free Software Foundation, Inc.,
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
- * $Id$
+ * $Id: Region.swig 230 2010-03-08 10:35:35Z NexisEntertainment@gmail.com $
  */
 
-%module Region
 
-//Fixed for Visual Studio
-//Has to be in begin section. VS will choke if this include isn't the very
-//first thing in the file. If GCC doesn't like it, encapsulate in 
-//#ifdef _WIN32 and include it be in #infdef _WIN32 in the header section
-//http://www.swig.org/Doc1.3/SWIG.html  5.6 Code Insertion
-#ifdef _WIN32
-%begin %{
-#include "llviewerprecompiledheaders.h"
-%}
-#endif
 %{
-
-
+// Everything from here down to llviewerobject.h is a dependency of LLViewerObject(List).
+//	Yes.  All of these.
+//	Removing them causes all kinds of hell because of shitty dependency resolution.
+//	-- Nexypoo
+#include "linden_common.h"
+#include "material_codes.h"
+#include "imageids.h"
 #include "stdtypes.h"
 
-#include "llviewerregion.h"
-
-//#include "llprimitive.h"
-//#include "llviewerobject.h"
-//#include "llvovolume.h"
-#include "v2math.h"
-#include "v3math.h"
-#include "v4math.h"
-#include "v4color.h"
-#include "llhttpclient.h"
-#include "m4math.h"
-#include "llvoclouds.h"
-
-#include "swig/Region/Region.h"
+#include "llhudeffect.h"
+#include "llhudeffectbeam.h"
+#include "llhudeffectlookat.h"
+#include "llhudeffectpointat.h"
+#include "llhudeffecttrail.h"
 %}
+
 %include <std_string.i>
 %include "LLUUID.i"
 //%include "LLVector.i" // Getting lots of redefinition errors...
 
-%include "../llviewerregion.h"
 
-%rename (Region) LLViewerRegion;
+%include "../llhudeffect.h"
+%include "../llhudeffectbeam.h"
+%include "../llhudeffectlookat.h"
+%include "../llhudeffectpointat.h"
+%include "../llhudeffecttrail.h"
 
-%include "Region/Region.h"
+%rename (HUDEffect) LLHUDEffect;
+%rename (HUDEffectBeam) LLHUDEffectBeam;
+%rename (HUDEffectLookAt) LLHUDEffectLookAt;
+%rename (HUDEffectPointAt) LLHUDEffectPointAt;
+%rename (HUDEffectTrail) LLHUDEffectTrail;
+
