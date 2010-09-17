@@ -1393,7 +1393,8 @@ if (WINDOWS)
 
     if (PACKAGE)
       add_custom_target(package ALL DEPENDS ${CMAKE_CFG_INTDIR}/touched.bat)
-      add_dependencies(package windows-updater windows-crash-logger)
+	   # fuck the crash logger/updater
+      #add_dependencies(package windows-updater windows-crash-logger)
     endif (PACKAGE)
 endif (WINDOWS)
 

@@ -257,19 +257,20 @@ class WindowsManifest(ViewerManifest):
 
         # These need to be installed as a SxS assembly, currently a 'private' assembly.
         # See http://msdn.microsoft.com/en-us/library/ms235291(VS.80).aspx
-        if self.prefix(src=self.args['configuration'], dst=""):
-            if self.args['configuration'] == 'Debug':
-                self.path("msvcr80d.dll")
-                self.path("msvcp80d.dll")
-                self.path("Microsoft.VC80.DebugCRT.manifest")
-            else:
-                self.path("msvcr80.dll")
-                self.path("msvcp80.dll")
-                self.path("Microsoft.VC80.CRT.manifest")
-            self.end_prefix()
+		# WHAT THE HELL IS WRONG WITH YOU
+        #if self.prefix(src=self.args['configuration'], dst=""):
+        #    if self.args['configuration'] == 'Debug':
+        #        self.path("msvcr90d.dll")
+        #        self.path("msvcp90d.dll")
+        #        self.path("Microsoft.VC90.DebugCRT.manifest")
+        #    else:
+        #        self.path("msvcr90.dll")
+        #        self.path("msvcp90.dll")
+        #        self.path("Microsoft.VC90.CRT.manifest")
+        #    self.end_prefix()
 
         # The config file name needs to match the exe's name.
-        self.path(src="%s/Luna.exe.config" % self.args['configuration'], dst=self.final_exe() + ".config")
+        self.path(src="Luna.exe.config", dst=self.final_exe() + ".config")
 
         # Vivox runtimes
         if self.prefix(src="vivox-runtime/i686-win32", dst=""):
@@ -299,6 +300,7 @@ class WindowsManifest(ViewerManifest):
 
 
     def nsi_file_commands(self, install=True):
+		
         def wpath(path):
             if path.endswith('/') or path.endswith(os.path.sep):
                 path = path[:-1]
@@ -320,9 +322,9 @@ class WindowsManifest(ViewerManifest):
                     out_path = installed_dir
                     result += 'SetOutPath ' + out_path + '\n'
             if install:
-                result += 'File ' + pkg_file + '\n'
+                result += 'File \"' + pkg_file + '\"\n'
             else:
-                result += 'Delete ' + wpath(os.path.join('$INSTDIR', rel_file)) + '\n'
+                result += 'Delete \"' + wpath(os.path.join('$INSTDIR', rel_file)) + '\"\n'
         # at the end of a delete, just rmdir all the directories
         if not install:
             deleted_file_dirs = [os.path.dirname(pair[1].replace(self.get_dst_prefix()+os.path.sep,'')) for pair in self.file_list]
@@ -338,7 +340,7 @@ class WindowsManifest(ViewerManifest):
                 if d != prev:   # skip duplicates
                     result += 'RMDir ' + wpath(os.path.join('$INSTDIR', os.path.normpath(d))) + '\n'
                 prev = d
-
+        
         return result
 
     def package_finish(self):
@@ -393,18 +395,18 @@ class WindowsManifest(ViewerManifest):
                 !define UNINSTALL_SETTINGS 1
                 Caption "Second Life %(grid)s ${VERSION}"
                 """
-        elif self.viewer_branding_id()=="snowglobe":
-                installer_file = "Snowglobe_%(version_dashes)s_Setup.exe"
+        elif self.viewer_branding_id()=="Luna":
+                installer_file = "Luna_%(version_dashes)s_Setup.exe"
                 grid_vars_template = """
                 OutFile "%(installer_file)s"
-                !define VIEWERNAME "Snowglobe"
+                !define VIEWERNAME "Luna"
                 !define INSTFLAGS "%(flags)s"
-                !define INSTNAME   "Snowglobe"
-                !define SHORTCUT   "Snowglobe"
-                !define URLNAME   "secondlife"
-                !define INSTALL_ICON "install_icon_snowglobe.ico"
-                !define UNINSTALL_ICON "uninstall_icon_snowglobe.ico"
-                Caption "Snowglobe ${VERSION}"
+                !define INSTNAME   "Luna"
+                !define SHORTCUT   "Luna"
+                !define URLNAME   "luna"
+                !define INSTALL_ICON "install_icon_ascent.ico"
+                !define UNINSTALL_ICON "install_icon_ascent.ico"
+                Caption "Luna ${VERSION}"
                 """
         else:
             # some other channel on some grid
@@ -437,8 +439,9 @@ class WindowsManifest(ViewerManifest):
         # We use the Unicode version of NSIS, available from
         # http://www.scratchpaper.com/
         NSIS_path = 'C:\\Program Files\\NSIS\\Unicode\\makensis.exe'
+		
         self.run_command('"' + proper_windows_path(NSIS_path) + '" ' + self.dst_path_of(tempfile))
-        # self.remove(self.dst_path_of(tempfile))
+        self.remove(self.dst_path_of(tempfile))
         # If we're on a build machine, sign the code using our Authenticode certificate. JC
         sign_py = os.path.expandvars("{SIGN_PY}")
         if sign_py == "" or sign_py == "{SIGN_PY}":

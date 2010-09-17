@@ -1,6 +1,6 @@
 /**
  * @brief Luna Lua Integration Framework
- * @author N3X15
+ * @author Luna Contributors
  *
  *  Copyright (C) 2008-2010 Luna Contributors
  *

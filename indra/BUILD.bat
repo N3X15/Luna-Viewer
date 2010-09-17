@@ -17,7 +17,7 @@ set MODULES=%MODULES% SL
 lua5.1 newview/swig/BuildModules.lua %MODULES%
 
 set GEN="VC90"
-python ./develop.py --type=%BUILDTYPE% -G "%GEN%" configure
+python ./develop.py --type=%BUILDTYPE% -G "%GEN%" configure -DPACKAGE:BOOL=TRUE
 :python ./develop.py --type=%BUILDTYPE% -G "%GEN%" build
 rem VERBOSE=1
 pause
