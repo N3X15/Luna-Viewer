@@ -412,6 +412,10 @@ void LLFloaterChat::addChat(const LLChat& chat,
 		{
 			text_color = gSavedSettings.getColor("SystemChatColor");
 		}
+		else if (chat.mSourceType == CHAT_SOURCE_LUA)
+		{
+			text_color = gSavedSettings.getColor("LuaChatColor");
+		}
 		else if(from_instant_message)
 		{
 			text_color = gSavedSettings.getColor("IMChatColor");

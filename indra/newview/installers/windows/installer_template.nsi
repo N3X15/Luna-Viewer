@@ -101,6 +101,7 @@ Var SHORTCUT_LANG_PARAM ; "--set InstallLanguage de", passes language to viewer
 !insertmacro GetParameters
 !insertmacro GetOptions
 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; After install completes, launch app
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -682,6 +683,12 @@ lbl_check_silent:
 	StrCpy $LANGUAGE $0
 
 lbl_build_menu:
+
+	; Splash
+    InitPluginsDir
+    File /oname=$PLUGINSDIR\spltmp.bmp "%%SOURCE%%\installers\windows\splash.bmp"
+    advsplash::show 1000 600 400 -1 $PLUGINSDIR\spltmp
+	
 	Push ""
     # Use separate file so labels can be UTF-16 but we can still merge changes
     # into this ASCII file. JC

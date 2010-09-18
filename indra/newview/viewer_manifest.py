@@ -241,6 +241,12 @@ class WindowsManifest(ViewerManifest):
             self.path("qtwebkit4.dll")
             self.path("ssleay32.dll")
             self.end_prefix()
+			
+		# Lua modules, plugins, etc
+        if self.prefix(src="../../libraries/i686-win32/lib/release", dst=""):
+            self.path("lfs.dll")
+            self.path("Lua5.1.dll") # I think it's linked statically, but just to be sure...
+            self.end_prefix()
 
         # For WebKit/Qt plugin runtimes (image format plugins)
         if self.prefix(src="../../libraries/i686-win32/lib/release/imageformats", dst="llplugin/imageformats"):
@@ -270,7 +276,8 @@ class WindowsManifest(ViewerManifest):
         #    self.end_prefix()
 
         # The config file name needs to match the exe's name.
-        self.path(src="Luna.exe.config", dst=self.final_exe() + ".config")
+		# Not required, and the VC90 build fucks this up anyway - N3X15
+        #self.path(src="Luna.exe.config", dst=self.final_exe() + ".config")
 
         # Vivox runtimes
         if self.prefix(src="vivox-runtime/i686-win32", dst=""):
@@ -281,17 +288,18 @@ class WindowsManifest(ViewerManifest):
             self.path("wrap_oal.dll")
             self.end_prefix()
 
+		# Fuck you
         # pull in the crash logger and updater from other projects
-        self.path(src=self.find_existing_file( # tag:"crash-logger" here as a cue to the exporter
-                "../win_crash_logger/debug/windows-crash-logger.exe",
-                "../win_crash_logger/release/windows-crash-logger.exe",
-                "../win_crash_logger/relwithdebinfo/windows-crash-logger.exe"),
-                  dst="win_crash_logger.exe")
-        self.path(src=self.find_existing_file(
-                "../win_updater/debug/windows-updater.exe",
-                "../win_updater/release/windows-updater.exe",
-                "../win_updater/relwithdebinfo/windows-updater.exe"),
-                  dst="updater.exe")
+        #self.path(src=self.find_existing_file( # tag:"crash-logger" here as a cue to the exporter
+        #        "../win_crash_logger/debug/windows-crash-logger.exe",
+        #        "../win_crash_logger/release/windows-crash-logger.exe",
+        #        "../win_crash_logger/relwithdebinfo/windows-crash-logger.exe"),
+        #          dst="win_crash_logger.exe")
+        #self.path(src=self.find_existing_file(
+        #        "../win_updater/debug/windows-updater.exe",
+        #        "../win_updater/release/windows-updater.exe",
+        #        "../win_updater/relwithdebinfo/windows-updater.exe"),
+        #          dst="updater.exe")
 
         # For google-perftools tcmalloc allocator.
         #if self.prefix(src="../../libraries/i686-win32/lib/release", dst=""):

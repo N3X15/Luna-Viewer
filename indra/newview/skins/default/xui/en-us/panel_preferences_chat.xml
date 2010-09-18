@@ -34,10 +34,14 @@
 	     can_apply_immediately="true" color="1 1 1 1" control_name="UserChatColor"
 	     enabled="true" follows="left|top" height="47" label="You" left="148"
 	     mouse_opaque="true" name="user" width="44" />
-	<color_swatch border_color="0.45098 0.517647 0.607843 1" bottom="-100"
+  <color_swatch border_color="0.45098 0.517647 0.607843 1" bottom="-100"
 	     can_apply_immediately="true" color="1 1 1 1" control_name="AgentChatColor"
 	     enabled="true" follows="left|top" height="47" label="Others" left_delta="54"
 	     mouse_opaque="true" name="agent" width="44" />
+  <color_swatch border_color="0.45098 0.517647 0.607843 1" bottom="-100"
+	     can_apply_immediately="true" color="0.6 0.6 1 1" control_name="LuaChatColor"
+	     enabled="true" follows="left|top" height="47" label="Lua" left_delta="54"
+	     mouse_opaque="true" name="lua" width="44" />
 	<color_swatch border_color="0.45098 0.517647 0.607843 1" bottom="-100"
 	     can_apply_immediately="true" color="0.6 0.6 1 1"
 	     enabled="true" follows="left|top" height="47" label="IM" left_delta="54"

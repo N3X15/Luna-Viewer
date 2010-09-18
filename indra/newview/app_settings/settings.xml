@@ -926,6 +926,22 @@
       <key>Value</key>
       <string>806a8249-e235-f051-ac4c-0a58b570f1c1</string>
     </map>
+  <key>LuaChatColor</key>
+  <map>
+    <key>Comment</key>
+    <string>Color of chat messages from the Lua engine</string>
+    <key>Persist</key>
+    <integer>1</integer>
+    <key>Type</key>
+    <string>Color4</string>
+    <key>Value</key>
+    <array>
+      <real>0.6509803921568627</real>
+      <real>0.6117647058823529</real>
+      <real>1.0</real>
+      <real>1.0</real>
+    </array>
+  </map>
 	<!-- Vanilla SL settings that are now optionally Account-Specific -->
 	<key>AgentChatColor</key>
     <map>

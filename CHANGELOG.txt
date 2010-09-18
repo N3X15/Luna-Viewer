@@ -4,10 +4,16 @@ Luna 1.4.2.5
 ### Lua Bindings
 * Bindings combined to facilitate a working build on Windows.
 * Latest Lua library included.
+* Added lfs.dll
+* Added Lua's own chat color. (Dusty blue by default)
 
 ### General
 * Tests disabled since they're just damn annoying.
 * Client tags should be downloaded properly now.
 * Client tags updated to latest Ascent list + Luna.
-* Windows build should work now under VS2008.  Maybe.
+* Windows build works now under VS2008.
 * Imported a few buildscript tweaks from Snowglobe.
+* Removed *.config files since they fuck everything up
+* Added splash screen to installer.
+* Added --multiple to commandline.
+* Using VC90 redist instead of VC80.
