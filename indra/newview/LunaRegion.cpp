@@ -1,10 +1,10 @@
 #include "llviewerprecompiledheaders.h"
 
-#include "Region.h"
+#include "LunaRegion.h"
 
 #include "llhttpclient.h"
-#include "../../llviewerregion.h"
-#include "../../llworld.h"
+#include "llviewerregion.h"
+#include "llworld.h"
 
 LLViewerRegion* FindByName(std::string name)
 {

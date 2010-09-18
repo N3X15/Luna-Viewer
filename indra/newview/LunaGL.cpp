@@ -1,7 +1,8 @@
 
+// This will cause errors on Windows because Visual Studio is a retard
 #include "llviewerprecompiledheaders.h"
 
-#include "GL.h"
+#include "LunaGL.h"
 
 #include "llrender.h"
 

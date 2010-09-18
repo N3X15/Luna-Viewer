@@ -42,7 +42,7 @@
 #include "lldir.h"
 #include "llfontgl.h"
 
-#include "swig/GL.h"
+#include "LunaGL.h"
 %}
 
 %include <std_string.i>
@@ -52,5 +52,5 @@
 //%include "../../llrender/llrender.h" // GL drawing methods
 //%include "../../llrender/llglheaders.h" // GL drawing methods
 
-%include "GL.h"
+%include "../LunaGL.h"
 
