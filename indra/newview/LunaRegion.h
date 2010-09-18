@@ -8,7 +8,7 @@ local region = Region.FindByIP(IPAddress)
 region:setWaterHeight(100)
 */
 
-#include "../../llviewerregion.h"
+#include "llviewerregion.h"
 //#include "llprimitive.h"
 //#include "../../llviewerobject.h"
 //#include "../../llvovolume.h"

@@ -40,7 +40,7 @@
 #include "m4math.h"
 #include "llvoclouds.h"
 
-#include "swig/Region/Region.h"
+#include "LunaRegion.h"
 %}
 %include <std_string.i>
 %include "LLUUID.i"
@@ -50,4 +50,4 @@
 
 %rename (Region) LLViewerRegion;
 
-%include "Region/Region.h"
+%include "../LunaRegion.h"

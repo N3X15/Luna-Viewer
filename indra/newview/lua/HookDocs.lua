@@ -7,43 +7,43 @@ RegisterHook("OnBump"	,"You were bumped by something")
 -- defined in indra/newview/llviewerobjectlist.cpp:1406
 RegisterHook("OnObjectCreated"	,"An object has rezzed/appeared.")
 
--- defined in indra/newview/llviewermessage.cpp:2658
+-- defined in indra/newview/llviewermessage.cpp:2660
 RegisterHook("OnChatUnknown"	,"Triggered when someone uses an unknown chat method.")
 
 -- defined in indra/newview/pipeline.cpp:1584
 RegisterHook("PreUpdateGeometry"	,"Before geometry update.")
 
--- defined in indra/newview/llagent.cpp:826
+-- defined in indra/newview/llagent.cpp:818
 RegisterHook("OnPhantom"	,"Tells the script engine whether a user has become phantom.")
 
--- defined in indra/newview/llagent.cpp:960
+-- defined in indra/newview/llagent.cpp:952
 RegisterHook("OnRegionChanged"	,"Tells Lua that you have moved into a new region.")
 
 -- defined in indra/newview/llviewerobject.cpp:4250
 RegisterHook("OnAttachedParticles"	,"Particle data.")
 
--- defined in indra/newview/llviewermessage.cpp:2626
+-- defined in indra/newview/llviewermessage.cpp:2628
 RegisterHook("OnChatWhisper"	,"Triggered when someone whispers something in local chat")
 
--- defined in indra/newview/llviewermessage.cpp:3710
+-- defined in indra/newview/llviewermessage.cpp:3712
 RegisterHook("OnSoundTriggered"	,"Triggered when a sound is triggered.")
 
--- defined in indra/newview/llviewermessage.cpp:2650
+-- defined in indra/newview/llviewermessage.cpp:2652
 RegisterHook("OnChatShout"	,"Triggered when someone shouts something in local chat.")
 
--- defined in indra/newview/LunaLua.cpp:195
+-- defined in indra/newview/LunaLua.cpp:188
 RegisterHook("OnLunaInit"	,"Luna's Lua engine has initialized.")
 
--- defined in indra/newview/llvoavatar.cpp:3156
+-- defined in indra/newview/llvoavatar.cpp:3157
 RegisterHook("OnAvatarLoaded"	,"Triggered when an avatar has been fully loaded.")
 
 -- defined in indra/newview/llviewerobject.cpp:4376
 RegisterHook("OnAttachedSound"	,"Object playing a sound (includes looped sounds).")
 
--- defined in indra/newview/llagent.cpp:490
+-- defined in indra/newview/llagent.cpp:482
 RegisterHook("OnAgentInit"	,"On login, tells the Lua engine the name of the user and whether it's a Linden or not.")
 
--- defined in indra/newview/llviewermessage.cpp:2631
+-- defined in indra/newview/llviewermessage.cpp:2633
 RegisterHook("OnChatSay"	,"Triggered when an object uses llOwnerSay.")
 
 -- defined in indra/newview/pipeline.cpp:638
@@ -52,5 +52,5 @@ RegisterHook("PipelineCreateBuffers"	,"Reserve GL buffers.")
 -- defined in indra/newview/llviewerobject.cpp:1003
 RegisterHook("OnSetText"	,"Someone set this object's llSetText.")
 
--- defined in indra/newview/llviewermessage.cpp:2644
+-- defined in indra/newview/llviewermessage.cpp:2646
 RegisterHook("OnChatDebug"	,"Triggered when an object states something on the debug channel.")

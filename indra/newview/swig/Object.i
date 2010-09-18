@@ -59,7 +59,7 @@
 #include "llviewerobject.h"
 #include "llviewerobjectlist.h"
 
-#include "swig/Object/Object.h"
+#include "LunaObject.h"
 %}
 
 %include <std_string.i>
@@ -77,4 +77,4 @@
 
 %rename (Object) LLViewerObject;
 
-%include "Object/Object.h"
+%include "../LunaObject.h"

@@ -1,5 +1,5 @@
-#include "../../llviewerobject.h"
-#include "../../llviewerobjectlist.h"
+#include "llviewerobject.h"
+#include "llviewerobjectlist.h"
 #include "stdtypes.h"
 
 inline LLViewerObject	*FindObject(const LLUUID &id) { return gObjectList.findObject(id);}
