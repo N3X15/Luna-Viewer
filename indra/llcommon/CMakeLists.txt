@@ -202,22 +202,12 @@ target_link_libraries(
     ${ZLIB_LIBRARIES}
     )
 
-if(WORD_SIZE EQUAL 64)
-    add_library (llcommonPIC ${llcommon_SOURCE_FILES})
-    add_dependencies(llcommonPIC prepare)
-
-    if(WINDOWS)
-        add_definitions(/FIXED:NO)
-    else(WINDOWS) # not windows therefore gcc LINUX and DARWIN
-        add_definitions(-fPIC)
-    endif(WINDOWS)
-
-    target_link_libraries(
-    llcommonPIC
-    ${APRUTIL_LIBRARIES}
-    ${APR_LIBRARIES}
-    ${EXPAT_LIBRARIES}
-    ${ZLIB_LIBRARIES}
-    )
-endif(WORD_SIZE EQUAL 64)
-
+if (DARWIN)
+    # Don't embed a full path in the library's install name
+    set_target_properties(
+        llcommon
+        PROPERTIES
+        BUILD_WITH_INSTALL_RPATH 1
+        INSTALL_NAME_DIR "@executable_path/../Resources"
+		)
+endif (DARWIN)
