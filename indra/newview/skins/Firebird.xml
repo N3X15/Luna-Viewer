@@ -1,0 +1,14 @@
+<llsd>
+    <map>
+    <key>skin_name</key>
+        <string>Firebird</string>
+    <key>author_name</key>
+        <string>Miss Wright</string>
+    <key>additional_author_names</key>
+        <string>Linden Lab</string>
+    <key>skin_info</key>
+        <string>The first skin customized for the Phoenix Viewer.</string>
+    <key>folder_name</key>
+        <string>firebird</string>
+    </map>
+</llsd>

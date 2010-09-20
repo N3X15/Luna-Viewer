@@ -1,0 +1,49 @@
+<llsd>
+  <array>
+
+    <!--
+        This file contains fallback settings only.
+        The actual list of grids is loaded from a web server.
+    -->
+
+    <!-- Second Life -->
+    <map>
+      <key>gridnick</key><string>secondlife</string>
+      <key>gridname</key><string>Agni</string>
+      <key>platform</key><string>SecondLife</string>
+      <key>loginuri</key><string>https://login.agni.lindenlab.com/cgi-bin/login.cgi</string>
+      <key>loginpage</key><string>http://phoenixviewer.com/app/login_test/</string>
+      <key>helperuri</key><string>https://secondlife.com/helpers/</string>
+      <key>website</key><string>http://secondlife.com/</string>
+      <key>support</key><string>http://secondlife.com/support/</string>
+      <key>register</key><string>http://secondlife.com/registration/</string>
+      <key>password</key><string>http://secondlife.com/account/request.php</string>
+    </map>
+
+    <map>
+      <key>gridnick</key><string>secondlife_beta</string>
+      <key>gridname</key><string>Aditi</string>
+      <key>helperuri</key><string>http://aditi-secondlife.webdev.lindenlab.com/helpers/</string>
+      <key>loginpage</key><string>http://phoenixviewer.com/app/login_test/</string>
+      <key>loginuri</key><string>https://login.aditi.lindenlab.com/cgi-bin/login.cgi</string>
+      <key>password</key><string>http://secondlife.com/account/request.php</string>
+      <key>platform</key><string>SecondLife</string>
+      <key>register</key><string>http://secondlife.com/registration/</string>
+      <key>render_compat</key><boolean>0</boolean>
+      <key>support</key><string>http://secondlife.com/support/</string>
+      <key>version</key><integer>0</integer>
+      <key>website</key><string>http://secondlife.com/</string>
+    </map>
+
+
+    <!-- Local Host -->
+    <map>
+      <key>gridnick</key><string>local</string>
+      <key>gridname</key><string>Local Host</string>
+      <key>platform</key><string>OpenSim</string>
+      <key>loginuri</key><string>http://127.0.0.1:9000/</string>
+      <key>helperuri</key><string>http://127.0.0.1:9000/</string>
+    </map>
+
+  </array>
+</llsd>
