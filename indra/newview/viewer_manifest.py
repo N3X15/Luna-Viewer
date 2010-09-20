@@ -175,15 +175,7 @@ class ViewerManifest(LLManifest):
 
 class WindowsManifest(ViewerManifest):
     def final_exe(self):
-        if self.default_channel() and self.viewer_branding_id()=="secondlife":
-            if self.default_grid():
-                return "Luna.exe"
-            else:
-                return "Luna.exe"
-        elif(self.viewer_branding_id=="snowglobe"):
-            return "Luna.exe"
-        else:
-            return 'Luna.exe'
+        return 'Luna.exe'
 
 
     def construct(self):
@@ -198,14 +190,22 @@ class WindowsManifest(ViewerManifest):
                   "SLPlugin.exe")
         
       	# need to get the kdu dll from any of the build directories as well
-        try:
-            self.path(self.find_existing_file('../llkdu/%s/llkdu.dll' % self.args['configuration'],
-                '../../libraries/i686-win32/lib/release/llkdu.dll'), 
-                  dst='llkdu.dll')
-            pass
-        except:
-            print "Skipping llkdu.dll"
-            pass
+        #try:
+        #    self.path(self.find_existing_file('../llkdu/%s/llkdu.dll' % self.args['configuration'],
+        #        '../../libraries/i686-win32/lib/release/llkdu.dll'), 
+        #          dst='llkdu.dll')
+        #    pass
+        #except:
+        #    print "Skipping llkdu.dll"
+        #    pass
+		
+		
+        if self.prefix(src=os.path.join(os.pardir, os.pardir, 'libraries', 'i686-win32', 'lib', self.args['configuration']), dst=""):
+            self.path('libapr-1.dll')
+            self.path('libaprutil-1.dll')
+            self.path('libapriconv-1.dll')
+            self.end_prefix()
+		
         self.path(src="licenses-win32.txt", dst="licenses.txt")
 
         self.path("featuretable.txt")
@@ -217,9 +217,9 @@ class WindowsManifest(ViewerManifest):
         self.path("fmod.dll")
 
         # For textures
-        if self.prefix(src="../../libraries/i686-win32/lib/release", dst=""):
-            self.path("openjpeg.dll")
-            self.end_prefix()
+        #if self.prefix(src="../../libraries/i686-win32/lib/release", dst=""):
+        #    self.path("openjpeg.dll")
+        #    self.end_prefix()
 
         # Media plugins - QuickTime
         if self.prefix(src='../media_plugins/quicktime/%s' % self.args['configuration'], dst="llplugin"):
@@ -231,31 +231,74 @@ class WindowsManifest(ViewerManifest):
             self.path("media_plugin_webkit.dll")
             self.end_prefix()
             
-        # For WebKit/Qt plugin runtimes
-        if self.prefix(src="../../libraries/i686-win32/lib/release", dst="llplugin"):
-            self.path("libeay32.dll")
-            self.path("qtcore4.dll")
-            self.path("qtgui4.dll")
-            self.path("qtnetwork4.dll")
-            self.path("qtopengl4.dll")
-            self.path("qtwebkit4.dll")
-            self.path("ssleay32.dll")
-            self.end_prefix()
+        if self.args['configuration'].lower() == 'debug':
+            if self.prefix(src=os.path.join(os.pardir, os.pardir, 'libraries', 'i686-win32', 'lib', 'debug'),
+                           dst="llplugin"):
+                self.path("libeay32.dll")
+                self.path("qtcored4.dll")
+                self.path("qtguid4.dll")
+                self.path("qtnetworkd4.dll")
+                self.path("qtopengld4.dll")
+                self.path("qtwebkitd4.dll")
+                self.path("qtxmlpatternsd4.dll")
+                self.path("ssleay32.dll")
+
+                # For WebKit/Qt plugin runtimes (image format plugins)
+                if self.prefix(src="imageformats", dst="imageformats"):
+                    self.path("qgifd4.dll")
+                    self.path("qicod4.dll")
+                    self.path("qjpegd4.dll")
+                    self.path("qmngd4.dll")
+                    self.path("qsvgd4.dll")
+                    self.path("qtiffd4.dll")
+                    self.end_prefix()
+
+                # For WebKit/Qt plugin runtimes (codec/character encoding plugins)
+                if self.prefix(src="codecs", dst="codecs"):
+                    self.path("qcncodecsd4.dll")
+                    self.path("qjpcodecsd4.dll")
+                    self.path("qkrcodecsd4.dll")
+                    self.path("qtwcodecsd4.dll")
+                    self.end_prefix()
+
+                self.end_prefix()
+        else:
+            if self.prefix(src=os.path.join(os.pardir, os.pardir, 'libraries', 'i686-win32', 'lib', 'release'),
+                           dst="llplugin"):
+                self.path("libeay32.dll")
+                self.path("qtcore4.dll")
+                self.path("qtgui4.dll")
+                self.path("qtnetwork4.dll")
+                self.path("qtopengl4.dll")
+                self.path("qtwebkit4.dll")
+                self.path("qtxmlpatterns4.dll")
+                self.path("ssleay32.dll")
+
+                # For WebKit/Qt plugin runtimes (image format plugins)
+                if self.prefix(src="imageformats", dst="imageformats"):
+                    self.path("qgif4.dll")
+                    self.path("qico4.dll")
+                    self.path("qjpeg4.dll")
+                    self.path("qmng4.dll")
+                    self.path("qsvg4.dll")
+                    self.path("qtiff4.dll")
+                    self.end_prefix()
+
+                # For WebKit/Qt plugin runtimes (codec/character encoding plugins)
+                if self.prefix(src="codecs", dst="codecs"):
+                    self.path("qcncodecs4.dll")
+                    self.path("qjpcodecs4.dll")
+                    self.path("qkrcodecs4.dll")
+                    self.path("qtwcodecs4.dll")
+                    self.end_prefix()
+
+                self.end_prefix()
 			
 		# Lua modules, plugins, etc
         if self.prefix(src="../../libraries/i686-win32/lib/release", dst=""):
-            self.path("lfs.dll")
+            self.path("lfs.dll") # Lua filesystem module
+            self.path("bit.dll") # Bitwise operators
             self.path("Lua5.1.dll") # I think it's linked statically, but just to be sure...
-            self.end_prefix()
-
-        # For WebKit/Qt plugin runtimes (image format plugins)
-        if self.prefix(src="../../libraries/i686-win32/lib/release/imageformats", dst="llplugin/imageformats"):
-            self.path("qgif4.dll")
-            self.path("qico4.dll")
-            self.path("qjpeg4.dll")
-            self.path("qmng4.dll")
-            self.path("qsvg4.dll")
-            self.path("qtiff4.dll")
             self.end_prefix()
 
         # Per platform MIME config on the cheap.  See SNOW-307 / DEV-41388
@@ -329,6 +372,7 @@ class WindowsManifest(ViewerManifest):
                 if install:
                     out_path = installed_dir
                     result += 'SetOutPath ' + out_path + '\n'
+			# TRY PUTTING QUOTES AROUND FILENAMES SO CRAP DOESN'T BREAK, IDIOTS
             if install:
                 result += 'File \"' + pkg_file + '\"\n'
             else:
@@ -447,7 +491,6 @@ class WindowsManifest(ViewerManifest):
         # We use the Unicode version of NSIS, available from
         # http://www.scratchpaper.com/
         NSIS_path = 'C:\\Program Files\\NSIS\\Unicode\\makensis.exe'
-		
         self.run_command('"' + proper_windows_path(NSIS_path) + '" ' + self.dst_path_of(tempfile))
         self.remove(self.dst_path_of(tempfile))
         # If we're on a build machine, sign the code using our Authenticode certificate. JC

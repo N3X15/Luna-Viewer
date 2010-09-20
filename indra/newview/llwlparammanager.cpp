@@ -195,7 +195,7 @@ void LLWLParamManager::loadPreset(const std::string & name,bool propagate)
 	escaped_filename += ".xml";
 
 	std::string pathName(gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS, "windlight/skies", escaped_filename));
-	//llinfos << "Loading WindLight sky setting from " << pathName << llendl; //Commenting this out DOES make loading faster. --Liny
+	llinfos << "Loading WindLight sky setting from " << pathName << llendl;
 
 	llifstream presetsXML;
 	presetsXML.open(pathName.c_str());
@@ -204,7 +204,7 @@ void LLWLParamManager::loadPreset(const std::string & name,bool propagate)
 	if(!presetsXML)
 	{
 		pathName=gDirUtilp->getExpandedFilename( LL_PATH_USER_SETTINGS , "windlight/skies", escaped_filename);
-		//llinfos << "Loading User WindLight sky setting from " << pathName << llendl; //Leave this commented for speed reasons --Liny
+		llinfos << "Loading User WindLight sky setting from " << pathName << llendl;
 		presetsXML.open(pathName.c_str());
 	}
 

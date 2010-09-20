@@ -525,7 +525,12 @@ bool LLWorldMap::insertItem(U32 x_world, U32 y_world, std::string& name, LLUUID&
 		case MAP_ITEM_LAND_FOR_SALE:		// land for sale
 		case MAP_ITEM_LAND_FOR_SALE_ADULT:	// adult land for sale 
 		{
-			std::string tooltip = llformat("%d sq. m. L$%d", extra, extra2);
+			F32 cost_per_sqm = 0.0f;
+			if (extra > 0)
+			{
+				cost_per_sqm = (F32)extra2 / (F32)extra;
+			}
+			std::string tooltip = llformat("%d sq.m. L$%d (L$ %.1f/sq.m.)", extra, extra2, cost_per_sqm);
 			new_item.setTooltip(tooltip);
 			if (type == MAP_ITEM_LAND_FOR_SALE)
 			{

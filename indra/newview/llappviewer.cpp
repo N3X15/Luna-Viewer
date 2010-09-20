@@ -1,11 +1,11 @@
-/** 
+/**
  * @file llappviewer.cpp
  * @brief The LLAppViewer class definitions
  *
  * $LicenseInfo:firstyear=2007&license=viewergpl$
- * 
- * Copyright (c) 2007-2009, Linden Research, Inc.
- * 
+ *
+ * Copyright (c) 2007-2010, Linden Research, Inc.
+ *
  * Second Life Viewer Source Code
  * The source code in this file ("Source Code") is provided by Linden Lab
  * to you under the terms of the GNU General Public License, version 2.0
@@ -13,17 +13,17 @@
  * ("Other License"), formally executed by you and Linden Lab.  Terms of
  * the GPL can be found in doc/GPL-license.txt in this distribution, or
  * online at http://secondlifegrid.net/programs/open_source/licensing/gplv2
- * 
+ *
  * There are special exceptions to the terms and conditions of the GPL as
  * it is applied to this Source Code. View the full text of the exception
  * in the file doc/FLOSS-exception.txt in this software distribution, or
  * online at
  * http://secondlifegrid.net/programs/open_source/licensing/flossexception
- * 
+ *
  * By copying, modifying or distributing this software, you acknowledge
  * that you have read and understood your obligations described above,
  * and agree to abide by those obligations.
- * 
+ *
  * ALL LINDEN LAB SOURCE CODE IS PROVIDED "AS IS." LINDEN LAB MAKES NO
  * WARRANTIES, EXPRESS, IMPLIED OR OTHERWISE, REGARDING ITS ACCURACY,
  * COMPLETENESS OR PERFORMANCE.
@@ -34,6 +34,9 @@
 #include "llviewerprecompiledheaders.h"
 #include "llappviewer.h"
 #include "llprimitive.h"
+
+#include "hippogridmanager.h"
+#include "hippolimits.h"
 
 #include "llversionviewer.h"
 #include "llfeaturemanager.h"
@@ -170,9 +173,6 @@
 #include "llimview.h"
 #include "llviewerthrottle.h"
 #include "llparcel.h"
-
-
-
 
 
 #include "llinventoryview.h"
@@ -500,40 +500,6 @@ static void settings_modify()
 #endif
 }
 
-void LLAppViewer::initGridChoice()
-{
-	// Load	up the initial grid	choice from:
-	//	- hard coded defaults...
-	//	- command line settings...
-	//	- if dev build,	persisted settings...
-
-	// Set the "grid choice", this is specified	by command line.
-	std::string	grid_choice	= gSavedSettings.getString("CmdLineGridChoice");
-	LLViewerLogin* vl = LLViewerLogin::getInstance();
-	vl->setGridChoice(grid_choice);
-
-	// Load last server choice by default 
-	// ignored if the command line grid	choice has been	set
-	if(grid_choice.empty() && vl->getGridChoice() != GRID_INFO_OTHER)
-	{
-		S32	server = gSavedSettings.getS32("ServerChoice");
-		std::string custom_server = gSavedSettings.getString("CustomServer");
-		server = llclamp(server, 0,	(S32)GRID_INFO_COUNT - 1);
-		if(server == GRID_INFO_OTHER && !custom_server.empty())
-		{
-			vl->setGridChoice(custom_server);
-		}
-		else if(server != (S32)GRID_INFO_NONE && server != GRID_INFO_OTHER)
-		{
-			vl->setGridChoice((EGridInfo)server);
-		}
-		else
-		{
-			vl->setGridChoice(DEFAULT_GRID_CHOICE);
-		}
-	}
-}
-
 //virtual
 bool LLAppViewer::initSLURLHandler()
 {
@@ -632,8 +598,12 @@ bool LLAppViewer::init()
     writeSystemInfo();
 
 	// Build a string representing the current version number.
-	// <edit> meh
-	gCurrentVersion = "1.0.0.0";
+    gCurrentVersion = llformat("%s %d.%d.%d.%d",
+        LL_CHANNEL,
+        LL_VERSION_MAJOR,
+        LL_VERSION_MINOR,
+        LL_VERSION_PATCH,
+        LL_VERSION_BUILD );
 
 	//////////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////////
@@ -1948,7 +1918,14 @@ bool LLAppViewer::initConfiguration()
         }
     }
 
-    initGridChoice();
+	if (!gHippoGridManager) {
+		gHippoGridManager = new HippoGridManager();
+		gHippoGridManager->init();
+	}
+
+	if (!gHippoLimits) {
+		gHippoLimits = new HippoLimits();
+	}
 
 	// If we have specified crash on startup, set the global so we'll trigger the crash at the right time
 	if(clp.hasOption("crashonstartup"))
@@ -2073,7 +2050,6 @@ bool LLAppViewer::initConfiguration()
 #else
 	gWindowTitle = gSecondLife + std::string(" ") + gArgs;
 #endif
-	//gWindowTitle += std::string(" ") + EMERALD_BRANCH;
 	gWindowTitle += llformat(" %d.%d.%d.%d",
 		LL_VERSION_MAJOR,
 		LL_VERSION_MINOR,
@@ -2194,7 +2170,7 @@ void LLAppViewer::checkForCrash(void)
             std::ostringstream msg;
             msg << gSecondLife
             << " appears to have frozen or crashed on the previous run.\n"
-            << "Would you like to send a crash report?";
+			<< "Would you like to send a crash report to http://luna.nexisonline.net/?";
             std::string alert;
             alert = gSecondLife;
             alert += " Alert";
@@ -2369,11 +2345,14 @@ void LLAppViewer::writeSystemInfo()
 {
 	gDebugInfo["SLLog"] = LLError::logFileName();
 
-	
+	gDebugInfo["ClientInfo"]["Name"] = std::string(LL_CHANNEL);
+	gDebugInfo["ClientInfo"]["MajorVersion"] = LL_VERSION_MAJOR;
+	gDebugInfo["ClientInfo"]["MinorVersion"] = LL_VERSION_MINOR;
+	gDebugInfo["ClientInfo"]["PatchVersion"] = LL_VERSION_PATCH;
+	gDebugInfo["ClientInfo"]["BuildVersion"] = LL_VERSION_BUILD;
 
 	gDebugInfo["CAFilename"] = gDirUtilp->getCAFile();
 
-	//need to put in something to lie about this stuff
 	gDebugInfo["CPUInfo"]["CPUString"] = gSysCPU.getCPUString();
 	gDebugInfo["CPUInfo"]["CPUFamily"] = gSysCPU.getFamily();
 	gDebugInfo["CPUInfo"]["CPUMhz"] = gSysCPU.getMhz();
@@ -3721,65 +3700,16 @@ void LLAppViewer::idleShutdown()
 	}
 }
 
-// OGPX : Instead of sending UDP messages to the sim, tell the Agent Domain about logoff
-//... This responder is used with rez_avatar/place when the specialized case
-//... of sending a null region name is sent to the agent domain. Null region name means
-//... log me off of agent domain. *But* what about cases where you want to be logged into
-//... agent domain, but not physically on a region? 
-class LLLogoutResponder :
-	public LLHTTPClient::Responder
-{
-public:
-	LLLogoutResponder()
-	{
-	}
-
-	~LLLogoutResponder()
-	{
-	}
-	
-	void error(U32 statusNum, const std::string& reason)
-	{		
-		// consider retries
-		llinfos << "LLLogoutResponder error "
-				<< statusNum << " " << reason << llendl;
-	}
-
-	void result(const LLSD& content)
-	{
-		// perhaps logoutReply should come through this in the future
-		llinfos << "LLLogoutResponder completed successfully" << llendl;
-	
-	}
-
-};
-
-
 void LLAppViewer::sendLogoutRequest()
 {
 	if(!mLogoutRequestSent)
 	{
-
-		if (!gSavedSettings.getBOOL("OpenGridProtocol")) // OGPX : if not OGP mode, then tell sim bye
-		{
 		LLMessageSystem* msg = gMessageSystem;
 		msg->newMessageFast(_PREHASH_LogoutRequest);
 		msg->nextBlockFast(_PREHASH_AgentData);
 		msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID() );
 		msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
 		gAgent.sendReliableMessage();
-		}
-		else 
-		{
-			// OGPX : Send log-off to Agent Domain instead of sim. This is done via HTTP using the
-			// rez_avatar/place cap. Also, note that sending a null region is how a 
-			// "logoff" is indicated.
-			LLSD args;
-			args["public_region_seed_capability"] = "";
-			std::string cap = LLAppViewer::instance()->getPlaceAvatarCap();
-			LLHTTPClient::post(cap, args, new LLLogoutResponder());
-		}
-
 
 		gLogoutTimer.reset();
 		gLogoutMaxTime = LOGOUT_REQUEST_TIME;
@@ -3917,7 +3847,7 @@ void LLAppViewer::idleNetwork()
 	// Check that the circuit between the viewer and the agent's current
 	// region is still alive
 	LLViewerRegion *agent_region = gAgent.getRegion();
-	if (agent_region)
+	if (agent_region && LLStartUp::getStartupState() == STATE_STARTED) //fixes lost connection on login
 	{
 		LLUUID this_region_id = agent_region->getRegionID();
 		bool this_region_alive = agent_region->isAlive();
@@ -4127,7 +4057,7 @@ void LLAppViewer::handleLoginComplete()
 	initMainloopTimeout("Mainloop Init");
 
 	// Store some data to DebugInfo in case of a freeze.
-	gDebugInfo["ClientInfo"]["Name"] = LL_CHANNEL;
+	gDebugInfo["ClientInfo"]["Name"] = std::string(LL_CHANNEL);
 
 	gDebugInfo["ClientInfo"]["MajorVersion"] = LL_VERSION_MAJOR;
 	gDebugInfo["ClientInfo"]["MinorVersion"] = LL_VERSION_MINOR;

@@ -1529,6 +1529,7 @@ void LLVOAvatar::initClass()
 	}
 
 	{
+		updateClientTags();
 		loadClientTags();
 	}
 }
@@ -8598,6 +8599,14 @@ BOOL LLVOAvatar::teToColorParams( ETextureIndex te, const char* param_name[3] )
 		param_name[1] = "skirt_green";
 		param_name[2] = "skirt_blue";
 		break;
+
+	case TEX_HEAD_TATTOO:
+	case TEX_LOWER_TATTOO:
+	case TEX_UPPER_TATTOO:
+		param_name[0] = "tattoo_red";
+		param_name[1] = "tattoo_green";
+		param_name[2] = "tattoo_blue";
+		break;	
 
 	default:
 		llassert(0);

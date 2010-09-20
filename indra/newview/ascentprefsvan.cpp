@@ -170,19 +170,19 @@ void LLPrefsAscentVanImpl::refreshValues()
 	mSelectedClient			= LLSavedSettingsGlue::getCOAU32("AscentReportClientIndex");
 	mEffectColor			= LLSavedSettingsGlue::getCOAColor4("EffectColor");
 	if (LLSavedSettingsGlue::getCOABOOL("AscentUseCustomTag"))
-		{
-			childEnable("custom_tag_label_text");
-			childEnable("custom_tag_label_box");
-			childEnable("custom_tag_color_text");
-			childEnable("custom_tag_color_swatch");
-		}
-		else
-		{
-			childDisable("custom_tag_label_text");
-			childDisable("custom_tag_label_box");
-			childDisable("custom_tag_color_text");
-			childDisable("custom_tag_color_swatch");
-		}
+	{
+		childEnable("custom_tag_label_text");
+		childEnable("custom_tag_label_box");
+		childEnable("custom_tag_color_text");
+		childEnable("custom_tag_color_swatch");
+	}
+	else
+	{
+		childDisable("custom_tag_label_text");
+		childDisable("custom_tag_label_box");
+		childDisable("custom_tag_color_text");
+		childDisable("custom_tag_color_swatch");
+	}
 	mCustomTagLabel			= LLSavedSettingsGlue::getCOAString("AscentCustomTagLabel");
 	mCustomTagColor			= LLSavedSettingsGlue::getCOAColor4("AscentCustomTagColor");
 	mFriendColor			= LLSavedSettingsGlue::getCOAColor4("AscentFriendColor");
@@ -203,9 +203,9 @@ void LLPrefsAscentVanImpl::refresh()
 	childSetValue("customize_own_tag_check", mCustomTagOn);
 	childSetValue("custom_tag_label_box", mCustomTagLabel);
 	
-		getChild<LLColorSwatchCtrl>("effect_color_swatch")->set(mEffectColor);
-		getChild<LLColorSwatchCtrl>("custom_tag_color_swatch")->set(mCustomTagColor);
-		getChild<LLColorSwatchCtrl>("friend_color_swatch")->set(mFriendColor);
+	getChild<LLColorSwatchCtrl>("effect_color_swatch")->set(mEffectColor);
+	getChild<LLColorSwatchCtrl>("custom_tag_color_swatch")->set(mCustomTagColor);
+	getChild<LLColorSwatchCtrl>("friend_color_swatch")->set(mFriendColor);
 	LLSavedSettingsGlue::setCOAColor4("EffectColor", LLColor4::white);
 	LLSavedSettingsGlue::setCOAColor4("EffectColor", mEffectColor);
 	LLSavedSettingsGlue::setCOAColor4("AscentFriendColor", LLColor4::yellow);
@@ -227,9 +227,9 @@ void LLPrefsAscentVanImpl::cancel()
 	childSetValue("customize_own_tag_check", mCustomTagOn);
 	childSetValue("custom_tag_label_box", mCustomTagLabel);
 	
-		getChild<LLColorSwatchCtrl>("effect_color_swatch")->set(mEffectColor);
-		getChild<LLColorSwatchCtrl>("custom_tag_color_swatch")->set(mCustomTagColor);
-		getChild<LLColorSwatchCtrl>("friend_color_swatch")->set(mFriendColor);
+	getChild<LLColorSwatchCtrl>("effect_color_swatch")->set(mEffectColor);
+	getChild<LLColorSwatchCtrl>("custom_tag_color_swatch")->set(mCustomTagColor);
+	getChild<LLColorSwatchCtrl>("friend_color_swatch")->set(mFriendColor);
 	LLSavedSettingsGlue::setCOAColor4("EffectColor", LLColor4::white);
 	LLSavedSettingsGlue::setCOAColor4("EffectColor", mEffectColor);
 	LLSavedSettingsGlue::setCOAColor4("AscentFriendColor", LLColor4::yellow);
@@ -270,7 +270,7 @@ void LLPrefsAscentVanImpl::apply()
 	LLSavedSettingsGlue::setCOABOOL("AscentUseCustomTag",		childGetValue("customize_own_tag_check"));
 	LLSavedSettingsGlue::setCOAString("AscentCustomTagLabel",	childGetValue("custom_tag_label_box"));
 	LLSavedSettingsGlue::setCOAColor4("AscentCustomTagColor",	childGetValue("custom_tag_color_swatch"));
-
+	
 	refreshValues();
 }
 

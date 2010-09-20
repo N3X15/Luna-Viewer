@@ -529,10 +529,10 @@ LLCircuitData* LLMessageSystem::findCircuit(const LLHost& host,
 }
 
 // Returns TRUE if a valid, on-circuit message has been received.
-BOOL LLMessageSystem::checkMessages( S64 frame_count, bool faked_message, U8 fake_buffer[MAX_BUFFER_SIZE], LLHost fake_host, S32 fake_size )
+BOOL LLMessageSystem::checkMessages( S64 frame_count )
 {
 	// Pump 
-	BOOL valid_packet = FALSE;
+	BOOL	valid_packet = FALSE;
 	mMessageReader = mTemplateMessageReader;
 
 	LLTransferTargetVFile::updateQueue();
@@ -559,23 +559,20 @@ BOOL LLMessageSystem::checkMessages( S64 frame_count, bool faked_message, U8 fak
 
 		U8* buffer = mTrueReceiveBuffer.buffer;
 
-		if(!faked_message)
-		{
-			mTrueReceiveSize = mPacketRing.receivePacket(mSocket, (char *)mTrueReceiveBuffer.buffer);
-			receive_size = mTrueReceiveSize;
-			mLastSender = mPacketRing.getLastSender();
-			mLastReceivingIF = mPacketRing.getLastReceivingInterface();
-		} else {
-			buffer = fake_buffer; //true my ass.
-			mTrueReceiveSize = fake_size;
-			receive_size = mTrueReceiveSize;
-			mLastSender = fake_host;
-			mLastReceivingIF = mPacketRing.getLastReceivingInterface(); //don't really give two tits about the interface, just leave it
-		}
+		mTrueReceiveSize = mPacketRing.receivePacket(mSocket, (char *)mTrueReceiveBuffer.buffer);			
+		receive_size = mTrueReceiveSize;
+		mLastSender = mPacketRing.getLastSender();
+		mLastReceivingIF = mPacketRing.getLastReceivingInterface();
 		
 		// If you want to dump all received packets into SecondLife.log, uncomment this
 		//dumpPacketToLog();
 		
+ 		// <edit>
+ 		if(mTrueReceiveSize)
+ 		{
+ 			LLMessageLog::log(mLastSender, LLHost(16777343, mPort), buffer, mTrueReceiveSize);
+ 		}
+ 		// </edit>
 
 		
 		if (receive_size < (S32) LL_MINIMUM_VALID_PACKET_SIZE)
@@ -596,7 +593,7 @@ BOOL LLMessageSystem::checkMessages( S64 frame_count, bool faked_message, U8 fak
 			LLCircuitData* cdp;
 			
 			// note if packet acks are appended.
-			if(buffer[0] & LL_ACK_FLAG && !faked_message)
+			if(buffer[0] & LL_ACK_FLAG)
 			{
 				acks += buffer[--receive_size];
 				true_rcv_size = receive_size;
@@ -619,7 +616,6 @@ BOOL LLMessageSystem::checkMessages( S64 frame_count, bool faked_message, U8 fak
 			// process the message as normal
 			mIncomingCompressedSize = zeroCodeExpand(&buffer, &receive_size);
 			mCurrentRecvPacketID = ntohl(*((U32*)(&buffer[1])));
-
 			host = getSender();
 
 			const bool resetPacketId = true;
@@ -629,7 +625,7 @@ BOOL LLMessageSystem::checkMessages( S64 frame_count, bool faked_message, U8 fak
 			// this message came in on if it's valid, and NULL if the
 			// circuit was bogus.
 
-			if(cdp && (acks > 0) && ((S32)(acks * sizeof(TPACKETID)) < (true_rcv_size)) && !faked_message)
+			if(cdp && (acks > 0) && ((S32)(acks * sizeof(TPACKETID)) < (true_rcv_size)))
 			{
 				TPACKETID packet_id;
 				U32 mem_id=0;
@@ -702,7 +698,6 @@ BOOL LLMessageSystem::checkMessages( S64 frame_count, bool faked_message, U8 fak
 			// But we don't want to acknowledge UseCircuitCode until the circuit is
 			// available, which is why the acknowledgement test is done above.  JC
 			bool trusted = cdp && cdp->getTrusted();
-
 			valid_packet = mTemplateMessageReader->validateMessage(
 				buffer,
 				receive_size,
@@ -1578,7 +1573,6 @@ LLCircuit* LLMessageSystem::getCircuit()
 	return &mCircuitInfo;
 }
 // </edit>
-
 // returns whether the given host is on a trusted circuit
 BOOL    LLMessageSystem::getCircuitTrust(const LLHost &host)
 {
@@ -1858,11 +1852,7 @@ void	open_circuit(LLMessageSystem *msgsystem, void** /*user_data*/)
 	msgsystem->getIPPortFast(_PREHASH_CircuitInfo, _PREHASH_Port, port);
 
 	// By default, OpenCircuit's are untrusted
-	// <edit>
-//#ifndef LL_RELEASE_FOR_DOWNLOAD
-	llwarns << "OpenCircuit " << LLHost(ip, port) << llendl;
-//#endif
-	// </edit>msgsystem->enableCircuit(LLHost(ip, port), FALSE);
+	msgsystem->enableCircuit(LLHost(ip, port), FALSE);
 }
 
 void	close_circuit(LLMessageSystem *msgsystem, void** /*user_data*/)
@@ -4080,11 +4070,4 @@ const LLHost& LLMessageSystem::getSender() const
 
 LLHTTPRegistration<LLHTTPNodeAdapter<LLTrustedMessageService> >
 	gHTTPRegistrationTrustedMessageWildcard("/trusted-message/<message-name>");
-// <edit>
 
-// Copypasta from LLTemplateMessageReader
-BOOL LLMessageSystem::decodeTemplate( const U8* buffer, S32 buffer_size, LLMessageTemplate** msg_template )
-{
-	return(TRUE);
-}
-// </edit

@@ -458,6 +458,9 @@ extern "C" { int yyerror(const char *fmt, ...); }
 "PRIM_FULLBRIGHT"		{ count(); yylval.ival = LSL_PRIM_FULLBRIGHT; return(INTEGER_CONSTANT); }
 "PRIM_TEXGEN"			{ count(); yylval.ival = LSL_PRIM_TEXGEN; return(INTEGER_CONSTANT); }
 "PRIM_GLOW"	     		{ count(); yylval.ival = LSL_PRIM_GLOW; return(INTEGER_CONSTANT); }
+"PRIM_TEXT"	     		{ count(); yylval.ival = LSL_PRIM_TEXT; return(INTEGER_CONSTANT); }
+"PRIM_NAME"	     		{ count(); yylval.ival = LSL_PRIM_NAME; return(INTEGER_CONSTANT); }
+"PRIM_DESC"	     		{ count(); yylval.ival = LSL_PRIM_DESC; return(INTEGER_CONSTANT); }
 
 "PRIM_TYPE_BOX"			{ count(); yylval.ival = LSL_PRIM_TYPE_BOX; return(INTEGER_CONSTANT); }
 "PRIM_TYPE_CYLINDER"	{ count(); yylval.ival = LSL_PRIM_TYPE_CYLINDER; return(INTEGER_CONSTANT); }
@@ -603,6 +606,7 @@ extern "C" { int yyerror(const char *fmt, ...); }
 "PARCEL_DETAILS_OWNER"	{ count(); yylval.ival = PARCEL_DETAILS_OWNER; return(INTEGER_CONSTANT); }
 "PARCEL_DETAILS_GROUP"	{ count(); yylval.ival = PARCEL_DETAILS_GROUP; return(INTEGER_CONSTANT); }
 "PARCEL_DETAILS_AREA"	{ count(); yylval.ival = PARCEL_DETAILS_AREA; return(INTEGER_CONSTANT); }
+"PARCEL_DETAILS_ID"		{ count(); yylval.ival = PARCEL_DETAILS_ID; return(INTEGER_CONSTANT); }
 
 "STRING_TRIM_HEAD"	{ count(); yylval.ival = STRING_TRIM_HEAD; return(INTEGER_CONSTANT); }
 "STRING_TRIM_TAIL"	{ count(); yylval.ival = STRING_TRIM_TAIL; return(INTEGER_CONSTANT); }

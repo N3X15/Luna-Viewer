@@ -2,10 +2,6 @@
 
 project(media_plugin_base)
 
-if(WORD_SIZE EQUAL 64)
-    set(REQUIRE_PIC)
-endif(WORD_SIZE EQUAL 64)
-
 include(00-Common)
 include(LLCommon)
 include(LLImage)
@@ -51,7 +47,6 @@ add_library(media_plugin_base
     ${media_plugin_base_SOURCE_FILES}
 )
 
-add_dependencies(media_plugin_base
-  prepare
+add_dependencies(media_plugin_base 
+ prepare
 )
-

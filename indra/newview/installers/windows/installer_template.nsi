@@ -101,7 +101,6 @@ Var SHORTCUT_LANG_PARAM ; "--set InstallLanguage de", passes language to viewer
 !insertmacro GetParameters
 !insertmacro GetOptions
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; After install completes, launch app
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

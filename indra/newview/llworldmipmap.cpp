@@ -34,10 +34,12 @@
 
 #include "llworldmipmap.h"
 
+#include "llviewercontrol.h"
 #include "llviewerimagelist.h"
 #include "math.h"	// log()
 // <edit>
 #include "llworldmap.h"
+#include "hippogridmanager.h"
 #include "llviewernetwork.h" //for isProductionGrid();
 // </edit>
 
@@ -157,22 +159,22 @@ LLPointer<LLViewerImage> LLWorldMipmap::getObjectsTile(U32 grid_x, U32 grid_y, S
 		{
 			// Load it 
 			LLPointer<LLViewerImage> img;
-			// <edit>
-			//this is a hack for opensims.
-			if(LLViewerLogin::getInstance()->getGridChoice() < GRID_INFO_OTHER)
-				img = loadObjectsTile(grid_x, grid_y, level);
+
+			//hack for opensims.
+			if(gHippoGridManager->getConnectedGrid()->getPlatform() == HippoGridInfo::PLATFORM_SECONDLIFE)
+			  img = loadObjectsTile(grid_x, grid_y, level);
 			else
 			{
-				LLSimInfo* info = LLWorldMap::getInstance()->simInfoFromHandle(handle);
-				if(info)
-				{
-					img = gImageList.getImage(info->getMapImageID(), MIPMAP_TRUE, FALSE);
-				 	img->setBoostLevel(LLViewerImageBoostLevel::BOOST_MAP);
-				}
-				else
-				 return NULL;
+			  LLSimInfo* info = LLWorldMap::getInstance()->simInfoFromHandle(handle);
+			  if(info)
+			  {
+				img = gImageList.getImage(info->getMapImageID(), MIPMAP_TRUE, FALSE);
+				img->setBoostLevel(LLViewerImageBoostLevel::BOOST_MAP);
+			  }
+			  else
+			   return NULL;
 			}
-			// </edit>
+
 			// Insert the image in the map
 			level_mipmap.insert(sublevel_tiles_t::value_type( handle, img ));
 			// Find the element again in the map (it's there now...)
@@ -206,9 +208,7 @@ LLPointer<LLViewerImage> LLWorldMipmap::getObjectsTile(U32 grid_x, U32 grid_y, S
 LLPointer<LLViewerImage> LLWorldMipmap::loadObjectsTile(U32 grid_x, U32 grid_y, S32 level)
 {
 	// Get the grid coordinates
-//	std::string imageurl = llformat("http://map.secondlife.com.s3.amazonaws.com/%d/%05d/%05d/map-%d-%d-%d-objects.jpg",
-	std::string imageurl = llformat("http://map.secondlife.com.s3.amazonaws.com/map-%d-%d-%d-objects.jpg",
-									level, grid_x, grid_y, level, grid_x, grid_y);
+	std::string imageurl = gSavedSettings.getString("MapServerURL") + llformat("map-%d-%d-%d-objects.jpg", level, grid_x, grid_y);
 
 	// DO NOT COMMIT!! DEBUG ONLY!!!
 	// Use a local jpeg for every tile to test map speed without S3 access

@@ -60,10 +60,14 @@ if (FMOD)
          )
 
     if (LINUX)
-      if (${CXX_VERSION} MATCHES "4.[23]")
+	  # This check fails in Ubuntu 9.10 with g++-4.x.. We should be using > 4.1 now anyway.
+	  # -Wno-unused-function should only be used once it is clear that the fmod instance is being created.
+      #if (${CXX_VERSION} MATCHES "4.[234]")
         set_source_files_properties(llaudioengine_fmod.cpp
-                                    COMPILE_FLAGS -Wno-error=write-strings)
-      endif (${CXX_VERSION} MATCHES "4.[23]")
+        							lllistener_fmod.cpp
+        							llstreamingaudio_fmod.cpp
+                                    PROPERTIES COMPILE_FLAGS "-Wno-write-strings -Wno-unused-function")
+      #endif (${CXX_VERSION} MATCHES "4.[234]")
     endif (LINUX)
 endif (FMOD)
 

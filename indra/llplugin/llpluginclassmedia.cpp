@@ -2,32 +2,28 @@
  * @file llpluginclassmedia.cpp
  * @brief LLPluginClassMedia handles a plugin which knows about the "media" message class.
  *
- * $LicenseInfo:firstyear=2008&license=viewergpl$
- * 
- * Copyright (c) 2008-2009, Linden Research, Inc.
- * 
+ * @cond
+ * $LicenseInfo:firstyear=2008&license=viewerlgpl$
  * Second Life Viewer Source Code
- * The source code in this file ("Source Code") is provided by Linden Lab
- * to you under the terms of the GNU General Public License, version 2.0
- * ("GPL"), unless you have obtained a separate licensing agreement
- * ("Other License"), formally executed by you and Linden Lab.  Terms of
- * the GPL can be found in doc/GPL-license.txt in this distribution, or
- * online at http://secondlifegrid.net/programs/open_source/licensing/gplv2
+ * Copyright (C) 2010, Linden Research, Inc.
  * 
- * There are special exceptions to the terms and conditions of the GPL as
- * it is applied to this Source Code. View the full text of the exception
- * in the file doc/FLOSS-exception.txt in this software distribution, or
- * online at
- * http://secondlifegrid.net/programs/open_source/licensing/flossexception
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation;
+ * version 2.1 of the License only.
  * 
- * By copying, modifying or distributing this software, you acknowledge
- * that you have read and understood your obligations described above,
- * and agree to abide by those obligations.
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
  * 
- * ALL LINDEN LAB SOURCE CODE IS PROVIDED "AS IS." LINDEN LAB MAKES NO
- * WARRANTIES, EXPRESS, IMPLIED OR OTHERWISE, REGARDING ITS ACCURACY,
- * COMPLETENESS OR PERFORMANCE.
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * 
+ * Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
  * $/LicenseInfo$
+ * @endcond
  */
 
 #include "linden_common.h"
@@ -35,6 +31,8 @@
 
 #include "llpluginclassmedia.h"
 #include "llpluginmessageclasses.h"
+
+#include "llqtwebkit.h"
 
 static int LOW_PRIORITY_TEXTURE_SIZE_DEFAULT = 256;
 
@@ -54,23 +52,31 @@ LLPluginClassMedia::LLPluginClassMedia(LLPluginClassMediaOwner *owner)
 	mOwner = owner;
 	mPlugin = NULL;
 	reset();
+
+	//debug use
+	mDeleteOK = true ;
 }
 
 
 LLPluginClassMedia::~LLPluginClassMedia()
 {
+	llassert_always(mDeleteOK) ;
 	reset();
 }
 
-bool LLPluginClassMedia::init(const std::string &launcher_filename, const std::string &plugin_filename, bool debug, const std::string &user_data_path)
+bool LLPluginClassMedia::init(const std::string &launcher_filename, const std::string &plugin_filename, bool debug)
 {	
 	LL_DEBUGS("Plugin") << "launcher: " << launcher_filename << LL_ENDL;
 	LL_DEBUGS("Plugin") << "plugin: " << plugin_filename << LL_ENDL;
-	LL_DEBUGS("Plugin") << "user_data_path: " << user_data_path << LL_ENDL;
 	
 	mPlugin = new LLPluginProcessParent(this);
 	mPlugin->setSleepTime(mSleepTime);
-	mPlugin->init(launcher_filename, plugin_filename, debug, user_data_path);
+	
+	// Queue up the media init message -- it will be sent after all the currently queued messages.
+	LLPluginMessage message(LLPLUGIN_MESSAGE_CLASS_MEDIA, "init");
+	sendMessage(message);
+	
+	mPlugin->init(launcher_filename, plugin_filename, debug);
 
 	return true;
 }
@@ -101,6 +107,8 @@ void LLPluginClassMedia::reset()
 	mSetMediaHeight = -1;
 	mRequestedMediaWidth = 0;
 	mRequestedMediaHeight = 0;
+	mRequestedTextureWidth = 0;
+	mRequestedTextureHeight = 0;
 	mFullMediaWidth = 0;
 	mFullMediaHeight = 0;
 	mTextureWidth = 0;
@@ -123,7 +131,8 @@ void LLPluginClassMedia::reset()
 	mCanPaste = false;
 	mMediaName.clear();
 	mMediaDescription.clear();
-
+	mBackgroundColor = LLColor4(1.0f, 1.0f, 1.0f, 1.0f);
+	
 	// media_browser class
 	mNavigateURI.clear();
 	mNavigateResultCode = -1;
@@ -132,6 +141,9 @@ void LLPluginClassMedia::reset()
 	mHistoryForwardAvailable = false;
 	mStatusText.clear();
 	mProgressPercent = 0;	
+	mClickURL.clear();
+	mClickTarget.clear();
+	mClickTargetType = TARGET_NONE;
 	
 	// media_time class
 	mCurrentTime = 0.0f;
@@ -147,7 +159,7 @@ void LLPluginClassMedia::idle(void)
 		mPlugin->idle();
 	}
 	
-	if((mMediaWidth == -1) || (!mTextureParamsReceived) || (mPlugin == NULL))
+	if((mMediaWidth == -1) || (!mTextureParamsReceived) || (mPlugin == NULL) || (mPlugin->isBlocked()))
 	{
 		// Can't process a size change at this time
 	}
@@ -233,6 +245,10 @@ void LLPluginClassMedia::idle(void)
 			message.setValueS32("height", mRequestedMediaHeight);
 			message.setValueS32("texture_width", mRequestedTextureWidth);
 			message.setValueS32("texture_height", mRequestedTextureHeight);
+			message.setValueReal("background_r", mBackgroundColor.mV[VX]);
+			message.setValueReal("background_g", mBackgroundColor.mV[VY]);
+			message.setValueReal("background_b", mBackgroundColor.mV[VZ]);
+			message.setValueReal("background_a", mBackgroundColor.mV[VW]);
 			mPlugin->sendMessage(message);	// DO NOT just use sendMessage() here -- we want this to jump ahead of the queue.
 			
 			LL_DEBUGS("Plugin") << "Sending size_change" << LL_ENDL;
@@ -420,6 +436,12 @@ void LLPluginClassMedia::mouseEvent(EMouseEventType type, int button, int x, int
 {
 	if(type == MOUSE_EVENT_MOVE)
 	{
+		if(!mPlugin || !mPlugin->isRunning() || mPlugin->isBlocked())
+		{
+			// Don't queue up mouse move events that can't be delivered.
+			return;
+		}
+
 		if((x == mLastMouseX) && (y == mLastMouseY))
 		{
 			// Don't spam unnecessary mouse move events.
@@ -458,7 +480,7 @@ void LLPluginClassMedia::mouseEvent(EMouseEventType type, int button, int x, int
 	sendMessage(message);
 }
 
-bool LLPluginClassMedia::keyEvent(EKeyEventType type, int key_code, MASK modifiers)
+bool LLPluginClassMedia::keyEvent(EKeyEventType type, int key_code, MASK modifiers, LLSD native_key_data)
 {
 	bool result = true;
 	
@@ -515,6 +537,7 @@ bool LLPluginClassMedia::keyEvent(EKeyEventType type, int key_code, MASK modifie
 		message.setValueS32("key", key_code);
 
 		message.setValue("modifiers", translateModifiers(modifiers));
+		message.setValueLLSD("native_key_data", native_key_data);
 		
 		sendMessage(message);
 	}
@@ -533,12 +556,13 @@ void LLPluginClassMedia::scrollEvent(int x, int y, MASK modifiers)
 	sendMessage(message);
 }
 	
-bool LLPluginClassMedia::textInput(const std::string &text, MASK modifiers)
+bool LLPluginClassMedia::textInput(const std::string &text, MASK modifiers, LLSD native_key_data)
 {
 	LLPluginMessage message(LLPLUGIN_MESSAGE_CLASS_MEDIA, "text_event");
 
 	message.setValue("text", text);
 	message.setValue("modifiers", translateModifiers(modifiers));
+	message.setValueLLSD("native_key_data", native_key_data);
 	
 	sendMessage(message);
 	
@@ -661,6 +685,54 @@ void LLPluginClassMedia::paste()
 {
 	LLPluginMessage message(LLPLUGIN_MESSAGE_CLASS_MEDIA, "edit_paste");
 	sendMessage(message);
+}
+
+void LLPluginClassMedia::setUserDataPath(const std::string &user_data_path)
+{
+	LLPluginMessage message(LLPLUGIN_MESSAGE_CLASS_MEDIA, "set_user_data_path");
+	message.setValue("path", user_data_path);
+	sendMessage(message);
+}
+
+void LLPluginClassMedia::setLanguageCode(const std::string &language_code)
+{
+	LLPluginMessage message(LLPLUGIN_MESSAGE_CLASS_MEDIA, "set_language_code");
+	message.setValue("language", language_code);
+	sendMessage(message);
+}
+
+void LLPluginClassMedia::setPluginsEnabled(const bool enabled)
+{
+	LLPluginMessage message(LLPLUGIN_MESSAGE_CLASS_MEDIA, "plugins_enabled");
+	message.setValueBoolean("enable", enabled);
+	sendMessage(message);
+}
+
+void LLPluginClassMedia::setJavascriptEnabled(const bool enabled)
+{
+	LLPluginMessage message(LLPLUGIN_MESSAGE_CLASS_MEDIA, "javascript_enabled");
+	message.setValueBoolean("enable", enabled);
+	sendMessage(message);
+}
+
+LLPluginClassMedia::ETargetType getTargetTypeFromLLQtWebkit(int target_type)
+{
+	// convert a LinkTargetType value from llqtwebkit to an ETargetType
+	// so that we don't expose the llqtwebkit header in viewer code
+	switch (target_type)
+	{
+	case LLQtWebKit::LTT_TARGET_NONE:
+		return LLPluginClassMedia::TARGET_NONE;
+
+	case LLQtWebKit::LTT_TARGET_BLANK:
+		return LLPluginClassMedia::TARGET_BLANK;
+
+	case LLQtWebKit::LTT_TARGET_EXTERNAL:
+		return LLPluginClassMedia::TARGET_EXTERNAL;
+
+	default:
+		return LLPluginClassMedia::TARGET_OTHER;
+	}
 }
 
 /* virtual */ 
@@ -915,13 +987,23 @@ void LLPluginClassMedia::receivePluginMessage(const LLPluginMessage &message)
 		{
 			mClickURL = message.getValue("uri");
 			mClickTarget = message.getValue("target");
+			U32 target_type = message.getValueU32("target_type");
+			mClickTargetType = ::getTargetTypeFromLLQtWebkit(target_type);
 			mediaEvent(LLPluginClassMediaOwner::MEDIA_EVENT_CLICK_LINK_HREF);
 		}
 		else if(message_name == "click_nofollow")
 		{
 			mClickURL = message.getValue("uri");
 			mClickTarget.clear();
+			mClickTargetType = TARGET_NONE;
 			mediaEvent(LLPluginClassMediaOwner::MEDIA_EVENT_CLICK_LINK_NOFOLLOW);
+		}
+		else if(message_name == "cookie_set")
+		{
+			if(mOwner)
+			{
+				mOwner->handleCookieSet(this, message.getValue("cookie"));
+			}
 		}
 		else
 		{
@@ -1006,9 +1088,17 @@ void LLPluginClassMedia::clear_cookies()
 	sendMessage(message);
 }
 
+void LLPluginClassMedia::set_cookies(const std::string &cookies)
+{
+	LLPluginMessage message(LLPLUGIN_MESSAGE_CLASS_MEDIA_BROWSER, "set_cookies");
+	message.setValue("cookies", cookies);	
+	sendMessage(message);
+}
+
 void LLPluginClassMedia::enable_cookies(bool enable)
 {
 	LLPluginMessage message(LLPLUGIN_MESSAGE_CLASS_MEDIA_BROWSER, "enable_cookies");
+	message.setValueBoolean("enable", enable);
 	sendMessage(message);
 }
 

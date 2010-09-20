@@ -87,20 +87,18 @@
 #include "llappviewer.h"
 #include "llpanelinventory.h"
 
-// This appears to be some legacy shit left in
-// Server handles this, but the default should be this,
-//   since it's quieter.
+
 const std::string HELLO_LSL =
 	"default\n"
 	"{\n"
 	"    state_entry()\n"
     "    {\n"
-    "        llOwnerSay(\"Hello, Avatar!\");\n"
+    "        llSay(0, \"Hello, Avatar!\");\n"
     "    }\n"
 	"\n"
 	"    touch_start(integer total_number)\n"
 	"    {\n"
-	"        llOwnerSay(\"Touched.\");\n"
+	"        llSay(0, \"Touched.\");\n"
 	"    }\n"
 	"}\n";
 const std::string HELP_LSL_URL = "http://wiki.secondlife.com/wiki/LSL_Portal";

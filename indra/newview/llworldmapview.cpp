@@ -1082,13 +1082,11 @@ BOOL LLWorldMapView::handleToolTip( S32 x, S32 y, std::string& msg, LLRect* stic
 
 				if (agent_count == 1)
 				{
-					// <edit>
-					message += "agents";
+					message += "person";
 				}
 				else
 				{
-					// <edit>
-					message += "agents";
+					message += "people";
 				}
 			}
 		}

@@ -21,5 +21,5 @@
 * $Id$
 */
 
-#include "shooped_constants.h"
+#include "luna_constants.h"
 

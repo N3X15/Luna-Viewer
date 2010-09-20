@@ -80,7 +80,19 @@ set(llmath_HEADER_FILES
 set_source_files_properties(${llmath_HEADER_FILES}
                             PROPERTIES HEADER_FILE_ONLY TRUE)
 
+# This somehow prevents random crashes due to new allocations from spirit::grammar. ~Disc
+if (NOT WINDOWS)
+	set_source_files_properties(
+		    llcalc.cpp
+		    llcalcparser.cpp
+		    PROPERTIES COMPILE_FLAGS "-O0"
+		    )
+endif (NOT WINDOWS)
+
 list(APPEND llmath_SOURCE_FILES ${llmath_HEADER_FILES})
 
 add_library (llmath ${llmath_SOURCE_FILES})
 add_dependencies(llmath prepare)
+target_link_libraries(
+    llmath
+    llcommon)

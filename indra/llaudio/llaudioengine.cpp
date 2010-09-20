@@ -52,7 +52,7 @@ extern void request_sound(const LLUUID &sound_guid);
 
 LLAudioEngine* gAudiop = NULL;
 
-int gSoundHistoryPruneCounter = 0;
+int gSoundHistoryPruneCounter;
 
 //
 // LLAudioEngine implementation
@@ -823,17 +823,20 @@ void LLAudioEngine::triggerSound(const LLUUID &audio_uuid, const LLUUID& owner_i
 	// Create a new source (since this can't be associated with an existing source.
 	//llinfos << "Localized: " << audio_uuid << llendl;
 
-	if (mMuted)
+	//If we cannot hear it, dont even try to load the sound.
+	if (mMuted || gain == 0.0)
 	{
 		return;
 	}
-
+	//fix collision sounds under OpenAL
+	F32 fixedGain=llclamp(gain,0.0f,1.0f);
+	if (fixedGain == 0.f) return;
 	LLUUID source_id;
 	source_id.generate();
 
 	// <edit>
 	//LLAudioSource *asp = new LLAudioSource(source_id, owner_id, gain, type);
-	LLAudioSource *asp = new LLAudioSource(source_id, owner_id, gain, type, source_object, true);
+	LLAudioSource *asp = new LLAudioSource(source_id, owner_id, fixedGain, type, source_object, true);
 	// </edit>
 	gAudiop->addAudioSource(asp);
 	if (pos_global.isExactlyZero())
@@ -973,6 +976,58 @@ LLAudioData * LLAudioEngine::getAudioData(const LLUUID &audio_uuid)
 	{
 		return iter->second;
 	}
+}
+
+void LLAudioEngine::removeAudioData(LLUUID &audio_uuid)
+{
+  data_map::iterator iter;
+  iter = mAllData.find(audio_uuid);
+  if(iter != mAllData.end())
+  {
+    source_map::iterator iter2;
+    for (iter2 = mAllSources.begin(); iter2 != mAllSources.end();)
+    {
+      LLAudioSource *sourcep = iter2->second;
+      if(sourcep)
+      {
+	if(sourcep->getCurrentData())
+	{
+	  if(!(sourcep->getCurrentData()->getID().isNull()))
+	  {
+	    if(sourcep->getCurrentData()->getID().asString() == audio_uuid.asString())
+	    {
+	      LLAudioChannel* chan=sourcep->getChannel();
+	      delete sourcep;
+	      mAllSources.erase(iter2++);
+	      if(chan)
+		chan->cleanup();
+	    }
+	    else
+	      iter2++;
+	  }
+	  else
+	    iter2++;
+	}
+	else
+	  iter2++;
+      }
+      else
+	iter2++;
+    }
+    LLAudioBuffer* buf=((LLAudioData*)iter->second)->getBuffer();
+    if(buf)
+    {
+	S32 i;
+	for (i = 0; i < MAX_BUFFERS; i++)
+	{
+	  if(mBuffers[i] == buf)
+		mBuffers[i] = NULL;
+	}
+	delete buf;
+    }
+    delete iter->second;
+    mAllData[audio_uuid] = NULL;
+  }
 }
 
 void LLAudioEngine::addAudioSource(LLAudioSource *asp)

@@ -78,7 +78,9 @@ set(viewer_SOURCE_FILES
 	floatersculptpreview.cpp
     hgfloatertexteditor.cpp
 	hippogridmanager.cpp
+	hippolimits.cpp
 	hipporestrequest.cpp
+	hippopanelgrids.cpp
     jcfloaterareasearch.cpp
 	chatbar_as_cmdline.cpp
     llagent.cpp
@@ -547,7 +549,9 @@ set(viewer_HEADER_FILES
 	floatersculptpreview.h
     hgfloatertexteditor.h
 	hippogridmanager.h
+	hippolimits.h
 	hipporestrequest.h
+	hippopanelgrids.h
     jcfloaterareasearch.h
 	chatbar_as_cmdline.h
     llagent.h
@@ -969,31 +973,7 @@ set(viewer_HEADER_FILES
 	scriptcounter.h
     VertexCache.h
     VorbisFramework.h
-    wlfPanel_AdvSettings.h
-#    LunaVoxelSurface.h
-#    LunaVOVoxelSurface.h
-    LunaLua.h
-# Base Module ------------
-    LuaAgent_f.h
-    LuaAvatar_f.h
-    LuaBase_f.h
-    LuaBuild_f.h
-    LuaWindlight.h
-    LuaUI.h
-    _LuaSL.h
-# GL Module --------------
-    LunaGL.h
-#    _LuaGL.h
-# Region module ----------
-    LunaRegion.h
-#    _LuaRegion.h
-# Object Module
-    LunaObject.h
-#    _LuaObject.h
-# ------------------------
-    LuaWindlight.h
-    lunaconsole.h
-    LunaLua.h
+	wlfPanel_AdvSettings.h
     )
 
 source_group("CMake Rules" FILES ViewerInstall.cmake)
@@ -1417,8 +1397,16 @@ target_link_libraries(${VIEWER_BINARY_NAME}
     ${LLCOMMON_LIBRARIES}
     ${NDOF_LIBRARY}
     ${viewer_LIBRARIES}
-    ${BOOST_PROGRAM_OPTIONS_LIBRARY}
-    ${BOOST_REGEX_LIBRARY}
+    ${Boost_PROGRAM_OPTIONS_LIBRARY}
+    ${Boost_REGEX_LIBRARY}
+    ${Boost_PYTHON_LIBRARY}
+    ${Boost_SIGNALS_LIBRARY}
+    ${Boost_WAVE_LIBRARY}
+    ${Boost_SYSTEM_LIBRARY}
+    ${Boost_FILESYSTEM_LIBRARY}
+    ${Boost_IOSTREAMS_LIBRARY}
+    ${Boost_DATE_TIME_LIBRARY}
+    ${Boost_THREAD_LIBRARY}
     ${DBUSGLIB_LIBRARIES}
     ${OPENGL_LIBRARIES}
     ${FMODWRAPPER_LIBRARY}
@@ -1559,15 +1547,17 @@ if (INSTALL)
 endif (INSTALL)
 
 # Add tests
-if (NOT STANDALONE)
-	ADD_VIEWER_BUILD_TEST(llagentaccess viewer)
-	#ADD_VIEWER_BUILD_TEST(llworldmap viewer)
-	#ADD_VIEWER_BUILD_TEST(llworldmipmap viewer)
-	ADD_VIEWER_BUILD_TEST(lltextureinfo viewer)
-	ADD_VIEWER_BUILD_TEST(lltextureinfodetails viewer)
-	ADD_VIEWER_BUILD_TEST(lltexturestatsuploader viewer)
-	#ADD_VIEWER_COMM_BUILD_TEST(lltranslate viewer "")
-endif (NOT STANDALONE)
+if (LL_TESTS)
+  ADD_VIEWER_BUILD_TEST(llagentaccess viewer)
+  ADD_VIEWER_BUILD_TEST(llworldmap viewer)
+  ADD_VIEWER_BUILD_TEST(llworldmipmap viewer)
+  ADD_VIEWER_BUILD_TEST(llworldmap viewer)
+  ADD_VIEWER_BUILD_TEST(llworldmipmap viewer)
+  ADD_VIEWER_BUILD_TEST(lltextureinfo viewer)
+  ADD_VIEWER_BUILD_TEST(lltextureinfodetails viewer)
+  ADD_VIEWER_BUILD_TEST(lltexturestatsuploader viewer)
+  ADD_VIEWER_COMM_BUILD_TEST(lltranslate viewer "")
+endif (LL_TESTS)
 
 # Don't do these for DARWIN or LINUX here -- they're taken care of by viewer_manifest.py
 if (WINDOWS)

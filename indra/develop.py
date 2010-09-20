@@ -73,7 +73,7 @@ class PlatformSetup(object):
     for t in ('Debug', 'Release', 'RelWithDebInfo'):
         build_types[t.lower()] = t
 
-    build_type = build_types['relwithdebinfo']
+    build_type = build_types['release']
     standalone = 'OFF'
     unattended = 'OFF'
     project_name = 'Luna'
@@ -242,6 +242,7 @@ class UnixSetup(PlatformSetup):
 
     def run(self, command, name=None):
         '''Run a program.  If the program fails, raise an exception.'''
+        sys.stdout.flush()
         ret = os.system(command)
         if ret:
             if name is None:
@@ -397,8 +398,9 @@ class LinuxSetup(UnixSetup):
                 if hostname.startswith('eniac'):
                     hosts, job_count = mk_distcc_hosts('eniac', 71, 2)
                     os.environ['DISTCC_HOSTS'] = hosts
-            if job_count > 4:
-                job_count = 4;
+            # This is just silly. [Disc]
+      #if job_count > 4:
+               #job_count = 4;
             opts.extend(['-j', str(job_count)])
 
         if targets:
@@ -505,16 +507,16 @@ class WindowsSetup(PlatformSetup):
                     print 'Building with ', self.gens[version]['gen']
                     break
             else:
-                print >> sys.stderr, 'Cannot find a Visual Studio installation, testing for express editions'
-                for version in 'vc80 vc90 vc71'.split():
-                    if self.find_visual_studio_express(version):
-                        self._generator = version
-                        self.using_express = True
-                        print 'Building with ', self.gens[version]['gen'] , "Express edition"
-                        break
-                    else:
-                        print >> sys.stderr, 'Cannot find any Visual Studio installation'
-                        sys.exit(1)
+                    print >> sys.stderr, 'Cannot find a Visual Studio installation, testing for express editions'
+                    for version in 'vc80 vc90 vc71'.split():
+                        if self.find_visual_studio_express(version):
+                            self._generator = version
+                            self.using_express = True
+                            print 'Building with ', self.gens[version]['gen'] , "Express edition"
+                            break
+                        else:
+                            print >> sys.stderr, 'Cannot find any Visual Studio installation'
+                            sys.exit(1)
         return self._generator
 
     def _set_generator(self, gen):
@@ -616,7 +618,7 @@ class WindowsSetup(PlatformSetup):
                  build_dirs=self.build_dirs()
                  print >> sys.stderr, "\nSolution generation complete, it can can now be found in:", build_dirs[0]    
                  print >> sys.stderr, "\nAs you are using an Express Visual Studio, the build step cannot be automated"
-		 print >> sys.stderr, "\nPlease see https://wiki.secondlife.com/wiki/Microsoft_Visual_Studio#Extra_steps_for_Visual_Studio_Express_editions for Visual Studio Express specific information"
+                 print >> sys.stderr, "\nPlease see https://wiki.secondlife.com/wiki/Microsoft_Visual_Studio#Extra_steps_for_Visual_Studio_Express_editions for Visual Studio Express specific information"
                  exit(0)
     
         # devenv.com is CLI friendly, devenv.exe... not so much.

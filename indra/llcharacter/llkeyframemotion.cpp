@@ -1489,6 +1489,10 @@ BOOL LLKeyframeMotion::deserialize(LLDataPacker& dp)
 
 				LLQuaternion::Order ro = StringToOrder("ZYX");
 				rot_key.mRotation = mayaQ(rot_angles.mV[VX], rot_angles.mV[VY], rot_angles.mV[VZ], ro);
+				if(!(rot_key.mRotation.isFinite()))
+				{
+					return FALSE;
+				}
 			}
 			else
 			{
@@ -1567,6 +1571,10 @@ BOOL LLKeyframeMotion::deserialize(LLDataPacker& dp)
 			if (old_version)
 			{
 				success = dp.unpackVector3(pos_key.mPosition, "pos");
+				if(!(pos_key.mPosition.isFinite()))
+				{
+					return FALSE;
+				}
 			}
 			else
 			{
@@ -1673,7 +1681,6 @@ BOOL LLKeyframeMotion::deserialize(LLDataPacker& dp)
 			str = (char*)bin_data;
 			constraintp->mSourceConstraintVolume = mCharacter->getCollisionVolumeID(str);
 
-			// <edit>
 			if(constraintp->mSourceConstraintVolume == -1)
 			{
 				llwarns << "can't get source constraint volume" << llendl;
@@ -1714,6 +1721,12 @@ BOOL LLKeyframeMotion::deserialize(LLDataPacker& dp)
 			{
 				constraintp->mConstraintTargetType = CONSTRAINT_TARGET_TYPE_BODY;
 				constraintp->mTargetConstraintVolume = mCharacter->getCollisionVolumeID(str);
+				if(constraintp->mTargetConstraintVolume == -1)
+				{
+					llwarns << "can't find a valid target collision volume." << llendl;
+					delete constraintp;
+					return FALSE;
+				}
 			}
 
 			if (!dp.unpackVector3(constraintp->mTargetConstraintOffset, "target_offset"))

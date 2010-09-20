@@ -1,5 +1,6 @@
-Linden Lab would like to acknowledge source code contributions from the
-following residents.   The Second Life resident name is given below,
+Linden Lab and the Phoenix Viewer Team would like to acknowledge
+source code contributions from the following residents.
+The Second Life resident name is given below,
 along with the issue identifier corresponding to the patches we've
 received from them.  To see more about these contributions, visit the
 browsable version: http://wiki.secondlife.com/wiki/Source_contributions
@@ -128,6 +129,8 @@ Ardy Lay
 	SNOW-205
 	SNOW-322
 	SNOW-364
+	SNOW-384
+	SNOW-629
 Argent Stonecutter
 	VWR-68
 Armin Weatherwax
@@ -166,6 +169,7 @@ blino Nakamura
 Boroondas Gupte
 	SNOW-201
 	SNOW-396
+	SNOW-624
 	VWR-233
 	WEB-262
 Bulli Schumann
@@ -336,8 +340,16 @@ JB Kraft
 	VWR-7802
 Joghert LeSabre
 	VWR-64
+Kadah Coba
+	PHOE-277
 Kage Pixel
 	VWR-11
+Kadah Coba
+	PHOE-54
+	PHOE-319
+	PHOE-320
+	PHOE-394
+	PHOE-392 
 Ken March
 	CT-245
 Kerutsen Sellery

@@ -25,7 +25,9 @@
 
 -- dirtree()  Code by David Kastrup
 
-require "lfs"
+require "lfs" -- Lua Filesystem API
+require "bit" -- Bitwise operators
+
 ----------------------------------------------------------------------------------
 --               IMPORTANT FUNCTIONS NEEDED TO LOAD LIBS, ETC                   --
 ----------------------------------------------------------------------------------

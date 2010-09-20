@@ -3,7 +3,6 @@
 project(llimage)
 
 include(00-Common)
-include(LLAddBuildTest)
 include(LLCommon)
 include(LLImage)
 include(LLMath)
@@ -62,7 +61,8 @@ target_link_libraries(
     ${ZLIB_LIBRARIES}
     )
 
-# Add tests
-if (NOT STANDALONE)
-	ADD_BUILD_TEST(llimageworker llimage)
-endif (NOT STANDALONE)
+if (LL_TESTS)
+  include(LLAddBuildTest)
+  # Add tests
+  ADD_BUILD_TEST(llimageworker llimage)
+endif (LL_TESTS)

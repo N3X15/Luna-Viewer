@@ -28,6 +28,15 @@ set_source_files_properties(${llimagej2coj_HEADER_FILES}
 
 list(APPEND llimagej2coj_SOURCE_FILES ${llimagej2coj_HEADER_FILES})
 
+# Pass proper definition to preprocessor to generate shared lib
+IF(WIN32)
+  IF(BUILD_SHARED_LIBS)
+    ADD_DEFINITIONS(-DOPJ_EXPORTS)
+  ELSE(BUILD_SHARED_LIBS)
+    ADD_DEFINITIONS(-DOPJ_STATIC)
+  ENDIF(BUILD_SHARED_LIBS)
+ENDIF(WIN32)
+
 add_library (llimagej2coj ${llimagej2coj_SOURCE_FILES})
 add_dependencies(llimagej2coj prepare)
 target_link_libraries(

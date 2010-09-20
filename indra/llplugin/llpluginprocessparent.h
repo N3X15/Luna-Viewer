@@ -2,32 +2,28 @@
  * @file llpluginprocessparent.h
  * @brief LLPluginProcessParent handles the parent side of the external-process plugin API.
  *
- * $LicenseInfo:firstyear=2008&license=viewergpl$
- * 
- * Copyright (c) 2008-2009, Linden Research, Inc.
- * 
+ * @cond
+ * $LicenseInfo:firstyear=2008&license=viewerlgpl$
  * Second Life Viewer Source Code
- * The source code in this file ("Source Code") is provided by Linden Lab
- * to you under the terms of the GNU General Public License, version 2.0
- * ("GPL"), unless you have obtained a separate licensing agreement
- * ("Other License"), formally executed by you and Linden Lab.  Terms of
- * the GPL can be found in doc/GPL-license.txt in this distribution, or
- * online at http://secondlifegrid.net/programs/open_source/licensing/gplv2
+ * Copyright (C) 2010, Linden Research, Inc.
  * 
- * There are special exceptions to the terms and conditions of the GPL as
- * it is applied to this Source Code. View the full text of the exception
- * in the file doc/FLOSS-exception.txt in this software distribution, or
- * online at
- * http://secondlifegrid.net/programs/open_source/licensing/flossexception
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation;
+ * version 2.1 of the License only.
  * 
- * By copying, modifying or distributing this software, you acknowledge
- * that you have read and understood your obligations described above,
- * and agree to abide by those obligations.
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
  * 
- * ALL LINDEN LAB SOURCE CODE IS PROVIDED "AS IS." LINDEN LAB MAKES NO
- * WARRANTIES, EXPRESS, IMPLIED OR OTHERWISE, REGARDING ITS ACCURACY,
- * COMPLETENESS OR PERFORMANCE.
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * 
+ * Linden Research, Inc., 945 Battery Street, San Francisco, CA  94111  USA
  * $/LicenseInfo$
+ * @endcond
  */
 
 #ifndef LL_LLPLUGINPROCESSPARENT_H
@@ -40,12 +36,16 @@
 #include "llpluginsharedmemory.h"
 
 #include "lliosocket.h"
+#include "llthread.h"
+#include <queue>
+
 
 class LLPluginProcessParentOwner
 {
 public:
 	virtual ~LLPluginProcessParentOwner();
 	virtual void receivePluginMessage(const LLPluginMessage &message) = 0;
+	virtual bool receivePluginMessageEarly(const LLPluginMessage &message) {return false;};
 	// This will only be called when the plugin has died unexpectedly 
 	virtual void pluginLaunchFailed() {};
 	virtual void pluginDied() {};
@@ -58,7 +58,10 @@ public:
 	LLPluginProcessParent(LLPluginProcessParentOwner *owner);
 	~LLPluginProcessParent();
 		
-	void init(const std::string &launcher_filename, const std::string &plugin_filename, bool debug, const std::string &user_data_path);
+	void init(const std::string &launcher_filename, 
+			  const std::string &plugin_filename, 
+			  bool debug);
+
 	void idle(void);
 	
 	// returns true if the plugin is on its way to steady state
@@ -69,6 +72,9 @@ public:
 
 	// returns true if the process has exited or we've had a fatal error
 	bool isDone(void);	
+	
+	// returns true if the process is currently waiting on a blocking request
+	bool isBlocked(void) { return mBlocked; };
 	
 	void killSockets(void);
 	
@@ -83,7 +89,9 @@ public:
 	void receiveMessage(const LLPluginMessage &message);
 	
 	// Inherited from LLPluginMessagePipeOwner
-	void receiveMessageRaw(const std::string &message);
+	/*virtual*/ void receiveMessageRaw(const std::string &message);
+	/*virtual*/ void receiveMessageEarly(const LLPluginMessage &message);
+	/*virtual*/ void setMessagePipe(LLPluginMessagePipe *message_pipe) ;
 	
 	// This adds a memory segment shared with the client, generating a name for the segment.  The name generated is guaranteed to be unique on the host.
 	// The caller must call removeSharedMemory first (and wait until getSharedMemorySize returns 0 for the indicated name) before re-adding a segment with the same name.
@@ -106,7 +114,11 @@ public:
 	void setLockupTimeout(F32 timeout) { mPluginLockupTimeout = timeout; };
 
 	F64 getCPUUsage() { return mCPUUsage; };
-
+	
+	static void poll(F64 timeout);
+	static bool canPollThreadRun() { return (sPollSet || sPollsetNeedsRebuild || sUseReadThread); };
+	static void setUseReadThread(bool use_read_thread);
+	static bool getUseReadThread() { return sUseReadThread; };
 private:
 
 	enum EState
@@ -142,8 +154,6 @@ private:
 	
 	std::string mPluginFile;
 
-	std::string mUserDataPath;
-
 	LLPluginProcessParentOwner *mOwner;
 	
 	typedef std::map<std::string, LLPluginSharedMemory*> sharedMemoryRegionsType;
@@ -158,12 +168,27 @@ private:
 	
 	bool mDisableTimeout;
 	bool mDebug;
+	bool mBlocked;
+	bool mPolledInput;
 
 	LLProcessLauncher mDebugger;
 	
 	F32 mPluginLaunchTimeout;		// Somewhat longer timeout for initial launch.
 	F32 mPluginLockupTimeout;		// If we don't receive a heartbeat in this many seconds, we declare the plugin locked up.
 
+	static bool sUseReadThread;
+	apr_pollfd_t mPollFD;
+	static apr_pollset_t *sPollSet;
+	static bool sPollsetNeedsRebuild;
+	static LLMutex *sInstancesMutex;
+	static std::list<LLPluginProcessParent*> sInstances;
+	static void dirtyPollSet();
+	static void updatePollset();
+	void servicePoll();
+	static LLThread *sReadThread;
+	
+	LLMutex mIncomingQueueMutex;
+	std::queue<LLPluginMessage> mIncomingQueue;
 };
 
 #endif // LL_LLPLUGINPROCESSPARENT_H

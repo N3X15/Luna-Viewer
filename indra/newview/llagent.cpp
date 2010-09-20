@@ -5642,7 +5642,7 @@ class LLAgentDropGroupViewerNode : public LLHTTPNode
 			!input.has("body") )
 		{
 			//what to do with badly formed message?
-			response->status(400);
+			response->status(400,"Invalid message parameters");
 			response->result(LLSD("Invalid message parameters"));
 		}
 
@@ -5715,7 +5715,7 @@ class LLAgentDropGroupViewerNode : public LLHTTPNode
 		else
 		{
 			//what to do with badly formed message?
-			response->status(400);
+			response->status(400,"Invalid message parameters");
 			response->result(LLSD("Invalid message parameters"));
 		}
 	}
@@ -5938,73 +5938,6 @@ void LLAgent::processScriptControlChange(LLMessageSystem *msg, void **)
 	}
 }
 
-/*
-// static
-void LLAgent::processControlTake(LLMessageSystem *msg, void **)
-{
-	U32	controls;
-	msg->getU32("Data", "Controls", controls );
-	U32 passon;
-	msg->getBOOL("Data", "PassToAgent", passon );
-
-	S32 i;
-	S32 total_count = 0;
-	for (i = 0; i < TOTAL_CONTROLS; i++)
-	{
-		if (controls & ( 1 << i))
-		{
-			if (passon)
-			{
-				gAgent.mControlsTakenPassedOnCount[i]++;
-			}
-			else
-			{
-				gAgent.mControlsTakenCount[i]++;
-			}
-			total_count++;
-		}
-	}
-
-	// Any control taken?  If so, might be first time.
-	if (total_count > 0)
-	{
-		LLFirstUse::useOverrideKeys();
-	}
-}
-
-// static
-void LLAgent::processControlRelease(LLMessageSystem *msg, void **)
-{
-	U32	controls;
-	msg->getU32("Data", "Controls", controls );
-	U32 passon;
-	msg->getBOOL("Data", "PassToAgent", passon );
-
-	S32 i;
-	for (i = 0; i < TOTAL_CONTROLS; i++)
-	{
-		if (controls & ( 1 << i))
-		{
-			if (passon)
-			{
-				gAgent.mControlsTakenPassedOnCount[i]--;
-				if (gAgent.mControlsTakenPassedOnCount[i] < 0)
-				{
-					gAgent.mControlsTakenPassedOnCount[i] = 0;
-				}
-			}
-			else
-			{
-				gAgent.mControlsTakenCount[i]--;
-				if (gAgent.mControlsTakenCount[i] < 0)
-				{
-					gAgent.mControlsTakenCount[i] = 0;
-				}
-			}
-		}
-	}
-}
-*/
 
 //static
 void LLAgent::processAgentCachedTextureResponse(LLMessageSystem *mesgsys, void **user_data)

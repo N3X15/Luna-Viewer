@@ -4,7 +4,7 @@
  *
  * $LicenseInfo:firstyear=2002&license=viewergpl$
  * 
- * Copyright (c) 2002-2009, Linden Research, Inc.
+ * Copyright (c) 2002-2010, Linden Research, Inc.
  * 
  * Second Life Viewer Source Code
  * The source code in this file ("Source Code") is provided by Linden Lab
@@ -42,6 +42,7 @@
 #include "llfloater.h"
 #include "lltabcontainervertical.h"
 
+class HippoPanelGrids;
 class LLPanelGeneral;
 class LLPanelInput;
 class LLPanelLCD;
@@ -64,6 +65,8 @@ class LLPreferenceCore
 {
 
 public:
+	enum { TAB_GRIDS = 11 };
+
 	LLPreferenceCore(LLTabContainer* tab_container, LLButton * default_btn);
 	~LLPreferenceCore();
 
@@ -83,6 +86,7 @@ private:
 	LLTabContainer	*mTabContainer;
 	LLPanelGeneral	        *mGeneralPanel;
 	LLPanelSkins			*mSkinsPanel;
+	HippoPanelGrids			*mGridsPanel;
 	LLPanelInput			*mInputPanel;
 	LLPanelNetwork	        *mNetworkPanel;
 	LLPanelDisplay	        *mDisplayPanel;

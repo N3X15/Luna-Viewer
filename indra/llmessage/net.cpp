@@ -421,7 +421,6 @@ S32 receive_packet(int hSocket, char * receiveBuffer)
 // Returns TRUE on success.
 BOOL send_packet(int hSocket, const char *sendBuffer, int size, U32 recipient, int nPort)
 {
-
 	//  Sends a packet to the address set in initNet
 	//  
 	int nRet = 0;

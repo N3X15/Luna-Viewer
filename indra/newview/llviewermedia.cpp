@@ -477,7 +477,8 @@ LLPluginClassMedia* LLViewerMediaImpl::newSourceFromMediaType(std::string media_
 		{
 			LLPluginClassMedia* media_source = new LLPluginClassMedia(owner);
 			media_source->setSize(default_width, default_height);
-			if (media_source->init(launcher_name, plugin_name, false, user_data_path))
+			media_source->setUserDataPath(user_data_path);
+			if (media_source->init(launcher_name, plugin_name, false)) //No more user_data_path
 			{
 				return media_source;
 			}
@@ -767,7 +768,38 @@ bool LLViewerMediaImpl::handleKeyHere(KEY key, MASK mask)
 	
 	if (mMediaSource)
 	{
-		result = mMediaSource->keyEvent(LLPluginClassMedia::KEY_EVENT_DOWN ,key, mask);
+		// FIXME: THIS IS SO WRONG.
+		// Menu keys should be handled by the menu system and not passed to UI elements, but this is how LLTextEditor and LLLineEditor do it...
+		if( MASK_CONTROL & mask )
+		{
+			if( 'C' == key )
+			{
+				mMediaSource->copy();
+				result = true;
+			}
+			else
+			if( 'V' == key )
+			{
+				mMediaSource->paste();
+				result = true;
+			}
+			else
+			if( 'X' == key )
+			{
+				mMediaSource->cut();
+				result = true;
+			}
+		}
+		
+		if(!result)
+		{
+			
+			LLSD native_key_data;//gViewerWindow->getWindow()->getNativeKeyData();
+			
+			result = mMediaSource->keyEvent(LLPluginClassMedia::KEY_EVENT_DOWN ,key, mask, native_key_data);
+			// Since the viewer internal event dispatching doesn't give us key-up events, simulate one here.
+			(void)mMediaSource->keyEvent(LLPluginClassMedia::KEY_EVENT_UP ,key, mask, native_key_data);
+		}
 	}
 	
 	return result;
@@ -784,7 +816,8 @@ bool LLViewerMediaImpl::handleUnicodeCharHere(llwchar uni_char)
 		if (uni_char >= 32 // discard 'control' characters
 			&& uni_char != 127) // SDL thinks this is 'delete' - yuck.
 		{
-			mMediaSource->textInput(wstring_to_utf8str(LLWString(1, uni_char)), gKeyboard->currentMask(FALSE));
+			LLSD native_key_data;
+			mMediaSource->textInput(wstring_to_utf8str(LLWString(1, uni_char)), gKeyboard->currentMask(FALSE), native_key_data);
 		}
 	}
 	

@@ -449,10 +449,8 @@ S32 LLTemplateMessageReader::getMessageSize() const
 // Returns template for the message contained in buffer
 BOOL LLTemplateMessageReader::decodeTemplate(  
 		const U8* buffer, S32 buffer_size,  // inputs
-		// <edit>
 		//LLMessageTemplate** msg_template ) // outputs
 		LLMessageTemplate** msg_template, BOOL custom)
-		// </edit>
 {
 	const U8* header = buffer + LL_PACKET_ID_SIZE;
 
@@ -723,7 +721,7 @@ BOOL LLTemplateMessageReader::decodeData(const U8* buffer, const LLHost& sender,
 		lldebugs << "Empty message '" << mCurrentRMessageTemplate->mName << "' (no blocks)" << llendl;
 		return FALSE;
 	}
-	
+
 	// <edit>
 	if(!custom)
 	// </edit>
@@ -790,6 +788,7 @@ BOOL LLTemplateMessageReader::validateMessage(const U8* buffer,
 	mReceiveSize = buffer_size;
 	// <edit>
 	//BOOL valid = decodeTemplate(buffer, buffer_size, &mCurrentRMessageTemplate );
+
 	BOOL valid = decodeTemplate(buffer, buffer_size, &mCurrentRMessageTemplate, custom );
 	//if(result)
 	if(valid && !custom)
@@ -847,7 +846,6 @@ LLMessageTemplate* LLTemplateMessageReader::getTemplate()
 	return mCurrentRMessageTemplate;
 }
 // </edit>
-
 //virtual 
 bool LLTemplateMessageReader::isTrusted() const
 {

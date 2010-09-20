@@ -45,13 +45,6 @@ Typical usage:
 
 This module works with Python 2.3 or higher."""
 
-# *HACK: Necessary for python 2.4. Consider replacing this code wart
-# after python >=2.5 has deployed everywhere. 2009-10-05
-try:
-    from hashlib import md5
-except ImportError:
-    from md5 import md5
-
 __author__ = 'Ka-Ping Yee <ping@zesty.ca>'
 __date__ = '$Date: 2006/06/12 23:15:40 $'.split()[1].replace('/', '-')
 __version__ = '$Revision: 1.30 $'.split()[1]
@@ -453,7 +446,8 @@ def uuid1(node=None, clock_seq=None):
 
 def uuid3(namespace, name):
     """Generate a UUID from the MD5 hash of a namespace UUID and a name."""
-    hash = md5(namespace.bytes + name).digest()
+    import md5
+    hash = md5.md5(namespace.bytes + name).digest()
     return UUID(bytes=hash[:16], version=3)
 
 def uuid4():

@@ -1,3 +1,20 @@
+Luna 1.4.2.6
+============
+
+### Lua Bindings
+* Added Ponger plugin, for responding to PINGs.
+* Added a function to hide OwnerSays that start with &FLEXLIFE; (for Ponger and Windlight, which need to communicate with the viewer)
+* Lua bindings moved around so they'll build correctly on Linux AND Windows.  
+* Added bitwise operators (bit.dll/.so)
+
+### General
+* Ascent codebase updated to 1.4.2.6
+* Disabled LLKDU use.  Only OpenJPEG will work now.
+* Added Hippo login crap
+* Updated Boost
+* Using Phoenix's OpenJPEG for less crashy-crashy
+* Patched the crash reporter to send to a non-existant URL on my server
+
 Luna 1.4.2.5
 ============
 

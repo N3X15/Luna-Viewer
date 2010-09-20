@@ -2632,6 +2632,10 @@ void process_chat_from_simulator(LLMessageSystem *msg, void **user_data)
 				verb = ": ";
 				// @hook OnChatSay(from_id,owner_id,message) Triggered when an object uses llOwnerSay.
 				LUA_CALL("OnOwnerSay") << from_id << owner_id << mesg << LUA_END;
+				// Bridge message;  Hide it.
+				// *** DO NOT CHANGE THIS TO LUNA, IT'LL BREAK COMPATIBILITY WITH OLD BRIDGE SYSTEMS ***
+				if(mesg.find("&FLEXLIFE;")==0)
+					return;
 				break;
 			case CHAT_TYPE_DEBUG_MSG:
 			case CHAT_TYPE_NORMAL:
