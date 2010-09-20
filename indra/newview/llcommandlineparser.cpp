@@ -59,7 +59,7 @@
 
 namespace po = boost::program_options;
 
-// *NTOE:MEP - Currently the boost object reside in file scope. 
+// *NOTE:MEP - Currently the boost object reside in file scope. 
 // This has a couple of negatives, they are always around and 
 // there can be only one instance of each. 
 // The plus is that the boost-ly-ness of this implementation is 

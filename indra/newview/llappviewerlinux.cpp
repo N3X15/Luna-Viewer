@@ -49,10 +49,6 @@
 #if LL_LINUX
 # include <dlfcn.h>		// RTLD_LAZY
 # include <execinfo.h>  // backtrace - glibc only
-# include <sys/types.h>
-# include <unistd.h>
-# include <dirent.h>
-# include <boost/algorithm/string.hpp>
 #elif LL_SOLARIS
 # include <sys/types.h>
 # include <unistd.h>
