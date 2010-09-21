@@ -280,26 +280,24 @@ class Installer(object):
         if not self._dryrun:
             file(filename, 'wb').write(llsd.format_pretty_xml(state))
 	
-	#Luna: Sort installables so merging isn't a hellish nightmare.
-	def sort(self, filename):
-        print "Reading ",filename
-		self._install_changed=true
-		self.save()
+    #Luna: Sort installables so merging isn't a hellish nightmare.
+    def sort(self):
+        print "Sorting..."
+        self._install_changed=True
+        self.save()
 
     def save(self):
         if self._install_changed:
             state = {}
             state['licenses'] = {}
-            for name in self._licenses:
+            for name in sorted(self._licenses):
                 state['licenses'][name] = self._licenses[name]._definition
             #print "self._installables:",self._installables
             state['installables'] = {}
-            for name in self._installables:
+            for name in sorted(self._installables):
                 state['installables'][name] = \
                                         self._installables[name]._definition
-			#Luna: Sort so that merging libraries isn't a hellish nightmare.
-            state['installables']=sorted(state['installables'], key=lambda installable: installable[name])
-            state['licenses']=sorted(state['licenses'], key=lambda license: license[name])
+            #Luna: Sort so that merging libraries isn't a hellish nightmare.
             self._write(self._install_filename, state)
         if self._installed_changed:
             state = {}
@@ -1079,9 +1077,9 @@ def main():
     #
     # Handle the queries for information
     #
-	if options.sort_manifest:
-		installer.sort()
-		return 0
+    if options.sort_manifest:
+        installer.sort()
+        return 0
     if options.list_installed:
         print "installed list:", installer.list_installed()
         return 0

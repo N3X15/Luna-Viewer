@@ -3255,7 +3255,8 @@ bool LLVOAvatar::updateClientTags()
 { 
 	std::string client_list_filename = gDirUtilp->getExpandedFilename(LL_PATH_USER_SETTINGS, "client_definitions.xml");
 	// For statistics
-	LLSD response = LLHTTPClient::blockingGet("http://luna.nexisonline.net/apps/client_tags.php?out=llsd&mytag="+LUNA_CLIENT_TAG);
+	//LLSD response = LLHTTPClient::blockingGet("http://luna.nexisonline.net/apps/client_tags.php?out=llsd&mytag="+LUNA_CLIENT_TAG);
+	LLSD response = LLHTTPClient::blockingGet("http://viewertags.com/app/client_list_unified_colours.xml");
 	if(response.has("body"))
 	{
 		const LLSD &client_list = response["body"];
