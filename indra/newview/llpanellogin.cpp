@@ -79,6 +79,7 @@
 
 #include "llglheaders.h"
 
+// <edit>
 #include "llappviewer.h"
 #include "llspinctrl.h"
 #include "llviewermessage.h"

@@ -1,11 +1,11 @@
 /** 
- * @file hbprefsinert.cpp
- * @author Henri Beauchamp
- * @brief Ascent Viewer preferences panel
+ * @file ascentprefsvan.cpp
+ * @Ascent Viewer preferences panel
  *
  * $LicenseInfo:firstyear=2008&license=viewergpl$
  * 
  * Copyright (c) 2008, Henri Beauchamp.
+ * Rewritten in its entirety 2010 Hg Beeks. 
  * 
  * Second Life Viewer Source Code
  * The source code in this file ("Source Code") is provided by Linden Lab
@@ -39,6 +39,7 @@
 #include "llcolorswatch.h"
 #include "llvoavatar.h"
 #include "llagent.h"
+#include "llfloaterchat.h"
 #include "llstartup.h"
 #include "llviewercontrol.h"
 #include "v4color.h"
@@ -63,6 +64,7 @@ public:
 private:
 	static void onCommitCheckBox(LLUICtrl* ctrl, void* user_data);
 	static void onCommitColor(LLUICtrl* ctrl, void* user_data);
+	static void onManualClientUpdate(void* data);
 	void refreshValues();
 	//General
 	BOOL mUseAccountSettings;
@@ -74,6 +76,9 @@ private:
 	LLColor4 mCustomTagColor;
 	LLColor4 mEffectColor;
 	LLColor4 mFriendColor;
+	LLColor4 mLindenColor;
+	LLColor4 mMutedColor;
+	LLColor4 mEMColor;
 	U32 mSelectedClient;
 };
 
@@ -93,6 +98,7 @@ LLPrefsAscentVanImpl::LLPrefsAscentVanImpl()
 	childSetCommitCallback("Y Modifier", LLPrefsAscentVan::onCommitUpdateAvatarOffsets);
 	childSetCommitCallback("Z Modifier", LLPrefsAscentVan::onCommitUpdateAvatarOffsets);
 	
+	childSetAction("update_clientdefs", onManualClientUpdate, this);
 	refresh();
 	
 }
@@ -118,6 +124,30 @@ void LLPrefsAscentVanImpl::onCommitColor(LLUICtrl* ctrl, void* user_data)
 		gAgent.sendAgentSetAppearance();
 		gAgent.resetClientTag();
 	}
+}
+
+void LLPrefsAscentVanImpl::onManualClientUpdate(void* data)
+{
+	LLChat chat;
+	chat.mSourceType = CHAT_SOURCE_SYSTEM;
+	chat.mText = llformat("Definitions already up-to-date.");
+	if (LLVOAvatar::updateClientTags())
+	{
+		chat.mText = llformat("Client definitions updated.");
+		LLVOAvatar::loadClientTags();
+		for (std::vector<LLCharacter*>::iterator iter = LLCharacter::sInstances.begin();
+		iter != LLCharacter::sInstances.end(); ++iter)
+		{
+			LLVOAvatar* avatarp = (LLVOAvatar*) *iter;
+			if(avatarp)
+			{
+				LLVector3 root_pos_last = avatarp->mRoot.getWorldPosition();
+				avatarp->mClientTag = "";
+			}
+		}
+	}
+	LLFloaterChat::addChat(chat);
+	
 }
 
 //static
@@ -169,23 +199,20 @@ void LLPrefsAscentVanImpl::refreshValues()
 	
 	mSelectedClient			= LLSavedSettingsGlue::getCOAU32("AscentReportClientIndex");
 	mEffectColor			= LLSavedSettingsGlue::getCOAColor4("EffectColor");
-	if (LLSavedSettingsGlue::getCOABOOL("AscentUseCustomTag"))
-	{
-		childEnable("custom_tag_label_text");
-		childEnable("custom_tag_label_box");
-		childEnable("custom_tag_color_text");
-		childEnable("custom_tag_color_swatch");
-	}
-	else
-	{
-		childDisable("custom_tag_label_text");
-		childDisable("custom_tag_label_box");
-		childDisable("custom_tag_color_text");
-		childDisable("custom_tag_color_swatch");
-	}
+	
+	BOOL use_custom = LLSavedSettingsGlue::getCOABOOL("AscentUseCustomTag");
+
+	childSetEnabled("custom_tag_label_text", use_custom);
+	childSetEnabled("custom_tag_label_box", use_custom);
+	childSetEnabled("custom_tag_color_text", use_custom);
+	childSetEnabled("custom_tag_color_swatch", use_custom);
+
 	mCustomTagLabel			= LLSavedSettingsGlue::getCOAString("AscentCustomTagLabel");
 	mCustomTagColor			= LLSavedSettingsGlue::getCOAColor4("AscentCustomTagColor");
 	mFriendColor			= LLSavedSettingsGlue::getCOAColor4("AscentFriendColor");
+	mLindenColor			= LLSavedSettingsGlue::getCOAColor4("AscentLindenColor");
+	mMutedColor				= LLSavedSettingsGlue::getCOAColor4("AscentMutedColor");
+	mEMColor				= LLSavedSettingsGlue::getCOAColor4("AscentEstateOwnerColor");
 }
 
 void LLPrefsAscentVanImpl::refresh()
@@ -206,10 +233,23 @@ void LLPrefsAscentVanImpl::refresh()
 	getChild<LLColorSwatchCtrl>("effect_color_swatch")->set(mEffectColor);
 	getChild<LLColorSwatchCtrl>("custom_tag_color_swatch")->set(mCustomTagColor);
 	getChild<LLColorSwatchCtrl>("friend_color_swatch")->set(mFriendColor);
+	getChild<LLColorSwatchCtrl>("linden_color_swatch")->set(mLindenColor);
+	getChild<LLColorSwatchCtrl>("muted_color_swatch")->set(mMutedColor);
+	getChild<LLColorSwatchCtrl>("em_color_swatch")->set(mEMColor);
 	LLSavedSettingsGlue::setCOAColor4("EffectColor", LLColor4::white);
 	LLSavedSettingsGlue::setCOAColor4("EffectColor", mEffectColor);
-	LLSavedSettingsGlue::setCOAColor4("AscentFriendColor", LLColor4::yellow);
+	
+	LLSavedSettingsGlue::setCOAColor4("AscentFriendColor", LLColor4::white);
 	LLSavedSettingsGlue::setCOAColor4("AscentFriendColor", mFriendColor);
+
+	LLSavedSettingsGlue::setCOAColor4("AscentLindenColor", LLColor4::white);
+	LLSavedSettingsGlue::setCOAColor4("AscentLindenColor", mLindenColor);
+
+	LLSavedSettingsGlue::setCOAColor4("AscentMutedColor", LLColor4::white);
+	LLSavedSettingsGlue::setCOAColor4("AscentMutedColor", mMutedColor);
+
+	LLSavedSettingsGlue::setCOAColor4("AscentEstateOwnerColor", LLColor4::white);
+	LLSavedSettingsGlue::setCOAColor4("AscentEstateOwnerColor", mEMColor);
 	gAgent.resetClientTag();
 }
 
@@ -217,23 +257,17 @@ void LLPrefsAscentVanImpl::cancel()
 {
 	//General --------------------------------------------------------------------------------
 	childSetValue("use_account_settings_check", mUseAccountSettings);
-
-	//Colors ---------------------------------------------------------------------------------
-	LLComboBox* combo = getChild<LLComboBox>("tag_spoofing_combobox");
-	combo->setCurrentByIndex(mSelectedClient);
-
-	childSetValue("show_self_tag_check", mShowSelfClientTag);
-	childSetValue("show_self_tag_color_check", mShowSelfClientTagColor);
-	childSetValue("customize_own_tag_check", mCustomTagOn);
-	childSetValue("custom_tag_label_box", mCustomTagLabel);
 	
-	getChild<LLColorSwatchCtrl>("effect_color_swatch")->set(mEffectColor);
-	getChild<LLColorSwatchCtrl>("custom_tag_color_swatch")->set(mCustomTagColor);
-	getChild<LLColorSwatchCtrl>("friend_color_swatch")->set(mFriendColor);
 	LLSavedSettingsGlue::setCOAColor4("EffectColor", LLColor4::white);
 	LLSavedSettingsGlue::setCOAColor4("EffectColor", mEffectColor);
 	LLSavedSettingsGlue::setCOAColor4("AscentFriendColor", LLColor4::yellow);
 	LLSavedSettingsGlue::setCOAColor4("AscentFriendColor", mFriendColor);
+	LLSavedSettingsGlue::setCOAColor4("AscentLindenColor", LLColor4::yellow);
+	LLSavedSettingsGlue::setCOAColor4("AscentLindenColor", mLindenColor);
+	LLSavedSettingsGlue::setCOAColor4("AscentMutedColor", LLColor4::yellow);
+	LLSavedSettingsGlue::setCOAColor4("AscentMutedColor", mMutedColor);
+	LLSavedSettingsGlue::setCOAColor4("AscentEstateOwnerColor", LLColor4::yellow);
+	LLSavedSettingsGlue::setCOAColor4("AscentEstateOwnerColor", mEMColor);
 }
 
 void LLPrefsAscentVanImpl::apply()
@@ -265,11 +299,14 @@ void LLPrefsAscentVanImpl::apply()
 	gSavedSettings.setBOOL("AscentShowSelfTag",			childGetValue("show_self_tag_check"));
 	gSavedSettings.setBOOL("AscentShowSelfTagColor",	childGetValue("show_self_tag_color_check"));
 
-	LLSavedSettingsGlue::setCOAColor4("EffectColor",			childGetValue("effect_color_swatch"));
-	LLSavedSettingsGlue::setCOAColor4("AscentFriendColor",		childGetValue("friend_color_swatch"));
-	LLSavedSettingsGlue::setCOABOOL("AscentUseCustomTag",		childGetValue("customize_own_tag_check"));
-	LLSavedSettingsGlue::setCOAString("AscentCustomTagLabel",	childGetValue("custom_tag_label_box"));
-	LLSavedSettingsGlue::setCOAColor4("AscentCustomTagColor",	childGetValue("custom_tag_color_swatch"));
+	LLSavedSettingsGlue::setCOAColor4("EffectColor",				childGetValue("effect_color_swatch"));
+	LLSavedSettingsGlue::setCOAColor4("AscentFriendColor",			childGetValue("friend_color_swatch"));
+	LLSavedSettingsGlue::setCOAColor4("AscentLindenColor",			childGetValue("linden_color_swatch"));
+	LLSavedSettingsGlue::setCOAColor4("AscentMutedColor",			childGetValue("muted_color_swatch"));
+	LLSavedSettingsGlue::setCOAColor4("AscentEstateOwnerColor",		childGetValue("em_color_swatch"));
+	LLSavedSettingsGlue::setCOABOOL("AscentUseCustomTag",			childGetValue("customize_own_tag_check"));
+	LLSavedSettingsGlue::setCOAString("AscentCustomTagLabel",		childGetValue("custom_tag_label_box"));
+	LLSavedSettingsGlue::setCOAColor4("AscentCustomTagColor",		childGetValue("custom_tag_color_swatch"));
 	
 	refreshValues();
 }

@@ -65,24 +65,24 @@ include_directories(
     )
 
 set(viewer_SOURCE_FILES
-	ascentfloatercontactgroups.cpp
+    ascentfloatercontactgroups.cpp
     ascentprefssys.cpp
-	ascentprefsvan.cpp
-	ascentuploadbrowser.cpp
-	dhparam.cpp
-	dsaparam.cpp
-	emerald.cpp
-	emeraldboobutils.cpp
+    ascentprefsvan.cpp
+    ascentuploadbrowser.cpp
+    dhparam.cpp
+    dsaparam.cpp
+    emerald.cpp
+    emeraldboobutils.cpp
     dofloaterhex.cpp
     dohexeditor.cpp
-	floatersculptpreview.cpp
+    floatersculptpreview.cpp
     hgfloatertexteditor.cpp
-	hippogridmanager.cpp
-	hippolimits.cpp
-	hipporestrequest.cpp
-	hippopanelgrids.cpp
+    hippogridmanager.cpp
+    hippolimits.cpp
+    hipporestrequest.cpp
+    hippopanelgrids.cpp
     jcfloaterareasearch.cpp
-	chatbar_as_cmdline.cpp
+    chatbar_as_cmdline.cpp
     llagent.cpp
     llagentaccess.cpp
     llagentdata.cpp
@@ -153,7 +153,7 @@ set(viewer_SOURCE_FILES
     llfloateravatarpicker.cpp
     llfloateravatartextures.cpp
     llfloaterbeacons.cpp
-	llfloaterblacklist.cpp
+    llfloaterblacklist.cpp
     llfloaterbuildoptions.cpp
     llfloaterbulkpermission.cpp
     llfloaterbump.cpp
@@ -175,7 +175,7 @@ set(viewer_SOURCE_FILES
     llfloaterevent.cpp
     llfloaterexport.cpp
     llfloaterexploreanimations.cpp
-	llfloaterexploresounds.cpp
+    llfloaterexploresounds.cpp
     llfloaterfriends.cpp
     llfloaterfonttest.cpp
     llfloatergesture.cpp
@@ -491,8 +491,8 @@ set(viewer_SOURCE_FILES
     llxmlrpctransaction.cpp
     noise.cpp
     pipeline.cpp
-	scriptcounter.cpp
-	wlfPanel_AdvSettings.cpp
+    scriptcounter.cpp
+    wlfPanel_AdvSettings.cpp
     lunaconsole.cpp
 #    LunaVoxelSurface.cpp
 #    LunaVOVoxelSurface.cpp
@@ -538,22 +538,22 @@ endif (LINUX)
 set(viewer_HEADER_FILES
     CMakeLists.txt
     ViewerInstall.cmake
-	ascentfloatercontactgroups.h
-	ascentprefssys.h
-	ascentprefsvan.h
-	ascentuploadbrowser.h
-	emerald.h
-	emeraldboobutils.h
+    ascentfloatercontactgroups.h
+    ascentprefssys.h
+    ascentprefsvan.h
+    ascentuploadbrowser.h
+    emerald.h
+    emeraldboobutils.h
     dofloaterhex.h
     dohexeditor.h
-	floatersculptpreview.h
+    floatersculptpreview.h
     hgfloatertexteditor.h
-	hippogridmanager.h
-	hippolimits.h
-	hipporestrequest.h
-	hippopanelgrids.h
+    hippogridmanager.h
+    hippolimits.h
+    hipporestrequest.h
+    hippopanelgrids.h
     jcfloaterareasearch.h
-	chatbar_as_cmdline.h
+    chatbar_as_cmdline.h
     llagent.h
     llagentaccess.h
     llagentdata.h
@@ -626,7 +626,7 @@ set(viewer_HEADER_FILES
     llfloateravatarpicker.h
     llfloateravatartextures.h
     llfloaterbeacons.h
-	llfloaterblacklist.h
+    llfloaterblacklist.h
     llfloaterbuildoptions.h
     llfloaterbulkpermission.h
     llfloaterbump.h
@@ -647,7 +647,7 @@ set(viewer_HEADER_FILES
     llfloaterenvsettings.h
     llfloaterexport.h
     llfloaterexploreanimations.h
-	llfloaterexploresounds.h
+    llfloaterexploresounds.h
     llfloaterevent.h
     llfloaterfonttest.h
     llfloaterfriends.h
@@ -970,10 +970,10 @@ set(viewer_HEADER_FILES
     noise.h
     pipeline.h
     randgauss.h
-	scriptcounter.h
+    scriptcounter.h
     VertexCache.h
     VorbisFramework.h
-	wlfPanel_AdvSettings.h
+    wlfPanel_AdvSettings.h
     )
 
 source_group("CMake Rules" FILES ViewerInstall.cmake)
@@ -1293,6 +1293,28 @@ endif (LINUX)
 set(PACKAGE ${PACKAGE_DEFAULT} CACHE BOOL
     "Add a package target that builds an installer package.")
 
+
+
+### SWIG SHIT
+# Swig is used to generate these horrendous Lua bindings.
+
+#swig -lua -c++ -o newview/_LuaSL.cpp -oh newview/_LuaSL.h newview/swig/SL.swig
+add_custom_command(
+	TARGET ${VIEWER_BINARY_NAME} PRE_BUILD
+	COMMAND swig
+	ARGS
+	  -lua
+	  -c++
+	  #-includeall
+	  -o  _LuaSL.cpp
+	  -oh _LuaSL.h
+	  ${CMAKE_CURRENT_SOURCE_DIR}/swig/SL.swig
+	COMMENT "Creating bindings."
+	)
+
+source_group("Swig Interfaces" FILES ${viewer_SWIG_FILES})
+### END SWIG
+
 if (WINDOWS)
     if(MSVC71)
         set(release_flags "/MAP:Release/${VIEWER_BINARY_NAME}.map /MAPINFO:LINES")
@@ -1372,7 +1394,7 @@ if (WINDOWS)
 
     if (PACKAGE)
       add_custom_target(package ALL DEPENDS ${CMAKE_CFG_INTDIR}/touched.bat)
-	   # fuck the crash logger/updater
+       # fuck the crash logger/updater
       #add_dependencies(package windows-updater windows-crash-logger)
     endif (PACKAGE)
 endif (WINDOWS)
@@ -1418,8 +1440,8 @@ target_link_libraries(${VIEWER_BINARY_NAME}
     ${WINDOWS_LIBRARIES}
     ${XMLRPCEPI_LIBRARIES}
     ${ELFIO_LIBRARIES}
-	${LUA_LIBRARY}
-	)
+    ${LUA_LIBRARY}
+    )
 
 if (LINUX)
   add_custom_command(
@@ -1604,10 +1626,10 @@ if (WINDOWS)
       TARGET ${VIEWER_BINARY_NAME} POST_BUILD
       COMMAND ${CMAKE_COMMAND}
       ARGS 
-	 -E
-	 copy_if_different
-	 ${mime_types_source}/mime_types_windows.xml 
-	 ${mime_types_dest}/mime_types.xml
+     -E
+     copy_if_different
+     ${mime_types_source}/mime_types_windows.xml 
+     ${mime_types_dest}/mime_types.xml
       COMMENT "Copying mime_types_windows.xml to mime_types.xml."
       )
   

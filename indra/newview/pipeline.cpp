@@ -640,8 +640,6 @@ void LLPipeline::createGLBuffers()
 			gGL.getTexUnit(0)->setTextureFilteringOption(LLTexUnit::TFO_POINT);
 		}
 	}
-	// @hook PipelineCreateBuffers() Reserve GL buffers.
-	LUA_CALL0("PipeineCreateBuffers");
 }
 
 void LLPipeline::restoreGL() 
@@ -1585,9 +1583,6 @@ void LLPipeline::updateGeom(F32 max_dtime)
 	// notify various object types to reset internal cost metrics, etc.
 	// for now, only LLVOVolume does this to throttle LOD changes
 	LLVOVolume::preUpdateGeom();
-
-	// @hook PreUpdateGeometry() Before geometry update.
-	LUA_CALL0("PreUpdateGeometry");
 
 	// Iterate through all drawables on the priority build queue,
 	for (LLDrawable::drawable_list_t::iterator iter = mBuildQ1.begin();
@@ -4851,7 +4846,7 @@ void LLPipeline::resetVertexBuffers(LLDrawable* drawable)
 void LLPipeline::resetVertexBuffers()
 {
 	sRenderBump = gSavedSettings.getBOOL("RenderObjectBump");
-
+	LLVertexBuffer::sUseStreamDraw = gSavedSettings.getBOOL("RenderUseStreamVBO");
 	for (LLWorld::region_list_t::const_iterator iter = LLWorld::getInstance()->getRegionList().begin(); 
 			iter != LLWorld::getInstance()->getRegionList().end(); ++iter)
 	{

@@ -1435,7 +1435,7 @@ void init_debug_rendering_menu(LLMenuGL* menu)
 
 	menu->appendSeparator();
 	menu->append(new LLMenuItemCheckGL("Axes", menu_toggle_control, NULL, menu_check_control, (void*)"ShowAxes"));
-//	menu->append(new LLMenuItemCheckGL("Cull Small Objects", toggle_cull_small, NULL, menu_check_control, (void*)"RenderCullBySize"));
+	//menu->append(new LLMenuItemCheckGL("Cull Small Objects", toggle_cull_small, NULL, menu_check_control, (void*)"RenderCullBySize"));
 
 	menu->appendSeparator();
 	menu->append(new LLMenuItemToggleGL("Hide Selected", &gHideSelectedObjects));

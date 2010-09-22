@@ -1,10 +1,11 @@
+@echo off
 :Something's wrong with this, but I don't know what.
 set BUILDTYPE=Release
 :set BUILDTYPE=RelWithDebInfo
 :set BUILDTYPE=Debug
 
 : Clean out unused _Lua* files
-rm newview/_Lua*
+:rm newview/_Lua*
 
 set MODULES=
 set MODULES=%MODULES% SL
@@ -14,7 +15,7 @@ set MODULES=%MODULES% SL
 :set MODULES=%MODULES% HUDEffects
 
 :Build the SL and GL Lua modules.
-lua5.1 newview/swig/BuildModules.lua %MODULES%
+:lua5.1 newview/swig/BuildModules.lua %MODULES%
 
 set GEN="VC90"
 python ./develop.py --type=%BUILDTYPE% -G "%GEN%" configure -DPACKAGE:BOOL=TRUE -DLL_TESTS:BOOL=FALSE

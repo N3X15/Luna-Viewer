@@ -109,9 +109,9 @@
    functor="GenericAcknowledge"
    icon="alertmodal.tga"
    name="TPVNotification"
-   label="Unknown Alert Message"
+   label="TPV Notice"
    type="alertmodal">
-Luna may not be TPV compliant (see README for details).
+Luna may not be TPV compliant (N3X15 is currently banned from AGNI).
 
 By connecting to any Linden Lab grid with Luna, you accept any risks that you may incur by using any TPV-incompliant viewer, up to and including permanent banishment.
     <usetemplate

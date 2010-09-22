@@ -52,6 +52,7 @@
 #include "llemote.h"
 
 #include "llfirstuse.h"
+#include "llfloaterchat.h"
 #include "llheadrotmotion.h"
 
 #include "llhudeffecttrail.h"
@@ -1529,7 +1530,17 @@ void LLVOAvatar::initClass()
 	}
 
 	{
-		updateClientTags();
+		if (gSavedSettings.getBOOL("AscentUpdateTagsOnLoad"))
+		{
+			if (updateClientTags())
+			{
+				LLChat chat;
+				chat.mSourceType = CHAT_SOURCE_SYSTEM;
+				chat.mText = llformat("Client definitions are up-to-date.");
+				LLFloaterChat::addChat(chat);
+			}
+		}
+
 		loadClientTags();
 	}
 }
@@ -6938,6 +6949,7 @@ BOOL LLVOAvatar::attachObject(LLViewerObject *viewer_object)
 {
 	LLViewerJointAttachment* attachment = getTargetAttachmentPoint(viewer_object);
 	
+	// @hook OnAttach(UUID, Name) Object UUID has attached to avatar Name.
 	LUA_CALL("OnAttach") << viewer_object->getID() << getFullname() << LUA_END;
 
 	// <edit> testzone attachpt

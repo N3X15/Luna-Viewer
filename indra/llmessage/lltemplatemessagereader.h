@@ -101,14 +101,14 @@ public:
 
 	virtual const char* getMessageName() const;
 	virtual S32 getMessageSize() const;
-
+	
 	// <edit>
 	LLMessageTemplate* getTemplate();
 	// </edit>
 
 	virtual void copyToBuilder(LLMessageBuilder&) const;
 
-	BOOL validateMessage(const U8* buffer, S32 buffer_size, 
+	BOOL validateMessage(const U8* buffer, S32 buffer_size,
 	// <edit>
 	//					 const LLHost& sender);
 						 const LLHost& sender, bool trusted = false, BOOL custom = FALSE);
