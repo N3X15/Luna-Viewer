@@ -31,7 +31,7 @@ local function LunaPonger(from_id, owner_id, mesg)
 --	DumpTable(t)
 	if (t[1]=="&FLEXLIFE;PING") then
 		say("&FLEXLIFE;PONG^"..t[2],-50)
-		print("PING "..t[2].."... PONG!")
+--		print("PING "..t[2].."... PONG!")
 	end
 end
 

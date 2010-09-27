@@ -120,6 +120,9 @@ public:
 #ifdef USE_PLUGIN_MEDIA
 	LLPluginClassMedia* initializeMedia(const std::string& media_type);
 #endif
+	void setWindMuted(bool windMuted);
+	bool getWindMuted() const { return mWindMuted; }
+
 	F32 getMasterGain();
 	void setMasterGain(F32 gain);
 
@@ -216,6 +219,8 @@ protected:
 
 	bool mMuted;
 	void* mUserData;
+
+	bool mWindMuted;
 
 	S32 mLastStatus;
 	
@@ -329,7 +334,10 @@ public:
 protected:
 	void setChannel(LLAudioChannel *channelp);
 	LLAudioChannel *getChannel() const						{ return mChannelp; }
-
+	static void logSoundPlay(LLUUID id, LLAudioSource* audio_source, LLVector3d position, S32 type, LLUUID assetid, LLUUID ownerid, LLUUID sourceid, bool is_trigger, bool is_looped);
+	static void logSoundStop(LLUUID id);
+	static void pruneSoundLog();
+	static int gSoundHistoryPruneCounter;
 protected:
 	LLUUID			mID; // The ID of the source is that of the object if it's attached to an object.
 	LLUUID			mOwnerID;	// owner of the object playing the sound
@@ -345,11 +353,9 @@ protected:
 	S32             mType;
 	LLVector3d		mPositionGlobal;
 	LLVector3		mVelocity;
-	// <edit>
 	LLUUID			mLogID;
 	LLUUID			mSourceID;
 	bool			mIsTrigger;
-	// </edit>
 
 	//LLAudioSource	*mSyncMasterp;	// If we're a slave, the source that we're synced to.
 	LLAudioChannel	*mChannelp;		// If we're currently playing back, this is the channel that we're assigned to.
@@ -468,7 +474,6 @@ protected:
 
 extern LLAudioEngine* gAudiop;
 
-// <edit>
 typedef struct
 {
 	LLUUID mID;
@@ -489,11 +494,5 @@ typedef struct
 
 extern std::map<LLUUID, LLSoundHistoryItem> gSoundHistory;
 
-extern void logSoundPlay(LLUUID id, LLAudioSource* audio_source, LLVector3d position, S32 type, LLUUID assetid, LLUUID ownerid, LLUUID sourceid, bool is_trigger, bool is_looped);
-extern void logSoundStop(LLUUID id);
-extern void pruneSoundLog();
-extern int gSoundHistoryPruneCounter;
-
-// </edit>
 
 #endif

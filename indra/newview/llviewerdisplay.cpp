@@ -90,7 +90,7 @@ LLPointer<LLImageGL> gDisconnectedImagep = NULL;
 // used to toggle renderer back on after teleport
 const F32 TELEPORT_RENDER_DELAY = 20.f; // Max time a teleport is allowed to take before we raise the curtain
 const F32 TELEPORT_ARRIVAL_DELAY = 2.f; // Time to preload the world before raising the curtain after we've actually already arrived.
-const F32 TELEPORT_LOCAL_DELAY = 1.0f; // Delay to prevent teleports after starting an in-sim teleport.
+const F32 TELEPORT_LOCAL_DELAY = 0.0f; // Delay to prevent teleports after starting an in-sim teleport.
 BOOL		 gTeleportDisplay = FALSE;
 LLFrameTimer gTeleportDisplayTimer;
 LLFrameTimer gTeleportArrivalTimer;
@@ -190,13 +190,6 @@ void display_update_camera()
 // Write some stats to llinfos
 void display_stats()
 {
-	if (gNoRender || !gViewerWindow->mWindow->getVisible() || !gFocusMgr.getAppHasFocus())
-	{
-		// Do not keep FPS statistics while yielding cooperatively
-		// (i;e. when not running as foreground window)
-		gRecentFrameCount = 0;
-		gRecentFPSTime.reset();
-	}
 	F32 fps_log_freq = gSavedSettings.getF32("FPSLogFrequency");
 	if (fps_log_freq > 0.f && gRecentFPSTime.getElapsedTimeF32() >= fps_log_freq)
 	{
@@ -471,7 +464,7 @@ void display(BOOL rebuild, F32 zoom_factor, int subfield, BOOL for_snapshot)
 	if (gSavedDrawDistance > 0.0f && gAgent.getTeleportState() == LLAgent::TELEPORT_NONE)
 	{
 		if (gTeleportArrivalTimer.getElapsedTimeF32() >=
-			(F32)gSavedSettings.getU32("SpeedRezInterval"))
+			(F32)gSavedSettings.getU32("RenderFarClipSteppingInterval"))
 		{
 			gTeleportArrivalTimer.reset();
 			F32 current = gSavedSettings.getF32("RenderFarClip");

@@ -255,7 +255,8 @@ BOOL	LLPipeline::sRenderFrameTest = FALSE;
 BOOL	LLPipeline::sRenderAttachedLights = TRUE;
 BOOL	LLPipeline::sRenderAttachedParticles = TRUE;
 BOOL	LLPipeline::sRenderDeferred = FALSE;
-S32		LLPipeline::sVisibleLightCount = 0;
+S32	LLPipeline::sVisibleLightCount = 0;
+F32	LLPipeline::sSculptSurfaceAreaFrame = 0.0;
 
 static LLCullResult* sCull = NULL;
 
@@ -1019,8 +1020,8 @@ U32 LLPipeline::addObject(LLViewerObject *vobj)
 	{
 		return 0;
 	}
-
-	if (gSavedSettings.getBOOL("RenderDelayCreation"))
+	static BOOL sRenderDelayCreation = gSavedSettings.getBOOL("RenderDelayCreation");
+	if (sRenderDelayCreation)
 	{
 		mCreateQ.push_back(vobj);
 	}
@@ -1083,7 +1084,9 @@ void LLPipeline::createObject(LLViewerObject* vobj)
 
 	markRebuild(drawablep, LLDrawable::REBUILD_ALL, TRUE);
 
-	if (drawablep->getVOVolume() && gSavedSettings.getBOOL("RenderAnimateRes"))
+	static BOOL sRenderAnimateRes = gSavedSettings.getBOOL("RenderAnimateRes");
+
+	if (drawablep->getVOVolume() && sRenderAnimateRes)
 	{
 		// fun animated res
 		drawablep->updateXform(TRUE);
@@ -1122,7 +1125,8 @@ void LLPipeline::resetFrameStats()
 //external functions for asynchronous updating
 void LLPipeline::updateMoveDampedAsync(LLDrawable* drawablep)
 {
-	if (gSavedSettings.getBOOL("FreezeTime"))
+	static BOOL* sFreezeTime = rebind_llcontrol<BOOL>("FreezeTime", &gSavedSettings, true);
+	if ((*sFreezeTime))
 	{
 		return;
 	}
@@ -1152,7 +1156,8 @@ void LLPipeline::updateMoveDampedAsync(LLDrawable* drawablep)
 
 void LLPipeline::updateMoveNormalAsync(LLDrawable* drawablep)
 {
-	if (gSavedSettings.getBOOL("FreezeTime"))
+	static BOOL* sFreezeTime = rebind_llcontrol<BOOL>("FreezeTime", &gSavedSettings, true);
+	if ((*sFreezeTime))
 	{
 		return;
 	}
@@ -1205,7 +1210,8 @@ void LLPipeline::updateMove()
 	LLFastTimer t(LLFastTimer::FTM_UPDATE_MOVE);
 	LLMemType mt(LLMemType::MTYPE_PIPELINE);
 
-	if (gSavedSettings.getBOOL("FreezeTime"))
+	static BOOL* sFreezeTime = rebind_llcontrol<BOOL>("FreezeTime", &gSavedSettings, true);
+	if ((*sFreezeTime))
 	{
 		return;
 	}
@@ -2187,6 +2193,8 @@ void LLPipeline::postSort(LLCamera& camera)
 	LLFastTimer ftm(LLFastTimer::FTM_STATESORT_POSTSORT);
 
 	assertInitialized();
+	
+	sSculptSurfaceAreaFrame = 0.0;
 
 	//rebuild drawable geometry
 	for (LLCullResult::sg_list_t::iterator i = sCull->beginDrawableGroups(); i != sCull->endDrawableGroups(); ++i)
@@ -2295,8 +2303,10 @@ void LLPipeline::postSort(LLCamera& camera)
 		std::sort(sCull->beginAlphaGroups(), sCull->endAlphaGroups(), LLSpatialGroup::CompareDepthGreater());
 	}
 	
+	static BOOL* sBeaconAlwaysOn = rebind_llcontrol<BOOL>("BeaconAlwaysOn", &gSavedSettings, true);
+
 	// only render if the flag is set. The flag is only set if we are in edit mode or the toggle is set in the menus
-	if (gSavedSettings.getBOOL("BeaconAlwaysOn") && !sShadowRender)
+	if (*sBeaconAlwaysOn && !sShadowRender)
 	{
 		if (sRenderScriptedTouchBeacons)
 		{
@@ -4199,6 +4209,9 @@ void LLPipeline::enableLightsAvatar()
 
 void LLPipeline::enableLightsAvatarEdit(const LLColor4& color)
 {
+	//Danny: Turn off local lights for appearance if they're disabled.
+	if(mLightingDetail < 1)
+		return;
 	U32 mask = 0x2002; // Avatar backlight only, set ambient
 	setupAvatarLights(TRUE);
 	enableLights(mask);

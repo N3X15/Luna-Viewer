@@ -88,7 +88,14 @@ BOOL LLVoiceRemoteCtrl::postBuild()
 	childSetAction("show_channel", onClickPopupBtn, this);
 	childSetAction("end_call_btn", onClickEndCall, this);
 
-	
+	LLTextBox* text = getChild<LLTextBox>("channel_label");
+	if (text)
+	{
+		text->setUseEllipses(TRUE);
+	}
+
+	childSetAction("voice_channel_bg", onClickVoiceChannel, this);
+
 
 	return TRUE;
 }
@@ -106,16 +113,18 @@ void LLVoiceRemoteCtrl::draw()
 	mPosLockBtn->setEnabled(voice_active);
 	mTalkLockBtn->setEnabled(voice_active);
 
+	static BOOL *sPTTCurrentlyEnabled = rebind_llcontrol<BOOL>("PTTCurrentlyEnabled", &gSavedSettings, true);
+
+
 	// propagate ptt state to button display,
 	if (!mTalkBtn->hasMouseCapture())
 	{
 		// not in push to talk mode, or push to talk is active means I'm talking
-		mTalkBtn->setToggleState(!gSavedSettings.getBOOL("PTTCurrentlyEnabled") || gVoiceClient->getUserPTTState());
+		mTalkBtn->setToggleState(!(*sPTTCurrentlyEnabled) || gVoiceClient->getUserPTTState());
 	}
 	mSpeakersBtn->setToggleState(LLFloaterActiveSpeakers::instanceVisible(LLSD()));
+	mTalkLockBtn->setToggleState(!(*sPTTCurrentlyEnabled));
 	mPosLockBtn->setToggleState(gVoiceClient->getPosLocked());
-	mTalkLockBtn->setToggleState(!gSavedSettings.getBOOL("PTTCurrentlyEnabled"));
-	
 
 	std::string talk_blip_image;
 	if (gVoiceClient->getIsSpeaking(gAgent.getID()))
@@ -169,7 +178,36 @@ void LLVoiceRemoteCtrl::draw()
 								&& current_channel->isActive()
 								&& current_channel != LLVoiceChannelProximal::getInstance());
 
+	childSetValue("channel_label", active_channel_name);
+	childSetToolTip("voice_channel_bg", active_channel_name);
 
+	if (current_channel)
+	{
+		LLIconCtrl* voice_channel_icon = getChild<LLIconCtrl>("voice_channel_icon");
+		if (voice_channel_icon && voice_floater)
+		{
+			voice_channel_icon->setImage(voice_floater->getString("voice_icon"));
+		}
+
+		LLButton* voice_channel_bg = getChild<LLButton>("voice_channel_bg");
+		if (voice_channel_bg)
+		{
+			LLColor4 bg_color;
+			if (current_channel->isActive())
+			{
+				bg_color = lerp(LLColor4::green, LLColor4::white, 0.7f);
+			}
+			else if (current_channel->getState() == LLVoiceChannel::STATE_ERROR)
+			{
+				bg_color = lerp(LLColor4::red, LLColor4::white, 0.7f);
+			}
+			else // active, but not connected
+			{
+				bg_color = lerp(LLColor4::yellow, LLColor4::white, 0.7f);
+			}
+			voice_channel_bg->setImageColor(bg_color);
+		}
+	}
 
 	LLButton* expand_button = getChild<LLButton>("show_channel");
 	if (expand_button)

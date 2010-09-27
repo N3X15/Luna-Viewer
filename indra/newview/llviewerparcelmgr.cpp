@@ -1710,7 +1710,12 @@ void optionally_start_music(const std::string& music_url)
 		// changed as part of SL-4878
 		if ( gOverlayBar && gOverlayBar->musicPlaying())
 		{
+			if(gSavedSettings.getBOOL("AscentStopMusicOnParcelChange"))
+			{
+				gOverlayBar->toggleMusicPlay(gOverlayBar);
+			}else
 			gAudiop->startInternetStream(music_url);
+			
 		}
 	}
 }
@@ -2399,7 +2404,7 @@ BOOL LLViewerParcelMgr::isParcelModifiableByAgent(const LLParcel* parcelp, U64 g
 	if (parcelp)
 	{
 		// *NOTE: This should only work for leased parcels, but group owned
-		// parcels cannot be OS_LEASED yet. Phoenix 2003-12-15.
+		// parcels cannot be OS_LEASED yet. Ascent 2003-12-15.
 		rv = isParcelOwnedByAgent(parcelp, group_proxy_power);
 
 		// ... except for the case that the parcel is not OS_LEASED for agent-owned parcels.

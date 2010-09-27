@@ -1,6 +1,6 @@
 /** 
  * @file llioutil.h
- * @author Phoenix
+ * @author Ascent
  * @date 2005-10-05
  * @brief Helper classes for dealing with IOPipes
  *

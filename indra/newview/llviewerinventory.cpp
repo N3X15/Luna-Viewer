@@ -489,7 +489,7 @@ bool LLViewerInventoryCategory::fetchDescendents()
 		std::string url = gAgent.getCapability("agent/inventory"); // OGPX : was WebFetchInventoryDescendents
 		if (url.empty()) //OGPX : agent/inventory Capability not found on agent domain.  See if the region has one.
 		{
-			llinfos << " agent/inventory not on AD, checking fallback to region " << llendl; //OGPX
+			//llinfos << " agent/inventory not on AD, checking fallback to region " << llendl; //OGPX
 			url = gAgent.getRegion()->getCapability("WebFetchInventoryDescendents");
 		}
 		if (!url.empty()) //Capability found.  Build up LLSD and use it.
@@ -498,7 +498,8 @@ bool LLViewerInventoryCategory::fetchDescendents()
 		}
 		else
 		{	//Deprecated, but if we don't have a capability, use the old system.
-			llinfos << "WebFetchInventoryDescendents or agent/inventory capability not found.  Using deprecated UDP message." << llendl;
+			//Great, but we don't need to know about it, removed this info message.
+			//llinfos << "WebFetchInventoryDescendents or agent/inventory capability not found.  Using deprecated UDP message." << llendl;
 			LLMessageSystem* msg = gMessageSystem;
 			msg->newMessage("FetchInventoryDescendents");
 			msg->nextBlock("AgentData");
@@ -517,7 +518,43 @@ bool LLViewerInventoryCategory::fetchDescendents()
 	}
 	return false;
 }
+void LLViewerInventoryCategory::createBasicHair()
+{
+	LLUUID item_id = LLUUID("30d1d71b-38a6-4956-b27e-3bbcc17da0e2"); //lolhack, it's my UUID?
+	
+	//Make some hair just in case, using the library item so we're not hacking.
+	LLUUID folder_id(gInventory.findCategoryUUIDForType(LLAssetType::AT_BODYPART));
+	LLPermissions* perms = new LLPermissions();
+	perms->set(LLPermissions::DEFAULT);
+	perms->setOwnerAndGroup(LLUUID::null, LLUUID::null, LLUUID::null, false);
+	perms->setMaskBase(0);
+	perms->setMaskEveryone(0);
+	perms->setMaskGroup(0);
+	perms->setMaskNext(0);
+	perms->setMaskOwner(0);
+	LLViewerInventoryItem* item = new LLViewerInventoryItem(
+			item_id,
+			folder_id,
+			*perms,
+			LLUUID("f0581d0d-d7c4-2573-b2ce-7a5d6ded3851"),
+			LLAssetType::AT_BODYPART,
+			LLInventoryType::IT_WEARABLE,
+			"RuthHairFix",
+			"",
+			LLSaleInfo::DEFAULT,
+			0,
+			0);
 
+	//Update some stuff I guess
+	LLInventoryModel::update_map_t update;
+	++update[item->getParentUUID()];
+	gInventory.accountForUpdate(update);
+	gInventory.updateItem(item);
+	gInventory.notifyObservers();
+	
+
+	wear_inventory_item_on_avatar(item);
+}
 bool LLViewerInventoryCategory::importFileLocal(LLFILE* fp)
 {
 	// *NOTE: This buffer size is hard coded into scanf() below.

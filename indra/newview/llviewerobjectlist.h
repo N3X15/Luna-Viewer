@@ -304,4 +304,3 @@ inline void LLViewerObjectList::removeFromMap(LLViewerObject *objectp)
 
 
 #endif // LL_VIEWER_OBJECT_LIST_H
-

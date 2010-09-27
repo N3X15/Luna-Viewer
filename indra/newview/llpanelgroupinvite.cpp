@@ -43,6 +43,7 @@
 #include "lltextbox.h"
 #include "llviewerobject.h"
 #include "llviewerobjectlist.h"
+#include "llviewercontrol.h"
 #include "lluictrlfactory.h"
 #include "llviewerwindow.h"
 
@@ -384,6 +385,10 @@ void LLPanelGroupInvite::clear()
 	mImplementation->mRoleNames->clear();
 	mImplementation->mRoleNames->removeall();
 	mImplementation->mOKButton->setEnabled(FALSE);
+}
+void LLPanelGroupInvite::addUsers(std::vector<LLUUID>& agent_ids,std::vector<std::string>& provided_names)
+{
+	mImplementation->addUsers(provided_names, agent_ids);	
 }
 
 void LLPanelGroupInvite::addUsers(std::vector<LLUUID>& agent_ids)

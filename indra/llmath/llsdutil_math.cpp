@@ -1,6 +1,6 @@
 /** 
  * @file llsdutil_math.cpp
- * @author Phoenix
+ * @author Ascent
  * @date 2006-05-24
  * @brief Implementation of classes, functions, etc, for using structured data.
  *

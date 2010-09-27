@@ -1,11 +1,11 @@
-/** 
+/**
  * @file llmaniptranslate.cpp
  * @brief LLManipTranslate class implementation
  *
  * $LicenseInfo:firstyear=2002&license=viewergpl$
- * 
- * Copyright (c) 2002-2009, Linden Research, Inc.
- * 
+ *
+ * Copyright (c) 2002-2010, Linden Research, Inc.
+ *
  * Second Life Viewer Source Code
  * The source code in this file ("Source Code") is provided by Linden Lab
  * to you under the terms of the GNU General Public License, version 2.0
@@ -13,17 +13,17 @@
  * ("Other License"), formally executed by you and Linden Lab.  Terms of
  * the GPL can be found in doc/GPL-license.txt in this distribution, or
  * online at http://secondlifegrid.net/programs/open_source/licensing/gplv2
- * 
+ *
  * There are special exceptions to the terms and conditions of the GPL as
  * it is applied to this Source Code. View the full text of the exception
  * in the file doc/FLOSS-exception.txt in this software distribution, or
  * online at
  * http://secondlifegrid.net/programs/open_source/licensing/flossexception
- * 
+ *
  * By copying, modifying or distributing this software, you acknowledge
  * that you have read and understood your obligations described above,
  * and agree to abide by those obligations.
- * 
+ *
  * ALL LINDEN LAB SOURCE CODE IS PROVIDED "AS IS." LINDEN LAB MAKES NO
  * WARRANTIES, EXPRESS, IMPLIED OR OTHERWISE, REGARDING ITS ACCURACY,
  * COMPLETENESS OR PERFORMANCE.
@@ -66,6 +66,8 @@
 #include "llui.h"
 #include "pipeline.h"
 
+#include "hippolimits.h"
+
 const S32 NUM_AXES = 3;
 const S32 MOUSE_DRAG_SLOP = 2;       // pixels
 const F32 HANDLE_HIDE_ANGLE = 0.15f; // radians
@@ -80,7 +82,7 @@ const F32 SNAP_ARROW_SCALE = 0.7f;
 
 static LLPointer<LLImageGL> sGridTex = NULL ;
 
-const LLManip::EManipPart MANIPULATOR_IDS[9] = 
+const LLManip::EManipPart MANIPULATOR_IDS[9] =
 {
 	LLManip::LL_X_ARROW,
 	LLManip::LL_Y_ARROW,
@@ -93,7 +95,7 @@ const LLManip::EManipPart MANIPULATOR_IDS[9] =
 	LLManip::LL_XY_PLANE
 };
 
-const U32 ARROW_TO_AXIS[4] = 
+const U32 ARROW_TO_AXIS[4] =
 {
 	VX,
 	VX,
@@ -119,9 +121,9 @@ LLManipTranslate::LLManipTranslate( LLToolComposite* composite )
 	mArrowScales(1.f, 1.f, 1.f),
 	mPlaneScales(1.f, 1.f, 1.f),
 	mPlaneManipPositions(1.f, 1.f, 1.f, 1.f)
-{ 
+{
 	if (sGridTex.isNull())
-	{ 
+	{
 		restoreGL();
 	}
 }
@@ -161,7 +163,7 @@ void LLManipTranslate::restoreGL()
 		return ;
 	}
 
-	GLuint* d = new GLuint[rez*rez];	
+	GLuint* d = new GLuint[rez*rez];
 
 	gGL.getTexUnit(0)->bindManual(LLTexUnit::TT_TEXTURE, sGridTex->getTexName());
 	gGL.getTexUnit(0)->setTextureFilteringOption(LLTexUnit::TFO_TRILINEAR);
@@ -172,7 +174,7 @@ void LLManipTranslate::restoreGL()
 		{
 			d[i] = 0x00FFFFFF;
 		}
-		
+
 		U32 subcol = 0xFFFFFFFF;
 		if (rez >= 4)
 		{	//large grain grid
@@ -195,10 +197,10 @@ void LLManipTranslate::restoreGL()
 				}
 				else
 				{
-					subcol = 0xFFFFFFFF;	
+					subcol = 0xFFFFFFFF;
 				}
 				d[i			*rez+ 0		 ] = subcol;
-				d[0			*rez+ i		 ] = subcol;				
+				d[0			*rez+ i		 ] = subcol;
 				if (rez >= 32)
 				{
 					d[i			*rez+ (rez-1)] = subcol;
@@ -208,7 +210,7 @@ void LLManipTranslate::restoreGL()
 				if (rez >= 64)
 				{
 					subcol = 0xFFFFFFFF;
-					
+
 					if (i > 0 && i < (rez-1))
 					{
 						d[i			*rez+ 1		 ] = subcol;
@@ -228,7 +230,7 @@ void LLManipTranslate::restoreGL()
 				for (U32 j = 2; j < rez-2; j++)
 				{
 					d[i	*rez+ j] = subcol;
-					d[j	*rez+ i] = subcol;			
+					d[j	*rez+ i] = subcol;
 				}
 			}
 		}
@@ -254,7 +256,7 @@ void LLManipTranslate::restoreGL()
 					if (rez > 128)
 					{
 						d[pi	*rez+ j] = subcol;
-						d[j		*rez+ pi] = subcol;			
+						d[j		*rez+ pi] = subcol;
 					}
 				}
 			}
@@ -314,7 +316,7 @@ BOOL LLManipTranslate::handleMouseDownOnPart( S32 x, S32 y, MASK mask )
 	highlightManipulators(x, y);
 	S32 hit_part = mHighlightedPart;
 
-	if( (hit_part != LL_X_ARROW) && 
+	if( (hit_part != LL_X_ARROW) &&
 		(hit_part != LL_Y_ARROW) &&
 		(hit_part != LL_Z_ARROW) &&
 		(hit_part != LL_YZ_PLANE) &&
@@ -403,7 +405,7 @@ BOOL LLManipTranslate::handleHover(S32 x, S32 y, MASK mask)
 	// Bail out if mouse not down.
 	if( !hasMouseCapture() )
 	{
-		lldebugst(LLERR_USER_INPUT) << "hover handled by LLManipTranslate (inactive)" << llendl;		
+		lldebugst(LLERR_USER_INPUT) << "hover handled by LLManipTranslate (inactive)" << llendl;
 		// Always show cursor
 		// gViewerWindow->setCursor(UI_CURSOR_ARROW);
 		gViewerWindow->setCursor(UI_CURSOR_TOOLTRANSLATE);
@@ -411,7 +413,7 @@ BOOL LLManipTranslate::handleHover(S32 x, S32 y, MASK mask)
 		highlightManipulators(x, y);
 		return TRUE;
 	}
-	
+
 	// Handle auto-rotation if necessary.
 	const F32 ROTATE_ANGLE_PER_SECOND = 30.f * DEG_TO_RAD;
 	const S32 ROTATE_H_MARGIN = gViewerWindow->getWindowWidth() / 20;
@@ -530,7 +532,7 @@ BOOL LLManipTranslate::handleHover(S32 x, S32 y, MASK mask)
 
 	F64 axis_magnitude = relative_move * axis_d;					// dot product
 	LLVector3d cursor_point_snap_line;
-	
+
 	F64 off_axis_magnitude;
 
 	getMousePointOnPlaneGlobal(cursor_point_snap_line, x, y, current_pos_global, mSnapOffsetAxis % axis_f);
@@ -549,7 +551,7 @@ BOOL LLManipTranslate::handleHover(S32 x, S32 y, MASK mask)
 			}
 
 			F32 cursor_grid_dist = (cursor_snap_agent - mGridOrigin) * axis_f;
-			
+
 			F32 snap_dist = getMinGridScale() / (2.f * mSubdivisions);
 			F32 relative_snap_dist = fmodf(llabs(cursor_grid_dist) + snap_dist, getMinGridScale() / mSubdivisions);
 			if (relative_snap_dist < snap_dist * 2.f)
@@ -653,13 +655,13 @@ BOOL LLManipTranslate::handleHover(S32 x, S32 y, MASK mask)
 
 	LLVector3d clamped_relative_move = axis_magnitude * axis_d;	// scalar multiply
 	LLVector3 clamped_relative_move_f = (F32)axis_magnitude * axis_f; // scalar multiply
-	
+
 	for (LLObjectSelection::iterator iter = mObjectSelection->begin();
 		 iter != mObjectSelection->end(); iter++)
 	{
 		LLSelectNode* selectNode = *iter;
 		LLViewerObject* object = selectNode->getObject();
-		
+
 		// Only apply motion to root objects and objects selected
 		// as "individual".
 		if (!object->isRootEdit() && !selectNode->mIndividualSelection)
@@ -705,9 +707,9 @@ BOOL LLManipTranslate::handleHover(S32 x, S32 y, MASK mask)
 				if (selectNode->mIndividualSelection)
 				{
 					send_update = FALSE;
-		
+
 					// counter-translate child objects if we are moving the root as an individual
-					object->resetChildrenPosition(old_position_local - new_position_local, TRUE) ;					
+					object->resetChildrenPosition(old_position_local - new_position_local, TRUE) ;
 				}
 			}
 			else
@@ -724,9 +726,10 @@ BOOL LLManipTranslate::handleHover(S32 x, S32 y, MASK mask)
 				}
 
 				// For safety, cap heights where objects can be dragged
-				if (new_position_global.mdV[VZ] > MAX_OBJECT_Z)
+				float maxHeight = gHippoLimits->getMaxHeight();
+				if (new_position_global.mdV[VZ] > maxHeight)
 				{
-					new_position_global.mdV[VZ] = MAX_OBJECT_Z;
+					new_position_global.mdV[VZ] = maxHeight;
 				}
 
 				// Grass is always drawn on the ground, so clamp its position to the ground
@@ -734,7 +737,7 @@ BOOL LLManipTranslate::handleHover(S32 x, S32 y, MASK mask)
 				{
 					new_position_global.mdV[VZ] = LLWorld::getInstance()->resolveLandHeightGlobal(new_position_global) + 1.f;
 				}
-				
+
 				if (object->isRootEdit())
 				{
 					new_position_global = LLWorld::getInstance()->clipToVisibleRegions(object->getPositionGlobal(), new_position_global);
@@ -762,7 +765,7 @@ BOOL LLManipTranslate::handleHover(S32 x, S32 y, MASK mask)
 				if (selectNode->mIndividualSelection)
 				{
 					// counter-translate child objects if we are moving the root as an individual
-					object->resetChildrenPosition(old_position_agent - new_position_agent, TRUE) ;					
+					object->resetChildrenPosition(old_position_agent - new_position_agent, TRUE) ;
 					send_update = FALSE;
 				}
 				else if (old_position_global != new_position_global)
@@ -791,13 +794,13 @@ void LLManipTranslate::highlightManipulators(S32 x, S32 y)
 	{
 		return;
 	}
-	
+
 	//LLBBox bbox = LLSelectMgr::getInstance()->getBBoxOfSelection();
 	LLMatrix4 projMatrix = LLViewerCamera::getInstance()->getProjection();
 	LLMatrix4 modelView = LLViewerCamera::getInstance()->getModelview();
 
 	LLVector3 object_position = getPivotPoint();
-	
+
 	LLVector3 grid_origin;
 	LLVector3 grid_scale;
 	LLQuaternion grid_rotation;
@@ -831,7 +834,7 @@ void LLManipTranslate::highlightManipulators(S32 x, S32 y)
 		transform *= modelView;
 		transform *= projMatrix;
 	}
-		
+
 	S32 numManips = 0;
 
 	// edges
@@ -889,7 +892,7 @@ void LLManipTranslate::highlightManipulators(S32 x, S32 y)
 
 	for_each(mProjectedManipulators.begin(), mProjectedManipulators.end(), DeletePointer());
 	mProjectedManipulators.clear();
-	
+
 	for (S32 i = 0; i < num_arrow_manips; i+= 2)
 	{
 		LLVector4 projected_start = mManipulatorVertices[i] * transform;
@@ -898,9 +901,9 @@ void LLManipTranslate::highlightManipulators(S32 x, S32 y)
 		LLVector4 projected_end = mManipulatorVertices[i + 1] * transform;
 		projected_end = projected_end * (1.f / projected_end.mV[VW]);
 
-		ManipulatorHandle* projManipulator = 
-			new ManipulatorHandle(LLVector3(projected_start.mV[VX], projected_start.mV[VY], projected_start.mV[VZ]), 
-				LLVector3(projected_end.mV[VX], projected_end.mV[VY], projected_end.mV[VZ]), 
+		ManipulatorHandle* projManipulator =
+			new ManipulatorHandle(LLVector3(projected_start.mV[VX], projected_start.mV[VY], projected_start.mV[VZ]),
+				LLVector3(projected_end.mV[VX], projected_end.mV[VY], projected_end.mV[VZ]),
 				MANIPULATOR_IDS[i / 2],
 				10.f); // 10 pixel hotspot for arrows
 		mProjectedManipulators.insert(projManipulator);
@@ -915,9 +918,9 @@ void LLManipTranslate::highlightManipulators(S32 x, S32 y)
 		LLVector4 projected_end = mManipulatorVertices[i + 1] * transform;
 		projected_end = projected_end * (1.f / projected_end.mV[VW]);
 
-		ManipulatorHandle* projManipulator = 
-			new ManipulatorHandle(LLVector3(projected_start.mV[VX], projected_start.mV[VY], projected_start.mV[VZ]), 
-				LLVector3(projected_end.mV[VX], projected_end.mV[VY], projected_end.mV[VZ]), 
+		ManipulatorHandle* projManipulator =
+			new ManipulatorHandle(LLVector3(projected_start.mV[VX], projected_start.mV[VY], projected_start.mV[VZ]),
+				LLVector3(projected_end.mV[VX], projected_end.mV[VY], projected_end.mV[VZ]),
 				MANIPULATOR_IDS[i / 2],
 				20.f); // 20 pixels for planar manipulators
 		mProjectedManipulators.insert(projManipulator);
@@ -932,9 +935,9 @@ void LLManipTranslate::highlightManipulators(S32 x, S32 y)
 		LLVector4 projected_end = mManipulatorVertices[i + 1] * transform;
 		projected_end = projected_end * (1.f / projected_end.mV[VW]);
 
-		ManipulatorHandle* projManipulator = 
-			new ManipulatorHandle(LLVector3(projected_start.mV[VX], projected_start.mV[VY], projected_start.mV[VZ]), 
-				LLVector3(projected_end.mV[VX], projected_end.mV[VY], projected_end.mV[VZ]), 
+		ManipulatorHandle* projManipulator =
+			new ManipulatorHandle(LLVector3(projected_start.mV[VX], projected_start.mV[VY], projected_start.mV[VZ]),
+				LLVector3(projected_end.mV[VX], projected_end.mV[VY], projected_end.mV[VZ]),
 				MANIPULATOR_IDS[i / 2],
 				20.f); // 20 pixels for planar manipulators
 		mProjectedManipulators.insert(projManipulator);
@@ -949,9 +952,9 @@ void LLManipTranslate::highlightManipulators(S32 x, S32 y)
 		LLVector4 projected_end = mManipulatorVertices[i + 1] * transform;
 		projected_end = projected_end * (1.f / projected_end.mV[VW]);
 
-		ManipulatorHandle* projManipulator = 
-			new ManipulatorHandle(LLVector3(projected_start.mV[VX], projected_start.mV[VY], projected_start.mV[VZ]), 
-				LLVector3(projected_end.mV[VX], projected_end.mV[VY], projected_end.mV[VZ]), 
+		ManipulatorHandle* projManipulator =
+			new ManipulatorHandle(LLVector3(projected_start.mV[VX], projected_start.mV[VY], projected_start.mV[VZ]),
+				LLVector3(projected_end.mV[VX], projected_end.mV[VY], projected_end.mV[VZ]),
 				MANIPULATOR_IDS[i / 2],
 				20.f); // 20 pixels for planar manipulators
 		mProjectedManipulators.insert(projManipulator);
@@ -1038,7 +1041,7 @@ BOOL LLManipTranslate::handleMouseUp(S32 x, S32 y, MASK mask)
 
 		// Might have missed last update due to UPDATE_DELAY timing.
 		LLSelectMgr::getInstance()->sendMultipleUpdate( UPD_POSITION );
-		
+
 		mInSnapRegime = FALSE;
 		LLSelectMgr::getInstance()->saveSelectedObjectTransform(SELECT_ACTION_TYPE_PICK);
 		//gAgent.setObjectTracking(gSavedSettings.getBOOL("TrackFocusObject"));
@@ -1095,7 +1098,7 @@ void LLManipTranslate::renderSnapGuides()
 	{
 		return;
 	}
-	
+
 	updateGridSettings();
 
 	F32 smallest_grid_unit_scale = getMinGridScale() / max_subdivisions;
@@ -1226,7 +1229,7 @@ void LLManipTranslate::renderSnapGuides()
 			LLVector3 cam_to_selection = getPivotPoint() - LLViewerCamera::getInstance()->getOrigin();
 			F32 current_range = cam_to_selection.normVec();
 			guide_size_meters = SNAP_GUIDE_SCREEN_SIZE * gViewerWindow->getWindowHeight() * current_range / LLViewerCamera::getInstance()->getPixelMeterRatio();
-	
+
 			F32 fraction_of_fov = mAxisArrowLength / (F32) LLViewerCamera::getInstance()->getViewHeightInPixels();
 			F32 apparent_angle = fraction_of_fov * LLViewerCamera::getInstance()->getView();  // radians
 			F32 offset_at_camera = tan(apparent_angle) * 1.5f;
@@ -1364,7 +1367,7 @@ void LLManipTranslate::renderSnapGuides()
 		screen_translate_axis.normVec();
 
 		S32 tick_label_spacing = llround(screen_translate_axis * sTickLabelSpacing);
-        
+
 		// render tickmark values
 		for (S32 i = -num_ticks_per_side; i <= num_ticks_per_side; i++)
 		{
@@ -1387,16 +1390,16 @@ void LLManipTranslate::renderSnapGuides()
 
 				if (mSnapOffsetAxis * LLViewerCamera::getInstance()->getUpAxis() > 0.f)
 				{
-					snap_offset_meters = mSnapOffsetMeters;			
+					snap_offset_meters = mSnapOffsetMeters;
 				}
 				else
 				{
 					snap_offset_meters = -mSnapOffsetMeters;
 				}
-				LLVector3 text_origin = selection_center + 
-						(translate_axis * ((smallest_grid_unit_scale * (F32)i) - offset_nearest_grid_unit)) + 
+				LLVector3 text_origin = selection_center +
+						(translate_axis * ((smallest_grid_unit_scale * (F32)i) - offset_nearest_grid_unit)) +
 							(mSnapOffsetAxis * snap_offset_meters * (1.f + tick_scale));
-				
+
 				LLVector3 tick_offset = (tick_pos - mGridOrigin) * ~mGridRotation;
 				F32 offset_val = 0.5f * tick_offset.mV[ARROW_TO_AXIS[mManipPart]] / getMinGridScale();
 				EGridMode grid_mode = LLSelectMgr::getInstance()->getGridMode();
@@ -1405,7 +1408,7 @@ void LLManipTranslate::renderSnapGuides()
 				{
 					text_highlight = 1.f;
 				}
-				
+
 				if (grid_mode == GRID_MODE_WORLD)
 				{
 					// rescale units to meters from multiple of grid scale
@@ -1426,7 +1429,7 @@ void LLManipTranslate::renderSnapGuides()
 				F32 snap_offset_meters_up;
 				if (mSnapOffsetAxis * LLViewerCamera::getInstance()->getUpAxis() > 0.f)
 				{
-					snap_offset_meters_up = mSnapOffsetMeters;			
+					snap_offset_meters_up = mSnapOffsetMeters;
 				}
 				else
 				{
@@ -1458,7 +1461,7 @@ void LLManipTranslate::renderSnapGuides()
 		LLVector3 grid_center = selection_center - grid_origin;
 		F32 usc = 1;
 		F32 vsc = 1;
-		
+
 		grid_center *= ~grid_rotation;
 
 		switch (mManipPart)
@@ -1500,14 +1503,14 @@ void LLManipTranslate::renderSnapGuides()
 		grid_rotation.getAngleAxis(&angle_radians, &x, &y, &z);
 		gGL.translatef(selection_center.mV[VX], selection_center.mV[VY], selection_center.mV[VZ]);
 		glRotatef(angle_radians * RAD_TO_DEG, x, y, z);
-		
+
 		F32 sz = mGridSizeMeters;
 		F32 tiles = sz;
 		glMatrixMode(GL_TEXTURE);
 		gGL.pushMatrix();
 		usc = 1.0f/usc;
 		vsc = 1.0f/vsc;
-		
+
 		while (usc > vsc*4.0f)
 		{
 			usc *= 0.5f;
@@ -1519,7 +1522,7 @@ void LLManipTranslate::renderSnapGuides()
 
 		glScalef(usc, vsc, 1.0f);
 		gGL.translatef(u, v, 0);
-		
+
 		float a = line_alpha;
 
 		LLColor4 col = gColors.getColor("SilhouetteChildColor");
@@ -1538,7 +1541,7 @@ void LLManipTranslate::renderSnapGuides()
 					gGL.flush();
 					gGL.setSceneBlendType(LLRender::BT_ALPHA);
 				}
-				
+
 				{
 					LLGLDisable alpha_test(GL_ALPHA_TEST);
 					//draw black overlay
@@ -1564,7 +1567,7 @@ void LLManipTranslate::renderSnapGuides()
 					LLGLEnable stipple(GL_LINE_STIPPLE);
 					gGL.flush();
 					glLineStipple(1, 0x3333);
-		
+
 					switch (mManipPart)
 					{
 					  case LL_YZ_PLANE:
@@ -1606,7 +1609,7 @@ void LLManipTranslate::renderGrid(F32 x, F32 y, F32 size, F32 r, F32 g, F32 b, F
 			da = sqrtf(llmax(0.0f, 1.0f-sqrtf(dx*dx+dy*dy)/size))*a;
 			gGL.texCoord2f(dx, dy);
 			renderGridVert(dx,dy,r,g,b,da);
-			
+
 			dx = xx; dy = yy+d;
 			da = sqrtf(llmax(0.0f, 1.0f-sqrtf(dx*dx+dy*dy)/size))*a;
 			gGL.texCoord2f(dx, dy);
@@ -1620,19 +1623,19 @@ void LLManipTranslate::renderGrid(F32 x, F32 y, F32 size, F32 r, F32 g, F32 b, F
 		gGL.end();
 	}
 
-	
+
 }
 
-void LLManipTranslate::highlightIntersection(LLVector3 normal, 
-											 LLVector3 selection_center, 
-											 LLQuaternion grid_rotation, 
+void LLManipTranslate::highlightIntersection(LLVector3 normal,
+											 LLVector3 selection_center,
+											 LLQuaternion grid_rotation,
 											 LLColor4 inner_color)
 {
 	if (!gSavedSettings.getBOOL("GridCrossSections"))
 	{
 		return;
 	}
-	
+
 	U32 types[] = { LLRenderPass::PASS_SIMPLE, LLRenderPass::PASS_ALPHA, LLRenderPass::PASS_FULLBRIGHT, LLRenderPass::PASS_SHINY };
 	U32 num_types = LL_ARRAY_SIZE(types);
 
@@ -1664,7 +1667,7 @@ void LLManipTranslate::highlightIntersection(LLVector3 normal,
 
 		BOOL particles = gPipeline.hasRenderType(LLPipeline::RENDER_TYPE_PARTICLES);
 		BOOL clouds = gPipeline.hasRenderType(LLPipeline::RENDER_TYPE_CLOUDS);
-		
+
 		if (particles)
 		{
 			LLPipeline::toggleRenderType(LLPipeline::RENDER_TYPE_PARTICLES);
@@ -1673,7 +1676,7 @@ void LLManipTranslate::highlightIntersection(LLVector3 normal,
 		{
 			LLPipeline::toggleRenderType(LLPipeline::RENDER_TYPE_CLOUDS);
 		}
-		
+
 		//stencil in volumes
 		glStencilOp(GL_INCR, GL_INCR, GL_INCR);
 		glCullFace(GL_FRONT);
@@ -1688,7 +1691,7 @@ void LLManipTranslate::highlightIntersection(LLVector3 normal,
 		{
 			gPipeline.renderObjects(types[i], LLVertexBuffer::MAP_VERTEX, FALSE);
 		}
-		
+
 		if (particles)
 		{
 			LLPipeline::toggleRenderType(LLPipeline::RENDER_TYPE_PARTICLES);
@@ -1708,7 +1711,7 @@ void LLManipTranslate::highlightIntersection(LLVector3 normal,
 	grid_rotation.getAngleAxis(&angle_radians, &x, &y, &z);
 	gGL.translatef(selection_center.mV[VX], selection_center.mV[VY], selection_center.mV[VZ]);
 	glRotatef(angle_radians * RAD_TO_DEG, x, y, z);
-	
+
 	F32 sz = mGridSizeMeters;
 	F32 tiles = sz;
 
@@ -1753,7 +1756,7 @@ void LLManipTranslate::renderTranslationHandles()
 	LLVector3 grid_scale;
 	LLQuaternion grid_rotation;
 	LLGLDepthTest gls_depth(GL_FALSE);
-	
+
 	LLSelectMgr::getInstance()->getGrid(grid_origin, grid_rotation, grid_scale);
 	LLVector3 at_axis;
 	if (mObjectSelection->getSelectType() == SELECT_TYPE_HUD)
@@ -1797,7 +1800,7 @@ void LLManipTranslate::renderTranslationHandles()
 
 	LLVector3 selection_center = getPivotPoint();
 
-	// Drag handles 	
+	// Drag handles
 	if (mObjectSelection->getSelectType() == SELECT_TYPE_HUD)
 	{
 		mArrowLengthMeters = mAxisArrowLength / gViewerWindow->getWindowHeight();
@@ -1808,7 +1811,7 @@ void LLManipTranslate::renderTranslationHandles()
 		LLVector3 camera_pos_agent = gAgent.getCameraPositionAgent();
 		F32 range = dist_vec(camera_pos_agent, selection_center);
 		F32 range_from_agent = dist_vec(gAgent.getPositionAgent(), selection_center);
-		
+
 		// Don't draw handles if you're too far away
 		if (gSavedSettings.getBOOL("LimitSelectDistance"))
 		{
@@ -1850,7 +1853,7 @@ void LLManipTranslate::renderTranslationHandles()
 		invRotation.conjQuat();
 
 		LLVector3 relative_camera_dir;
-		
+
 		if (mObjectSelection->getSelectType() == SELECT_TYPE_HUD)
 		{
 			relative_camera_dir = LLVector3::x_axis * invRotation;
@@ -1984,7 +1987,7 @@ void LLManipTranslate::renderTranslationHandles()
 					gGL.vertex3f(mPlaneManipOffsetMeters * PLANE_TICK_SIZE  * 0.1f,   0.f, mPlaneManipOffsetMeters * -PLANE_TICK_SIZE * 0.1f);
 					gGL.vertex3f(mPlaneManipOffsetMeters * PLANE_TICK_SIZE  * 0.25f,  0.f, mPlaneManipOffsetMeters * -PLANE_TICK_SIZE * 0.25f);
 					gGL.vertex3f(mPlaneManipOffsetMeters * PLANE_TICK_SIZE  * 0.1f,   0.f, mPlaneManipOffsetMeters * -PLANE_TICK_SIZE * 0.4f);
-																				
+
 					gGL.vertex3f(mPlaneManipOffsetMeters * -PLANE_TICK_SIZE * 0.25f,  0.f, mPlaneManipOffsetMeters * -PLANE_TICK_SIZE * 0.25f);
 					gGL.vertex3f(mPlaneManipOffsetMeters * -PLANE_TICK_SIZE * 0.25f,  0.f, mPlaneManipOffsetMeters * PLANE_TICK_SIZE * 0.25f);
 					gGL.vertex3f(mPlaneManipOffsetMeters * -PLANE_TICK_SIZE * 0.25f,  0.f, mPlaneManipOffsetMeters * PLANE_TICK_SIZE * 0.25f);
@@ -2003,13 +2006,13 @@ void LLManipTranslate::renderTranslationHandles()
 				// render XY plane manipulator
 				gGL.pushMatrix();
 				glScalef(mPlaneManipPositions.mV[VX], mPlaneManipPositions.mV[VY], mPlaneManipPositions.mV[VZ]);
-				
+
 /*				 			  Y
 				 			  ^
 				 			  v1
-				 			  |  \ 
+				 			  |  \
 				 			  |<- v0
-				 			  |  /| \ 
+				 			  |  /| \
 				 			  v2__v__v3 > X
 */
 					LLVector3 v0,v1,v2,v3;
@@ -2038,7 +2041,7 @@ void LLManipTranslate::renderTranslationHandles()
 						color1.setVec(0.8f, 0.f, 0.f, 0.6f);
 						color2.setVec(0.f, 0.8f, 0.f, 0.6f);
 					}
-				
+
 					gGL.begin(LLRender::TRIANGLES);
 					{
 						gGL.color4fv(color1.mV);
@@ -2082,7 +2085,7 @@ void LLManipTranslate::renderTranslationHandles()
 		{
 			gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
 
-			// Since we draw handles with depth testing off, we need to draw them in the 
+			// Since we draw handles with depth testing off, we need to draw them in the
 			// proper depth order.
 
 			// Copied from LLDrawable::updateGeometry
@@ -2093,8 +2096,8 @@ void LLManipTranslate::renderTranslationHandles()
 			LLVector3 orientWRTHead    = headPos * invRotation;
 
 			// Find nearest vertex
-			U32 nearest = (orientWRTHead.mV[0] < 0.0f ? 1 : 0) + 
-				(orientWRTHead.mV[1] < 0.0f ? 2 : 0) + 
+			U32 nearest = (orientWRTHead.mV[0] < 0.0f ? 1 : 0) +
+				(orientWRTHead.mV[1] < 0.0f ? 2 : 0) +
 				(orientWRTHead.mV[2] < 0.0f ? 4 : 0);
 
 			// opposite faces on Linden cubes:
@@ -2103,7 +2106,7 @@ void LLManipTranslate::renderTranslationHandles()
 			// 2 & 4
 
 			// Table of order to draw faces, based on nearest vertex
-			static U32 face_list[8][NUM_AXES*2] = { 
+			static U32 face_list[8][NUM_AXES*2] = {
 				{ 2,0,1, 4,5,3 }, // v6  F201 F453
 				{ 2,0,3, 4,5,1 }, // v7  F203 F451
 				{ 4,0,1, 2,5,3 }, // v5  F401 F253
@@ -2133,7 +2136,7 @@ void LLManipTranslate::renderTranslationHandles()
 			}
 
 			for (U32 i = 0; i < NUM_AXES*2; i++)
-			{				
+			{
 				U32 face = face_list[nearest][i];
 
 				LLVector3 arrow_axis;
@@ -2159,14 +2162,14 @@ void LLManipTranslate::renderArrow(S32 which_arrow, S32 selected_arrow, F32 box_
 	LLGLEnable gls_color_material(GL_COLOR_MATERIAL);
 
 	for (S32 pass = 1; pass <= 2; pass++)
-	{	
+	{
 		LLGLDepthTest gls_depth(GL_TRUE, GL_FALSE, pass == 1 ? GL_LEQUAL : GL_GREATER);
 		gGL.pushMatrix();
-			
+
 		S32 index = 0;
-	
+
 		index = ARROW_TO_AXIS[which_arrow];
-		
+
 		// assign a color for this arrow
 		LLColor4 color;  // black
 		if (which_arrow == selected_arrow || which_arrow == mHighlightedPart)
@@ -2177,7 +2180,7 @@ void LLManipTranslate::renderArrow(S32 which_arrow, S32 selected_arrow, F32 box_
 		{
 			color.mV[VALPHA] = 0.f;
 		}
-		else 
+		else
 		{
 			color.mV[index] = pass == 1 ? .8f : .35f ;			// red, green, or blue
 			color.mV[VALPHA] = 0.6f;
@@ -2197,7 +2200,7 @@ void LLManipTranslate::renderArrow(S32 which_arrow, S32 selected_arrow, F32 box_
 			gGL.end();
 			LLUI::setLineWidth(1.0f);
 		}
-		
+
 		gGL.translatef(vec.mV[0], vec.mV[1], vec.mV[2]);
 		glScalef(handle_size, handle_size, handle_size);
 

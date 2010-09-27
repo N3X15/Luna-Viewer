@@ -223,6 +223,7 @@ void LLFloaterGesture::buildGestureList()
 
 	list->operateOnAll(LLCtrlListInterface::OP_DELETE);
 
+
 	LLGestureManager::item_map_t::iterator it;
 	for (it = gGestureManager.mActive.begin(); it != gGestureManager.mActive.end(); ++it)
 	{

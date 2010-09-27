@@ -43,6 +43,9 @@
 #include "lluictrlfactory.h"
 #include "llviewercontrol.h"
 #include "llviewerwindow.h"
+#include "llagent.h"
+
+#include "llviewerthrottle.h"
 
 bool LLPanelNetwork::sSocksSettingsChanged;
 
@@ -64,7 +67,7 @@ BOOL LLPanelNetwork::postBuild()
 	childSetCommitCallback("connection_port_enabled", onCommitPort, this);
 
 	childSetValue("cache_size", (F32)gSavedSettings.getU32("CacheSize"));
-	childSetValue("max_bandwidth", gSavedSettings.getF32("ThrottleBandwidthKBPS"));
+	childSetValue("max_bandwidth", *LLViewerThrottle::sThrottleBandwidthKBPS);
 	childSetValue("connection_port_enabled", gSavedSettings.getBOOL("ConnectionPortEnabled"));
 	childSetValue("connection_port", (F32)gSavedSettings.getU32("ConnectionPort"));
 
@@ -110,7 +113,6 @@ void LLPanelNetwork::apply()
 	gSavedSettings.setU32("ConnectionPort", childGetValue("connection_port").asInteger());
 
 	gSavedSettings.setBOOL("Socks5ProxyEnabled", childGetValue("socks5_proxy_enabled"));
-	//gSavedSettings.setBOOL("Socks5HttpEnabled", childGetValue("socks5_http_enabled"));		
 	gSavedSettings.setString("Socks5HttpProxyType", childGetValue("socks5_http_proxy_type"));
 	gSavedSettings.setString("Socks5ProxyHost", childGetValue("socks5_proxy_host"));
 	gSavedSettings.setU32("Socks5ProxyPort", childGetValue("socks5_proxy_port").asInteger());

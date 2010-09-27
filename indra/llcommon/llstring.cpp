@@ -608,7 +608,7 @@ bool LLStringOps::isHexString(const std::string& str)
 }
 
 #if LL_WINDOWS
-// documentation moved to header. Phoenix 2007-11-27
+// documentation moved to header. Ascent 2007-11-27
 namespace snprintf_hack
 {
 	int snprintf(char *str, size_t size, const char *format, ...)

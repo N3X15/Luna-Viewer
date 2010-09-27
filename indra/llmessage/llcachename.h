@@ -64,7 +64,7 @@ public:
 
 	void cancelCallback(const LLUUID& id, LLCacheNameCallback callback, void* user_data = NULL);
 
-	// janky old format. Remove after a while. Phoenix. 2008-01-30
+	// janky old format. Remove after a while. Ascent. 2008-01-30
 	void importFile(LLFILE* fp);
 
 	// storing cache on disk; for viewer, in name.cache

@@ -62,6 +62,7 @@
 #include "llpanelmsgs.h"
 #include "llpanelweb.h"
 #include "llpanelskins.h"
+//#include "llpanelAscent.h" 
 #include "llprefschat.h"
 #include "llprefsvoice.h"
 #include "llprefsim.h"
@@ -137,6 +138,7 @@ LLPreferenceCore::LLPreferenceCore(LLTabContainer* tab_container, LLButton * def
 	mSkinsPanel(NULL),
 	mGridsPanel(NULL),
 	mLCDPanel(NULL),
+	mAscentPanel(NULL),
 	mPrefsAscentSys(NULL),
 	mPrefsAscentVan(NULL)
 {
@@ -201,6 +203,10 @@ LLPreferenceCore::LLPreferenceCore(LLTabContainer* tab_container, LLButton * def
 	mGridsPanel = HippoPanelGrids::create();
 	mTabContainer->addTabPanel(mGridsPanel, mGridsPanel->getLabel(), FALSE, onTabChanged, mTabContainer);
 	mGridsPanel->setDefaultBtn(default_btn);
+
+	//mAscentPanel = new LLPanelAscent();
+	//mTabContainer->addTabPanel(mAscentPanel, mAscentPanel->getLabel(), FALSE, onTabChanged, mTabContainer);
+	//mAscentPanel->setDefaultBtn(default_btn);
 
 	mPrefsAscentSys = new LLPrefsAscentSys();
 	mTabContainer->addTabPanel(mPrefsAscentSys->getPanel(), mPrefsAscentSys->getPanel()->getLabel(), FALSE, onTabChanged, mTabContainer);
@@ -269,6 +275,12 @@ LLPreferenceCore::~LLPreferenceCore()
 		delete mSkinsPanel;
 		mSkinsPanel = NULL;
 	}
+
+	//if (mAscentPanel)
+	//{
+	//	delete mAscentPanel;
+	//	mAscentPanel = NULL;
+	//}
 	if (mPrefsAscentSys)
 	{
 		delete mPrefsAscentSys;
@@ -301,6 +313,7 @@ void LLPreferenceCore::apply()
 	mMsgPanel->apply();
 	mSkinsPanel->apply();
 	mGridsPanel->apply();
+	/*mAscentPanel->apply();*/
 	mPrefsAscentSys->apply();
 	mPrefsAscentVan->apply();
 
@@ -332,6 +345,7 @@ void LLPreferenceCore::cancel()
 	mMsgPanel->cancel();
 	mSkinsPanel->cancel();
 	mGridsPanel->cancel();
+	/*mAscentPanel->cancel();*/
 	mPrefsAscentSys->cancel();
 	mPrefsAscentVan->cancel();
 
@@ -347,6 +361,11 @@ void LLPreferenceCore::cancel()
 	}
 #endif
 //	mWebPanel->cancel();
+}
+
+void LLPreferenceCore::selectLastTab()
+{
+       mTabContainer->selectTab(gSavedSettings.getS32("LastPrefTab"));
 }
 
 // static
@@ -369,10 +388,16 @@ void LLPreferenceCore::refreshEnabledGraphics()
 	mDisplayPanel->refreshEnabledState();
 }
 
+void LLPreferenceCore::refreshSkinPanel()
+{
+	mSkinsPanel->mSkin = gSavedSettings.getString("SkinCurrent");
+	mSkinsPanel->refresh();
+}
+
 //////////////////////////////////////////////
 // LLFloaterPreference
 
-LLFloaterPreference::LLFloaterPreference()
+LLFloaterPreference::LLFloaterPreference() : mExitWithoutSaving(FALSE)
 {
 	LLUICtrlFactory::getInstance()->buildFloater(this, "floater_preferences.xml");
 }
@@ -434,12 +459,20 @@ void LLFloaterPreference::cancel()
 
 
 // static
+void LLFloaterPreference::overrideLastTab(S32 tabIndex)
+{
+	gSavedSettings.setS32("LastPrefTab", tabIndex);
+}
+
+// static
 void LLFloaterPreference::show(void*)
 {
 	if (!sInstance)
 	{
 		new LLFloaterPreference();
 		sInstance->center();
+	} else if (sInstance->mPreferenceCore) {
+		sInstance->mPreferenceCore->selectLastTab();
 	}
 
 	sInstance->open();		/* Flawfinder: ignore */
@@ -521,7 +554,10 @@ void LLFloaterPreference::onBtnApply( void* userdata )
 void LLFloaterPreference::onClose(bool app_quitting)
 {
 	LLPanelLogin::setAlwaysRefresh(false);
-	cancel(); // will be a no-op if OK or apply was performed just prior.
+	if(!mExitWithoutSaving)
+	{
+		cancel(); // will be a no-op if OK or apply was performed just prior.
+	}
 	LLFloater::onClose(app_quitting);
 }
 
@@ -554,4 +590,16 @@ void LLFloaterPreference::updateUserInfo(const std::string& visibility, bool im_
 void LLFloaterPreference::refreshEnabledGraphics()
 {
 	sInstance->mPreferenceCore->refreshEnabledGraphics();
+}
+
+void LLFloaterPreference::refreshSkinPanel()
+{
+	sInstance->mPreferenceCore->refreshSkinPanel();
+}
+
+// static
+void LLFloaterPreference::closeWithoutSaving()
+{
+	sInstance->mExitWithoutSaving = true;
+	sInstance->close();
 }

@@ -103,9 +103,7 @@ public:
 	void setZCompare(const BOOL zcompare);
 	void setDoFade(const BOOL do_fade);
 	void setVisibleOffScreen(BOOL visible) { mVisibleOffScreen = visible; }
-	// <edit>
 	std::string getStringUTF8();
-	// </edit>
 	
 	// mMaxLines of -1 means unlimited lines.
 	void setMaxLines(S32 max_lines) { mMaxLines = max_lines; }
@@ -134,6 +132,11 @@ public:
 	static void addPickable(std::set<LLViewerObject*> &pick_list);
 	static void reshape();
 	static void setDisplayText(BOOL flag) { sDisplayText = flag ; }
+// [RLVa:KB] - Checked: 2009-07-09 (RLVa-1.0.0f) | Added: RLVa-1.0.0f
+	const std::string& getObjectText() const						{ return mObjText; }
+	void               setObjectText(const std::string &utf8string)	{ mObjText = utf8string; }
+	static void        refreshAllObjectText();
+// [/RLVa:KB]
 protected:
 	LLHUDText(const U8 type);
 
@@ -179,6 +182,9 @@ private:
 	EVertAlignment	mVertAlignment;
 	S32				mLOD;
 	BOOL			mHidden;
+// [RLVa:KB] - Checked: 2009-07-09 (RLVa-1.0.0f) | Added: RLVa-1.0.0f
+	std::string     mObjText;
+// [/RLVa:KB]
 
 	static BOOL    sDisplayText ;
 	static std::set<LLPointer<LLHUDText> > sTextObjects;

@@ -64,6 +64,7 @@
 #include "llviewerobjectlist.h"
 #include "llviewercamera.h"
 #include "llviewerstats.h"
+#include "importtracker.h"
 
 // <edit>
 #include "llparcel.h" // always rez
@@ -196,8 +197,22 @@ BOOL LLToolPlacer::addObject( LLPCode pcode, S32 x, S32 y, U8 use_physics )
 
 	// Set params for new object based on its PCode.
 	LLQuaternion	rotation;
-	LLVector3		scale = DEFAULT_OBJECT_SCALE;
+	LLVector3		scale = LLVector3(
+		gSavedSettings.getF32("AscentBuildPrefs_Xsize"),
+		gSavedSettings.getF32("AscentBuildPrefs_Ysize"),
+		gSavedSettings.getF32("AscentBuildPrefs_Zsize"));
+	
 	U8				material = LL_MCODE_WOOD;
+	if(gSavedSettings.getString("AscentBuildPrefs_Material")== "Stone") material = LL_MCODE_STONE;
+	if(gSavedSettings.getString("AscentBuildPrefs_Material")== "Metal") material = LL_MCODE_METAL;
+	if(gSavedSettings.getString("AscentBuildPrefs_Material")== "Wood") material = LL_MCODE_WOOD;
+	if(gSavedSettings.getString("AscentBuildPrefs_Material")== "Flesh") material = LL_MCODE_FLESH;
+	if(gSavedSettings.getString("AscentBuildPrefs_Material")== "Rubber") material = LL_MCODE_RUBBER;
+	if(gSavedSettings.getString("AscentBuildPrefs_Material")== "Plastic") material = LL_MCODE_PLASTIC;
+		
+
+	
+
 	BOOL			create_selected = FALSE;
 	LLVolumeParams	volume_params;
 	
@@ -254,7 +269,7 @@ BOOL LLToolPlacer::addObject( LLPCode pcode, S32 x, S32 y, U8 use_physics )
 	gMessageSystem->addU8Fast(_PREHASH_Material,	material);
 
 	U32 flags = 0;		// not selected
-	if (use_physics)
+	if (use_physics || gSavedSettings.getBOOL("AscentBuildPrefs_Physical"))
 	{
 		flags |= FLAGS_USE_PHYSICS;
 	}
@@ -436,7 +451,8 @@ BOOL LLToolPlacer::addObject( LLPCode pcode, S32 x, S32 y, U8 use_physics )
 	
 	// Pack in name value pairs
 	gMessageSystem->sendReliable(regionp->getHost());
-
+	//FUCKlgg set flag to set texture here
+	//gImportTracker.expectRez();
 	// Spawns a message, so must be after above send
 	if (create_selected)
 	{

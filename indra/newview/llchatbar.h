@@ -94,6 +94,8 @@ public:
 	static void startChat(const char* line);
 	static void stopChat();
 
+	static void toggleChanSelect(void* user_data);//lgg
+
 protected:
 	void sendChat(EChatType type);
 	void updateChat();
@@ -105,6 +107,8 @@ protected:
 
 	// Which non-zero channel did we last chat on?
 	S32				mLastSpecialChatChannel;
+
+	BOOL			mChanSelectorExpanded;
 
 	BOOL			mIsBuilt;
 	LLComboBox*		mGestureCombo;

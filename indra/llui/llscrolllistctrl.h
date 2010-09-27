@@ -449,7 +449,7 @@ public:
 
 	virtual BOOL	isSelected(const LLSD& value) const;
 
-	BOOL			handleClick(S32 x, S32 y, MASK mask);
+	BOOL			handleClick(S32 x, S32 y, MASK mask, BOOL rightmouse);
 	BOOL			selectFirstItem();
 	BOOL			selectNthItem( S32 index );
 	BOOL			selectItemRange( S32 first, S32 last );
@@ -548,7 +548,9 @@ public:
 	// Overridden from LLView
 	/*virtual*/ void    draw();
 	/*virtual*/ BOOL	handleMouseDown(S32 x, S32 y, MASK mask);
+	/*virtual*/ BOOL	handleRightMouseDown(S32 x, S32 y, MASK mask);
 	/*virtual*/ BOOL	handleMouseUp(S32 x, S32 y, MASK mask);
+	/*virtual*/ BOOL	handleRightMouseUp(S32 x, S32 y, MASK mask);
 	/*virtual*/ BOOL	handleDoubleClick(S32 x, S32 y, MASK mask);
 	/*virtual*/ BOOL	handleHover(S32 x, S32 y, MASK mask);
 	/*virtual*/ BOOL	handleKeyHere(KEY key, MASK mask);
@@ -690,6 +692,7 @@ private:
 	LLColor4		mFgUnselectedColor;
 	LLColor4		mFgDisabledColor;
 	LLColor4		mHighlightedColor;
+	LLColor4		mDefaultListTextColor;
 
 	S32				mBorderThickness;
 	void			(*mOnDoubleClickCallback)(void* userdata);

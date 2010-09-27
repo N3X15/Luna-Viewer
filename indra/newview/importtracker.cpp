@@ -169,18 +169,21 @@ void ImportTracker::get_update(S32 newid, BOOL justCreated, BOOL createSelected)
 				LLPrimitive obj;
 				obj.setNumTEs(U8(10));	
 				S32 shinnyLevel = 0;
-				if(gSavedSettings.getString("EmeraldBuildPrefs_Shiny")== "None") shinnyLevel = 0;
-				if(gSavedSettings.getString("EmeraldBuildPrefs_Shiny")== "Low") shinnyLevel = 1;
-				if(gSavedSettings.getString("EmeraldBuildPrefs_Shiny")== "Medium") shinnyLevel = 2;
-				if(gSavedSettings.getString("EmeraldBuildPrefs_Shiny")== "High") shinnyLevel = 3;
+				static std::string* shinystr = rebind_llcontrol<std::string>("AscentBuildPrefs_Shiny", &gSavedSettings, true);
+				if(*shinystr == "None") shinnyLevel = 0;
+				if(*shinystr == "Low") shinnyLevel = 1;
+				if(*shinystr == "Medium") shinnyLevel = 2;
+				if(*shinystr == "High") shinnyLevel = 3;
 				
 				for (int i = 0; i < 10; i++)
 				{
-					LLTextureEntry tex =  LLTextureEntry(LLUUID(gSavedSettings.getString("EmeraldBuildPrefs_Texture")));
-					tex.setColor(gSavedSettings.getColor4("EmeraldBuildPrefs_Color"));
-					tex.setAlpha(1.0 - ((gSavedSettings.getF32("EmeraldBuildPrefs_Alpha")) / 100.0));
-					tex.setGlow(gSavedSettings.getF32("EmeraldBuildPrefs_Glow"));
-					if(gSavedSettings.getBOOL("EmeraldBuildPrefs_FullBright"))
+					static std::string* buildpreftex = rebind_llcontrol<std::string>("AscentBuildPrefs_Texture", &gSavedSettings, true);
+
+					LLTextureEntry tex =  LLTextureEntry(LLUUID(*buildpreftex));
+					tex.setColor(gSavedSettings.getColor4("AscentBuildPrefs_Color"));
+					tex.setAlpha(1.0 - ((gSavedSettings.getF32("AscentBuildPrefs_Alpha")) / 100.0));
+					tex.setGlow(gSavedSettings.getF32("AscentBuildPrefs_Glow"));
+					if(gSavedSettings.getBOOL("AscentBuildPrefs_FullBright"))
 					{
 						tex.setFullbright(TEM_FULLBRIGHT_MASK);
 					}
@@ -199,15 +202,15 @@ void ImportTracker::get_update(S32 newid, BOOL justCreated, BOOL createSelected)
 				msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID() );
 				msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
 				msg->addU32Fast(_PREHASH_ObjectLocalID, (U32)newid );
-				msg->addBOOLFast(_PREHASH_UsePhysics, gSavedSettings.getBOOL("EmeraldBuildPrefs_Physical"));
-				msg->addBOOL("IsTemporary", gSavedSettings.getBOOL("EmeraldBuildPrefs_Temporary"));
-				msg->addBOOL("IsPhantom", gSavedSettings.getBOOL("EmeraldBuildPrefs_Phantom") );
+				msg->addBOOLFast(_PREHASH_UsePhysics, gSavedSettings.getBOOL("AscentBuildPrefs_Physical"));
+				msg->addBOOL("IsTemporary", gSavedSettings.getBOOL("AscentBuildPrefs_Temporary"));
+				msg->addBOOL("IsPhantom", gSavedSettings.getBOOL("AscentBuildPrefs_Phantom") );
 				msg->addBOOL("CastsShadows", true );
 				msg->sendReliable(gAgent.getRegion()->getHost());
 
-				if(gSavedSettings.getBOOL("EmeraldBuildPrefs_EmbedItem"))
+				if(gSavedSettings.getBOOL("AscentBuildPrefs_EmbedItem"))
 				{
-					LLViewerInventoryItem* item = (LLViewerInventoryItem*)gInventory.getItem((LLUUID)gSavedSettings.getString("EmeraldBuildPrefs_Item"));
+					LLViewerInventoryItem* item = (LLViewerInventoryItem*)gInventory.getItem((LLUUID)gSavedSettings.getString("AscentBuildPrefs_Item"));
 					LLViewerObject* objectp = find((U32)newid);
 					if(objectp)
 						if(item)
@@ -329,7 +332,7 @@ void insert(LLViewerInventoryItem* item, LLViewerObject* objectp, InventoryImpor
 							TRUE,
 							LLToolDragAndDrop::SOURCE_AGENT,
 							gAgent.getID());
-		//cmdline_printchat("inserted.");
+		cmdline_printchat("inserted.");
 	}
 	delete data;
 	gImportTracker.asset_insertions -= 1;
@@ -348,7 +351,7 @@ public:
 	}
 	void fire(const LLUUID &inv_item)
 	{
-		//cmdline_printchat("fired transfer for "+inv_item.asString()+"|"+data->assetid.asString());
+		cmdline_printchat("fired transfer for "+inv_item.asString()+"|"+data->assetid.asString());
 		LLViewerInventoryItem* item = (LLViewerInventoryItem*)gInventory.getItem(inv_item);
 		LLViewerObject* objectp = find(data->localid);
 		insert(item, objectp, data);
@@ -407,7 +410,7 @@ public:
 	}
 	virtual void uploadComplete(const LLSD& content)
 	{
-		//cmdline_printchat("completed upload, inserting");
+		cmdline_printchat("completed upload, inserting");
 		LLViewerInventoryItem* item = (LLViewerInventoryItem*)gInventory.getItem(item_id);
 		LLViewerObject* objectp = find(data->localid);
 		insert(item, objectp, data);
@@ -428,7 +431,7 @@ public:
 	{
 		S32 file_size;
 		LLAPRFile infile ;
-		infile.open(data->filename, LL_APR_RB, NULL, &file_size);
+		infile.open(data->filename, LL_APR_RB, LLAPRFile::global, &file_size);
 		if (infile.getFileHandle())
 		{
 			//cmdline_printchat("got file handle @ postinv");

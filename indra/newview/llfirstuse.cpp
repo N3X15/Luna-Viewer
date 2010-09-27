@@ -277,3 +277,15 @@ void LLFirstUse::useMedia()
 		LLNotifications::instance().add("FirstMedia");
 	}
 }
+
+// Luna is not TPV compliant AFAIK, warn users without being annoying.
+// static 
+void LLFirstUse::TPVWarning()
+{
+	if (gSavedSettings.getWarning("FirstTPV"))
+	{
+		gSavedSettings.setWarning("FirstTPV", FALSE);
+
+		LLNotifications::instance().add("TPVNotification");
+	}
+}

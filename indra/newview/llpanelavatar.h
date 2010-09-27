@@ -100,7 +100,7 @@ public:
 
 	/*virtual*/ BOOL postBuild(void);
 	static void onClickImage(			void *userdata);
-
+	
 
 	void enableControls(BOOL own_avatar);
 };
@@ -305,6 +305,8 @@ public:
 	void sendAvatarNotesUpdate();
 
 	void sendAvatarPicksRequest();
+	
+	void sendAvatarRatingsRequest();
 
 	void selectTab(S32 tabnum);
 	void selectTabByName(std::string tab_name);
@@ -383,6 +385,17 @@ private:
 
 	typedef std::list<LLPanelAvatar*> panel_list_t;
 	static panel_list_t sAllPanels;
+};
+
+class LLPanelAvatarRatingsDownloader : public LLHTTPClient::Responder
+{
+public:
+	LLPanelAvatarRatingsDownloader(LLPanelAvatar *panel);
+	void error(U32 status, const std::string& reason);
+	void completedRaw(U32 status, const std::string& reason, const LLChannelDescriptors& channels, const LLIOPipe::buffer_ptr_t& buffer);
+	
+private:
+	LLPanelAvatar *mPanelAvatar;
 };
 
 // helper funcs

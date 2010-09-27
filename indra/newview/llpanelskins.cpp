@@ -1,34 +1,34 @@
 /** 
- * @file llpanelskins.cpp
- * @brief General preferences panel in preferences floater
- *
- * $LicenseInfo:firstyear=2001&license=viewergpl$
- * 
- * Copyright (c) 2001-2009, Linden Research, Inc.
- * 
- * Second Life Viewer Source Code
- * The source code in this file ("Source Code") is provided by Linden Lab
- * to you under the terms of the GNU General Public License, version 2.0
- * ("GPL"), unless you have obtained a separate licensing agreement
- * ("Other License"), formally executed by you and Linden Lab.  Terms of
- * the GPL can be found in doc/GPL-license.txt in this distribution, or
- * online at http://secondlifegrid.net/programs/open_source/licensing/gplv2
- * 
- * There are special exceptions to the terms and conditions of the GPL as
- * it is applied to this Source Code. View the full text of the exception
- * in the file doc/FLOSS-exception.txt in this software distribution, or
- * online at
- * http://secondlifegrid.net/programs/open_source/licensing/flossexception
- * 
- * By copying, modifying or distributing this software, you acknowledge
- * that you have read and understood your obligations described above,
- * and agree to abide by those obligations.
- * 
- * ALL LINDEN LAB SOURCE CODE IS PROVIDED "AS IS." LINDEN LAB MAKES NO
- * WARRANTIES, EXPRESS, IMPLIED OR OTHERWISE, REGARDING ITS ACCURACY,
- * COMPLETENESS OR PERFORMANCE.
- * $/LicenseInfo$
- */
+* @file llpanelskins.cpp
+* @brief General preferences panel in preferences floater
+*
+* $LicenseInfo:firstyear=2001&license=viewergpl$
+* 
+* Copyright (c) 2001-2009, Linden Research, Inc.
+* 
+* Second Life Viewer Source Code
+* The source code in this file ("Source Code") is provided by Linden Lab
+* to you under the terms of the GNU General Public License, version 2.0
+* ("GPL"), unless you have obtained a separate licensing agreement
+* ("Other License"), formally executed by you and Linden Lab.  Terms of
+* the GPL can be found in doc/GPL-license.txt in this distribution, or
+* online at http://secondlifegrid.net/programs/open_source/licensing/gplv2
+* 
+* There are special exceptions to the terms and conditions of the GPL as
+* it is applied to this Source Code. View the full text of the exception
+* in the file doc/FLOSS-exception.txt in this software distribution, or
+* online at
+* http://secondlifegrid.net/programs/open_source/licensing/flossexception
+* 
+* By copying, modifying or distributing this software, you acknowledge
+* that you have read and understood your obligations described above,
+* and agree to abide by those obligations.
+* 
+* ALL LINDEN LAB SOURCE CODE IS PROVIDED "AS IS." LINDEN LAB MAKES NO
+* WARRANTIES, EXPRESS, IMPLIED OR OTHERWISE, REGARDING ITS ACCURACY,
+* COMPLETENESS OR PERFORMANCE.
+* $/LicenseInfo$
+*/
 
 #include "llviewerprecompiledheaders.h"
 
@@ -62,82 +62,77 @@ LLPanelSkins::~LLPanelSkins()
 BOOL LLPanelSkins::postBuild()
 {
 	mSkin = gSavedSettings.getString("SkinCurrent");
-	oldSkin=mSkin;
-	getChild<LLComboBox>("custom_skin_combo")->setCommitCallback(onComboBoxCommit);
+	oldSkin = mSkin;
+	getChild<LLComboBox>("emrd_skin_combo")->setCommitCallback(onComboBoxCommit);
+	getChild<LLButton>("emrd_skin_browser_button")->setClickedCallback(onClickFindMore);
 	refresh();
 	return TRUE;
 }
 
+void LLPanelSkins::scanFolder(const std::string& folder)
+{
+	LLComboBox* comboBox = getChild<LLComboBox>("emrd_skin_combo");
+	std::string name;
+	while(true) 
+	{
+		if(!gDirUtilp->getNextFileInDir(folder, "*.xml", name, false))
+			break;
+		
+		LLSD data;
+		llifstream importer(folder + name);
+		LLSDSerialize::fromXMLDocument(data, importer);
+		
+		if(data.has("folder_name"))
+		{
+			datas.push_back(data);
+			comboBox->add(data["skin_name"].asString());
+
+			if(data["folder_name"].asString() == mSkin)
+			{
+				childSetValue("emrd_skin_author", data["author_name"].asString());
+				childSetValue("emrd_skin_ad_authors", data["additional_author_names"].asString());
+				childSetValue("emrd_skin_info", data["skin_info"].asString());
+				childSetValue("emrd_skin_folder", data["folder_name"].asString());
+				LLButton* b = getChild<LLButton>("emrd_skin_preview");
+				std::string imageprev(".." + gDirUtilp->getDirDelimiter() +
+									  ".." + gDirUtilp->getDirDelimiter() +
+									  data["folder_name"].asString() + gDirUtilp->getDirDelimiter() +
+									  "textures" + gDirUtilp->getDirDelimiter() +
+									  "preview.png");
+				b->setImages(imageprev, imageprev);
+				b->setHoverImages(imageprev, imageprev);
+				b->setScaleImage(TRUE);
+			}
+		}
+	}
+}
+
 void LLPanelSkins::refresh()
 {
-	if(mSkin=="")
+	if(mSkin == "")
 	{
-		oldSkin=mSkin="default";
-		gSavedSettings.setString("SkinCurrent",mSkin);
+		oldSkin = mSkin = "default";
+		gSavedSettings.setString("SkinCurrent", mSkin);
 	}
-	LLComboBox* comboBox = getChild<LLComboBox>("custom_skin_combo");
+	LLComboBox* comboBox = getChild<LLComboBox>("emrd_skin_combo");
 
 	if(comboBox != NULL) 
 	{
-		std::string name;
-		gDirUtilp->getNextFileInDir(gDirUtilp->getChatLogsDir(),"*",name,false);//stupid hack to clear last file search
 		comboBox->removeall();
 		datas.clear();
-		//comboBox->add("===OFF===");
-		std::string path_name(gDirUtilp->getSkinBaseDir()+gDirUtilp->getDirDelimiter());
-		llinfos << "Reading skin listing from " << path_name << llendl;
-		bool found = true;	
-		std::string currentSkinName("");
-		while(found) 
+		
+		scanFolder(gDirUtilp->getSkinBaseDir() + gDirUtilp->getDirDelimiter());
+		comboBox->addSeparator(ADD_BOTTOM);
+		scanFolder(gDirUtilp->getOSUserAppDir() + gDirUtilp->getDirDelimiter() + "skins" + gDirUtilp->getDirDelimiter());
+		
+		for(std::vector<LLSD>::iterator itr = datas.begin(); itr != datas.end(); ++itr)
 		{
-			found = gDirUtilp->getNextFileInDir(path_name, "*.xml", name, false);
-			//llinfos << "path name " << path_name << " and name " << name << " and found " << found << llendl;
-			if(found)
+			if((*itr)["folder_name"].asString() == mSkin)
 			{
-				LLSD data;
-				llifstream importer(path_name+name);
-				LLSDSerialize::fromXMLDocument(data, importer);
-
-				if(data.has("folder_name"))
-				{
-					datas.push_back(data);
-					comboBox->add(data["skin_name"].asString());
-					/*llinfos << "data is length " << datas.size() << " foldername field is "
-						<< data["folder_name"].asString() << " and looking for " << gSavedSettings.getString("SkinCurrent") <<llendl;*/
-					if(data["folder_name"].asString()==mSkin)
-					{
-						//llinfos << "found!!!!!!1!1" << llendl;
-						currentSkinName = data["skin_name"].asString();
-
-						//LLButton* b;
-						//b.setImageOverlay()
-						childSetValue("custom_skin_author",data["author_name"].asString());
-						childSetValue("custom_skin_ad_authors",data["additional_author_names"].asString());
-						childSetValue("custom_skin_info",data["skin_info"].asString());
-						childSetValue("custom_skin_folder",data["folder_name"].asString());
-						LLButton* b = getChild<LLButton>("custom_skin_preview");
-						std::string imagename = data["preview_image"].asString();
-						if(imagename == "" || imagename == " " || !LLFile::isfile(imagename)) imagename = "preview.png";
-						std::string imageprev(".."+gDirUtilp->getDirDelimiter()+
-							".."+gDirUtilp->getDirDelimiter()+
-							data["folder_name"].asString()+gDirUtilp->getDirDelimiter()+
-							"textures"+gDirUtilp->getDirDelimiter()+
-							imagename);
-						b->setImages(imageprev,imageprev);
-						b->setHoverImages(imageprev,imageprev);
-						b->setScaleImage(TRUE);
-
-						//<button scale_image="true" image_selected="skin_thumbnail_default.png"
-						//image_unselected="skin_thumbnail_default.png" 
-						//	image_hover_selected="skin_thumbnail_default.png" 
-						//	image_hover_unselected="skin_thumbnail_default.png"/>
-
-						//set the rest here!
-					}
-				}
+				comboBox->setSimple((*itr)["skin_name"].asString());
+				break;
 			}
 		}
-		comboBox->setSimple(currentSkinName);
 	}
 }
 
@@ -145,9 +140,9 @@ void LLPanelSkins::apply()
 {
 	if (oldSkin != mSkin)
 	{
-		  oldSkin=mSkin;
-		  LLNotifications::instance().add("ChangeSkin");
-		  refresh();
+		oldSkin=mSkin;
+		LLNotifications::instance().add("ChangeSkin");
+		refresh();
 	}
 }
 
@@ -179,5 +174,10 @@ void LLPanelSkins::onComboBoxCommit(LLUICtrl* ctrl, void* userdata)
 			}
 		}
 	}	
+}
+
+void LLPanelSkins::onClickFindMore(void*)
+{
+//	FloaterSkinfinder::showInstance(LLSD());
 }
 

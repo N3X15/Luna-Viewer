@@ -592,6 +592,15 @@ To buy direct, visit the land and click on the place name in the title bar.
 		<button bottom="-48" follows="right|top" font="SansSerif" halign="center" height="20"
 			     label="Search" label_selected="Search" left="121" mouse_opaque="true"
 			     name="Search" width="95" />
+    <button bottom="-24" height="22" follows="right|top"
+         image_disabled="tearoffbox.tga"
+         image_disabled_selected="tearoffbox.tga"
+         image_hover_selected="tearoff_pressed.tga"
+         image_hover_unselected="tearoff_pressed.tga"
+         image_selected="tearoff_pressed.tga"
+         image_unselected="tearoffbox.tga" label="" left="-20" tool_tip="Open in new window"
+         name="popout_btn" scale_image="false" width="22" />
+
       <scroll_list background_visible="true" bottom="-510" column_padding="0" draw_border="true"
 			     draw_heading="true" 
                                

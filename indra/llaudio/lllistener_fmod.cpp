@@ -34,6 +34,27 @@
 #include "linden_common.h"
 #include "llaudioengine.h"
 #include "lllistener_fmod.h"
+
+// FMOD is silly and calls LoadLibrary instead of LoadLibraryA even though it calls with a normal char.
+// This seems to cause issues sometimes, so tell it who's bawce.
+#if LL_WINDOWS
+	#include <windows.h>
+	#pragma warning (disable : 4005)
+	#ifdef LoadLibrary
+		#undef LoadLibrary
+	#endif
+	#define LoadLibrary LoadLibraryA
+#endif
+
+// Hack for loading FMOD dynamically while not making the library required to run the viewer
+#if LL_WINDOWS || LL_LINUX
+	#include "fmoddyn.h"
+	#define FMOD_API(x) gFmod->x
+	extern FMOD_INSTANCE* gFmod;
+#else
+	#define FMOD_API(x) x
+#endif
+
 #include "fmod.h"
 
 //-----------------------------------------------------------------------
@@ -63,7 +84,7 @@ void LLListener_FMOD::translate(LLVector3 offset)
 {
 	LLListener::translate(offset);
 
-	FSOUND_3D_Listener_SetAttributes(mPosition.mV, NULL, mListenAt.mV[0],mListenAt.mV[1],mListenAt.mV[2], mListenUp.mV[0],mListenUp.mV[1],mListenUp.mV[2]);
+	FMOD_API(FSOUND_3D_Listener_SetAttributes)(mPosition.mV, NULL, mListenAt.mV[0],mListenAt.mV[1],mListenAt.mV[2], mListenUp.mV[0],mListenUp.mV[1],mListenUp.mV[2]);
 }
 
 //-----------------------------------------------------------------------
@@ -71,7 +92,7 @@ void LLListener_FMOD::setPosition(LLVector3 pos)
 {
 	LLListener::setPosition(pos);
 
-	FSOUND_3D_Listener_SetAttributes(pos.mV, NULL, mListenAt.mV[0],mListenAt.mV[1],mListenAt.mV[2], mListenUp.mV[0],mListenUp.mV[1],mListenUp.mV[2]);
+	FMOD_API(FSOUND_3D_Listener_SetAttributes)(pos.mV, NULL, mListenAt.mV[0],mListenAt.mV[1],mListenAt.mV[2], mListenUp.mV[0],mListenUp.mV[1],mListenUp.mV[2]);
 }
 
 //-----------------------------------------------------------------------
@@ -79,7 +100,7 @@ void LLListener_FMOD::setVelocity(LLVector3 vel)
 {
 	LLListener::setVelocity(vel);
 
-	FSOUND_3D_Listener_SetAttributes(NULL, vel.mV, mListenAt.mV[0],mListenAt.mV[1],mListenAt.mV[2], mListenUp.mV[0],mListenUp.mV[1],mListenUp.mV[2]);
+	FMOD_API(FSOUND_3D_Listener_SetAttributes)(NULL, vel.mV, mListenAt.mV[0],mListenAt.mV[1],mListenAt.mV[2], mListenUp.mV[0],mListenUp.mV[1],mListenUp.mV[2]);
 }
 
 //-----------------------------------------------------------------------
@@ -93,20 +114,20 @@ void LLListener_FMOD::orient(LLVector3 up, LLVector3 at)
 	// since DX is left-handed and we (LL, OpenGL, OpenAL) are right-handed
 	at = -at;
 
-	FSOUND_3D_Listener_SetAttributes(NULL, NULL, at.mV[0],at.mV[1],at.mV[2], up.mV[0],up.mV[1],up.mV[2]);
+	FMOD_API(FSOUND_3D_Listener_SetAttributes)(NULL, NULL, at.mV[0],at.mV[1],at.mV[2], up.mV[0],up.mV[1],up.mV[2]);
 }
 
 //-----------------------------------------------------------------------
 void LLListener_FMOD::commitDeferredChanges()
 {
-	FSOUND_Update();
+	FMOD_API(FSOUND_Update)();
 }
 
 
 void LLListener_FMOD::setRolloffFactor(F32 factor)
 {
 	mRolloffFactor = factor;
-	FSOUND_3D_SetRolloffFactor(factor);
+	FMOD_API(FSOUND_3D_SetRolloffFactor)(factor);
 }
 
 
@@ -119,7 +140,7 @@ F32 LLListener_FMOD::getRolloffFactor()
 void LLListener_FMOD::setDopplerFactor(F32 factor)
 {
 	mDopplerFactor = factor;
-	FSOUND_3D_SetDopplerFactor(factor);
+	FMOD_API(FSOUND_3D_SetDopplerFactor)(factor);
 }
 
 

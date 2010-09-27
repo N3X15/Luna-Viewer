@@ -69,6 +69,8 @@
 #include "llviewerregion.h"
 
 #include "llfirstuse.h"
+#include "llgroupmgr.h"
+#include "growlmanager.h"
 
 //
 // Globals
@@ -590,7 +592,7 @@ void LLIMMgr::addMessage(
 				<< " by participant " << other_participant_id << llendl;
 		}
 	}
-
+	
 	// create IM window as necessary
 	if(!floater)
 	{
@@ -634,9 +636,33 @@ void LLIMMgr::addMessage(
 
 	// now add message to floater
 	bool is_from_system = target_id.isNull() || (from == SYSTEM_FROM);
-	const LLColor4& color = ( is_from_system ? 
-							  gSavedSettings.getColor4("SystemChatColor") : 
-							  gSavedSettings.getColor("IMChatColor"));
+	bool is_encrypted = (msg.substr(0, 3) == "\xe2\x80\xa7");
+	LLColor4 color;
+	//Ascent:KC - color chat from friends. taking care not to color when RLV hide names is in effect, lol
+	static BOOL* sAscentColorFriendsChat = rebind_llcontrol<BOOL>("AscentColorFriendsChat", &gSavedSettings, true);
+	if (is_from_system)
+	{
+		color = gSavedSettings.getColor4("SystemChatColor");
+	}
+	else if (is_encrypted)
+	{
+		color = gSavedSettings.getColor4("AscentIMEncryptedChatColor");
+//		*msg = std::string("[User sent an encrypted message. Luna does not support encryption.]");
+	}
+	else if (target_id == gAgent.getID())
+	{
+		color = gSavedSettings.getColor("UserChatColor");
+	}
+	else if (*sAscentColorFriendsChat
+	&& LLAvatarTracker::instance().isBuddy(other_participant_id))
+	{
+		color = gSavedSettings.getColor4("AscentFriendChatColor");
+	} 
+	else
+	{
+		color = gSavedSettings.getColor4("IMChatColor");
+	}
+	
 	if ( !link_name )
 	{
 		floater->addHistoryLine(msg,color); // No name to prepend, so just add the message normally
@@ -946,7 +972,28 @@ void LLIMMgr::inviteToSession(
 		{
 			LLSD args;
 			args["NAME"] = caller_name;
-			args["GROUP"] = session_name;
+			//args["GROUP"] = session_name;
+			LLGroupMgrGroupData* temp = LLGroupMgr::getInstance()->getGroupData(session_id);
+			bool waiting = false;
+			if(temp)
+			{
+				if (temp->isGroupPropertiesDataComplete())
+				{
+					args["GROUP"] = temp->mName;
+				}
+				else
+				{
+					waiting = true;
+				}
+			}
+			else
+			{
+				waiting = true;
+			}
+			if(waiting)
+			{
+				LLGroupMgr::getInstance()->sendGroupPropertiesRequest(session_id);
+			}
 
 			LLNotifications::instance().add(notify_box_type, 
 					     args, 
@@ -1516,6 +1563,45 @@ public:
 				return;
 			}
 
+			//Kadah - PHOE-277: fix for group chat still coming thru on console when disabled
+			static LLCachedControl<BOOL> AscentMuteAllGroups("AscentMuteAllGroups", 0);
+			static LLCachedControl<BOOL> AscentMuteGroupWhenNoticesDisabled("AscentMuteGroupWhenNoticesDisabled", 0);
+			LLGroupData group_data;
+			if (gAgent.getGroupData(session_id, group_data))
+			{
+				if (AscentMuteAllGroups || (AscentMuteGroupWhenNoticesDisabled && !group_data.mAcceptNotices))
+				{
+					llinfos << "Ascent: muting group chat: " << group_data.mName << LL_ENDL;
+					
+					if(gSavedSettings.getBOOL("AscentNotifyWhenMutingGroupChat"))
+					{
+						LLChat chat;
+						chat.mText = "[Muting group chat: " + group_data.mName + "]";
+						chat.mSourceType = CHAT_SOURCE_SYSTEM;
+						LLFloaterChat::addChat(chat, FALSE, FALSE);
+					}
+					
+					//KC: make sure we leave the group chat at the server end as well
+					std::string aname;
+					gAgent.buildFullname(aname);
+					pack_instant_message(
+						gMessageSystem,
+						gAgent.getID(),
+						FALSE,
+						gAgent.getSessionID(),
+						from_id,
+						aname,
+						LLStringUtil::null,
+						IM_ONLINE,
+						IM_SESSION_LEAVE,
+						session_id);
+					gAgent.sendReliableMessage();
+					gIMMgr->removeSession(session_id);
+					
+					return;
+				}
+			}
+			
 			// standard message, not from system
 			std::string saved;
 			if(offline == IM_OFFLINE)
@@ -1540,8 +1626,7 @@ public:
 				message_params["region_id"].asUUID(),
 				ll_vector3_from_sd(message_params["position"]),
 				true);
-			LLGroupData group_data;
-			gAgent.getGroupData(session_id, group_data);
+
 			std::string prepend_msg;
 			if (gAgent.isInGroup(session_id)&& gSavedSettings.getBOOL("OptionShowGroupNameInChatIM"))
 			{

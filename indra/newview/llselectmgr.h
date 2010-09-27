@@ -472,7 +472,7 @@ public:
 
 	void updateSilhouettes();
 	void renderSilhouettes(BOOL for_hud);
-	void enableSilhouette(BOOL enable) { mRenderSilhouettes = enable; }
+	void enableSilhouette(BOOL enable);// { mRenderSilhouettes = enable; }
 	
 	////////////////////////////////////////////////////////////////
 	// Utility functions that operate on the current selection

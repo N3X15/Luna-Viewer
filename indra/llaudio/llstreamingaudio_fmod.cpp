@@ -34,6 +34,26 @@
 
 #include "llmath.h"
 
+// FMOD is silly and calls LoadLibrary instead of LoadLibraryA even though it calls with a normal char.
+// This seems to cause issues sometimes, so tell it who's bawce.
+#if LL_WINDOWS
+	#include <windows.h>
+	#pragma warning (disable : 4005)
+	#ifdef LoadLibrary
+		#undef LoadLibrary
+	#endif
+	#define LoadLibrary LoadLibraryA
+#endif
+
+// Hack for loading FMOD dynamically while not making the library required to run the viewer
+#if LL_WINDOWS || LL_LINUX
+	#include "fmoddyn.h"
+	#define FMOD_API(x) gFmod->x
+	extern FMOD_INSTANCE* gFmod;
+#else
+	#define FMOD_API(x) x
+#endif
+
 #include "fmod.h"
 #include "fmod_errors.h"
 
@@ -47,15 +67,22 @@ public:
 	int	startStream();
 	bool stopStream(); // Returns true if the stream was successfully stopped.
 	bool ready();
+	bool hasNewMetadata();
+	std::string getCurrentArtist();
+	std::string getCurrentTitle();
 
 	const std::string& getURL() 	{ return mInternetStreamURL; }
 
 	int getOpenState();
 protected:
+	static signed char F_CALLBACKAPI metadataCallback(char *name, char *value, void *userdata);
 	FSOUND_STREAM* mInternetStream;
 	bool mReady;
 
 	std::string mInternetStreamURL;
+	std::string mArtist;
+	std::string mTitle;
+	bool mHaveNewMetadata;
 };
 
 
@@ -70,7 +97,7 @@ LLStreamingAudio_FMOD::LLStreamingAudio_FMOD() :
 {
 	// Number of milliseconds of audio to buffer for the audio card.
 	// Must be larger than the usual Second Life frame stutter time.
-	FSOUND_Stream_SetBufferSize(200);
+	FMOD_API(FSOUND_Stream_SetBufferSize)(200);
 
 	// Here's where we set the size of the network buffer and some buffering 
 	// parameters.  In this case we want a network buffer of 16k, we want it 
@@ -153,7 +180,7 @@ void LLStreamingAudio_FMOD::update()
 			{
 				// Reset volume to previously set volume
 				setGain(getGain());
-				FSOUND_SetPaused(mFMODInternetStreamChannel, false);
+				FMOD_API(FSOUND_SetPaused)(mFMODInternetStreamChannel, false);
 			}
 		}
 	}
@@ -191,8 +218,8 @@ void LLStreamingAudio_FMOD::stop()
 {
 	if (mFMODInternetStreamChannel != -1)
 	{
-		FSOUND_SetPaused(mFMODInternetStreamChannel, true);
-		FSOUND_SetPriority(mFMODInternetStreamChannel, 0);
+		FMOD_API(FSOUND_SetPaused)(mFMODInternetStreamChannel, true);
+		FMOD_API(FSOUND_SetPriority)(mFMODInternetStreamChannel, 0);
 		mFMODInternetStreamChannel = -1;
 	}
 
@@ -273,10 +300,33 @@ void LLStreamingAudio_FMOD::setGain(F32 vol)
 	{
 		vol = llclamp(vol, 0.f, 1.f);
 		int vol_int = llround(vol * 255.f);
-		FSOUND_SetVolumeAbsolute(mFMODInternetStreamChannel, vol_int);
+		FMOD_API(FSOUND_SetVolumeAbsolute)(mFMODInternetStreamChannel, vol_int);
 	}
 }
 
+bool LLStreamingAudio_FMOD::hasNewMetadata()
+{
+	if(mCurrentInternetStreamp)
+		return mCurrentInternetStreamp->hasNewMetadata();
+	
+	return false;
+}
+
+std::string LLStreamingAudio_FMOD::getCurrentTitle()
+{
+	if(mCurrentInternetStreamp)
+		return mCurrentInternetStreamp->getCurrentTitle();
+	
+	return "";
+}
+
+std::string LLStreamingAudio_FMOD::getCurrentArtist()
+{
+	if(mCurrentInternetStreamp)
+		return mCurrentInternetStreamp->getCurrentArtist();
+	
+	return "";
+}
 
 ///////////////////////////////////////////////////////
 // manager of possibly-multiple internet audio streams
@@ -286,11 +336,11 @@ LLAudioStreamManagerFMOD::LLAudioStreamManagerFMOD(const std::string& url) :
 	mReady(false)
 {
 	mInternetStreamURL = url;
-	mInternetStream = FSOUND_Stream_Open(url.c_str(), FSOUND_NORMAL | FSOUND_NONBLOCKING, 0, 0);
+	mInternetStream = FMOD_API(FSOUND_Stream_Open)(url.c_str(), FSOUND_NORMAL | FSOUND_NONBLOCKING, 0, 0);
 	if (!mInternetStream)
 	{
 		llwarns << "Couldn't open fmod stream, error "
-			<< FMOD_ErrorString(FSOUND_GetError())
+			<< FMOD_ErrorString(FMOD_API(FSOUND_GetError)())
 			<< llendl;
 		mReady = false;
 		return;
@@ -309,9 +359,10 @@ int LLAudioStreamManagerFMOD::startStream()
 	}
 
 	// Make sure the stream is set to 2D mode.
-	FSOUND_Stream_SetMode(mInternetStream, FSOUND_2D);
+	FMOD_API(FSOUND_Stream_SetMode)(mInternetStream, FSOUND_2D);
+	FMOD_API(FSOUND_Stream_Net_SetMetadataCallback)(mInternetStream, metadataCallback, this);
 
-	return FSOUND_Stream_PlayEx(FSOUND_FREE, mInternetStream, NULL, true);
+	return FMOD_API(FSOUND_Stream_PlayEx)(FSOUND_FREE, mInternetStream, NULL, true);
 }
 
 bool LLAudioStreamManagerFMOD::stopStream()
@@ -322,7 +373,7 @@ bool LLAudioStreamManagerFMOD::stopStream()
 		int status = 0;
 		int bitrate = 0;
 		unsigned int flags = 0x0;
-		FSOUND_Stream_Net_GetStatus(mInternetStream, &status, &read_percent, &bitrate, &flags);
+		FMOD_API(FSOUND_Stream_Net_GetStatus)(mInternetStream, &status, &read_percent, &bitrate, &flags);
 
 		bool close = true;
 		switch (status)
@@ -340,7 +391,7 @@ bool LLAudioStreamManagerFMOD::stopStream()
 
 		if (close)
 		{
-			FSOUND_Stream_Close(mInternetStream);
+			FMOD_API(FSOUND_Stream_Close)(mInternetStream);
 			mInternetStream = NULL;
 			return true;
 		}
@@ -357,6 +408,43 @@ bool LLAudioStreamManagerFMOD::stopStream()
 
 int LLAudioStreamManagerFMOD::getOpenState()
 {
-	int open_state = FSOUND_Stream_GetOpenState(mInternetStream);
+	int open_state = FMOD_API(FSOUND_Stream_GetOpenState)(mInternetStream);
 	return open_state;
 }
+
+bool LLAudioStreamManagerFMOD::hasNewMetadata()
+{
+	bool ret = mHaveNewMetadata;
+	mHaveNewMetadata = false;
+	return ret;
+}
+
+std::string LLAudioStreamManagerFMOD::getCurrentArtist()
+{
+	return mArtist;
+}
+
+std::string LLAudioStreamManagerFMOD::getCurrentTitle()
+{
+	return mTitle;
+}
+
+signed char F_CALLBACKAPI LLAudioStreamManagerFMOD::metadataCallback(char *name, char *value, void *userdata)
+{
+	LLAudioStreamManagerFMOD* self = (LLAudioStreamManagerFMOD*)userdata;
+	if(!strcmp("ARTIST", name))
+	{
+		self->mArtist = std::string(value);
+		self->mHaveNewMetadata = true;
+		return true;
+	}
+
+	if (!strcmp("TITLE", name))
+	{
+		self->mTitle = std::string(value);
+		self->mHaveNewMetadata = true;
+		return true;
+	}
+	return true;
+}
+

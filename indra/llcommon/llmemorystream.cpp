@@ -1,6 +1,6 @@
 /** 
  * @file llmemorystream.cpp
- * @author Phoenix
+ * @author Ascent
  * @date 2005-06-03
  * @brief Buffer and stream for a fixed linear memory segment.
  *

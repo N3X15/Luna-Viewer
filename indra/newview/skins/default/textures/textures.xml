@@ -60,7 +60,7 @@
   <texture name="spin_down_out_blue.tga"	preload="true"/>
   <texture name="spin_up_in_blue.tga"	preload="true"/>
   <texture name="spin_up_out_blue.tga"	preload="true"/>
-  <texture name="ff_visible_map.tga"	preload="true"/>
+  
   <texture name="square_btn_32x128.tga"	preload="true" scale_left="8" scale_top="10" scale_right="120" scale_bottom="10"/>
   <texture name="square_btn_selected_32x128.tga"	preload="true" scale_left="2" scale_top="10" scale_right="126" scale_bottom="10"/>
   
@@ -111,7 +111,6 @@
   <texture name="inv_folder_notecard.tga"/>
   <texture name="inv_folder_object.tga"/>
   <texture name="inv_folder_plain_closed.tga"/>
-  <texture name="inv_folder_plain_open.tga"/>
   <texture name="inv_folder_script.tga"/>
   <texture name="inv_folder_snapshot.tga"/>
   <texture name="inv_folder_sound.tga"/>
@@ -144,6 +143,8 @@
   <texture name="inv_item_texture.tga"/>
   <texture name="inv_item_underpants.tga"/>
   <texture name="inv_item_undershirt.tga"/>
+  <texture name="inv_item_alpha.tga"/>
+  <texture name="inv_item_tattoo.tga"/>
   
   <texture name="lag_status_critical.tga"/>
   <texture name="lag_status_good.tga"/>
@@ -371,6 +372,15 @@
   
   <texture name="skin_thumbnail_default.png" preload="true" />
   <texture name="skin_thumbnail_silver.png" preload="true" />
+  <texture name="skin_thumbnail_dark.png" preload="true" /> 
+  <texture name="skin_thumbnail_gred.png" preload="true" />
+  <texture name="skin_thumbnail_ruby.png" preload="true" />
+  <texture name="skin_thumbnail_pslgreen.png" preload="true" />
+  <texture name="skin_thumbnail_pslpurple.png" preload="true" />
+  <texture name="skin_thumbnail_sapphire.png" preload="true" />
+  
+  <texture name="icon_avatar_expand.png" preload="true" />
+  
 
   <texture name="default_land_picture.j2c"/>
   <texture name="default_profile_picture.j2c"/>

@@ -1408,8 +1408,12 @@ void LLFloater::draw()
 		S32 right = getRect().getWidth() - LLPANEL_BORDER_WIDTH;
 		S32 bottom = LLPANEL_BORDER_WIDTH;
 
-		LLColor4 shadow_color = LLUI::sColorsGroup->getColor("ColorDropShadow");
-		F32 shadow_offset = (F32)LLUI::sConfigGroup->getS32("DropShadowFloater");
+		/*static LLColor4* sColorDropShadow = rebind_llcontrol<LLColor4>("ColorDropShadow", LLUI::sColorsGroup, true);
+
+		LLColor4 shadow_color = (*sColorDropShadow);
+		static S32* sDropShadowFloater = rebind_llcontrol<S32>("DropShadowFloater", LLUI::sConfigGroup, true);
+
+		F32 shadow_offset = (F32)(*sDropShadowFloater);
 		if (!isBackgroundOpaque())
 		{
 			shadow_offset *= 0.2f;
@@ -1417,7 +1421,7 @@ void LLFloater::draw()
 		}
 		gl_drop_shadow(left, top, right, bottom, 
 			shadow_color, 
-			llround(shadow_offset));
+			llround(shadow_offset));*/
 
 		// No transparent windows in simple UI
 		if (isBackgroundOpaque())
@@ -1489,8 +1493,13 @@ void LLFloater::draw()
 	{
 		// add in a border to improve spacialized visual aclarity ;)
 		// use lines instead of gl_rect_2d so we can round the edges as per james' recommendation
+
+		static LLColor4* sFloaterFocusBorderColor = rebind_llcontrol<LLColor4>("FloaterFocusBorderColor", LLUI::sColorsGroup, true);
+		static LLColor4* sFloaterUnfocusBorderColor = rebind_llcontrol<LLColor4>("FloaterUnfocusBorderColor", LLUI::sColorsGroup, true);
+	
+
 		LLUI::setLineWidth(1.5f);
-		LLColor4 outlineColor = gFocusMgr.childHasKeyboardFocus(this) ? LLUI::sColorsGroup->getColor("FloaterFocusBorderColor") : LLUI::sColorsGroup->getColor("FloaterUnfocusBorderColor");
+		LLColor4 outlineColor = gFocusMgr.childHasKeyboardFocus(this) ? *sFloaterFocusBorderColor : *sFloaterUnfocusBorderColor;
 		gl_rect_2d_offset_local(0, getRect().getHeight() + 1, getRect().getWidth() + 1, 0, outlineColor, -LLPANEL_BORDER_WIDTH, FALSE);
 		LLUI::setLineWidth(1.f);
 	}
@@ -1715,7 +1724,8 @@ void LLFloater::buildButtons()
 		buttonp->setFollowsTop();
 		buttonp->setFollowsRight();
 		buttonp->setToolTip( sButtonToolTips[i] );
-		buttonp->setImageColor(LLUI::sColorsGroup->getColor("FloaterButtonImageColor"));
+		static LLColor4 sFloaterButtonImageColor = LLUI::sColorsGroup->getColor("FloaterButtonImageColor");
+		buttonp->setImageColor(sFloaterButtonImageColor);
 		buttonp->setHoverImages(sButtonPressedImageNames[i],
 								sButtonPressedImageNames[i]);
 		buttonp->setScaleImage(TRUE);

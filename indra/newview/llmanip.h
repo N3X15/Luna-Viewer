@@ -153,11 +153,11 @@ protected:
 	LLColor4			setupSnapGuideRenderPass(S32 pass);
 private:
 	static void			initPivot();
-	static bool			updateActualRoot();
-	static bool			updatePivotIsPercent();
-	static bool			updatePivotX();
-	static bool			updatePivotY();
-	static bool			updatePivotZ();
+	static void			updateActualRoot(const LLSD &data);
+	static void			updatePivotIsPercent(const LLSD &data);
+	static void			updatePivotX(const LLSD &data);
+	static void			updatePivotY(const LLSD &data);
+	static void			updatePivotZ(const LLSD &data);
 protected:
 	LLFrameTimer		mHelpTextTimer;
 	BOOL				mInSnapRegime;
@@ -172,6 +172,7 @@ protected:
 	static F32			sGridMaxSubdivisionLevel;
 	static F32			sGridMinSubdivisionLevel;
 	static LLVector2	sTickLabelSpacing;
+
 	static bool			sActualRoot;
 	static bool			sPivotPerc;
 	static F32			sPivotX;

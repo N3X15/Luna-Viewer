@@ -1,6 +1,6 @@
 /** 
  * @file llservice.h
- * @author Phoenix
+ * @author Ascent
  * @date 2004-11-21
  * @brief Declaration file for LLService and related classes.
  *
@@ -173,7 +173,7 @@ protected:
 	// This frame timer records how long this service has
 	// existed. Useful for derived services to give themselves a
 	// lifetime and expiration.
-	// *NOTE: Phoenix - This functionaity has been moved to the
+	// *NOTE: Ascent - This functionaity has been moved to the
 	// pump. 2005-12-13
 	//LLFrameTimer mTimer;
 

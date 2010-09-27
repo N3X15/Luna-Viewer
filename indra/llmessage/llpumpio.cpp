@@ -1,6 +1,6 @@
 /** 
  * @file llpumpio.cpp
- * @author Phoenix
+ * @author Ascent
  * @date 2004-11-21
  * @brief Implementation of the i/o pump and related functions.
  *

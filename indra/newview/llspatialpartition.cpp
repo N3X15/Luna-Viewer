@@ -826,7 +826,7 @@ class LLSpatialSetStateDiff : public LLSpatialSetState
 public:
 	LLSpatialSetStateDiff(U32 state) : LLSpatialSetState(state) { }
 
-	virtual void traverse(const LLSpatialGroup::TreeNode* n)
+	virtual void traverse(const LLSpatialGroup::OctreeNode* n)
 	{
 		LLSpatialGroup* group = (LLSpatialGroup*) n->getListener(0);
 		
@@ -885,7 +885,7 @@ class LLSpatialClearStateDiff : public LLSpatialClearState
 public:
 	LLSpatialClearStateDiff(U32 state) : LLSpatialClearState(state) { }
 
-	virtual void traverse(const LLSpatialGroup::TreeNode* n)
+	virtual void traverse(const LLSpatialGroup::OctreeNode* n)
 	{
 		LLSpatialGroup* group = (LLSpatialGroup*) n->getListener(0);
 		
@@ -1343,7 +1343,7 @@ void LLSpatialGroup::doOcclusion(LLCamera* camera)
 				glBeginQueryARB(GL_SAMPLES_PASSED_ARB, mOcclusionQuery);					
 				glVertexPointer(3, GL_FLOAT, 0, mOcclusionVerts);
 				glDrawRangeElements(GL_TRIANGLE_FAN, 0, 7, 8,
-							GL_UNSIGNED_BYTE, get_box_fan_indices(camera, mBounds[0]));
+						GL_UNSIGNED_BYTE, get_box_fan_indices(camera, mBounds[0]));
 				glEndQueryARB(GL_SAMPLES_PASSED_ARB);
 
 				if (use_depth_clamp)
@@ -1519,7 +1519,7 @@ public:
 		return false;
 	}
 	
-	virtual void traverse(const LLSpatialGroup::TreeNode* n)
+	virtual void traverse(const LLSpatialGroup::OctreeNode* n)
 	{
 		LLSpatialGroup* group = (LLSpatialGroup*) n->getListener(0);
 

@@ -93,6 +93,10 @@ class LLVoiceClient: public LLSingleton<LLVoiceClient>
 
 	public:
 		
+		// This should be called when the code detects we have changed parcels.
+		// It initiates the call to the server that gets the parcel channel.
+		void parcelChanged();
+		
 		static F32 OVERDRIVEN_POWER_LEVEL;
 
 		void updateSettings(); // call after loading settings and whenever they change
@@ -175,10 +179,6 @@ static	void updatePosition(void);
 		void setAvatarPosition(const LLVector3d &position, const LLVector3 &velocity, const LLMatrix3 &rot);
 		bool channelFromRegion(LLViewerRegion *region, std::string &name);
 		void leaveChannel(void);		// call this on logout or teleport begin
-		
-		// This should be called when the code detects we have changed parcels.
-		// It initiates the call to the server that gets the parcel channel.
-		void parcelChanged();
 
 		
 		void setMuteMic(bool muted);		// Use this to mute the local mic (for when the client is minimized, etc), ignoring user PTT state.

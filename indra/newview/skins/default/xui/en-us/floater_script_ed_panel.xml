@@ -11,6 +11,9 @@
 	<button bottom="-499" enabled="true" follows="right|bottom" font="SansSerif"
 	     halign="center" height="20" label="Save" label_selected="Save" left="360"
 	     mouse_opaque="true" name="Save_btn" width="128" />
+  <button bottom="-479" enabled="false" follows="right|bottom" font="SansSerif"
+     halign="center" height="20" label="Open In XEd" label_selected="Open In XEd" left="360"
+     mouse_opaque="true" name="XEd_btn" width="128" />
 	<scroll_list background_visible="true" bottom="-457" column_padding="5" draw_border="true"
 	     draw_heading="false" draw_stripes="true" enabled="true"
 	     follows="left|right|bottom" height="60" left="4" mouse_opaque="true"
@@ -70,6 +73,12 @@
 			<menu_item_call bottom="-30" enabled="true" height="20" label="LSL Wiki Help..." left="0"
 			     mouse_opaque="true" name="LSL Wiki Help..." width="112" />
 		</menu>
+    <menu bottom="-18" drop_shadow="true" enabled="true" height="34"
+		     left="0" mouse_opaque="false" name="Advanced" opaque="true" tear_off="false"
+		     width="112">
+      <menu_item_check bottom="-30" enabled="true" height="20" label="Enable Preprocessing" left="0"
+			     mouse_opaque="true" name="preproc_on" width="112" />
+    </menu>
 	</menu_bar>
 	<string name="loading">
 		Loading...

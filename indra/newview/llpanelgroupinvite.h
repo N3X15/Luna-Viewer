@@ -43,6 +43,7 @@ public:
 	~LLPanelGroupInvite();
 	
 	void addUsers(std::vector<LLUUID>& agent_ids);
+	void addUsers(std::vector<LLUUID>& agent_ids,std::vector<std::string>& provided_names);
 	void clear();
 	void update();
 

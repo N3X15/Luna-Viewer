@@ -1,4 +1,4 @@
-/** 
+/**
  * @file llstartup.cpp
  * @brief startup routines.
  *
@@ -221,7 +221,9 @@
 
 
 
+#include "a_phoenixviewerlink.h"
 
+#include "growlmanager.h"
 
 
 
@@ -242,7 +244,6 @@ std::string SCREEN_LAST_FILENAME = "screen_last.bmp";
 //
 extern S32 gStartImageWidth;
 extern S32 gStartImageHeight;
-extern bool gLLWindEnabled;
 
 //
 // local globals
@@ -289,7 +290,7 @@ void callback_cache_name(const LLUUID& id, const std::string& firstname, const s
 	LLNameListCtrl::refreshAll(id, firstname, lastname, is_group);
 	LLNameBox::refreshAll(id, firstname, lastname, is_group);
 	LLNameEditor::refreshAll(id, firstname, lastname, is_group);
-	
+
 	// TODO: Actually be intelligent about the refresh.
 	// For now, just brute force refresh the dialogs.
 	dialog_refresh_all();
@@ -307,8 +308,8 @@ namespace
 {
 	class LLNullHTTPSender : public LLHTTPSender
 	{
-		virtual void send(const LLHost& host, 
-						  const std::string& message, const LLSD& body, 
+		virtual void send(const LLHost& host,
+						  const std::string& message, const LLSD& body,
 						  LLHTTPClient::ResponderPtr response) const
 		{
 			LL_WARNS("AppInit") << " attemped to send " << message << " to " << host
@@ -348,12 +349,10 @@ void hooked_process_sound_trigger(LLMessageSystem *msg, void **)
 	LLFloaterAvatarList::sound_trigger_hook(msg,NULL);
 }
 
-// Returns false to skip other idle processing. Should only return
-// true when all initialization done.
 bool idle_startup()
 {
 	LLMemType mt1(LLMemType::MTYPE_STARTUP);
-	
+
 	const F32 PRECACHING_DELAY = gSavedSettings.getF32("PrecachingDelay");
 	const F32 TIMEOUT_SECONDS = 5.f;
 	const S32 MAX_TIMEOUT_COUNT = 3;
@@ -417,10 +416,29 @@ bool idle_startup()
 		gViewerWindow->showCursor();
 		gViewerWindow->getWindow()->setCursor(UI_CURSOR_WAIT);
 
+		//good as place as any to create user windlight directories
+		std::string user_windlight_path_name(gDirUtilp->getExpandedFilename( LL_PATH_USER_SETTINGS , "windlight", ""));
+		LLFile::mkdir(user_windlight_path_name.c_str());
+
+		std::string user_windlight_skies_path_name(gDirUtilp->getExpandedFilename( LL_PATH_USER_SETTINGS , "windlight/skies", ""));
+		LLFile::mkdir(user_windlight_skies_path_name.c_str());
+
+		std::string user_windlight_water_path_name(gDirUtilp->getExpandedFilename( LL_PATH_USER_SETTINGS , "windlight/water", ""));
+		LLFile::mkdir(user_windlight_water_path_name.c_str());
+
+		std::string user_windlight_days_path_name(gDirUtilp->getExpandedFilename( LL_PATH_USER_SETTINGS , "windlight/days", ""));
+		LLFile::mkdir(user_windlight_days_path_name.c_str());
+
+
 		/////////////////////////////////////////////////
 		//
 		// Initialize stuff that doesn't need data from simulators
 		//
+
+		GrowlManager::InitiateManager();
+
+		AscentViewerLink::getInstance()->start_download();
+
 
 		if (LLFeatureManager::getInstance()->isSafe())
 		{
@@ -435,9 +453,10 @@ bool idle_startup()
 		{
 			LLNotifications::instance().add(gViewerWindow->getInitAlert());
 		}
-			
 
-		LLNotifications::instance().add("TPVNotification");
+		// How to be annoying as hell: display a warning dialog every startup :V
+		//LLNotifications::instance().add("TPVNotification");
+		LLFirstUse::TPVWarning();
 			
 		gSavedSettings.setS32("LastFeatureVersion", LLFeatureManager::getInstance()->getVersion());
 
@@ -460,7 +479,7 @@ bool idle_startup()
 		if (!xml_ok)
 		{
 			// If XML is bad, there's a good possibility that notifications.xml is ALSO bad.
-			// If that's so, then we'll get a fatal error on attempting to load it, 
+			// If that's so, then we'll get a fatal error on attempting to load it,
 			// which will display a nontranslatable error message that says so.
 			// Otherwise, we'll display a reasonable error message that IS translatable.
 			LLAppViewer::instance()->earlyExit("BadInstallation");
@@ -1823,7 +1842,7 @@ bool idle_startup()
 	if (STATE_WORLD_INIT == LLStartUp::getStartupState())
 	{
 		//first of all, let's check if wind should be used
-		gLLWindEnabled = gSavedSettings.getBOOL("WindEnabled");
+		gAudiop->enableWind(gSavedSettings.getBOOL("WindEnabled"));
 		
 		set_startup_status(0.40f, LLTrans::getString("LoginInitializingWorld"), gAgent.mMOTD);
 		display_startup();

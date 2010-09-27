@@ -83,7 +83,7 @@ public:
 	void setMap(LLLocalIDHashMap<DATA_TYPE, SIZE> *hash_mapp);
 	inline void first();
 	inline void next();
-	inline DATA_TYPE& current(); // *NOTE: Deprecate? Phoenix 2005-04-15
+	inline DATA_TYPE& current(); // *NOTE: Deprecate? Ascent 2005-04-15
 	inline BOOL done() const;
 	inline S32  currentBin() const;
 	inline void setBin(S32 bin);

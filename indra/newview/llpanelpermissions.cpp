@@ -197,6 +197,7 @@ void LLPanelPermissions::refresh()
 		childSetEnabled("button set group",false);
 		childSetEnabled("button open group",false);
 
+
 		childSetText("Object Name",LLStringUtil::null);
 		childSetEnabled("Object Name",false);
 		childSetEnabled("Name:",false);
@@ -892,12 +893,6 @@ void LLPanelPermissions::onClickOwner(void *data)
 	}
 }
 
-
-
-
-
-
-
 void LLPanelPermissions::onClickLastOwner(void *data)
 {
 	LLPanelPermissions *self = (LLPanelPermissions *)data;
@@ -927,6 +922,7 @@ void LLPanelPermissions::onClickGroup(void* data)
 		}
 	}
 }
+
 
 void LLPanelPermissions::onClickOpenGroup(void* data)
 {

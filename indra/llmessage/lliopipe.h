@@ -1,6 +1,6 @@
 /** 
  * @file lliopipe.h
- * @author Phoenix
+ * @author Ascent
  * @date 2004-11-18
  * @brief Declaration of base IO class
  *

@@ -64,6 +64,7 @@ const S32 CLIENT_RECT_VPAD = 4;
 const F32 SECONDS_TO_SHOW_FILE_SAVED_MSG = 8.f;
 
 LLPreviewTexture * LLPreviewTexture::sInstance;
+
 LLPreviewTexture::LLPreviewTexture(const std::string& name,
 								   const LLRect& rect,
 								   const std::string& title,
@@ -115,6 +116,7 @@ LLPreviewTexture::LLPreviewTexture(const std::string& name,
 	}
 }
 
+
 // Note: uses asset_id as a dummy item id.
 LLPreviewTexture::LLPreviewTexture(
 	const std::string& name,
@@ -147,9 +149,9 @@ LLPreviewTexture::LLPreviewTexture(
 	init();
 
 	setTitle(title);
+
 	LLRect curRect = getRect();
 	translate(curRect.mLeft - rect.mLeft, curRect.mTop - rect.mTop);
-	
 }
 
 
@@ -173,7 +175,7 @@ void LLPreviewTexture::init()
 {
 	sInstance = this;
 	LLUICtrlFactory::getInstance()->buildFloater(sInstance,"floater_preview_texture.xml");
-	
+
 	childSetVisible("desc", !mCopyToInv);	// Hide description field for embedded textures
 	childSetVisible("desc txt", !mCopyToInv);
 	childSetVisible("Copy To Inventory", mCopyToInv);
@@ -301,6 +303,36 @@ void LLPreviewTexture::draw()
 				//boost the previewed image priority to the highest to make it to get loaded first.
 				mImage->setAdditionalDecodePriority(1.0f) ;
 			}
+
+
+			std::string assetid(mImageID.asString());
+			if (mIsCopyable) childSetText("uuid", assetid);
+
+			if (mCreatorKey.isNull()&&(mImage->decodedComment.find("a")!=mImage->decodedComment.end()))
+			{
+				mCreatorKey = LLUUID(mImage->decodedComment["a"]);
+				childSetText("uploader", mImage->decodedComment["a"]);
+				gCacheName->get(mCreatorKey, FALSE, callbackLoadAvatarName);
+			}
+			if (mColor.empty()&&(mImage->decodedComment.find("c")!=mImage->decodedComment.end()))
+			{
+				mColor = mImage->decodedComment["c"];
+			}
+			if (mTime.empty()&&(mImage->decodedComment.find("z")!=mImage->decodedComment.end()))
+			{
+				mTime=mImage->decodedComment["z"];
+				std::string year = mTime.substr(0,4);
+				std::string month = mTime.substr(4,2);
+				std::string day = mTime.substr(6,2);
+				std::string hour = mTime.substr(8,2);
+				std::string minute = mTime.substr(10,2);
+				std::string second = mTime.substr(12,2);
+
+				mTime = llformat("%s/%s/%s - %s:%s:%s",year.c_str(),month.c_str(),day.c_str(),hour.c_str(),minute.c_str(),second.c_str());
+
+				childSetText("uploadtime", mTime);
+			}
+
 			// Don't bother decoding more than we can display, unless
 			// we're loading the full image.
 			if (!mLoadingFullImage)
@@ -351,7 +383,8 @@ void LLPreviewTexture::draw()
 					}
 				}
 			}
-			else if(!mSavedFileTimer.hasExpired())
+			else
+			if( !mSavedFileTimer.hasExpired() )
 			{
 				// *TODO: Translate
 				LLFontGL::getFontSansSerif()->renderUTF8(std::string("File Saved"), 0,
@@ -468,6 +501,8 @@ LLUUID LLPreviewTexture::getItemID()
 
 std::string LLPreviewTexture::getItemCreationDate()
 {
+	if(!mTime.empty())
+		return mTime;
 	const LLViewerInventoryItem* item = getItem();
 	if(item)
 	{
@@ -480,6 +515,12 @@ std::string LLPreviewTexture::getItemCreationDate()
 
 std::string LLPreviewTexture::getItemCreatorName()
 {
+	if(!mCreatorKey.isNull())
+	{
+		std::string name;
+		gCacheName->getFullName(mCreatorKey, name);
+		return name;
+	}
 	const LLViewerInventoryItem* item = getItem();
 	if(item)
 	{
@@ -543,7 +584,7 @@ void LLPreviewTexture::updateDimensions()
 
 	view_width = llmax(view_width, getMinWidth());
 	view_height = llmax(view_height, getMinHeight());
-	
+
 	if (client_height != mLastHeight || client_width != mLastWidth)
 	{
 		mLastWidth = client_width;
@@ -613,8 +654,8 @@ void LLPreviewTexture::updateDimensions()
 	window_rect.mTop -= (PREVIEW_HEADER_SIZE + CLIENT_RECT_VPAD);
 	window_rect.mBottom += PREVIEW_BORDER + button_height + CLIENT_RECT_VPAD + info_height + CLIENT_RECT_VPAD;
 
-	mClientRect.setLeftTopAndSize(window_rect.getCenterX() - (client_width / 2), window_rect.mTop, client_width, client_height);
-
+	mClientRect.setLeftTopAndSize(window_rect.getCenterX() - (client_width / 2), window_rect.mTop, client_width, client_height);	
+	
 	// Hide the aspect ratio label if the window is too narrow
 	// Assumes the label should be to the right of the dimensions
 	LLRect dim_rect, aspect_label_rect;

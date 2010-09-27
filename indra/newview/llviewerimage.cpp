@@ -62,10 +62,8 @@
 #include "llface.h"
 #include "llviewercamera.h"
 
-// <edit>
 #include "llimagemetadatareader.h"
 #include "lltexturecache.h"
-// </edit>
 ///////////////////////////////////////////////////////////////////////////////
 
 // statics
@@ -101,66 +99,55 @@ BOOL LLViewerImage::sFreezeImageScalingDown = FALSE ;
 //debug use
 S32 LLViewerImage::sLLViewerImageCount = 0 ;
 
-// <edit>
 class CommentCacheReadResponder : public LLTextureCache::ReadResponder
 {
 public:
-CommentCacheReadResponder(LLPointer<LLViewerImage> image)
-: mViewerImage(image)
-{
-	mID = image->getID();
-	mFormattedImage = new LLImageJ2C;
-	setImage(mFormattedImage);
-}
-void setData(U8* data, S32 datasize, S32 imagesize, S32 imageformat, BOOL imagelocal)
-{
-	if(imageformat==IMG_CODEC_TGA && mFormattedImage->getCodec()==IMG_CODEC_J2C)
+	CommentCacheReadResponder(LLPointer<LLViewerImage> image)
+		: mViewerImage(image)
 	{
-		//llwarns<<"Bleh its a tga not saving"<<llendl;
-		mFormattedImage=NULL;
-		mImageSize=0;
-		return;
+		mID = image->getID();
+	}
+	void setData(U8* data, S32 datasize, S32 imagesize, S32 imageformat, BOOL imagelocal)
+	{
+		if (mFormattedImage.notNull())
+		{
+			if(imageformat==IMG_CODEC_TGA && mFormattedImage->getCodec()==IMG_CODEC_J2C)
+			{
+				//llwarns<<"Bleh its a tga not saving"<<llendl;
+				mFormattedImage=NULL;
+				mImageSize=0;
+				return;
+			}
+			llassert_always(mFormattedImage->getCodec() == imageformat);
+			mFormattedImage->appendData(data, datasize);
+		}
+		else
+		{
+			mFormattedImage = LLImageFormatted::createFromType(imageformat);
+			mFormattedImage->setData(data,datasize);
+		}
+		mImageSize = imagesize;
+		mImageLocal = imagelocal;
 	}
 
-	if (mFormattedImage.notNull())
+	virtual void completed(bool success)
 	{
-		llassert_always(mFormattedImage->getCodec() == imageformat);
-		mFormattedImage->appendData(data, datasize);
-	}
-	else
-	{
-		mFormattedImage = LLImageFormatted::createFromType(imageformat);
-		mFormattedImage->setData(data,datasize);
-	}
-	mImageSize = imagesize;
-	mImageLocal = imagelocal;
-}
-
-virtual void completed(bool success)
-{
-	if(success && (mFormattedImage.notNull()) && mImageSize>0 && mViewerImage.notNull())
-	{
-
-		//llinfos << "SUCCESS getting texture "<<mID<< llendl;
-		mViewerImage->commentEncryptionType = LLImageMetaDataReader::ExtractEncodedComment(
+		if(success && (mFormattedImage.notNull()) && mImageSize>0 && mViewerImage.notNull())
+		{
+			//llinfos << "SUCCESS getting texture "<<mID<< llendl;
+			mViewerImage->decodedComment = LLImageMetaDataReader::ExtractKDUUploadComment(
 				mFormattedImage->getData(),
-				mFormattedImage->getDataSize(),
-				mViewerImage->decodedComment
-		);
-		
+				mFormattedImage->getDataSize());
+		}
+		if(mFormattedImage.notNull())
+			mFormattedImage->deleteData();		
+		mFormattedImage=NULL;
 	}
-	else
-	{
-		if(!success)
-			llwarns << "FAIL NOT SUCCESSFUL getting texture "<<mID<< llendl;
-	}
-}
 private:
 	LLPointer<LLImageFormatted> mFormattedImage;
 	LLPointer<LLViewerImage> mViewerImage;
 	LLUUID mID;
 };
-// </edit>
 
 // static
 void LLViewerImage::initClass()
@@ -589,7 +576,6 @@ BOOL LLViewerImage::createTexture(S32 usename/*= 0*/)
 		
 		U32 raw_width = mRawImage->getWidth() << mRawDiscardLevel;
 		U32 raw_height = mRawImage->getHeight() << mRawDiscardLevel;
-
 		if( raw_width > MAX_IMAGE_SIZE || raw_height > MAX_IMAGE_SIZE )
 		{
 			llinfos << "Width or height is greater than " << MAX_IMAGE_SIZE << ": (" << raw_width << "," << raw_height << ")" << llendl;
@@ -1086,8 +1072,7 @@ bool LLViewerImage::updateFetch()
 	S32 current_discard = getDiscardLevel();
 	S32 desired_discard = getDesiredDiscardLevel();
 	F32 decode_priority = getDecodePriority();
-	decode_priority = llmax(decode_priority, 0.0f);
-	decode_priority = llmin(decode_priority, maxDecodePriority());
+	decode_priority = llclamp(decode_priority, 0.0f, maxDecodePriority());
 	
 	if (mIsFetching)
 	{
@@ -1350,6 +1335,8 @@ BOOL LLViewerImage::forceFetch()
 
 void LLViewerImage::setIsMissingAsset()
 {
+	//spammy while IMG_DEFAULT is missing... GG LL
+	/*
 	if (mUrl.empty())
 	{
 		llwarns << mID << ": Marking image as missing" << llendl;
@@ -1358,6 +1345,7 @@ void LLViewerImage::setIsMissingAsset()
 	{
 		llwarns << mUrl << ": Marking image as missing" << llendl;
 	}
+	*/
 	if (mHasFetcher)
 	{
 		LLAppViewer::getTextureFetch()->deleteRequest(getID(), true);
@@ -1388,7 +1376,7 @@ void LLViewerImage::setLoadedCallback( loaded_callback_func loaded_callback,
 	if (mNeedsAux && mAuxRawImage.isNull() && getDiscardLevel() >= 0)
 	{
 		// We need aux data, but we've already loaded the image, and it didn't have any
-		llwarns << "No aux data available for callback for image:" << getID() << llendl;
+		//llwarns << "No aux data available for callback for image:" << getID() << llendl;
 	}
 }
 

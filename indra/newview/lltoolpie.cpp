@@ -69,6 +69,8 @@
 #include "llui.h"
 #include "llweb.h"
 
+#include "llviewerregion.h"
+
 extern void handle_buy(void*);
 
 extern BOOL gDebugClicks;
@@ -168,10 +170,8 @@ BOOL LLToolPie::pickAndShowMenu(BOOL always_show)
 		parent = object->getRootEdit();
 	}
 
-
 	BOOL touchable = (object && object->flagHandleTouch()) 
 					 || (parent && parent->flagHandleTouch());
-
 
 	// If it's a left-click, and we have a special action, do it.
 	if (useClickAction(always_show, mask, object, parent))
@@ -192,8 +192,7 @@ BOOL LLToolPie::pickAndShowMenu(BOOL always_show)
 			// touch behavior down below...
 			break;
 		case CLICK_ACTION_SIT:
-			if ((gAgent.getAvatarObject() != NULL) && (!gAgent.getAvatarObject()->mIsSitting) 
-				&& (!gSavedSettings.getBOOL("DisableClickSit"))) // agent not already sitting
+			if ((gAgent.getAvatarObject() != NULL) && (!gAgent.getAvatarObject()->mIsSitting) && !gSavedSettings.getBOOL("AscentBlockClickSit")) // agent not already sitting
 			{
 				handle_sit_or_stand();
 				// put focus in world when sitting on an object
@@ -302,7 +301,10 @@ BOOL LLToolPie::pickAndShowMenu(BOOL always_show)
 			gViewerWindow->hideCursor();
 			LLToolCamera::getInstance()->setMouseCapture(TRUE);
 			LLToolCamera::getInstance()->pickCallback(mPick);
-			gAgent.setFocusOnAvatar(TRUE, TRUE);
+			if(gSavedSettings.getBOOL("ResetFocusOnSelfClick"))
+			{
+				gAgent.setFocusOnAvatar(TRUE, TRUE);
+			}
 
 			return TRUE;
 		}
@@ -589,7 +591,6 @@ BOOL LLToolPie::handleHover(S32 x, S32 y, MASK mask)
 	*/
 
 	
-	gViewerWindow->getWindow()->setCursor(UI_CURSOR_ARROW);
 
 	LLViewerObject *object = NULL;
 	LLViewerObject *parent = NULL;
@@ -618,9 +619,16 @@ BOOL LLToolPie::handleHover(S32 x, S32 y, MASK mask)
 		{
 			gViewerWindow->getWindow()->setCursor(UI_CURSOR_HAND);
 		}
+		
+		else 
+		{
+			gViewerWindow->getWindow()->setCursor(UI_CURSOR_ARROW);
+		}
+
 	}
 	else
 	{
+		gViewerWindow->getWindow()->setCursor(UI_CURSOR_ARROW);
 		// We need to clear media hover flag
 		if (LLViewerMediaFocus::getInstance()->getMouseOverFlag())
 		{
@@ -676,8 +684,38 @@ BOOL LLToolPie::handleDoubleClick(S32 x, S32 y, MASK mask)
 	{
 		llinfos << "LLToolPie handleDoubleClick (becoming mouseDown)" << llendl;
 	}
+	/* code added to support double click teleports */
+	if (gSavedSettings.getBOOL("AscentDoubleClickTeleport"))
+	{
+		LLViewerObject* objp = mPick.getObject();
+//		LLViewerObject* parentp = objp ? objp->getRootEdit() : NULL;
+		bool is_in_world = mPick.mObjectID.notNull() && objp && !objp->isHUDAttachment();
+		bool is_land = mPick.mPickType == LLPickInfo::PICK_LAND;
+		bool pos_non_zero = !mPick.mPosGlobal.isExactlyZero();
+//		bool has_touch_handler = (objp && objp->flagHandleTouch()) || (parentp && parentp->flagHandleTouch());
+		bool is_click_action_attachment = objp && objp->flagHandleTouch() && objp->isAttachment() ;
+		if (pos_non_zero && (is_land || is_in_world) && !is_click_action_attachment) //&& !has_touch_handler && !has_click_action
+		{
+			LLVector3d pos = mPick.mPosGlobal;
 
-	if (gSavedSettings.getBOOL("DoubleClickAutoPilot") || gSavedSettings.getBOOL("DoubleClickTeleport"))
+			//handle_go_to();
+			//LLViewerRegion* regionp = gAgent.getRegion();
+			//bool isLocal = regionp->getHandle() == to_region_handle_global((F32)pos.mdV[VX], (F32)pos.mdV[VY]);
+			bool calc = gSavedSettings.getBOOL("AscentDoubleClickTeleportAvCalc");
+			bool vel = gSavedSettings.getBOOL("AscentVelocityDoubleClickTeleport");
+
+
+			LLVector3 offset = LLVector3(0.f,0.f,gSavedSettings.getF32("AscentDoubleClickZOffset"));
+			if(vel)offset += gAgent.getVelocity() * 0.25;
+			if(calc)offset += LLVector3(0.f,0.f,gAgent.getAvatarObject()->getPelvisToFoot());//LLVector3(0.f,0.f,gAgent.getAvatarObject()->getScale().mV[2] / 2);
+			pos.mdV[VX] += offset.mV[VX];
+			pos.mdV[VY] += offset.mV[VY];
+			pos.mdV[VZ] += offset.mV[VZ];
+			gAgent.teleportViaLocation(pos);
+			return TRUE;
+		}
+	}else
+	if (gSavedSettings.getBOOL("DoubleClickAutoPilot"))
 	{
 		if (mPick.mPickType == LLPickInfo::PICK_LAND
 			&& !mPick.mPosGlobal.isExactlyZero())
@@ -689,34 +727,13 @@ BOOL LLToolPie::handleDoubleClick(S32 x, S32 y, MASK mask)
 				 && !mPick.mPosGlobal.isExactlyZero())
 		{
 			// Hit an object
-			// Do not go to attachments...
-			if (!mPick.getObject()->isHUDAttachment())
-			{
-				// HACK: Call the last hit position the point we hit on the object
-				//gLastHitPosGlobal += gLastHitObjectOffset;
-				handle_go_to();
-				return TRUE;
-			}
-		}
-	} else
-	/* code added to support double click teleports */
-	if (gSavedSettings.getBOOL("DoubleClickTeleport"))
-	{
-		LLViewerObject* objp = mPick.getObject();
-		LLViewerObject* parentp = objp ? objp->getRootEdit() : NULL;
-		bool is_in_world = mPick.mObjectID.notNull() && objp && !objp->isHUDAttachment();
-		bool is_land = mPick.mPickType == LLPickInfo::PICK_LAND;
-		bool pos_non_zero = !mPick.mPosGlobal.isExactlyZero();
-		bool has_touch_handler = (objp && objp->flagHandleTouch()) || (parentp && parentp->flagHandleTouch());
-		bool has_click_action = final_click_action(objp);
-		if (pos_non_zero && (is_land || (is_in_world && !has_touch_handler && !has_click_action)))
-		{
-			LLVector3d pos = mPick.mPosGlobal;
-			pos.mdV[VZ] += gAgent.getAvatarObject()->getPelvisToFoot();
-			gAgent.teleportViaLocationLookAt(pos);
+			// HACK: Call the last hit position the point we hit on the object
+			//gLastHitPosGlobal += gLastHitObjectOffset;
+			handle_go_to();
 			return TRUE;
 		}
-	}
+	} 
+	
 
 	return FALSE;
 

@@ -1,6 +1,6 @@
 /** 
  * @file llurlrequest.h
- * @author Phoenix
+ * @author Ascent
  * @date 2005-04-21
  * @brief Declaration of url based requests on pipes.
  *

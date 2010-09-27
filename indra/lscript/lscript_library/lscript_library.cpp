@@ -42,7 +42,7 @@
 // When adding functions, they <b>MUST</b> be appended to the end of
 // the init() method. The init() associates the name with a number,
 // which is then serialized into the bytecode. Inserting a new
-// function in the middle will lead to many sim crashes. Phoenix 2006-04-10.
+// function in the middle will lead to many sim crashes. Ascent 2006-04-10.
 
 #include "linden_common.h"
 

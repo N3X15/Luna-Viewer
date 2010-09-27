@@ -674,8 +674,7 @@ void LLPanelClassified::processClassifiedInfoReply(LLMessageSystem *msg, void **
 			self->mAutoRenewCheck->set(auto_renew);
 		}
 
-		std::string datestr;
-		timeStructToFormattedString(now, gSavedSettings.getString("ShortDateFormat"), datestr);
+		std::string datestr = llformat("%02d/%02d/%d", now->tm_mon+1, now->tm_mday, now->tm_year+1900);
 		LLStringUtil::format_map_t string_args;
 		string_args["[DATE]"] = datestr;
 		string_args["[AMT]"] = llformat("%d", price_for_listing);

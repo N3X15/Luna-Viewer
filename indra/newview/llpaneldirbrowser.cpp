@@ -47,7 +47,6 @@
 
 // viewer project includes
 #include "llagent.h"
-#include "llappviewer.h"	// for gPacificDaylightTime
 #include "llbutton.h"
 #include "llcheckboxctrl.h"
 #include "llcombobox.h"
@@ -74,6 +73,8 @@
 #include "lluictrlfactory.h"
 #include "llnotify.h"
 
+#include "llfloateravatarinfo.h" // popout button
+
 #include <string>
 #include <sstream>
 #include <vector>
@@ -83,6 +84,8 @@
 //
 // Globals
 //
+
+LLUUID mPopoutID;
 
 LLMap< const LLUUID, LLPanelDirBrowser* > gDirBrowserInstances;
 
@@ -428,6 +431,7 @@ void LLPanelDirBrowser::showDetailPanel(S32 type, LLSD id)
 		{
 			mFloaterDirectory->mPanelAvatarp->setVisible(TRUE);
 			mFloaterDirectory->mPanelAvatarp->setAvatarID(id.asUUID(), LLStringUtil::null, ONLINE_STATUS_NO);
+			mPopoutID = id.asUUID();
 		}
 		break;
 	case EVENT_CODE:
@@ -529,6 +533,7 @@ void LLPanelDirBrowser::processDirPeopleReply(LLMessageSystem *msg, void**)
 
 	rows = self->showNextButton(rows);
 
+
 	for (S32 i = 0; i < rows; i++)
 	{			
 		msg->getStringFast(_PREHASH_QueryReplies,_PREHASH_FirstName, first_name, i);
@@ -553,6 +558,7 @@ void LLPanelDirBrowser::processDirPeopleReply(LLMessageSystem *msg, void**)
 		// so just use the 'offline' icon as the generic 'person' icon
 		row["columns"][0]["column"] = "icon";
 		row["columns"][0]["type"] = "icon";
+		row["columns"][0]["color"] = gColors.getColor("DefaultListIcon").getValue();
 		row["columns"][0]["value"] = "icon_avatar_offline.tga";
 
 		content["type"] = AVATAR_CODE;
@@ -623,6 +629,7 @@ void LLPanelDirBrowser::processDirPlacesReply(LLMessageSystem* msg, void**)
 	self->mResultsReceived += count;
 
 	count = self->showNextButton(count);
+
 
 	for (S32 i = 0; i < count ; i++)
 	{
@@ -710,6 +717,7 @@ void LLPanelDirBrowser::processDirEventsReply(LLMessageSystem* msg, void**)
 
 	rows = self->showNextButton(rows);
 
+
 	for (S32 i = 0; i < rows; i++)
 	{
 		U32 event_id;
@@ -767,28 +775,26 @@ void LLPanelDirBrowser::processDirEventsReply(LLMessageSystem* msg, void**)
 			row["columns"][0]["column"] = "icon";
 			row["columns"][0]["type"] = "icon";
 			row["columns"][0]["value"] = "icon_event_adult.tga";
+			row["columns"][0]["color"] = gColors.getColor("DefaultListIcon").getValue();
 		}
 		else if (event_flags == EVENT_FLAG_MATURE)
 		{
 			row["columns"][0]["column"] = "icon";
 			row["columns"][0]["type"] = "icon";
+			row["columns"][0]["color"] = gColors.getColor("DefaultListIcon").getValue();
 			row["columns"][0]["value"] = "icon_event_mature.tga";
 		}
 		else
 		{
 			row["columns"][0]["column"] = "icon";
 			row["columns"][0]["type"] = "icon";
+			row["columns"][0]["color"] = gColors.getColor("DefaultListIcon").getValue();
 			row["columns"][0]["value"] = "icon_event.tga";
 		}
 
 		row["columns"][1]["column"] = "name";
 		row["columns"][1]["value"] = name;
 		row["columns"][1]["font"] = "SANSSERIF";
-
-		struct tm* t = utc_to_pacific_time(unix_time, gPacificDaylightTime);
-		std::string format = "%m-%d ";
-		format += gSavedSettings.getString("ShortTimeFormat");
-		timeStructToFormattedString(t, format, date);
 
 		row["columns"][2]["column"] = "date";
 		row["columns"][2]["value"] = date;
@@ -849,6 +855,7 @@ void LLPanelDirBrowser::processDirGroupsReply(LLMessageSystem* msg, void**)
 
 	rows = self->showNextButton(rows);
 
+
 	for (i = 0; i < rows; i++)
 	{
 		msg->getUUIDFast(_PREHASH_QueryReplies, _PREHASH_GroupID,		group_id, i );
@@ -871,6 +878,7 @@ void LLPanelDirBrowser::processDirGroupsReply(LLMessageSystem* msg, void**)
 		LLUUID image_id;
 		row["columns"][0]["column"] = "icon";
 		row["columns"][0]["type"] = "icon";
+		row["columns"][0]["color"] = gColors.getColor("DefaultListIcon").getValue();
 		row["columns"][0]["value"] = "icon_group.tga";
 
 		row["columns"][1]["column"] = "name";
@@ -1023,6 +1031,7 @@ void LLPanelDirBrowser::processDirLandReply(LLMessageSystem *msg, void**)
 	S32 i;
 	S32 count = msg->getNumberOfBlocks("QueryReplies");
 	self->mResultsReceived += count;
+
 	
 	S32 non_auction_count = 0;
 	for (i = 0; i < count; i++)
@@ -1130,7 +1139,9 @@ void LLPanelDirBrowser::addClassified(LLCtrlListInterface *list, const LLUUID& p
 
 	row["columns"][0]["column"] = "icon";
 	row["columns"][0]["type"] = "icon";
+	row["columns"][0]["color"] = gColors.getColor("DefaultListIcon").getValue();
 	row["columns"][0]["value"] = "icon_top_pick.tga";
+
 
 	row["columns"][1]["column"] = "name";
 	row["columns"][1]["value"] = name;
@@ -1154,6 +1165,7 @@ LLSD LLPanelDirBrowser::createLandSale(const LLUUID& parcel_id, BOOL is_auction,
 	{
 		row["columns"][0]["column"] = "icon";
 		row["columns"][0]["type"] = "icon";
+		row["columns"][0]["color"] = gColors.getColor("DefaultListIcon").getValue();
 		row["columns"][0]["value"] = "icon_auction.tga";
 
 		*type = AUCTION_CODE;
@@ -1162,6 +1174,7 @@ LLSD LLPanelDirBrowser::createLandSale(const LLUUID& parcel_id, BOOL is_auction,
 	{
 		row["columns"][0]["column"] = "icon";
 		row["columns"][0]["type"] = "icon";
+		row["columns"][0]["color"] = gColors.getColor("DefaultListIcon").getValue();
 		row["columns"][0]["value"] = "icon_for_sale.tga";
 
 		*type = FOR_SALE_CODE;
@@ -1170,10 +1183,12 @@ LLSD LLPanelDirBrowser::createLandSale(const LLUUID& parcel_id, BOOL is_auction,
 	{
 		row["columns"][0]["column"] = "icon";
 		row["columns"][0]["type"] = "icon";
+		row["columns"][0]["color"] = gColors.getColor("DefaultListIcon").getValue();
 		row["columns"][0]["value"] = "icon_place.tga";
 
 		*type = PLACE_CODE;
 	}
+
 
 	row["columns"][2]["column"] = "name";
 	row["columns"][2]["value"] = name;
@@ -1242,10 +1257,22 @@ void LLPanelDirBrowser::onClickSearchCore(void* userdata)
 	LLPanelDirBrowser* self = (LLPanelDirBrowser*)userdata;
 	if (!self) return;
 
+	mPopoutID = LLUUID::null;
 	self->resetSearchStart();
 	self->performQuery();
 
 	LLFloaterDirectory::sOldSearchCount++;
+}
+
+void LLPanelDirBrowser::onClickPopout(void* userdata)
+{
+	LLPanelDirBrowser* self = (LLPanelDirBrowser*)userdata;
+	if (!self) return;
+	if (mPopoutID.notNull())
+	{
+		LLFloaterAvatarInfo::showFromDirectory(mPopoutID);
+	}
+//	LLFloaterDirectory::sOldSearchCount++;
 }
 
 

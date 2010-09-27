@@ -107,7 +107,7 @@ public:
 // LLFloaterLand
 //---------------------------------------------------------------------------
 
-void send_parcel_select_objects(S32 parcel_local_id, U32 return_type,
+void send_parcel_select_objects(S32 parcel_local_id, S32 return_type,
 								uuid_list_t* return_ids = NULL)
 {
 	LLMessageSystem *msg = gMessageSystem;
@@ -125,7 +125,7 @@ void send_parcel_select_objects(S32 parcel_local_id, U32 return_type,
 	msg->addUUIDFast(_PREHASH_SessionID,gAgent.getSessionID());
 	msg->nextBlockFast(_PREHASH_ParcelData);
 	msg->addS32Fast(_PREHASH_LocalID, parcel_local_id);
-	msg->addU32Fast(_PREHASH_ReturnType, return_type);
+	msg->addS32Fast(_PREHASH_ReturnType, return_type);
 
 	// Throw all return ids into the packet.
 	// TODO: Check for too many ids.
@@ -169,6 +169,16 @@ void LLFloaterLand::refreshAll()
 	LLFloaterLand::getInstance()->refresh();
 }
 
+BOOL LLFloaterLand::isOpen()
+{
+	LLFloaterLand* floater = LLFloaterLand::getInstance();
+	if (floater)
+	{
+		return floater->getVisible();
+	}
+	return FALSE;
+}
+
 void LLFloaterLand::onOpen()
 {
 	// Done automatically when the selected parcel's properties arrive
@@ -186,6 +196,7 @@ void LLFloaterLand::onOpen()
 // virtual
 void LLFloaterLand::onClose(bool app_quitting)
 {
+	LLViewerParcelMgr::getInstance()->deselectLand();
 	LLViewerParcelMgr::getInstance()->removeObserver( sObserver );
 	delete sObserver;
 	sObserver = NULL;
@@ -285,6 +296,7 @@ void* LLFloaterLand::createPanelLandOptions(void* data)
 	return self->mPanelOptions;
 }
 
+
 // static
 void* LLFloaterLand::createPanelLandAudio(void* data)
 {
@@ -354,7 +366,7 @@ BOOL LLPanelLandGeneral::postBuild()
 	mBtnSetGroup->setClickedCallback(onClickSetGroup, this);
 
 	getChild<LLButton>("group_profile")->setClickedCallback(onClickInfoGroup, this);
-
+	
 	mCheckDeedToGroup = getChild<LLCheckBoxCtrl>( "check deed");
 	childSetCommitCallback("check deed", onCommitAny, this);
 
@@ -852,12 +864,6 @@ void LLPanelLandGeneral::onClickBuyLand(void* data)
 	BOOL* for_group = (BOOL*)data;
 	LLViewerParcelMgr::getInstance()->startBuyLand(*for_group);
 }
-
-
-
-
-
-
 
 BOOL LLPanelLandGeneral::enableDeedToGroup(void* data)
 {
@@ -1494,7 +1500,7 @@ void LLPanelLandObjects::processParcelObjectOwnersReply(LLMessageSystem *msg, vo
 	std::vector<LLUUID> avatar_ids;
 	std::vector<LLVector3d> positions;
 	LLWorld::instance().getAvatars(&avatar_ids, &positions, mypos, F32_MAX);
-	
+
 	for(S32 i = 0; i < rows; ++i)
 	{
 		msg->getUUIDFast(_PREHASH_Data, _PREHASH_OwnerID,		owner_id,		i);
@@ -2930,3 +2936,42 @@ void LLPanelLandCovenant::updateEstateOwnerName(const std::string& name)
 		if (editor) editor->setText(name);
 	}
 }
+
+// [RLVa:KB] - Checked: 2009-07-04 (RLVa-1.0.0a)
+void LLFloaterLand::open()
+{
+	// We'll allow "About Land" as long as you have the ability to return prims (through ownership or through group powers)
+    // FUCK RLV
+	//if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC))
+	//{
+		LLParcelSelection* pParcelSel = LLViewerParcelMgr::getInstance()->getFloatingParcelSelection();
+		if ( (!pParcelSel) || (pParcelSel->hasOthersSelected()) )
+			return;
+		LLParcel* pParcel = pParcelSel->getParcel();
+		if (!pParcel)
+			return;
+
+		// Ideally we could just use LLViewerParcelMgr::isParcelOwnedByAgent(), but that has that sneaky exemption
+		// for fake god like (aka View Admin Options)
+		const LLUUID& idOwner = pParcel->getOwnerID();
+		if ( (idOwner != gAgent.getID()) )
+		{
+			// *sighs* LLAgent::hasPowerInGroup() has it too so copy/paste from there
+			S32 count = gAgent.mGroups.count(); bool fShow = false;
+			for (S32 i = 0; i < count; ++i)
+			{
+				if (gAgent.mGroups.get(i).mID == idOwner)
+				{
+					fShow |= ((gAgent.mGroups.get(i).mPowers & GP_LAND_RETURN) > 0);
+					break;
+				}
+			}
+
+			if (!fShow)
+				return;
+		}
+	//}
+
+	LLFloater::open();
+}
+// [/RLVa:KB]

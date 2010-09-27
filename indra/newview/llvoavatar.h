@@ -38,7 +38,6 @@
 #include <deque>
 #include <string>
 #include <vector>
-
 #include "imageids.h"			// IMG_INVISIBLE
 #include "llchat.h"
 #include "lldrawpoolalpha.h"
@@ -49,8 +48,8 @@
 #include "llrendertarget.h"
 #include "llwearable.h"
 #include "llvoavatardefines.h"
-#include "emeraldboobutils.h"
 
+#include "phoenixboobutils.h"
 
 extern const LLUUID ANIM_AGENT_BODY_NOISE;
 extern const LLUUID ANIM_AGENT_BREATHE_ROT;
@@ -67,14 +66,11 @@ class LLTexLayerSet;
 class LLVoiceVisualizer;
 class LLHUDText;
 class LLHUDEffectSpiral;
-
 class LLTexGlobalColor;
 
 class LLVOAvatarBoneInfo;
 class LLVOAvatarSkeletonInfo;
 class LLVOAvatarXmlInfo;
-
-
 
 //------------------------------------------------------------------------
 // LLVOAvatar
@@ -219,16 +215,11 @@ public:
 	static void		onCustomizeStart();
 	static void		onCustomizeEnd();
 
-
-
-
 	LLFrameTimer 	mIdleTimer;
-	void			undeform();
 
 	std::string		getIdleTime();
 
-
-
+public:
 	static void		dumpTotalLocalTextureByteCount();
 protected:
 	void			getLocalTextureByteCount( S32* gl_byte_count );
@@ -259,8 +250,9 @@ public:
 
 	void			addChat(const LLChat& chat);
 	void			clearChat();
-	void			startTyping() { mTyping = TRUE; mTypingTimer.reset(); mIdleTimer.reset();}
+	void			startTyping() { mTyping = TRUE; mTypingTimer.reset(); mIdleTimer.reset(); }
 	void			stopTyping() { mTyping = FALSE; }
+	bool			isTyping() { return mTyping; }
 
 	// Returns "FirstName LastName"
 	std::string		getFullname() const;
@@ -289,8 +281,8 @@ public:
 	void onFirstTEMessageReceived();
 	void updateSexDependentLayerSets( BOOL set_by_user );
 	void dirtyMesh(); // Dirty the avatar mesh
+	LLPolyMesh* getMesh( LLPolyMeshSharedData *shared_data );
 	void hideSkirt();
-
 
 	virtual void setParent(LLViewerObject* parent);
 	virtual void addChild(LLViewerObject *childp);
@@ -309,6 +301,9 @@ public:
 	BOOL isWearingUnsupportedAttachment( const LLUUID& inv_item_id );
 	// </edit>
 	LLViewerObject* getWornAttachment( const LLUUID& inv_item_id );
+// [RLVa:KB] - Checked: 2009-12-18 (RLVa-1.1.0i) | Added: RLVa-1.1.0i
+	LLViewerJointAttachment* getWornAttachmentPoint(const LLUUID& inv_item_id);
+// [/RLVa:KB]
 	const std::string getAttachedPointName(const LLUUID& inv_item_id);
 
 	static LLVOAvatar* findAvatarFromAttachment( LLViewerObject* obj );
@@ -365,7 +360,6 @@ public:
 
 	BOOL			isWearingWearableType( EWearableType type );
 	void			wearableUpdated(EWearableType type, BOOL upload_result = TRUE);
-
 	//--------------------------------------------------------------------
 	// texture compositing
 	//--------------------------------------------------------------------
@@ -383,7 +377,7 @@ public:
 	//--------------------------------------------------------------------
 public:
 	BOOL            isFullyLoaded();
-	//BOOL			isReallyFullyLoaded();
+	BOOL			isReallyFullyLoaded();
 	BOOL            updateIsFullyLoaded();
 private:
 	BOOL            mFullyLoaded;
@@ -528,15 +522,12 @@ private:
 	// boob bounce stuff
 	//--------------------------------------------------------------------
 
-private:
+public:
 	bool			mFirstSetActualBoobGravRan;
-	//bool			mFirstSetActualButtGravRan;
-	//bool			mFirstSetActualFatGravRan;
 	LLFrameTimer	mBoobBounceTimer;
-	EmeraldAvatarLocalBoobConfig mLocalBoobConfig;
-	EmeraldBoobState mBoobState;
-	//EmeraldBoobState mButtState;
-	//EmeraldBoobState mFatState;
+	AscentAvatarLocalBoobConfig mLocalBoobConfig;
+	AscentBoobState mBoobState;
+	static AscentGlobalBoobConfig sBoobConfig;
 
 public:
 	//boob
@@ -550,31 +541,6 @@ public:
 			mFirstSetActualBoobGravRan = true;
 		}
 	}
-
-	//butt
-	/*F32				getActualButtGrav() { return mLocalBoobConfig.actualButtGrav; }
-	void			setActualButtGrav(F32 grav)
-	{
-		mLocalBoobConfig.actualButtGrav = grav;
-		if(!mFirstSetActualButtGravRan)
-		{
-			mButtState.boobGrav = grav;
-			mFirstSetActualButtGravRan = true;
-		}
-	}
-	//fat
-	F32				getActualFatGrav() { return mLocalBoobConfig.actualFatGrav; }
-	void			setActualFatGrav(F32 grav)
-	{
-		mLocalBoobConfig.actualFatGrav = grav;
-		if(!mFirstSetActualFatGravRan)
-		{
-			mFatState.boobGrav = grav;
-			mFirstSetActualFatGravRan = true;
-		}
-	}
-	*/
-	static EmeraldGlobalBoobConfig sBoobConfig;
 
 	//--------------------------------------------------------------------
 	// Attachments
@@ -607,7 +573,6 @@ public:
 	static F32		sLODFactor; // user-settable LOD factor
 	static BOOL		sJointDebug; // output total number of joints being touched for each avatar
 	static BOOL     sDebugAvatarRotation;
-	static F32		sAvMorphTime;
 
 	static S32 sNumVisibleAvatars; // Number of instances of this class
 	
@@ -621,20 +586,7 @@ public:
 	LLViewerJoint mRoot; // avatar skeleton
 	BOOL mIsSitting; // sitting state
 
-	static bool updateClientTags();
 	static bool loadClientTags();
-	std::string 	mClientTag; //Zwagoth's new client identification system. -HgB
-	LLColor4 		mClientColor; //Zwagoth's new client identification system. -HgB
-
-
-
-
-
-
-
-
-
-
 	//--------------------------------------------------------------------
 	// Private member variables.
 	//--------------------------------------------------------------------
@@ -690,21 +642,16 @@ private:
 	LLVoiceVisualizer*  mVoiceVisualizer;
 	int					mCurrentGesticulationLevel;
 	
-
-
-
-
 	// Animation timer
 	LLTimer		mAnimTimer;
 	F32			mTimeLast;	
 
 	static LLSD sClientResolutionList;
 
-	bool isUnknownClient();
 	static void resolveClient(LLColor4& avatar_name_color, std::string& client, LLVOAvatar* avatar);
 	friend class LLFloaterAvatarList;
 
-
+protected:
 	LLPointer<LLHUDEffectSpiral> mBeam;
 	LLFrameTimer mBeamTimer;
 
@@ -791,18 +738,6 @@ protected:
 	S32				getLocalDiscardLevel(LLVOAvatarDefines::ETextureIndex index);
 public:
 	static void updateFreezeCounter(S32 counter = 0 );
-// <edit>
-
-public:
-	//bool mNametagSaysIdle;
-	//bool mIdleForever;
-	//LLFrameTimer mIdleTimer;
-	//U32 mIdleMinutes;
-	LLUUID mFocusObject;
-	LLVector3d mFocusVector;
-	//void resetIdleTime();
-// </edit>
-
 private:
 	static S32 sFreezeCounter;
 	
@@ -818,7 +753,7 @@ private:
 	// Per-avatar information about texture data.
 	// To-do: Move this to private implementation class
 	//-----------------------------------------------------------------------------------------------
-
+private:
 	struct BakedTextureData
 	{
 		LLUUID			mLastTextureIndex;

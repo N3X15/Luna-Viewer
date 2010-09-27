@@ -66,8 +66,9 @@ LLPanelAudioVolume::~LLPanelAudioVolume ()
 //
 void LLPanelAudioVolume::draw()
 {
-	BOOL mute = gSavedSettings.getBOOL("MuteAudio");
-	bool enable = mute ? false : true;
+
+	static BOOL* sMuteAudio = rebind_llcontrol<BOOL>("MuteAudio", &gSavedSettings, true);
+	bool enable = (*sMuteAudio) ? false : true;
 	childSetEnabled("Music Volume", enable);
 	childSetEnabled("Media Volume", enable);
 	childSetEnabled("Voice Volume", enable);
@@ -90,6 +91,7 @@ void LLPanelAudioVolume::onCommitVolumeChange(LLUICtrl* ctrl, void* user_data)
 {
 	// unmute various audio sources when user changes volume
 	std::string control_name = ctrl->getControlName();
+
 	if (control_name == "AudioLevelMaster")
 	{
 		gSavedSettings.setBOOL("MuteAudio", FALSE);

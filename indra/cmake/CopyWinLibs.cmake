@@ -23,13 +23,15 @@ copy_if_different(
 set(all_targets ${all_targets} ${out_targets})
 
 
+
 set(debug_src_dir "${CMAKE_SOURCE_DIR}/../libraries/i686-win32/lib/debug")
 set(debug_files
-    openjpegd.dll
     lua5.1.dll    
     libapr-1.dll
     libaprutil-1.dll
     libapriconv-1.dll
+    lgggrowl++.dll
+    lgggrowl.dll
     )
 
 copy_if_different(
@@ -216,6 +218,8 @@ set(release_files
     libapr-1.dll
     libaprutil-1.dll
     libapriconv-1.dll
+    lgggrowl++.dll
+    lgggrowl.dll
     )
     
 copy_if_different(
@@ -233,6 +237,7 @@ copy_if_different(
     ${vivox_files}
     )
 set(all_targets ${all_targets} ${out_targets})
+
 
 copy_if_different(
     ${release_src_dir} 

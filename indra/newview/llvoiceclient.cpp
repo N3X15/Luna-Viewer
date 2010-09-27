@@ -1221,7 +1221,7 @@ void LLVoiceClient::terminate()
 
 void LLVoiceClient::updateSettings()
 {
-	setVoiceEnabled(gSavedSettings.getBOOL("EnableVoiceChat"));
+	setVoiceEnabled(gSavedSettings.getBOOL("EnableVoiceChat") && !gSavedSettings.getBOOL("CmdLineDisableVoice"));
 	setUsePTT(gSavedSettings.getBOOL("PTTCurrentlyEnabled"));
 	std::string keyString = gSavedSettings.getString("PushToTalkButton");
 	setPTTKey(keyString);
@@ -2572,7 +2572,7 @@ void LLVoiceClient::sessionCreateSendMessage(sessionState *session, bool startAu
 	if(!session->mHash.empty())
 	{
 		stream
-			<< "<llfloat>" << LLURI::escape(session->mHash, allowed_chars) << "</Password>"
+			<< "<Password>" << LLURI::escape(session->mHash, allowed_chars) << "</Password>"
 			<< "<PasswordHashAlgorithm>SHA1UserName</PasswordHashAlgorithm>";
 	}
 	
@@ -3561,10 +3561,11 @@ void LLVoiceClient::sendFriendsListUpdates()
 	{
 		mFriendsListDirty = false;
 		
-		if(0)
+		if(gSavedSettings.getBOOL("AscentLargeFriendslistNoSLim"))
 		{
 			// FOR TESTING ONLY -- clear all buddy list, block list, and auto-accept list entries.
 			clearAllLists();
+			mBuddyListMap.clear();
 			return;
 		}
 		
@@ -3620,7 +3621,7 @@ void LLVoiceClient::sendFriendsListUpdates()
 							<< "<Request requestId=\"" << mCommandCookie++ << "\" action=\"Account.BuddySet.1\">"
 								<< "<AccountHandle>" << mAccountHandle << "</AccountHandle>"
 								<< "<BuddyURI>" << buddy->mURI << "</BuddyURI>"
-								<< "<DisplayName>" << buddy->mDisplayName << "</DisplayName>" 
+								<< "<DisplayName>" << buddy->mDisplayName << "</DisplayName>"
 								<< "<BuddyData></BuddyData>"	// Without this, SLVoice doesn't seem to parse the command.
 								<< "<GroupID>0</GroupID>"
 							<< "</Request>\n\n\n";	
@@ -5867,7 +5868,7 @@ void LLVoiceClient::setVoiceEnabled(bool enabled)
 
 bool LLVoiceClient::voiceEnabled()
 {
-	return gSavedSettings.getBOOL("EnableVoiceChat") && !gSavedSettings.getBOOL("CmdLineDisableVoice");
+	return LLVoiceClient::getInstance()->mVoiceEnabled;//gSavedSettings.getBOOL("EnableVoiceChat") && !gSavedSettings.getBOOL("CmdLineDisableVoice");
 }
 
 void LLVoiceClient::setLipSyncEnabled(BOOL enabled)

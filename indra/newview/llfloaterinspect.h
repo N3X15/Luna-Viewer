@@ -53,6 +53,8 @@ public:
 	static LLUUID getSelectedUUID();
 	virtual void draw();
 	virtual void refresh();
+	virtual void updateDimensions();
+	static void drawTextureEntry(const LLViewerImage* img, const U8 i);
 	static BOOL isVisible();
 	virtual void onFocusReceived();
 	static void onClickCreatorProfile(void* ctrl);
@@ -73,6 +75,9 @@ protected:
 private:
 	// static data
 	static LLFloaterInspect* sInstance;
+	static void onClickBlacklist(void *user_data);
+	static void onClickProfile(void *user_data);
+	static void callbackLoadAvatarName(const LLUUID& id, const std::string& first, const std::string& last, BOOL is_group, void* data);
 
 	LLSafeHandle<LLObjectSelection> mObjectSelection;
 	// <edit>

@@ -51,6 +51,7 @@ class LLPanelAudioPrefs;
 class LLPanelDebug;
 class LLPanelNetwork;
 class LLPanelWeb;
+class LLPanelAscent;
 class LLMessageSystem;
 class LLPrefsChat;
 class LLPrefsVoice;
@@ -75,12 +76,16 @@ public:
 
 	LLTabContainer* getTabContainer() { return mTabContainer; }
 
+	void selectLastTab();
+
 	void setPersonalInfo(const std::string& visibility, bool im_via_email, const std::string&  email);
 
 	static void onTabChanged(void* user_data, bool from_click);
 	
 	// refresh all the graphics preferences menus
 	void refreshEnabledGraphics();
+	
+	void refreshSkinPanel();
 
 private:
 	LLTabContainer	*mTabContainer;
@@ -98,6 +103,7 @@ private:
 	LLPanelWeb				*mWebPanel;
 	LLPanelMsgs				*mMsgPanel;
 	LLPanelLCD				*mLCDPanel;
+	LLPanelAscent			*mAscentPanel;
 	LLPrefsAscentSys		*mPrefsAscentSys;
 	LLPrefsAscentVan		*mPrefsAscentVan;
 };
@@ -114,11 +120,20 @@ public:
 	virtual BOOL postBuild();
 	static void show(void*);
 
+	static void overrideLastTab(S32 tabIndex);
+
 	// static data update, called from message handler
 	static void updateUserInfo(const std::string& visibility, bool im_via_email, const std::string& email);
 
 	// refresh all the graphics preferences menus
 	static void refreshEnabledGraphics();
+	
+	// refresh the skins
+	static void refreshSkinPanel();
+	
+	// *HACK: Close without doing anything.
+	// This is used by the "reset all settings" button.
+	static void closeWithoutSaving();
 
 protected:
 	LLPreferenceCore		*mPreferenceCore;
@@ -129,6 +144,7 @@ protected:
 	LLButton	*mOKBtn;
 	LLButton	*mCancelBtn;
 	LLButton	*mApplyBtn;
+	bool		mExitWithoutSaving;
 
 	static void		onClickAbout(void*);
 	static void		onBtnOK(void*);

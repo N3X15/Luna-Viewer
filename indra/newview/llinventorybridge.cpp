@@ -53,7 +53,7 @@
 #include "llfloaterchat.h"
 #include "llfloatercustomize.h"
 #include "llfloaterproperties.h"
-
+#include "llfloatertools.h"
 #include "llfloaterworldmap.h"
 #include "llfocusmgr.h"
 #include "llfolderview.h"
@@ -73,14 +73,14 @@
 #include "llresmgr.h"
 #include "llscrollcontainer.h"
 #include "llimview.h"
-
+#include "lltoolcomp.h"
 #include "lltooldraganddrop.h"
-
+#include "lltoolmgr.h"
 #include "llviewerimagelist.h"
 #include "llviewerinventory.h"
-
+#include "llviewerjoystick.h"
 #include "llviewerobjectlist.h"
-
+#include "llviewerparcelmgr.h"
 #include "llviewerwindow.h"
 #include "llvoavatar.h"
 #include "llwearable.h"
@@ -126,6 +126,8 @@ void remove_inventory_category_from_avatar(LLInventoryCategory* category);
 void remove_inventory_category_from_avatar_step2( BOOL proceed, void* userdata);
 bool move_task_inventory_callback(const LLSD& notification, const LLSD& response, LLMoveInv*);
 bool confirm_replace_attachment_rez(const LLSD& notification, const LLSD& response);
+void wear_attachments_on_avatar(const std::set<LLUUID>& item_ids, BOOL remove);
+void wear_attachments_on_avatar(const LLInventoryModel::item_array_t& items, BOOL remove);
 // <edit>
 void gotImageForSaveItemAs(BOOL success, 
 											LLViewerImage *src_vi,
@@ -555,20 +557,18 @@ void LLInvFVBridge::getClipboardEntries(bool show_asset_id, std::vector<std::str
 	if (show_asset_id)
 	{
 		items.push_back(std::string("Copy Asset UUID"));
-
 		if ( (! ( isItemPermissive() || gAgent.isGodlike() ) ) 
 			  || (flags & FIRST_SELECTED_ITEM) == 0)
 		{
 			disabled_items.push_back(std::string("Copy Asset UUID"));
 		}
+
+		items.push_back(std::string("Export"));
+		if ( (! ( isItemPermissive() || gAgent.isGodlike() ) ))
+		{
+			disabled_items.push_back(std::string("Export"));
+		}
 	}
-	
-
-
-
-
-
-
 
 	items.push_back(std::string("Copy Separator"));
 
@@ -617,20 +617,6 @@ void LLInvFVBridge::buildContextMenu(LLMenuGL& menu, U32 flags)
 	}
 	hideContextEntries(menu, items, disabled_items);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // *TODO: remove this
 BOOL LLInvFVBridge::startDrag(EDragAndDropType* type, LLUUID* id) const
@@ -901,7 +887,6 @@ LLInvFVBridge* LLInvFVBridge::createBridge(LLAssetType::EType asset_type,
 
 void LLItemBridge::performAction(LLFolderView* folder, LLInventoryModel* model, std::string action)
 {
-
 	if ("open" == action)
 	{
 		openItem();
@@ -1247,6 +1232,19 @@ BOOL LLItemBridge::isItemCopyable() const
 	LLViewerInventoryItem* item = getItem();
 	if (item)
 	{
+/*
+		// can't copy worn objects. DEV-15183
+		LLVOAvatar *avatarp = gAgent.getAvatarObject();
+		if( !avatarp )
+		{
+			return FALSE;
+		}
+
+		if( avatarp->isWearingAttachment( mUUID ) )
+		{
+			return FALSE;
+		}
+*/			
 		return (item->getPermissions().allowCopyBy(gAgent.getID()));
 	}
 	return FALSE;
@@ -2287,11 +2285,11 @@ void LLFolderBridge::buildContextMenu(LLMenuGL& menu, U32 flags)
 	LLUUID trash_id = model->findCategoryUUIDForType(LLAssetType::AT_TRASH);
 	LLUUID lost_and_found_id = model->findCategoryUUIDForType(LLAssetType::AT_LOST_AND_FOUND);
 
-
-
-
-
-
+// [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g)
+	// Fixes LL bug
+	mItems.clear();
+	mDisabledItems.clear();
+// [/RLVa:KB]
 
 	if (lost_and_found_id == mUUID)
 	  {
@@ -2397,7 +2395,6 @@ void LLFolderBridge::buildContextMenu(LLMenuGL& menu, U32 flags)
 	{
 		mItems.push_back(std::string("--no options--"));
 		mDisabledItems.push_back(std::string("--no options--"));
-
 	}
 	hideContextEntries(menu, mItems, mDisabledItems);
 }
@@ -3372,6 +3369,12 @@ LLUIImagePtr LLNotecardBridge::getIcon() const
 	return get_item_icon(LLAssetType::AT_NOTECARD, LLInventoryType::IT_NOTECARD, 0, FALSE);
 }
 
+void LLNotecardBridge::performAction(LLFolderView* folder, LLInventoryModel* model, std::string action)
+{
+	LLItemBridge::performAction(folder, model, action);
+}
+
+
 void open_notecard(LLViewerInventoryItem* inv_item,
 				   const std::string& title,
 				   const LLUUID& object_id,
@@ -3770,92 +3773,90 @@ void LLObjectBridge::performAction(LLFolderView* folder, LLInventoryModel* model
 			llwarns << "object not found - ignoring" << llendl;
 		}
 	}
+	else if ("edit" == action)
+	{
+		LLVOAvatar* avatarp = gAgent.getAvatarObject();
+		if (!avatarp)
+			return;
+		LLViewerObject* objectp = avatarp->getWornAttachment(mUUID);
+		if (!objectp)
+			return;
 
+		// [Selective copy/paste from LLObjectEdit::handleEvent()]
+		LLViewerParcelMgr::getInstance()->deselectLand();
+		LLSelectMgr::getInstance()->deselectAll();
 
+		if (gAgent.getFocusOnAvatar() && !LLToolMgr::getInstance()->inEdit())
+		{
+			if (objectp->isHUDAttachment() || !gSavedSettings.getBOOL("EditCameraMovement"))
+			{
+				// always freeze camera in space, even if camera doesn't move
+				// so, for example, follow cam scripts can't affect you when in build mode
+				gAgent.setFocusGlobal(gAgent.calcFocusPositionTargetGlobal(), LLUUID::null);
+				gAgent.setFocusOnAvatar(FALSE, ANIMATE);
+			}
+			else
+			{
+				gAgent.setFocusOnAvatar(FALSE, ANIMATE);
 
+				// zoom in on object center instead of where we clicked, as we need to see the manipulator handles
+				gAgent.setFocusGlobal(objectp->getPositionGlobal(), objectp->getID());
+				gAgent.cameraZoomIn(0.666f);
+				gAgent.cameraOrbitOver( 30.f * DEG_TO_RAD );
+				gViewerWindow->moveCursorToCenter();
+			}
+		}
 
+		gFloaterTools->open();
+	
+		LLToolMgr::getInstance()->setCurrentToolset(gBasicToolset);
+		gFloaterTools->setEditTool( LLToolCompTranslate::getInstance() );
 
+		LLViewerJoystick::getInstance()->moveObjects(true);
+		LLViewerJoystick::getInstance()->setNeedsReset(true);
 
+		LLSelectMgr::getInstance()->selectObjectAndFamily(objectp);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+		// Could be first use
+		LLFirstUse::useBuild();
+	}
 	else LLItemBridge::performAction(folder, model, action);
 }
 
 void LLObjectBridge::openItem()
 {
-	LLVOAvatar* avatar = gAgent.getAvatarObject();
-	if (!avatar)
+	/* Disabled -- this preview isn't useful. JC */
+	// CP: actually, this code is required - made changes to match LLAnimationBridge::openItem() idiom
+	// The properties preview is useful, converting to show object properties. - DaveP
+	// MOYMOD ADD
+	LLUUID object_id = mUUID;
+	LLViewerInventoryItem* item;
+	item = (LLViewerInventoryItem*)gInventory.getItem(object_id);
+	if (gSavedSettings.getBOOL("AscentDoubleClickWearInventoryObjects"))
 	{
-		return;
-	}
-	if (avatar->isWearingAttachment(mUUID))
-	{
-#ifdef LL_RRINTERFACE_H //MK
-		if (gRRenabled && !gAgent.mRRInterface.canDetach(avatar->getWornAttachment(mUUID)))
+		if(item && gInventory.isObjectDescendentOf(object_id, gAgent.getInventoryRootID()))
 		{
-			return;
+			rez_attachment(item, NULL);
 		}
-#endif //mk
-		performAction(NULL, NULL, "detach");
+		else if(item && item->isComplete())
+		{
+			// must be in library. copy it to our inventory and put it on.
+			LLPointer<LLInventoryCallback> cb = new RezAttachmentCallback(0);
+			copy_inventory_item(
+			gAgent.getID(),
+			item->getPermissions().getOwner(),
+			item->getUUID(),
+			LLUUID::null,
+			std::string(),
+			cb);
+		}
 	}
 	else
 	{
-		performAction(NULL, NULL, "attach");
+		LLShowProps::showProperties(mUUID);
 	}
+	gFocusMgr.setKeyboardFocus(NULL);
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 LLFontGL::StyleFlags LLObjectBridge::getLabelStyle() const
 { 
@@ -3974,7 +3975,7 @@ bool confirm_replace_attachment_rez(const LLSD& notification, const LLSD& respon
 	}
 	return false;
 }
-LLNotificationFunctorRegistration confirm_replace_attachment_rez_reg("ReplaceAttachment", confirm_replace_attachment_rez);
+static LLNotificationFunctorRegistration confirm_replace_attachment_rez_reg("ReplaceAttachment", confirm_replace_attachment_rez);
 
 void LLObjectBridge::buildContextMenu(LLMenuGL& menu, U32 flags)
 {
@@ -4008,11 +4009,15 @@ void LLObjectBridge::buildContextMenu(LLMenuGL& menu, U32 flags)
 				return;
 			}
 			
-
+			items.push_back(std::string("Attach Separator"));
 			if( avatarp->isWearingAttachment( mUUID ) )
 			{
-				items.push_back(std::string("Attach Separator"));
 				items.push_back(std::string("Detach From Yourself"));
+				items.push_back(std::string("Attachment Edit"));
+				if ( ( (flags & FIRST_SELECTED_ITEM) == 0))
+				{
+					disabled_items.push_back(std::string("Attachment Edit"));
+				}
 			}
 			else
 			// <edit> testzone attachpt
@@ -4031,7 +4036,6 @@ void LLObjectBridge::buildContextMenu(LLMenuGL& menu, U32 flags)
 			if( !isInTrash() && !(LLXmlImport::sImportInProgress && LLXmlImport::sImportHasAttachments))
 			// </edit>
 			{
-				items.push_back(std::string("Attach Separator"));
 				items.push_back(std::string("Object Wear"));
 				items.push_back(std::string("Attach To"));
 				items.push_back(std::string("Attach To HUD"));
@@ -4168,18 +4172,10 @@ LLUIImagePtr LLLSLTextBridge::getIcon() const
 	return get_item_icon(LLAssetType::AT_SCRIPT, LLInventoryType::IT_LSL, 0, FALSE);
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
+void LLLSLTextBridge::performAction(LLFolderView* folder, LLInventoryModel* model, std::string action)
+{
+	LLItemBridge::performAction(folder, model, action);
+}
 
 void LLLSLTextBridge::openItem()
 {
@@ -4234,9 +4230,9 @@ void wear_inventory_item_on_avatar( LLInventoryItem* item )
 	}
 }
 
-
-
-
+// [RLVa:KB] - Checked: 2009-12-18 (RLVa-1.1.0i) | Added: RLVa-1.1.0i
+// Moved to llinventorybridge.h because we need it in RlvForceWear
+/*
 struct LLFoundData
 {
 	LLFoundData(const LLUUID& item_id,
@@ -4256,6 +4252,8 @@ struct LLFoundData
 	LLWearable* mWearable;
 };
 
+// [/RLVa:KB]
+
 struct LLWearableHoldingPattern
 {
 	LLWearableHoldingPattern() : mResolved(0) {}
@@ -4267,9 +4265,7 @@ struct LLWearableHoldingPattern
 	typedef std::list<LLFoundData*> found_list_t;
 	found_list_t mFoundList;
 	S32 mResolved;
-};
-
-
+};*/
 
 class LLOutfitObserver : public LLInventoryFetchObserver
 {
@@ -4328,30 +4324,30 @@ private:
 	bool mAppend;
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+class LLWearAttachmentsCallback : public LLInventoryCallback
+{
+public:
+	LLWearAttachmentsCallback(bool append) : mAppend(append) {}
+	void fire(const LLUUID& item_id)
+	{
+		mItemIDs.insert(item_id);
+	}
+protected:
+	~LLWearAttachmentsCallback()
+	{
+		if( LLInventoryCallbackManager::is_instantiated() )
+		{
+			wear_attachments_on_avatar(mItemIDs, mAppend);
+		}
+		else
+		{
+			llwarns << "Dropping unhandled LLWearAttachmentsCallback" << llendl;
+		}
+	}
+private:
+	std::set<LLUUID> mItemIDs;
+	bool mAppend;
+};
 
 void LLOutfitObserver::done()
 {
@@ -4697,10 +4693,10 @@ void wear_inventory_category_on_avatar_step2( BOOL proceed, void* userdata )
 			// wearables can be resolved immediately, then the
 			// callback will be called (and this object deleted)
 			// before the final getNextData().
-			LLWearableHoldingPattern* holder = new LLWearableHoldingPattern;
-
-
-
+//			LLWearableHoldingPattern* holder = new LLWearableHoldingPattern;
+// [RLVa:KB] - Checked: 2009-12-18 (RLVa-1.1.0i) | Added: RLVa-1.1.0i
+			LLWearableHoldingPattern* holder = new LLWearableHoldingPattern(wear_info->mAppend);
+// [/RLVa:KB]
 			LLFoundData* found;
 			LLDynamicArray<LLFoundData*> found_container;
 			for(i = 0; i  < wearable_count; ++i)
@@ -4714,9 +4710,9 @@ void wear_inventory_category_on_avatar_step2( BOOL proceed, void* userdata )
 			}
 			for(i = 0; i < wearable_count; ++i)
 			{
-
-				gAddToOutfit = wear_info->mAppend;
-
+// [RLVa:KB] - Part of LLWearableHoldingPattern
+//				gAddToOutfit = wear_info->mAppend;
+// [/RLVa:KB]
 
 				found = found_container.get(i);
 				gWearableList.getAsset(found->mAssetID,
@@ -4738,57 +4734,7 @@ void wear_inventory_category_on_avatar_step2( BOOL proceed, void* userdata )
 		if( obj_count > 0 )
 		{
 			// We've found some attachements.  Add these.
-
-			LLVOAvatar* avatar = gAgent.getAvatarObject();
-			if( avatar )
-			{
-				// Build a compound message to send all the objects that need to be rezzed.
-
-				// Limit number of packets to send
-				const S32 MAX_PACKETS_TO_SEND = 10;
-				const S32 OBJECTS_PER_PACKET = 4;
-				const S32 MAX_OBJECTS_TO_SEND = MAX_PACKETS_TO_SEND * OBJECTS_PER_PACKET;
-				if( obj_count > MAX_OBJECTS_TO_SEND )
-				{
-					obj_count = MAX_OBJECTS_TO_SEND;
-				}
-				
-				// Create an id to keep the parts of the compound message together
-				LLUUID compound_msg_id;
-				compound_msg_id.generate();
-				LLMessageSystem* msg = gMessageSystem;
-
-				for(i = 0; i < obj_count; ++i)
-				{
-					if( 0 == (i % OBJECTS_PER_PACKET) )
-					{
-						// Start a new message chunk
-						msg->newMessageFast(_PREHASH_RezMultipleAttachmentsFromInv);
-						msg->nextBlockFast(_PREHASH_AgentData);
-						msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID());
-						msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
-						msg->nextBlockFast(_PREHASH_HeaderData);
-						msg->addUUIDFast(_PREHASH_CompoundMsgID, compound_msg_id );
-						msg->addU8Fast(_PREHASH_TotalObjects, obj_count );
-						msg->addBOOLFast(_PREHASH_FirstDetachAll, !wear_info->mAppend );
-					}
-
-					LLInventoryItem* item = obj_item_array.get(i);
-					msg->nextBlockFast(_PREHASH_ObjectData );
-					msg->addUUIDFast(_PREHASH_ItemID, item->getUUID() );
-					msg->addUUIDFast(_PREHASH_OwnerID, item->getPermissions().getOwner());
-					msg->addU8Fast(_PREHASH_AttachmentPt, 0 );	// Wear at the previous or default attachment point
-					pack_permissions_slam(msg, item->getFlags(), item->getPermissions());
-					msg->addStringFast(_PREHASH_Name, item->getName());
-					msg->addStringFast(_PREHASH_Description, item->getDescription());
-
-					if( (i+1 == obj_count) || ((OBJECTS_PER_PACKET-1) == (i % OBJECTS_PER_PACKET)) )
-					{
-						// End of message chunk
-						msg->sendReliable( gAgent.getRegion()->getHost() );
-					}
-				}
-			}
+			wear_attachments_on_avatar(obj_item_array, !wear_info->mAppend);
 		}
 	}
 	delete wear_info;
@@ -4798,10 +4744,10 @@ void wear_inventory_category_on_avatar_step2( BOOL proceed, void* userdata )
 void wear_inventory_category_on_avatar_loop(LLWearable* wearable, void* data)
 {
 	LLWearableHoldingPattern* holder = (LLWearableHoldingPattern*)data;
-	BOOL append= gAddToOutfit;
+// [RLVa:KB] - Part of LLWearableHoldingPattern
+//	BOOL append= gAddToOutfit;
+// [/RLVa:KB]
 	
-
-
 	if(wearable)
 	{
 		for (LLWearableHoldingPattern::found_list_t::iterator iter = holder->mFoundList.begin();
@@ -4818,12 +4764,12 @@ void wear_inventory_category_on_avatar_loop(LLWearable* wearable, void* data)
 	holder->mResolved += 1;
 	if(holder->mResolved >= (S32)holder->mFoundList.size())
 	{
-		wear_inventory_category_on_avatar_step3(holder, append);
+//		wear_inventory_category_on_avatar_step3(holder, append);
+// [RLVa:KB] - Checked: 2009-12-18 (RLVa-1.1.0i) | Added: RLVa-1.1.0i
+		wear_inventory_category_on_avatar_step3(holder, holder->mAddToOutfit);
+// [/RLVa:KB]
 	}
 }
-
-
-
 
 void wear_inventory_category_on_avatar_step3(LLWearableHoldingPattern* holder, BOOL append)
 {
@@ -4877,146 +4823,98 @@ void wear_inventory_category_on_avatar_step3(LLWearableHoldingPattern* holder, B
 	dec_busy_count();
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+void wear_attachments_on_avatar(const std::set<LLUUID>& item_ids, BOOL remove)
+{
+	// NOTE: the inventory items can reside in the user's inventory, the library, or any combination of the two
+
+	LLInventoryModel::item_array_t items;
+	LLPointer<LLInventoryCallback> cb;
+
+	for (std::set<LLUUID>::const_iterator it = item_ids.begin(); it != item_ids.end(); ++it)
+	{
+		LLViewerInventoryItem* item = gInventory.getItem(*it);
+		if ( (item) && (LLAssetType::AT_OBJECT == item->getType()) )
+		{
+			if ( (gInventory.isObjectDescendentOf(*it, gAgent.getInventoryRootID())) )
+			{
+				items.put(item);
+			}
+			else if ( (item->isComplete()) )
+			{
+				if (cb.isNull())
+					cb = new LLWearAttachmentsCallback(remove);
+				copy_inventory_item(gAgent.getID(), item->getPermissions().getOwner(), item->getUUID(), LLUUID::null, std::string(), cb);
+			}
+		}
+	}
+
+	wear_attachments_on_avatar(items, remove);
+}
+
+void wear_attachments_on_avatar(const LLInventoryModel::item_array_t& items, BOOL remove)
+{
+	// NOTE: all inventory items must reside in the user's inventory
+
+	LLVOAvatar* avatarp = gAgent.getAvatarObject();
+	if(!avatarp)
+	{
+		llwarns << "No avatar found." << llendl;
+		return;
+	}
+
+	// Build a compound message to send all the objects that need to be rezzed.
+
+	// Limit number of packets to send
+	const S32 MAX_PACKETS_TO_SEND = 10;
+	const S32 OBJECTS_PER_PACKET = 4;
+	const S32 MAX_OBJECTS_TO_SEND = MAX_PACKETS_TO_SEND * OBJECTS_PER_PACKET;
+
+	S32 count = items.count();
+	if ( !count )
+	{
+		return;
+	}
+	else if ( count > MAX_OBJECTS_TO_SEND )
+	{
+		count = MAX_OBJECTS_TO_SEND;
+	}
+	
+	// Create an id to keep the parts of the compound message together
+	LLUUID compound_msg_id;
+	compound_msg_id.generate();
+	LLMessageSystem* msg = gMessageSystem;
+
+	for(S32 i = 0; i < count; ++i)
+	{
+		if( 0 == (i % OBJECTS_PER_PACKET) )
+		{
+			// Start a new message chunk
+			msg->newMessageFast(_PREHASH_RezMultipleAttachmentsFromInv);
+			msg->nextBlockFast(_PREHASH_AgentData);
+			msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID());
+			msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
+			msg->nextBlockFast(_PREHASH_HeaderData);
+			msg->addUUIDFast(_PREHASH_CompoundMsgID, compound_msg_id );
+			msg->addU8Fast(_PREHASH_TotalObjects, count );
+			msg->addBOOLFast(_PREHASH_FirstDetachAll, remove);
+		}
+
+		LLInventoryItem* item = items.get(i);
+		msg->nextBlockFast(_PREHASH_ObjectData );
+		msg->addUUIDFast(_PREHASH_ItemID, item->getUUID() );
+		msg->addUUIDFast(_PREHASH_OwnerID, item->getPermissions().getOwner());
+		msg->addU8Fast(_PREHASH_AttachmentPt, 0 );	// Wear at the previous or default attachment point
+		pack_permissions_slam(msg, item->getFlags(), item->getPermissions());
+		msg->addStringFast(_PREHASH_Name, item->getName());
+		msg->addStringFast(_PREHASH_Description, item->getDescription());
+
+		if( (i+1 == count) || ((OBJECTS_PER_PACKET-1) == (i % OBJECTS_PER_PACKET)) )
+		{
+			// End of message chunk
+			msg->sendReliable( gAgent.getRegion()->getHost() );
+		}
+	}
+}
 
 void remove_inventory_category_from_avatar( LLInventoryCategory* category )
 {
@@ -5100,10 +4998,6 @@ void remove_inventory_category_from_avatar_step2( BOOL proceed, void* userdata)
 		}
 		
 		
-
-
-
-
 		if (obj_count > 0)
 		{
 			for(i = 0; i  < obj_count; ++i)
@@ -5173,17 +5067,19 @@ BOOL LLWearableBridge::isItemRemovable()
 	// </edit>
 	return LLInvFVBridge::isItemRemovable();
 }
-
-
-
-
-
-
-
-
-
-
-
+//k, all uploadable asset types do not use this characteristic; therefore, we can use it to show temporaryness and not interfere cuz we're awesome like that
+LLFontGL::StyleFlags LLItemBridge::getLabelStyle() const
+{
+	LLPermissions perm = getItem()->getPermissions();
+	if(perm.getGroup() == gAgent.getID())
+	{
+		return LLFontGL::ITALIC;
+	}
+	else
+	{
+		return LLFontGL::NORMAL;
+	}
+}
 LLFontGL::StyleFlags LLWearableBridge::getLabelStyle() const
 { 
 	if( gAgent.isWearingItem( mUUID ) )
@@ -5252,14 +5148,12 @@ void LLWearableBridge::openItem()
 	}
 	else if(isAgentInventory())
 	{
-		if (gAgent.isWearingItem(mUUID))
+		if( !gAgent.isWearingItem( mUUID ) )
 		{
-			performAction(NULL, NULL, "take_off");
+			wearOnAvatar();
 		}
 		else
- 		{
-			performAction(NULL, NULL, "wear");
-		}
+			performAction(NULL, NULL, "take_off");
 	}
 	else
 	{
@@ -5350,7 +5244,6 @@ void LLWearableBridge::buildContextMenu(LLMenuGL& menu, U32 flags)
 											 (void*)this));*/
 		}
 	}
-
 	hideContextEntries(menu, items, disabled_items);
 }
 

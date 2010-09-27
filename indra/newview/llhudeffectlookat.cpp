@@ -33,6 +33,7 @@
 #include "llviewerprecompiledheaders.h"
 
 #include "llhudeffectlookat.h"
+#include "llhudrender.h"
 
 #include "llrender.h"
 
@@ -41,10 +42,12 @@
 #include "llvoavatar.h"
 #include "lldrawable.h"
 #include "llviewerobjectlist.h"
+#include "llviewerwindow.h"
 #include "llrendersphere.h"
 #include "llselectmgr.h"
+#include "llviewercontrol.h"
 #include "llglheaders.h"
-
+#include "llresmgr.h"
 
 #include "llxmltree.h"
 // <edit>
@@ -372,6 +375,11 @@ void LLHUDEffectLookAt::unpackData(LLMessageSystem *mesgsys, S32 blocknum)
 
 	U8 lookAtTypeUnpacked = 0;
 	htonmemcpy(&lookAtTypeUnpacked, &(packed_data[LOOKAT_TYPE]), MVT_U8, 1);
+	if (lookAtTypeUnpacked > 10)
+	{
+		LL_DEBUGS("LookAt")<< "wrong lookAtTypeUnpacked: " << lookAtTypeUnpacked << LL_ENDL;
+		lookAtTypeUnpacked = 0;
+	}
 	mTargetType = (ELookAtType)lookAtTypeUnpacked;
 
 	if (mTargetType == LOOKAT_TARGET_NONE)
@@ -504,60 +512,61 @@ void LLHUDEffectLookAt::setSourceObject(LLViewerObject* objectp)
 //-----------------------------------------------------------------------------
 void LLHUDEffectLookAt::render()
 {
-    if (gSavedSettings.getBOOL("PrivateLookAt") &&
+	static BOOL *sAscentDontShowMyLookAt = rebind_llcontrol<BOOL>("AscentDontShowMyLookAt", &gSavedSettings, true);
+	
+	if (*sAscentDontShowMyLookAt &&
         (gAgent.getAvatarObject() == ((LLVOAvatar*)(LLViewerObject*)mSourceObject))) return;
-	if (sDebugLookAt && mSourceObject.notNull())
-	{
-		gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
-
-		LLVector3 target = mTargetPos + ((LLVOAvatar*)(LLViewerObject*)mSourceObject)->mHeadp->getWorldPosition();
-		glMatrixMode(GL_MODELVIEW);
-		gGL.pushMatrix();
-		gGL.translatef(target.mV[VX], target.mV[VY], target.mV[VZ]);
-		glScalef(0.3f, 0.3f, 0.3f);
-		gGL.begin(LLRender::LINES);
+		if (sDebugLookAt && mSourceObject.notNull())
 		{
-			LLColor3 color = (*mAttentions)[mTargetType].mColor;
-			gGL.color3f(color.mV[VRED], color.mV[VGREEN], color.mV[VBLUE]);
-			gGL.vertex3f(-1.f, 0.f, 0.f);
-			gGL.vertex3f(1.f, 0.f, 0.f);
+			gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
 
-			gGL.vertex3f(0.f, -1.f, 0.f);
-			gGL.vertex3f(0.f, 1.f, 0.f);
+			LLVector3 target = mTargetPos + ((LLVOAvatar*)(LLViewerObject*)mSourceObject)->mHeadp->getWorldPosition();
+			glMatrixMode(GL_MODELVIEW);
+			gGL.pushMatrix();
+			gGL.translatef(target.mV[VX], target.mV[VY], target.mV[VZ]);
+			glScalef(0.3f, 0.3f, 0.3f);
+			gGL.begin(LLRender::LINES);
+			{
+				LLColor3 color = (*mAttentions)[mTargetType].mColor;
+				gGL.color3f(color.mV[VRED], color.mV[VGREEN], color.mV[VBLUE]);
+				gGL.vertex3f(-1.f, 0.f, 0.f);
+				gGL.vertex3f(1.f, 0.f, 0.f);
 
-			gGL.vertex3f(0.f, 0.f, -1.f);
-			gGL.vertex3f(0.f, 0.f, 1.f);
-		} gGL.end();
-		gGL.popMatrix();
-		// <edit>
-		const std::string text = ((LLVOAvatar*)(LLViewerObject*)mSourceObject)->getFullname();
-		LLVector3 offset = gAgent.getCameraPositionAgent() - target;
-		offset.normalize();
-		LLVector3 shadow_offset = offset * 0.49f;
-		offset *= 0.5f;
-		const LLFontGL* font = LLResMgr::getInstance()->getRes(LLFONT_SANSSERIF);
-		LLGLEnable gl_blend(GL_BLEND);
-		glPushMatrix();
-		gViewerWindow->setupViewport();
-		hud_render_utf8text(text,
-			target + shadow_offset,
-			*font,
-			LLFontGL::NORMAL,
-			-0.5f * font->getWidthF32(text) + 2.0f,
-			-2.0f,
-			LLColor4::black,
-			FALSE);
-		hud_render_utf8text(text,
-			target + offset,
-			*font,
-			LLFontGL::NORMAL,
-			-0.5f * font->getWidthF32(text),
-			0.0f,
-			(*mAttentions)[mTargetType].mColor,
-			FALSE);
-		glPopMatrix();
-		// </edit>
-	}
+				gGL.vertex3f(0.f, -1.f, 0.f);
+				gGL.vertex3f(0.f, 1.f, 0.f);
+
+				gGL.vertex3f(0.f, 0.f, -1.f);
+				gGL.vertex3f(0.f, 0.f, 1.f);
+			} gGL.end();
+			gGL.popMatrix();
+
+			static BOOL *sAscentShowLookAtNames = rebind_llcontrol<BOOL>("AscentShowLookAtNames", &gSavedSettings, true);
+			if (*sAscentShowLookAtNames)
+				{
+					const LLFontGL* fontp = LLResMgr::getInstance()->getRes( LLFONT_SANSSERIF_SMALL );
+					LLGLEnable color_mat(GL_COLOR_MATERIAL);
+					LLGLDepthTest gls_depth(GL_TRUE, GL_FALSE);
+					LLGLState gls_blend(GL_BLEND, TRUE);
+					LLGLState gls_alpha(GL_ALPHA_TEST, TRUE);
+					glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+					gGL.getTexUnit(0)->setTextureBlendType(LLTexUnit::TB_MULT);
+					gGL.getTexUnit(0)->enable(LLTexUnit::TT_TEXTURE);
+
+					// Well.. after that nasty complex try at somehow getting it to work initialising all sorts of stuff
+					// It seems to work and fix the previous bug of merely displaying untextured cubes, 
+					// probably due to the helpful getTexUnit->enable. - Nexii
+					glMatrixMode(GL_MODELVIEW);
+					glPushMatrix();
+					LLVector3 render_pos = target + LLVector3( 0.f, 0.f, 0.25f );
+					LLColor4 Color = LLColor4( (*mAttentions)[mTargetType].mColor, 1.0f ); 
+					std::string text = ((LLVOAvatar*)(LLViewerObject*)mSourceObject)->getFullname();
+
+					gViewerWindow->setupViewport();
+					hud_render_utf8text(text, render_pos, *fontp, LLFontGL::NORMAL, -0.5f * fontp->getWidthF32(text), 3.f, Color, FALSE );
+					
+					glPopMatrix();
+				}
+		}
 }
 
 //-----------------------------------------------------------------------------
@@ -565,6 +574,9 @@ void LLHUDEffectLookAt::render()
 //-----------------------------------------------------------------------------
 void LLHUDEffectLookAt::update()
 {
+	static BOOL *sPersistShowLookAt = rebind_llcontrol<BOOL>("PersistShowLookAt", &gSavedSettings, true);
+	
+	LLHUDEffectLookAt::sDebugLookAt = *sPersistShowLookAt;
 	// If the target object is dead, set the target object to NULL
 	if (!mTargetObject.isNull() && mTargetObject->isDead())
 	{
@@ -710,6 +722,6 @@ bool LLHUDEffectLookAt::calcTargetPosition()
 		return false;
 
 	source_avatar->setAnimationData("LookAtPoint", (void *)&mTargetPos);
-	source_avatar->mIdleTimer.reset();
+
 	return true;
 }

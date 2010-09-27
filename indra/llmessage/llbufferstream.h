@@ -1,6 +1,6 @@
 /** 
  * @file llbufferstream.h
- * @author Phoenix
+ * @author Ascent
  * @date 2005-10-10
  * @brief Classes to treat an LLBufferArray as a c++ iostream.
  *

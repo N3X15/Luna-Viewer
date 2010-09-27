@@ -39,6 +39,7 @@
 
 #include "lluictrlfactory.h"
 #include "llviewermessage.h"
+#include "llviewercontrol.h"
 #include "llappviewer.h"		// gPacificDaylightTime
 
 ///----------------------------------------------------------------------------

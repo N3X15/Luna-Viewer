@@ -1,6 +1,6 @@
 /** 
  * @file llpermissions.cpp
- * @author Phoenix
+ * @author Ascent
  * @brief Permissions for objects and inventory.
  *
  * $LicenseInfo:firstyear=2002&license=viewergpl$

@@ -1,6 +1,6 @@
 /** 
  * @file lliohttpserver.cpp
- * @author Phoenix
+ * @author Ascent
  * @date 2005-10-05
  * @brief Implementation of the http server classes
  *
@@ -166,7 +166,7 @@ LLIOPipe::EStatus LLHTTPPipe::process_impl(
 
 		// *TODO: Babbage: Parameterize parser?
 		// *TODO: We should look at content-type and do the right
-		// thing. Phoenix 2007-12-31
+		// thing. Ascent 2007-12-31
 		LLBufferStream istr(channels, buffer.get());
 
 		static LLTimer timer;
@@ -460,7 +460,7 @@ LLIOPipe::EStatus LLHTTPResponseHeader::process_impl(
 			ostr << "Content-Length: " << content_length << "\r\n";
 		}
 		// *NOTE: This guard can go away once the LLSD static map
-		// iterator is available. Phoenix. 2008-05-09
+		// iterator is available. Ascent. 2008-05-09
 		LLSD headers = context[CONTEXT_RESPONSE][CONTEXT_HEADERS];
 		if(headers.isDefined())
 		{

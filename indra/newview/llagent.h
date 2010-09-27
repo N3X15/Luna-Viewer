@@ -88,6 +88,7 @@ typedef enum e_camera_position
 	CAMERA_POSITION_OBJECT /** Camera positioned at observed object's position */
 } ECameraPosition;
 
+
 typedef enum e_anim_request
 {
 	ANIM_REQUEST_START,
@@ -157,7 +158,7 @@ public:
 
 	void			sendMessage();						// Send message to this agent's region.
 	void			sendReliableMessage();
-	void			resetClientTag();
+
 	LLVector3d		calcCameraPositionTargetGlobal(BOOL *hit_limit = NULL); // Calculate the camera position target
 	LLVector3d		calcFocusPositionTargetGlobal();
 	LLVector3d		calcThirdPersonFocusOffset();
@@ -178,6 +179,11 @@ public:
 	void			setRenderState(U8 newstate);
 	void			clearRenderState(U8 clearstate);
 	U8				getRenderState();
+
+	// get/set last region data
+	std::string		getLastRegion();
+	LLVector3		getLastCoords();
+	void			setLastRegionData(std::string regionName,LLVector3 agentCoords);
 
 	// Set the home data
 	void			setRegion(LLViewerRegion *regionp);
@@ -466,7 +472,7 @@ public:
 	void			moveLeftNudge(S32 direction);
 	void			moveUp(S32 direction);
 	void			moveYaw(F32 mag, bool reset_view = true);
-	void			movePitch(S32 direction);
+	void			movePitch(F32 mag);
 
 	void			setOrbitLeftKey(F32 mag)				{ mOrbitLeftKey = mag; }
 	void			setOrbitRightKey(F32 mag)				{ mOrbitRightKey = mag; }
@@ -783,7 +789,6 @@ public:
 
 	BOOL			mInitialized;
 
-	// <edit>
 	static BOOL lure_show;
 	static std::string lure_name;
 	static LLVector3d lure_posglobal;
@@ -812,16 +817,25 @@ public:
 
 	LLFrameTimer mDoubleTapRunTimer;
 	EDoubleTapRunMode mDoubleTapRunMode;
-	
-	// <edit>
+
+	static BOOL sFirstPersonBtnState;
+	static BOOL sMouselookBtnState;
+	static BOOL sThirdPersonBtnState;
+	static BOOL sBuildBtnState;
+        BOOL mBlockSpam;
 	static void showLureDestination(const std::string fromname, const int global_x, const int global_y, const int x, const int y, const int z, const std::string maturity);
 	static void onFoundLureDestination();
-	// </edit>
 
 private:
 	static BOOL exlPhantom;
 	static BOOL mForceTPose;
 	bool mbTeleportKeepsLookAt; // try to keep look-at after teleport is complete
+	static BOOL ignorePrejump;
+	static BOOL AscentForceFly;
+	static void updateIgnorePrejump(const LLSD &data);
+	static void	updateAscentForceFly(const LLSD &data);
+	
+	static BOOL AscentPhantom;
 	bool mbAlwaysRun; // should the avatar run by default rather than walk
 	bool mbRunning;	// is the avatar trying to run right now
 
@@ -962,6 +976,9 @@ private:
 	BOOL			mFirstLogin;
 	BOOL			mGenderChosen;
 	
+	std::string		mLastRegion;
+	LLVector3		mLastCoordinates;
+
 	//--------------------------------------------------------------------
 	// Wearables
 	//--------------------------------------------------------------------

@@ -55,6 +55,7 @@
 
 #include "llglheaders.h"
 
+
 // Basically a C++ implementation of the OCEAN_COLOR defined in mapstitcher.py 
 // Please ensure consistency between those 2 files (TODO: would be better to get that color from an asset source...)
 // # Constants
@@ -1362,7 +1363,7 @@ void LLWorldMapView::drawTrackingArrow(const LLRect& rect, S32 x, S32 y,
 	// *FIX: deal with non-square window properly.
 	// I do not understand what this comment means -- is it actually
 	// broken or is it correctly dealing with non-square
-	// windows. Phoenix 2007-01-03.
+	// windows. Ascent 2007-01-03.
 	S32 half_arrow_size = (S32) (0.5f * arrow_size);
 
 	F32 angle = atan2( y + half_arrow_size - y_center, x + half_arrow_size - x_center);

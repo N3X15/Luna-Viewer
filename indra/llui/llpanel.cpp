@@ -67,9 +67,12 @@ static LLRegisterWidget<LLPanel> r1("panel");
 void LLPanel::init()
 {
 	// mRectControl
-	mBgColorAlpha        = LLUI::sColorsGroup->getColor( "DefaultBackgroundColor" );
-	mBgColorOpaque       = LLUI::sColorsGroup->getColor( "FocusBackgroundColor" );
-	mDefaultBtnHighlight = LLUI::sColorsGroup->getColor( "DefaultHighlightLight" );
+	static LLColor4 sBgColorAlpha        = LLUI::sColorsGroup->getColor( "DefaultBackgroundColor" );
+	static LLColor4 sBgColorOpaque       = LLUI::sColorsGroup->getColor( "FocusBackgroundColor" );
+	static LLColor4 sDefaultBtnHighlight = LLUI::sColorsGroup->getColor( "DefaultHighlightLight" );
+	mBgColorAlpha        = sBgColorAlpha;
+	mBgColorOpaque       = sBgColorOpaque;
+	mDefaultBtnHighlight = sDefaultBtnHighlight;
 	mBgVisible = FALSE;
 	mBgOpaque = FALSE;
 	mBorder = NULL;
@@ -284,7 +287,7 @@ BOOL LLPanel::handleKeyHere( KEY key, MASK mask )
 	LLUICtrl* cur_focus = dynamic_cast<LLUICtrl*>(gFocusMgr.getKeyboardFocus());
 
 	// handle user hitting ESC to defocus
-	if (key == KEY_ESCAPE && mask == MASK_NONE)
+	if (key == KEY_ESCAPE)
 	{
 		gFocusMgr.setKeyboardFocus(NULL);
 		return TRUE;

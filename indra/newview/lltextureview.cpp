@@ -54,6 +54,9 @@
 #include "llviewerimage.h"
 #include "llviewerimagelist.h"
 #include "llvovolume.h"
+
+#include "llviewerthrottle.h"
+
 extern F32 texmem_lower_bound_scale;
 
 LLTextureView *gTextureView = NULL;
@@ -504,7 +507,7 @@ void LLGLTexMemBar::draw()
 					LLImageRaw::sRawImageCount,
 					LLAppViewer::getTextureFetch()->getNumHTTPRequests(),
 					LLAppViewer::getTextureFetch()->getTextureBandwidth(),
-					gSavedSettings.getF32("ThrottleBandwidthKBPS"));
+					*LLViewerThrottle::sThrottleBandwidthKBPS);
 
 	LLFontGL::getFontMonospace()->renderUTF8(text, 0, 0, line_height*2,
 									 text_color, LLFontGL::LEFT, LLFontGL::TOP);

@@ -39,6 +39,7 @@
 
 extern const S32 TABCNTR_HEADER_HEIGHT;
 
+
 class LLTabContainer : public LLPanel
 {
 public:

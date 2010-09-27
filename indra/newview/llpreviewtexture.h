@@ -80,7 +80,10 @@ public:
 							BOOL final,
 							void* userdata );
 	static LLPreviewTexture* getInstance(){ return sInstance; }
-	LLUUID mCreatorKey;
+
+	LLUUID mCreatorKey; // Let's do this right - N3X15
+	std::string mColor;
+	std::string mTime;
 
 protected:
 	void				init();
@@ -98,7 +101,7 @@ private:
 	LLFrameTimer		mSavedFileTimer;
 	BOOL                mShowKeepDiscard;
 	BOOL                mCopyToInv;
-	
+
 	static LLPreviewTexture* sInstance;
 	static void			onClickProfile(void* userdata);
 	static void callbackLoadAvatarName(const LLUUID& id, const std::string& first, const std::string& last, BOOL is_group, void* data);
@@ -106,7 +109,7 @@ private:
 	// This is stored off in a member variable, because the save-as
 	// button and drag and drop functionality need to know.
 	BOOL mIsCopyable;
-	
+
 	S32 mLastHeight;
 	S32 mLastWidth;
 	F32 mAspectRatio;	// 0 = Unconstrained

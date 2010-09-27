@@ -32,6 +32,7 @@
 
 #include "llviewerprecompiledheaders.h"
 
+#include <ctime>
 #include "lllogchat.h"
 #include "llappviewer.h"
 #include "llfloaterchat.h"
@@ -42,6 +43,21 @@ const S32 LOG_RECALL_SIZE = 2048;
 //static
 std::string LLLogChat::makeLogFileName(std::string filename)
 {
+	if (gSavedPerAccountSettings.getBOOL("LogFileNamewithDate"))
+	{
+		time_t now; 
+		time(&now); 
+		char dbuffer[20];               /* Flawfinder: ignore */ 
+		if (filename == "chat") 
+		{ 
+			strftime(dbuffer, 20, "-%Y-%m-%d", localtime(&now)); 
+		} 
+		else 
+		{ 
+			strftime(dbuffer, 20, "-%Y-%m", localtime(&now)); 
+		} 
+		filename += dbuffer; 
+	}
 	filename = cleanFileName(filename);
 	filename = gDirUtilp->getExpandedFilename(LL_PATH_PER_ACCOUNT_CHAT_LOGS,filename);
 	filename += ".txt";
@@ -72,21 +88,22 @@ std::string LLLogChat::timestamp(bool withdate)
 	// it's daylight savings time there.
 	timep = utc_to_pacific_time(utc_time, gPacificDaylightTime);
 
-	std::string format = "";
-	if (withdate)
-		format = gSavedSettings.getString("ShortDateFormat") + " ";
-	if (gSavedSettings.getBOOL("SecondsInChatAndIMs"))
+	std::string text;
+	if (gSavedSettings.getBOOL("AscentAddSecondsInLog"))
 	{
-		format += gSavedSettings.getString("LongTimeFormat");
+		if (withdate)
+			text = llformat("[%d-%02d-%02d %02d:%02d:%02d]  ", (timep->tm_year-100)+2000, timep->tm_mon+1, timep->tm_mday, timep->tm_hour, timep->tm_min, timep->tm_sec);
+		else
+			text = llformat("[%02d:%02d:%02d]  ", timep->tm_hour, timep->tm_min, timep->tm_sec);
 	}
 	else
 	{
-		format += gSavedSettings.getString("ShortTimeFormat");
+		if (withdate)
+			text = llformat("[%d/%02d/%02d %02d:%02d]  ", (timep->tm_year-100)+2000, timep->tm_mon+1, timep->tm_mday, timep->tm_hour, timep->tm_min);
+		else
+			text = llformat("[%02d:%02d]  ", timep->tm_hour, timep->tm_min);
 	}
-
-	std::string text;
-	timeStructToFormattedString(timep, format, text);
-	text = "[" + text + "]  ";
+	
 	return text;
 }
 
@@ -99,6 +116,8 @@ void LLLogChat::saveHistory(std::string filename, std::string line)
 		llinfos << "Filename is Empty!" << llendl;
 		return;
 	}
+	//dont allow bad files names
+	filename = gDirUtilp->getScrubbedFileName(filename);
 
 	LLFILE* fp = LLFile::fopen(LLLogChat::makeLogFileName(filename), "a"); 		/*Flawfinder: ignore*/
 	if (!fp)
@@ -120,6 +139,8 @@ void LLLogChat::loadHistory(std::string filename , void (*callback)(ELogLineType
 		llwarns << "Filename is Empty!" << llendl;
 		return ;
 	}
+	//dont allow bad files names
+	filename = gDirUtilp->getScrubbedFileName(filename);
 
 	LLFILE* fptr = LLFile::fopen(makeLogFileName(filename), "r");		/*Flawfinder: ignore*/
 	if (!fptr)

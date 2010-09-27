@@ -13,19 +13,18 @@
 
 #include "llagent.h"
 
-
+#include "llviewercontrol.h"
 ////////////////////////////////
 // LLNetListItem
-//////////////////////////////// 	
+////////////////////////////////
 LLNetListItem::LLNetListItem(LLUUID id)
 :	mID(id),
 	mAutoName(TRUE),
 	mName("No name"),
 	mPreviousRegionName(""),
-	mCircuitData(NULL)	 	
+	mCircuitData(NULL)
 {
 }
-
 ////////////////////////////////
 // LLFloaterMessageLogItem
 ////////////////////////////////
@@ -377,7 +376,6 @@ std::string LLFloaterMessageLogItem::getString(LLTemplateMessageReader* readerp,
 		}
 		break;
 	}
-
 	return stream.str();
 }
 LLMessageLogFilter::LLMessageLogFilter()
@@ -418,7 +416,7 @@ LLMessageLogFilterApply::LLMessageLogFilterApply()
 	mFinished(FALSE),
 	mProgress(0)
 {
-	mIter = LLFloaterMessageLog::sMessageLogEntries.begin();
+	mIter = LLFloaterMessageLog::sMessageLogEntries.begin();	
 }
 void LLMessageLogFilterApply::cancel()
 {
@@ -466,8 +464,8 @@ BOOL LLMessageLogFilterApply::tick()
 
 			return TRUE;
 		}
-
-		LLFloaterMessageLog::sInstance->conditionalLog(LLFloaterMessageLogItem((*mIter)));
+		
+			LLFloaterMessageLog::sInstance->conditionalLog(LLFloaterMessageLogItem((*mIter)));
 		
 		mIter++;
 		mProgress++;
@@ -697,6 +695,7 @@ void LLFloaterMessageLog::setNetInfoMode(ENetInfoMode mode)
 	mNetInfoMode = mode;
 	if(mNetInfoMode == NI_NET)
 		refreshNetInfo(TRUE);
+	childSetEnabled("send_to_message_builder_btn", mNetInfoMode == NI_LOG);
 }
 // static
 void LLFloaterMessageLog::onLog(LLMessageLogEntry entry)
@@ -710,7 +709,7 @@ void LLFloaterMessageLog::onLog(LLMessageLogEntry entry)
 }
 // static
 void LLFloaterMessageLog::conditionalLog(LLFloaterMessageLogItem item)
-{	
+{
 	if(!sBusyApplyingFilter)
 		sInstance->childSetText("log_status_text", llformat("Showing %d messages from %d", sFloaterMessageLogItems.size(), sMessageLogEntries.size()));
 	std::string find_name = item.mName;
@@ -822,11 +821,10 @@ BOOL LLFloaterMessageLog::onClickCloseCircuit(void* user_data)
 	return TRUE;
 }
 // static
-bool LLFloaterMessageLog::onConfirmCloseCircuit(const LLSD& notification, const LLSD& response )
+void LLFloaterMessageLog::onConfirmCloseCircuit(S32 option, LLSD payload)
 {
-	S32 option = LLNotification::getSelectedOption(notification, response);
-	LLCircuitData* cdp = gMessageSystem->mCircuitInfo.findCircuit(LLHost(notification["payload"]["circuittoclose"].asString()));
-	if(!cdp) return false;
+	LLCircuitData* cdp = gMessageSystem->mCircuitInfo.findCircuit(LLHost(payload["circuittoclose"].asString()));
+	if(!cdp) return;
 	LLViewerRegion* regionp = LLWorld::getInstance()->getRegion(cdp->getHost());
 	switch(option)
 	{
@@ -835,7 +833,7 @@ bool LLFloaterMessageLog::onConfirmCloseCircuit(const LLSD& notification, const 
 		gMessageSystem->sendReliable(cdp->getHost());
 		break;
 	case 2: // cancel
-		return false;
+		return;
 		break;
 	case 1: // no
 	default:
@@ -854,15 +852,12 @@ bool LLFloaterMessageLog::onConfirmCloseCircuit(const LLSD& notification, const 
 		payload["regionhost"] = myhost.getString();
 		LLNotifications::instance().add("GenericAlertYesCancel", args, payload, onConfirmRemoveRegion);
 	}
-	return false;
 }
 // static
-bool LLFloaterMessageLog::onConfirmRemoveRegion(const LLSD& notification, const LLSD& response )
+void LLFloaterMessageLog::onConfirmRemoveRegion(S32 option, LLSD payload)
 {
-	S32 option = LLNotification::getSelectedOption(notification, response);
 	if(option == 0) // yes
-		LLWorld::getInstance()->removeRegion(LLHost(notification["payload"]["regionhost"].asString()));
-	return false;
+		LLWorld::getInstance()->removeRegion(LLHost(payload["regionhost"].asString()));
 }
 // static
 void LLFloaterMessageLog::onClickFilterApply(void* user_data)
@@ -876,7 +871,7 @@ void LLFloaterMessageLog::startApplyingFilter(std::string filter, BOOL force)
 	sMessageLogFilterString = filter;
 	new_filter.set(sMessageLogFilterString);
 	if(!filter.length() || filter.at(filter.length()-1) != ' ')
-		childSetText("filter_edit", filter + " ");
+	childSetText("filter_edit", filter + " ");
 	if(force
 		|| (new_filter.mNegativeNames != sMessageLogFilter.mNegativeNames)
 		|| (new_filter.mPositiveNames != sMessageLogFilter.mPositiveNames))
@@ -924,6 +919,8 @@ void LLFloaterMessageLog::onClickClearLog(void* user_data)
 {
 	LLFloaterMessageLog* floaterp = (LLFloaterMessageLog*)user_data;
 	floaterp->stopApplyingFilter();
+	if(floaterp->mMessageLogFilterApply)
+		return;
 	floaterp->getChild<LLScrollListCtrl>("message_log")->clearRows();
 	floaterp->setNetInfoMode(NI_NET);
 	sMessageLogEntries.clear();
@@ -934,6 +931,8 @@ void LLFloaterMessageLog::onClickFilterChoice(void* user_data)
 {
 	LLMenuGL* menu = new LLMenuGL(LLStringUtil::null);
 	menu->append(new LLMenuItemCallGL("No filter", onClickFilterMenu, NULL, (void*)""));
+	menu->append(new LLMenuItemCallGL("Sounds", onClickFilterMenu, NULL, (void*)"SoundTrigger"));
+	menu->append(new LLMenuItemCallGL("Default",onClickFilterMenu, NULL, (void*)"!StartPingCheck !CompletePingCheck !PacketAck !SimulatorViewerTimeMessage !SimStats !AgentUpdate !AgentAnimation !AvatarAnimation !ViewerEffect !CoarseLocationUpdate !LayerData !CameraConstraint !ObjectUpdateCached !RequestMultipleObjects !ObjectUpdate !ObjectUpdateCompressed !ImprovedTerseObjectUpdate !KillObject !ImagePacket !SendXferPacket !ConfirmXferPacket !TransferPacket"));
 	menu->append(new LLMenuItemCallGL("Fewer spammy messages", onClickFilterMenu, NULL, (void*)"!StartPingCheck !CompletePingCheck !PacketAck !SimulatorViewerTimeMessage !SimStats !AgentUpdate !AgentAnimation !AvatarAnimation !ViewerEffect !CoarseLocationUpdate !LayerData !CameraConstraint !ObjectUpdateCached !RequestMultipleObjects !ObjectUpdate !ObjectUpdateCompressed !ImprovedTerseObjectUpdate !KillObject !ImagePacket !SendXferPacket !ConfirmXferPacket !TransferPacket"));
 	menu->append(new LLMenuItemCallGL("Fewer spammy messages (minus sound crap)", onClickFilterMenu, NULL, (void*)"!StartPingCheck !CompletePingCheck !PacketAck !SimulatorViewerTimeMessage !SimStats !AgentUpdate !AgentAnimation !AvatarAnimation !ViewerEffect !CoarseLocationUpdate !LayerData !CameraConstraint !ObjectUpdateCached !RequestMultipleObjects !ObjectUpdate !ObjectUpdateCompressed !ImprovedTerseObjectUpdate !KillObject !ImagePacket !SendXferPacket !ConfirmXferPacket !TransferPacket !SoundTrigger !AttachedSound !PreloadSound"));
 	menu->append(new LLMenuItemCallGL("Object updates", onClickFilterMenu, NULL, (void*)"ObjectUpdateCached ObjectUpdate ObjectUpdateCompressed ImprovedTerseObjectUpdate KillObject RequestMultipleObjects"));

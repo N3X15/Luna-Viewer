@@ -937,23 +937,6 @@ void LLPanelGroupVoting::impl::addPendingHistoryScrollListItem(unsigned int curr
 //static
 std::map<LLUUID, LLPanelGroupVoting::impl*> LLPanelGroupVoting::impl::sGroupIDs;
 
-static std::string format_date(std::string date)
-{
-	tm t;
-	if (sscanf(date.c_str(), "%u/%u/%u %u:%u",
-		&t.tm_mon, &t.tm_mday, &t.tm_year, &t.tm_hour, &t.tm_min) == 5
-		&& t.tm_year > 1900)
-	{
-		t.tm_year -= 1900;
-		t.tm_mon--;
-		t.tm_sec = 0;
-		std::string format = gSavedSettings.getString("ShortDateFormat");
-		format += " " + gSavedSettings.getString("ShortTimeFormat");
-		timeStructToFormattedString(&t, format, date);
-	}
-	return date;
-}
-
 //static
 void LLPanelGroupVoting::impl::processGroupActiveProposalItemReply(LLMessageSystem *msg, void**)
 {
@@ -1041,7 +1024,7 @@ void LLPanelGroupVoting::impl::processGroupActiveProposalItemReply(LLMessageSyst
 		row["columns"][1]["width"] = self->mProposalColumnWidths[index++];
 
 		row["columns"][2]["column"] = "end_datetime";
-		row["columns"][2]["value"] = format_date(end_datetime);
+		row["columns"][2]["value"] = end_datetime;
 		row["columns"][2]["font"] = "SANSSERIF_SMALL";
 		row["columns"][2]["width"] = self->mProposalColumnWidths[index++];
 
@@ -1056,7 +1039,7 @@ void LLPanelGroupVoting::impl::processGroupActiveProposalItemReply(LLMessageSyst
 		row["columns"][4]["width"] = self->mProposalColumnWidths[index++];
 
 		row["columns"][5]["column"] = "start_datetime";
-		row["columns"][5]["value"] = format_date(start_datetime);
+		row["columns"][5]["value"] = start_datetime;
 		row["columns"][5]["font"] = "SANSSERIF_SMALL";
 		row["columns"][5]["width"] = self->mProposalColumnWidths[index++];
 
@@ -1239,7 +1222,7 @@ void LLPanelGroupVoting::impl::processGroupVoteHistoryItemReply(LLMessageSystem 
 			row["columns"][1]["width"] = self->mHistoryColumnWidths[index++];
 
 			row["columns"][2]["column"] = "end_datetime";
-			row["columns"][2]["value"] = format_date(end_datetime);
+			row["columns"][2]["value"] = end_datetime;
 			row["columns"][2]["font"] = "SANSSERIF_SMALL";
 			row["columns"][2]["width"] = self->mHistoryColumnWidths[index++];
 

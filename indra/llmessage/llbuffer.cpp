@@ -1,6 +1,6 @@
 /** 
  * @file llbuffer.cpp
- * @author Phoenix
+ * @author Ascent
  * @date 2005-09-20
  * @brief Implementation of the segments, buffers, and buffer arrays.
  *

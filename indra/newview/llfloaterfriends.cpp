@@ -1,6 +1,6 @@
 /** 
  * @file llfloaterfriends.cpp
- * @author Phoenix
+ * @author Ascent
  * @date 2005-01-13
  * @brief Implementation of the friends floater
  *
@@ -59,6 +59,7 @@
 #include "lltimer.h"
 #include "lltextbox.h"
 #include "llvoiceclient.h"
+
 
 #include "llsdserialize.h"
 #include "llfilepicker.h"

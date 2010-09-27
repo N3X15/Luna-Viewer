@@ -58,6 +58,7 @@ private:
 	LLColor4 mSystemChatColor;
 	LLColor4 mUserChatColor;
 	LLColor4 mAgentChatColor;
+	LLColor4 mFriendChatColor; //Ascent:KC
 	LLColor4 mIMChatColor;
 	LLColor4 mObjectChatColor;
 	LLColor4 mOwnerSayChatColor;
@@ -65,6 +66,7 @@ private:
 	LLColor4 mLuaChatColor;
 	LLColor4 mScriptErrorColor;
 	LLColor4 mHTMLLinkColor;
+	LLColor4 mIMEncryptedChatColor;
 	BOOL mChatFullWidth;
 	BOOL mCloseChatOnReturn;
 	BOOL mArrowKeysMoveAvatar;
@@ -93,6 +95,7 @@ LLPrefsChatImpl::LLPrefsChatImpl()
 	getChild<LLColorSwatchCtrl>("system")->set(gSavedSettings.getColor4("SystemChatColor"));
 	getChild<LLColorSwatchCtrl>("user")->set(gSavedSettings.getColor4("UserChatColor"));
 	getChild<LLColorSwatchCtrl>("agent")->set(gSavedSettings.getColor4("AgentChatColor"));
+	getChild<LLColorSwatchCtrl>("friend")->set(gSavedSettings.getColor4("AscentFriendChatColor")); //Ascent:KC
 	getChild<LLColorSwatchCtrl>("lua")->set(gSavedSettings.getColor4("LuaChatColor"));
 	getChild<LLColorSwatchCtrl>("im")->set(gSavedSettings.getColor4("IMChatColor"));
 	getChild<LLColorSwatchCtrl>("script_error")->set(gSavedSettings.getColor4("ScriptErrorColor"));
@@ -100,6 +103,7 @@ LLPrefsChatImpl::LLPrefsChatImpl()
 	getChild<LLColorSwatchCtrl>("owner")->set(gSavedSettings.getColor4("llOwnerSayChatColor"));
 	getChild<LLColorSwatchCtrl>("background")->set(gSavedSettings.getColor4("BackgroundChatColor"));
 	getChild<LLColorSwatchCtrl>("links")->set(gSavedSettings.getColor4("HTMLLinkColor"));
+	getChild<LLColorSwatchCtrl>("encrypted")->set(gSavedSettings.getColor4("AscentIMEncryptedChatColor"));
 
 	childSetValue("arrow_keys_move_avatar_check", gSavedSettings.getBOOL("ArrowKeysMoveAvatar"));
 	childSetValue("show_timestamps_check", gSavedSettings.getBOOL("ChatShowTimestamps"));
@@ -124,6 +128,7 @@ void LLPrefsChatImpl::refreshValues()
 	mSystemChatColor = gSavedSettings.getColor4("SystemChatColor");
 	mUserChatColor = gSavedSettings.getColor4("UserChatColor");
 	mAgentChatColor = gSavedSettings.getColor4("AgentChatColor");
+	mFriendChatColor = gSavedSettings.getColor4("AscentFriendChatColor"); //Ascent:KC
 	mLuaChatColor = gSavedSettings.getColor4("LuaChatColor");
 	mIMChatColor = gSavedSettings.getColor4("IMChatColor");
 	mObjectChatColor = gSavedSettings.getColor4("ObjectChatColor");
@@ -139,9 +144,13 @@ void LLPrefsChatImpl::refreshValues()
 	mCloseChatOnReturn = gSavedSettings.getBOOL("CloseChatOnReturn");
 	mPlayTypingAnim = gSavedSettings.getBOOL("PlayTypingAnim"); 
 	mConsoleOpacity = gSavedSettings.getF32("ConsoleBackgroundOpacity");
-	mBubbleOpacity = gSavedSettings.getF32("ChatBubbleOpacity");
+
+	static F32* sChatBubbleOpacity = rebind_llcontrol<F32>("ChatBubbleOpacity", &gSavedSettings, true);
+	
+	mBubbleOpacity = *sChatBubbleOpacity;
 	mTranslateLanguage = gSavedSettings.getString("TranslateLanguage");
 	mTranslateChat = gSavedSettings.getBOOL("TranslateChat");
+	mIMEncryptedChatColor = gSavedSettings.getColor4("AscentIMEncryptedChatColor");
 }
 
 void LLPrefsChatImpl::cancel()
@@ -152,6 +161,7 @@ void LLPrefsChatImpl::cancel()
 	gSavedSettings.setColor4("SystemChatColor", mSystemChatColor);
 	gSavedSettings.setColor4("UserChatColor", mUserChatColor);
 	gSavedSettings.setColor4("AgentChatColor", mAgentChatColor);
+	gSavedSettings.setColor4("AscentFriendChatColor", mFriendChatColor); //Ascent:KC
 	gSavedSettings.setColor4("LuaChatColor", mLuaChatColor);
 	gSavedSettings.setColor4("IMChatColor", mIMChatColor);
 	gSavedSettings.setColor4("ObjectChatColor", mObjectChatColor);
@@ -170,6 +180,7 @@ void LLPrefsChatImpl::cancel()
 	gSavedSettings.setF32("ChatBubbleOpacity", mBubbleOpacity);	
 	gSavedSettings.setString("TranslateLanguage", mTranslateLanguage);	
 	gSavedSettings.setBOOL("TranslateChat", mTranslateChat);
+	gSavedSettings.setColor4("AscentIMEncryptedChatColor", mIMEncryptedChatColor);
 }
 
 void LLPrefsChatImpl::apply()
@@ -181,12 +192,14 @@ void LLPrefsChatImpl::apply()
 	gSavedSettings.setColor4("SystemChatColor", childGetValue("system"));
 	gSavedSettings.setColor4("UserChatColor", childGetValue("user"));
 	gSavedSettings.setColor4("AgentChatColor", childGetValue("agent"));
+	gSavedSettings.setColor4("AscentFriendChatColor", childGetValue("friend")); //Ascent:KC
 	gSavedSettings.setColor4("LuaChatColor", childGetValue("lua"));
 	gSavedSettings.setColor4("IMChatColor", childGetValue("im"));
 	gSavedSettings.setColor4("ScriptErrorColor", childGetValue("script_error"));
 	gSavedSettings.setColor4("ObjectChatColor", childGetValue("objects"));
 	gSavedSettings.setColor4("llOwnerSayChatColor", childGetValue("owner"));
 	gSavedSettings.setColor4("BackgroundChatColor", childGetValue("background"));
+	gSavedSettings.setColor4("AscentIMEncryptedChatColor", childGetValue("encrypted"));
 
 	gSavedSettings.setColor4("HTMLLinkColor", childGetValue("links"));
 	LLTextEditor::setLinkColor(childGetValue("links"));

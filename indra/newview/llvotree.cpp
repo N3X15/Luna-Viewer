@@ -348,9 +348,10 @@ BOOL LLVOTree::idleUpdate(LLAgent &agent, LLWorld &world, const F64 &time)
 	{
 		return TRUE;
 	}
+
+	static BOOL* sRenderAnimateTrees = rebind_llcontrol<BOOL>("RenderAnimateTrees", &gSavedSettings, true);
 	
-	//it's cheaper to check if wind is enabled first
-	if (gLLWindEnabled && gSavedSettings.getBOOL("RenderAnimateTrees"))
+	if (*sRenderAnimateTrees)
 	{
 		F32 mass_inv; 
 
@@ -393,7 +394,7 @@ BOOL LLVOTree::idleUpdate(LLAgent &agent, LLWorld &world, const F64 &time)
 		}
 	} 
 
-	if (!gLLWindEnabled || !gSavedSettings.getBOOL("RenderAnimateTrees"))
+	if (!*sRenderAnimateTrees)
 	{
 		if (mReferenceBuffer.isNull())
 		{
@@ -538,8 +539,8 @@ BOOL LLVOTree::updateGeometry(LLDrawable *drawable)
 			max_indices += sLODIndexCount[lod];
 			max_vertices += sLODVertexCount[lod];
 		}
-
-		mReferenceBuffer = new LLVertexBuffer(LLDrawPoolTree::VERTEX_DATA_MASK, gSavedSettings.getBOOL("RenderAnimateTrees") ? GL_STATIC_DRAW_ARB : 0);
+		static BOOL* sRenderAnimateTrees = rebind_llcontrol<BOOL>("RenderAnimateTrees", &gSavedSettings, true);
+		mReferenceBuffer = new LLVertexBuffer(LLDrawPoolTree::VERTEX_DATA_MASK, *sRenderAnimateTrees ? GL_STATIC_DRAW_ARB : 0);
 		mReferenceBuffer->allocateBuffer(max_vertices, max_indices, TRUE);
 
 		LLStrider<LLVector3> vertices;
@@ -842,8 +843,8 @@ BOOL LLVOTree::updateGeometry(LLDrawable *drawable)
 		llassert(vertex_count == max_vertices);
 		llassert(index_count == max_indices);
 	}
-
-	if (gLLWindEnabled || gSavedSettings.getBOOL("RenderAnimateTrees"))
+	static BOOL* sRenderAnimateTrees = rebind_llcontrol<BOOL>("RenderAnimateTrees", &gSavedSettings, true);
+	if (*sRenderAnimateTrees)
 	{
 		mDrawable->getFace(0)->mVertexBuffer = mReferenceBuffer;
 	}

@@ -129,12 +129,13 @@ BOOL LLFloaterAvatarPicker::postBuild()
 
 	getChild<LLScrollListCtrl>("SearchResults")->addCommentText(getString("no_results"));
 
-	LLInventoryPanel* inventory_panel = getChild<LLInventoryPanel>("InventoryPanel");
+	/*LLInventoryPanel* inventory_panel = getChild<LLInventoryPanel>("InventoryPanel");
 	inventory_panel->setFilterTypes(0x1 << LLInventoryType::IT_CALLINGCARD);
 	inventory_panel->setFollowsAll();
 	inventory_panel->setShowFolderState(LLInventoryFilter::SHOW_NON_EMPTY_FOLDERS);
 	inventory_panel->openDefaultFolderForType(LLAssetType::AT_CALLINGCARD);
-	inventory_panel->setSelectCallback(LLFloaterAvatarPicker::onCallingCardSelectionChange, this);
+	inventory_panel->setSelectCallback(LLFloaterAvatarPicker::onCallingCardSelectionChange, this);*/
+	init_cards = FALSE;
 
 	childSetTabChangeCallback("ResidentChooserTabs", "SearchPanel",			onTabChanged, this);
 	childSetTabChangeCallback("ResidentChooserTabs", "CallingCardsPanel",	onTabChanged, this);
@@ -154,6 +155,40 @@ void LLFloaterAvatarPicker::onTabChanged(void* userdata, bool from_click)
 	}
 	
 	self->childSetEnabled("Select", self->visibleItemsSelected());
+	self->chkcards();
+}
+
+void LLFloaterAvatarPicker::chkcards()
+{
+	if(init_cards == FALSE)
+	{
+		LLPanel* active_panel = childGetVisibleTab("ResidentChooserTabs");
+
+		if(active_panel == getChild<LLPanel>("CallingCardsPanel"))
+		{
+			init_cards = TRUE;
+			/*<inventory_panel allow_multi_select="false" border="true" bottom_delta="-117"
+			     follows="left|top|right|bottom" height="110" left="10" mouse_opaque="true"
+			     name="InventoryPanel" sort_order="AvatarPickerSortOrder" width="115" />*/
+			LLRect rect = active_panel->getRect();
+			rect.mLeft += 5;
+			rect.mTop -= 5;
+			rect.setLeftTopAndSize(rect.mLeft,rect.mTop,rect.getWidth()-5,rect.getHeight()-10);
+			LLInventoryPanel* panel = new LLInventoryPanel("InventoryPanel", "AvatarPickerSortOrder",
+								 rect, &gInventory,
+								 FALSE, active_panel);
+			panel->setFollowsAll();
+			panel->reshape(rect.getWidth(), rect.getHeight());
+			panel->postBuild();
+			active_panel->addChild(panel);
+			LLInventoryPanel* inventory_panel = getChild<LLInventoryPanel>("InventoryPanel");
+			inventory_panel->setFilterTypes(0x1 << LLInventoryType::IT_CALLINGCARD);
+			inventory_panel->setFollowsAll();
+			inventory_panel->setShowFolderState(LLInventoryFilter::SHOW_NON_EMPTY_FOLDERS);
+			inventory_panel->openDefaultFolderForType(LLAssetType::AT_CALLINGCARD);
+			inventory_panel->setSelectCallback(LLFloaterAvatarPicker::onCallingCardSelectionChange, this);
+		}
+	}
 }
 
 // Destroys the object
@@ -213,10 +248,10 @@ void LLFloaterAvatarPicker::onBtnSelect(void* userdata)
 		else if(active_panel == self->getChild<LLPanel>("KeyPanel"))
 		{
 			LLUUID specified = self->getChild<LLLineEditor>("EditUUID")->getValue().asUUID();
-			if(specified.isNull())
+			if(specified.isNull()) return;
+			std::vector<std::string>  avatar_names;
+			std::vector<LLUUID>      avatar_ids;
 				return;
-			std::vector<std::string>	avatar_names;
-			std::vector<LLUUID>			avatar_ids;
 			avatar_ids.push_back(specified);
 			avatar_names.push_back(specified.asString());
 			self->mCallback(avatar_names, avatar_ids, self->mCallbackUserdata);
@@ -415,7 +450,7 @@ void LLFloaterAvatarPicker::find()
 void LLFloaterAvatarPicker::setAllowMultiple(BOOL allow_multiple)
 {
 	getChild<LLScrollListCtrl>("SearchResults")->setAllowMultipleSelection(allow_multiple);
-	getChild<LLInventoryPanel>("InventoryPanel")->setAllowMultiSelect(allow_multiple);
+	if(init_cards)getChild<LLInventoryPanel>("InventoryPanel")->setAllowMultiSelect(allow_multiple);
 	getChild<LLScrollListCtrl>("NearMe")->setAllowMultipleSelection(allow_multiple);
 }
 
@@ -493,9 +528,11 @@ void LLFloaterAvatarPicker::processAvatarPickerReply(LLMessageSystem* msg, void*
 void LLFloaterAvatarPicker::editKeystroke(LLLineEditor* caller, void* user_data)
 {
 	LLFloaterAvatarPicker* self = (LLFloaterAvatarPicker*)user_data;
+//	self->childSetEnabled("Find", caller->getText().size() >= 3);
+
 	LLPanel* active_panel = self->childGetVisibleTab("ResidentChooserTabs");
 	if(active_panel == self->getChild<LLPanel>("SearchPanel"))
-		self->childSetEnabled("Find", caller->getText().size() >= 3);
+	self->childSetEnabled("Find", caller->getText().size() >= 3);
 	else if(active_panel == self->getChild<LLPanel>("KeyPanel"))
 	{
 		LLUUID specified = self->getChild<LLLineEditor>("EditUUID")->getValue().asUUID();

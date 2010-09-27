@@ -44,6 +44,12 @@ public:
 
 	static void show(void*);
 
+	static std::string get_viewer_release_notes_url();
+	static std::string get_viewer_version();
+	static std::string get_viewer_build_version();
+	static std::string get_viewer_region_info(std::string you_are_at);
+	static std::string get_viewer_misc_info();
+
 private:
 	static LLFloaterAbout* sInstance;
 };

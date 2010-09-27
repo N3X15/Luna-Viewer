@@ -247,7 +247,7 @@ public:
 
 	// Create a landmark at the "appropriate" location for the
 	// currently selected parcel.
-	// *NOTE: Taken out 2005-03-21. Phoenix.
+	// *NOTE: Taken out 2005-03-21. Ascent.
 	//void makeLandmarkAtSelection();
 
 	static void processParcelOverlay(LLMessageSystem *msg, void **user_data);

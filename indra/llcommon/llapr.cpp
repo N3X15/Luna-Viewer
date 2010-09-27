@@ -1,6 +1,6 @@
 /** 
  * @file llapr.cpp
- * @author Phoenix
+ * @author Ascent
  * @date 2004-11-28
  * @brief Helper functions for using the apache portable runtime library.
  *

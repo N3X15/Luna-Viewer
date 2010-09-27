@@ -1,6 +1,6 @@
 /** 
  * @file llservice.cpp
- * @author Phoenix
+ * @author Ascent
  * @date 2005-04-20
  *
  * $LicenseInfo:firstyear=2005&license=viewergpl$

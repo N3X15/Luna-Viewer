@@ -15,38 +15,32 @@ Hover your mouse over the options for more help.
 	     label="?" label_selected="?" left="391" mouse_opaque="true"
 	     name="help_button" width="20" />
 	<line_editor bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
-	     bottom="-24" drop_shadow_visible="true" follows="left|top" font="SansSerif"
+	     bottom="-20" drop_shadow_visible="true" follows="left|top" font="SansSerif"
 	     h_pad="0" halign="left" height="16" label="Type your new group name here"
 	     left="7" max_length="35" mouse_opaque="true" name="group_name_editor"
 	     prevalidate="ascii" v_pad="0" width="300" />
-	<text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
-	     bottom="-20" drop_shadow_visible="true" follows="left|top"
-	     font="SansSerifBig" h_pad="0" halign="left" height="16" left="7"
-	     mouse_opaque="true" name="group_name" v_pad="0" width="300">
-		Type your new group name here
-	</text>
-	<text font="SansSerifSmall" name="prepend_founded_by">
-		Founded by
+	<text bottom_delta="-12" font="SansSerifSmall" name="prepend_founded_by">
+		Founded by 
 	</text>
 	<text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
 	     bottom_delta="-6" drop_shadow_visible="true" follows="left|top"
-	     font="SansSerifSmall" h_pad="0" halign="left" height="16" left_delta="63"
+	     font="SansSerifSmall" h_pad="0" halign="left" height="16" left_delta="65"
 	     mouse_opaque="true" name="founder_name" v_pad="0" width="200">
 		(waiting)
 	</text>
-	<text font="SansSerifSmall" name="group_key_text" follows="left|top" left="7" bottom="-50">
+	<text font="SansSerifSmall" name="phoenix_guuid-pre" follows="left|top" left="7" bottom="-50">
 		Group Key:
 	</text>
       <name_editor bevel_style="in" border_style="line"
 			     border_thickness="1" bottom="-55" enabled="false" follows="left|top"
 			     font="SansSerifSmall" height="16" is_unicode="false" left_delta="65"
-			     max_length="254" mouse_opaque="false" name="group_key"
+			     max_length="254" mouse_opaque="false" name="groupkey_"
 			     width="256" />
 	<text bottom_delta="-20" font="SansSerifSmall" halign="left" height="16"
 	     name="group_charter_label" right="410" width="265">
 		Group Charter
 	</text>
-	<texture_picker bottom_delta="-129" follows="left|top" height="144"
+	<texture_picker bottom_delta="-130" follows="left|top" height="144"
 	      label="Group Insignia" left="7"
 	     mouse_opaque="true" name="insignia" tool_tip="Click to choose a picture"
 	     width="128" />
@@ -65,12 +59,8 @@ Hover your mouse over the options for more help.
 	     height="22" label="Detailed View" label_selected="Detailed View"
 	     left_delta="0" mouse_opaque="true" name="info_button" width="128" />
 	<text bottom_delta="-16" font="SansSerif" name="text_owners_and_visible_members">
-		Owners &amp; Visible Members
-	</text>
-	<text bottom_delta="-16" font="SansSerifSmall" left_delta="0"
-	     name="text_owners_are_shown_in_bold">
-		(Owners are shown in bold)
-	</text>
+		Owners &amp; Visible Members (Owners are shown in bold)
+  </text>
 	<name_list allow_calling_card_drop="false" background_visible="true" bottom_delta="-88"
 	     column_padding="0" draw_border="true" draw_heading="true"
 	     follows="left|top" heading_font="SansSerifSmall" heading_height="14"

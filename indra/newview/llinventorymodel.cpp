@@ -1457,7 +1457,7 @@ void LLInventoryModel::bulkFetch(std::string url)
 		
 		    if (cat)
 		    {
-				// <edit> Pre-emptive strike
+			    // <edit> Pre-emptive strike
 				if(!(gInventory.isObjectDescendentOf(cat->getUUID(), gLocalInventoryRoot)))
 				{
 				// </edit>
@@ -2052,10 +2052,6 @@ bool LLInventoryModel::loadSkeleton(
 		//delete cat; // automatic when cat is reasigned or destroyed
 	}
  
-
-
-
-
 	S32 cached_category_count = 0;
 	S32 cached_item_count = 0;
 	if (!temp_cats.empty())
@@ -3223,14 +3219,6 @@ void LLInventoryModel::processSaveAssetIntoInventory(LLMessageSystem* msg,
 		gViewerWindow->getWindow()->decBusyCount();
 	}
 }
-
-
-
-
-
-
-
-
 
 struct InventoryCallbackInfo
 {

@@ -668,7 +668,7 @@ void LLViewerObjectList::updateApparentAngles(LLAgent &agent)
 		mCurLazyUpdateIndex = 0;
 	}
 
-	mCurBin = (mCurBin + 1) % NUM_BINS;
+	mCurBin = (++mCurBin) % NUM_BINS;
 
 	LLVOAvatar::cullAvatarsByPixelArea();
 }
@@ -727,7 +727,9 @@ void LLViewerObjectList::update(LLAgent &agent, LLWorld &world)
 		}
 	}
 
-	if (gSavedSettings.getBOOL("FreezeTime"))
+	static BOOL* sFreezeTime = rebind_llcontrol<BOOL>("FreezeTime", &gSavedSettings, true);
+
+	if ((*sFreezeTime))
 	{
 		for (std::vector<LLViewerObject*>::iterator iter = idle_list.begin();
 			iter != idle_list.end(); iter++)
@@ -937,6 +939,9 @@ void LLViewerObjectList::killObjects(LLViewerRegion *regionp)
 		if (objectp->mRegionp == regionp)
 		{
 			killObject(objectp);
+			// invalidate region pointer. region will become invalid, but 
+			// refcounted objects may survive the cleanDeadObjects() call below
+			objectp->mRegionp = NULL;
 		}
 	}
 
@@ -1090,7 +1095,7 @@ void LLViewerObjectList::renderObjectsForMap(LLNetMap &netmap)
 	LLColor4 group_own_below_water_color = 
 						gColors.getColor( "NetMapGroupOwnBelowWater" );
 
-	F32 max_radius = gSavedSettings.getF32("MiniMapPrimMaxRadius");
+	F32 max_radius = gSavedSettings.getF32("AscentMiniMapPrimMaxRadius");
 
 	for (S32 i = 0; i < mMapObjects.count(); i++)
 	{
@@ -1106,9 +1111,7 @@ void LLViewerObjectList::renderObjectsForMap(LLNetMap &netmap)
 
 		F32 approx_radius = (scale.mV[VX] + scale.mV[VY]) * 0.5f * 0.5f * 1.3f;  // 1.3 is a fudge
 
-		// Limit the size of megaprims so they don't blot out everything on the minimap.
-		// Attempting to draw very large megaprims also causes client lag.
-		// See DEV-17370 and SNOW-79 for details.
+		// DEV-17370 - megaprims of size > 4096 cause lag.  (go figger.)
 		approx_radius = llmin(approx_radius, max_radius);
 
 		LLColor4U color = above_water_color;

@@ -559,15 +559,18 @@ void LLViewerImageList::updateImages(F32 max_time)
 	{
 		//trigger loaded callbacks on local textures immediately
 		LLViewerImage* image = *iter++;
-		if (!image->mUrl.empty())
+		if(image)
 		{
-			// Do stuff to handle callbacks, update priorities, etc.
-			didone = image->doLoadedCallbacks();
-		}
-		else if (!didone)
-		{
-			// Do stuff to handle callbacks, update priorities, etc.
-			didone = image->doLoadedCallbacks();
+		  if (!image->mUrl.empty())
+		  {
+			  // Do stuff to handle callbacks, update priorities, etc.
+			  didone = image->doLoadedCallbacks();
+		  }
+		  else if (!didone)
+		  {
+			  // Do stuff to handle callbacks, update priorities, etc.
+			  didone = image->doLoadedCallbacks();
+		  }
 		}
 	}
 	llpushcallstacks ;

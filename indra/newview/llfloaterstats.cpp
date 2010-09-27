@@ -255,18 +255,18 @@ void LLFloaterStats::buildStats()
 
 	stat_barp = sim_statviewp->addStat("Sim FPS", &(LLViewerStats::getInstance()->mSimFPS), "DebugStatModeSimFPS");
 	stat_barp->mMinBar = 0.f;
-	stat_barp->mMaxBar = 200.f;
-	stat_barp->mTickSpacing = 20.f;
-	stat_barp->mLabelSpacing = 100.f;
+	stat_barp->mMaxBar = 45.f;
+	stat_barp->mTickSpacing = 7.5f;
+	stat_barp->mLabelSpacing = 15.f;
 	stat_barp->mPerSec = FALSE;
 	stat_barp->mDisplayMean = FALSE;
 
 	stat_barp = sim_statviewp->addStat("Physics FPS", &(LLViewerStats::getInstance()->mSimPhysicsFPS), "DebugStatModePhysicsFPS");
 	stat_barp->mPrecision = 1;
 	stat_barp->mMinBar = 0.f;
-	stat_barp->mMaxBar = 66.f;
-	stat_barp->mTickSpacing = 33.f;
-	stat_barp->mLabelSpacing = 33.f;
+	stat_barp->mMaxBar = 45.f;
+	stat_barp->mTickSpacing = 7.5f;
+	stat_barp->mLabelSpacing = 15.f;
 	stat_barp->mPerSec = FALSE;
 	stat_barp->mDisplayMean = FALSE;
 
@@ -330,9 +330,9 @@ void LLFloaterStats::buildStats()
 	stat_barp = sim_statviewp->addStat("Objects", &(LLViewerStats::getInstance()->mSimObjects), "DebugStatModeSimObjects");
 	stat_barp->mPrecision = 0;
 	stat_barp->mMinBar = 0.f;
-	stat_barp->mMaxBar = 30000.f;
-	stat_barp->mTickSpacing = 5000.f;
-	stat_barp->mLabelSpacing = 10000.f;
+	stat_barp->mMaxBar = 15000.f;
+	stat_barp->mTickSpacing = 2500.f;
+	stat_barp->mLabelSpacing = 5000.f;
 	stat_barp->mPerSec = FALSE;
 	stat_barp->mDisplayMean = FALSE;
 
@@ -358,9 +358,9 @@ void LLFloaterStats::buildStats()
 	stat_barp->setUnitLabel(" eps");
 	stat_barp->mPrecision = 0;
 	stat_barp->mMinBar = 0.f;
-	stat_barp->mMaxBar = 20000.f;
-	stat_barp->mTickSpacing = 2500.f;
-	stat_barp->mLabelSpacing = 5000.f;
+	stat_barp->mMaxBar = 6000.f;
+	stat_barp->mTickSpacing = 1000.f;
+	stat_barp->mLabelSpacing = 2000.f;
 	stat_barp->mPerSec = FALSE;
 	stat_barp->mDisplayMean = FALSE;
 
@@ -476,7 +476,8 @@ void LLFloaterStats::buildStats()
 
 	stat_barp = sim_time_viewp->addStat("Script Time", &(LLViewerStats::getInstance()->mSimScriptMsec), "DebugStatModeSimScriptMsec");
 	stat_barp->setUnitLabel("ms");
-	stat_barp->mPrecision = 1;
+	//Chalice - Enhanced Script Time precision
+	stat_barp->mPrecision = 3;
 	stat_barp->mMinBar = 0.f;
 	stat_barp->mMaxBar = 40.f;
 	stat_barp->mTickSpacing = 10.f;
@@ -563,6 +564,11 @@ LLFloaterStats::LLFloaterStats(const LLSD& val)
 
 {
 	LLUICtrlFactory::getInstance()->buildFloater(this, "floater_statistics.xml", NULL, FALSE);
+
+	if(gSavedSettings.getBOOL("AscentStatsBarChrome"))
+	{
+		setIsChrome(TRUE);
+	}
 	
 	LLRect stats_rect(0, getRect().getHeight() - LLFLOATER_HEADER_SIZE,
 					  getRect().getWidth() - LLFLOATER_CLOSE_BOX_SIZE, 0);

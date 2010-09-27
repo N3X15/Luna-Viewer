@@ -221,6 +221,13 @@ BOOL LLPreviewNotecard::handleKeyHere(KEY key, MASK mask)
 		return TRUE;
 	}
 
+/*	LUNA:  Double-check with Ascent code. -- N3X15
+	if(('F' == key) && (MASK_CONTROL == (mask & MASK_CONTROL)))
+	{
+		LLFloaterSearchReplace::show(getChild<LLViewerTextEditor>("Notecard Editor"));
+		return TRUE;
+	}
+*/
 	return LLPreview::handleKeyHere(key, mask);
 }
 

@@ -41,8 +41,6 @@
 #include "llfloaterdirectory.h"
 #include "llfloaterworldmap.h"
 #include "llagent.h"
-#include "llappviewer.h"	// for gPacificDaylightTime
-#include "llviewercontrol.h"
 
 LLEventNotifier gEventNotifier;
 
@@ -233,7 +231,8 @@ BOOL LLEventNotification::load(const LLUserAuth::response_t &response)
 	{
 		event_ok = FALSE;
 	}
-/*
+
+
 	option_it = response.find("event_date");
 	if (option_it != response.end())
 	{
@@ -244,25 +243,12 @@ BOOL LLEventNotification::load(const LLUserAuth::response_t &response)
 	{
 		event_ok = FALSE;
 	}
-*/
+
 	option_it = response.find("event_date_ut");
 	if (option_it != response.end())
 	{
 		llinfos << "EventDate: " << option_it->second << llendl;
 		mEventDate = strtoul(option_it->second.c_str(), NULL, 10);
-
-		// Convert to Pacific, based on server's opinion of whether
-		// it's daylight savings time there.
-		struct tm* t = utc_to_pacific_time(mEventDate, gPacificDaylightTime);
-		timeStructToFormattedString(t, gSavedSettings.getString("TimestampFormat"), mEventDateStr);
-		if (gPacificDaylightTime)
-		{
-			mEventDateStr += " PDT";
-		}
-		else
-		{
-			mEventDateStr += " PST";
-		}
 	}
 	else
 	{

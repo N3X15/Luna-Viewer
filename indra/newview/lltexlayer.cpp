@@ -431,14 +431,14 @@ void LLTexLayerSetBuffer::readBackAndUpload()
 void LLTexLayerSetBuffer::onTextureUploadComplete(const LLUUID& uuid, void* userdata, S32 result, LLExtStat ext_status) // StoreAssetData callback (not fixed)
 {
 	LLBakedUploadData* baked_upload_data = (LLBakedUploadData*)userdata;
-
-	LLVOAvatar* avatar = gAgent.getAvatarObject();
-
+  
+  	LLVOAvatar* avatar = gAgent.getAvatarObject();
+  
 	if (0 == result &&
 		avatar && !avatar->isDead() &&
 		baked_upload_data->mAvatar == avatar && // Sanity check: only the user's avatar should be uploading textures.
 		baked_upload_data->mLayerSet->hasComposite())
- 	{
+	{
 		LLTexLayerSetBuffer* layerset_buffer = baked_upload_data->mLayerSet->getComposite();
 
 		if (layerset_buffer->mUploadID.isNull())
@@ -479,18 +479,19 @@ void LLTexLayerSetBuffer::onTextureUploadComplete(const LLUUID& uuid, void* user
 
 		avatar->dirtyMesh();
 	}
- 	else
- 	{
+	else
+	{
+		// Baked texture failed to upload (in which case since we
 		// didn't set the new baked texture, it means that they'll try
 		// and rebake it at some point in the future (after login?)),
 		// or this response to upload is out of date, in which case a
 		// current response should be on the way or already processed.
- 		llwarns << "Baked upload failed" << llendl;
- 	}
- 
- 	delete baked_upload_data;
-}
+		llwarns << "Baked upload failed" << llendl;
+	}
 
+	delete baked_upload_data;
+}
+  
 //-----------------------------------------------------------------------------
 // LLTexLayerSet
 // An ordered set of texture layers that get composited into a single texture.
@@ -676,7 +677,6 @@ BOOL LLTexLayerSet::isLocalTextureDataFinal()
 	return mAvatar->isLocalTextureDataFinal( this );
 }
 
-
 void LLTexLayerSet::renderAlphaMaskTextures(S32 x, S32 y, S32 width, S32 height, bool forceClear)
 {
 	const LLTexLayerSetInfo *info = getInfo();
@@ -712,8 +712,8 @@ void LLTexLayerSet::renderAlphaMaskTextures(S32 x, S32 y, S32 width, S32 height,
 		gl_rect_2d_simple( width, height );
 
 		gGL.flush();
- 	}
- 
+	}
+
 	// (Optional) Mask out part of the baked texture with alpha masks
 	// will still have an effect even if mClearAlpha is set or the alpha component was replaced
 	if (mMaskLayerList.size() > 0)
@@ -781,7 +781,7 @@ BOOL LLTexLayerSet::render( S32 x, S32 y, S32 width, S32 height )
 				success &= layer->render(x, y, width, height);
 				gGL.flush();
 			}
- 		}
+		}
 
 		renderAlphaMaskTextures(x, y, width, height, false);
 
@@ -801,9 +801,9 @@ BOOL LLTexLayerSet::render( S32 x, S32 y, S32 width, S32 height )
 
 		gGL.flush();
 	}
- 
- 	return success;
- }
+
+	return success;
+}
 
 void LLTexLayerSet::requestUpdate()
 {

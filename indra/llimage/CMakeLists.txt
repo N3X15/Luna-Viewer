@@ -18,7 +18,6 @@ include_directories(
     )
 
 set(llimage_SOURCE_FILES
-     aes.cpp
     llimagebmp.cpp
     llimage.cpp
     llimagedxt.cpp
@@ -33,7 +32,6 @@ set(llimage_SOURCE_FILES
 
 set(llimage_HEADER_FILES
     CMakeLists.txt
-     aes.h
     llimage.h
     llimagebmp.h
     llimagedxt.h
@@ -53,9 +51,11 @@ set_source_files_properties(${llimage_HEADER_FILES}
 list(APPEND llimage_SOURCE_FILES ${llimage_HEADER_FILES})
 
 add_library (llimage ${llimage_SOURCE_FILES})
-add_dependencies(llimage prepare)
+# Libraries on which this library depends, needed for Linux builds
+# Sort by high-level to low-level
 target_link_libraries(
     llimage
+    llimagej2coj        # *HACK: In theory a noop for KDU builds?
     ${JPEG_LIBRARIES}
     ${PNG_LIBRARIES}
     ${ZLIB_LIBRARIES}

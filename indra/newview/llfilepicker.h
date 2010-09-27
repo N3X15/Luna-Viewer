@@ -91,10 +91,11 @@ public:
 		FFLOAD_XML = 6,
 		FFLOAD_SLOBJECT = 7,
 		FFLOAD_RAW = 8,
+		FFLOAD_APP = 9,
 		// <edit>
-		FFLOAD_INVGZ = 9,
-		FFLOAD_AO = 10,
-		FFLOAD_BLACKLIST = 11
+		FFLOAD_INVGZ = 10,
+		FFLOAD_AO = 11,
+		FFLOAD_BLACKLIST = 12
 		// </edit>
 	};
 

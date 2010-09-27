@@ -389,51 +389,10 @@ void LLEmbeddedItems::bindEmbeddedChars( const LLFontGL* font ) const
 		{
 			continue;
 		}
-		const char* img_name;
-		switch( item->getType() )
-		{
-		  case LLAssetType::AT_TEXTURE:
-			if(item->getInventoryType() == LLInventoryType::IT_SNAPSHOT)
-			{
-				img_name = "inv_item_snapshot.tga";
-			}
-			else
-			{
-				img_name = "inv_item_texture.tga";
-			}
-
-			break;
-		  case LLAssetType::AT_SOUND:			img_name = "inv_item_sound.tga";	break;
-		  case LLAssetType::AT_LANDMARK:		
-			if (item->getFlags() & LLInventoryItem::II_FLAGS_LANDMARK_VISITED)
-			{
-				img_name = "inv_item_landmark_visited.tga";	
-			}
-			else
-			{
-				img_name = "inv_item_landmark.tga";	
-			}
-			break;
-		  case LLAssetType::AT_CLOTHING:		img_name = "inv_item_clothing.tga";	break;
-		  case LLAssetType::AT_OBJECT:			
-			if (item->getFlags() & LLInventoryItem::II_FLAGS_OBJECT_HAS_MULTIPLE_ITEMS)
-			{
-				img_name = "inv_item_object_multi.tga";	
-			}
-			else
-			{
-				img_name = "inv_item_object.tga";	
-			}
-			break;
-		  case LLAssetType::AT_NOTECARD:		img_name = "inv_item_notecard.tga";	break;
-		  case LLAssetType::AT_LSL_TEXT:		img_name = "inv_item_script.tga";	break;
-		  case LLAssetType::AT_BODYPART:		img_name = "inv_item_skin.tga";	break;
-		  case LLAssetType::AT_ANIMATION:		img_name = "inv_item_animation.tga";break;
-		  case LLAssetType::AT_GESTURE:			img_name = "inv_item_gesture.tga";	break;
-		  default: llassert(0); continue;
-		}
-
-		LLUIImagePtr image = LLUI::getUIImage(img_name);
+		LLUIImagePtr image = get_item_icon(item->getType(),
+					item->getInventoryType(),
+					0, 
+					item->getFlags() & LLInventoryItem::II_FLAGS_OBJECT_HAS_MULTIPLE_ITEMS);//LLUI::getUIImage(img_name);
 
 		font->addEmbeddedChar( wch, image->getImage(), item->getName() );
 	}
@@ -935,6 +894,7 @@ BOOL LLViewerTextEditor::handleMouseUp(S32 x, S32 y, MASK mask)
 BOOL LLViewerTextEditor::handleRightMouseDown(S32 x, S32 y, MASK mask)
 {
 	BOOL handled = childrenHandleRightMouseDown(x, y, mask) != NULL;
+	if(!handled)handled = LLTextEditor::handleRightMouseDown(x, y, mask);
 
 	// *TODO: Add right click menus for SLURLs
 // 	if(! handled)
@@ -1115,6 +1075,7 @@ BOOL LLViewerTextEditor::handleDragAndDrop(S32 x, S32 y, MASK mask,
 				{
 					LLInventoryItem *item = (LLInventoryItem *)cargo_data;
 					// <edit>
+					/* <LUNA> I don't like this, disabling. - N3X15
 					if((item->getPermissions().getMaskOwner() & PERM_ITEM_UNRESTRICTED) != PERM_ITEM_UNRESTRICTED)
 					{
 						if(gSavedSettings.getBOOL("ForceNotecardDragCargoPermissive"))
@@ -1131,13 +1092,14 @@ BOOL LLViewerTextEditor::handleDragAndDrop(S32 x, S32 y, MASK mask,
 							item->setPermissions(perm);
 						}
 					}
+					</LUNA> */
 					// </edit>
 					if( item && allowsEmbeddedItems() )
 					{
 						U32 mask_next = item->getPermissions().getMaskNextOwner();
 						// <edit>
 						//if((mask_next & PERM_ITEM_UNRESTRICTED) == PERM_ITEM_UNRESTRICTED)
-						if(((mask_next & PERM_ITEM_UNRESTRICTED) == PERM_ITEM_UNRESTRICTED) || gSavedSettings.getBOOL("ForceNotecardDragCargoAcceptance"))
+						if(((mask_next & PERM_ITEM_UNRESTRICTED) == PERM_ITEM_UNRESTRICTED))// I DOES NOT LIKING THIS, DISABLING || gSavedSettings.getBOOL("ForceNotecardDragCargoAcceptance"))
 						{
 							if( drop )
 							{
@@ -1280,19 +1242,13 @@ std::string LLViewerTextEditor::appendTime(bool prepend_newline)
 	// Convert to Pacific, based on server's opinion of whether
 	// it's daylight savings time there.
 	timep = utc_to_pacific_time(utc_time, gPacificDaylightTime);
-
-	std::string format = "";
-	if (gSavedSettings.getBOOL("SecondsInChatAndIMs"))
-	{
-		format = gSavedSettings.getString("LongTimeFormat");
-	}
-	else
-	{
-		format = gSavedSettings.getString("ShortTimeFormat");
-	}
 	std::string text;
-	timeStructToFormattedString(timep, format, text);
-	text = "[" + text + "]  ";
+	
+	if (gSavedSettings.getBOOL("AscentAddSecondsInHistory"))
+		text = llformat("[%02d:%02d:%02d]  ", timep->tm_hour, timep->tm_min, timep->tm_sec);
+	else
+		text = llformat("[%02d:%02d]  ", timep->tm_hour, timep->tm_min);
+	
 	appendColoredText(text, false, prepend_newline, LLColor4::grey);
 
 	return text;

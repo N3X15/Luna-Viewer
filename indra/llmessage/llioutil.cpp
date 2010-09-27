@@ -1,6 +1,6 @@
 /** 
  * @file llioutil.cpp
- * @author Phoenix
+ * @author Ascent
  * @date 2005-10-05
  * @brief Utility functionality for the io pipes.
  *

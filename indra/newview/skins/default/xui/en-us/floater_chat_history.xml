@@ -106,9 +106,14 @@
         <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom="0"
 				     enabled="true" follows="left|right|bottom" font="SansSerif"
 				     handle_edit_keys_directly="false" height="20" label="Click here to chat."
-				     left="0" max_length="254" mouse_opaque="true" name="Chat Editor"
-				     right="-70" select_all_on_focus_received="false" select_on_focus="false"
+				     left="0" max_length="2147483647" mouse_opaque="true" name="Chat Editor"
+				     right="-160" select_all_on_focus_received="false" select_on_focus="false"
 				     tab_group="1" />
+				<spinner bottom="-23" decimal_digits="0" follows="right|bottom" height="20"
+			     increment="1.00" initial_val="0" label="Chan" label_width="29" left="-155"
+			     max_val="2147483647" min_val="-2147483647" mouse_opaque="true" name="ChatChannel"
+			     text_enabled_color="110, 15, 15, 255" width="80" />
+
 				<flyout_button bottom="0" follows="right|bottom" height="20" label="Say" left="-65"
 				     list_position="above" mouse_opaque="true" name="Say" tool_tip="(Enter)"
 				     width="70">

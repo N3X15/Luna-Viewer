@@ -135,10 +135,8 @@ BOOL LLFloaterImagePreview::postBuild()
 		if (mRawImagep->getWidth() * mRawImagep->getHeight () <= LL_IMAGE_REZ_LOSSLESS_CUTOFF * LL_IMAGE_REZ_LOSSLESS_CUTOFF)
 			childEnable("lossless_check");
 
-		// <edit>
-		gSavedSettings.setBOOL("TemporaryUpload",FALSE);
+		gSavedSettings.setBOOL("AscentTemporaryUpload",FALSE);
 		childSetValue("temp_check",FALSE);
-		// </edit>
 	}
 	else
 	{

@@ -1,4 +1,4 @@
-/* Copyright (c) 2009
+/* Copyright (c) 2010
  *
  * Modular Systems All rights reserved.
  *
@@ -33,4 +33,4 @@
 
 #include "llchatbar.h"
 
-bool cmd_line_chat(std::string revised_text, EChatType type);
+bool cmd_line_chat(std::string revised_text, EChatType type, bool from_gesture = false);

@@ -466,7 +466,7 @@ BOOL LLImageJ2COJ::getMetadata(LLImageJ2C &base)
 
 	/* open a byte stream */
 	cio = opj_cio_open((opj_common_ptr)dinfo, base.getData(), base.getDataSize());
-	
+
 	/* decode the stream and fill the image structure */
 	if (!cio) return FALSE;
 	if (cio->bp == NULL) return FALSE;

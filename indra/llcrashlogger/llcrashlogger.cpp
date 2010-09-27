@@ -241,7 +241,7 @@ void LLCrashLogger::gatherFiles()
 	}*/
 
 	// Use login servers as the alternate, since they are already load balanced and have a known name
-	mAltCrashHost = "https://login.agni.lindenlab.com:12043/crash/report";
+	//mAltCrashHost = "https://login.agni.lindenlab.com:12043/crash/report";
 
 	mCrashHost = "http://luna.nexisonline.net/app/crash/crash.php";
 	mAltCrashHost = "http://luna.nexisonline.net/app/crash/crash.php";
@@ -375,7 +375,7 @@ bool LLCrashLogger::init()
 	gDirUtilp->initAppDirs("SecondLife");
 
 	// Default to the product name "Second Life" (this is overridden by the -name argument)
-	mProductName = "Second Life";
+	mProductName = "Luna Viewer";
 	
 	mCrashSettings.declareS32(CRASH_BEHAVIOR_SETTING, CRASH_BEHAVIOR_ASK, "Controls behavior when viewer crashes "
 		"(0 = ask before sending crash report, 1 = always send crash report, 2 = never send crash report)");

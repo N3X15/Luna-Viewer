@@ -1,6 +1,6 @@
 /** 
  * @file lliobuffer.cpp
- * @author Phoenix
+ * @author Ascent
  * @date 2005-05-04
  * @brief Definition of buffer based implementations of IO Pipes.
  *

@@ -38,7 +38,15 @@
 #include "lllistener_fmod.h"
 #include "llwindgen.h"
 
-#include "fmod.h"
+//from "fmod.h"
+#if LL_WINDOWS
+#define F_CALLBACKAPI __stdcall
+#else
+#define F_CALLBACKAPI
+#endif
+typedef struct FSOUND_SAMPLE    FSOUND_SAMPLE;
+typedef struct FSOUND_STREAM    FSOUND_STREAM;
+typedef struct FSOUND_DSPUNIT	FSOUND_DSPUNIT;
 
 class LLAudioStreamManagerFMOD;
 
@@ -77,6 +85,7 @@ protected:
 	//F32 mMinDistance[MAX_BUFFERS];
 	//F32 mMaxDistance[MAX_BUFFERS];
 
+	S32 mFadeIn;
 	bool mInited;
 
 	// On Windows, userdata is the HWND of the application window.

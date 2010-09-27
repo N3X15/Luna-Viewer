@@ -122,7 +122,7 @@ void LLPrefsAscentVanImpl::onCommitColor(LLUICtrl* ctrl, void* user_data)
 		LLSavedSettingsGlue::setCOAString("AscentCustomTagLabel",		self->childGetValue("custom_tag_label_box"));
 		LLSavedSettingsGlue::setCOAColor4("AscentCustomTagColor",		self->childGetValue("custom_tag_color_swatch"));
 		gAgent.sendAgentSetAppearance();
-		gAgent.resetClientTag();
+//		gAgent.resetClientTag();
 	}
 }
 
@@ -130,22 +130,7 @@ void LLPrefsAscentVanImpl::onManualClientUpdate(void* data)
 {
 	LLChat chat;
 	chat.mSourceType = CHAT_SOURCE_SYSTEM;
-	chat.mText = llformat("Definitions already up-to-date.");
-	if (LLVOAvatar::updateClientTags())
-	{
-		chat.mText = llformat("Client definitions updated.");
-		LLVOAvatar::loadClientTags();
-		for (std::vector<LLCharacter*>::iterator iter = LLCharacter::sInstances.begin();
-		iter != LLCharacter::sInstances.end(); ++iter)
-		{
-			LLVOAvatar* avatarp = (LLVOAvatar*) *iter;
-			if(avatarp)
-			{
-				LLVector3 root_pos_last = avatarp->mRoot.getWorldPosition();
-				avatarp->mClientTag = "";
-			}
-		}
-	}
+	chat.mText = llformat("This button is currently fucked until Ascent can straighten their shit out.");
 	LLFloaterChat::addChat(chat);
 	
 }
@@ -171,7 +156,7 @@ void LLPrefsAscentVanImpl::onCommitCheckBox(LLUICtrl* ctrl, void* user_data)
 			if(avatarp)
 			{
 				LLVector3 root_pos_last = avatarp->mRoot.getWorldPosition();
-				avatarp->mClientTag = "";
+//				avatarp->mClientTag = "";
 			}
 		}
 	}
@@ -183,8 +168,8 @@ void LLPrefsAscentVanImpl::onCommitCheckBox(LLUICtrl* ctrl, void* user_data)
 	self->childSetEnabled("custom_tag_label_box", showCustomOptions);
 	self->childSetEnabled("custom_tag_color_text", showCustomOptions);
 	self->childSetEnabled("custom_tag_color_swatch", showCustomOptions);
-	if (!gAgent.getID().isNull())
-		gAgent.resetClientTag();
+//	if (!gAgent.getID().isNull())
+//		gAgent.resetClientTag();
 }
 
 void LLPrefsAscentVanImpl::refreshValues()
@@ -250,7 +235,7 @@ void LLPrefsAscentVanImpl::refresh()
 
 	LLSavedSettingsGlue::setCOAColor4("AscentEstateOwnerColor", LLColor4::white);
 	LLSavedSettingsGlue::setCOAColor4("AscentEstateOwnerColor", mEMColor);
-	gAgent.resetClientTag();
+//	gAgent.resetClientTag();
 }
 
 void LLPrefsAscentVanImpl::cancel()

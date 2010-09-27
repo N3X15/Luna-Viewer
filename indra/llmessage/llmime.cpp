@@ -1,6 +1,6 @@
 /** 
  * @file llmime.cpp
- * @author Phoenix
+ * @author Ascent
  * @date 2006-12-20
  * @brief Implementation of mime tools.
  *

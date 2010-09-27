@@ -49,7 +49,7 @@
 #include "llfocusmgr.h"
 #include "llresmgr.h"
 
-const U32 MAX_STRING_LENGTH = 32;
+const U32 MAX_STRING_LENGTH = 255;
 
 static LLRegisterWidget<LLSpinCtrl> r2("spinner");
  
@@ -68,10 +68,14 @@ LLSpinCtrl::LLSpinCtrl(	const std::string& name, const LLRect& rect, const std::
 	mIncrement( increment ),
 	mPrecision( 3 ),
 	mLabelBox( NULL ),
-	mTextEnabledColor( LLUI::sColorsGroup->getColor( "LabelTextColor" ) ),
-	mTextDisabledColor( LLUI::sColorsGroup->getColor( "LabelDisabledColor" ) ),
+	//mTextEnabledColor( LLUI::sColorsGroup->getColor( "LabelTextColor" ) ),
+	//mTextDisabledColor( LLUI::sColorsGroup->getColor( "LabelDisabledColor" ) ),
 	mbHasBeenSet( FALSE )
 {
+	static LLColor4 defaultTextEnabledColor = LLUI::sColorsGroup->getColor( "LabelTextColor" );
+	static LLColor4 defaultTextDisabledColor = LLUI::sColorsGroup->getColor( "LabelDisabledColor" );
+	mTextEnabledColor = (defaultTextEnabledColor);
+	mTextDisabledColor = (defaultTextDisabledColor);
 	S32 top = getRect().getHeight();
 	S32 bottom = top - 2 * SPINCTRL_BTN_HEIGHT;
 	S32 centered_top = top;
@@ -164,7 +168,10 @@ void LLSpinCtrl::onUpBtn( void *userdata )
 	if( self->getEnabled() )
 	{
 		// use getValue()/setValue() to force reload from/to control
-		F32 val = (F32)self->getValue().asReal() + self->mIncrement;
+		F32 inc = self->mIncrement;
+		if(gKeyboard->getKeyDown(KEY_CONTROL))inc = inc * 0.10;
+		else if(gKeyboard->getKeyDown(KEY_SHIFT))inc = inc * 0.01;
+		F32 val = (F32)self->getValue().asReal() + inc;
 		val = clamp_precision(val, self->mPrecision);
 		val = llmin( val, self->mMaxValue );
 		
@@ -197,7 +204,10 @@ void LLSpinCtrl::onDownBtn( void *userdata )
 
 	if( self->getEnabled() )
 	{
-		F32 val = (F32)self->getValue().asReal() - self->mIncrement;
+		F32 inc = self->mIncrement;
+		if(gKeyboard->getKeyDown(KEY_CONTROL))inc = inc * 0.10;
+		else if(gKeyboard->getKeyDown(KEY_SHIFT))inc = inc * 0.01;
+		F32 val = (F32)self->getValue().asReal() - inc;
 		val = clamp_precision(val, self->mPrecision);
 		val = llmax( val, self->mMinValue );
 
@@ -324,11 +334,6 @@ void LLSpinCtrl::onEditorCommit( LLUICtrl* caller, void *userdata )
 			success = TRUE;
 		}
 	}
-	else
-	{
-		// We want to update the editor in case it fails while blanking -- MC
-		success = TRUE;
-	}
 
 	if( success )
 	{
@@ -406,18 +411,6 @@ void LLSpinCtrl::setLabel(const LLStringExplicit& label)
 	}
 }
 
-BOOL LLSpinCtrl::setLabelArg( const std::string& key, const LLStringExplicit& text )
-{
-	if (mLabelBox)
-	{
-		BOOL res = mLabelBox->setTextArg(key, text);
-		reshape(getRect().getWidth(), getRect().getHeight(), FALSE);
-		return res;
-	}
-	return FALSE;
-}
-
-
 void LLSpinCtrl::setAllowEdit(BOOL allow_edit)
 {
 	mEditor->setEnabled(allow_edit);
@@ -467,7 +460,7 @@ BOOL LLSpinCtrl::handleKeyHere(KEY key, MASK mask)
 {
 	if (mEditor->hasFocus())
 	{
-		if (key == KEY_ESCAPE && mask == MASK_NONE)
+		if(key == KEY_ESCAPE)
 		{
 			// text editors don't support revert normally (due to user confusion)
 			// but not allowing revert on a spinner seems dangerous
@@ -483,11 +476,6 @@ BOOL LLSpinCtrl::handleKeyHere(KEY key, MASK mask)
 		if(key == KEY_DOWN)
 		{
 			LLSpinCtrl::onDownBtn(this);
-			return TRUE;
-		}
-		if(key == KEY_RETURN)
-		{
-			forceEditorCommit();
 			return TRUE;
 		}
 	}

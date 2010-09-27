@@ -41,9 +41,11 @@
 #include "lluictrlfactory.h"
 #include "llurlsimstring.h"
 #include "llviewercontrol.h"
+#include "llnotifications.h"
 
 #include "llagent.h"
 #include "llviewerregion.h"
+#include "llfloaterpreference.h"
 
 LLPanelGeneral::LLPanelGeneral()
 {
@@ -103,6 +105,8 @@ BOOL LLPanelGeneral::postBuild()
 	
 	childSetVisible("maturity_desired_combobox", can_choose);
 	childSetVisible("maturity_desired_textbox",	!can_choose);
+	
+	childSetAction("clear_settings", &onClickClearSettings, this);
 			
 	return TRUE;
 }
@@ -158,3 +162,42 @@ void LLPanelGeneral::cancel()
 {
 }
 
+// static
+void LLPanelGeneral::onClickClearSettings(void*)
+{
+	LLNotifications::instance().add("AscentResetAllSettingsPrompt",
+									LLSD(),
+									LLSD(),
+									&callbackResetAllSettings);
+}
+
+// static
+void LLPanelGeneral::callbackResetAllSettings(const LLSD& notification, const LLSD& response)
+{
+	S32 option = LLNotification::getSelectedOption(notification, response);
+	if(option == 0) // OK
+	{
+		// We probably want to avoid altering this setting, so keep it across the reset.
+		std::string client_settings_file = gSavedSettings.getString("ClientSettingsFile");
+		gSavedSettings.resetToDefaults();
+		gSavedSettings.setString("ClientSettingsFile", client_settings_file);
+		gSavedSettings.saveToFile(client_settings_file, TRUE);
+		
+		// Wipe user-specific settings for good measure and consistency.
+		// Obviously, we can only do this if we're actually logged in.
+		if(gAgent.getID().notNull())
+		{
+			gSavedPerAccountSettings.resetToDefaults();
+			gSavedPerAccountSettings.saveToFile(gSavedSettings.getString("PerAccountSettingsFile"), TRUE);
+			LLNotifications::instance().add("AscentResetAllSettingsComplete");
+		}
+		else
+		{
+			LLNotifications::instance().add("AscentResetAllSettingsCompleteNoUser");
+		}			
+
+		// *HACK: Now close the floater without cancelling or applying.
+		// (the alternative route would be to add a method to every preference panel to handle this and update its UI)
+		LLFloaterPreference::closeWithoutSaving();
+	}
+}

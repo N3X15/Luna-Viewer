@@ -179,7 +179,7 @@ public:
 	enum { DESCENDENT_COUNT_UNKNOWN = -1 };
 	S32 getDescendentCount() const { return mDescendentCount; }
 	void setDescendentCount(S32 descendents) { mDescendentCount = descendents; }
-
+	static void createBasicHair();
 	// file handling on the viewer. These are not meant for anything
 	// other than cacheing.
 	bool exportFileLocal(LLFILE* fp) const;

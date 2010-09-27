@@ -88,6 +88,7 @@ public:
 	// next/prev state and performs the query.
 	// Expects a pointer to an LLPanelDirBrowser object.
 	static void onClickSearchCore(void* userdata);
+	static void onClickPopout(void* userdata);
 
 	// query_start indicates the first result row to
 	// return, usually 0 or 100 or 200 because the searches

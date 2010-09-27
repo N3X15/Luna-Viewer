@@ -1,22 +1,19 @@
 @echo off
-:Something's wrong with this, but I don't know what.
+
+: Dick with settings
+
+:2010-09-26T22:06:21Z WARNING: LLControlGroup::getBOOL: Invalid BOOL control AscentBuildAlwaysEnabled
+:2010-09-26T22:06:21Z WARNING: LLControlGroup::getBOOL: Invalid BOOL control PrivateLookAt
+set PER_ACCT=../indra/newview/app_settings/settings_per_account.xml
+echo *** Editing indra/newview/app_settings/settings.xml...
+python.exe ../scripts/settings.py --set=LunaCmdLineLua=/lua;LunaCmdLineMacro=/m;AscentDoubleClickTeleport=1;RadarChatKeys=1;AscentBuildAlwaysEnabled=False;PrivateLookAt=False
+echo *** Editing indra/newview/app_settings/settings_per_account.xml...
+python.exe ../scripts/settings.py --target-file=%PER_ACCT% --set=LunaCmdLineLua=/lua;LunaCmdLineMacro=/m;AscentDoubleClickTeleport=1;RadarChatKeys=1;AscentBuildAlwaysEnabled=1
+
+: Set your build type here.  Release = no debugging symbols.  RelWithDebInfo = Optimized with debugging symbols. Debug = FAT AND SLOW, MUCH LIKE YOUR MOTHER
 set BUILDTYPE=Release
-:set BUILDTYPE=RelWithDebInfo
-:set BUILDTYPE=Debug
 
-: Clean out unused _Lua* files
-:rm newview/_Lua*
-
-set MODULES=
-set MODULES=%MODULES% SL
-:set MODULES=%MODULES% GL
-:set MODULES=%MODULES% Region
-:set MODULES=%MODULES% Object
-:set MODULES=%MODULES% HUDEffects
-
-:Build the SL and GL Lua modules.
-:lua5.1 newview/swig/BuildModules.lua %MODULES%
-
+: Generator: VC80 = Visual C++ 2005, VC90 = Visual C++ 2008 (use this)
 set GEN="VC90"
 python ./develop.py --type=%BUILDTYPE% -G "%GEN%" configure -DPACKAGE:BOOL=TRUE -DLL_TESTS:BOOL=FALSE
 :python ./develop.py --type=%BUILDTYPE% -G "%GEN%" build

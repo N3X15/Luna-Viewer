@@ -2,62 +2,78 @@
 <panel border="true" bottom="-409" enabled="true" follows="left|top|right|bottom"
      height="408" label="Audio &amp; Video" left="102" mouse_opaque="true"
      name="Media panel" width="517">
-	<text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+  <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
 	     bottom="-22" drop_shadow_visible="true" enabled="true" follows="left|top"
 	     font="SansSerifSmall" h_pad="0" halign="left" height="12" left="10"
 	     mouse_opaque="true" name="muting_text" v_pad="0" width="128">
-		Volume:
-	</text>
-	<text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
-	     bottom="-215" drop_shadow_visible="true" enabled="true" follows="left|top"
+    Volume:
+  </text>
+  <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+	     bottom="-195" drop_shadow_visible="true" enabled="true" follows="left|top"
 	     font="SansSerifSmall" h_pad="0" halign="left" height="12" left="10"
 	     mouse_opaque="true" name="streaming_prefs_text" v_pad="0" width="128">
-		Streaming Preferences:
-	</text>
-	<text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
-	     bottom="-280" drop_shadow_visible="true" enabled="true" follows="left|top"
+    Streaming Preferences:
+  </text>
+  <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+	     bottom="-300" drop_shadow_visible="true" enabled="true" follows="left|top"
 	     font="SansSerifSmall" h_pad="0" halign="left" height="12" left="10"
 	     mouse_opaque="true" name="audio_prefs_text" v_pad="0" width="128">
-		Audio Preferences:
-	</text>
-	<panel border="true" bottom="-195" enabled="true" filename="panel_audio.xml"
+    Audio Preferences:
+  </text>
+  <panel border="true" bottom="-195" enabled="true" filename="panel_audio.xml"
 	     follows="left|top|right|bottom" height="180" label="Volume" left="148"
 	     mouse_opaque="true" name="Volume Panel" width="260" />
-	<check_box bottom="-220" control_name="AudioStreamingMusic" enabled="true"
+  <check_box bottom="-200" control_name="AudioStreamingMusic" enabled="true"
 	     follows="left|top" font="SansSerifSmall" height="16" initial_value="true"
-	     label="Play Streaming Music When Available (uses more bandwidth)"
+	     label="Enable Streaming Music When Available"
 	     left="142" mouse_opaque="true" name="streaming_music" radio_style="false"
 	     width="339" />
-	<check_box bottom_delta="-20" control_name="AudioStreamingVideo" enabled="true"
+  <check_box bottom_delta="-20" control_name="AudioStreamingVideo" enabled="true"
 	     follows="left|top" font="SansSerifSmall" height="16" initial_value="true"
-	     label="Play Streaming Media When Available (uses more bandwidth)"
+	     label="Enable Streaming Media When Available"
 	     left="142" mouse_opaque="true" name="streaming_video" radio_style="false"
 	     width="338" />
-	<check_box bottom_delta="-20" control_name="ParcelMediaAutoPlayEnable" enabled="true"
+  <check_box bottom_delta="-20" control_name="ParcelMediaAutoPlayEnable" enabled="true"
 	     follows="left|top" font="SansSerifSmall" height="16"
 	     initial_value="true" label="Automatically play media" left="162"
 	     mouse_opaque="true" name="auto_streaming_video" radio_style="false"
+       tool_tip="If you have this enabled, regardless of whether you have media stopped or not,
+       when you enter a new parcel your media will automatically turn on after a few seconds."
 	     width="338" />
-	<check_box bottom_delta="-25" control_name="MuteWhenMinimized" enabled="true"
+  <check_box bottom_delta="-20" control_name="PhoenixAllowScriptedMedia" enabled="true"
+	     follows="left|top" font="SansSerifSmall" height="16"
+	     initial_value="true" label="Let scripts control my play button" left="162"
+	     mouse_opaque="true" name="scripted_media" radio_style="false"
+       tool_tip="Having this turned on will prevent scripts from turning on your media (if it was already off) 
+       until you have pressed the play button yourself, or auto play turns it on."
+	     width="338" />
+  <check_box bottom_delta="-20" control_name="PhoenixStopMusicOnParcelChange" enabled="true"
+	     follows="left|top" font="SansSerifSmall" height="16"
+	     initial_value="true" label="Turn off media when you change parcels." left="142"
+	     mouse_opaque="true" name="auto_streaming_music" radio_style="false"
+       tool_tip="When you enter into a new parcel, any steaming music or playing media will be turned off.
+       This will last until it is either automatically turned on through auto play, a script, or your play button."
+	     width="338" />
+  <check_box bottom_delta="-25" control_name="MuteWhenMinimized" enabled="true"
 	     follows="left|top" font="SansSerifSmall" height="16" initial_value="true"
 	     label="Mute Audio When Window Minimized" left="142" mouse_opaque="true"
 	     name="mute_when_minimized" radio_style="false" width="215" />
-	<slider bottom_delta="-20" control_name="AudioLevelDoppler" edit_text="true"
+  <slider bottom_delta="-20" control_name="AudioLevelDoppler" edit_text="true"
 	     enabled="true" follows="left|top" height="15" increment="0.1"
 	     initial_val="1" label="Doppler Effect" label_width="100" left="148"
 	     max_val="2" min_val="0" mouse_opaque="true" name="Doppler Effect"
 	     show_text="true" width="250" />
-	<slider bottom_delta="-20" control_name="AudioLevelRolloff" edit_text="true"
+  <slider bottom_delta="-20" control_name="AudioLevelRolloff" edit_text="true"
 	     enabled="true" follows="left|top" height="15" increment="0.1"
 	     initial_val="1" label="Rolloff Factor" label_width="100" left="148"
 	     max_val="2" min_val="0" mouse_opaque="true" name="Rolloff Factor"
 	     show_text="true" width="250" />
-	<spinner bottom_delta="-20" control_name="UISndMoneyChangeThreshold" decimal_digits="0"
+  <spinner bottom_delta="-20" control_name="UISndMoneyChangeThreshold" decimal_digits="0"
 	     enabled="true" follows="left|top" height="16" increment="10"
 	     initial_val="10" label="L$ Change Threshold" label_width="128" left="148"
 	     max_val="10000" min_val="0" mouse_opaque="true" name="L$ Change Threshold"
 	     width="192" />
-	<spinner bottom_delta="-20" control_name="UISndHealthReductionThreshold"
+  <spinner bottom_delta="-20" control_name="UISndHealthReductionThreshold"
 	     decimal_digits="0" enabled="true" follows="left|top" height="16"
 	     increment="10" initial_val="20" label="Health Change Threshold"
 	     label_width="128" left="148" max_val="10000" min_val="0"

@@ -1,6 +1,6 @@
 /** 
  * @file llsdserialize.cpp
- * @author Phoenix
+ * @author Ascent
  * @date 2006-03-05
  * @brief Implementation of LLSD parsers and formatters
  *

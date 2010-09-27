@@ -197,7 +197,6 @@ void LLSimInfo::clearItems()
 void LLSimInfo::insertAgentLocation(const LLItemInfo& item) 
 {
 	std::string name = item.getName();
-	
 
 	// Find the last item in the list with a different name and erase them
 	item_info_list_t::iterator lastiter;

@@ -67,12 +67,12 @@
 const F32 RADIUS_PIXELS = 100.f;		// size in screen space
 const F32 SQ_RADIUS = RADIUS_PIXELS * RADIUS_PIXELS;
 const F32 WIDTH_PIXELS = 8;
-const S32 CIRCLE_STEPS = 100;
+const S32 CIRCLE_STEPS = 360;
 const F32 DELTA = F_TWO_PI / CIRCLE_STEPS;
 const F32 SIN_DELTA = sin( DELTA );
 const F32 COS_DELTA = cos( DELTA );
 const F32 MAX_MANIP_SELECT_DISTANCE = 100.f;
-const F32 SNAP_ANGLE_INCREMENT = 5.625f;
+const F32 SNAP_ANGLE_INCREMENT = 2.8125f;
 const F32 SNAP_ANGLE_DETENTE = SNAP_ANGLE_INCREMENT;
 const F32 SNAP_GUIDE_RADIUS_1 = 2.8f;
 const F32 SNAP_GUIDE_RADIUS_2 = 2.4f;
@@ -831,35 +831,35 @@ void LLManipRotate::renderSnapGuides()
 			}
 			glPopMatrix();
 
-			for (S32 i = 0; i < 64; i++)
+			for (S32 i = 0; i < CIRCLE_STEPS; i++)
 			{
 				BOOL render_text = TRUE;
-				F32 deg = 5.625f * (F32)i;
+				//F32 deg = 5.625f * (F32)i;
 				LLVector3 inner_point;
 				LLVector3 outer_point;
 				LLVector3 text_point;
-				LLQuaternion rot(deg * DEG_TO_RAD, constraint_axis);
+				LLQuaternion rot(i * DEG_TO_RAD, constraint_axis);
 				gGL.begin(LLRender::LINES);
 				{
 					inner_point = (projected_snap_axis * mRadiusMeters * SNAP_GUIDE_INNER_RADIUS * rot) + center;
 					F32 tick_length = 0.f;
-					if (i % 16 == 0)
+					if (i % 90 == 0)
 					{
 						tick_length = mRadiusMeters * (SNAP_GUIDE_RADIUS_1 - SNAP_GUIDE_INNER_RADIUS);
 					}
-					else if (i % 8 == 0)
+					else if (i % 45 == 0)
 					{
 						tick_length = mRadiusMeters * (SNAP_GUIDE_RADIUS_2 - SNAP_GUIDE_INNER_RADIUS);
 					}
-					else if (i % 4 == 0)
+					else if (i % 30 == 0)
 					{
 						tick_length = mRadiusMeters * (SNAP_GUIDE_RADIUS_3 - SNAP_GUIDE_INNER_RADIUS);
 					}
-					else if (i % 2 == 0)
+					else if (i % 15 == 0)
 					{
 						tick_length = mRadiusMeters * (SNAP_GUIDE_RADIUS_4 - SNAP_GUIDE_INNER_RADIUS);
 					}
-					else
+					else if(i % 5 == 0)
 					{
 						tick_length = mRadiusMeters * (SNAP_GUIDE_RADIUS_5 - SNAP_GUIDE_INNER_RADIUS);
 					}
@@ -899,7 +899,7 @@ void LLManipRotate::renderSnapGuides()
 
 				// *TODO: Translate
 				//RN: text rendering does own shadow pass, so only render once
-				if (pass == 1 && render_text && i % 16 == 0)
+				if (pass == 1 && render_text && i % 90 == 0)
 				{
 					if (world_snap_axis.mV[VX])
 					{
@@ -907,7 +907,7 @@ void LLManipRotate::renderSnapGuides()
 						{
 							renderTickText(text_point, mObjectSelection->isAttachment() ? std::string("Forward") : std::string("East"), LLColor4::white);
 						}
-						else if (i == 16)
+						else if (i == 90)
 						{
 							if (constraint_axis.mV[VZ] > 0.f)
 							{
@@ -918,7 +918,7 @@ void LLManipRotate::renderSnapGuides()
 								renderTickText(text_point, mObjectSelection->isAttachment() ? std::string("Right") : std::string("South"), LLColor4::white);
 							}
 						}
-						else if (i == 32)
+						else if (i == 180)
 						{
 							renderTickText(text_point, mObjectSelection->isAttachment() ? std::string("Back") : std::string("West"), LLColor4::white);
 						}
@@ -940,7 +940,7 @@ void LLManipRotate::renderSnapGuides()
 						{
 							renderTickText(text_point, mObjectSelection->isAttachment() ? std::string("Left") : std::string("North"), LLColor4::white);
 						}
-						else if (i == 16)
+						else if (i == 90)
 						{
 							if (constraint_axis.mV[VX] > 0.f)
 							{
@@ -951,7 +951,7 @@ void LLManipRotate::renderSnapGuides()
 								renderTickText(text_point, std::string("Down"), LLColor4::white);
 							}
 						}
-						else if (i == 32)
+						else if (i == 180)
 						{
 							renderTickText(text_point, mObjectSelection->isAttachment() ? std::string("Right") : std::string("South"), LLColor4::white);
 						}
@@ -973,7 +973,7 @@ void LLManipRotate::renderSnapGuides()
 						{
 							renderTickText(text_point, std::string("Up"), LLColor4::white);
 						}
-						else if (i == 16)
+						else if (i == 90)
 						{
 							if (constraint_axis.mV[VY] > 0.f)
 							{
@@ -984,7 +984,7 @@ void LLManipRotate::renderSnapGuides()
 								renderTickText(text_point, mObjectSelection->isAttachment() ? std::string("Back") : std::string("West"), LLColor4::white);
 							}
 						}
-						else if (i == 32)
+						else if (i == 180)
 						{
 							renderTickText(text_point, std::string("Down"), LLColor4::white);
 						}
@@ -1266,6 +1266,7 @@ LLQuaternion LLManipRotate::dragConstrained( S32 x, S32 y )
 	LLVector3 center = gAgent.getPosAgentFromGlobal( mRotationCenter );
 
 	F32 angle = 0.f;
+	F32 protsize = gSavedSettings.getF32("GridProtractorSize");
 
 	// build snap axes
 	LLVector3 grid_origin;
@@ -1455,7 +1456,7 @@ LLQuaternion LLManipRotate::dragConstrained( S32 x, S32 y )
 			// 0 to 360 deg
 			F32 mouse_angle = fmodf(atan2(projected_mouse * axis1, projected_mouse * axis2) * RAD_TO_DEG + 360.f, 360.f);
 			
-			F32 relative_mouse_angle = fmodf(mouse_angle + (SNAP_ANGLE_DETENTE / 2), SNAP_ANGLE_INCREMENT);
+			F32 relative_mouse_angle = fmodf(mouse_angle + (protsize / 2), protsize);
 			//fmodf(llround(mouse_angle * RAD_TO_DEG, 7.5f) + 360.f, 360.f);
 
 			LLVector3 object_axis;
@@ -1466,9 +1467,9 @@ LLQuaternion LLManipRotate::dragConstrained( S32 x, S32 y )
 			object_axis = object_axis - (object_axis * getConstraintAxis()) * getConstraintAxis();
 			object_axis.normVec();
 
-			if (relative_mouse_angle < SNAP_ANGLE_DETENTE)
+			if (relative_mouse_angle < protsize)
 			{
-				F32 quantized_mouse_angle = mouse_angle - (relative_mouse_angle - (SNAP_ANGLE_DETENTE * 0.5f));
+				F32 quantized_mouse_angle = mouse_angle - (relative_mouse_angle - (protsize * 0.5f));
 				angle = (quantized_mouse_angle * DEG_TO_RAD) - atan2(object_axis * axis1, object_axis * axis2);
 			}
 			else
@@ -1528,7 +1529,7 @@ LLQuaternion LLManipRotate::dragConstrained( S32 x, S32 y )
 			// 0 to 360 deg
 			F32 mouse_angle = fmodf(atan2(projected_mouse * axis1, projected_mouse * axis2) * RAD_TO_DEG + 360.f, 360.f);
 			
-			F32 relative_mouse_angle = fmodf(mouse_angle + (SNAP_ANGLE_DETENTE / 2), SNAP_ANGLE_INCREMENT);
+			F32 relative_mouse_angle = fmodf(mouse_angle + (protsize / 2), protsize);
 			//fmodf(llround(mouse_angle * RAD_TO_DEG, 7.5f) + 360.f, 360.f);
 
 			LLVector3 object_axis;
@@ -1539,9 +1540,9 @@ LLQuaternion LLManipRotate::dragConstrained( S32 x, S32 y )
 			object_axis = object_axis - (object_axis * getConstraintAxis()) * getConstraintAxis();
 			object_axis.normVec();
 
-			if (relative_mouse_angle < SNAP_ANGLE_DETENTE)
+			if (relative_mouse_angle < protsize)
 			{
-				F32 quantized_mouse_angle = mouse_angle - (relative_mouse_angle - (SNAP_ANGLE_DETENTE * 0.5f));
+				F32 quantized_mouse_angle = mouse_angle - (relative_mouse_angle - (protsize * 0.5f));
 				angle = (quantized_mouse_angle * DEG_TO_RAD) - atan2(object_axis * axis1, object_axis * axis2);
 			}
 			else

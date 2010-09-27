@@ -52,8 +52,11 @@ public:
 	void			setResizeLimits( S32 min_size, S32 max_size ) { mMinSize = min_size; mMaxSize = max_size; }
 	void			setEnableSnapping(BOOL enable) { mSnappingEnabled = enable; }
 	void			setAllowDoubleClickSnapping(BOOL allow) { mAllowDoubleClickSnapping = allow; }
+	void			setChangeCallback( void(*function)(void*), void* value);
 
 private:
+	void			(*mDragCallback)( void* userdata );
+	void*			mDragCallbackUserdata;
 	S32				mDragLastScreenX;
 	S32				mDragLastScreenY;
 	S32				mLastMouseScreenX;

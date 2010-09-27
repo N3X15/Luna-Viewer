@@ -100,8 +100,10 @@ LLButton::LLButton(	const std::string& name, const LLRect& rect, const std::stri
 	setImageDisabled(std::string("button_disabled_32x128.tga"));
 	setImageDisabledSelected(std::string("button_disabled_32x128.tga"));
 
-	mImageColor = LLUI::sColorsGroup->getColor( "ButtonImageColor" );
-	mDisabledImageColor = LLUI::sColorsGroup->getColor( "ButtonImageColor" );
+	static LLColor4 sButtonImageColor = LLUI::sColorsGroup->getColor("ButtonImageColor");
+
+	mImageColor = sButtonImageColor;
+	mDisabledImageColor = sButtonImageColor;
 
 	init(click_callback, callback_data, NULL, control_name);
 }
@@ -149,9 +151,12 @@ LLButton::LLButton(const std::string& name, const LLRect& rect,
 	mUnselectedLabel = unselected_label;
 	mSelectedLabel = selected_label;
 
+	static LLColor4 sButtonImageColor = LLUI::sColorsGroup->getColor("ButtonImageColor");
+
+
 	// by default, disabled color is same as enabled
-	mImageColor = LLUI::sColorsGroup->getColor( "ButtonImageColor" );
-	mDisabledImageColor = LLUI::sColorsGroup->getColor( "ButtonImageColor" );
+	mImageColor = sButtonImageColor;
+	mDisabledImageColor = sButtonImageColor;
 
 	if( unselected_image_name != "" )
 	{
@@ -203,14 +208,23 @@ void LLButton::init(void (*click_callback)(void*), void *callback_data, const LL
 
 	setControlName(control_name, NULL);
 
-	mUnselectedLabelColor = (			LLUI::sColorsGroup->getColor( "ButtonLabelColor" ) );
-	mSelectedLabelColor = (			LLUI::sColorsGroup->getColor( "ButtonLabelSelectedColor" ) );
-	mDisabledLabelColor = (			LLUI::sColorsGroup->getColor( "ButtonLabelDisabledColor" ) );
-	mDisabledSelectedLabelColor = (	LLUI::sColorsGroup->getColor( "ButtonLabelSelectedDisabledColor" ) );
-	mHighlightColor = (				LLUI::sColorsGroup->getColor( "ButtonUnselectedFgColor" ) );
-	mUnselectedBgColor = (				LLUI::sColorsGroup->getColor( "ButtonUnselectedBgColor" ) );
-	mSelectedBgColor = (				LLUI::sColorsGroup->getColor( "ButtonSelectedBgColor" ) );
-	mFlashBgColor = (				LLUI::sColorsGroup->getColor( "ButtonFlashBgColor" ) );
+	static LLColor4 sUnselectedLabelColor = (			LLUI::sColorsGroup->getColor( "ButtonLabelColor" ) );
+	static LLColor4 sSelectedLabelColor = (			LLUI::sColorsGroup->getColor( "ButtonLabelSelectedColor" ) );
+	static LLColor4 sDisabledLabelColor = (			LLUI::sColorsGroup->getColor( "ButtonLabelDisabledColor" ) );
+	static LLColor4 sDisabledSelectedLabelColor = (	LLUI::sColorsGroup->getColor( "ButtonLabelSelectedDisabledColor" ) );
+	static LLColor4 sHighlightColor = (				LLUI::sColorsGroup->getColor( "ButtonUnselectedFgColor" ) );
+	static LLColor4 sUnselectedBgColor = (				LLUI::sColorsGroup->getColor( "ButtonUnselectedBgColor" ) );
+	static LLColor4 sSelectedBgColor = (				LLUI::sColorsGroup->getColor( "ButtonSelectedBgColor" ) );
+	static LLColor4 sFlashBgColor = (				LLUI::sColorsGroup->getColor( "ButtonFlashBgColor" ) );
+
+	mUnselectedLabelColor = sUnselectedLabelColor;
+	mSelectedLabelColor = sSelectedLabelColor;
+	mDisabledLabelColor = sDisabledLabelColor;
+	mDisabledSelectedLabelColor = sDisabledSelectedLabelColor;
+	mHighlightColor = sHighlightColor;
+	mUnselectedBgColor = sUnselectedBgColor;
+	mSelectedBgColor = sSelectedBgColor;
+	mFlashBgColor = sFlashBgColor;
 
 	mImageOverlayAlignment = LLFontGL::HCENTER;
 	mImageOverlayColor = LLColor4::white;

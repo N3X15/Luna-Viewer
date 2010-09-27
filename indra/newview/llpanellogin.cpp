@@ -984,7 +984,7 @@ void LLPanelLogin::loadLoginPage()
 	curl_free(curl_channel);
 	curl_free(curl_version);
 
-	// grid=blah code was here. Due to the implementation of the Phoenix login manager, sending
+	// grid=blah code was here. Due to the implementation of the Ascent login manager, sending
 	// this information is a very bad idea. Don't do it.
 
 	// This is to work out if dropping Tiger support is sane. Also to suggest updates on the login screen.

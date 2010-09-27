@@ -385,7 +385,7 @@ void LLViewerRegion::saveCache()
 
 	std::string filename;
 	filename = gDirUtilp->getExpandedFilename(LL_PATH_CACHE,"") + gDirUtilp->getDirDelimiter() +
-		llformat("sobjects_%d_%d.slc", U32(mHandle>>32)/REGION_WIDTH_UNITS, U32(mHandle)/REGION_WIDTH_UNITS );
+		llformat("objects_%d_%d.slc", U32(mHandle>>32)/REGION_WIDTH_UNITS, U32(mHandle)/REGION_WIDTH_UNITS );
 
 	LLFILE* fp = LLFile::fopen(filename, "wb");		/* Flawfinder: ignore */
 	if (!fp)
@@ -546,6 +546,7 @@ const std::string LLViewerRegion::getSimAccessString() const
 std::string LLViewerRegion::regionFlagsToString(U32 flags)
 {
 	std::string result;
+
 	if (flags & REGION_FLAGS_SANDBOX)
 	{
 		if(!result.empty()) result += ", ";

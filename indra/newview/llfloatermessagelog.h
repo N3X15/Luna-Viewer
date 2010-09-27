@@ -2,7 +2,6 @@
 #include "llfloater.h"
 #include "llmessagelog.h"
 #include "lltemplatemessagereader.h"
-
 class LLNetListItem
 {
 public:
@@ -13,7 +12,6 @@ public:
 	std::string mPreviousRegionName;
 	LLCircuitData* mCircuitData;
 };
-
 class LLFloaterMessageLogItem : public LLMessageLogEntry
 {
 public:
@@ -26,8 +24,6 @@ public:
 	U32 mFlags;
 	std::string getFull(BOOL show_header = TRUE);
 	BOOL isOutgoing();
-	void refreshNetList();
-
 private:
 	static LLTemplateMessageReader* sTemplateMessageReader;
 	static std::string getString(LLTemplateMessageReader* readerp, const char* block_name, S32 block_num, const char* var_name, e_message_variable_type var_type, BOOL &returned_hex, BOOL summary_mode = FALSE);
@@ -59,6 +55,7 @@ public:
 	LLFloaterMessageLog();
 	~LLFloaterMessageLog();
 	static void show();
+	static LLFloaterMessageLog* getInstance(){ return sInstance; }
 	BOOL postBuild();
 	BOOL tick();
 	LLNetListItem* findNetListItem(LLHost host);
@@ -73,8 +70,8 @@ public:
 	static void onCommitMessageLog(LLUICtrl* ctrl, void* user_data);
 	static void onCommitFilter(LLUICtrl* ctrl, void* user_data);
 	static BOOL onClickCloseCircuit(void* user_data);
-	static bool onConfirmCloseCircuit(const LLSD& notification, const LLSD& response );
-	static bool onConfirmRemoveRegion(const LLSD& notification, const LLSD& response );
+	static void onConfirmCloseCircuit(S32 option, LLSD payload);
+	static void onConfirmRemoveRegion(S32 option, LLSD payload);
 	static void onClickFilterApply(void* user_data);
 	void startApplyingFilter(std::string filter, BOOL force);
 	void stopApplyingFilter();

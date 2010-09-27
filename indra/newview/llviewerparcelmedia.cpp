@@ -50,6 +50,7 @@
 // Static Variables
 
 S32 LLViewerParcelMedia::sMediaParcelLocalID = 0;
+BOOL LLViewerParcelMedia::sManuallyAllowedScriptedMedia = FALSE;
 LLUUID LLViewerParcelMedia::sMediaRegionID;
 viewer_media_t LLViewerParcelMedia::sMediaImpl;
 
@@ -136,6 +137,11 @@ void LLViewerParcelMedia::update(LLParcel* parcel)
 				|| ( sMediaImpl->getMediaTextureID() != parcel->getMediaID() )
 				|| ( sMediaImpl->getMimeType() != parcel->getMediaType() ))
 			{
+				if(gSavedSettings.getBOOL("AscentStopMusicOnParcelChange"))
+				{
+					stop();
+					sManuallyAllowedScriptedMedia=FALSE;
+				}else
 				// Only play if the media types are the same.
 				if(sMediaImpl->getMimeType() == parcel->getMediaType())
 				{
@@ -196,40 +202,36 @@ void LLViewerParcelMedia::play(LLParcel* parcel)
 	// Debug print
 	// LL_DEBUGS("Media") << "Play media type : " << mime_type << ", url : " << media_url << LL_ENDL;
 
-	if(sMediaImpl)
+	if(!sMediaImpl)
 	{
-		// If the url and mime type are the same, call play again
-		if(sMediaImpl->getMediaURL() == media_url 
-			&& sMediaImpl->getMimeType() == mime_type
-			&& sMediaImpl->getMediaTextureID() == placeholder_texture_id)
-		{
-			LL_DEBUGS("Media") << "playing with existing url " << media_url << LL_ENDL;
-
-			sMediaImpl->play();
-		}
-		// Else if the texture id's are the same, navigate and rediscover type
-		// MBW -- This causes other state from the previous parcel (texture size, autoscale, and looping) to get re-used incorrectly.
-		// It's also not really necessary -- just creating a new instance is fine.
+		// There is no media impl, make a new one
+		sMediaImpl = LLViewerMedia::newMediaImpl(media_url, placeholder_texture_id,
+			media_width, media_height, media_auto_scale,
+			media_loop, mime_type);
+	}
+	// If the url and mime type are the same, call play again
+	if(sMediaImpl->getMediaURL() == media_url 
+		&& sMediaImpl->getMimeType() == mime_type
+		&& sMediaImpl->getMediaTextureID() == placeholder_texture_id)
+	{
+		LL_DEBUGS("Media") << "playing with existing url " << media_url << LL_ENDL;
+		sMediaImpl->play();
+	}
+	// Else if the texture id's are the same, navigate and rediscover type
+	// MBW -- This causes other state from the previous parcel (texture size, autoscale, and looping) to get re-used incorrectly.
+	// It's also not really necessary -- just creating a new instance is fine.
 //		else if(sMediaImpl->getMediaTextureID() == placeholder_texture_id)
 //		{
 //			sMediaImpl->navigateTo(media_url, mime_type, true);
 //		}
-		else
-		{
-			// Since the texture id is different, we need to generate a new impl
-			LL_DEBUGS("Media") << "new media impl with mime type " << mime_type << ", url " << media_url << LL_ENDL;
-
-			// Delete the old one first so they don't fight over the texture.
-			sMediaImpl->stop();
-
-			sMediaImpl = LLViewerMedia::newMediaImpl(media_url, placeholder_texture_id,
-				media_width, media_height, media_auto_scale,
-				media_loop, mime_type);
-		}
-	}
 	else
 	{
-		// There is no media impl, make a new one
+		// Since the texture id is different, we need to generate a new impl
+		LL_DEBUGS("Media") << "new media impl with mime type " << mime_type << ", url " << media_url << LL_ENDL;
+
+		// Delete the old one first so they don't fight over the texture.
+		sMediaImpl->stop();
+
 		sMediaImpl = LLViewerMedia::newMediaImpl(media_url, placeholder_texture_id,
 			media_width, media_height, media_auto_scale,
 			media_loop, mime_type);
@@ -333,7 +335,7 @@ void LLViewerParcelMedia::processParcelMediaCommandMessage( LLMessageSystem *msg
 	msg->getU32( "CommandBlock", "Flags", flags );
 	msg->getU32( "CommandBlock", "Command", command);
 	msg->getF32( "CommandBlock", "Time", time );
-
+	
 	if (flags &( (1<<PARCEL_MEDIA_COMMAND_STOP)
 				| (1<<PARCEL_MEDIA_COMMAND_PAUSE)
 				| (1<<PARCEL_MEDIA_COMMAND_PLAY)
@@ -356,6 +358,14 @@ void LLViewerParcelMedia::processParcelMediaCommandMessage( LLMessageSystem *msg
 		if(( command == PARCEL_MEDIA_COMMAND_PLAY ) ||
 		   ( command == PARCEL_MEDIA_COMMAND_LOOP ))
 		{
+			if(!
+				( 
+				(gSavedSettings.getBOOL("AscentAllowScriptedMedia")) ||
+				(sManuallyAllowedScriptedMedia)||
+				(gSavedSettings.getBOOL("ParcelMediaAutoPlayEnable"))
+				)
+				)
+				return;
 			if (getStatus() == LLViewerMediaImpl::MEDIA_PAUSED)
 			{
 				start();

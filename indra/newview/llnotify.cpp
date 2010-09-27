@@ -136,10 +136,11 @@ LLNotifyBox::LLNotifyBox(LLNotificationPtr notification,
 	  mNumOptions(0),
 	  mNumButtons(0),
 	  mAddedDefaultBtn(FALSE),
-	  mLayoutScriptDialog(layout_script_dialog)
+	  mLayoutScriptDialog(layout_script_dialog),
+	  mUserInputBox(NULL)
 {
-	// clicking on a button does not steal current focus
-	setIsChrome(TRUE);
+	std::string edit_text_name;
+	std::string edit_text_contents;
 
 	// class init
 	if (!sFont)
@@ -171,9 +172,10 @@ LLNotifyBox::LLNotifyBox(LLNotificationPtr notification,
 	LLNotificationFormPtr form(notification->getForm());
 
 	mNumOptions = form->getNumElements();
+	
+	bool is_textbox = form->getElement("message").isDefined();
 		  
-	LLRect rect = mIsTip ? getNotifyTipRect(mMessage)
-		   		  		 : getNotifyRect(mNumOptions, layout_script_dialog, mIsCaution);
+	LLRect rect = mIsTip ? getNotifyTipRect(mMessage) : getNotifyRect(is_textbox ? 10 : mNumOptions, layout_script_dialog, mIsCaution);
 	setRect(rect);
 	setFollows(mIsTip ? (FOLLOWS_BOTTOM|FOLLOWS_RIGHT) : (FOLLOWS_TOP|FOLLOWS_RIGHT));
 	setBackgroundVisible(FALSE);
@@ -222,7 +224,10 @@ LLNotifyBox::LLNotifyBox(LLNotificationPtr notification,
 
 		caution_box->setFontStyle(LLFontGL::BOLD);
 		caution_box->setColor(gColors.getColor("NotifyCautionWarnColor"));
-		caution_box->setBackgroundColor(gColors.getColor("NotifyCautionBoxColor"));
+
+		static LLColor4* sNotifyCautionBoxColor = rebind_llcontrol<LLColor4>("NotifyCautionBoxColor", &gColors, true);
+		
+		caution_box->setBackgroundColor((*sNotifyCautionBoxColor));
 		caution_box->setBorderVisible(FALSE);
 		caution_box->setWrappedText(notification->getMessage());
 		
@@ -294,14 +299,50 @@ LLNotifyBox::LLNotifyBox(LLNotificationPtr notification,
 		{
 
 			LLSD form_element = form->getElement(i);
-			if (form_element["type"].asString() != "button") 
+			std::string element_t = form_element["type"].asString();
+			if(element_t == "button")
 			{
-				continue;
+				addButton(form_element["name"].asString(), form_element["text"].asString(), TRUE, form_element["default"].asBoolean());
 			}
-
-			addButton(form_element["name"].asString(), form_element["text"].asString(), TRUE, form_element["default"].asBoolean());
+			else if(element_t == "input")
+			{
+				edit_text_contents = form_element["value"].asString();
+				edit_text_name = form_element["name"].asString();
+			}
 		}
-
+		if(is_textbox)
+		{
+			S32 button_rows = (layout_script_dialog) ? 2 : 1;
+			
+			LLRect input_rect;
+			input_rect.setOriginAndSize(
+										x,
+										BOTTOM_PAD + button_rows * (BTN_HEIGHT + VPAD),
+										3 * 80 + 4 * HPAD,
+										(button_rows) * (BTN_HEIGHT + VPAD) + BTN_HEIGHT);
+			
+			mUserInputBox = new LLTextEditor(edit_text_name, 
+											 input_rect,
+											 254,
+											 edit_text_contents,
+											 sFont,
+											 FALSE);
+			mUserInputBox->setBorderVisible(TRUE);
+			mUserInputBox->setTakesNonScrollClicks(TRUE);
+			mUserInputBox->setHideScrollbarForShortDocs(TRUE);
+			mUserInputBox->setWordWrap(TRUE);
+			mUserInputBox->setTabsToNextField(FALSE);
+			mUserInputBox->setCommitOnFocusLost(FALSE);
+			mUserInputBox->setAcceptCallingCardNames(FALSE);
+			mUserInputBox->setHandleEditKeysDirectly(TRUE);
+			
+			addChild(mUserInputBox, -1);
+		}
+		else
+		{
+			setIsChrome(TRUE);
+		}
+			
 		if (mNumButtons == 0)
 		{
 			addButton("OK", "OK", FALSE, TRUE);
@@ -475,7 +516,10 @@ void LLNotifyBox::drawBackground() const
 	{
 		gGL.getTexUnit(0)->bind(imagep->getImage());
 		// set proper background color depending on whether notify box is a caution or not
-		LLColor4 color = mIsCaution? gColors.getColor("NotifyCautionBoxColor") : gColors.getColor("NotifyBoxColor");
+		static LLColor4* sNotifyCautionBoxColor = rebind_llcontrol<LLColor4>("NotifyCautionBoxColor", &gColors, true);
+		static LLColor4* sNotifyBoxColor = rebind_llcontrol<LLColor4>("NotifyBoxColor", &gColors, true);
+
+		LLColor4 color = mIsCaution? (*sNotifyCautionBoxColor) : (*sNotifyBoxColor);
 		if(gFocusMgr.childHasKeyboardFocus( this ))
 		{
 			const S32 focus_width = 2;
@@ -490,9 +534,9 @@ void LLNotifyBox::drawBackground() const
 			gl_segmented_rect_2d_tex(0, getRect().getHeight(), getRect().getWidth(), 0, imagep->getTextureWidth(), imagep->getTextureHeight(), 16, mIsTip ? ROUNDED_RECT_TOP : ROUNDED_RECT_BOTTOM);
 
 			if( mIsCaution )
-				color = gColors.getColor("NotifyCautionBoxColor");
+				color = (*sNotifyCautionBoxColor);
 			else
-				color = gColors.getColor("NotifyBoxColor");
+				color = (*sNotifyBoxColor);
 
 			gGL.color4fv(color.mV);
 			gl_segmented_rect_2d_tex(1, getRect().getHeight()-1, getRect().getWidth()-1, 1, imagep->getTextureWidth(), imagep->getTextureHeight(), 16, mIsTip ? ROUNDED_RECT_TOP : ROUNDED_RECT_BOTTOM);
@@ -538,7 +582,7 @@ void LLNotifyBox::format(std::string& msg, const LLStringUtil::format_map_t& arg
 	// XUI:translate!
 	LLStringUtil::format_map_t targs = args;
 	targs["[SECOND_LIFE]"] = "Second Life";
-	targs["[VIEWER_NAME]"] = "Ascent";
+	targs["[VIEWER_NAME]"] = "Luna";
 	LLStringUtil::format(msg, targs);
 }
 
@@ -729,6 +773,10 @@ void LLNotifyBox::onClickButton(void* data)
 	if (!self->mAddedDefaultBtn && !button_name.empty())
 	{
 		response[button_name] = true;
+	}
+	if (self->mUserInputBox)
+	{
+		response[self->mUserInputBox->getName()] = self->mUserInputBox->getValue();
 	}
 	self->mNotification->respond(response);
 }

@@ -44,6 +44,7 @@
 #include "lltoolfocus.h"
 #include "llviewerwindow.h"
 #include "llvoavatar.h"
+#include "lllslconstants.h"
 
 //
 // Constants

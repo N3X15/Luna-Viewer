@@ -365,8 +365,7 @@ public:
 	LLFrameTimer mLastPacketTimer;		// Time since last packet.
 	LLFrameTimer mLastReferencedTimer;
 
-	std::string decodedComment;
-	unsigned int commentEncryptionType;
+	std::map<std::string,std::string> decodedComment;
 
 private:
 	LLUUID mID;
@@ -453,7 +452,5 @@ public:
 	static BOOL sFreezeImageScalingDown ;//do not scale down image res if set.
 	static S32 sLLViewerImageCount ;
 };
-
-
 
 #endif

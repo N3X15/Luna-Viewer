@@ -47,6 +47,8 @@
 #include "lluuid.h"
 #include "llkeyboard.h"
 
+#include "llappviewer.h"
+
 
 // Merov: Temporary definitions while porting the new viewer media code to Snowglobe
 const int LEFT_BUTTON  = 0;
@@ -197,7 +199,7 @@ viewer_media_t LLViewerMedia::newMediaImpl(const std::string& media_url,
 		media_impl->mMediaAutoScale = media_auto_scale;
 		media_impl->mMediaLoop = media_loop;
 		if(! media_url.empty())
-			media_impl->navigateTo(media_url, mime_type, true);
+			media_impl->navigateTo(media_url, mime_type, false);
 	}
 	return media_impl;
 }
@@ -243,12 +245,11 @@ std::string LLViewerMedia::getCurrentUserAgent()
 {
 	// Don't use user-visible string to avoid 
 	// punctuation and strange characters.
-	std::string skin_name = gSavedSettings.getString("SkinCurrent");
+	//std::string skin_name = gSavedSettings.getString("SkinCurrent");
 
 	// Just in case we need to check browser differences in A/B test
 	// builds.
-
-	std::string channel = LL_CHANNEL;
+	//std::string channel = std::string(LL_CHANNEL);
 
 	// append our magic version number string to the browser user agent id
 	// See the HTTP 1.0 and 1.1 specifications for allowed formats:
@@ -259,7 +260,7 @@ std::string LLViewerMedia::getCurrentUserAgent()
 	std::ostringstream codec;
 	codec << "SecondLife/";
 	codec << LL_VERSION_MAJOR << "." << LL_VERSION_MINOR << "." << LL_VERSION_PATCH << "." << LL_VERSION_BUILD;
-	codec << " (" << channel << "; " << skin_name << " skin)";
+	codec << " (" << "Snowglobe Test Build" << "; " << gSavedSettings.getString("SkinCurrent") << " skin)";
 	llinfos << codec.str() << llendl;
 	
 	return codec.str();
@@ -400,9 +401,9 @@ bool LLViewerMediaImpl::initializeMedia(const std::string& mime_type)
 		if(! initializePlugin(mime_type))
 		{
 			LL_WARNS("Plugin") << "plugin intialization failed for mime type: " << mime_type << LL_ENDL;
-			LLSD args;
+			/*LLSD args;
 			args["MIME_TYPE"] = mime_type;
-			LLNotifications::instance().add("NoPlugin", args);
+			LLNotifications::instance().add("NoPlugin", args);*/
 
 			return false;
 		}
@@ -417,7 +418,7 @@ void LLViewerMediaImpl::createMediaSource()
 {
 	if(! mMediaURL.empty())
 	{
-		navigateTo(mMediaURL, mMimeType, true);
+		navigateTo(mMediaURL, mMimeType, false);
 	}
 	else if(! mMimeType.empty())
 	{

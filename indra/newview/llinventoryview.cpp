@@ -45,7 +45,7 @@
 #include "llradiogroup.h"
 #include "llspinctrl.h"
 #include "lltextbox.h"
-
+#include "llcombobox.h"
 #include "llui.h"
 
 #include "llfirstuse.h"
@@ -497,9 +497,9 @@ void LLInventoryView::init(LLInventoryModel* inventory)
 	addBoolControl("Inventory.SortByDate", ! sort_by_name );
 	addBoolControl("Inventory.FoldersAlwaysByName", sort_folders_by_name );
 	addBoolControl("Inventory.SystemFoldersToTop", sort_system_folders_to_top );
-	
+
 	//Search Controls - RKeast
-	U32 search_type = gSavedPerAccountSettings.getU32("rkeastInventorySearchType");
+	U32 search_type = gSavedPerAccountSettings.getU32("AscentInventorySearchType");
 	BOOL search_by_name = (search_type == 0);
 
 	addBoolControl("Inventory.SearchByName", search_by_name);
@@ -510,7 +510,7 @@ void LLInventoryView::init(LLInventoryModel* inventory)
 	addBoolControl("Inventory.SearchByAll", !search_by_name);
 	
 	//Bool for toggling the partial search results - RKeast
-	BOOL partial_search = gSavedPerAccountSettings.getBOOL("rkeastInventoryPartialSearch");
+	BOOL partial_search = gSavedPerAccountSettings.getBOOL("AscentInventoryPartialSearch");
 	
 	addBoolControl("Inventory.PartialSearchToggle", partial_search);
 
@@ -526,7 +526,7 @@ void LLInventoryView::init(LLInventoryModel* inventory)
 	if (mActivePanel)
 	{
 		// "All Items" is the previous only view, so it gets the InventorySortOrder
-		
+
 		//Fix for gSavedSettings use - rkeast
 		mActivePanel->getFilter()->setSearchType(search_type);
 		mActivePanel->getFilter()->setPartialSearch(partial_search);
@@ -545,7 +545,7 @@ void LLInventoryView::init(LLInventoryModel* inventory)
 		recent_items_panel->getFilter()->markDefault();
 		recent_items_panel->setSelectCallback(onSelectionChange, recent_items_panel);
 	}
-
+	
 	LLInventoryPanel* worn_items_panel = getChild<LLInventoryPanel>("Worn Items");
 	if (worn_items_panel)
 	{
@@ -580,9 +580,8 @@ void LLInventoryView::init(LLInventoryModel* inventory)
 		}
 	}
 
-
 	//Initialize item count - rkeast
-	mItemCount = gSavedPerAccountSettings.getS32("rkeastInventoryPreviousCount");
+	mItemCount = gSavedPerAccountSettings.getS32("AscentInventoryPreviousCount");
 
 
 	mSearchEditor = getChild<LLSearchEditor>("inventory search editor");
@@ -590,7 +589,7 @@ void LLInventoryView::init(LLInventoryModel* inventory)
 	{
 		mSearchEditor->setSearchCallback(onSearchEdit, this);
 	}
-	
+
 	mQuickFilterCombo = getChild<LLComboBox>("Quick Filter");
 
 	if (mQuickFilterCombo)
@@ -680,7 +679,7 @@ void LLInventoryView::draw()
 	{
 		mSearchEditor->setText(mActivePanel->getFilterSubString());
 	}
-	
+
 	if (mActivePanel && mQuickFilterCombo)
 	{
 		refreshQuickFilter( mQuickFilterCombo );
@@ -835,7 +834,7 @@ void LLInventoryView::changed(U32 mask)
 		LLLocale locale(LLLocale::USER_LOCALE);
 		std::string item_count_string;
 		LLResMgr::getInstance()->getIntegerString(item_count_string, gInventory.getItemCount());
-		
+
 		//Displays a progress indication for loading the inventory, but not if it hasn't been loaded before on this PC, or we load more than expected - rkeast
 		if(mItemCount == -1)
 		{
@@ -852,7 +851,7 @@ void LLInventoryView::changed(U32 mask)
 			else title << " (Fetched " << item_count_string << " items of ~" << total_items << " - ~" << items_remaining << " remaining...)";
 		}
 	}
-	else gSavedPerAccountSettings.setS32("rkeastInventoryPreviousCount", gInventory.getItemCount());
+	else gSavedPerAccountSettings.setS32("AscentInventoryPreviousCount", gInventory.getItemCount());
 	title << mFilterText;
 	setTitle(title.str());
 
@@ -1932,10 +1931,9 @@ void LLInventoryPanel::buildNewViews(const LLUUID& id)
 		if (objectp->getType() <= LLAssetType::AT_NONE ||
 			objectp->getType() >= LLAssetType::AT_COUNT)
 		{
-			llwarns << "LLInventoryPanel::buildNewViews called with objectp->mType == " 
+			/*llwarns << "LLInventoryPanel::buildNewViews called with objectp->mType == " 
 				<< ((S32) objectp->getType())
-				<< " for object " << objectp->getName()
-				<< " (shouldn't happen)" << llendl;
+				<< " (shouldn't happen)" << llendl;*/
 		}
 		else if (objectp->getType() == LLAssetType::AT_CATEGORY) // build new view for category
 		{

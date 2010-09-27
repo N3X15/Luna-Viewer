@@ -55,6 +55,10 @@ public:
 	BOOL			loadBinary(LLFILE* fp, LLPolyMeshSharedData *mesh);
 	const std::string& getName() { return mName; }
 
+	BOOL			saveLLM(LLFILE *fp);
+	BOOL			saveOBJ(LLFILE *fp);
+	BOOL			setMorphFromMesh(LLPolyMesh *morph);
+
 public:
 	std::string			mName;
 
@@ -166,6 +170,7 @@ public:
 	/*virtual*/ const LLVector3*	getNextDistortion(U32 *index, LLPolyMesh **poly_mesh);
 
 	void	applyMask(U8 *maskData, S32 width, S32 height, S32 num_components, BOOL invert);
+	BOOL	undoMask(BOOL delete_mask);
 	void	addPendingMorphMask() { mNumMorphMasksPending++; }
 
 protected:

@@ -47,6 +47,7 @@
 #include "lltabcontainer.h"
 #include "lltextbox.h"
 #include "lltexteditor.h"
+#include "llviewercontrol.h"
 #include "llviewerimagelist.h"
 #include "llviewerwindow.h"
 #include "llfocusmgr.h"
@@ -716,6 +717,7 @@ void LLPanelGroupSubTab::buildActionCategory(LLScrollListCtrl* ctrl,
 			row["columns"][0]["value"] = (*iter).second;
 		}
 
+
 		row["columns"][1]["column"] = "action";
 		row["columns"][1]["value"] = action_set->mActionSetData->mName;
 		row["columns"][1]["font-style"] = "BOLD";
@@ -1065,6 +1067,7 @@ void LLPanelGroupMembersSubTab::handleMemberSelect()
 					member_is_owner = TRUE;
 				}
 			}
+
 
 			LLRoleData rd;
 			if (gdatap->getRoleData(role_id,rd))
@@ -1683,6 +1686,7 @@ void LLPanelGroupMembersSubTab::updateMembers()
 			LLSD row;
 			row["id"] = (*mMemberProgress).first;
 
+
 			row["columns"][0]["column"] = "name";
 			// value is filled in by name list control
 
@@ -1769,6 +1773,10 @@ BOOL LLPanelGroupRolesSubTab::postBuildSubTab(LLView* root)
 		return FALSE;
 	}
 
+	mAssignedMembersList->setCallbackUserData(this);
+	// Show the member's profile on double click.
+	mAssignedMembersList->setDoubleClickCallback(onMemberDoubleClick);
+
 	mRemoveEveryoneTxt = getString("cant_delete_role");
 
 	mCreateRoleButton = 
@@ -1815,6 +1823,22 @@ BOOL LLPanelGroupRolesSubTab::postBuildSubTab(LLView* root)
 	setFooterEnabled(FALSE);
 
 	return TRUE;
+}
+
+// static
+void LLPanelGroupRolesSubTab::onMemberDoubleClick(void* user_data)
+{
+	LLPanelGroupRolesSubTab* self = static_cast<LLPanelGroupRolesSubTab*>(user_data);
+	self->handleMemberDoubleClick();
+}
+
+void LLPanelGroupRolesSubTab::handleMemberDoubleClick()
+{
+	LLScrollListItem* selected = mAssignedMembersList->getFirstSelected();
+	if (selected)
+	{
+		LLFloaterAvatarInfo::showFromDirectory( selected->getUUID() );
+	}
 }
 
 void LLPanelGroupRolesSubTab::activate()
@@ -1878,6 +1902,7 @@ LLSD LLPanelGroupRolesSubTab::createRoleItem(const LLUUID& role_id,
 {
 	LLSD row;
 	row["id"] = role_id;
+
 
 	row["columns"][0]["column"] = "name";
 	row["columns"][0]["value"] = name;
@@ -2358,6 +2383,7 @@ void LLPanelGroupRolesSubTab::handleCreateRole()
 	row["id"] = new_role_id;
 	row["columns"][0]["column"] = "name";
 	row["columns"][0]["value"] = rd.mRoleName;
+
 	mRolesList->addElement(row, ADD_BOTTOM, this);
 	mRolesList->selectByID(new_role_id);
 

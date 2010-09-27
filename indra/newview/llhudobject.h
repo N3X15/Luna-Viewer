@@ -75,6 +75,8 @@ public:
 	static void updateAll();
 	static void renderAll();
 	static void renderAllForSelect();
+
+	static void markViewerEffectsDead();
 	static void renderAllForTimer();
 
 	static void cleanupHUDObjects();

@@ -86,6 +86,9 @@
 #include "lluictrlfactory.h"
 #include "llselectmgr.h"
 
+// Defined in llinventorybridge.cpp
+void wear_attachments_on_avatar(const std::set<LLUUID>& item_ids, BOOL remove);
+
 // <edit>
 #include "lllocalinventory.h"
 #include "llinventorybackup.h"
@@ -121,6 +124,12 @@ bool doToSelected(LLFolderView* folder, std::string action)
 
 	std::set<LLUUID> selected_items;
 	folder->getSelectionList(selected_items);
+
+	if ( ("attach" == action) && (selected_items.size() > 1) )
+	{
+		wear_attachments_on_avatar(selected_items, FALSE);
+		return true;
+	}
 
 	LLMultiPreview* multi_previewp = NULL;
 	LLMultiProperties* multi_propertiesp = NULL;
@@ -158,12 +167,6 @@ bool doToSelected(LLFolderView* folder, std::string action)
 
 		bridge->performAction(folder, model, action);
 	}
-
-
-
-
-
-
 
 	LLFloater::setFloaterHost(NULL);
 	if (multi_previewp)
@@ -507,44 +510,60 @@ class SetSearchType : public inventory_listener_t
 		{
 			mPtr->getActivePanel()->setSearchType(0);
 
-			gSavedPerAccountSettings.setU32("rkeastInventorySearchType",0);
+			gSavedPerAccountSettings.setU32("AscentInventorySearchType",0);
 			
 			mPtr->getControl("Inventory.SearchByName")->setValue(TRUE);
 			mPtr->getControl("Inventory.SearchByCreator")->setValue(FALSE);	
 			mPtr->getControl("Inventory.SearchByDesc")->setValue(FALSE);
+			mPtr->getControl("Inventory.SearchByUUID")->setValue(FALSE);
 			mPtr->getControl("Inventory.SearchByAll")->setValue(FALSE);
 		}
 		else if(search_type == "creator")
 		{
 			mPtr->getActivePanel()->setSearchType(1);
 
-			gSavedPerAccountSettings.setU32("rkeastInventorySearchType",1);
+			gSavedPerAccountSettings.setU32("AscentInventorySearchType",1);
 
 			mPtr->getControl("Inventory.SearchByName")->setValue(FALSE);
 			mPtr->getControl("Inventory.SearchByCreator")->setValue(TRUE);
 			mPtr->getControl("Inventory.SearchByDesc")->setValue(FALSE);
+			mPtr->getControl("Inventory.SearchByUUID")->setValue(FALSE);
 			mPtr->getControl("Inventory.SearchByAll")->setValue(FALSE);
 		}
 		else if(search_type == "desc")
 		{
 			mPtr->getActivePanel()->setSearchType(2);
 
-			gSavedPerAccountSettings.setU32("rkeastInventorySearchType",2);
+			gSavedPerAccountSettings.setU32("AscentInventorySearchType",2);
 
 			mPtr->getControl("Inventory.SearchByName")->setValue(FALSE);
 			mPtr->getControl("Inventory.SearchByCreator")->setValue(FALSE);
 			mPtr->getControl("Inventory.SearchByDesc")->setValue(TRUE);
+			mPtr->getControl("Inventory.SearchByUUID")->setValue(FALSE);
+			mPtr->getControl("Inventory.SearchByAll")->setValue(FALSE);
+		}
+		else if(search_type == "uuid")
+		{
+			mPtr->getActivePanel()->setSearchType(4);
+
+			gSavedPerAccountSettings.setU32("AscentInventorySearchType",4);
+
+			mPtr->getControl("Inventory.SearchByName")->setValue(FALSE);
+			mPtr->getControl("Inventory.SearchByCreator")->setValue(FALSE);
+			mPtr->getControl("Inventory.SearchByDesc")->setValue(FALSE);
+			mPtr->getControl("Inventory.SearchByUUID")->setValue(TRUE);
 			mPtr->getControl("Inventory.SearchByAll")->setValue(FALSE);
 		}
 		else if(search_type == "all")
 		{
 			mPtr->getActivePanel()->setSearchType(3);
 
-			gSavedPerAccountSettings.setU32("rkeastInventorySearchType",3);
+			gSavedPerAccountSettings.setU32("AscentInventorySearchType",3);
 
 			mPtr->getControl("Inventory.SearchByName")->setValue(FALSE);
 			mPtr->getControl("Inventory.SearchByCreator")->setValue(FALSE);
 			mPtr->getControl("Inventory.SearchByDesc")->setValue(FALSE);
+			mPtr->getControl("Inventory.SearchByUUID")->setValue(FALSE);
 			mPtr->getControl("Inventory.SearchByAll")->setValue(TRUE);
 		}
 		
@@ -571,14 +590,14 @@ class SetPartialSearch : public inventory_listener_t
 				mPtr->getActivePanel()->setPartialSearch(true);
 				mPtr->getControl("Inventory.PartialSearchToggle")->setValue(TRUE);
 
-				gSavedPerAccountSettings.setBOOL("rkeastInventoryPartialSearch",TRUE);
+				gSavedPerAccountSettings.setBOOL("AscentInventoryPartialSearch",TRUE);
 			}
 			else 
 			{
 				mPtr->getActivePanel()->setPartialSearch(false);
 				mPtr->getControl("Inventory.PartialSearchToggle")->setValue(FALSE);
 
-				gSavedPerAccountSettings.setBOOL("rkeastInventoryPartialSearch",FALSE);
+				gSavedPerAccountSettings.setBOOL("AscentInventoryPartialSearch",FALSE);
 			}
 		}
 		
@@ -613,7 +632,7 @@ class LLSetSortBy : public inventory_listener_t
 		else if (sort_field == "foldersalwaysbyname")
 		{
 			U32 order = mPtr->getActivePanel()->getSortOrder();
-			if ( order & LLInventoryFilter::SO_FOLDERS_BY_NAME )
+			if (order & LLInventoryFilter::SO_FOLDERS_BY_NAME)
 			{
 				order &= ~LLInventoryFilter::SO_FOLDERS_BY_NAME;
 
@@ -630,7 +649,7 @@ class LLSetSortBy : public inventory_listener_t
 		else if (sort_field == "systemfolderstotop")
 		{
 			U32 order = mPtr->getActivePanel()->getSortOrder();
-			if ( order & LLInventoryFilter::SO_SYSTEM_FOLDERS_TO_TOP )
+			if (order & LLInventoryFilter::SO_SYSTEM_FOLDERS_TO_TOP)
 			{
 				order &= ~LLInventoryFilter::SO_SYSTEM_FOLDERS_TO_TOP;
 
@@ -642,7 +661,7 @@ class LLSetSortBy : public inventory_listener_t
 
 				mPtr->getControl("Inventory.SystemFoldersToTop")->setValue( TRUE );
 			}
-			mPtr->getActivePanel()->setSortOrder( order );
+			mPtr->getActivePanel()->setSortOrder(order);
 		}
 
 		return true;
@@ -677,7 +696,6 @@ class LLRefreshInvModel : public inventory_listener_t
 		return true;
 	}
 };
-
 
 class LLBeginIMSession : public inventory_panel_listener_t
 {
@@ -869,7 +887,8 @@ void init_inventory_actions(LLInventoryView *floater)
 	(new LLShowFilters())->registerListener(floater, "Inventory.ShowFilters");
 	(new LLResetFilter())->registerListener(floater, "Inventory.ResetFilter");
 	(new LLSetSortBy())->registerListener(floater, "Inventory.SetSortBy");
-
+	
+	//Register Search related listeners - RKeast
 	(new SetSearchType())->registerListener(floater, "Inventory.SetSearchBy");
 	(new SetPartialSearch())->registerListener(floater, "Inventory.PartialSearch");
 }

@@ -77,6 +77,7 @@ class LLFloaterLand
 	friend class LLUISingleton<LLFloaterLand, VisibilityPolicy<LLFloater> >;
 public:
 	static void refreshAll();
+	static BOOL isOpen();
 
 	static LLPanelLandObjects* getCurrentPanelLandObjects();
 	static LLPanelLandCovenant* getCurrentPanelLandCovenant();
@@ -86,9 +87,9 @@ public:
 	virtual void onOpen();
 	virtual BOOL postBuild();
 
-
-
-
+// [RLVa:KB] - Checked: 2009-07-04 (RLVa-1.0.0a)
+	virtual void open();
+// [/RLVa:KB]
 
 protected:
 
@@ -107,6 +108,7 @@ protected:
 	static void* createPanelLandMedia(void* data);
 	static void* createPanelLandAccess(void* data);
 	static void* createPanelLandBan(void* data);
+
 
 protected:
 	static LLParcelSelectionObserver* sObserver;

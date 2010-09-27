@@ -80,7 +80,7 @@
 LLOverlayBar *gOverlayBar = NULL;
 
 extern S32 MENU_BAR_HEIGHT;
-extern ImportTracker gImportTracker;
+//extern ImportTracker gImportTracker;
 
 BOOL LLOverlayBar::sAdvSettingsPopup;
 BOOL LLOverlayBar::sChatVisible;

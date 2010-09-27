@@ -99,6 +99,7 @@ ATI Radeon HD 4300				.*ATI.*Radeon HD 43.*				1		1
 ATI Radeon HD 4500				.*ATI.*Radeon HD 45.*				2		1
 ATI Radeon HD 4600				.*ATI.*Radeon HD 46.*				3		1
 ATI Radeon HD 4800				.*ATI.*Radeon.*HD.*48.*				3		1
+ATI Radeon HD 5700				.*ATI.*Radeon.*HD.*57.*				3		1
 ATI Radeon OpenGL				.*ATI.*Radeon OpenGL.* 				0		0
 ATI Radeon 2100					.*ATI.*Radeon 21.*					0		1
 ATI Radeon 3100					.*ATI.*Radeon 31.*					1		1

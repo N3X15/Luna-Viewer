@@ -14,12 +14,12 @@
 	<text follows="top|left" left="15" width="128" name="show_label" bottom_delta="-24">
 		Show these popups:
 	</text>
-	<scroll_list follows="top|left" height="88" left="15" name="enabled_popups" width="480" />
-	<button follows="top|left" height="20" label="Disable first time popups..." left="15"
+  <scroll_list follows="top|left" height="88" left="15" name="enabled_popups" width="480" />
+  <button follows="top|left" height="20" label="Disable first time popups..." left="15"
 	     name="skip_frst_btn"
 	     tool_tip="Disable all of the first time use notifications."
 	     width="175" />
-	<button bottom_delta="0" follows="top|left" height="20"
+  <button bottom_delta="0" follows="top|left" height="20"
 	     label="Disable all these popups..." left="200"
 	     name="skip_dialogs_btn"
 	     tool_tip="Disable all of the optional popups and &apos;first time use&apos; notifications."
@@ -39,7 +39,11 @@
 	     follows="left|top" font="SansSerifSmall" height="16" initial_value="true"
 	     label="Automatically view after accepting" left="40" mouse_opaque="true"
 	     name="show_new_inventory" radio_style="false" width="270" />
-   	<check_box bottom_delta="-20" enabled="true"
+  <check_box bottom_delta="-20" enabled="true"
+     follows="left|top" font="SansSerifSmall" height="16" initial_value="true"
+     label="Automatically accept all other types of inventory" left="18" mouse_opaque="true"
+     name="accept_new_objects" radio_style="false" width="270" />
+  <check_box bottom_delta="-20" enabled="true"
 	     follows="left|top" font="SansSerifSmall" height="16" initial_value="true"
 	     label="Automatically show newly accepted objects in inventory" left="18" mouse_opaque="true"
 	     name="show_in_inventory" radio_style="false" width="270" />

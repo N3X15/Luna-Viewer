@@ -112,6 +112,7 @@ BOOL LLPrefsIMImpl::postBuild()
 	childDisable("log_chat_timestamp");
 	childDisable("log_chat_IM");
 	childDisable("log_date_timestamp");
+	childDisable("logfile_name_datestamp");
 
 	childSetText("busy_response", getString("log_in_to_change"));
 
@@ -127,6 +128,7 @@ BOOL LLPrefsIMImpl::postBuild()
 	childSetValue("log_chat_timestamp", gSavedPerAccountSettings.getBOOL("LogChatTimestamp"));
 	childSetValue("log_chat_IM", gSavedPerAccountSettings.getBOOL("LogChatIM"));
 	childSetValue("log_date_timestamp", gSavedPerAccountSettings.getBOOL("LogTimestampDate"));
+	childSetValue("logfile_name_datestamp", gSavedPerAccountSettings.getBOOL("LogFileNamewithDate"));
 
 	childSetAction("log_path_button", onClickLogPath, this);
 	childSetCommitCallback("log_chat",onCommitLogging,this);
@@ -176,6 +178,7 @@ void LLPrefsIMImpl::apply()
 		gSavedPerAccountSettings.setBOOL("LogChatTimestamp",childGetValue("log_chat_timestamp").asBoolean());
 		gSavedPerAccountSettings.setBOOL("LogChatIM",childGetValue("log_chat_IM").asBoolean());
 		gSavedPerAccountSettings.setBOOL("LogTimestampDate",childGetValue("log_date_timestamp").asBoolean());
+		gSavedPerAccountSettings.setBOOL("LogFileNamewithDate",childGetValue("logfile_name_datestamp").asBoolean());
 
 		gDirUtilp->setChatLogsDir(gSavedPerAccountSettings.getString("InstantMessageLogPath"));
 
@@ -250,6 +253,7 @@ void LLPrefsIMImpl::setPersonalInfo(const std::string& visibility, bool im_via_e
 	childEnable("log_chat_timestamp");
 	childEnable("log_chat_IM");
 	childEnable("log_date_timestamp");
+	childEnable("logfile_name_datestamp");
 	
 	//RN: get wide string so replace char can work (requires fixed-width encoding)
 	LLWString busy_response = utf8str_to_wstring( gSavedPerAccountSettings.getString("BusyModeResponse") );

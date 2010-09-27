@@ -45,7 +45,7 @@ class ViewerManifest(LLManifest):
         self.exclude("*.svn*")
         self.path(src="../../scripts/messages/message_template.msg", dst="app_settings/message_template.msg")
         self.path(src="../../etc/message.xml", dst="app_settings/message.xml")
-	self.path(src="lua/lfs.so",dst="lfs.so")
+	
 	self.path(src="../../doc/license.htm",dst="readme.htm")
 	
 	if self.prefix(src="lua"):
@@ -213,13 +213,27 @@ class WindowsManifest(ViewerManifest):
         # For use in crash reporting (generates minidumps)
         self.path("dbghelp.dll")
 
-        # For using FMOD for sound... DJS
-        self.path("fmod.dll")
+        try:
+            # For using FMOD for sound... DJS
+            self.path("fmod.dll")
+        except:
+            print("Skipping FMOD not found")
+        
+        # Vivox runtimes
+        if self.prefix(src="vivox-runtime/i686-win32", dst=""):
+            self.path("SLVoice.exe")
+            self.path("alut.dll")
+            self.path("vivoxsdk.dll")
+            self.path("ortp.dll")
+            self.path("wrap_oal.dll")
+            self.end_prefix()
 
-        # For textures
-        #if self.prefix(src="../../libraries/i686-win32/lib/release", dst=""):
-        #    self.path("openjpeg.dll")
-        #    self.end_prefix()
+
+        # Growl bullshit.
+        if self.prefix(src="../../libraries/i686-win32/lib/release", dst=""):
+            self.path("lgggrowl.dll")
+            self.path("lgggrowl++.dll")
+            self.end_prefix()
 
         # Media plugins - QuickTime
         if self.prefix(src='../media_plugins/quicktime/%s' % self.args['configuration'], dst="llplugin"):
@@ -322,33 +336,12 @@ class WindowsManifest(ViewerManifest):
 		# Not required, and the VC90 build fucks this up anyway - N3X15
         #self.path(src="Luna.exe.config", dst=self.final_exe() + ".config")
 
-        # Vivox runtimes
-        if self.prefix(src="vivox-runtime/i686-win32", dst=""):
-            self.path("SLVoice.exe")
-            self.path("alut.dll")
-            self.path("vivoxsdk.dll")
-            self.path("ortp.dll")
-            self.path("wrap_oal.dll")
-            self.end_prefix()
-
-		# Fuck you
         # pull in the crash logger and updater from other projects
-        #self.path(src=self.find_existing_file( # tag:"crash-logger" here as a cue to the exporter
-        #        "../win_crash_logger/debug/windows-crash-logger.exe",
-        #        "../win_crash_logger/release/windows-crash-logger.exe",
-        #        "../win_crash_logger/relwithdebinfo/windows-crash-logger.exe"),
-        #          dst="win_crash_logger.exe")
-        #self.path(src=self.find_existing_file(
-        #        "../win_updater/debug/windows-updater.exe",
-        #        "../win_updater/release/windows-updater.exe",
-        #        "../win_updater/relwithdebinfo/windows-updater.exe"),
-        #          dst="updater.exe")
-
-        # For google-perftools tcmalloc allocator.
-        #if self.prefix(src="../../libraries/i686-win32/lib/release", dst=""):
-        #        self.path("libtcmalloc_minimal.dll")
-        #        self.end_prefix()
-
+        # tag:"crash-logger" here as a cue to the exporter
+        self.path(src='../win_crash_logger/%s/windows-crash-logger.exe' % self.args['configuration'],
+                  dst="win_crash_logger.exe")
+        self.path(src='../win_updater/%s/windows-updater.exe' % self.args['configuration'],
+                  dst="updater.exe")
 
     def nsi_file_commands(self, install=True):
 		
@@ -863,7 +856,6 @@ class Linux_i686Manifest(LinuxManifest):
             self.path("libuuid.so.1")
             self.path("libSDL-1.2.so.0")
             self.path("libELFIO.so")
-            self.path("libopenjpeg.so.1.3.0", "libopenjpeg.so.1.3")
             self.path("libalut.so")
             self.path("libopenal.so", "libopenal.so.1")
             self.path("liblua5.1.so")

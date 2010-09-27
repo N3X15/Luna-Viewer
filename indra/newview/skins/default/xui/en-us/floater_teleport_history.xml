@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-<floater can_close="true" can_drag_on_left="false" can_minimize="true" can_resize="false"
-		min_width="470" min_height="250" width="470" height="250" name="teleporthistory"
+<floater can_close="true" can_drag_on_left="false" can_minimize="true" can_resize="true"
+		min_width="500" min_height="250" width="500" height="250" name="teleporthistory"
 		rect_control="FloaterTeleportHistoryRect" title="Teleport History">
-	<tab_container label="TPlistTabs" bottom="40" height="185" left="5" mouse_opaque="false" name="tplisttabs"
-	     tab_min_width="50" tab_position="top" width="460" bg_opaque_color="0,0,0,0.0">
+	<tab_container label="TPlistTabs" bottom="40" height="185" left="5" follows="left|top|right|bottom" mouse_opaque="false" name="tplisttabs"
+	     tab_min_width="50" tab_position="top" width="480" right="-10" bg_opaque_color="0,0,0,0.0">
 		<panel border="true" bottom="-185" follows="left|top|right|bottom" height="185"
 				 label="Teleported into" left="2" mouse_opaque="true" name="TP-in" width="455">
-			<scroll_list background_visible="true" draw_border="true" draw_stripes="true"
-				draw_heading="true" follows="left|top|right|bottom" left="2" top="5" width="450"
+	<scroll_list background_visible="true" draw_border="true" draw_stripes="true"
+				draw_heading="true" follows="left|top|right|bottom" left="2" right="-2" top="5" width="450"
 				height="175" bottom_delta="-177" multi_select="false" name="places_list_in">
-				<column dynamicwidth="true" label="Region" name="region" />
-				<column dynamicwidth="true" label="Position" name="position" />
-				<column dynamicwidth="true" label="Visited" name="visited" />
-				<!--Hidden fields, used as storage for prebuilt strings, please keep at width 0-->
-				<column width="0" label="SLURL" name="slurl" />
-				<column width="0" label="Sim String" name="simstring" />
-			</scroll_list>
+		<column dynamicwidth="true" label="Region" name="region" />
+		<column width="100" label="Position" name="position" />
+		<column dynamicwidth="true" label="Visited" name="visited" />
+		<!--Hidden fields, used as storage for prebuilt strings, please keep at width 0-->
+		<column width="0" label="SLURL" name="slurl" />
+		<column width="0" label="Sim String" name="simstring" />
+	</scroll_list>
 		</panel>
 		<panel border="true" bottom="-185" follows="left|top|right|bottom" height="185"
 				 label="Teleported out of" left="2" mouse_opaque="true" name="TP-out" width="455">
 			<scroll_list background_visible="true" draw_border="true" draw_stripes="true"
-				draw_heading="true" follows="left|top|right|bottom" left="2" top="5" width="450"
+				draw_heading="true" follows="left|top|right|bottom" left="2" right="-2" top="5" width="450"
 				height="175" bottom_delta="-177" multi_select="false" name="places_list_out">
 				<column dynamicwidth="true" label="Region" name="region" />
-				<column dynamicwidth="true" label="Position" name="position" />
+				<column width="100" label="Position" name="position" />
 				<column dynamicwidth="true" label="Visited" name="visited" />
 				<!--Hidden fields, used as storage for prebuilt strings, please keep at width 0-->
 				<column width="0" label="SLURL" name="slurl" />
@@ -40,7 +40,7 @@
 		left_delta="100" mouse_opaque="true" name="show_on_map"
 		tool_tip="Center map on this location" width="125" />
 	<button bottom_delta="0" enabled="false" follows="bottom|right" font="SansSerif"
-		height="20" label="Copy SLURL to clipboard" left="-230" name="copy_slurl"
+		height="20" label="Copy SLURL to clipboard" left="-190" name="copy_slurl"
 		tool_tip="Copies current location as SLURL to be used on the web."
-		width="222" />
+		width="182" />
 </floater>

@@ -1,15 +1,38 @@
-// <edit>
+/** 
+* @file llimagemetadatareader.cpp
+* @brief reads comments from j2c images
+*
+* Copyright (c) 2010
+* 
+* Second Life Viewer Source Code
+* The source code in this file ("Source Code") is provided
+* to you under the terms of the GNU General Public License, version 2.0
+* ("GPL"), unless you have obtained a separate licensing agreement
+* ("Other License"), formally executed by you and Linden Lab.  Terms of
+* the GPL can be found in doc/GPL-license.txt in this distribution, or
+* online at http://secondlifegrid.net/programs/open_source/licensing/gplv2
+* 
+* There are special exceptions to the terms and conditions of the GPL as
+* it is applied to this Source Code. View the full text of the exception
+* in the file doc/FLOSS-exception.txt in this software distribution, or
+* online at
+* http://secondlifegrid.net/programs/open_source/licensing/flossexception
+* 
+* By copying, modifying or distributing this software, you acknowledge
+* that you have read and understood your obligations described above,
+* and agree to abide by those obligations.
+* 
+* ALL LINDEN LAB SOURCE CODE IS PROVIDED "AS IS." LINDEN LAB MAKES NO
+* WARRANTIES, EXPRESS, IMPLIED OR OTHERWISE, REGARDING ITS ACCURACY,
+* COMPLETENESS OR PERFORMANCE.
+* $/LicenseInfo$
+*/
+
 #include "linden_common.h"
 #include "llimagemetadatareader.h"
-#include "aes.h"
-//#include "llapr.h"
-//#include "llerror.h"
-const unsigned char EMKDU_AES_KEY[] = {0x01,0x00,0x81,0x07,0x63,0x78,0xB6,0xFE,0x6E,0x3F,0xB0,0x12,0xCC,0x65,0x66,0xC1,
-0x81,0x96,0xAC,0xC1,0x3B,0x66,0x0B,0xF7};
-//#define COMMENT_DEBUGG1ING
 LLJ2cParser::LLJ2cParser(U8* data,int data_size)
 {
-    	if(data && data_size)
+	if(data && data_size)
 	{
 		mData.resize(data_size);
 		memcpy(&(mData[0]), data, data_size);
@@ -75,139 +98,34 @@ std::vector<U8> LLJ2cParser::GetNextComment()
 	return content;
 }
 
-//flow of control in this method is shit, gotta fix this... possibly return a vector or map instead of a string -HG
-
-/*
-  Notes:
-
-  For anyone debugging this method, if a comment is not being decoded properly and you know encryption is being used,
-  the easiest thing to do is to create an LLAPRFile handle inside this method and write the contents of data to a file.
-  Normally the comment is going to be up near the header, just have a look at it in a hex editor.
-
-  It's generally going to be a string of 130 bytes preceeded by a null.
-*/
-
-//static
-unsigned int LLImageMetaDataReader::ExtractEncodedComment(U8* data,int data_size, std::string& output)
+std::map<std::string,std::string> LLImageMetaDataReader::ExtractKDUUploadComment(U8* data,int data_size)
 {
 	LLJ2cParser parser = LLJ2cParser(data,data_size);
 
-	std::string decodedComment;
-
-	//not supported yet, but why the hell not?
-	unsigned int result = ENC_NONE;
-
+	std::map<std::string,std::string>  result;
 	while(1)
 	{
-	    std::vector<U8> comment = parser.GetNextComment();
-	    if (comment.empty()) break; //exit loop
+		std::vector<U8> comment = parser.GetNextComment();
+		if (comment.empty())break; //exit loop
+		if (comment[0] == 0x00 && comment.size() <= 130)
+		{
+			std::string fullComment(comment.begin()+2,comment.end());
 
-	    if (comment[1] == 0x00 && comment.size() == 130)
-	    {
-			bool xorComment = true;
-			//llinfos << "FOUND PAYLOAD" << llendl;
-			std::vector<U8> payload(128);
-			S32 i;
-			memcpy(&(payload[0]), &(comment[2]), 128);
-			//std::copy(comment.begin()+2,comment.end(),payload.begin());
-			//lets check xorComment Cipher first
-			if (payload[2] == payload[127])
+			result["full"]=fullComment;
+			//a=abbee3b5-fbe0-4cfa-8d15-323d6800448e&h=480&w=640&z=20081118204138&c=26961aff
+			int pos = 0;//where we are in the string
+			while(pos<fullComment.length())
 			{
-				// emkdu.dll
-				for (i = 4; i < 128; i += 4)
-				{
-					payload[i] ^= payload[3];
-					payload[i + 1] ^= payload[1];
-					payload[i + 2] ^= payload[0];
-					payload[i + 3] ^= payload[2];
-				}
-				result = ENC_EMKDU_V1;
+				int equalsPos = fullComment.find("=",pos);
+				std::string infoType = fullComment.substr(pos,equalsPos-pos);
+				if(infoType.length()>2 && infoType.length()<30)infoType="Other";
+				pos=fullComment.find("&",pos);
+				if(pos==(int)std::string::npos)pos=fullComment.length();
+				pos++;
+				std::string info = fullComment.substr(equalsPos+1,pos-2-equalsPos);
+				result[infoType]=info;
 			}
-			else if (payload[3] == payload[127])
-			{
-				// emkdu.dll or onyxkdu.dll
-				for (i = 4; i < 128; i += 4)
-				{
-					payload[i] ^= payload[2];
-					payload[i + 1] ^= payload[0];
-					payload[i + 2] ^= payload[1];
-					payload[i + 3] ^= payload[3];
-				}
-				result = ENC_ONYXKDU;
-			}
-			else
-			{
-				xorComment = false;
-			}
-			if(!xorComment)
-			{
-				//this is terrible i know
-				std::vector<U8> decrypted(129);
-				CRijndael aes;
-				try
-				{
-					aes.MakeKey(reinterpret_cast<const char*>(EMKDU_AES_KEY),"", 24, 16);
-				} catch(std::string error)
-				{
-					llinfos << error << llendl;
-				}
-				try
-				{
-					int numBlocks = 8;
-					char* datain = (char*)&(payload[0]);
-					char* dataout = (char*)&(decrypted[0]);
-					char buffer[64];
-					memset(buffer,0,sizeof(buffer));
-					aes.DecryptBlock(datain,dataout); // do first block
-					for (int pos = 0; pos < 16; ++pos)
-						*dataout++ ^= buffer[pos];
-					datain += 16;
-					numBlocks--;
-
-					while (numBlocks)
-					{
-						aes.DecryptBlock(datain,dataout); // do next block
-						for (int pos = 0; pos < 16; ++pos)
-							*dataout++ ^= *(datain-16+pos);
-						datain  += 16;
-						--numBlocks;
-					}
-				} catch(std::string error)
-				{
-					llinfos << error << llendl;
-				}
-				//payload.clear();
-				//memcpy(&(payload[0]),&(dataout[0]),dataout.size());
-				for (i = 0 ; i < 128; ++i)
-				{
-					if (decrypted[i] == 0) break;
-				}
-				if(i == 0) continue;
-				if(decodedComment.length() > 0)
-					decodedComment.append(", ");
-
-				//the way it's being done now, you can only specify the encryption type for the last comment.
-				//need to switch to a map<std::string, unsigned int> or a vector for output.
-				result = ENC_EMKDU_V2;
-				decodedComment.append(decrypted.begin(),decrypted.begin()+i);
-			}
-			else
-			{
-				for (i = 4 ; i < 128; ++i)
-				{
-					if (payload[i] == 0) break;
-				}
-				if(i < 4) continue;
-				if(decodedComment.length() > 0)
-					decodedComment.append(", ");
-
-				decodedComment.append(payload.begin()+4,payload.begin()+i);
-			}
-			//llinfos << "FOUND COMMENT: " << result << llendl;
-	    }
+		}
 	}
-	//end of loop
-	output = decodedComment;
 	return result;
 }
-// </edit>

@@ -54,7 +54,7 @@
 			<line_editor bevel_style="in" border_style="line" border_thickness="1" bottom="7"
 			     enabled="true" follows="left|right|bottom" font="SansSerif"
 			     handle_edit_keys_directly="false" height="20"
-			     label="Click here to instant message" left="5" max_length="1022"
+			     label="Click here to instant message" left="5" max_length="2147483647"
 			     mouse_opaque="true" name="chat_editor" select_all_on_focus_received="false"
 			     select_on_focus="false" tab_group="1" width="426" />
 			<button bottom_delta="0" enabled="true" follows="right|bottom" font="SansSerif"

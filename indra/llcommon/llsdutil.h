@@ -1,6 +1,6 @@
 /** 
  * @file llsdutil.h
- * @author Phoenix
+ * @author Ascent
  * @date 2006-05-24
  * @brief Utility classes, functions, etc, for using structured data.
  *

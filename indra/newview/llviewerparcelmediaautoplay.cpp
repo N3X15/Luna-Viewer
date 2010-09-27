@@ -113,7 +113,7 @@ BOOL LLViewerParcelMediaAutoPlay::tick()
 	{
 		if (this_media_texture_id.notNull())  // and if the media texture is good
 		{
-			LLViewerImage *image = gImageList.getImage(this_media_texture_id, FALSE);
+			/*LLViewerImage *image = gImageList.getImage(this_media_texture_id, FALSE);
 
 			F32 image_size = 0;
 
@@ -121,11 +121,13 @@ BOOL LLViewerParcelMediaAutoPlay::tick()
 			{
 				image_size = image->mMaxVirtualSize;
 			}
-
+			llinfos << " media texture id is " << this_media_texture_id.asString().c_str() << " and the image info is"
+				<< image->getID().asString().c_str() << " so now the size is " << image_size << " weeee," << llendl;
+			*/
 			if (gAgent.getVelocity().magVec() < AUTOPLAY_SPEED) // and if the agent is stopped (slow enough)
 			{
-				if (image_size > AUTOPLAY_SIZE)    // and if the target texture is big enough on screen
-				{
+				//if (image_size > AUTOPLAY_SIZE)    // and if the target texture is big enough on screen
+				//{
 					if (this_parcel)
 					{
 						if (gSavedSettings.getBOOL("ParcelMediaAutoPlayEnable"))
@@ -136,7 +138,7 @@ BOOL LLViewerParcelMediaAutoPlay::tick()
 					}
 
 					mPlayed = TRUE;
-				}
+				//}
 			}
 		}
 	}

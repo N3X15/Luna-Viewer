@@ -277,7 +277,7 @@ void LLPrefsAscentSysImpl::refresh()
 	childSetValue("fetch_inventory_on_login_check", mFetchInventoryOnLogin);
 	childSetValue("enable_wind", mEnableLLWind);
 	childSetValue("enable_clouds", mEnableClouds);
-	gLLWindEnabled = mEnableLLWind;
+	gAudiop->enableWind(mEnableLLWind);
 	childSetValue("speed_rez_check", mSpeedRez);
 	if (mSpeedRez)
 	{
@@ -348,7 +348,7 @@ void LLPrefsAscentSysImpl::cancel()
 		gSavedSettings.setBOOL("CloudsEnabled", mEnableClouds);
 		LLPipeline::toggleRenderTypeControl((void*)LLPipeline::RENDER_TYPE_CLOUDS);
 	}
-	gLLWindEnabled = mEnableLLWind;
+	gAudiop->enableWind(mEnableLLWind);
 }
 
 void LLPrefsAscentSysImpl::apply()

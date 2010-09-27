@@ -2,22 +2,267 @@
 <floater can_close="true" can_drag_on_left="false" can_minimize="true" can_resize="true"
      min_height="300" min_width="400" name="inspect"
      rect_control="FloaterInspectRect" title="Inspect Objects">
-	<scroll_list bottom="30" can_resize="false" column_padding="0" draw_heading="true"
-	     follows="top|right|left|bottom" left="10" multi_select="false"
-	     name="object_list" right="-10"
-	     tool_tip="Select an object from this list to highlight it in-world"
+
+  <scroll_list bottom="30" can_resize="false" column_padding="0" draw_heading="true"
+	     follows="top|right|left|bottom" left="10" right="-260" multi_select="false"
+	     name="object_list" tool_tip="Select an object from this list to highlight it in-world"
 	     top="-20">
 		<column dynamicwidth="true" label="Object Name" name="object_name" />
 		<column dynamicwidth="true" label="Owner Name" name="owner_name" />
-    <column dynamicwidth="true" label="Last Owner Name" name="last_owner_name" />
+		<column dynamicwidth="true" label="Last Owner Name" name="last_owner_name" /> 
 		<column dynamicwidth="true" label="Creator Name" name="creator_name" />
-    <column label="Faces" name="face_num" width="35" />
-    <column label="Vertices" name="vertex_num" width="35" />
-    <column label="Scripts" name="script_num" width="35" />
-    <column label="Inv Total" name="inv_num" width="35" />
-		<column label="Creation Date" name="creation_date" width="150" />
+	    <column label="Faces" name="face_num" width="55" />
+	    <column label="Vert" name="vertex_num" width="55" />
+	    <column label="Scripts" name="script_num" width="65" />
+	    <column label="Inv" name="inv_num" width="45" />
+		<column dynamicwidth="true" label="Creation Date" name="creation_date"/>
 	</scroll_list>
-	<button bottom="5" follows="left|bottom" font="SansSerif" halign="center" height="20"
+
+  <!--
+  <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false" 
+        bottom_delta="-20" drop_shadow_visible="true" enabled="true" follows="right|top" font="SansSerifSmall" h_pad="0" halign="left"
+        right="-104" height="16"  mouse_opaque="true" name="uploadtime txt" v_pad="0" width="80">Uploaded on:</text>
+  -->
+
+  <panel name="texpanels" visible="true" bottom="-84" right="-5" follows="right|top" width="250" height="80" border="false" mouse_opaque="false" bevel_style="in" can_resize="false">
+    <texture_picker bottom_delta="-78" left_delta="5" follows="left|top" width="50" height="63" label="Sculptie" name="texs" />
+    <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+          drop_shadow_visible="true" enabled="true" follows="left|top" font="SansSerifSmall" h_pad="0" halign="left" height="16"
+          left_delta="55" bottom_delta="48" mouse_opaque="true" name="line1_s" v_pad="0" width="190"></text>
+    <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+          drop_shadow_visible="true" enabled="true" follows="left|top" font="SansSerifSmall" h_pad="0" halign="left" height="16"
+          left_delta="0" bottom_delta="-12" mouse_opaque="true" name="line2_s" v_pad="0" width="190"></text>
+    <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+          drop_shadow_visible="true" enabled="true" follows="left|top" font="SansSerifSmall" h_pad="0" halign="left" height="16"
+          left_delta="0" bottom_delta="-12" mouse_opaque="true" name="line3_s" v_pad="0" width="190"></text>
+    <button bottom_delta="-16" enabled="true" follows="right|top" font="SansSerifSmall" halign="center" height="14" label="Blacklist"
+          left_delta="0" visible="false" mouse_opaque="true" name="blacklist_btn_s" scale_image="true" width="70" />
+    <button bottom_delta="0" enabled="true" follows="right|top" font="SansSerifSmall" halign="center" height="14" label="Profile"
+          left_delta="73" visible="false" mouse_opaque="true" name="profile_btn_s" scale_image="true" width="60" />
+    <panel name="sep" right="-10" width="240" height="1" bottom_delta="-5" border="true" mouse_opaque="true" bevel_style="in" follows="top|right" can_resize="false"/>
+  </panel>
+
+  <panel name="texpanelp" visible="true" bottom_delta="-66" right="-5" follows="right|top" width="250" height="80" border="false" mouse_opaque="true" bevel_style="in" can_resize="false">
+    <texture_picker bottom_delta="-78" left_delta="5" follows="left|top" width="50" height="63" label="Particle" name="texp" />
+    <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+          drop_shadow_visible="true" enabled="true" follows="left|top" font="SansSerifSmall" h_pad="0" halign="left" height="16"
+          left_delta="55" bottom_delta="48" mouse_opaque="true" name="line1_p" v_pad="0" width="190"></text>
+    <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+          drop_shadow_visible="true" enabled="true" follows="left|top" font="SansSerifSmall" h_pad="0" halign="left" height="16"
+          left_delta="0" bottom_delta="-12" mouse_opaque="true" name="line2_p" v_pad="0" width="190"></text>
+    <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+          drop_shadow_visible="true" enabled="true" follows="left|top" font="SansSerifSmall" h_pad="0" halign="left" height="16"
+          left_delta="0" bottom_delta="-12" mouse_opaque="true" name="line3_p" v_pad="0" width="190"></text>
+    <button bottom_delta="-16" enabled="true" follows="right|top" font="SansSerifSmall" halign="center" height="14" label="Blacklist"
+          left_delta="0" visible="false" mouse_opaque="true" name="blacklist_btn_p" scale_image="true" width="70" />
+    <button bottom_delta="0" enabled="true" follows="right|top" font="SansSerifSmall" halign="center" height="14" label="Profile"
+          left_delta="73" visible="false" mouse_opaque="true" name="profile_btn_p" scale_image="true" width="60" />
+    <panel name="sep" right="-10" width="240" height="1" bottom_delta="-5" border="true" mouse_opaque="true" bevel_style="in" follows="top|right" can_resize="false"/>
+  </panel>
+
+  <panel name="texpanel0" visible="false" bottom_delta="-66" right="-5" follows="right|top" width="250" height="80" border="false" mouse_opaque="true" bevel_style="in" can_resize="false">
+    <texture_picker bottom_delta="-78" left_delta="5" follows="left|top" width="50" height="63" label="Face 0" name="tex0" />
+    <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+          drop_shadow_visible="true" enabled="true" follows="left|top" font="SansSerifSmall" h_pad="0" halign="left" height="16"
+          left_delta="55" bottom_delta="48" mouse_opaque="true" name="line1_0" v_pad="0" width="190"></text>
+    <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+          drop_shadow_visible="true" enabled="true" follows="left|top" font="SansSerifSmall" h_pad="0" halign="left" height="16"
+          left_delta="0" bottom_delta="-12" mouse_opaque="true" name="line2_0" v_pad="0" width="190"></text>
+    <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+          drop_shadow_visible="true" enabled="true" follows="left|top" font="SansSerifSmall" h_pad="0" halign="left" height="16"
+          left_delta="0" bottom_delta="-12" mouse_opaque="true" name="line3_0" v_pad="0" width="190"></text>
+    <button bottom_delta="-16" enabled="true" follows="right|top" font="SansSerifSmall" halign="center" height="14" label="Blacklist"
+          left_delta="0" visible="false" mouse_opaque="true" name="blacklist_btn_0" scale_image="true" width="70" />
+    <button bottom_delta="0" enabled="true" follows="right|top" font="SansSerifSmall" halign="center" height="14" label="Profile"
+          left_delta="73" visible="false" mouse_opaque="true" name="profile_btn_0" scale_image="true" width="60" />
+    <panel name="sep" right="-10" width="240" height="1" bottom_delta="-5" border="true" mouse_opaque="true" bevel_style="in" follows="top|right" can_resize="false"/>
+  </panel>
+
+  <panel name="texpanel1" visible="false" bottom_delta="-66" right="-5" follows="right|top" width="250" height="80" border="false" mouse_opaque="true" bevel_style="in" can_resize="false">
+    <texture_picker bottom_delta="-78" left_delta="5" follows="left|top" width="50" height="63" label="Face 1" name="tex1" />
+    <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+          drop_shadow_visible="true" enabled="true" follows="left|top" font="SansSerifSmall" h_pad="0" halign="left" height="16"
+          left_delta="55" bottom_delta="48" mouse_opaque="true" name="line1_1" v_pad="0" width="190"></text>
+    <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+          drop_shadow_visible="true" enabled="true" follows="left|top" font="SansSerifSmall" h_pad="0" halign="left" height="16"
+          left_delta="0" bottom_delta="-12" mouse_opaque="true" name="line2_1" v_pad="0" width="190"></text>
+    <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+          drop_shadow_visible="true" enabled="true" follows="left|top" font="SansSerifSmall" h_pad="0" halign="left" height="16"
+          left_delta="0" bottom_delta="-12" mouse_opaque="true" name="line3_1" v_pad="0" width="190"></text>
+    <button bottom_delta="-16" enabled="true" follows="right|top" font="SansSerifSmall" halign="center" height="14" label="Blacklist"
+          left_delta="0" visible="false" mouse_opaque="true" name="blacklist_btn_1" scale_image="true" width="70" />
+    <button bottom_delta="0" enabled="true" follows="right|top" font="SansSerifSmall" halign="center" height="14" label="Profile"
+          left_delta="73" visible="false" mouse_opaque="true" name="profile_btn_1" scale_image="true" width="60" />
+
+    <panel name="sep" right="-10" width="240" height="1" bottom_delta="-5" border="true" mouse_opaque="true" bevel_style="in" follows="top|right" can_resize="false"/>
+  </panel>
+
+  <panel name="texpanel2" visible="false" bottom_delta="-66" right="-5" follows="right|top" width="250" height="80" border="false" mouse_opaque="true" bevel_style="in" can_resize="false">
+    <texture_picker bottom_delta="-78" left_delta="5" follows="left|top" width="50" height="63" label="Face 2" name="tex2" />
+    <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+          drop_shadow_visible="true" enabled="true" follows="left|top" font="SansSerifSmall" h_pad="0" halign="left" height="16"
+          left_delta="55" bottom_delta="48" mouse_opaque="true" name="line1_2" v_pad="0" width="190"></text>
+    <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+          drop_shadow_visible="true" enabled="true" follows="left|top" font="SansSerifSmall" h_pad="0" halign="left" height="16"
+          left_delta="0" bottom_delta="-12" mouse_opaque="true" name="line2_2" v_pad="0" width="190"></text>
+    <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+          drop_shadow_visible="true" enabled="true" follows="left|top" font="SansSerifSmall" h_pad="0" halign="left" height="16"
+          left_delta="0" bottom_delta="-12" mouse_opaque="true" name="line3_2" v_pad="0" width="190"></text>
+    <button bottom_delta="-16" enabled="true" follows="right|top" font="SansSerifSmall" halign="center" height="14" label="Blacklist"
+          left_delta="0" visible="false" mouse_opaque="true" name="blacklist_btn_2" scale_image="true" width="70" />
+    <button bottom_delta="0" enabled="true" follows="right|top" font="SansSerifSmall" halign="center" height="14" label="Profile"
+          left_delta="73" visible="false" mouse_opaque="true" name="profile_btn_2" scale_image="true" width="60" />
+
+    <panel name="sep" right="-10" width="240" height="1" bottom_delta="-5" border="true" mouse_opaque="true" bevel_style="in" follows="top|right" can_resize="false"/>
+  </panel>
+
+  <panel name="texpanel3" visible="false" bottom_delta="-66" right="-5" follows="right|top" width="250" height="80" border="false" mouse_opaque="true" bevel_style="in" can_resize="false">
+    <texture_picker bottom_delta="-78" left_delta="5" follows="left|top" width="50" height="63" label="Face 3" name="tex3" />
+    <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+          drop_shadow_visible="true" enabled="true" follows="left|top" font="SansSerifSmall" h_pad="0" halign="left" height="16"
+          left_delta="55" bottom_delta="48" mouse_opaque="true" name="line1_3" v_pad="0" width="190"></text>
+    <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+          drop_shadow_visible="true" enabled="true" follows="left|top" font="SansSerifSmall" h_pad="0" halign="left" height="16"
+          left_delta="0" bottom_delta="-12" mouse_opaque="true" name="line2_3" v_pad="0" width="190"></text>
+    <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+          drop_shadow_visible="true" enabled="true" follows="left|top" font="SansSerifSmall" h_pad="0" halign="left" height="16"
+          left_delta="0" bottom_delta="-12" mouse_opaque="true" name="line3_3" v_pad="0" width="190"></text>
+    <button bottom_delta="-16" enabled="true" follows="right|top" font="SansSerifSmall" halign="center" height="14" label="Blacklist"
+          left_delta="0" visible="false" mouse_opaque="true" name="blacklist_btn_3" scale_image="true" width="70" />
+    <button bottom_delta="0" enabled="true" follows="right|top" font="SansSerifSmall" halign="center" height="14" label="Profile"
+          left_delta="73" visible="false" mouse_opaque="true" name="profile_btn_3" scale_image="true" width="60" />
+
+    <panel name="sep" right="-10" width="240" height="1" bottom_delta="-5" border="true" mouse_opaque="true" bevel_style="in" follows="top|right" can_resize="false"/>
+  </panel>
+
+  <panel name="texpanel4" visible="false" bottom_delta="-66" right="-5" follows="right|top" width="250" height="80" border="false" mouse_opaque="true" bevel_style="in" can_resize="false">
+    <texture_picker bottom_delta="-78" left_delta="5" follows="left|top" width="50" height="63" label="Face 4" name="tex4" />
+    <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+          drop_shadow_visible="true" enabled="true" follows="left|top" font="SansSerifSmall" h_pad="0" halign="left" height="16"
+          left_delta="55" bottom_delta="48" mouse_opaque="true" name="line1_4" v_pad="0" width="190"></text>
+    <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+          drop_shadow_visible="true" enabled="true" follows="left|top" font="SansSerifSmall" h_pad="0" halign="left" height="16"
+          left_delta="0" bottom_delta="-12" mouse_opaque="true" name="line2_4" v_pad="0" width="190"></text>
+    <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+          drop_shadow_visible="true" enabled="true" follows="left|top" font="SansSerifSmall" h_pad="0" halign="left" height="16"
+          left_delta="0" bottom_delta="-12" mouse_opaque="true" name="line3_4" v_pad="0" width="190"></text>
+    <button bottom_delta="-16" enabled="true" follows="right|top" font="SansSerifSmall" halign="center" height="14" label="Blacklist"
+          left_delta="0" visible="false" mouse_opaque="true" name="blacklist_btn_4" scale_image="true" width="70" />
+    <button bottom_delta="0" enabled="true" follows="right|top" font="SansSerifSmall" halign="center" height="14" label="Profile"
+          left_delta="73" visible="false" mouse_opaque="true" name="profile_btn_4" scale_image="true" width="60" />
+
+    <panel name="sep" right="-10" width="240" height="1" bottom_delta="-5" border="true" mouse_opaque="true" bevel_style="in" follows="top|right" can_resize="false"/>
+  </panel>
+
+  <panel name="texpanel5" visible="false" bottom_delta="-66" right="-5" follows="right|top" width="250" height="80" border="false" mouse_opaque="true" bevel_style="in" can_resize="false">
+    <texture_picker bottom_delta="-78" left_delta="5" follows="left|top" width="50" height="63" label="Face 5" name="tex5" />
+    <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+          drop_shadow_visible="true" enabled="true" follows="left|top" font="SansSerifSmall" h_pad="0" halign="left" height="16"
+          left_delta="55" bottom_delta="48" mouse_opaque="true" name="line1_5" v_pad="0" width="190"></text>
+    <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+          drop_shadow_visible="true" enabled="true" follows="left|top" font="SansSerifSmall" h_pad="0" halign="left" height="16"
+          left_delta="0" bottom_delta="-12" mouse_opaque="true" name="line2_5" v_pad="0" width="190"></text>
+    <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+          drop_shadow_visible="true" enabled="true" follows="left|top" font="SansSerifSmall" h_pad="0" halign="left" height="16"
+          left_delta="0" bottom_delta="-12" mouse_opaque="true" name="line3_5" v_pad="0" width="190"></text>
+    <button bottom_delta="-16" enabled="true" follows="right|top" font="SansSerifSmall" halign="center" height="14" label="Blacklist"
+          left_delta="0" visible="false" mouse_opaque="true" name="blacklist_btn_5" scale_image="true" width="70" />
+    <button bottom_delta="0" enabled="true" follows="right|top" font="SansSerifSmall" halign="center" height="14" label="Profile"
+          left_delta="73" visible="false" mouse_opaque="true" name="profile_btn_5" scale_image="true" width="60" />
+    <panel name="sep" right="-10" width="240" height="1" bottom_delta="-5" border="true" mouse_opaque="true" bevel_style="in" follows="top|right" can_resize="false"/>
+  </panel>
+
+  <panel name="texpanel6" visible="false" bottom_delta="-66" right="-5" follows="right|top" width="250" height="80" border="false" mouse_opaque="true" bevel_style="in" can_resize="false">
+    <texture_picker bottom_delta="-78" left_delta="5" follows="left|top" width="50" height="63" label="Face 6" name="tex6" />
+    <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+          drop_shadow_visible="true" enabled="true" follows="left|top" font="SansSerifSmall" h_pad="0" halign="left" height="16"
+          left_delta="55" bottom_delta="48" mouse_opaque="true" name="line1_6" v_pad="0" width="190"></text>
+    <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+          drop_shadow_visible="true" enabled="true" follows="left|top" font="SansSerifSmall" h_pad="0" halign="left" height="16"
+          left_delta="0" bottom_delta="-12" mouse_opaque="true" name="line2_6" v_pad="0" width="190"></text>
+    <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+          drop_shadow_visible="true" enabled="true" follows="left|top" font="SansSerifSmall" h_pad="0" halign="left" height="16"
+          left_delta="0" bottom_delta="-12" mouse_opaque="true" name="line3_6" v_pad="0" width="190"></text>
+    <button bottom_delta="-16" enabled="true" follows="right|top" font="SansSerifSmall" halign="center" height="14" label="Blacklist"
+          left_delta="0" visible="false" mouse_opaque="true" name="blacklist_btn_6" scale_image="true" width="70" />
+    <button bottom_delta="0" enabled="true" follows="right|top" font="SansSerifSmall" halign="center" height="14" label="Profile"
+          left_delta="73" visible="false" mouse_opaque="true" name="profile_btn_6" scale_image="true" width="60" />
+    <panel name="sep" right="-10" width="240" height="1" bottom_delta="-5" border="true" mouse_opaque="true" bevel_style="in" follows="top|right" can_resize="false"/>
+  </panel>
+
+  <panel name="texpanel7" visible="false" bottom_delta="-66" right="-5" follows="right|top" width="250" height="80" border="false" mouse_opaque="true" bevel_style="in" can_resize="false">
+    <texture_picker bottom_delta="-78" left_delta="5" follows="left|top" width="50" height="63" label="Face 7" name="tex7" />
+    <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+          drop_shadow_visible="true" enabled="true" follows="left|top" font="SansSerifSmall" h_pad="0" halign="left" height="16"
+          left_delta="55" bottom_delta="48" mouse_opaque="true" name="line1_7" v_pad="0" width="190"></text>
+    <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+          drop_shadow_visible="true" enabled="true" follows="left|top" font="SansSerifSmall" h_pad="0" halign="left" height="16"
+          left_delta="0" bottom_delta="-12" mouse_opaque="true" name="line2_7" v_pad="0" width="190"></text>
+    <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+          drop_shadow_visible="true" enabled="true" follows="left|top" font="SansSerifSmall" h_pad="0" halign="left" height="16"
+          left_delta="0" bottom_delta="-12" mouse_opaque="true" name="line3_7" v_pad="0" width="190"></text>
+    <button bottom_delta="-16" enabled="true" follows="right|top" font="SansSerifSmall" halign="center" height="14" label="Blacklist"
+          left_delta="0" visible="false" mouse_opaque="true" name="blacklist_btn_7" scale_image="true" width="70" />
+    <button bottom_delta="0" enabled="true" follows="right|top" font="SansSerifSmall" halign="center" height="14" label="Profile"
+          left_delta="73" visible="false" mouse_opaque="true" name="profile_btn_7" scale_image="true" width="60" />
+    <panel name="sep" right="-10" width="240" height="1" bottom_delta="-5" border="true" mouse_opaque="true" bevel_style="in" follows="top|right" can_resize="false"/>
+  </panel>
+
+  <panel name="texpanel8" visible="false" bottom_delta="-66" right="-5" follows="right|top" width="250" height="80" border="false" mouse_opaque="true" bevel_style="in" can_resize="false">
+    <texture_picker bottom_delta="-78" left_delta="5" follows="left|top" width="50" height="63" label="Face 8" name="tex8" />
+    <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+          drop_shadow_visible="true" enabled="true" follows="left|top" font="SansSerifSmall" h_pad="0" halign="left" height="16"
+          left_delta="55" bottom_delta="48" mouse_opaque="true" name="line1_8" v_pad="0" width="190"></text>
+    <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+          drop_shadow_visible="true" enabled="true" follows="left|top" font="SansSerifSmall" h_pad="0" halign="left" height="16"
+          left_delta="0" bottom_delta="-12" mouse_opaque="true" name="line2_8" v_pad="0" width="190"></text>
+    <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+          drop_shadow_visible="true" enabled="true" follows="left|top" font="SansSerifSmall" h_pad="0" halign="left" height="16"
+          left_delta="0" bottom_delta="-12" mouse_opaque="true" name="line3_8" v_pad="0" width="190"></text>
+    <button bottom_delta="-16" enabled="true" follows="right|top" font="SansSerifSmall" halign="center" height="14" label="Blacklist"
+          left_delta="0" visible="false" mouse_opaque="true" name="blacklist_btn_8" scale_image="true" width="70" />
+    <button bottom_delta="0" enabled="true" follows="right|top" font="SansSerifSmall" halign="center" height="14" label="Profile"
+          left_delta="73" visible="false" mouse_opaque="true" name="profile_btn_8" scale_image="true" width="60" />
+    <panel name="sep" right="-10" width="240" height="1" bottom_delta="-5" border="true" mouse_opaque="true" bevel_style="in" follows="top|right" can_resize="false"/>
+  </panel>
+  
+  <panel name="texpanel9" visible="false" bottom_delta="-66" right="-5" follows="right|top" width="250" height="80" border="false" mouse_opaque="true" bevel_style="in" can_resize="false">
+    <texture_picker bottom_delta="-78" left_delta="5" follows="left|top" width="50" height="63" label="Face 9" name="tex9" />
+    <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+          drop_shadow_visible="true" enabled="true" follows="left|top" font="SansSerifSmall" h_pad="0" halign="left" height="16"
+          left_delta="55" bottom_delta="48" mouse_opaque="true" name="line1_9" v_pad="0" width="190"></text>
+    <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+          drop_shadow_visible="true" enabled="true" follows="left|top" font="SansSerifSmall" h_pad="0" halign="left" height="16"
+          left_delta="0" bottom_delta="-12" mouse_opaque="true" name="line2_9" v_pad="0" width="190"></text>
+    <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+          drop_shadow_visible="true" enabled="true" follows="left|top" font="SansSerifSmall" h_pad="0" halign="left" height="16"
+          left_delta="0" bottom_delta="-12" mouse_opaque="true" name="line3_9" v_pad="0" width="190"></text>
+    <button bottom_delta="-16" enabled="true" follows="right|top" font="SansSerifSmall" halign="center" height="14" label="Blacklist"
+          left_delta="0" visible="false" mouse_opaque="true" name="blacklist_btn_9" scale_image="true" width="70" />
+    <button bottom_delta="0" enabled="true" follows="right|top" font="SansSerifSmall" halign="center" height="14" label="Profile"
+          left_delta="73" visible="false" mouse_opaque="true" name="profile_btn_9" scale_image="true" width="60" />
+    <panel name="sep" right="-10" width="240" height="1" bottom_delta="-5" border="true" mouse_opaque="true" bevel_style="in" follows="top|right" can_resize="false"/>
+  </panel>
+  
+  <panel name="texpanel10" visible="false" bottom_delta="-66" right="-5" follows="right|top" width="250" height="80" border="false" mouse_opaque="true" bevel_style="in" can_resize="false">
+    <texture_picker bottom_delta="-78" left_delta="5" follows="left|top" width="50" height="63" label="Face 10" name="tex10" />
+    <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+          drop_shadow_visible="true" enabled="true" follows="left|top" font="SansSerifSmall" h_pad="0" halign="left" height="16"
+          left_delta="55" bottom_delta="48" mouse_opaque="true" name="line1_10" v_pad="0" width="190"></text>
+    <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+          drop_shadow_visible="true" enabled="true" follows="left|top" font="SansSerifSmall" h_pad="0" halign="left" height="16"
+          left_delta="0" bottom_delta="-12" mouse_opaque="true" name="line2_10" v_pad="0" width="190"></text>
+    <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+          drop_shadow_visible="true" enabled="true" follows="left|top" font="SansSerifSmall" h_pad="0" halign="left" height="16"
+          left_delta="0" bottom_delta="-12" mouse_opaque="true" name="line3_10" v_pad="0" width="190"></text>
+    <button bottom_delta="-16" enabled="true" follows="right|top" font="SansSerifSmall" halign="center" height="14" label="Blacklist"
+          left_delta="0" visible="false" mouse_opaque="true" name="blacklist_btn_10" scale_image="true" width="70" />
+    <button bottom_delta="0" enabled="true" follows="right|top" font="SansSerifSmall" halign="center" height="14" label="Profile"
+          left_delta="73" visible="false" mouse_opaque="true" name="profile_btn_10" scale_image="true" width="60" />
+    <panel name="sep" right="-10" width="240" height="1" bottom_delta="-5" border="true" mouse_opaque="true" bevel_style="in" follows="top|right" can_resize="false"/>
+  </panel>
+
+  <button bottom="5" follows="left|bottom" font="SansSerif" halign="center" height="20"
 	     label="See Owner Profile..." label_selected="" left="10"
 	     mouse_opaque="true" name="button owner"
 	     tool_tip="See profile of the highlighted object&apos;s owner" width="150" />
@@ -26,4 +271,5 @@
 	     mouse_opaque="true" name="button creator"
 	     tool_tip="See profile of the highlighted object&apos;s original creator"
 	     width="150" />
+  
 </floater>

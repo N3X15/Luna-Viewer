@@ -39,13 +39,17 @@
 	     enabled="true" follows="left|top" height="47" label="Others" left_delta="54"
 	     mouse_opaque="true" name="agent" width="44" />
 	<color_swatch border_color="0.45098 0.517647 0.607843 1" bottom="-100"
+	     can_apply_immediately="true" color="0.6 0.6 1 1" control_name="IMChatColor"
+	     enabled="true" follows="left|top" height="47" label="IM" left_delta="54"
+	     mouse_opaque="true" name="im" width="44" />
+	<color_swatch border_color="0.45098 0.517647 0.607843 1" bottom="-100"
+	     can_apply_immediately="true" color="0.447 0.784 0.663 1" control_name="PhoenixFriendChatColor"
+	     enabled="true" follows="left|top" height="47" label="Friends" left_delta="54"
+	     mouse_opaque="true" name="friend" width="44" />
+	<color_swatch border_color="0.45098 0.517647 0.607843 1" bottom="-100"
 	     can_apply_immediately="true" color="0.6 0.6 1 1" control_name="LuaChatColor"
 	     enabled="true" follows="left|top" height="47" label="Lua" left_delta="54"
 	     mouse_opaque="true" name="lua" width="44" />
-	<color_swatch border_color="0.45098 0.517647 0.607843 1" bottom="-100"
-	     can_apply_immediately="true" color="0.6 0.6 1 1"
-	     enabled="true" follows="left|top" height="47" label="IM" left_delta="54"
-	     mouse_opaque="true" name="im" width="44" />
 	<color_swatch border_color="0.45098 0.517647 0.607843 1" bottom="-100"
 	     can_apply_immediately="true" color="0.8 1 1 1"
 	     enabled="true" follows="left|top" height="47"  label="System" left_delta="54"
@@ -63,6 +67,11 @@
 	     name="objects" width="44" />
 	<color_swatch border_color="0.45098 0.517647 0.607843 1" bottom="-150"
 	     can_apply_immediately="true" color="0.7 0.9 0.7 1"
+	     control_name="ObjectIMColor" enabled="true" follows="left|top"
+	     height="47" label="Obj IMs" left_delta="54" mouse_opaque="true"
+	     name="object_ims" width="44" />
+	<color_swatch border_color="0.45098 0.517647 0.607843 1" bottom="-150"
+	     can_apply_immediately="true" color="0.7 0.9 0.7 1"
 	     enabled="true" follows="left|top"
 	     height="47" label="Owner" left_delta="54" mouse_opaque="true" name="owner"
 	     width="44" />
@@ -75,9 +84,15 @@
 	     can_apply_immediately="true" color="0.6 0.6 1 1"
 	     enabled="true" follows="left|top" height="47"
 	     label="URLs" left_delta="54" mouse_opaque="true" name="links" width="44" />
+      <text bottom="-150" follows="left|top" font="SansSerifSmall" height="16" left_delta="54" name="PhoenixEncrypted" width="55">Encrypted</text>
+	<color_swatch border_color="0.45098 0.517647 0.607843 1" bottom="-150"
+	     can_apply_immediately="true" color="0.6 0.6 1 1"
+	     enabled="true" follows="left|top" height="47"
+	     label="" left_delta="0" mouse_opaque="true" name="encrypted" width="44" />	
+
 	
 	<text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
-	     bottom_delta="-26" drop_shadow_visible="true" enabled="true" follows="left|top"
+	     bottom_delta="-18" drop_shadow_visible="true" enabled="true" follows="left|top"
 	     font="SansSerifSmall" h_pad="0" halign="left" height="10" left="12"
 	     mouse_opaque="false" name="text_box3" v_pad="0" width="135">
 		Chat Console:
@@ -139,10 +154,14 @@
 	     label="Show script errors and warnings as regular chat" left="148"
 	     mouse_opaque="true" name="script_errors_as_chat" radio_style="false"
 	     width="275" />
-	<check_box bottom_delta="-20" enabled="true" control_name="PlayTypingAnim"
+	<check_box bottom_delta="-20" enabled="true"
 	     follows="left|top" font="SansSerifSmall" height="16" initial_value="true"
 	     label="Play typing animation when chatting" left="148" mouse_opaque="true"
 	     name="play_typing_animation" radio_style="false" width="237" />
+	<check_box bottom_delta="-20" control_name="PhoenixColorFriendsChat" enabled="true"
+	     follows="left|top" font="SansSerifSmall" height="16" initial_value="true"
+	     label="Color text in chat from my friends in a different color" left="148" mouse_opaque="true"
+	     name="PhoenixColorFriendsChat" radio_style="false" width="237" />
 	<text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
 	     bottom="-365" drop_shadow_visible="true" enabled="true" follows="left|top"
 	     font="SansSerifSmall" h_pad="0" halign="left" height="10" left="12"

@@ -133,7 +133,6 @@ void LLViewerGesture::doTrigger( BOOL send_chat )
 			gAgent.sendAnimationRequest(anim_id, ANIM_REQUEST_START);
 		}
 	}
-
 	cmd_line_chat(mOutputString, CHAT_TYPE_NORMAL);
 	if ( send_chat && !mOutputString.empty())
 	{

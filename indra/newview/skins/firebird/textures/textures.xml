@@ -369,8 +369,7 @@
   
   <texture name="skin_thumbnail_default.png" preload="true" />
   <texture name="skin_thumbnail_silver.png" preload="true" />  
-  <texture name="skin_thumbnail_dark.png" preload="true" />
-  <texture name="skin_thumbnail_emerald.png" preload="true" />  
+  <texture name="skin_thumbnail_dark.png" preload="true" /> 
   <texture name="skin_thumbnail_gred.png" preload="true" />
   <texture name="skin_thumbnail_ruby.png" preload="true" />
   <texture name="skin_thumbnail_pslgreen.png" preload="true" />

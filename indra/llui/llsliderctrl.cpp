@@ -51,7 +51,8 @@
 const U32 MAX_STRING_LENGTH = 10;
 
 static LLRegisterWidget<LLSliderCtrl> r("slider");
- 
+
+
 LLSliderCtrl::LLSliderCtrl(const std::string& name, const LLRect& rect, 
 						   const std::string& label,
 						   const LLFontGL* font,
@@ -75,11 +76,16 @@ LLSliderCtrl::LLSliderCtrl(const std::string& name, const LLRect& rect,
 	  mValue( initial_value ),
 	  mEditor( NULL ),
 	  mTextBox( NULL ),
-	  mTextEnabledColor( LLUI::sColorsGroup->getColor( "LabelTextColor" ) ),
-	  mTextDisabledColor( LLUI::sColorsGroup->getColor( "LabelDisabledColor" ) ),
+	  //mTextEnabledColor( sLabelTextColor ),
+	  //mTextDisabledColor( sLabelDisabledColor ),
 	  mSliderMouseUpCallback( NULL ),
 	  mSliderMouseDownCallback( NULL )
 {
+	static LLColor4 sLabelTextColor = LLUI::sColorsGroup->getColor( "LabelTextColor" );
+	static LLColor4 sLabelDisabledColor = LLUI::sColorsGroup->getColor( "LabelDisabledColor" );
+	mTextEnabledColor = sLabelTextColor;
+	mTextDisabledColor = sLabelDisabledColor;
+
 	S32 top = getRect().getHeight();
 	S32 bottom = 0;
 	S32 left = 0;

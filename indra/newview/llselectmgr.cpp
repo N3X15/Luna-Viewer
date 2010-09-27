@@ -614,9 +614,13 @@ void LLSelectMgr::deselectObjectAndFamily(LLViewerObject* object, BOOL send_to_s
 			start_new_message = FALSE;
 		}
 
-		msg->nextBlockFast(_PREHASH_ObjectData);
-		msg->addU32Fast(_PREHASH_ObjectLocalID, (objects[i])->getLocalID());
-		select_count++;
+		// deselects objects anyways, so instead prevent selecting
+		if((objects[i])->getPositionRegion().mV[VZ] < 4096.0)
+		{
+			msg->nextBlockFast(_PREHASH_ObjectData);
+			msg->addU32Fast(_PREHASH_ObjectLocalID, (objects[i])->getLocalID());
+			select_count++;
+		}
 
 		// Zap the angular velocity, as the sim will set it to zero
 		objects[i]->setAngularVelocity( 0,0,0 );
@@ -649,7 +653,7 @@ void LLSelectMgr::deselectObjectOnly(LLViewerObject* object, BOOL send_to_sim)
 	object->setAngularVelocity( 0,0,0 );
 	object->setVelocity( 0,0,0 );
 
-	if (send_to_sim)
+	if (send_to_sim && object->getPositionRegion().mV[VZ] < 4096.0)
 	{
 		LLViewerRegion* region = object->getRegion();
 		gMessageSystem->newMessageFast(_PREHASH_ObjectDeselect);
@@ -1390,9 +1394,6 @@ void LLSelectMgr::selectionSetImage(const LLUUID& imageid)
 {
 	// First for (no copy) textures and multiple object selection
 	LLViewerInventoryItem* item = gInventory.getItem(imageid);
-	// <edit> fffff
-	/*
-	// </edit>
 	if(item 
 		&& !item->getPermissions().allowOperationBy(PERM_COPY, gAgent.getID())
 		&& (mSelectedObjects->getNumNodes() > 1) )
@@ -1401,9 +1402,6 @@ void LLSelectMgr::selectionSetImage(const LLUUID& imageid)
 				<< llendl;
 		return;
 	}
-	// <edit>
-	*/
-	// </edit>
 
 	struct f : public LLSelectedTEFunctor
 	{
@@ -4351,6 +4349,11 @@ void LLSelectMgr::processObjectProperties(LLMessageSystem* msg, void** user_data
 		LLFloaterExport::receiveObjectProperties(id, name, desc);
 		// </edit>
 
+		// <LUNA>
+		// @hook OnObjectProperties(id,name,desc)
+		LUA_CALL("OnObjectProperties") << id << name << desc << LUA_END;
+		// </LUNA>
+
 		// Iterate through nodes at end, since it can be on both the regular AND hover list
 		struct f : public LLSelectedNodeFunctor
 		{
@@ -4492,6 +4495,12 @@ void LLSelectMgr::processObjectPropertiesFamily(LLMessageSystem* msg, void** use
 	// <edit> Send to export floaters
 	LLFloaterExport::receiveObjectProperties(id, name, desc);
 	// </edit>
+
+	// <LUNA>
+	// @hook OnObjectProperties(id,name,desc)
+	LUA_CALL("OnObjectProperties") << id << name << desc << LUA_END;
+	// </LUNA>
+
 	// the reporter widget askes the server for info about picked objects
 	if (request_flags & (COMPLAINT_REPORT_REQUEST | BUG_REPORT_REQUEST))
 	{
@@ -4574,12 +4583,27 @@ void LLSelectMgr::processForceObjectSelect(LLMessageSystem* msg, void**)
 	// Don't select, just highlight
 	LLSelectMgr::getInstance()->highlightObjectAndFamily(objects);
 }
-
+//Banana:KC - I'll just put this back so it will work again
+void LLSelectMgr::enableSilhouette(BOOL enable)
+{
+	if(gSavedSettings.getBOOL("AscentRenderHighlightSelections"))
+	{
+		mRenderSilhouettes = enable;
+	}
+	else
+	{
+		mRenderSilhouettes = false;
+	}
+}
 
 extern LLGLdouble	gGLModelView[16];
 
 void LLSelectMgr::updateSilhouettes()
 {
+	//LOOOOOTS of CPU time saved by this.
+	if(!mRenderSilhouettes)
+		return;
+
 	S32 num_sils_genned = 0;
 
 	LLVector3d	cameraPos = gAgent.getCameraPositionGlobal();
@@ -4890,6 +4914,7 @@ void LLSelectMgr::renderSilhouettes(BOOL for_hud)
 	if (mSelectedObjects->getNumNodes())
 	{
 		LLUUID inspect_item_id = LLFloaterInspect::getSelectedUUID();
+		LLUUID focus_item_id = LLViewerMediaFocus::getInstance()->getSelectedUUID();
 		
 		// <edit>
 		//for (S32 pass = 0; pass < 2; pass++)
@@ -4906,7 +4931,11 @@ void LLSelectMgr::renderSilhouettes(BOOL for_hud)
 				{
 					continue;
 				}
-				if(objectp->getID() == inspect_item_id)
+				if (objectp->getID() == focus_item_id)
+				{
+					node->renderOneSilhouette(gFocusMgr.getFocusColor());
+				}
+				else if(objectp->getID() == inspect_item_id)
 				{
 					node->renderOneSilhouette(sHighlightInspectColor);
 				}

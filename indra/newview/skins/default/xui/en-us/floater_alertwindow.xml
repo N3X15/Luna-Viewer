@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<floater border="false" can_close="true" can_minimize="true" bottom="400" left="300" can_resize="false" height="250" name="PhoenixAlertWindow" title="Phoenix - Keywords Alert" width="325">
+     <check_box bottom_delta="-40" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
+          label="If any of the phrases (separated by commas) listed here" left="5" mouse_opaque="true"
+          name="PhoenixKeywords_Alert" radio_style="false" width="270"/>
+      <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom_delta="-20" follows="left|top"
+          font="SansSerifSmall" height="20" left_delta="5" max_length="500" mouse_opaque="true" name="PhoenixKeywords_Entries" width="300" />
+      <text bottom_delta="-30" follows="left|top" font="SansSerifSmall" height="20" left_delta="15" name="EmKeyw"
+          width="100">Is found within:</text>
+     <check_box bottom_delta="3" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
+          label="Instant Message Floater" left_delta="100" mouse_opaque="true" name="PhoenixKeywords_IM" radio_style="false" width="270"/>
+     <check_box bottom_delta="-15" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
+          label="Local Chat Floater" left_delta="0" mouse_opaque="true" name="PhoenixKeywords_LocalChat" radio_style="false" width="270"/>
+     <check_box bottom_delta="-30" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
+          label="Highlight the message in this color:" left_delta="-110" mouse_opaque="true" name="PhoenixKeywords_Highlight"
+          radio_style="false" width="270"/>
+     <color_swatch border_color="0.45098, 0.517647, 0.607843, 1" bottom_delta="-15" can_apply_immediately="true"
+          color="1, 1, 1, 1" follows="left|top" height="35" label="" left_delta="210"
+          mouse_opaque="true" name="PhoenixKeywords_Color" tool_tip="Click to open Color Picker" width="50"/>
+     <check_box bottom_delta="-10" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
+          label="Play this sound alert: (UUID)" left_delta="-210" mouse_opaque="true" name="PhoenixKeywords_PlaySound"
+          radio_style="false" width="270"/>
+      <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom_delta="-20" follows="left|top"
+          font="SansSerifSmall" height="20" left_delta="0" max_length="36" mouse_opaque="true" name="PhoenixKeywords_SoundUUID" width="300" />
+     <button bottom_delta="-40" enabled="true" follows="left|top" font="SansSerif"
+          halign="center" height="22" label="Save" left="75"
+          mouse_opaque="true" name="PhoenixKeywords_save" scale_image="true" width="85" />
+     <button bottom_delta="0" enabled="true" follows="left|top" font="SansSerif"
+          halign="center" height="22" label="Cancel" left_delta="90"
+          mouse_opaque="true" name="PhoenixKeywords_cancel" scale_image="true" width="85" />
+</floater> 

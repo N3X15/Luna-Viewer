@@ -1,6 +1,6 @@
 /** 
  * @file llbufferstream.cpp
- * @author Phoenix
+ * @author Ascent
  * @date 2005-10-10
  * @brief Implementation of the buffer iostream classes
  *

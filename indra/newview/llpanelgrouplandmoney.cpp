@@ -49,6 +49,7 @@
 #include "lltabcontainer.h"
 #include "lltrans.h"
 #include "lltransactiontypes.h"
+#include "llviewercontrol.h"
 #include "lluictrlfactory.h"
 
 #include "llstatusbar.h"
@@ -415,6 +416,7 @@ void LLPanelGroupLandMoney::impl::processGroupLand(LLMessageSystem* msg)
 		std::string sim_name;
 		std::string land_sku;
 		std::string land_type;
+
 		
 		for(S32 i = first_block; i < count; ++i)
 		{

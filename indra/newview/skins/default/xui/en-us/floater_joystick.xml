@@ -17,6 +17,7 @@
 	<check_box bottom="-96" left="185" control_name="ZoomDirect" label="Direct Zoom" name="ZoomDirect" />
 	<check_box bottom="-96" left="310" control_name="Cursor3D" label="3D Cursor" name="Cursor3D" />
 	<check_box bottom="-96" left="420" control_name="AutoLeveling" label="Auto Level" name="AutoLeveling" />
+	<check_box bottom="-112" left="420" control_name="JoystickMouselookYaw" label="Mouselook Steers" name="MouselookSteers" />
 
 	<text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
 	     bottom="-120" drop_shadow_visible="true" enabled="true" follows="left|top"

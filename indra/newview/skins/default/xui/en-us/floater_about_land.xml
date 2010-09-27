@@ -83,13 +83,13 @@
 			     bottom="-162" drop_shadow_visible="true" enabled="false" follows="left|top"
 			     font="SansSerifSmall" h_pad="0" halign="left" height="16" left="96"
 			     mouse_opaque="true" name="GroupText" v_pad="0" width="250" />
-			<button bottom="-160" enabled="true" follows="left|top" font="SansSerifSmall"
-			     halign="center" height="16" label="Set..." label_selected="Set..."
-			     left="350" mouse_opaque="true" name="Set..." scale_image="true" width="50" />
-			<button bottom="-120" enabled="true" follows="left|top" font="SansSerifSmall"
+      <button bottom="-160" enabled="true" follows="left|top" font="SansSerifSmall"
+                 halign="center" height="16" label="Set..." label_selected="Set..."
+                 left="350" mouse_opaque="true" name="Set..." scale_image="true" width="50" />
+      <button bottom_delta="0" enabled="true" follows="left|top" font="SansSerifSmall"
 			     halign="center" height="16" label="Info"
 			     left="400" mouse_opaque="true" name="group_profile" scale_image="true" width="50" />
-			<check_box bottom="-180" enabled="false" follows="left|top" font="SansSerifSmall"
+      <check_box bottom="-180" enabled="false" follows="left|top" font="SansSerifSmall"
 			     height="16" initial_value="false" label="Allow Deed to Group" left="96"
 			     mouse_opaque="true" name="check deed" radio_style="false"
 			     tool_tip="A group officer can deed this land to the group, so it will be supported by the group&amp;apos;s land allocation."
@@ -537,7 +537,7 @@ Go to World menu > About Land or select another parcel to show its details.
 			     column_padding="0" draw_border="true" draw_heading="true"
 			     draw_stripes="true" enabled="true" 
 			     follows="left|top|right|bottom" height="117" left="4" mouse_opaque="true"
-			     multi_select="true" name="owner list" name_column_index="2" width="450">
+			     multi_select="false" name="owner list" name_column_index="2" width="450">
 				<column name="type" label="Type" sort="online_status" width="24" />
 				<column name="online_status" width="-1" />
 				<column name="name" dynamicwidth="true" label="Name" />

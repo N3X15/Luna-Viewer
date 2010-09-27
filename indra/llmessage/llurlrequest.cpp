@@ -1,6 +1,6 @@
 /** 
  * @file llurlrequest.cpp
- * @author Phoenix
+ * @author Ascent
  * @date 2005-04-28
  * @brief Implementation of the URLRequest class and related classes.
  *

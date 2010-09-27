@@ -4,54 +4,60 @@
      mouse_opaque="true" name="Inventory" rect_control="FloaterInventoryRect"
      title="Inventory" width="467">
 	<search_editor bottom="-50" follows="left|top|right" height="16" label="Type here to search"
-	    left="6" mouse_opaque="true" name="inventory search editor" width="455" />
-	<text name="group_titles_textbox" font="SansSerifSmall" follows="left|top"
-		height="16" left="10" bottom_delta="-24" width="120">Quick Filter:</text>
-	<!-- Inventory Type Filter Labels -->
-	<string name="filter_type_all">All Types</string>
-	<string name="filter_type_animation">Animations</string>
-	<string name="filter_type_callingcard">Calling Cards</string>
-	<string name="filter_type_wearable">Clothing / Body Parts</string>
-	<string name="filter_type_gesture">Gestures</string>
-	<string name="filter_type_landmark">Landmarks</string>
-	<string name="filter_type_notecard">Notecards</string>
-	<string name="filter_type_object">Objects</string>
-	<string name="filter_type_script">Scripts</string>
-	<string name="filter_type_sound">Sounds</string>
-	<string name="filter_type_texture">Textures</string>
-	<string name="filter_type_snapshot">Snapshots</string>
-	<string name="filter_type_custom">Custom...</string>
-	<combo_box name="Quick Filter" label="Quick Filter" follows="left|top" height="20" left="80" width="150" bottom_delta="0">
-		<combo_item name="filter_type_all">All Types</combo_item>
-		<separator />
-		<combo_item name="filter_type_animation">Animations</combo_item>
-		<combo_item name="filter_type_callingcard">Calling Cards</combo_item>
-		<combo_item name="filter_type_wearable">Clothing / Body Parts</combo_item>
-		<combo_item name="filter_type_gesture">Gestures</combo_item>
-		<combo_item name="filter_type_landmark">Landmarks</combo_item>
-		<combo_item name="filter_type_notecard">Notecards</combo_item>
-		<combo_item name="filter_type_object">Objects</combo_item>
-		<combo_item name="filter_type_script">Scripts</combo_item>
-		<combo_item name="filter_type_sound">Sounds</combo_item>
-		<combo_item name="filter_type_texture">Textures</combo_item>
-		<combo_item name="filter_type_snapshot">Snapshots</combo_item>
-		<separator />
-		<combo_item name="filter_type_custom">Custom...</combo_item>
-	</combo_box>
+	     left="6" mouse_opaque="true" name="inventory search editor" width="455" />
+  <button bottom_delta="-24" enabled="true" follows="left|top" font="SansSerifSmall"
+	     halign="center" height="20" label="Collapse"
+	     left="6" mouse_opaque="true" name="Inventory.ResetAll" scale_image="true" width="60" />
+  <button bottom_delta="0" enabled="true" follows="left|top" font="SansSerifSmall"
+	     halign="center" height="20" label="Expand"
+	     left="66" mouse_opaque="true" name="Inventory.ExpandAll" scale_image="true" width="60" />
+  <text name="group_titles_textbox" font="SansSerifSmall" follows="left|top"
+	    height="16" left="130" bottom_delta="0" width="103">Filter:</text>
+	  <!-- Inventory Type Filter Labels -->
+	  <string name="filter_type_all">All Types</string>
+	  <string name="filter_type_animation">Animations</string>
+	  <string name="filter_type_callingcard">Calling Cards</string>
+	  <string name="filter_type_wearable">Clothing / Body Parts</string>
+	  <string name="filter_type_gesture">Gestures</string>
+	  <string name="filter_type_landmark">Landmarks</string>
+	  <string name="filter_type_notecard">Notecards</string>
+	  <string name="filter_type_object">Objects</string>
+	  <string name="filter_type_script">Scripts</string>
+	  <string name="filter_type_sound">Sounds</string>
+	  <string name="filter_type_texture">Textures</string>
+	  <string name="filter_type_snapshot">Snapshots</string>
+	  <string name="filter_type_custom">Custom...</string>
+	  <combo_box name="Quick Filter" label="Quick Filter" follows="left|top|right" height="20" left="170" bottom_delta="0">
+	    <combo_item name="filter_type_all">All Types</combo_item>
+	    <separator />
+	    <combo_item name="filter_type_animation">Animations</combo_item>
+	    <combo_item name="filter_type_callingcard">Calling Cards</combo_item>
+	    <combo_item name="filter_type_wearable">Clothing / Body Parts</combo_item>
+	    <combo_item name="filter_type_gesture">Gestures</combo_item>
+	    <combo_item name="filter_type_landmark">Landmarks</combo_item>
+	    <combo_item name="filter_type_notecard">Notecards</combo_item>
+	    <combo_item name="filter_type_object">Objects</combo_item>
+	    <combo_item name="filter_type_script">Scripts</combo_item>
+	    <combo_item name="filter_type_sound">Sounds</combo_item>
+	    <combo_item name="filter_type_texture">Textures</combo_item>
+	    <combo_item name="filter_type_snapshot">Snapshots</combo_item>
+	    <separator />
+	    <combo_item name="filter_type_custom">Custom...</combo_item>
+	  </combo_box>
 	<tab_container name="inventory filter tabs" follows="left|top|right|bottom"
 	     bottom_delta="-487" height="480" left="2" width="463"
 	     mouse_opaque="false" tab_position="top">
 
 		<inventory_panel allow_multi_select="true" border="true" bottom="-507"
-		     follows="left|top|right|bottom" height="491" label="All Items" left="1"
+		     follows="left|top|right|bottom" height="431" label="All Items" left="1"
 		     mouse_opaque="true" name="All Items" sort_order="InventorySortOrder"
 		     width="461" />
 		<inventory_panel allow_multi_select="true" border="true" bottom_delta="0"
-		     follows="left|top|right|bottom" height="491" label="Recent Items"
+		     follows="left|top|right|bottom" height="431" label="Recent Items"
 		     left_delta="0" mouse_opaque="true" name="Recent Items"
 		     sort_order="RecentItemsSortOrder" width="461" />
 		<inventory_panel allow_multi_select="true" border="true" bottom_delta="0"
-		     follows="left|top|right|bottom" height="491" label="Worn Items"
+		     follows="left|top|right|bottom" height="431" label="Worn Items"
 		     left_delta="0" mouse_opaque="true" name="Worn Items"
 		     sort_order="WornItemsSortOrder" width="461" />
 	</tab_container>
@@ -205,7 +211,7 @@
 				<on_click filter="" function="Inventory.SetSortBy" userdata="systemfolderstotop" />
 			</menu_item_check>
 		</menu>
-		<menu bottom_delta="64" drop_shadow="true" height="49"
+    <menu bottom_delta="64" drop_shadow="true" height="49"
 		     label="Search" left="0" mouse_opaque="false" name="Search" opaque="true"
 		     tear_off="true" width="118">
       <menu_item_check bottom_delta="-18" control_name="Inventory.SearchByName" height="18"

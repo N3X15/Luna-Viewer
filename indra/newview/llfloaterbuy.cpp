@@ -46,6 +46,7 @@
 #include "llinventoryview.h"	// for get_item_icon
 #include "llselectmgr.h"
 #include "llscrolllistctrl.h"
+#include "llviewercontrol.h"
 #include "llviewerobject.h"
 #include "lluictrlfactory.h"
 #include "llviewerwindow.h"

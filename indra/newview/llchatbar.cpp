@@ -53,6 +53,7 @@
 #include "llkeyboard.h"
 #include "lllineeditor.h"
 #include "llstatusbar.h"
+#include "llspinctrl.h"
 #include "lltextbox.h"
 #include "lluiconstants.h"
 #include "llviewergesture.h"			// for triggering gestures
@@ -67,7 +68,9 @@
 #include "llui.h"
 #include "llviewermenu.h"
 #include "lluictrlfactory.h"
-
+// [SA] needed to fetch avatar list for autocompletion
+#include "llworld.h"
+// [/SA]
 #include "chatbar_as_cmdline.h"
 
 //
@@ -79,7 +82,12 @@ LLChatBar *gChatBar = NULL;
 
 // legacy calllback glue
 void toggleChatHistory(void* user_data);
-void send_chat_from_viewer(const std::string& utf8_out_text, EChatType type, S32 channel);
+void toggleChanSelect(void* user_data);
+//void send_chat_from_viewer(const std::string& utf8_out_text, EChatType type, S32 channel);
+// [RLVa:KB] - Checked: 2009-07-07 (RLVa-1.0.0d) | Modified: RLVa-0.2.2a
+void send_chat_from_viewer(std::string utf8_out_text, EChatType type, S32 channel);
+// [/RLVa:KB]
+void really_send_chat_from_viewer(const std::string& utf8_out_text, EChatType type, S32 channel);
 
 
 class LLChatBarGestureObserver : public LLGestureManagerObserver
@@ -103,6 +111,7 @@ LLChatBar::LLChatBar()
 	mGestureLabelTimer(),
 	mLastSpecialChatChannel(0),
 	mIsBuilt(FALSE),
+	mChanSelectorExpanded(FALSE),
 	mGestureCombo(NULL),
 	mObserver(NULL)
 {
@@ -125,6 +134,8 @@ LLChatBar::~LLChatBar()
 BOOL LLChatBar::postBuild()
 {
 	childSetAction("History", toggleChatHistory, this);
+	//lgg
+	childSetAction("Expand",this->toggleChanSelect,this);
 	childSetCommitCallback("Say", onClickSay, this);
 
 	// attempt to bind to an existing combo box named gesture
@@ -149,7 +160,7 @@ BOOL LLChatBar::postBuild()
 		mInputEditor->setPassDelete(TRUE);
 		mInputEditor->setReplaceNewlinesWithSpaces(FALSE);
 
-		mInputEditor->setMaxTextLength(DB_CHAT_MSG_STR_LEN);
+		mInputEditor->setMaxTextLength(S32_MAX);
 		mInputEditor->setEnableLineHistory(TRUE);
 	}
 
@@ -168,6 +179,10 @@ BOOL LLChatBar::handleKeyHere( KEY key, MASK mask )
 	BOOL handled = FALSE;
 
 	// ALT-RETURN is reserved for windowed/fullscreen toggle
+
+	// not any more :p
+
+
 	if( KEY_RETURN == key )
 	{
 		if (mask == MASK_CONTROL)
@@ -176,20 +191,139 @@ BOOL LLChatBar::handleKeyHere( KEY key, MASK mask )
 			sendChat(CHAT_TYPE_SHOUT);
 			handled = TRUE;
 		}
+		else if (mask == MASK_SHIFT)
+		{
+			// whisper
+			sendChat( CHAT_TYPE_WHISPER );
+			handled = TRUE;
+		}
+		else if (mask == MASK_ALT)
+		{
+			// ooc chat
+			
+			sendChat( CHAT_TYPE_OOC );
+			handled = TRUE;
+		}
 		else if (mask == MASK_NONE)
 		{
 			// say
 			sendChat( CHAT_TYPE_NORMAL );
 			handled = TRUE;
 		}
+		else if (mask == (MASK_ALT | MASK_SHIFT | MASK_CONTROL))
+		{
+			//Insert new line symbol after the current cursor pos, then increment the curser by 1.
+			if (mInputEditor)
+			{
+				std::string msg = mInputEditor->getText();
+				if (mInputEditor->getCursor() > 0)
+				{
+					if (msg[mInputEditor->getCursor() - 1] != '\n')
+					{
+						//For some reason you have to use a newline character, the ¶ wont show up in chat.
+						msg = msg.insert(mInputEditor->getCursor(), "\n");
+						mInputEditor->setText(msg);
+						mInputEditor->setCursor(mInputEditor->getCursor() + 1);
+					}
+				}
+				handled = true;
+			}
+		}
 	}
 	// only do this in main chatbar
-	else if (KEY_ESCAPE == key && mask == MASK_NONE && gChatBar == this)
+	else if ( KEY_ESCAPE == key && gChatBar == this)
 	{
 		stopChat();
 
 		handled = TRUE;
 	}
+	// [SA] Support for name autocompletion
+	else if ( gSavedSettings.getBOOL("TabAutoComplete")
+	  && KEY_TAB == key && mask == MASK_NONE )
+	{
+		std::string text = mInputEditor->getText();
+		int cursor = mInputEditor->getCursor();
+		if ( cursor && (text.at(cursor - 1) != ' ' || mInputEditor->hasSelection()))
+		{
+			//check who is around
+			std::vector<LLUUID> nearbyList;
+			std::vector<LLVector3d> positions;
+			LLWorld::getInstance()->getAvatars(&nearbyList, &positions, gAgent.getPositionGlobal(), gSavedSettings.getF32("NearMeRange"));
+
+			//parse current text entry for search pattern
+			std::string prefix;
+			prefix = text.substr(0, cursor);
+			std::string suffix = text.substr(cursor, text.length() - cursor);
+			int lastSpace = prefix.rfind(" ");
+			std::string pattern2 = prefix.substr(lastSpace + 1, prefix.length() - lastSpace - 1);
+			prefix = prefix.substr(0, lastSpace + 1);
+			std::string pattern1 = "";
+			
+			//declare and initialize variables for search
+			std::string name;
+			bool found = false;
+			std::vector<LLUUID>::iterator iter;
+			bool isInitial = false;
+			bool fullName = false;
+			//if there are several words, try matching firstName+beginningOfLastName (the user might want to do this if several avatars around have the same first name)
+			if (lastSpace != std::string::npos && !prefix.empty())
+			{
+				// go deeper in parsing
+				lastSpace = prefix.substr(0, prefix.length() - 2).rfind(" ");
+				if (lastSpace == std::string::npos && prefix.at(prefix.length() - 2) == ':')
+				{ //case of initial second autocompletion
+					pattern1 = prefix.substr(lastSpace + 1, prefix.length() - lastSpace - 3) + " ";
+					cursor -= 2;
+				}
+				else pattern1 = prefix.substr(lastSpace + 1, prefix.length() - lastSpace -1);
+				prefix = prefix.substr(0, lastSpace + 1);
+				// prepare search pattern
+				std::string fullPattern(pattern1+pattern2);
+				LLStringUtil::toLower(fullPattern);
+				// search
+				iter = nearbyList.begin();		
+				while (iter != nearbyList.end() && !found)
+				{
+					if ((bool)gCacheName->getFullName(*iter++, name))
+					{
+						LLStringUtil::toLower(name);
+						found = (name.find(fullPattern) == 0);
+					}
+				}
+			}
+			else isInitial = true; //at this point we know the text has at most one word, thus the avatar name would be initial after replacement (if any)
+
+			if (found) {isInitial = (lastSpace == std::string::npos); fullName = true;} //ignore OnlyFirstName in case we want to disambiguate
+			else if (!pattern2.empty())// if first search did not work, try matching with last word before cursor only
+			{
+				prefix += pattern1; // first part of the pattern wasn't a pattern, so keep it in prefix
+				// prepare search pattern
+				LLStringUtil::toLower(pattern2);
+				// search
+				iter = nearbyList.begin();
+				while (iter != nearbyList.end() && !found)
+				{
+					if ((bool)gCacheName->getFullName(*iter++, name))
+					{
+						LLStringUtil::toLower(name);
+						found = (name.find(pattern2) == 0);
+					}
+				}
+			}
+			// if we found something by either method, replace the pattern by the avatar name
+			if (found)
+			{
+				std::string first, last;
+				gCacheName->getName(*(iter - 1), first, last);
+				prefix += first + (fullName?(" "+last):"") + (isInitial?":":"") + " ";
+				mInputEditor->setText(prefix + suffix);
+				mInputEditor->setSelection(prefix.length(), cursor);
+			}
+			  
+			handled = TRUE;
+		}
+	}
+	// [/SA]
 
 	return handled;
 }
@@ -212,6 +346,7 @@ void LLChatBar::refresh()
 
 	childSetValue("History", LLFloaterChat::instanceVisible(LLSD()));
 
+	childSetValue("ChatChannel",( 1.f * ((S32)(getChild<LLSpinCtrl>("ChatChannel")->get()))) );
 	childSetEnabled("Say", mInputEditor->getText().size() > 0);
 	childSetEnabled("Shout", mInputEditor->getText().size() > 0);
 
@@ -342,16 +477,12 @@ LLWString LLChatBar::stripChannelNumber(const LLWString &mesg, S32* channel)
 	else if (mesg[0] == '/'
 			 && mesg[1]
 			 && ( LLStringOps::isDigit(mesg[1]) 
-				// <edit>
 				|| mesg[1] == '-' ))
-				// </edit>
 	{
 		// This a special "/20" speak on a channel
 		S32 pos = 0;
-		// <edit>
 		if(mesg[1] == '-')
 			pos++;
-		// </edit>
 		// Copy the channel number into a string
 		LLWString channel_string;
 		llwchar c;
@@ -373,17 +504,15 @@ LLWString LLChatBar::stripChannelNumber(const LLWString &mesg, S32* channel)
 		}
 		
 		mLastSpecialChatChannel = strtol(wstring_to_utf8str(channel_string).c_str(), NULL, 10);
-		// <edit>
 		if(mesg[1] == '-')
 			mLastSpecialChatChannel = -mLastSpecialChatChannel;
-		// </edit>
 		*channel = mLastSpecialChatChannel;
 		return mesg.substr(pos, mesg.length() - pos);
 	}
 	else
 	{
 		// This is normal chat.
-		*channel = 0;
+		//NO WHAT ARE YOU DOING!!! :(*channel = 0;
 		return mesg;
 	}
 }
@@ -396,10 +525,21 @@ void LLChatBar::sendChat( EChatType type )
 		LLWString text = mInputEditor->getConvertedText();
 		if (!text.empty())
 		{
+			if(type == CHAT_TYPE_OOC)
+			{
+				std::string tempText = mInputEditor->getText();
+				tempText = gSavedSettings.getString("AscentOOCPrefix") + " " + tempText + " " + gSavedSettings.getString("AscentOOCPostfix");
+				mInputEditor->setText(tempText);
+				text = utf8str_to_wstring(tempText);
+			}
 			// store sent line in history, duplicates will get filtered
 			if (mInputEditor) mInputEditor->updateHistory();
-
-			S32 channel = 0;
+			// Check if this is destined for another channel
+			//greg changed channel here
+			//F32 readChan= getChild<LLSpinCtrl>("ChatChannel")->get();
+			//S32 undoneChan = (S32)readChan;
+			//S32 channel = undoneChan;
+			S32 channel = (S32)(getChild<LLSpinCtrl>("ChatChannel")->get());
 			stripChannelNumber(text, &channel);
 			
 			std::string utf8text = wstring_to_utf8str(text);//+" and read is "+llformat("%f",readChan)+" and undone is "+llformat("%d",undoneChan)+" but actualy channel is "+llformat("%d",channel);
@@ -410,33 +550,41 @@ void LLChatBar::sendChat( EChatType type )
 				if (gSavedSettings.getBOOL("AscentAutoCloseOOC") && (utf8text.length() > 1))
 				{
 					// Chalice - OOC autoclosing patch based on code by Henri Beauchamp
-					int needsClosingType=0;
-					//Check if it needs the end-of-chat brackets -HgB
-					if (utf8text.find("((") == 0 && utf8text.find("))") == -1)
+					int needsClosingType = 0;
+					if (utf8text.find("((") == 0 && utf8text.find("))") == -1) // have (( missing ))
+						needsClosingType = 1;
+					else if(utf8text.find("[[") == 0 && utf8text.find("]]") == -1) // have [[ missing ]]
+						needsClosingType = 2;
+					if(needsClosingType == 1)
 					{
 						if(utf8text.at(utf8text.length() - 1) == ')')
-							utf8text+=" ";
-						utf8text+="))";
+							utf8text += " ";
+						utf8text += "))";
 					}
-					else if(utf8text.find("[[") == 0 && utf8text.find("]]") == -1)
+					else if(needsClosingType == 2)
 					{
 						if(utf8text.at(utf8text.length() - 1) == ']')
-							utf8text+=" ";
-						utf8text+="]]";
+							utf8text += " ";
+						utf8text += "]]";
 					}
-					//Check if it needs the start-of-chat brackets -HgB
-					needsClosingType=0;
-					if (utf8text.find("((") == -1 && utf8text.find("))") == (utf8text.length() - 2))
-					{
-						if(utf8text.at(0) == '(')
-							utf8text.insert(0," ");
-						utf8text.insert(0,"((");
-					}
-					else if (utf8text.find("[[") == -1 && utf8text.find("]]") == (utf8text.length() - 2))
-					{
-						if(utf8text.at(0) == '[')
-							utf8text.insert(0," ");
-						utf8text.insert(0,"[[");
+					if (utf8text.length() >= 2) { // Don't add brackets on the start of 1 character lines
+						needsClosingType = 0;
+						if (utf8text.find("((") == -1 && utf8text.find("))") == (utf8text.length() - 2)) // have )) missing ((
+							needsClosingType = 1;
+						else if (utf8text.find("[[") == -1 && utf8text.find("]]") == (utf8text.length() - 2)) // have ]] missing [[
+							needsClosingType = 2;
+						if(needsClosingType == 1)
+						{
+							if(utf8text.at(0) == '(')
+								utf8text.insert(0, " ");
+							utf8text.insert(0, "((");
+						}
+						else if(needsClosingType == 2)
+						{
+							if(utf8text.at(0) == '[')
+								utf8text.insert(0, " ");
+							utf8text.insert(0, "[[");
+						}
 					}
 				}
 				// Convert MU*s style poses into IRC emotes here.
@@ -462,9 +610,9 @@ void LLChatBar::sendChat( EChatType type )
 			utf8_revised_text = utf8str_trim(utf8_revised_text);
 			EChatType nType;
 			if(type == CHAT_TYPE_OOC)
-				nType=CHAT_TYPE_NORMAL;
+				nType = CHAT_TYPE_NORMAL;
 			else
-				nType=type;
+				nType = type;
 			if (!utf8_revised_text.empty() && cmd_line_chat(utf8_revised_text, nType))
 			{
 				// Chat with animation
@@ -493,17 +641,22 @@ void LLChatBar::sendChat( EChatType type )
 // static 
 void LLChatBar::startChat(const char* line)
 {
-	gChatBar->setVisible(TRUE);
-	gChatBar->setKeyboardFocus(TRUE);
 	gSavedSettings.setBOOL("ChatVisible", TRUE);
 
 	if (line && gChatBar->mInputEditor)
 	{
-		std::string line_string(line);
-		gChatBar->mInputEditor->setText(line_string);
+		gChatBar->setVisible(TRUE);
+		gChatBar->setKeyboardFocus(TRUE);
+		gSavedSettings.setBOOL("ChatVisible", TRUE);
+	
+		if (line && gChatBar->mInputEditor)
+		{
+			std::string line_string(line);
+			gChatBar->mInputEditor->setText(line_string);
+		}
+		// always move cursor to end so users don't obliterate chat when accidentally hitting WASD
+		gChatBar->mInputEditor->setCursorToEnd();
 	}
-	// always move cursor to end so users don't obliterate chat when accidentally hitting WASD
-	gChatBar->mInputEditor->setCursorToEnd();
 }
 
 
@@ -636,15 +789,13 @@ void LLChatBar::sendChatFromViewer(const std::string &utf8text, EChatType type, 
 void LLChatBar::sendChatFromViewer(const LLWString &wtext, EChatType type, BOOL animate)
 {
 	// Look for "/20 foo" channel chats.
-	S32 channel = 0;
+	S32 channel = (S32)(getChild<LLSpinCtrl>("ChatChannel")->get());
+			
+	//todo 
 	LLWString out_text = stripChannelNumber(wtext, &channel);
 	std::string utf8_out_text = wstring_to_utf8str(out_text);
-	if (!utf8_out_text.empty())
-	{
-		utf8_out_text = utf8str_truncate(utf8_out_text, MAX_MSG_STR_LEN);
-	}
+	std::string utf8_text = wstring_to_utf8str(wtext)+" and chan is "+llformat("%d",channel);
 
-	std::string utf8_text = wstring_to_utf8str(wtext);
 	utf8_text = utf8str_trim(utf8_text);
 	if (!utf8_text.empty())
 	{
@@ -686,22 +837,63 @@ void LLChatBar::sendChatFromViewer(const LLWString &wtext, EChatType type, BOOL 
 	send_chat_from_viewer(utf8_out_text, type, channel);
 }
 
-void send_chat_from_viewer(const std::string& utf8_out_text, EChatType type, S32 channel)
+
+void send_chat_from_viewer(std::string utf8_out_text, EChatType type, S32 channel)
+{
+	// same code like in llimpanel.cpp
+	U32 split = MAX_MSG_BUF_SIZE - 1;
+	U32 pos = 0;
+	U32 total = utf8_out_text.length();
+	
+	// Don't break null messages
+	if(total == 0)
+	{
+		really_send_chat_from_viewer(utf8_out_text, type, channel);
+	}
+	
+	while(pos < total)
+	{
+		U32 next_split = split;
+		
+		if(pos + next_split > total) next_split = total - pos;
+		
+		// don't split utf-8 bytes
+		while(U8(utf8_out_text[pos + next_split]) >= 0x80 && U8(utf8_out_text[pos + next_split]) < 0xC0
+			  && next_split > 0)
+		{
+			--next_split;
+		}
+		
+		if(next_split == 0)
+		{
+			next_split = split;
+			LL_WARNS("Splitting") << "utf-8 couldn't be split correctly" << LL_ENDL;
+		}
+		
+		std::string send = utf8_out_text.substr(pos, pos + next_split);
+		pos += next_split;
+		
+		// *FIXME: Queue messages and wait for server
+		really_send_chat_from_viewer(send, type, channel);
+		
+		LLViewerStats::getInstance()->incStat(LLViewerStats::ST_CHAT_COUNT);
+	}
+}
+
+// This should do nothing other than send chat, with no other processing.
+void really_send_chat_from_viewer(const std::string& message, EChatType type, S32 channel)
 {
 	LLMessageSystem* msg = gMessageSystem;
-	// <edit>
 	if(channel >= 0)
 	{
-	// </edit>
-	msg->newMessageFast(_PREHASH_ChatFromViewer);
-	msg->nextBlockFast(_PREHASH_AgentData);
-	msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID());
-	msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
-	msg->nextBlockFast(_PREHASH_ChatData);
-	msg->addStringFast(_PREHASH_Message, utf8_out_text);
-	msg->addU8Fast(_PREHASH_Type, type);
-	msg->addS32("Channel", channel);
-	// <edit>
+		msg->newMessageFast(_PREHASH_ChatFromViewer);
+		msg->nextBlockFast(_PREHASH_AgentData);
+		msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID());
+		msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
+		msg->nextBlockFast(_PREHASH_ChatData);
+		msg->addStringFast(_PREHASH_Message, message);
+		msg->addU8Fast(_PREHASH_Type, type);
+		msg->addS32("Channel", channel);
 	}
 	else
 	{
@@ -713,14 +905,10 @@ void send_chat_from_viewer(const std::string& utf8_out_text, EChatType type, S32
 		msg->addUUID("ObjectID", gAgent.getID());
 		msg->addS32("ChatChannel", channel);
 		msg->addS32("ButtonIndex", 0);
-		msg->addString("ButtonLabel", utf8_out_text);
+		msg->addString("ButtonLabel", message);
 	}
-	// </edit>
 	gAgent.sendReliableMessage();
-
-	LLViewerStats::getInstance()->incStat(LLViewerStats::ST_CHAT_COUNT);
 }
-
 
 // static
 void LLChatBar::onCommitGesture(LLUICtrl* ctrl, void* data)
@@ -762,6 +950,47 @@ void toggleChatHistory(void* user_data)
 	LLFloaterChat::toggleInstance(LLSD());
 }
 
+//static
+void LLChatBar::toggleChanSelect(void* user_data)//lgg
+{
+	LLChatBar* self = (LLChatBar*) user_data;
+
+	//Rect code by Cryogenic
+	LLRect chatbar = self->mInputEditor->getRect();
+	LLRect chanselect;
+	LLRect expander;
+	S32 chatdelta;
+	if(self->childGetRect("ChatChannel",chanselect) && self->childGetRect("Expand",expander))
+	{
+
+		if(self->mChanSelectorExpanded)
+		{
+			self->mChanSelectorExpanded=false;
+			chatdelta = chanselect.getWidth();
+			
+			//self->childSetLabelArg("Expand","[NOTHING]",std::string("<"));
+			self->childSetToolTip("Expand",std::string("Show Channel Selector"));
+		}else
+		{
+			self->mChanSelectorExpanded=true;
+			
+			//self->childSetText("Expand",std::string(">"));
+			
+			//self->childSetLabelArg("Expand","[NOTHING]",std::string(">"));
+			self->childSetToolTip("Expand",std::string("Hide Channel Selector"));
+			chatdelta = -chanselect.getWidth();
+		}
+		expander.setCenterAndSize(expander.getCenterX() + chatdelta,expander.getCenterY(),expander.getWidth(),expander.getHeight());
+		chatbar.setCenterAndSize(chatbar.getCenterX() + chatdelta/2,chatbar.getCenterY(),chatbar.getWidth() + chatdelta,chatbar.getHeight());
+		self->childSetVisible("ChatChannel",self->mChanSelectorExpanded);
+		self->mInputEditor->setRect(chatbar);
+		self->childSetRect("Expand",expander);
+	}
+	else
+	{
+		llwarns << "ChatChannel or Expand could not be found in panel_chat_bar.xml" << llendl;
+	}
+}
 
 class LLChatHandler : public LLCommandHandler
 {

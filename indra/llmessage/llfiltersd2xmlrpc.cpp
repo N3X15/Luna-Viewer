@@ -1,6 +1,6 @@
 /** 
  * @file llfiltersd2xmlrpc.cpp
- * @author Phoenix
+ * @author Ascent
  * @date 2005-04-26
  *
  * $LicenseInfo:firstyear=2005&license=viewergpl$

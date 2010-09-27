@@ -1,6 +1,6 @@
 /** 
  * @file llpacketack.cpp
- * @author Phoenix
+ * @author Ascent
  * @date 2007-05-09
  * @brief Implementation of the LLReliablePacket.
  *

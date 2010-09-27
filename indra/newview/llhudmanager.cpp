@@ -79,10 +79,9 @@ void LLHUDManager::updateEffects()
 
 void LLHUDManager::sendEffects()
 {
+	static BOOL* sAscentBroadcastEffects = rebind_llcontrol<BOOL>("AscentBroadcastEffects", &gSavedSettings, true);
 
-	if(!gSavedSettings.getBOOL("BroadcastViewerEffects"))
-		return;
-	
+	if(!(*sAscentBroadcastEffects))return;
 	S32 i;
 	for (i = 0; i < mHUDEffects.count(); i++)
 	{

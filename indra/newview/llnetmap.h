@@ -114,6 +114,7 @@ private:
 
 private:
 	LLUUID			mClosestAgentToCursor;
+	LLVector3d		mClosestAgentPosition;
 	LLUUID			mClosestAgentAtLastRightClick;
 
 	static BOOL		sRotateMap;
@@ -155,6 +156,12 @@ private:
 	};
 
 	class LLShowAgentProfile : public LLMemberListener<LLNetMap>
+	{
+	public:
+		/*virtual*/ bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata);
+	};
+
+	class LLCamFollow : public LLMemberListener<LLNetMap> //moymod
 	{
 	public:
 		/*virtual*/ bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata);

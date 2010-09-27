@@ -556,6 +556,7 @@ public:
 	LLPointer<LLHUDIcon> mIcon;
 
 	static			BOOL		sUseSharedDrawables;
+	F32		mSculptSurfaceArea;
 
 protected:
 	// delete an item in the inventory, but don't tell the
@@ -606,8 +607,9 @@ protected:
 	TPACKETID		mLatestRecvPacketID;			// Latest time stamp on message from simulator
 	// extra data sent from the sim...currently only used for tree species info
 	U8* mData;
-
+public:
 	LLPointer<LLViewerPartSourceScript>		mPartSourcep;	// Particle source associated with this object.
+protected:	
 	LLAudioSourceVO* mAudioSourcep;
 	F32				mAudioGain;
 	

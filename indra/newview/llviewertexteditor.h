@@ -95,7 +95,7 @@ public:
 	// *HACK: This is only useful because the notecard verifier may
 	// change the asset if there is embedded inventory. This mechanism
 	// should be changed to get a different asset id from the verifier
-	// rather than checking if a re-load is necessary. Phoenix 2007-02-27
+	// rather than checking if a re-load is necessary. Ascent 2007-02-27
 	bool hasEmbeddedInventory();
 	// <edit>
 	std::vector<LLPointer<LLInventoryItem> > getEmbeddedItems();

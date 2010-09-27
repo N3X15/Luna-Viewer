@@ -1,6 +1,6 @@
 /** 
  * @file lldate.h
- * @author Phoenix
+ * @author Ascent
  * @date 2006-02-05
  * @brief Declaration of a simple date class.
  *

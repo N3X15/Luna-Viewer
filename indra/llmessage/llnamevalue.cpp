@@ -128,7 +128,7 @@ void LLNameValue::init(const char *name, const char *data, const char *type, con
 		// WRONG! - this is a poorly implemented and incomplete escape
 		// mechanism. For example, using this scheme, there is no way
 		// to tell an intentional double quotes from a zero length
-		// string. This needs to excised. Phoenix
+		// string. This needs to excised. Ascent
 		//if (strchr(data, '\"'))
 		//{
 		//	string_length -= 2;
@@ -199,7 +199,7 @@ void LLNameValue::init(const char *name, const char *data, const char *type, con
 		// WRONG! - this is a poorly implemented and incomplete escape
 		// mechanism. For example, using this scheme, there is no way
 		// to tell an intentional double quotes from a zero length
-		// string. This needs to excised. Phoenix
+		// string. This needs to excised. Ascent
 		//if (strchr(data, '\"'))
 		//{
 		//	string_length -= 2;

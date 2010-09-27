@@ -300,7 +300,9 @@ public:
 		U32 ypos = 64;
 		const U32 y_inc = 20;
 
-		if (gSavedSettings.getBOOL("DebugShowTime"))
+		static BOOL *sDebugShowTime = rebind_llcontrol<BOOL>("DebugShowTime", &gSavedSettings, true);
+
+		if(*sDebugShowTime)
 		{
 			const U32 y_inc2 = 15;
 			for (std::map<S32,LLFrameTimer>::reverse_iterator iter = gDebugTimers.rbegin();
@@ -321,7 +323,15 @@ public:
 			S32 hours = (S32)(time / (60*60));
 			S32 mins = (S32)((time - hours*(60*60)) / 60);
 			S32 secs = (S32)((time - hours*(60*60) - mins*60));
-			addText(xpos, ypos, llformat("Time: %d:%02d:%02d", hours,mins,secs)); ypos += y_inc;
+
+			std::string temp_str = llformat( "Time: %d:%02d:%02d / FPS %3.1f Phys %2.1f TD %1.3f",		/* Flawfinder: ignore */
+			hours,mins,secs,
+			LLViewerStats::getInstance()->mFPSStat.getMeanPerSec(),
+			LLViewerStats::getInstance()->mSimPhysicsFPS.getPrev(0),
+			LLViewerStats::getInstance()->mSimTimeDilation.getPrev(0));
+//			S32 len = temp_str.length();
+
+			addText(xpos, ypos, temp_str); ypos += y_inc;
 		}
 		
 		if (gDisplayCameraPos)
@@ -517,8 +527,10 @@ public:
 			addText(xpos, ypos, llformat("%d %d %d %d", color[0], color[1], color[2], color[3]));
 			ypos += y_inc;
 		}
+		static BOOL* sBeaconAlwaysOn = rebind_llcontrol<BOOL>("BeaconAlwaysOn", &gSavedSettings, true);
+
 		// only display these messages if we are actually rendering beacons at this moment
-		if (LLPipeline::getRenderBeacons(NULL) && gSavedSettings.getBOOL("BeaconAlwaysOn"))
+		if (LLPipeline::getRenderBeacons(NULL) && *sBeaconAlwaysOn)
 		{
 			if (LLPipeline::getRenderParticleBeacons(NULL))
 			{
@@ -600,6 +612,11 @@ BOOL LLViewerWindow::handleMouseDown(LLWindow *window,  LLCoordGL pos, MASK mask
 	S32 y = pos.mY;
 	x = llround((F32)x / mDisplayScale.mV[VX]);
 	y = llround((F32)y / mDisplayScale.mV[VY]);
+
+	// <LUNA>
+	// @hook OnLeftMouseDown(x,y,mask) Left mouse button is DOWN.
+	LUA_CALL("OnLeftMouseDown") << x << y << (int)mask << LUA_END;
+	// </LUNA>
 
 	LLView::sMouseHandlerMessage.clear();
 
@@ -705,6 +722,11 @@ BOOL LLViewerWindow::handleDoubleClick(LLWindow *window,  LLCoordGL pos, MASK ma
 	x = llround((F32)x / mDisplayScale.mV[VX]);
 	y = llround((F32)y / mDisplayScale.mV[VY]);
 
+	// <LUNA>
+	// @hook OnDoubleClick(x,y,mask) Right mouse button is DOWN.
+	LUA_CALL("OnDoubleClick") << x << y << (int)mask << LUA_END;
+	// </LUNA>
+
 	LLView::sMouseHandlerMessage.clear();
 
 	if (gDebugClicks)
@@ -784,6 +806,11 @@ BOOL LLViewerWindow::handleMouseUp(LLWindow *window,  LLCoordGL pos, MASK mask)
 	S32 y = pos.mY;
 	x = llround((F32)x / mDisplayScale.mV[VX]);
 	y = llround((F32)y / mDisplayScale.mV[VY]);
+
+	// <LUNA>
+	// @hook OnLeftMouseUp(x,y,mask) Left mouse button is UP.
+	LUA_CALL("OnLeftMouseUp") << x << y << (int)mask << LUA_END;
+	// </LUNA>
 
 	LLView::sMouseHandlerMessage.clear();
 
@@ -875,6 +902,11 @@ BOOL LLViewerWindow::handleRightMouseDown(LLWindow *window,  LLCoordGL pos, MASK
 	S32 y = pos.mY;
 	x = llround((F32)x / mDisplayScale.mV[VX]);
 	y = llround((F32)y / mDisplayScale.mV[VY]);
+
+	// <LUNA>
+	// @hook OnRightMouseDown(x,y,mask) Right mouse button is DOWN.
+	LUA_CALL("OnRightMouseDown") << x << y << (int)mask << LUA_END;
+	// </LUNA>
 
 	LLView::sMouseHandlerMessage.clear();
 
@@ -983,6 +1015,11 @@ BOOL LLViewerWindow::handleRightMouseUp(LLWindow *window,  LLCoordGL pos, MASK m
 	x = llround((F32)x / mDisplayScale.mV[VX]);
 	y = llround((F32)y / mDisplayScale.mV[VY]);
 
+	// <LUNA>
+	// @hook OnRightMouseUp(x,y,mask) Right mouse button is UP.
+	LUA_CALL("OnRightMouseUp") << x << y << (int)mask << LUA_END;
+	// </LUNA>
+
 	LLView::sMouseHandlerMessage.clear();
 
 	// Don't care about caps lock for mouse events.
@@ -1076,6 +1113,16 @@ BOOL LLViewerWindow::handleMiddleMouseDown(LLWindow *window,  LLCoordGL pos, MAS
 
 BOOL LLViewerWindow::handleMiddleMouseUp(LLWindow *window,  LLCoordGL pos, MASK mask)
 {
+	S32 x = pos.mX;
+	S32 y = pos.mY;
+
+	x = llround((F32)x / mDisplayScale.mV[VX]);
+	y = llround((F32)y / mDisplayScale.mV[VY]);
+
+	// <LUNA>
+	// @hook OnMiddleMouseUp(x,y,mask) Middle mouse button is Up.
+	LUA_CALL("OnMiddleMouseUp") << x << y << (int)mask << LUA_END;
+	// </LUNA>
 	gVoiceClient->middleMouseState(false);
 
 	// Always handled as far as the OS is concerned.
@@ -1149,6 +1196,10 @@ void LLViewerWindow::handleQuit(LLWindow *window)
 
 void LLViewerWindow::handleResize(LLWindow *window,  S32 width,  S32 height)
 {
+	// <LUNA>
+	// @hook OnWindowResized(width,height) Window was resized.
+	LUA_CALL("OnWindowResized") << width << height << LUA_END;
+	// </LUNA>
 	reshape(width, height);
 	mResDirty = true;
 }
@@ -1211,6 +1262,11 @@ void LLViewerWindow::handleFocusLost(LLWindow *window)
 
 BOOL LLViewerWindow::handleTranslatedKeyDown(KEY key,  MASK mask, BOOL repeated)
 {
+	// <LUNA>
+	// @hook OnKeyDown(key,mask) Right mouse button is DOWN.
+	LUA_CALL("OnKeyDown") << (int)key << (int)mask << LUA_END;
+	// </LUNA>
+
 	// Let the voice chat code check for its PTT key.  Note that this never affects event processing.
 	gVoiceClient->keyDown(key, mask);
 	
@@ -1233,6 +1289,11 @@ BOOL LLViewerWindow::handleTranslatedKeyDown(KEY key,  MASK mask, BOOL repeated)
 
 BOOL LLViewerWindow::handleTranslatedKeyUp(KEY key,  MASK mask)
 {
+	// <LUNA>
+	// @hook OnKeyDown(key,mask) Key released.
+	LUA_CALL("OnKeyDown") << key << (int)mask << LUA_END;
+	// </LUNA>
+
 	// Let the voice chat code check for its PTT key.  Note that this never affects event processing.
 	gVoiceClient->keyUp(key, mask);
 
@@ -2284,7 +2345,9 @@ void LLViewerWindow::draw()
 	//S32 screen_x, screen_y;
 
 	// HACK for timecode debugging
-	if (gSavedSettings.getBOOL("DisplayTimecode"))
+	static BOOL* sDisplayTimecode = rebind_llcontrol<BOOL>("DisplayTimecode", &gSavedSettings, true);
+
+	if (*sDisplayTimecode)
 	{
 		// draw timecode block
 		std::string text;
@@ -2355,7 +2418,7 @@ void LLViewerWindow::draw()
 		// Draw tooltips
 		// Adjust their rectangle so they don't go off the top or bottom
 		// of the screen.
-		if( mToolTip && mToolTip->getVisible() )
+		if( mToolTip && mToolTip->getVisible() && !mToolTipBlocked )
 		{
 			glMatrixMode(GL_MODELVIEW);
 			LLUI::pushMatrix();
@@ -2402,6 +2465,16 @@ void LLViewerWindow::draw()
 // Takes a single keydown event, usually when UI is visible
 BOOL LLViewerWindow::handleKey(KEY key, MASK mask)
 {
+	// Hide tooltips on keypress
+	mToolTipBlocked = TRUE; // block until next time mouse is moved
+
+	// Also hide hover info on keypress
+	if (gHoverView)
+	{
+		gHoverView->cancelHover();
+		gHoverView->setTyping(TRUE);
+	}
+
 	if (gFocusMgr.getKeyboardFocus() 
 		&& !(mask & (MASK_CONTROL | MASK_ALT))
 		&& !gFocusMgr.getKeystrokesOnly())
@@ -2422,17 +2495,6 @@ BOOL LLViewerWindow::handleKey(KEY key, MASK mask)
 		{
 			return TRUE;
 		}
-	}
-
-	// Hide tooltips on keypress
-	mToolTipBlocked = TRUE; // block until next time mouse is moved
-
-	// Also hide hover info on keypress
-	if (gHoverView)
-	{
-		gHoverView->cancelHover();
-
-		gHoverView->setTyping(TRUE);
 	}
 
 	// Explicit hack for debug menu.
@@ -2465,13 +2527,6 @@ BOOL LLViewerWindow::handleKey(KEY key, MASK mask)
 	    && ('5' == key))
 	{
 		LLFloaterNotificationConsole::showInstance();
-		return TRUE;
-	}
-
-	// handle shift-escape key (reset camera view)
-	if (key == KEY_ESCAPE && mask == MASK_SHIFT)
-	{
-		handle_reset_view();
 		return TRUE;
 	}
 
@@ -2761,7 +2816,9 @@ BOOL LLViewerWindow::handlePerFrameHover()
 
 	LLVector2 mouse_vel; 
 
-	if (gSavedSettings.getBOOL("MouseSmooth"))
+	static BOOL* sMouseSmooth = rebind_llcontrol<BOOL>("MouseSmooth", &gSavedSettings, true);
+
+	if (*sMouseSmooth)
 	{
 		static F32 fdx = 0.f;
 		static F32 fdy = 0.f;
@@ -2916,7 +2973,9 @@ BOOL LLViewerWindow::handlePerFrameHover()
 	// Show a new tool tip (or update one that is alrady shown)
 	BOOL tool_tip_handled = FALSE;
 	std::string tool_tip_msg;
-	F32 tooltip_delay = gSavedSettings.getF32( "ToolTipDelay" );
+	static F32 *sToolTipDelay = rebind_llcontrol<F32>("ToolTipDelay", &gSavedSettings, true);
+
+	F32 tooltip_delay = (*sToolTipDelay);
 	//HACK: hack for tool-based tooltips which need to pop up more quickly
 	//Also for show xui names as tooltips debug mode
 	if ((mouse_captor && !mouse_captor->isView()) || LLUI::sShowXUINames)
@@ -2967,9 +3026,10 @@ BOOL LLViewerWindow::handlePerFrameHover()
 		{
 			mToolTip->setVisible( tooltip_vis );
 		}
-	}		
+	}	
+	static BOOL* sFreezeTime = rebind_llcontrol<BOOL>("FreezeTime", &gSavedSettings, true);
 	
-	if (tool && tool != gToolNull  && tool != LLToolCompInspect::getInstance() && tool != LLToolDragAndDrop::getInstance() && !gSavedSettings.getBOOL("FreezeTime"))
+	if (tool && tool != gToolNull  && tool != LLToolCompInspect::getInstance() && tool != LLToolDragAndDrop::getInstance() && !(*sFreezeTime))
 	{ 
 		LLMouseHandler *captor = gFocusMgr.getMouseCapture();
 		// With the null, inspect, or drag and drop tool, don't muck
@@ -3710,13 +3770,12 @@ LLViewerObject* LLViewerWindow::cursorIntersect(S32 mouse_x, S32 mouse_y, F32 de
 			}
 
 	else // check ALL objects
-			{
+	{
 		found = gPipeline.lineSegmentIntersectInHUD(mouse_hud_start, mouse_hud_end, pick_transparent,
 													face_hit, intersection, uv, normal, binormal);
 
 		if (!found) // if not found in HUD, look in world:
-
-			{
+		{
 			found = gPipeline.lineSegmentIntersectInWorld(mouse_world_start, mouse_world_end, pick_transparent,
 														  face_hit, intersection, uv, normal, binormal);
 			}
@@ -4313,7 +4372,15 @@ BOOL LLViewerWindow::rawSnapshot(LLImageRaw *raw, S32 image_width, S32 image_hei
 		image_buffer_x = llfloor(snapshot_width*scale_factor) ;
 		image_buffer_y = llfloor(snapshot_height *scale_factor) ;
 	}
-	raw->resize(image_buffer_x, image_buffer_y, 3);
+	if(image_buffer_x > 0 && image_buffer_y > 0)
+	{
+		raw->resize(image_buffer_x, image_buffer_y, 3);
+	}
+	else
+	{
+		return FALSE ;
+	}
+
 	if(raw->isBufferInvalid())
 	{
 		return FALSE ;
@@ -5250,7 +5317,7 @@ void LLPickInfo::fetchResults()
 	{
 		icon_dist = (LLViewerCamera::getInstance()->getOrigin()-intersection).magVec();
 	}
-	LLViewerObject* hit_object = gViewerWindow->cursorIntersect(mMousePt.mX, mMousePt.mY, 512.f,
+	LLViewerObject* hit_object = gViewerWindow->cursorIntersect(mMousePt.mX, mMousePt.mY, 1024.f, 
 									NULL, -1, mPickTransparent, &face_hit,
 									&intersection, &uv, &normal, &binormal);
 	

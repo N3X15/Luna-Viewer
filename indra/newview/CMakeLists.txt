@@ -38,8 +38,12 @@ include(LUA)
 include(ViewerMiscLibs)
 include(ViewerArtwork.cmake)
 
+include(Growl)
+include(7zip)
+
 if (WINDOWS)
-    include(CopyWinLibs)
+  include(CopyWinLibs)
+  set(VIEWER_RESOURCE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/res)
 endif (WINDOWS)
 
 include_directories(
@@ -62,17 +66,20 @@ include_directories(
     ${LLXML_INCLUDE_DIRS}
     ${LSCRIPT_INCLUDE_DIRS}
     ${LSCRIPT_INCLUDE_DIRS}/lscript_compile
+    ${VIEWER_RESOURCE_DIRS}
+    ${GROWL_INCLUDE_DIRS}
     )
 
 set(viewer_SOURCE_FILES
+	a_phoenixviewerlink.cpp
     ascentfloatercontactgroups.cpp
     ascentprefssys.cpp
     ascentprefsvan.cpp
     ascentuploadbrowser.cpp
     dhparam.cpp
     dsaparam.cpp
-    emerald.cpp
-    emeraldboobutils.cpp
+	phoenix.cpp
+	phoenixboobutils.cpp
     dofloaterhex.cpp
     dohexeditor.cpp
     floatersculptpreview.cpp
@@ -83,6 +90,10 @@ set(viewer_SOURCE_FILES
     hippopanelgrids.cpp
     jcfloaterareasearch.cpp
     chatbar_as_cmdline.cpp
+	growlmanager.cpp
+	growlnotifier.cpp
+	streamtitledisplay.cpp
+	floaterskinfinder.cpp
     llagent.cpp
     llagentaccess.cpp
     llagentdata.cpp
@@ -153,7 +164,6 @@ set(viewer_SOURCE_FILES
     llfloateravatarpicker.cpp
     llfloateravatartextures.cpp
     llfloaterbeacons.cpp
-    llfloaterblacklist.cpp
     llfloaterbuildoptions.cpp
     llfloaterbulkpermission.cpp
     llfloaterbump.cpp
@@ -332,6 +342,7 @@ set(viewer_SOURCE_FILES
     llpanelpick.cpp
     llpanelplace.cpp
     llpanelskins.cpp
+    llpanelphoenix.cpp
     llpanelvolume.cpp
     llpanelweb.cpp
     llparcelselection.cpp
@@ -493,6 +504,7 @@ set(viewer_SOURCE_FILES
     pipeline.cpp
     scriptcounter.cpp
     wlfPanel_AdvSettings.cpp
+	floaterblacklist.cpp
     lunaconsole.cpp
 #    LunaVoxelSurface.cpp
 #    LunaVOVoxelSurface.cpp
@@ -538,12 +550,13 @@ endif (LINUX)
 set(viewer_HEADER_FILES
     CMakeLists.txt
     ViewerInstall.cmake
+    a_phoenixviewerlink.h
     ascentfloatercontactgroups.h
     ascentprefssys.h
     ascentprefsvan.h
     ascentuploadbrowser.h
-    emerald.h
-    emeraldboobutils.h
+    phoenix.h
+	phoenixboobutils.h
     dofloaterhex.h
     dohexeditor.h
     floatersculptpreview.h
@@ -554,6 +567,10 @@ set(viewer_HEADER_FILES
     hippopanelgrids.h
     jcfloaterareasearch.h
     chatbar_as_cmdline.h
+	growlmanager.h
+	growlnotifier.h
+	streamtitledisplay.h
+	floaterskinfinder.h
     llagent.h
     llagentaccess.h
     llagentdata.h
@@ -626,7 +643,6 @@ set(viewer_HEADER_FILES
     llfloateravatarpicker.h
     llfloateravatartextures.h
     llfloaterbeacons.h
-    llfloaterblacklist.h
     llfloaterbuildoptions.h
     llfloaterbulkpermission.h
     llfloaterbump.h
@@ -805,6 +821,7 @@ set(viewer_HEADER_FILES
     llpanelpick.h
     llpanelplace.h
     llpanelskins.h
+    llpanelphoenix.h
     llpanelvolume.h
     llpanelweb.h
     llparcelselection.h
@@ -974,12 +991,18 @@ set(viewer_HEADER_FILES
     VertexCache.h
     VorbisFramework.h
     wlfPanel_AdvSettings.h
+	floaterblacklist.h
     )
 
 source_group("CMake Rules" FILES ViewerInstall.cmake)
 
 if (DARWIN)
   LIST(APPEND viewer_SOURCE_FILES llappviewermacosx.cpp)
+  LIST(APPEND viewer_HEADER_FILES growlnotifiermacosx-objc.h)
+  LIST(APPEND viewer_SOURCE_FILES growlnotifiermacosx-objc.mm)
+  LIST(APPEND viewer_SOURCE_FILES growlnotifiermacosx.h)
+  LIST(APPEND viewer_SOURCE_FILES growlnotifiermacosx.cpp)
+
 
   find_library(AGL_LIBRARY AGL)
   find_library(APPKIT_LIBRARY AppKit)
@@ -1019,6 +1042,8 @@ endif (DARWIN)
 if (LINUX)
     LIST(APPEND viewer_SOURCE_FILES llappviewerlinux.cpp)
     LIST(APPEND viewer_SOURCE_FILES llappviewerlinux_api_dbus.cpp)
+    LIST(APPEND viewer_HEADER_FILES desktopnotifierlinux.h)
+    LIST(APPEND viewer_SOURCE_FILES desktopnotifierlinux.cpp)
     SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--as-needed")
 
     set(viewer_LIBRARIES
@@ -1028,11 +1053,13 @@ endif (LINUX)
 
 if (WINDOWS)
     list(APPEND viewer_SOURCE_FILES
+         growlnotifierwin.cpp
          llappviewerwin32.cpp
          llwindebug.cpp
          )
 
     list(APPEND viewer_HEADER_FILES
+         growlnotifierwin.h
          llappviewerwin32.h
          llwindebug.h
          )
@@ -1441,6 +1468,7 @@ target_link_libraries(${VIEWER_BINARY_NAME}
     ${XMLRPCEPI_LIBRARIES}
     ${ELFIO_LIBRARIES}
     ${LUA_LIBRARY}
+    ${GROWL_LIBRARY}
     )
 
 if (LINUX)
@@ -1626,10 +1654,10 @@ if (WINDOWS)
       TARGET ${VIEWER_BINARY_NAME} POST_BUILD
       COMMAND ${CMAKE_COMMAND}
       ARGS 
-     -E
-     copy_if_different
-     ${mime_types_source}/mime_types_windows.xml 
-     ${mime_types_dest}/mime_types.xml
+	 -E
+	 copy_if_different
+	 ${mime_types_source}/mime_types_windows.xml 
+	 ${mime_types_dest}/mime_types.xml
       COMMENT "Copying mime_types_windows.xml to mime_types.xml."
       )
   

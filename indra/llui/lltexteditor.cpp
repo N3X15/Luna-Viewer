@@ -59,6 +59,11 @@
 #include "lltextparser.h"
 #include <queue>
 
+#include "llmenugl.h"
+#include <boost/regex.hpp>
+#include "../newview/lltranslate.h"
+#include "../newview/llviewercontrol.h"
+
 // 
 // Globals
 //
@@ -93,7 +98,34 @@ LLColor4 LLTextEditor::mLinkColor = LLColor4::blue;
 void (* LLTextEditor::mURLcallback)(const std::string&)   = NULL;
 bool (* LLTextEditor::mSecondlifeURLcallback)(const std::string&)   = NULL;
 bool (* LLTextEditor::mSecondlifeURLcallbackRightClick)(const std::string&)   = NULL;
+///////////////////////////////////////////////////////////////////
 
+class TextChatTranslationReceiver : public LLTranslate::TranslationReceiver
+{
+public :
+	TextChatTranslationReceiver(const std::string &toLang, LLTextEditor* line): LLTranslate::TranslationReceiver("", toLang),
+		m_line(line)	
+	{
+	}
+
+	static boost::intrusive_ptr<TextChatTranslationReceiver> build(const std::string &toLang,LLTextEditor* line)
+	{
+		return boost::intrusive_ptr<TextChatTranslationReceiver>(new TextChatTranslationReceiver(toLang,line));
+	}
+
+protected:
+	void handleResponse(const std::string &translation, const std::string &detectedLanguage)
+	{
+		BOOL rep = gSavedSettings.getBOOL("PhoenixTranslateReplace");
+		m_line->insertText((rep?"":" (") + translation +(rep?"":")"),rep);
+	}
+	void handleFailure()
+	{
+		LLTranslate::TranslationReceiver::handleFailure();
+	}
+private:
+	LLTextEditor* m_line;
+};
 
 ///////////////////////////////////////////////////////////////////
 
@@ -254,6 +286,7 @@ LLTextEditor::LLTextEditor(
 	LLUICtrl( name, rect, TRUE, NULL, NULL, FOLLOWS_TOP | FOLLOWS_LEFT ),
 	mTextIsUpToDate(TRUE),
 	mMaxTextByteLength( max_length ),
+	mPopupMenuHandle(),
 	mBaseDocIsPristine(TRUE),
 	mPristineCmd( NULL ),
 	mLastCmd( NULL ),
@@ -339,6 +372,58 @@ LLTextEditor::LLTextEditor(
 
 	mParseHTML=FALSE;
 	mHTML.clear();
+	// make the popup menu available
+	//LLMenuGL* menu = LLUICtrlFactory::getInstance()->buildMenu("menu_texteditor.xml", parent_view);
+	LLMenuGL* menu = new LLMenuGL("wot");
+	/*if (!menu)
+	{
+			menu = new LLMenuGL(LLStringUtil::null);
+	}*/
+	menu->append(new LLMenuItemCallGL("Cut", context_cut, NULL, this));
+	menu->append(new LLMenuItemCallGL("Copy", context_copy, NULL, this));
+	menu->append(new LLMenuItemCallGL("Paste", context_paste, NULL, this));
+	menu->append(new LLMenuItemCallGL("Delete", context_delete, NULL, this));
+	menu->append(new LLMenuItemCallGL("Select All", context_selectall, NULL, this));
+	menu->appendSeparator("transep");
+	LLMenuGL* translatemenu = new LLMenuGL("Translate To");
+	translatemenu->setCanTearOff(FALSE);
+	SpellMenuBind* t=new SpellMenuBind;t->origin=this;t->word="en";
+	translatemenu->append(new LLMenuItemCallGL("English",translateText, NULL, t));
+	t=new SpellMenuBind;t->origin=this;t->word="da";
+	translatemenu->append(new LLMenuItemCallGL("Danish",translateText, NULL, t));
+	t=new SpellMenuBind;t->origin=this;t->word="de";
+	translatemenu->append(new LLMenuItemCallGL("Deutsch(German)",translateText, NULL, t));
+	t=new SpellMenuBind;t->origin=this;t->word="es";
+	translatemenu->append(new LLMenuItemCallGL("Spanish",translateText, NULL, t));
+	t=new SpellMenuBind;t->origin=this;t->word="fr";
+	translatemenu->append(new LLMenuItemCallGL("French",translateText, NULL, t));
+	t=new SpellMenuBind;t->origin=this;t->word="it";
+	translatemenu->append(new LLMenuItemCallGL("Italian",translateText, NULL, t));
+	t=new SpellMenuBind;t->origin=this;t->word="hu";
+	translatemenu->append(new LLMenuItemCallGL("Hungarian",translateText, NULL, t));
+	t=new SpellMenuBind;t->origin=this;t->word="nl";
+	translatemenu->append(new LLMenuItemCallGL("Dutch",translateText, NULL, t));
+	t=new SpellMenuBind;t->origin=this;t->word="pl";
+	translatemenu->append(new LLMenuItemCallGL("Polish",translateText, NULL, t));
+	t=new SpellMenuBind;t->origin=this;t->word="pt";
+	translatemenu->append(new LLMenuItemCallGL("Portugese",translateText, NULL, t));
+	t=new SpellMenuBind;t->origin=this;t->word="ru";
+	translatemenu->append(new LLMenuItemCallGL("Russian",translateText, NULL, t));
+	t=new SpellMenuBind;t->origin=this;t->word="tr";
+	translatemenu->append(new LLMenuItemCallGL("Turkish",translateText, NULL, t));
+	t=new SpellMenuBind;t->origin=this;t->word="uk";
+	translatemenu->append(new LLMenuItemCallGL("Ukrainian",translateText, NULL, t));
+	t=new SpellMenuBind;t->origin=this;t->word="zh";
+	translatemenu->append(new LLMenuItemCallGL("Chinese",translateText, NULL, t));
+	t=new SpellMenuBind;t->origin=this;t->word="ja";
+	translatemenu->append(new LLMenuItemCallGL("Japanese",translateText, NULL, t));
+	t=new SpellMenuBind;t->origin=this;t->word="ko";
+	translatemenu->append(new LLMenuItemCallGL("Korean",translateText, NULL, t));
+	
+	menu->appendMenu(translatemenu);
+	menu->setCanTearOff(FALSE);
+	menu->setVisible(FALSE);
+	mPopupMenuHandle = menu->getHandle();
 }
 
 
@@ -357,6 +442,60 @@ LLTextEditor::~LLTextEditor()
 	std::for_each(mSegments.begin(), mSegments.end(), DeletePointer());
 
 	std::for_each(mUndoStack.begin(), mUndoStack.end(), DeletePointer());
+	LLView::deleteViewByHandle(mPopupMenuHandle);
+}
+void LLTextEditor::context_cut(void* data)
+{
+	LLTextEditor* line = (LLTextEditor*)data;
+	if(line)line->cut();
+}
+void LLTextEditor::context_copy(void* data)
+{
+	LLTextEditor* line = (LLTextEditor*)data;
+	if(line)line->copy();
+}
+void LLTextEditor::translateText(void * data)
+{
+	SpellMenuBind* t = (SpellMenuBind*)data;
+	LLTextEditor* line = t->origin;
+	const std::string &toLang = t->word;//LLTranslate::getTranslateLanguage();
+	LLHTTPClient::ResponderPtr result = TextChatTranslationReceiver::build(toLang,line);
+
+	S32 left_pos = llmin( line->mSelectionStart, line->mSelectionEnd );
+	S32 length = abs( line->mSelectionStart - line->mSelectionEnd );
+	LLTranslate::translateMessage(result,"", toLang, line->getText().substr(left_pos, length));
+}
+void LLTextEditor::spell_correct(void* data)
+{
+}
+void LLTextEditor::spell_show(void * data)
+{
+}
+
+std::vector<S32> LLTextEditor::getMisspelledWordsPositions()
+{
+	std::vector<S32> thePosesOfBadWords;
+
+	return thePosesOfBadWords;
+}
+void LLTextEditor::spell_add(void* data)
+{
+
+}
+void LLTextEditor::context_paste(void* data)
+{
+	LLTextEditor* line = (LLTextEditor*)data;
+	if(line)line->paste();
+}
+void LLTextEditor::context_delete(void* data)
+{
+	LLTextEditor* line = (LLTextEditor*)data;
+	if(line)line->doDelete();
+}
+void LLTextEditor::context_selectall(void* data)
+{
+	LLTextEditor* line = (LLTextEditor*)data;
+	if(line)line->selectAll();
 }
 
 void LLTextEditor::setTrackColor( const LLColor4& color )
@@ -645,6 +784,7 @@ void LLTextEditor::selectNext(const std::string& search_text_in, BOOL case_insen
 	}
 
 	setCursorPos(loc);
+	scrollToPos(mCursorPos);
 	
 	mIsSelecting = TRUE;
 	mSelectionEnd = mCursorPos;
@@ -1126,6 +1266,14 @@ BOOL LLTextEditor::handleMouseDown(S32 x, S32 y, MASK mask)
 {
 	BOOL	handled = FALSE;
 
+	// SL-51858: Key presses are not being passed to the Popup menu.
+	// A proper fix is non-trivial so instead just close the menu.
+	LLMenuGL* menu = (LLMenuGL*)mPopupMenuHandle.get();
+	if (menu && menu->isOpen())
+	{
+		LLMenuGL::sMenuContainer->hideMenus();
+	}
+
 	// Let scrollbar have first dibs
 	handled = LLView::childrenHandleMouseDown(x, y, mask) != NULL;
 
@@ -1199,6 +1347,27 @@ BOOL LLTextEditor::handleMouseDown(S32 x, S32 y, MASK mask)
 	resetKeystrokeTimer();
 
 	return handled;
+}
+BOOL LLTextEditor::handleRightMouseDown( S32 x, S32 y, MASK mask )
+{
+
+	setFocus(TRUE);
+
+	//setCursorAtLocalPos( x, y, TRUE );
+	S32 wordStart = 0;
+	S32 wordEnd = getCursorPosFromLocalCoord(x,y,TRUE);
+
+	LLMenuGL* menu = (LLMenuGL*)mPopupMenuHandle.get();
+	if (menu)
+	{
+
+		menu->setItemVisible("Translate To",!mReadOnly);
+		
+		menu->buildDrawLabels();
+		menu->updateParent(LLMenuGL::sMenuContainer);
+		LLMenuGL::showPopup(this, menu, x, y);
+	}
+	return TRUE;
 }
 
 
@@ -1891,6 +2060,15 @@ BOOL LLTextEditor::canPaste() const
 	return !mReadOnly && gClipboard.canPasteString();
 }
 
+void LLTextEditor::spellReplace(SpellMenuBind* spellData)
+{
+	remove( spellData->wordPositionStart, 
+		spellData->wordPositionEnd - spellData->wordPositionStart, TRUE );
+	LLWString clean_string = utf8str_to_wstring(spellData->word);
+	insert(spellData->wordPositionStart, clean_string, FALSE);
+	mCursorPos+=clean_string.length() - (spellData->wordPositionEnd-spellData->wordPositionStart);
+	needsReflow();
+}
 
 // paste from clipboard
 void LLTextEditor::paste()
@@ -2251,6 +2429,13 @@ BOOL LLTextEditor::handleKeyHere(KEY key, MASK mask )
 	BOOL	selection_modified = FALSE;
 	BOOL	return_key_hit = FALSE;
 	BOOL	text_may_have_changed = TRUE;
+	// SL-51858: Key presses are not being passed to the Popup menu.
+	// A proper fix is non-trivial so instead just close the menu.
+	LLMenuGL* menu = (LLMenuGL*)mPopupMenuHandle.get();
+	if (menu && menu->isOpen())
+	{
+		LLMenuGL::sMenuContainer->hideMenus();
+	}
 
 	if ( gFocusMgr.getKeyboardFocus() == this )
 	{
@@ -2293,6 +2478,14 @@ BOOL LLTextEditor::handleKeyHere(KEY key, MASK mask )
 				selection_modified = TRUE;
 				text_may_have_changed = TRUE;
 			}
+		}
+
+		// SL-51858: Key presses are not being passed to the Popup menu.
+		// A proper fix is non-trivial so instead just close the menu.
+		LLMenuGL* menu = (LLMenuGL*)mPopupMenuHandle.get();
+		if (menu && menu->isOpen())
+		{
+			LLMenuGL::sMenuContainer->hideMenus();
 		}
 
 		// Handle most keys only if the text editor is writeable.
@@ -2727,6 +2920,13 @@ void LLTextEditor::drawSelectionBackground()
 			}
 		}
 	}
+}
+void LLTextEditor::autoCorrectText()
+{
+	
+}
+void LLTextEditor::drawMisspelled()
+{
 }
 
 void LLTextEditor::drawCursor()
@@ -3415,6 +3615,43 @@ void LLTextEditor::setCursorAndScrollToEnd()
 	needsScroll();
 }
 
+void LLTextEditor::scrollToPos(S32 pos)
+{
+	mScrollbar->setDocSize( getLineCount() );
+
+	S32 line, offset;
+	getLineAndOffset(pos, &line, &offset );
+
+	S32 page_size = mScrollbar->getPageSize();
+
+	if( line < mScrollbar->getDocPos() )
+	{
+		// scroll so that the cursor is at the top of the page
+		mScrollbar->setDocPos( line );
+	}
+	else if( line >= mScrollbar->getDocPos() + page_size - 1 )
+	{
+		S32 new_pos = 0;
+		if( line < mScrollbar->getDocSize() - 1 )
+		{
+			// scroll so that the cursor is one line above the bottom of the page,
+			new_pos = line - page_size + 1;
+		}
+		else
+		{
+			// if there is less than a page of text remaining, scroll so that the cursor is at the bottom
+			new_pos = mScrollbar->getDocPosMax();
+		}
+		mScrollbar->setDocPos( new_pos );
+	}
+
+	// Check if we've scrolled to bottom for callback if asked for callback
+	if (mOnScrollEndCallback && mOnScrollEndData && (mScrollbar->getDocPos() == mScrollbar->getDocPosMax()))
+	{
+		mOnScrollEndCallback(mOnScrollEndData);
+	}
+}
+
 void LLTextEditor::getLineAndColumnForPosition( S32 position, S32* line, S32* col, BOOL include_wordwrap )
 {
 	if( include_wordwrap )
@@ -3492,45 +3729,13 @@ void LLTextEditor::endOfDoc()
 // Sets the scrollbar from the cursor position
 void LLTextEditor::updateScrollFromCursor()
 {
-	mScrollbar->setDocSize( getLineCount() );
-
 	if (mReadOnly)
 	{
 		// no cursor in read only mode
 		return;
 	}
 
-	S32 line, offset;
-	getLineAndOffset( mCursorPos, &line, &offset ); 
-
-	S32 page_size = mScrollbar->getPageSize();
-
-	if( line < mScrollbar->getDocPos() )
-	{
-		// scroll so that the cursor is at the top of the page
-		mScrollbar->setDocPos( line );
-	}
-	else if( line >= mScrollbar->getDocPos() + page_size - 1 )
-	{
-		S32 new_pos = 0;
-		if( line < mScrollbar->getDocSize() - 1 )
-		{
-			// scroll so that the cursor is one line above the bottom of the page,
-			new_pos = line - page_size + 1;
-		}
-		else
-		{
-			// if there is less than a page of text remaining, scroll so that the cursor is at the bottom
-			new_pos = mScrollbar->getDocPosMax();
-		}
-		mScrollbar->setDocPos( new_pos );
-	}
-
-	// Check if we've scrolled to bottom for callback if asked for callback
-	if (mOnScrollEndCallback && mOnScrollEndData && (mScrollbar->getDocPos() == mScrollbar->getDocPosMax()))
-	{
-		mOnScrollEndCallback(mOnScrollEndData);
-	}
+	scrollToPos(mCursorPos);
 }
 
 void LLTextEditor::reshape(S32 width, S32 height, BOOL called_from_parent)
@@ -3582,13 +3787,13 @@ void LLTextEditor::autoIndent()
 }
 
 // Inserts new text at the cursor position
-void LLTextEditor::insertText(const std::string &new_text)
+void LLTextEditor::insertText(const std::string &new_text,BOOL deleteCurrentSelection)
 {
 	BOOL enabled = getEnabled();
 	setEnabled( TRUE );
 
 	// Delete any selected characters (the insertion replaces them)
-	if( hasSelection() )
+	if( hasSelection() && (deleteCurrentSelection))
 	{
 		deleteSelection(TRUE);
 	}
@@ -3632,7 +3837,8 @@ void LLTextEditor::appendStyledText(const std::string &new_text,
 
 		S32 start=0,end=0;
 		std::string text = new_text;
-		while ( findHTML(text, &start, &end) )
+		std::string url;
+		while ( findHTML(text, &start, &end, url) )
 		{
 			LLStyleSP html(new LLStyle);
 			html->setVisible(true);
@@ -3658,7 +3864,7 @@ void LLTextEditor::appendStyledText(const std::string &new_text,
 				appendHighlightedText(subtext,allow_undo, prepend_newline, part, stylep); 
 			}
 			
-			html->setLinkHREF(text.substr(start,end-start));
+			html->setLinkHREF(url);
 			appendText(text.substr(start, end-start),allow_undo, prepend_newline, html);
 			if (end < (S32)text.length()) 
 			{
@@ -3671,6 +3877,7 @@ void LLTextEditor::appendStyledText(const std::string &new_text,
 				break;
 			}
 		}
+		
 		if (part != (S32)LLTextParser::WHOLE) part=(S32)LLTextParser::END;
 		if (end < (S32)text.length()) appendHighlightedText(text,allow_undo, prepend_newline, part, stylep);		
 	}
@@ -3937,6 +4144,15 @@ void LLTextEditor::loadKeywords(const std::string& filename,
 		llassert( mSegments.front()->getStart() == 0 );
 		llassert( mSegments.back()->getEnd() == getLength() );
 	}
+}
+
+void LLTextEditor::addToken(LLKeywordToken::TOKEN_TYPE type,
+					const std::string& key,
+					const LLColor3& color,
+					const std::string& tool_tip,
+					const std::string& delimiter)
+{
+	mKeywords.addToken(type,key,color,tool_tip);
 }
 
 void LLTextEditor::updateSegments()
@@ -4453,7 +4669,7 @@ S32 LLTextEditor::findHTMLToken(const std::string &line, S32 pos, BOOL reverse) 
 	}		
 }
 
-BOOL LLTextEditor::findHTML(const std::string &line, S32 *begin, S32 *end) const
+BOOL LLTextEditor::findHTML(const std::string &line, S32 *begin, S32 *end, std::string& url) const
 {
 	  
 	S32 m1,m2,m3;
@@ -4512,10 +4728,16 @@ BOOL LLTextEditor::findHTML(const std::string &line, S32 *begin, S32 *end) const
 	{
 		S32 strpos, strpos2;
 
-		std::string url     = line.substr(*begin,*end - *begin);
+		url = line.substr(*begin,*end - *begin);
 		std::string slurlID = "slurl.com/secondlife/";
 		strpos = url.find(slurlID);
 		
+		if (strpos < 0)
+		{
+			slurlID="maps.secondlife.com/secondlife/";
+			strpos = url.find(slurlID);
+		}
+	
 		if (strpos < 0)
 		{
 			slurlID="secondlife://";
@@ -4547,6 +4769,56 @@ BOOL LLTextEditor::findHTML(const std::string &line, S32 *begin, S32 *end) const
 			}
 		}
 
+	}
+	
+	// In-client JIRA linking.
+	// This check helpfully ensures that any full-form links aren't double-linked.
+	if(m1 < 0)
+	{
+		// jiras[] contains the project keys.
+		// jira_count contains the number of entries in jiras[].
+		// jurls[] contains the URL templates
+		// jurl_types[] maps jiras to urls.
+		// We DO NOT sanity check jurl_types. Make sure there is an entry in jurls for any given type.
+		// (yes, it would be easier to use a map. No, there is no really good reason we don't.)
+		const int jira_count = 4;
+		const char* jiras[] = { "SVC-", "VWR-", "SNOW-", "STROM-", "PHOE-", "LUNA-" };
+		int jurl_types[] = { 0, 0, 0, 0, 1, 2 };
+		const char* jurls[] = { "https://jira.secondlife.com/browse/%s", "http://jira.phoenixviewer.com/browse/%s", "http://bugs.nexisonline.net/viewissue.php?issue_no=%s" };
+		for(int j = 0; j < jira_count; ++j)
+		{
+			std::string jira(jiras[j]);
+			S32 m1 = line.find(jira);
+			if(m1 > 0)
+			{
+				// Get the length of our key.
+				size_t ending = line.substr(m1 + jira.length()).find_first_not_of("0123456789");
+				if(ending == std::string::npos)
+				{
+					ending = line.length() - m1 - jira.length();
+				}
+				// We can't break the loop, because if there's a match later than the first one we find,
+				// (e.g. "EMLD-12 VWR-15" will match VWR-15 first due to the order of jiras[])
+				// the loop calling this function will truncate to the end of the last match we found.
+				// Therefore, we must return the first link of *any* type, which means we must check all jiras,
+				// and return whichever is first (assuming any are found at all). Ew.
+				if(!matched || m1 < *begin)
+				{
+					*begin = m1;
+					*end = m1 + jira.length() + ending;
+					// If no key is provided (e.g. EMLD-), use the summary page instead of a specific issue.
+					if(ending <= 0)
+					{
+						url = llformat(jurls[jurl_types[j]], line.substr(*begin, *end - m1 - 1).c_str());
+					}
+					else
+					{
+						url = llformat(jurls[jurl_types[j]], line.substr(*begin, *end - m1).c_str());
+					}
+					matched = TRUE;
+				}
+			}
+		}
 	}
 	
 	if (!matched)

@@ -269,7 +269,6 @@ void LLPanelPick::exportPick()
 	export_file.close();
 }
 
-
 void LLPanelPick::setPickID(const LLUUID& pick_id, const LLUUID& creator_id)
 {
 	mPickID = pick_id;
@@ -492,9 +491,6 @@ void LLPanelPick::refresh()
 		mSetBtn->setVisible(godlike);
 		mSetBtn->setEnabled(godlike);
 	}
-
-
-
 	else
 	{
 		mSnapshotCtrl->setEnabled(is_self);
@@ -513,9 +509,6 @@ void LLPanelPick::refresh()
 		mSetBtn->setEnabled(is_self);
 	}
 }
-
-
-
 
 
 // static

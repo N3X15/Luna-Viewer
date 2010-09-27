@@ -1,6 +1,6 @@
 /** 
  * @file lliosocket.cpp
- * @author Phoenix
+ * @author Ascent
  * @date 2005-07-31
  * @brief Sockets declarations for use with the io pipes
  *

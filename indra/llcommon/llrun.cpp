@@ -1,6 +1,6 @@
 /** 
  * @file llrun.cpp
- * @author Phoenix
+ * @author Ascent
  * @date 2006-02-16
  * @brief Implementation of the LLRunner and related classes
  *

@@ -1,6 +1,6 @@
 /** 
  * @file lluserrelations.h
- * @author Phoenix
+ * @author Ascent
  * @date 2006-10-12
  * @brief Declaration of a class for handling granted rights.
  *

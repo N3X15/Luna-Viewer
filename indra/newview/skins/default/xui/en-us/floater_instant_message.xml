@@ -42,7 +42,7 @@
 	<string name="otr_gen_key_please_wait">OTR is generating keys.  This will happen once for each of your avatars and should take less than 45 seconds.</string>
 	<string name="otr_generic_name">Your buddy</string>
 	<string name="otr_err_send_in_finished">[NAME] has ended the private conversation, so your message was not sent.  You should restart the private conversation, or end the private conversation.</string>
-	<string name="otr_err_deacivated">OTR has been deactivated by preferences (edit > preferences > Extras tab > IM tab)</string>
+	<string name="otr_err_deacivated">OTR has been deactivated by preferences (edit > preferences > Phoenix tab > IM tab)</string>
 	<string name="otr_err_failed_sending">Unable to encrypt your message for some reason; it has not been sent.</string>
 	<string name="otr_err_failed_starting">Unable to start private conversation.</string>
 	<string name="otr_err_offline_start">[NAME] appears offline; OTR will not try to start a private conversation.</string>
@@ -71,21 +71,21 @@
 	<string name="otr_stop"   >End private conversation</string>
 	<string name="otr_auth"   >Authenticate buddy</string>
 	<!--[/$PLOTR$]-->
-	<button bottom="-40" follows="left|top" height="20" label="Profile" left="5"
-	     name="profile_callee_btn" width="80" />
-	<button bottom="-40" follows="left|top" halign="center" height="20" label="Teleport" left_delta="80"
-		 name="profile_tele_btn" width="80" />
-  <button bottom="-40" follows="left|top" halign="center" height="20" label="History" left_delta="80"
-          name="history_btn" pad_right="10" visible="true" width="80" />
-	<button bottom="-40" follows="left|top" halign="right" height="20"
+  <button bottom="-40" follows="left|top" height="20" label="Profile" left="5"
+         name="profile_callee_btn" width="50" />
+  <button bottom="-40" follows="left|top" halign="center" height="20" label="Teleport" left_delta="50"
+		 name="profile_tele_btn" width="57" />
+  <button bottom="-40" follows="left|top" halign="right" height="20" label="History" left_delta="57"
+          name="history_btn" pad_right="10" visible="true" width="56" />
+  <button bottom="-40" follows="left|top" halign="right" height="20"
 	     image_overlay="icn_voice-call-start.tga" image_overlay_alignment="left"
-	     label="Call" left_delta="80" name="start_call_btn" width="53" />
-	<button bottom="-40" follows="left|top" halign="right" height="20"
+	     label="Call" left_delta="56" name="start_call_btn" width="53" />
+  <button bottom="-40" follows="left|top" halign="right" height="20"
 	     image_overlay="icn_voice-call-end.tga" image_overlay_alignment="left"
 	     label="End" left_delta="0" name="end_call_btn" pad_right="10"
 	     visible="false" width="53" />
-	<panel border="false" bottom="-37" follows="left|top" height="20"
-	     left_delta="50" name="speaker_controls" width="100">
+	<panel border="false" bottom="-37" follows="left|top|right" height="20"
+	     left_delta="96" name="speaker_controls" width="100">
 		<volume_slider bottom="0" follows="left|bottom" height="15" increment="0.05" initial_val="0.5"
 		     left_delta="0" max_val="1.0" min_val="0.0" name="speaker_volume" width="56" />
 		<button bottom_delta="0" height="20" image_selected="icn_speaker-muted_dark.tga"
@@ -97,20 +97,23 @@
 	     follows="left|top|right|bottom" font="SansSerif" height="221" left="5"
 	     max_length="2147483647" mouse_opaque="true" name="im_history"
 	     text_color="ChatHistoryTextColor"
-       track_bottom="true" 
+       track_bottom="true"
 	     text_readonly_color="ChatHistoryTextColor" width="487" word_wrap="true" />
 	<line_editor bevel_style="in" border_style="line" border_thickness="1" bottom="7"
 	     follows="left|right|bottom" font="SansSerif" height="20"
-	     label="Click here to instant message" left="5" max_length="1022"
+	     label="Click here to instant message" left="5" max_length="2147483647"
 	     mouse_opaque="true" name="chat_editor" select_all_on_focus_received="false"
 	     select_on_focus="false" tab_group="1" width="423" />
 	<button bottom="7" follows="right|bottom" font="SansSerif" halign="center" height="20"
 	     label="Send" left="433" mouse_opaque="true" name="send_btn"
 	     scale_image="true" width="60" />
 	<string name="live_help_dialog">
-		*** Welcome to Help Request *** 
-Please first check our SL Help Pages by pressing F1, or by accessing the Knowledge Base http://secondlife.com/knowledgebase/ 
+		*** Welcome to Help Request ***
+Please first check our SL Help Pages by pressing F1, or by accessing the Knowledge Base http://secondlife.com/knowledgebase/
 If your answer is not there, please enter your question to begin, then allow a few moments for available helpers to respond.
 -=-=- Response times will vary, especially during peak times -=-=-
+	</string>
+	<string name="Ascent_no_support_available">
+		You are using a BETA release viewer!  If you are experiencing problems, please visit our jira at http://jira.phoenixviewer.com and see if it has been reported and if not do so. The support team may or may not be able to help you.
 	</string>
 </floater>

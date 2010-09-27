@@ -151,7 +151,7 @@ public:
 	const LLSimInfo::item_info_list_t& getLandForSaleAdult() const { return mLandForSaleAdult; }
 	const LLSimInfo::item_info_list_t& getAgentLocation() const { return mAgentLocations; }
 
-private:
+public:
 	U64 mHandle;				// This is a hash of the X and Y world coordinates of the SW corner of the sim
 	std::string mName;			// Region name
 
@@ -164,8 +164,7 @@ private:
 //	F32 mWaterHeight;			// Water height on the region (not actively used)
 
 	// Handling the "land for sale / land for auction" overlay image
-
-	LLUUID mMapImageID;			// Image ID of the overlay image
+	LLUUID mMapImageID;						// Image ID of the overlay image
 	LLPointer<LLViewerImage> mOverlayImage;	// Reference to the overlay image
 
 	// Items for this region

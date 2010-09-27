@@ -106,6 +106,7 @@ public:
 	static void useDebugMenus();
 	static void useSculptedPrim();
 	static void useMedia();
+	static void TPVWarning();
 	
 protected:
 	static std::set<std::string> sConfigVariables;

@@ -81,7 +81,7 @@
 /// Local function declarations, constants, enums, and typedefs
 ///----------------------------------------------------------------------------
 S32 LLFloaterSnapshot::sUIWinHeightLong = 546 ;
-S32 LLFloaterSnapshot::sUIWinHeightShort = LLFloaterSnapshot::sUIWinHeightLong - 250 ;
+S32 LLFloaterSnapshot::sUIWinHeightShort = LLFloaterSnapshot::sUIWinHeightLong - 230 ;
 S32 LLFloaterSnapshot::sUIWinWidth = 215 ;
 
 LLSnapshotFloaterView* gSnapshotFloaterView = NULL;
@@ -414,9 +414,9 @@ void LLSnapshotLivePreview::draw()
 		LLColor4 bg_color(0.f, 0.f, 0.3f, 0.4f);
 		gl_rect_2d(getRect(), bg_color);
 		LLRect &rect = mImageRect[mCurImageIndex];
-		LLRect shadow_rect = mImageRect[mCurImageIndex];
-		shadow_rect.stretch(BORDER_WIDTH);
-		gl_drop_shadow(shadow_rect.mLeft, shadow_rect.mTop, shadow_rect.mRight, shadow_rect.mBottom, LLColor4(0.f, 0.f, 0.f, mNeedsFlash ? 0.f :0.5f), 10);
+		//LLRect shadow_rect = mImageRect[mCurImageIndex];
+		//shadow_rect.stretch(BORDER_WIDTH);
+		//gl_drop_shadow(shadow_rect.mLeft, shadow_rect.mTop, shadow_rect.mRight, shadow_rect.mBottom, LLColor4(0.f, 0.f, 0.f, mNeedsFlash ? 0.f :0.5f), 10);
 
 		LLColor4 image_color(1.f, 1.f, 1.f, 1.f);
 		gGL.color4fv(image_color.mV);
@@ -733,7 +733,10 @@ BOOL LLSnapshotLivePreview::onIdle( void* snapshot_preview )
 
 	LLVector3 new_camera_pos = LLViewerCamera::getInstance()->getOrigin();
 	LLQuaternion new_camera_rot = LLViewerCamera::getInstance()->getQuaternion();
-	if (gSavedSettings.getBOOL("FreezeTime") && 
+
+	static BOOL* sFreezeTime = rebind_llcontrol<BOOL>("FreezeTime", &gSavedSettings, true);
+
+	if ((*sFreezeTime) && 
 		(new_camera_pos != previewp->mCameraPos || dot(new_camera_rot, previewp->mCameraRot) < 0.995f))
 	{
 		previewp->mCameraPos = new_camera_pos;
@@ -1251,6 +1254,11 @@ void LLFloaterSnapshot::Impl::updateControls(LLFloaterSnapshot* floater)
 	floater->childSetVisible("save_btn",			shot_type == LLSnapshotLivePreview::SNAPSHOT_LOCAL);
 	floater->childSetEnabled("keep_aspect_check",	shot_type != LLSnapshotLivePreview::SNAPSHOT_TEXTURE && !sAspectRatioCheckOff);
 	floater->childSetEnabled("layer_types",			shot_type == LLSnapshotLivePreview::SNAPSHOT_LOCAL);
+	if(shot_type != LLSnapshotLivePreview::SNAPSHOT_TEXTURE)
+	{
+		floater->childSetValue("temp_check",			shot_type == LLSnapshotLivePreview::SNAPSHOT_TEXTURE);
+	}
+	floater->childSetEnabled("temp_check",			shot_type == LLSnapshotLivePreview::SNAPSHOT_TEXTURE);
 
 	BOOL is_advance = gSavedSettings.getBOOL("AdvanceSnapshot");
 	BOOL is_local = shot_type == LLSnapshotLivePreview::SNAPSHOT_LOCAL;
@@ -2040,10 +2048,8 @@ BOOL LLFloaterSnapshot::postBuild()
 	sInstance->getRootView()->addChild(previewp);
 	sInstance->getRootView()->addChild(gSnapshotFloaterView);
 
-	// <edit>
-	gSavedSettings.setBOOL("TemporaryUpload",FALSE);
-        childSetValue("temp_check",FALSE);
-	// </edit>
+	gSavedSettings.setBOOL("AscentTemporaryUpload",FALSE);
+	childSetValue("temp_check",FALSE);
 
 	Impl::sPreviewHandle = previewp->getHandle();
 
@@ -2158,8 +2164,10 @@ LLSnapshotFloaterView::~LLSnapshotFloaterView()
 
 BOOL LLSnapshotFloaterView::handleKey(KEY key, MASK mask, BOOL called_from_parent)
 {
+	static BOOL* sFreezeTime = rebind_llcontrol<BOOL>("FreezeTime", &gSavedSettings, true);
+
 	// use default handler when not in freeze-frame mode
-	if(!gSavedSettings.getBOOL("FreezeTime"))
+	if(!(*sFreezeTime))
 	{
 		return LLFloaterView::handleKey(key, mask, called_from_parent);
 	}
@@ -2179,8 +2187,9 @@ BOOL LLSnapshotFloaterView::handleKey(KEY key, MASK mask, BOOL called_from_paren
 
 BOOL LLSnapshotFloaterView::handleMouseDown(S32 x, S32 y, MASK mask)
 {
+	static BOOL* sFreezeTime = rebind_llcontrol<BOOL>("FreezeTime", &gSavedSettings, true);
 	// use default handler when not in freeze-frame mode
-	if(!gSavedSettings.getBOOL("FreezeTime"))
+	if(!(*sFreezeTime))
 	{
 		return LLFloaterView::handleMouseDown(x, y, mask);
 	}
@@ -2194,8 +2203,9 @@ BOOL LLSnapshotFloaterView::handleMouseDown(S32 x, S32 y, MASK mask)
 
 BOOL LLSnapshotFloaterView::handleMouseUp(S32 x, S32 y, MASK mask)
 {
+	static BOOL* sFreezeTime = rebind_llcontrol<BOOL>("FreezeTime", &gSavedSettings, true);
 	// use default handler when not in freeze-frame mode
-	if(!gSavedSettings.getBOOL("FreezeTime"))
+	if(!(*sFreezeTime))
 	{
 		return LLFloaterView::handleMouseUp(x, y, mask);
 	}
@@ -2209,8 +2219,9 @@ BOOL LLSnapshotFloaterView::handleMouseUp(S32 x, S32 y, MASK mask)
 
 BOOL LLSnapshotFloaterView::handleHover(S32 x, S32 y, MASK mask)
 {
+	static BOOL* sFreezeTime = rebind_llcontrol<BOOL>("FreezeTime", &gSavedSettings, true);
 	// use default handler when not in freeze-frame mode
-	if(!gSavedSettings.getBOOL("FreezeTime"))
+	if(!(*sFreezeTime))
 	{
 		return LLFloaterView::handleHover(x, y, mask);
 	}	

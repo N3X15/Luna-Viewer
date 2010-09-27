@@ -36,7 +36,6 @@
 #include "llappviewer.h"	// for gPacificDaylightTime
 #include "lluuid.h"
 #include "message.h"
-#include "llviewercontrol.h"
 
 LLEventInfo::cat_map LLEventInfo::sCategories;
 
@@ -50,7 +49,7 @@ void LLEventInfo::unpack(LLMessageSystem *msg)
 
 	msg->getString("EventData", "Category", mCategoryStr);
 
-//	msg->getString("EventData", "Date", mTimeStr);
+	msg->getString("EventData", "Date", mTimeStr);
 
 	U32 duration;
 	msg->getU32("EventData","Duration",duration);
@@ -59,19 +58,6 @@ void LLEventInfo::unpack(LLMessageSystem *msg)
 	U32 date;
 	msg->getU32("EventData", "DateUTC", date);
 	mUnixTime = date;
-
-	// Convert to Pacific, based on server's opinion of whether
-	// it's daylight savings time there.
-	struct tm* t = utc_to_pacific_time(mUnixTime, gPacificDaylightTime);;
-	timeStructToFormattedString(t, gSavedSettings.getString("TimestampFormat"), mTimeStr);
-	if (gPacificDaylightTime)
-	{
-		mTimeStr += " PDT";
-	}
-	else
-	{
-		mTimeStr += " PST";
-	}
 
 	msg->getString("EventData", "Desc", mDesc);
 

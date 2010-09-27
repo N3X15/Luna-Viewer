@@ -180,11 +180,11 @@ const F32 CAMERA_LAG_HALF_LIFE = 0.25f;
 const F32 MIN_CAMERA_LAG = 0.5f;
 const F32 MAX_CAMERA_LAG = 5.f;
 
-const F32 CAMERA_COLLIDE_EPSILON = 0.0f;
-const F32 MIN_CAMERA_DISTANCE = 0.0f;
-const F32 AVATAR_ZOOM_MIN_X_FACTOR = 0.0f;
-const F32 AVATAR_ZOOM_MIN_Y_FACTOR = 0.0f;
-const F32 AVATAR_ZOOM_MIN_Z_FACTOR = 0.0f;
+const F32 CAMERA_COLLIDE_EPSILON = 0.1f;
+const F32 MIN_CAMERA_DISTANCE = 0.1f;
+const F32 AVATAR_ZOOM_MIN_X_FACTOR = 0.55f;
+const F32 AVATAR_ZOOM_MIN_Y_FACTOR = 0.7f;
+const F32 AVATAR_ZOOM_MIN_Z_FACTOR = 1.15f;
 
 const F32 MAX_CAMERA_DISTANCE_FROM_AGENT = 50.f;
 
@@ -228,8 +228,15 @@ LLVector3 gReSitOffset;
 // Statics
 //
 
-// <edit>
-// For MapBlockReply funk 'cause I dunno what I'm doing
+BOOL LLAgent::AscentPhantom = 0;
+BOOL LLAgent::ignorePrejump = 0;
+
+BOOL LLAgent::sFirstPersonBtnState;
+BOOL LLAgent::sMouselookBtnState;
+BOOL LLAgent::sThirdPersonBtnState;
+BOOL LLAgent::sBuildBtnState;
+BOOL LLAgent::AscentForceFly;
+
 BOOL LLAgent::lure_show = FALSE;
 std::string LLAgent::lure_name;
 LLVector3d LLAgent::lure_posglobal;
@@ -377,7 +384,7 @@ LLAgent::LLAgent() :
 	mLeftKey(0),
 	mUpKey(0),
 	mYawKey(0.f),
-	mPitchKey(0),
+	mPitchKey(0.f),
 
 	mOrbitLeftKey(0.f),
 	mOrbitRightKey(0.f),
@@ -444,8 +451,18 @@ LLAgent::LLAgent() :
 	}
 
 	mFollowCam.setMaxCameraDistantFromSubject( MAX_CAMERA_DISTANCE_FROM_AGENT );
+	//AscentForceFly = gSavedSettings.getBOOL("AscentAlwaysFly");
+	//gSavedSettings.getControl("AscentAlwaysFly")->getSignal()->connect(&updateAscentForceFly);
+}
+void LLAgent::updateAscentForceFly(const LLSD &data)
+{
+	AscentForceFly = data.asBoolean();
 }
 
+void LLAgent::updateIgnorePrejump(const LLSD &data)
+{
+	ignorePrejump = data.asBoolean();
+}
 // Requires gSavedSettings to be initialized.
 //-----------------------------------------------------------------------------
 // init()
@@ -476,6 +493,11 @@ void LLAgent::init()
 //	LLDebugVarMessageBox::show("Camera Lag", &CAMERA_FOCUS_HALF_LIFE, 0.5f, 0.01f);
 
 	mEffectColor = LLSavedSettingsGlue::getCOAColor4("EffectColor");
+	ignorePrejump = LLSavedSettingsGlue::getCOABOOL("AscentIgnoreFinishAnimation");
+	//LLSavedSettingsGlue::getCOAControl("AscentIgnoreFinishAnimation")->getSignal()->connect(&updateIgnorePrejump);
+	AscentForceFly = LLSavedSettingsGlue::getCOABOOL("AscentAlwaysFly");
+	//LLSavedSettingsGlue::getCOAControl("AscentAlwaysFly")->getSignal()->connect(&updateAscentForceFly);
+	mBlockSpam=LLSavedSettingsGlue::getCOABOOL("AscentBlockSpam");
 	
 	mInitialized = TRUE;
 
@@ -549,7 +571,9 @@ void LLAgent::resetView(BOOL reset_camera, BOOL change_camera)
 		gMenuHolder->hideMenus();
 	}
 
-	if (change_camera && !gSavedSettings.getBOOL("FreezeTime"))
+	static BOOL* sFreezeTime = rebind_llcontrol<BOOL>("FreezeTime", &gSavedSettings, true);
+
+	if (change_camera && !(*sFreezeTime))
 	{
 		changeCameraToDefault();
 		
@@ -573,7 +597,7 @@ void LLAgent::resetView(BOOL reset_camera, BOOL change_camera)
 	}
 
 
-	if (reset_camera && !gSavedSettings.getBOOL("FreezeTime"))
+	if (reset_camera && !(*sFreezeTime))
 	{
 		if (!gViewerWindow->getLeftMouseDown() && cameraThirdPerson())
 		{
@@ -762,24 +786,24 @@ void LLAgent::moveYaw(F32 mag, bool reset_view)
 		setControlFlags(AGENT_CONTROL_YAW_NEG);
 	}
 
-    if (reset_view)
+	if (reset_view)
 	{
-        resetView();
+		resetView();
 	}
 }
 
 //-----------------------------------------------------------------------------
 // movePitch()
 //-----------------------------------------------------------------------------
-void LLAgent::movePitch(S32 direction)
+void LLAgent::movePitch(F32 mag)
 {
-	setKey(direction, mPitchKey);
+	mPitchKey = mag;
 
-	if (direction > 0)
+	if (mag > 0)
 	{
 		setControlFlags(AGENT_CONTROL_PITCH_POS );
 	}
-	else if (direction < 0)
+	else if (mag < 0)
 	{
 		setControlFlags(AGENT_CONTROL_PITCH_NEG);
 	}
@@ -790,12 +814,8 @@ void LLAgent::movePitch(S32 direction)
 BOOL LLAgent::canFly()
 {
 	if (isGodlike()) return TRUE;
-
-	// <edit>
-	if(gSavedSettings.getBOOL("AscentFlyAlwaysEnabled")) 
-		return TRUE;
-	// </edit>
-
+	//LGG always fly code
+	if(AscentForceFly) return TRUE;
 	LLViewerRegion* regionp = getRegion();
 	if (regionp && regionp->getBlockFly()) return FALSE;
 	
@@ -824,19 +844,9 @@ BOOL LLAgent::getPhantom()
 	return exlPhantom;
 }
 
-void LLAgent::resetClientTag()
-{
-	if (!mAvatarObject.isNull())
-	{
-		llinfos << "Resetting mClientTag." << llendl;
-		mAvatarObject->mClientTag = "";
-	}
-}
-//
-
 //-----------------------------------------------------------------------------
 // setFlying()
-//-----------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 void LLAgent::setFlying(BOOL fly)
 {
 	if (mAvatarObject.notNull())
@@ -892,6 +902,10 @@ void LLAgent::toggleFlying()
 	resetView();
 }
 
+
+//-----------------------------------------------------------------------------
+// togglePhantom()
+//-----------------------------------------------------------------------------
 void LLAgent::togglePhantom()
 {
 	BOOL phan = !(exlPhantom);
@@ -1333,11 +1347,11 @@ F32 LLAgent::clampPitchToLimits(F32 angle)
 
 	LLVector3 skyward = getReferenceUpVector();
 
-	F32			look_down_limit;
-	F32			look_up_limit = 10.f * DEG_TO_RAD;
+	F32			look_down_limit = 179.f * DEG_TO_RAD;
+	F32			look_up_limit = 1.f * DEG_TO_RAD;
 
 	F32 angle_from_skyward = acos( mFrameAgent.getAtAxis() * skyward );
-
+	/*
 	if (mAvatarObject.notNull() && mAvatarObject->mIsSitting)
 	{
 		look_down_limit = 130.f * DEG_TO_RAD;
@@ -1346,7 +1360,7 @@ F32 LLAgent::clampPitchToLimits(F32 angle)
 	{
 		look_down_limit = 170.f * DEG_TO_RAD;
 	}
-
+	*/
 	// clamp pitch to limits
 	if ((angle >= 0.f) && (angle_from_skyward + angle > look_down_limit))
 	{
@@ -1567,13 +1581,9 @@ LLVector3 LLAgent::calcFocusOffset(LLViewerObject *object, LLVector3 original_fo
 //-----------------------------------------------------------------------------
 BOOL LLAgent::calcCameraMinDistance(F32 &obj_min_distance)
 {
-	/* Emerald:
-	We don't care about minimum distances in Emerald. No we don't.
-	~Zwag
-	*/
 	BOOL soft_limit = FALSE; // is the bounding box to be treated literally (volumes) or as an approximation (avatars)
 
-	if (!mFocusObject || mFocusObject->isDead() || gSavedSettings.getBOOL("DisableCameraConstraints"))
+	if (!mFocusObject || mFocusObject->isDead())
 	{
 		obj_min_distance = 0.f;
 		return TRUE;
@@ -1743,7 +1753,6 @@ BOOL LLAgent::calcCameraMinDistance(F32 &obj_min_distance)
 	obj_min_distance += LLViewerCamera::getInstance()->getNear() + (soft_limit ? 0.1f : 0.2f);
 	
 	return TRUE;
-	
 }
 
 F32 LLAgent::getCameraZoomFraction()
@@ -1826,7 +1835,7 @@ void LLAgent::setCameraZoomFraction(F32 fraction)
 		//						LLWorld::getInstance()->getRegionWidthInMeters() - DIST_FUDGE,
 		//						MAX_CAMERA_DISTANCE_FROM_AGENT);
 
-		if (!disable_min)
+		if(!disable_min)
 		{
 			if (mFocusObject.notNull())
 			{
@@ -1844,6 +1853,7 @@ void LLAgent::setCameraZoomFraction(F32 fraction)
 		{
 			min_zoom = 0.f;
 		}
+
 		LLVector3d camera_offset_dir = mCameraFocusOffsetTarget;
 		camera_offset_dir.normalize();
 		//mCameraFocusOffsetTarget = camera_offset_dir * rescale(fraction, 0.f, 1.f, max_zoom, min_zoom);
@@ -1945,11 +1955,11 @@ void LLAgent::cameraZoomIn(const F32 fraction)
 				min_zoom = OBJECT_MIN_ZOOM;
 			}
 		}
-		new_distance = llmax(new_distance, min_zoom);
+	new_distance = llmax(new_distance, min_zoom); 
 	}
 
-	// Don't zoom too far back
-	const F32 DIST_FUDGE = 16.f; // meters
+		// Don't zoom too far back
+		const F32 DIST_FUDGE = 16.f; // meters
 	F32 max_distance = /*llmin(mDrawDistance*/ INT_MAX - DIST_FUDGE//, 
 							 /*LLWorld::getInstance()->getRegionWidthInMeters() - DIST_FUDGE )*/;
 
@@ -1982,7 +1992,9 @@ void LLAgent::cameraOrbitIn(const F32 meters)
 		
 		mCameraZoomFraction = (mTargetCameraDistance - meters) / camera_offset_dist;
 
-		if (!gSavedSettings.getBOOL("FreezeTime") && mCameraZoomFraction < MIN_ZOOM_FRACTION && meters > 0.f)
+		static BOOL* sFreezeTime = rebind_llcontrol<BOOL>("FreezeTime", &gSavedSettings, true);
+
+		if (!(*sFreezeTime) && mCameraZoomFraction < MIN_ZOOM_FRACTION && meters > 0.f)
 		{
 			// No need to animate, camera is already there.
 			changeCameraToMouselook(FALSE);
@@ -2038,6 +2050,8 @@ void LLAgent::cameraOrbitIn(const F32 meters)
 		cameraZoomIn(1.f);
 	}
 }
+
+
 //-----------------------------------------------------------------------------
 // cameraPanIn()
 //-----------------------------------------------------------------------------
@@ -2130,7 +2144,10 @@ U32 LLAgent::getControlFlags()
 		}
 	}
 */
-	return mControlFlags;
+        if(LLAgent::ignorePrejump)
+                return mControlFlags | AGENT_CONTROL_FINISH_ANIM;
+        else
+                return mControlFlags;
 }
 
 //-----------------------------------------------------------------------------
@@ -2616,7 +2633,7 @@ void LLAgent::propagate(const F32 dt)
 
 	// handle rotation based on keyboard levels
 	const F32 YAW_RATE = 90.f * DEG_TO_RAD;				// radians per second
-	yaw( YAW_RATE * mYawKey * dt );
+	yaw(YAW_RATE * mYawKey * dt);
 
 	const F32 PITCH_RATE = 90.f * DEG_TO_RAD;			// radians per second
 	pitch(PITCH_RATE * (F32) mPitchKey * dt);
@@ -2839,6 +2856,11 @@ void LLAgent::startTyping()
 	{
 		sendAnimationRequest(ANIM_AGENT_TYPE, ANIM_REQUEST_START);
 	}
+
+	if (gSavedSettings.getBOOL("AscentVoiceAnimWhileTyping")){
+		sendAnimationRequest(LLUUID("37694185-3107-d418-3a20-0181424e542d"), ANIM_REQUEST_START);
+	}
+
 	gChatBar->sendChatFromViewer("", CHAT_TYPE_START, FALSE);
 }
 
@@ -2851,6 +2873,7 @@ void LLAgent::stopTyping()
 	{
 		clearRenderState(AGENT_STATE_TYPING);
 		sendAnimationRequest(ANIM_AGENT_TYPE, ANIM_REQUEST_STOP);
+		if(gSavedSettings.getBOOL("AscentVoiceAnimWhileTyping")) sendAnimationRequest(LLUUID("37694185-3107-d418-3a20-0181424e542d"), ANIM_REQUEST_STOP);
 		gChatBar->sendChatFromViewer("", CHAT_TYPE_STOP, FALSE);
 	}
 }
@@ -2882,6 +2905,26 @@ U8 LLAgent::getRenderState()
 		return 0;
 	}
 
+	static LLCachedControl<BOOL> AscentVoiceAnimWhileTyping("AscentVoiceAnimWhileTyping", 0);
+	if((mRenderState & AGENT_STATE_TYPING) && AscentVoiceAnimWhileTyping){ // If we are typing and voice anim should be played
+		LLVOAvatar* avatarp = gAgent.getAvatarObject();
+		if (avatarp)
+		{
+			bool isplaying=false;
+			LLVOAvatar::AnimSourceIterator ai;
+			for(ai = avatarp->mAnimationSources.begin(); ai != avatarp->mAnimationSources.end(); ++ai) // Loop through playing anims
+			{
+				if(ai->second==LLUUID("37694185-3107-d418-3a20-0181424e542d")){ //Are we playing this animation at the moment?
+					isplaying=true;
+				}
+			}
+			if(!isplaying){ //If not, start it again
+				sendAnimationRequest(LLUUID("37694185-3107-d418-3a20-0181424e542d"), ANIM_REQUEST_START);
+			}
+		}
+	}
+
+
 	// *FIX: don't do stuff in a getter!  This is infinite loop city!
 	if ((mTypingTimer.getElapsedTimeF32() > TYPING_TIMEOUT_SECS) 
 		&& (mRenderState & AGENT_STATE_TYPING))
@@ -2909,6 +2952,11 @@ static const LLFloaterView::skip_list_t& get_skip_list()
 {
 	static LLFloaterView::skip_list_t skip_list;
 	skip_list.insert(LLFloaterMap::getInstance());
+//	static BOOL *sAscentShowStatusBarInMouselook = rebind_llcontrol<BOOL>("AscentShowStatusBarInMouselook", &gSavedSettings, true);
+//	if(*sAscentShowStatusBarInMouselook)
+//	{
+//		skip_list.insert(LLFloaterStats::getInstance());
+//	}
 	return skip_list;
 }
 
@@ -3263,6 +3311,7 @@ void LLAgent::updateCamera()
 				mFollowCam.copyParams(*current_cam);
 				mFollowCam.setSubjectPositionAndRotation( mAvatarObject->getRenderPosition(), avatarRotationForFollowCam );
 				mFollowCam.update();
+				LLViewerJoystick::getInstance()->setCameraNeedsUpdate(true);
 			}
 			else
 			{
@@ -3840,7 +3889,7 @@ LLVector3d LLAgent::calcCameraPositionTargetGlobal(BOOL *hit_limit)
 				camera_distance = local_camera_offset.normalize();
 			}
 
-			mTargetCameraDistance = llmax(camera_distance, MIN_CAMERA_DISTANCE);
+			mTargetCameraDistance = camera_distance;//llmax(camera_distance, MIN_CAMERA_DISTANCE);
 
 			if (mTargetCameraDistance != mCurrentCameraDistance)
 			{
@@ -3965,10 +4014,21 @@ void LLAgent::handleScrollWheel(S32 clicks)
 		}
 		else if (mFocusOnAvatar && mCameraMode == CAMERA_MODE_THIRD_PERSON)
 		{
+			if(gKeyboard->getKeyDown(KEY_CONTROL))
+			{
+				//mCameraOffsetDefault.mV[2]+=clicks/10.0f;;
+				mThirdPersonHeadOffset.mV[2]+=clicks/10.0f; 
+				
+			}else if(gKeyboard->getKeyDown(KEY_SHIFT))
+			{
+				 gSavedSettings.setVector3("FocusOffsetDefault",
+					gSavedSettings.getVector3("FocusOffsetDefault") + LLVector3(0.0f,0.0f,clicks/10.0f));
+			}else
+			{
 			F32 current_zoom_fraction = mTargetCameraDistance / (mCameraOffsetDefault.magVec() * gSavedSettings.getF32("CameraOffsetScale"));
 			current_zoom_fraction *= 1.f - pow(ROOT_ROOT_TWO, clicks);
-			
 			cameraOrbitIn(current_zoom_fraction * mCameraOffsetDefault.magVec() * gSavedSettings.getF32("CameraOffsetScale"));
+		}
 		}
 		else
 		{
@@ -4039,10 +4099,14 @@ void LLAgent::changeCameraToMouselook(BOOL animate)
 
 	LLToolMgr::getInstance()->setCurrentToolset(gMouselookToolset);
 
-	gSavedSettings.setBOOL("FirstPersonBtnState",	FALSE);
-	gSavedSettings.setBOOL("MouselookBtnState",		TRUE);
-	gSavedSettings.setBOOL("ThirdPersonBtnState",	FALSE);
-	gSavedSettings.setBOOL("BuildBtnState",			FALSE);
+	//gSavedSettings.setBOOL("FirstPersonBtnState",	FALSE);
+	//gSavedSettings.setBOOL("MouselookBtnState",		TRUE);
+	//gSavedSettings.setBOOL("ThirdPersonBtnState",	FALSE);
+	//gSavedSettings.setBOOL("BuildBtnState",			FALSE);
+	LLAgent::sFirstPersonBtnState = FALSE;
+	LLAgent::sMouselookBtnState = TRUE;
+	LLAgent::sThirdPersonBtnState = FALSE;
+	LLAgent::sBuildBtnState = FALSE;
 
 	if (mAvatarObject.notNull())
 	{
@@ -4139,10 +4203,14 @@ void LLAgent::changeCameraToFollow(BOOL animate)
 			mAvatarObject->startMotion( ANIM_AGENT_BREATHE_ROT );
 		}
 
-		gSavedSettings.setBOOL("FirstPersonBtnState",	FALSE);
-		gSavedSettings.setBOOL("MouselookBtnState",		FALSE);
-		gSavedSettings.setBOOL("ThirdPersonBtnState",	TRUE);
-		gSavedSettings.setBOOL("BuildBtnState",			FALSE);
+		//gSavedSettings.setBOOL("FirstPersonBtnState",	FALSE);
+		//gSavedSettings.setBOOL("MouselookBtnState",		FALSE);
+		//gSavedSettings.setBOOL("ThirdPersonBtnState",	TRUE);
+		//gSavedSettings.setBOOL("BuildBtnState",			FALSE);
+		LLAgent::sFirstPersonBtnState = FALSE;
+		LLAgent::sMouselookBtnState = FALSE;
+		LLAgent::sThirdPersonBtnState = TRUE;
+		LLAgent::sBuildBtnState = FALSE;
 
 		// unpause avatar animation
 		mPauseRequest = NULL;
@@ -4180,6 +4248,11 @@ void LLAgent::changeCameraToThirdPerson(BOOL animate)
 
 	mCameraZoomFraction = INITIAL_ZOOM_FRACTION;
 
+	//gSavedSettings.setVector3("FocusOffsetDefault",LLVector3(1.0f,0.0f,1.0f));
+	mCameraOffsetDefault = gSavedSettings.getVector3("CameraOffsetDefault");
+	mThirdPersonHeadOffset=LLVector3(0.0f,0.0f,1.0f);
+
+
 	if (mAvatarObject.notNull())
 	{
 		if (!mAvatarObject->mIsSitting)
@@ -4190,10 +4263,14 @@ void LLAgent::changeCameraToThirdPerson(BOOL animate)
 		mAvatarObject->startMotion( ANIM_AGENT_BREATHE_ROT );
 	}
 
-	gSavedSettings.setBOOL("FirstPersonBtnState",	FALSE);
-	gSavedSettings.setBOOL("MouselookBtnState",		FALSE);
-	gSavedSettings.setBOOL("ThirdPersonBtnState",	TRUE);
-	gSavedSettings.setBOOL("BuildBtnState",			FALSE);
+	//gSavedSettings.setBOOL("FirstPersonBtnState",	FALSE);
+	//gSavedSettings.setBOOL("MouselookBtnState",		FALSE);
+	//gSavedSettings.setBOOL("ThirdPersonBtnState",	TRUE);
+	//gSavedSettings.setBOOL("BuildBtnState",			FALSE);
+	LLAgent::sFirstPersonBtnState = FALSE;
+	LLAgent::sMouselookBtnState = FALSE;
+	LLAgent::sThirdPersonBtnState = TRUE;
+	LLAgent::sBuildBtnState = FALSE;
 
 	LLVector3 at_axis;
 
@@ -4264,9 +4341,9 @@ void LLAgent::changeCameraToCustomizeAvatar(BOOL avatar_animate, BOOL camera_ani
 		return;
 	}
 
-	// <edit>
-	//setControlFlags(AGENT_CONTROL_STAND_UP); // force stand up
-	// </edit>
+	if(gSavedSettings.getBOOL("AscentAppearanceForceStand"))
+		setControlFlags(AGENT_CONTROL_STAND_UP); // force stand up
+
 	gViewerWindow->getWindow()->resetBusyCount();
 
 	if (gFaceEditToolset)
@@ -4274,10 +4351,14 @@ void LLAgent::changeCameraToCustomizeAvatar(BOOL avatar_animate, BOOL camera_ani
 		LLToolMgr::getInstance()->setCurrentToolset(gFaceEditToolset);
 	}
 
-	gSavedSettings.setBOOL("FirstPersonBtnState", FALSE);
-	gSavedSettings.setBOOL("MouselookBtnState", FALSE);
-	gSavedSettings.setBOOL("ThirdPersonBtnState", FALSE);
-	gSavedSettings.setBOOL("BuildBtnState", FALSE);
+	//gSavedSettings.setBOOL("FirstPersonBtnState", FALSE);
+	//gSavedSettings.setBOOL("MouselookBtnState", FALSE);
+	//gSavedSettings.setBOOL("ThirdPersonBtnState", FALSE);
+	//gSavedSettings.setBOOL("BuildBtnState", FALSE);
+	LLAgent::sFirstPersonBtnState = FALSE;
+	LLAgent::sMouselookBtnState = FALSE;
+	LLAgent::sThirdPersonBtnState = FALSE;
+	LLAgent::sBuildBtnState = FALSE;
 
 	if (camera_animate)
 	{
@@ -4312,9 +4393,9 @@ void LLAgent::changeCameraToCustomizeAvatar(BOOL avatar_animate, BOOL camera_ani
 
 	if (mAvatarObject.notNull())
 	{
-		if(avatar_animate)
+		if(avatar_animate  && gSavedSettings.getBOOL("AscentAppearanceAnimate"))
 		{
-				// Remove any pitch from the avatar
+			// Remove any pitch from the avatar
 			LLVector3 at = mFrameAgent.getAtAxis();
 			at.mV[VZ] = 0.f;
 			at.normalize();
@@ -4984,8 +5065,11 @@ void LLAgent::onAnimStop(const LLUUID& id)
 	}
 	else if (id == ANIM_AGENT_STANDUP)
 	{
-		// send stand up command
-		setControlFlags(AGENT_CONTROL_FINISH_ANIM);
+        // send stand up command
+        if(!gSavedSettings.getBOOL("AscentIgnoreFinishAnimation"))
+        {
+                setControlFlags(AGENT_CONTROL_FINISH_ANIM);
+        }
 
 		// now trigger dusting self off animation
 		if (mAvatarObject.notNull() && !mAvatarObject->mBelowWater && rand() % 3 == 0)
@@ -4993,7 +5077,10 @@ void LLAgent::onAnimStop(const LLUUID& id)
 	}
 	else if (id == ANIM_AGENT_PRE_JUMP || id == ANIM_AGENT_LAND || id == ANIM_AGENT_MEDIUM_LAND)
 	{
-		setControlFlags(AGENT_CONTROL_FINISH_ANIM);
+        if(!gSavedSettings.getBOOL("AscentIgnoreFinishAnimation"))
+        {
+                setControlFlags(AGENT_CONTROL_FINISH_ANIM);
+        }
 	}
 }
 
@@ -6098,9 +6185,13 @@ bool LLAgent::teleportCore(bool is_local)
 	LLFloaterDirectory::hide(NULL);
 
 	// hide land floater too - it'll be out of date
-	LLFloaterLand::hideInstance();
-	
-	LLViewerParcelMgr::getInstance()->deselectLand();
+	// NO
+	// LLFloaterLand::hideInstance();
+	if (!LLFloaterLand::isOpen())
+	{
+		LLViewerParcelMgr::getInstance()->deselectLand();
+	}
+
 	LLViewerMediaFocus::getInstance()->setFocusFace(false, NULL, 0, NULL);
 
 	// Close all pie menus, deselect land, etc.
@@ -6151,6 +6242,9 @@ void LLAgent::teleportRequest(
 	bool look_at_from_camera)
 {
 	LLViewerRegion* regionp = getRegion();
+
+	// Set last region data for teleport history
+	gAgent.setLastRegionData(regionp->getName(),gAgent.getPositionAgent());
 	bool is_local = (region_handle == to_region_handle(getPositionGlobal()));
 	if(regionp && teleportCore(is_local))
 	{
@@ -6164,14 +6258,17 @@ void LLAgent::teleportRequest(
 		msg->nextBlockFast(_PREHASH_Info);
 		msg->addU64("RegionHandle", region_handle);
 		msg->addVector3("Position", pos_local);
-		// <edit>
-		//LLVector3 look_at(0,1,0);
-		LLVector3 look_at = LLViewerCamera::getInstance()->getAtAxis();
-		/*if (look_at_from_camera)
+		//Chalice - 2 dTP modes: 0 - standard, 1 - TP AV with cam Z axis rotation.
+		LLVector3 look_at;
+		if (gSavedSettings.getBOOL("AscentDoubleClickTeleportMode") == 0)
+		{
+			LLVOAvatar* avatarp = gAgent.getAvatarObject();
+			look_at=avatarp->getRotation().packToVector3();
+		}
+		else
 		{
 			look_at = LLViewerCamera::getInstance()->getAtAxis();
-		}*/
-		// </edit>
+		}
 		msg->addVector3("LookAt", look_at);
 		sendReliableMessage();
 	}
@@ -6181,6 +6278,8 @@ void LLAgent::teleportRequest(
 void LLAgent::teleportViaLandmark(const LLUUID& landmark_asset_id)
 {
 	LLViewerRegion *regionp = getRegion();
+	// Set last region data for teleport history
+	gAgent.setLastRegionData(regionp->getName(),gAgent.getPositionAgent());
 	if(regionp && teleportCore())
 	{
 		LLMessageSystem* msg = gMessageSystem;
@@ -6196,6 +6295,8 @@ void LLAgent::teleportViaLandmark(const LLUUID& landmark_asset_id)
 void LLAgent::teleportViaLure(const LLUUID& lure_id, BOOL godlike)
 {
 	LLViewerRegion* regionp = getRegion();
+	// Set last region data for teleport history
+	gAgent.setLastRegionData(regionp->getName(),gAgent.getPositionAgent());
 	if(regionp && teleportCore())
 	{
 		U32 teleport_flags = 0x0;
@@ -6283,11 +6384,18 @@ void LLAgent::teleportViaLocation(const LLVector3d& pos_global)
 		msg->addU64Fast(_PREHASH_RegionHandle, region_handle);
 		msg->addVector3Fast(_PREHASH_Position, pos);
 		pos.mV[VX] += 1;
-		// <edit>
-		LLVector3 lookat = LLViewerCamera::getInstance()->getAtAxis();
-		//msg->addVector3Fast(_PREHASH_LookAt, pos);
-		msg->addVector3Fast(_PREHASH_LookAt, lookat);
-		// </edit>
+		LLVector3 look_at;
+		//Chalice - 2 dTP modes: 0 - standard, 1 - TP AV with cam Z axis rotation.
+		if (gSavedSettings.getBOOL("AscentDoubleClickTeleportMode") == 0)
+		{
+			LLVOAvatar* avatarp = gAgent.getAvatarObject();
+			look_at=avatarp->getRotation().packToVector3();
+		}
+		else
+		{
+			look_at = LLViewerCamera::getInstance()->getAtAxis();
+		}
+		msg->addVector3Fast(_PREHASH_LookAt, look_at);
 		sendReliableMessage();
 	}
 }
@@ -6305,7 +6413,10 @@ void LLAgent::teleportViaLocationLookAt(const LLVector3d& pos_global)
 void LLAgent::setTeleportState(ETeleportState state)
 {
 	mTeleportState = state;
-	if (mTeleportState > TELEPORT_NONE && gSavedSettings.getBOOL("FreezeTime"))
+
+	static BOOL* sFreezeTime = rebind_llcontrol<BOOL>("FreezeTime", &gSavedSettings, true);
+
+	if (mTeleportState > TELEPORT_NONE && (*sFreezeTime))
 	{
 		LLFloaterSnapshot::hide(0);
 	}
@@ -7427,45 +7538,7 @@ void LLAgent::sendAgentSetAppearance()
 			msg->addU8Fast(_PREHASH_TextureIndex, (U8)texture_index);
 		}
 		msg->nextBlockFast(_PREHASH_ObjectData);
-
-		/*if (gSavedSettings.getBOOL("AscentUseCustomTag"))
-		{
-			LLColor4 color;
-			if (!gSavedSettings.getBOOL("AscentStoreSettingsPerAccount"))
-			{
-				color = LLSavedSettingsGlue::setCOAColor4("AscentCustomTagColor");
-			}
-			else
-			{
-				color = gSavedPerAccountSettings.getColor4("AscentCustomTagColor");
-			}
-			LLUUID old_teid;
-			U8 client_buffer[UUID_BYTES];
-			memset(&client_buffer, 0, UUID_BYTES);
-			LLTextureEntry* entry = (LLTextureEntry*)mAvatarObject->getTE(0);
-			old_teid = entry->getID();
-			//You edit this to change the tag in your client. Yes.
-			const char* tag_client = "Ascent";
-			strncpy((char*)&client_buffer[0], tag_client, UUID_BYTES);
-			LLUUID part_a;
-			memcpy(&part_a.mData, &client_buffer[0], UUID_BYTES);
-			entry->setColor(color);
-			//This glow is used to tell if the tag color and name is set or not.
-			entry->setGlow(0.1f);
-			entry->setID(part_a);
-			mAvatarObject->packTEMessage( gMessageSystem, 1, gSavedSettings.getString("AscentReportClientUUID") );
-			entry->setID(old_teid);
-			
-		}
-		else
-		{*/
-			if (gSavedSettings.getBOOL("AscentUseTag"))
-				mAvatarObject->packTEMessage( gMessageSystem, 1, gSavedSettings.getString("AscentReportClientUUID"));
-			else
-				mAvatarObject->packTEMessage( gMessageSystem, 1, "c228d1cf-4b5d-4ba8-84f4-899a0796aa97");
-		//}
-		resetClientTag();
-		
+		mAvatarObject->packTEMessage( gMessageSystem, TRUE );
 	}
 	else
 	{
@@ -7487,7 +7560,11 @@ void LLAgent::sendAgentSetAppearance()
 			msg->nextBlockFast(_PREHASH_VisualParam );
 			
 			// We don't send the param ids.  Instead, we assume that the receiver has the same params in the same sequence.
-			const F32 param_value = param->getWeight();
+			F32 param_value;
+			if(param->getID() == 507)
+				param_value = mAvatarObject->getActualBoobGrav();
+			else
+				param_value = param->getWeight();
 			const U8 new_weight = F32_to_U8(param_value, param->getMinWeight(), param->getMaxWeight());
 			msg->addU8Fast(_PREHASH_ParamValue, new_weight );
 			transmitted_params++;
@@ -8020,6 +8097,24 @@ void LLAgent::parseTeleportMessages(const std::string& xml_filename)
 	}//end for (all message sets in xml file)
 }
 
+
+void LLAgent::setLastRegionData(std::string regionName, LLVector3 agentCoords)
+{
+	mLastRegion = regionName;
+	mLastCoordinates = agentCoords;
+}
+
+std::string LLAgent::getLastRegion()
+{
+	return mLastRegion;
+}
+
+LLVector3 LLAgent::getLastCoords()
+{
+	return mLastCoordinates;
+}
+
+
 // OGPX - This code will change when capabilities get refactored.
 // Right now this is used for capabilities that we get from OGP agent domain
 void LLAgent::setCapability(const std::string& name, const std::string& url)
@@ -8056,17 +8151,20 @@ std::string LLAgent::getCapability(const std::string& name) const
 	}
 	return iter->second;
 }
-// <edit>
 
 void LLAgent::showLureDestination(const std::string fromname, const int global_x, const int global_y, const int x, const int y, const int z, const std::string maturity)
 {
 	const LLVector3d posglobal = LLVector3d(F64(global_x), F64(global_y), F64(0));
 	LLSimInfo* siminfo;
 	siminfo = LLWorldMap::getInstance()->simInfoFromPosGlobal(posglobal);
+	std::string sim_name;
+	LLWorldMap::getInstance()->simNameFromPosGlobal( posglobal, sim_name );
+	
 	if(siminfo)
 	{
-		llinfos << fromname << "'s teleport lure is to " << siminfo->getName() << " (" << maturity << ")" << llendl;
-		std::string url = LLURLDispatcher::buildSLURL(siminfo->getName(), S32(x), S32(y), S32(z));
+		
+		llinfos << fromname << "'s teleport lure is to " << sim_name.c_str() << " (" << maturity << ")" << llendl;
+		std::string url = LLURLDispatcher::buildSLURL(sim_name.c_str(), S32(x), S32(y), S32(z));
 		std::string msg;
 		msg = llformat("%s's teleport lure is to %s", fromname.c_str(), url.c_str());
 		if(maturity != "")
@@ -8094,22 +8192,21 @@ void LLAgent::onFoundLureDestination()
 	LLAgent::lure_show = FALSE;
 	LLSimInfo* siminfo;
 	siminfo = LLWorldMap::getInstance()->simInfoFromPosGlobal(LLAgent::lure_posglobal);
+	std::string sim_name;
+	LLWorldMap::getInstance()->simNameFromPosGlobal( LLAgent::lure_posglobal, sim_name );
+
 	if(siminfo)
 	{
-		llinfos << LLAgent::lure_name << "'s teleport lure is to " << siminfo->getName() << " (" << LLAgent::lure_maturity << ")" << llendl;
-		std::string url = LLURLDispatcher::buildSLURL(siminfo->getName(), S32(LLAgent::lure_x), S32(LLAgent::lure_y), S32(LLAgent::lure_z));
+		llinfos << LLAgent::lure_name << " is offering a TP to " << sim_name.c_str() << " (" << LLAgent::lure_maturity << ")" << llendl;
+		std::string url = LLURLDispatcher::buildSLURL(sim_name.c_str(), S32(LLAgent::lure_x), S32(LLAgent::lure_y), S32(LLAgent::lure_z));
 		std::string msg;
-		msg = llformat("%s's teleport lure is to %s", LLAgent::lure_name.c_str(), url.c_str());
+		msg = llformat("%s is offering a TP to %s", LLAgent::lure_name.c_str(), url.c_str());
 		if(LLAgent::lure_maturity != "")
 			msg.append(llformat(" (%s)", LLAgent::lure_maturity.c_str()));
 		LLChat chat(msg);
 		LLFloaterChat::addChat(chat);
 	}
-	else
-		llwarns << "Grand scheme failed" << llendl;
 }
-
-// </edit>
 
 // EOF
 

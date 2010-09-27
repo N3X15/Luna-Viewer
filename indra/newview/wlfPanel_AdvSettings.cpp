@@ -1,4 +1,4 @@
-/* Copyright (c) 2009
+/* Copyright (c) 2010
  *
  * Modular Systems All rights reserved.
  *
@@ -41,15 +41,15 @@
 #include "lltextbox.h"
 #include "llcombobox.h"
 #include "llwlparammanager.h"
-#include "llwaterparammanager.h"
 #include "llstartup.h"
 
+//// [RLVa:KB]
+//#include "rlvhandler.h"
+//// [/RLVa:KB]
 
 BOOL firstBuildDone;
 void* fixPointer;
 std::string ButtonState;
-std::string current_preset = "Default";
-
 wlfPanel_AdvSettings::wlfPanel_AdvSettings()
 {
 	setIsChrome(TRUE);
@@ -75,8 +75,7 @@ void wlfPanel_AdvSettings::refresh()
 {
 	if (gSavedSettings.getBOOL("wlfAdvSettingsPopup"))
 	{
-		childSetEnabled("WLSkyPresetsCombo", true);
-		childSetEnabled("WLWaterPresetsCombo", true);
+		childSetEnabled("WLPresetsCombo", true);
 	}
 }
 
@@ -93,42 +92,25 @@ BOOL wlfPanel_AdvSettings::postBuild()
 {
 	childSetAction("expand", onClickExpandBtn, this);
 	
-	LLComboBox* comboBoxSky = getChild<LLComboBox>("WLSkyPresetsCombo");
-	if(comboBoxSky != NULL) 
-	{
-		std::map<std::string, LLWLParamSet>::iterator mIt = LLWLParamManager::instance()->mParamList.begin();
+	LLComboBox* comboBox = getChild<LLComboBox>("WLPresetsCombo");
+	if(comboBox != NULL) {
+		std::map<std::string, LLWLParamSet>::iterator mIt = 
+			LLWLParamManager::instance()->mParamList.begin();
 		for(; mIt != LLWLParamManager::instance()->mParamList.end(); mIt++) 
 		{
-			if (mIt->first.length() > 0)
-				comboBoxSky->add(mIt->first);
+			comboBox->add(mIt->first);
 		}
-		comboBoxSky->add(LLStringUtil::null);
-		comboBoxSky->selectByValue(LLSD(current_preset));
+		comboBox->add(LLStringUtil::null);
+		comboBox->selectByValue(LLSD("Default"));
 	}
-	comboBoxSky->setCommitCallback(onChangePresetName);
-
-	LLComboBox* comboBoxWater = getChild<LLComboBox>("WLWaterPresetsCombo");
-	if(comboBoxWater != NULL) 
-	{
-		std::map<std::string, LLWaterParamSet>::iterator mIt = LLWaterParamManager::instance()->mParamList.begin();
-		for(; mIt != LLWaterParamManager::instance()->mParamList.end(); mIt++) 
-		{
-			if (mIt->first.length() > 0)
-				comboBoxWater->add(mIt->first);
-		}
-		comboBoxWater->add(LLStringUtil::null);
-		comboBoxWater->selectByValue(LLSD(current_preset));
-	}
-	comboBoxWater->setCommitCallback(onChangePresetName);
+	comboBox->setCommitCallback(onChangePresetName);
 	fixPointer = this;
-	/*onClickExpandBtn(fixPointer);
-	onClickExpandBtn(fixPointer);*/
 	return TRUE;
 }
 void wlfPanel_AdvSettings::draw()
 {
 	LLButton* expand_button = getChild<LLButton>("expand");
-	/*if (expand_button)
+/*	if (expand_button)
 	{
 		if (expand_button->getToggleState())
 		{
@@ -138,11 +120,10 @@ void wlfPanel_AdvSettings::draw()
 		{
 			expand_button->setImageOverlay("arrow_up.tga");
 		}
-	}*/
-	expand_button->setImageOverlay(ButtonState);
+	} */
+			expand_button->setImageOverlay(ButtonState);
 	refresh();
 	LLPanel::draw();
-	
 }
 wlfPanel_AdvSettings::~wlfPanel_AdvSettings ()
 {
@@ -156,27 +137,15 @@ void wlfPanel_AdvSettings::onClickExpandBtn(void* user_data)
 }
 void wlfPanel_AdvSettings::onChangePresetName(LLUICtrl* ctrl, void * userData)
 {
+	LLComboBox * combo_box = static_cast<LLComboBox*>(ctrl);
+	
+	if(combo_box->getSimple() == "")
+	{
+		return;
+	}
+
 	LLWLParamManager::instance()->mAnimator.mIsRunning = false;
 	LLWLParamManager::instance()->mAnimator.mUseLindenTime = false;
-
-	LLComboBox * combo_box = static_cast<LLComboBox*>(ctrl);
-	llinfos << "Combobox is " << combo_box->getControlName() << " aka " << combo_box->getName() << llendl;
-	if (combo_box->getName() == "WLSkyPresetsCombo")
-	{
-		if(combo_box->getSimple() == "")
-		{
-			return;
-		}
-		current_preset = combo_box->getSelectedValue().asString();
-		LLWLParamManager::instance()->loadPreset(current_preset);
-	}
-	else if (combo_box->getName() == "WLWaterPresetsCombo")
-	{
-		if(combo_box->getSimple() == "")
-		{
-			return;
-		}
-		current_preset = combo_box->getSelectedValue().asString();
-		LLWaterParamManager::instance()->loadPreset(current_preset);
-	}
+	LLWLParamManager::instance()->loadPreset(
+		combo_box->getSelectedValue().asString());
 }

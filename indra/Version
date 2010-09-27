@@ -1,0 +1,5 @@
+# Server version
+VERSION_SERVER=1.33.0
+
+# Viewer version
+VERSION_VIEWER=1.5.1

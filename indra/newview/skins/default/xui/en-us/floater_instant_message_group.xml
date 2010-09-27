@@ -46,9 +46,11 @@
 		     height="130" left="0" min_width="210" name="im_contents_panel" width="175">
 			<button bottom="-20" follows="left|top" height="20" label="Group Info" left="5"
 			     name="group_info_btn" tab_group="0" width="80" />
+		    <button bottom="-20" follows="left|top" halign="right" height="20" label="History" left="90"
+                 name="history_btn" pad_right="10" visible="true" width="60" />
 			<button bottom_delta="0" enabled="false" follows="left|top" halign="right" height="20"
 			     image_overlay="icn_voice-call-start.tga" image_overlay_alignment="left"
-			     label="Join Call" left_delta="85" name="start_call_btn" pad_right="12"
+			     label="Join Call" left_delta="65" name="start_call_btn" pad_right="12"
 			     width="80" />
 			<button bottom_delta="0" follows="left|top" halign="right" height="20"
 			     image_overlay="icn_voice-call-end.tga" image_overlay_alignment="left"
@@ -69,7 +71,7 @@
 			     word_wrap="true" />
 			<line_editor bevel_style="in" border_style="line" border_thickness="1" bottom="7"
 			     enabled="true" follows="left|right|bottom" font="SansSerif" height="20"
-			     left="5" max_length="1022" mouse_opaque="true" name="chat_editor"
+			     left="5" mouse_opaque="true" name="chat_editor" max_length="2147483647"
 			     select_all_on_focus_received="false" select_on_focus="false" tab_group="1"
 			     width="106" />
 			<button bottom="7" enabled="true" follows="right|bottom" font="SansSerif"

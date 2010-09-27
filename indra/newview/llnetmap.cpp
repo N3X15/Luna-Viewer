@@ -295,6 +295,7 @@ void LLNetMap::draw()
 
 			// Draw objects
 			gObjectList.renderObjectsForMap(*this);
+			mObjectImagep->setSubImage(mObjectRawImagep, 0, 0, mObjectImagep->getWidth(), mObjectImagep->getHeight());
 
 			mObjectImagep->setSubImage(mObjectRawImagep, 0, 0, mObjectImagep->getWidth(), mObjectImagep->getHeight());
 			
@@ -651,7 +652,11 @@ void LLNetMap::renderScaledPointGlobal( const LLVector3d& pos, const LLColor4U &
 	LLVector3 local_pos;
 	local_pos.setVec( pos - mObjectImageCenterGlobal );
 
-	S32 diameter_pixels = llround(2 * radius_meters * mObjectMapTPM);
+	// DEV-17370 - megaprims of size > 4096 cause lag.  (go figger.)
+	const F32 MAX_RADIUS = 256.0f;
+	F32 radius_clamped = llmin(radius_meters, MAX_RADIUS);
+	
+	S32 diameter_pixels = llround(2 * radius_clamped * mObjectMapTPM);
 	renderPoint( local_pos, color, diameter_pixels );
 }
 
@@ -930,6 +935,26 @@ bool LLNetMap::LLScaleMap::handleEvent(LLPointer<LLEvent> event, const LLSD& use
 	return true;
 }
 
+bool LLNetMap::LLStopTracking::handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+{
+	LLTracker::stopTracking(NULL);
+	return true;
+}
+
+bool LLNetMap::LLEnableTracking::handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+{
+	LLNetMap *self = mPtr;
+	self->findControl(userdata["control"].asString())->setValue(LLTracker::isTracking(NULL));
+	return true;
+}
+
+
+bool LLNetMap::LLCamFollow::handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+{
+	LLNetMap *self = mPtr;
+//	LLFloaterAvatarList::lookAtAvatar(self->mClosestAgentAtLastRightClick);
+	return true;
+}
 bool LLNetMap::LLCenterMap::handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
 {
 	EMiniMapCenter center = (EMiniMapCenter)userdata.asInteger();
@@ -956,18 +981,6 @@ bool LLNetMap::LLCheckCenterMap::handleEvent(LLPointer<LLEvent> event, const LLS
 	return true;
 }
 
-bool LLNetMap::LLStopTracking::handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
-{
-	LLTracker::stopTracking(NULL);
-	return true;
-}
-
-bool LLNetMap::LLEnableTracking::handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
-{
-	LLNetMap *self = mPtr;
-	self->findControl(userdata["control"].asString())->setValue(LLTracker::isTracking(NULL));
-	return true;
-}
 
 bool LLNetMap::LLShowAgentProfile::handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
 {

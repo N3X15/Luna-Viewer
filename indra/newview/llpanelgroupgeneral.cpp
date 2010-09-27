@@ -256,9 +256,10 @@ BOOL LLPanelGroupGeneral::postBuild()
 		mBtnInfo->setVisible(FALSE);
 		mGroupName->setVisible(FALSE);
 	}
-
-
-
+	else
+	{
+		mGroupNameEditor->setEnabled(FALSE);
+	}
 
 	return LLPanelGroupTab::postBuild();
 }
@@ -759,8 +760,8 @@ void LLPanelGroupGeneral::update(LLGroupChange gc)
 	if (mInsignia) mInsignia->setEnabled(mAllowEdit && can_change_ident);
 	if (mEditCharter) mEditCharter->setEnabled(mAllowEdit && can_change_ident);
 	
-	if (mGroupName) mGroupName->setText(gdatap->mName);
-	if (mGroupNameEditor) mGroupNameEditor->setVisible(FALSE);
+	if (mGroupNameEditor) mGroupNameEditor->setVisible(TRUE);
+	if (mGroupNameEditor) mGroupNameEditor->setText(gdatap->mName);
 	if (mFounderName) mFounderName->setNameID(gdatap->mFounderID,FALSE);
 
 	LLNameEditor* key_edit = getChild<LLNameEditor>("group_key");
@@ -768,7 +769,6 @@ void LLPanelGroupGeneral::update(LLGroupChange gc)
 	{
 		key_edit->setText(gdatap->getID().asString());
 	}
-
 	if (mInsignia)
 	{
 		if (gdatap->mInsigniaID.notNull())
@@ -833,6 +833,7 @@ void LLPanelGroupGeneral::updateMembers()
 	all_timer.reset();
 	S32 i = 0;
 
+
 	for( ; mMemberProgress != gdatap->mMembers.end() && i<UPDATE_MEMBERS_PER_FRAME; 
 			++mMemberProgress, ++i)
 	{
@@ -855,18 +856,15 @@ void LLPanelGroupGeneral::updateMembers()
 
 		row["columns"][0]["column"] = "name";
 		row["columns"][0]["font-style"] = style;
-
 		// value is filled in by name list control
 
 		row["columns"][1]["column"] = "title";
 		row["columns"][1]["value"] = member->getTitle();
 		row["columns"][1]["font-style"] = style;
 		
-
 		row["columns"][2]["column"] = "online";
 		row["columns"][2]["value"] = member->getOnlineStatus();
 		row["columns"][2]["font-style"] = style;
-
 
 		sSDTime += sd_timer.getElapsedTimeF32();
 

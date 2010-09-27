@@ -197,7 +197,6 @@ void process_decline_callingcard(LLMessageSystem* msg, void**);
 // Message system exception prototypes
 void invalid_message_callback(LLMessageSystem*, void*, EMessageException);
 
-
 void process_initiate_download(LLMessageSystem* msg, void**);
 void start_new_inventory_observer();
 

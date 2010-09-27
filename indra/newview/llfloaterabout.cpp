@@ -30,7 +30,7 @@
  * COMPLETENESS OR PERFORMANCE.
  * $/LicenseInfo$
  */
-
+ 
 #include "llviewerprecompiledheaders.h"
 
 #include "llfloaterabout.h"
@@ -64,12 +64,6 @@
 #include "lldxhardware.h"
 #endif
 
-
-
-
-
-
-extern LLCPUInfo gSysCPU;
 extern LLMemoryInfo gSysMemory;
 extern U32 gPacketsIn;
 
@@ -78,8 +72,6 @@ extern U32 gPacketsIn;
 ///----------------------------------------------------------------------------
 
 LLFloaterAbout* LLFloaterAbout::sInstance = NULL;
-
-static std::string get_viewer_release_notes_url();
 
 ///----------------------------------------------------------------------------
 /// Class LLFloaterAbout
@@ -119,24 +111,12 @@ LLFloaterAbout::LLFloaterAbout()
 	viewer_link_style->setColor(gSavedSettings.getColor4("HTMLLinkColor"));
 
 	// Version string
-	std::string version = std::string(LLAppViewer::instance()->getSecondLifeTitle()
-		+ llformat(" %d.%d.%d (%d) %s %s (%s)\n",
-		LL_VERSION_MAJOR, LL_VERSION_MINOR, LL_VERSION_PATCH, LL_VIEWER_BUILD,
-		__DATE__, __TIME__,
-		LL_CHANNEL));
+	std::string version = get_viewer_version();
 	support_widget->appendColoredText(version, FALSE, FALSE, gColors.getColor("TextFgReadOnlyColor"));
 	support_widget->appendStyledText(LLTrans::getString("ReleaseNotes"), false, false, viewer_link_style);
 
-	std::string support;
-	support.append("\n\n");
-
-#if LL_MSVC
-    support.append(llformat("Built with MSVC version %d\n\n", _MSC_VER));
-#endif
-
-#if LL_GNUC
-    support.append(llformat("Built with GCC version %d\n\n", GCC_VERSION));
-#endif
+	std::string support("\n\n");
+	support.append(get_viewer_build_version());
 
 	// Position
 	LLViewerRegion* region = gAgent.getRegion();
@@ -148,25 +128,7 @@ LLFloaterAbout::LLFloaterAbout()
 		server_link_style->setLinkHREF(region->getCapability("ServerReleaseNotes"));
 		server_link_style->setColor(gSavedSettings.getColor4("HTMLLinkColor"));
 
-		const LLVector3d &pos = gAgent.getPositionGlobal();
-		LLUIString pos_text = getString("you_are_at");
-		pos_text.setArg("[POSITION]",
-						llformat("%.1f, %.1f, %.1f ", pos.mdV[VX], pos.mdV[VY], pos.mdV[VZ]));
-		support.append(pos_text);
-
-		std::string region_text = llformat("in %s located at ",
-										gAgent.getRegion()->getName().c_str());
-		support.append(region_text);
-
-		std::string buffer;
-		buffer = gAgent.getRegion()->getHost().getHostName();
-		support.append(buffer);
-		support.append(" (");
-		buffer = gAgent.getRegion()->getHost().getString();
-		support.append(buffer);
-		support.append(")\n");
-		support.append(gLastVersionChannel);
-		support.append("\n");
+		support.append(get_viewer_region_info(getString("you_are_at")));
 
 		support_widget->appendColoredText(support, FALSE, FALSE, gColors.getColor("TextFgReadOnlyColor"));
 		support_widget->appendStyledText(LLTrans::getString("ReleaseNotes"), false, false, server_link_style);
@@ -179,75 +141,7 @@ LLFloaterAbout::LLFloaterAbout()
 	//  and this info sometimes gets sent to support
 	
 	// CPU
-	support.append("CPU: ");
-	support.append( gSysCPU.getCPUString() );
-	support.append("\n");
-
-	U32 memory = gSysMemory.getPhysicalMemoryKB() / 1024;
-	// Moved hack adjustment to Windows memory size into llsys.cpp
-
-	std::string mem_text = llformat("Memory: %u MB\n", memory );
-	support.append(mem_text);
-
-	support.append("OS Version: ");
-	support.append( LLAppViewer::instance()->getOSInfo().getOSString() );
-	support.append("\n");
-
-	support.append("Graphics Card Vendor: ");
-	support.append( (const char*) glGetString(GL_VENDOR) );
-	support.append("\n");
-
-	support.append("Graphics Card: ");
-	support.append( (const char*) glGetString(GL_RENDERER) );
-	support.append("\n");
-
-#if LL_WINDOWS
-    getWindow()->incBusyCount();
-    getWindow()->setCursor(UI_CURSOR_ARROW);
-    support.append("Windows Graphics Driver Version: ");
-    LLSD driver_info = gDXHardware.getDisplayInfo();
-    if (driver_info.has("DriverVersion"))
-    {
-        support.append(driver_info["DriverVersion"]);
-    }
-    support.append("\n");
-    getWindow()->decBusyCount();
-    getWindow()->setCursor(UI_CURSOR_ARROW);
-#endif
-
-	support.append("OpenGL Version: ");
-	support.append( (const char*) glGetString(GL_VERSION) );
-	support.append("\n");
-
-	support.append("\n");
-
-	support.append("libcurl Version: ");
-	support.append( LLCurl::getVersionString() );
-	support.append("\n");
-
-	support.append("J2C Decoder Version: ");
-	support.append( LLImageJ2C::getEngineInfo() );
-	support.append("\n");
-
-	support.append("Audio Driver Version: ");
-	bool want_fullname = true;
-	support.append( gAudiop ? gAudiop->getDriverName(want_fullname) : "(none)" );
-	support.append("\n");
-
-	// TODO: Implement media plugin version query
-
-	support.append("Qt Webkit Version: 4.5.2 ");
-	support.append("\n");
-
-	if (gPacketsIn > 0)
-	{
-		std::string packet_loss = llformat("Packets Lost: %.0f/%.0f (%.1f%%)", 
-			LLViewerStats::getInstance()->mPacketsLostStat.getCurrent(),
-			F32(gPacketsIn),
-			100.f*LLViewerStats::getInstance()->mPacketsLostStat.getCurrent() / F32(gPacketsIn) );
-		support.append(packet_loss);
-		support.append("\n");
-	}
+	support.append(get_viewer_misc_info());
 
 	support_widget->appendColoredText(support, FALSE, FALSE, gColors.getColor("TextFgReadOnlyColor"));
 
@@ -285,21 +179,143 @@ void LLFloaterAbout::show(void*)
 }
 
 
-static std::string get_viewer_release_notes_url()
+std::string LLFloaterAbout::get_viewer_release_notes_url()
 {
 	std::ostringstream version;
-	version <<  LL_VERSION_MAJOR
-		<< "." << LL_VERSION_MINOR
-		<< "." << LL_VERSION_PATCH
-		<< "." << LL_VERSION_BUILD;
+	version << LL_VERSION_MAJOR << "."
+		<< LL_VERSION_MINOR << "."
+		<< LL_VERSION_PATCH << "."
+		<< LL_VERSION_BUILD;
+
 	LLSD query;
-
-	query["channel"] = LL_CHANNEL;
-
+	query["channel"] = std::string(LL_CHANNEL);
 	query["version"] = version.str();
 
 	std::ostringstream url;
 	url << RELEASE_NOTES_BASE_URL << LLURI::mapToQueryString(query);
 
 	return url.str();
+}
+std::string LLFloaterAbout::get_viewer_version()
+{
+	return std::string(LLAppViewer::instance()->getSecondLifeTitle()
+		+ llformat(" %d.%d.%d (%d) %s %s (%s)\n",
+		LL_VERSION_MAJOR, LL_VERSION_MINOR, LL_VERSION_PATCH, LL_VIEWER_BUILD,
+		__DATE__, __TIME__,
+		LL_CHANNEL));
+}
+std::string LLFloaterAbout::get_viewer_build_version()
+{
+	std::string support;
+
+#if LL_MSVC
+	support.append(llformat("Built with MSVC version %d\n\n", _MSC_VER));
+#endif
+
+#if LL_GNUC
+	support.append(llformat("Built with GCC version %d\n\n", GCC_VERSION));
+#endif
+	return support;
+}
+std::string LLFloaterAbout::get_viewer_region_info(std::string you_are_at)
+{
+	std::string support("");
+	LLViewerRegion* region = gAgent.getRegion();
+	if (region)
+	{
+		const LLVector3d &pos = gAgent.getPositionGlobal();
+		LLUIString pos_text = you_are_at;
+		pos_text.setArg("[POSITION]",
+			llformat("%.1f, %.1f, %.1f ", pos.mdV[VX], pos.mdV[VY], pos.mdV[VZ]));
+		support.append(pos_text);
+
+		std::string region_text = llformat("in %s located at ",
+			gAgent.getRegion()->getName().c_str());
+		support.append(region_text);
+
+		std::string buffer;
+		buffer = gAgent.getRegion()->getHost().getHostName();
+		support.append(buffer);
+		support.append(" (");
+		buffer = gAgent.getRegion()->getHost().getString();
+		support.append(buffer);
+		support.append(")\n");
+		support.append(gLastVersionChannel);
+		support.append("\n");
+	}
+	return support;
+}
+std::string LLFloaterAbout::get_viewer_misc_info()
+{
+	std::string support;
+	support.append("CPU: ");
+	support.append( gSysCPU.getCPUString() );
+	support.append("\n");
+
+	U32 memory = gSysMemory.getPhysicalMemoryKB() / 1024;
+	// Moved hack adjustment to Windows memory size into llsys.cpp
+
+	std::string mem_text = llformat("Memory: %u MB\n", memory );
+	support.append(mem_text);
+
+	support.append("OS Version: ");
+	support.append( LLAppViewer::instance()->getOSInfo().getOSString() );
+	support.append("\n");
+
+	support.append("Graphics Card Vendor: ");
+	support.append( (const char*) glGetString(GL_VENDOR) );
+	support.append("\n");
+
+	support.append("Graphics Card: ");
+	support.append( (const char*) glGetString(GL_RENDERER) );
+	support.append("\n");
+
+#if LL_WINDOWS
+	getWindow()->incBusyCount();
+	getWindow()->setCursor(UI_CURSOR_ARROW);
+	support.append("Windows Graphics Driver Version: ");
+	LLSD driver_info = gDXHardware.getDisplayInfo();
+	if (driver_info.has("DriverVersion"))
+	{
+		support.append(driver_info["DriverVersion"]);
+	}
+	support.append("\n");
+	getWindow()->decBusyCount();
+	getWindow()->setCursor(UI_CURSOR_ARROW);
+#endif
+
+	support.append("OpenGL Version: ");
+	support.append( (const char*) glGetString(GL_VERSION) );
+	support.append("\n");
+
+	support.append("\n");
+
+	support.append("libcurl Version: ");
+	support.append( LLCurl::getVersionString() );
+	support.append("\n");
+
+	support.append("J2C Decoder Version: ");
+	support.append( LLImageJ2C::getEngineInfo() );
+	support.append("\n");
+
+	support.append("Audio Driver Version: ");
+	bool want_fullname = true;
+	support.append( gAudiop ? gAudiop->getDriverName(want_fullname) : "(none)" );
+	support.append("\n");
+
+	// TODO: Implement media plugin version query
+
+	support.append("Qt Webkit Version: 4.5.2 ");
+	support.append("\n");
+
+	if (gPacketsIn > 0)
+	{
+		std::string packet_loss = llformat("Packets Lost: %.0f/%.0f (%.1f%%)", 
+			LLViewerStats::getInstance()->mPacketsLostStat.getCurrent(),
+			F32(gPacketsIn),
+			100.f*LLViewerStats::getInstance()->mPacketsLostStat.getCurrent() / F32(gPacketsIn) );
+		support.append(packet_loss);
+		support.append("\n");
+	}
+	return support;
 }

@@ -89,6 +89,7 @@ void* LLFloaterMyFriends::createGroupsPanel(void* data)
 //
 // LLFloaterChatterBox
 //
+
 LLFloaterChatterBox::LLFloaterChatterBox(const LLSD& seed) :
 	mActiveVoiceFloater(NULL)
 {

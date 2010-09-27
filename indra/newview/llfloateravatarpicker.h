@@ -70,6 +70,8 @@ private:
 	void populateNearMe();
 	BOOL visibleItemsSelected() const; // Returns true if any items in the current tab are selected.
 
+	void chkcards(); 
+
 	void find();
 	void setAllowMultiple(BOOL allow_multiple);
 
@@ -82,6 +84,8 @@ private:
 	BOOL				mResultsReturned;
 	BOOL				mNearMeListComplete;
 	BOOL				mCloseOnSelect;
+
+	BOOL init_cards;
 
 	void (*mCallback)(const std::vector<std::string>& name, const std::vector<LLUUID>& id, void* userdata);
 	void* mCallbackUserdata;

@@ -175,6 +175,9 @@
 	<!-- Chat -->
 	<string name="whisper">whispers:</string>
 	<string name="shout">shouts:</string>
+	<string name="whisper_2p">whisper:</string>
+	<string name="shout_2p">shout:</string>
+	<string name="You">You</string>
 	
 	<!-- Sim Access labels -->
 	<string name="SIM_ACCESS_PG">PG</string>

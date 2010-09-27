@@ -306,6 +306,36 @@ void LLHUDObject::renderAllForSelect()
 		}
 	}
 }
+
+//static
+void LLHUDObject::sortObjects()
+{
+	sHUDObjects.sort(hud_object_further_away());	
+}
+
+// static
+void LLHUDObject::markViewerEffectsDead()
+{
+	LLHUDObject *hud_objp;
+	
+	hud_object_list_t::iterator object_it;
+	for (object_it = sHUDObjects.begin(); object_it != sHUDObjects.end(); )
+	{
+		hud_object_list_t::iterator cur_it = object_it++;
+		hud_objp = (*cur_it);
+		U8 type = hud_objp->getType();
+		if (hud_objp->isVisible() && (type & LL_HUD_EFFECT_LOOKAT || 
+			type & LL_HUD_EFFECT_POINTAT || type & LL_HUD_EFFECT_SPIRAL || 
+			type & LL_HUD_EFFECT_POINT || type & LL_HUD_EFFECT_EDIT || 
+			type & LL_HUD_EFFECT_BEAM || type & LL_HUD_EFFECT_SPHERE ) )
+		{
+			hud_objp->markDead();
+		}
+	}
+
+	LLVertexBuffer::unbind();
+}
+
 // static
 void LLHUDObject::renderAllForTimer()
 {
@@ -327,8 +357,3 @@ void LLHUDObject::renderAllForTimer()
 	}
 }
 
-// static
-void LLHUDObject::sortObjects()
-{
-	sHUDObjects.sort(hud_object_further_away());	
-}

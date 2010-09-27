@@ -530,15 +530,15 @@ void LLVOVolume::updateTextureVirtualSize()
 				(texture_discard < current_discard || //texture has more data than last rebuild
 				current_discard < 0)) //no previous rebuild
 			{
-				gPipeline.markRebuild(mDrawable, LLDrawable::REBUILD_VOLUME, FALSE);
+				markForUpdate(FALSE);
 				mSculptChanged = TRUE;
 			}
 
 			if (gPipeline.hasRenderDebugMask(LLPipeline::RENDER_DEBUG_SCULPTED))
 			{
-				setDebugText(llformat("T%d C%d V%d\n%dx%d",
+				setDebugText(llformat("T%d C%d V%d\n%dx%d SA%f",
 										  texture_discard, current_discard, getVolume()->getSculptLevel(),
-										  mSculptTexture->getHeight(), mSculptTexture->getWidth()));
+										  mSculptTexture->getHeight(), mSculptTexture->getWidth(), mSculptSurfaceArea));
 			}
 		}
 	}
@@ -684,11 +684,13 @@ BOOL LLVOVolume::setVolume(const LLVolumeParams &volume_params, const S32 detail
 			{
 				sculpt();
 				mSculptLevel = getVolume()->getSculptLevel();
+				mSculptSurfaceArea = getVolume()->sculptGetSurfaceArea();
 			}
 		}
 		else
 		{
 			mSculptTexture = NULL;
+			mSculptSurfaceArea = 0.0;
 		}
 
 		return TRUE;
@@ -2176,6 +2178,7 @@ void LLVolumeGeometryManager::getGeometry(LLSpatialGroup* group)
 
 }
 
+
 void LLVolumeGeometryManager::rebuildGeom(LLSpatialGroup* group)
 {
 	if (LLPipeline::sSkipUpdate)
@@ -2218,8 +2221,13 @@ void LLVolumeGeometryManager::rebuildGeom(LLSpatialGroup* group)
 	std::vector<LLFace*> alpha_faces;
 	U32 useage = group->mSpatialPartition->mBufferUsage;
 
-	U32 max_vertices = (gSavedSettings.getS32("RenderMaxVBOSize")*1024)/LLVertexBuffer::calcStride(group->mSpatialPartition->mVertexDataMask);
-	U32 max_total = (gSavedSettings.getS32("RenderMaxNodeSize")*1024)/LLVertexBuffer::calcStride(group->mSpatialPartition->mVertexDataMask);
+
+	static S32* sRenderMaxVBOSize = rebind_llcontrol<S32>("RenderMaxVBOSize", &gSavedSettings, true);
+	static S32* sRenderMaxNodeSize = rebind_llcontrol<S32>("RenderMaxNodeSize", &gSavedSettings, true);
+
+
+	U32 max_vertices = ((*sRenderMaxVBOSize)*1024)/LLVertexBuffer::calcStride(group->mSpatialPartition->mVertexDataMask);
+	U32 max_total = ((*sRenderMaxNodeSize)*1024)/LLVertexBuffer::calcStride(group->mSpatialPartition->mVertexDataMask);
 	max_vertices = llmin(max_vertices, (U32) 65535);
 
 	U32 cur_total = 0;
@@ -2240,6 +2248,18 @@ void LLVolumeGeometryManager::rebuildGeom(LLSpatialGroup* group)
 		}
 
 		LLVOVolume* vobj = drawablep->getVOVolume();
+		
+		static F32* sSculptSurfaceAreaThreshold = rebind_llcontrol<F32>("ZwagothSculptSAThresh", &gSavedSettings, true);
+		static F32* sSculptSurfaceAreaMax = rebind_llcontrol<F32>("ZwagothSculptSAMax", &gSavedSettings, true);
+		if (vobj->mSculptSurfaceArea > (*sSculptSurfaceAreaThreshold))
+		{
+		    LLPipeline::sSculptSurfaceAreaFrame += vobj->mSculptSurfaceArea;
+		    if(LLPipeline::sSculptSurfaceAreaFrame > (*sSculptSurfaceAreaMax))
+		    {
+		      continue;
+		    }
+		}
+		
 		llassert_always(vobj);
 		vobj->updateTextureVirtualSize();
 		vobj->preRebuild();
@@ -2408,8 +2428,6 @@ void LLVolumeGeometryManager::rebuildGeom(LLSpatialGroup* group)
 
 void LLVolumeGeometryManager::rebuildMesh(LLSpatialGroup* group)
 {
-	static int warningsCount = 20;
-
 	if (group->isState(LLSpatialGroup::MESH_DIRTY))
 	{
 		S32 num_mapped_veretx_buffer = LLVertexBuffer::sMappedCount ;
@@ -2473,11 +2491,7 @@ void LLVolumeGeometryManager::rebuildMesh(LLSpatialGroup* group)
 		//if not all buffers are unmapped
 		if(num_mapped_veretx_buffer != LLVertexBuffer::sMappedCount) 
 		{
-			if (++warningsCount > 20)	// Do not spam the log file uselessly...
-			{
-				llwarns << "Not all mapped vertex buffers are unmapped!" << llendl ;
-				warningsCount = 1;
-			}
+			//llwarns << "Not all mapped vertex buffers are unmapped!" << llendl ; 
 			for (LLSpatialGroup::element_iter drawable_iter = group->getData().begin(); drawable_iter != group->getData().end(); ++drawable_iter)
 			{
 				LLDrawable* drawablep = *drawable_iter;
@@ -2498,8 +2512,9 @@ void LLVolumeGeometryManager::rebuildMesh(LLSpatialGroup* group)
 
 void LLVolumeGeometryManager::genDrawInfo(LLSpatialGroup* group, U32 mask, std::vector<LLFace*>& faces, BOOL distance_sort)
 {
+	static S32* sRenderMaxVBOSize = rebind_llcontrol<S32>("RenderMaxVBOSize", &gSavedSettings, true);
 	//calculate maximum number of vertices to store in a single buffer
-	U32 max_vertices = (gSavedSettings.getS32("RenderMaxVBOSize")*1024)/LLVertexBuffer::calcStride(group->mSpatialPartition->mVertexDataMask);
+	U32 max_vertices = ((*sRenderMaxVBOSize)*1024)/LLVertexBuffer::calcStride(group->mSpatialPartition->mVertexDataMask);
 	max_vertices = llmin(max_vertices, (U32) 65535);
 
 	if (!distance_sort)

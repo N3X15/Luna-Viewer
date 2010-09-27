@@ -49,7 +49,6 @@
 #include "lltransactiontypes.h"
 #include "llstatusbar.h"
 #include "lleconomy.h"
-#include "llviewercontrol.h"
 #include "llviewerwindow.h"
 #include "llfloaterdirectory.h"
 #include "llfloatergroupinfo.h"
@@ -794,6 +793,20 @@ LLGroupMgrGroupData* LLGroupMgr::getGroupData(const LLUUID& id)
 	return NULL;
 }
 
+// Helper function for LLGroupMgr::processGroupMembersReply
+// This reformats date strings from MM/DD/YYYY to YYYY/MM/DD ( e.g. 1/27/2008 -> 2008/1/27 )
+// so that the sorter can sort by year before month before day.
+static void formatDateString(std::string &date_string)
+{
+	using namespace boost;
+	cmatch result;
+	const regex expression("([0-9]{1,2})/([0-9]{1,2})/([0-9]{4})");
+	if (regex_match(date_string.c_str(), result, expression))
+	{
+		date_string = result[3]+"/"+result[1]+"/"+result[2];
+	}
+}
+
 // static
 void LLGroupMgr::processGroupMembersReply(LLMessageSystem* msg, void** data)
 {
@@ -843,14 +856,7 @@ void LLGroupMgr::processGroupMembersReply(LLMessageSystem* msg, void** data)
 
 			if (member_id.notNull())
 			{
-				tm t;
-				if (sscanf(online_status.c_str(), "%u/%u/%u", &t.tm_mon, &t.tm_mday, &t.tm_year) == 3 && t.tm_year > 1900)
-				{
-					t.tm_year -= 1900;
-					t.tm_mon--;
-					t.tm_hour = t.tm_min = t.tm_sec = 0;
-					timeStructToFormattedString(&t, gSavedSettings.getString("ShortDateFormat"), online_status);
-				}
+				formatDateString(online_status); // reformat for sorting, e.g. 12/25/2008 -> 2008/12/25
 				
 				//llinfos << "Member " << member_id << " has powers " << std::hex << agent_powers << std::dec << llendl;
 				LLGroupMemberData* newdata = new LLGroupMemberData(member_id, 

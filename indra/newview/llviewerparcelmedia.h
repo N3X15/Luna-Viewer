@@ -85,6 +85,8 @@ class LLViewerParcelMedia : public LLViewerMediaObserver
 		static LLUUID sMediaRegionID;
 		// HACK: this will change with Media on a Prim
 		static viewer_media_t sMediaImpl;
+		//whether the user pressed the play button, thus allowing scripts to control media
+		static BOOL sManuallyAllowedScriptedMedia;
 };
 
 

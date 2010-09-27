@@ -340,6 +340,13 @@ const LLRelationship* LLAvatarTracker::getBuddyInfo(const LLUUID& id) const
 	return get_ptr_in_map(mBuddyInfo, id);
 }
 
+//Ascent:KC - from v2
+bool LLAvatarTracker::isBuddy(const LLUUID& id) const
+{
+	LLRelationship* info = get_ptr_in_map(mBuddyInfo, id);
+	return (info != NULL);
+}
+
 // online status
 void LLAvatarTracker::setBuddyOnline(const LLUUID& id, bool is_online)
 {
@@ -715,16 +722,31 @@ void LLAvatarTracker::formFriendship(const LLUUID& id)
 void LLAvatarTracker::processTerminateFriendship(LLMessageSystem* msg, void**)
 {
 	LLUUID id;
+	LLUUID agentid;
+	msg->getUUID("AgentData", "AgentID", agentid);
 	msg->getUUID("ExBlock", "OtherID", id);
 	if(id.notNull())
 	{
 		LLAvatarTracker& at = LLAvatarTracker::instance();
 		LLRelationship* buddy = get_ptr_in_map(at.mBuddyInfo, id);
-		if(!buddy) return;
-		at.mBuddyInfo.erase(id);
-		at.mModifyMask |= LLFriendObserver::REMOVE;
-		delete buddy;
-		at.notifyObservers();
+		if(buddy)
+		{
+			at.mBuddyInfo.erase(id);
+			at.mModifyMask |= LLFriendObserver::REMOVE;
+			delete buddy;
+			at.notifyObservers();
+
+			std::string first, last;
+			LLSD args;
+			if(gCacheName->getName(id, first, last))
+			{
+				args["NAME"] = first + " " + last;
+			}else
+			{
+				args["NAME"] = "(unknown name) (key: "+id.asString()+")";	
+			}
+			LLNotifications::instance().add("FriendshipDissolved", args);
+		}
 	}
 }
 

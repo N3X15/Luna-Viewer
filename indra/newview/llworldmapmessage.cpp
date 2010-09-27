@@ -40,10 +40,6 @@
 
 #include "hippogridmanager.h"
 
-// <edit>
-#include "llviewernetwork.h" //for isInProductionGrid()
-// </edit>
-
 const U32 LAYER_FLAG = 2;
 
 //---------------------------------------------------------------------------

@@ -4,7 +4,7 @@
  *
  * $LicenseInfo:firstyear=2004&license=viewergpl$
  * 
- * Copyright (c) 2004-2009, Linden Research, Inc.
+ * Copyright (c) 2004-2010, Linden Research, Inc.
  * 
  * Second Life Viewer Source Code
  * The source code in this file ("Source Code") is provided by Linden Lab
@@ -64,7 +64,7 @@ public:
 	void			refresh();
 
 	static BOOL		precommitValidate(LLUICtrl* ctrl,void* userdata);
-
+	
 	static void		onCommitLock(LLUICtrl *ctrl, void *data);
 	static void 	onCommitPosition(		LLUICtrl* ctrl, void* userdata);
 	static void 	onCommitScale(			LLUICtrl* ctrl, void* userdata);
@@ -123,6 +123,7 @@ protected:
 	static LLVolumeParams mClipboardVolumeParams;
 	static BOOL hasParamClipboard;
 	
+
 	S32				mComboMaterialItemCount;
 
 	LLTextBox*		mLabelMaterial;
@@ -215,9 +216,6 @@ protected:
 	LLCheckBoxCtrl  *mCtrlSculptMirror;
 	LLCheckBoxCtrl  *mCtrlSculptInvert;
 	
-
-
-
 	LLVector3		mCurEulerDegrees;		// to avoid sending rotation when not changed
 	BOOL			mIsPhysical;			// to avoid sending "physical" when not changed
 	BOOL			mIsTemporary;			// to avoid sending "temporary" when not changed

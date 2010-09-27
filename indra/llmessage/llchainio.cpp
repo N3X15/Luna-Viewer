@@ -1,6 +1,6 @@
 /** 
  * @file llchainio.cpp
- * @author Phoenix
+ * @author Ascent
  * @date 2005-08-04
  * @brief Implementaiton of the chain factory.
  *

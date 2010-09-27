@@ -53,7 +53,7 @@ const F32 MIN_BANDWIDTH = 50.f;
 const F32 MAX_BANDWIDTH = 1500.f;
 const F32 STEP_FRACTIONAL = 0.1f;
 const F32 TIGHTEN_THROTTLE_THRESHOLD = 3.0f; // packet loss % per s
-const F32 EASE_THROTTLE_THRESHOLD = 0.5f; // packet loss % per s
+const F32 EASE_THROTTLE_THRESHOLD = 0.2f; // packet loss % per s
 const F32 DYNAMIC_UPDATE_DURATION = 5.0f; // seconds
 
 LLViewerThrottle gViewerThrottle;
@@ -198,6 +198,8 @@ public:
 	}
 };
 
+F32 *LLViewerThrottle::sThrottleBandwidthKBPS;
+
 LLViewerThrottle::LLViewerThrottle() :
 	mMaxBandwidth(0.f),
 	mCurrentBandwidth(0.f),
@@ -227,7 +229,7 @@ void LLViewerThrottle::setMaxBandwidth(F32 kbits_per_second, BOOL from_event)
 
 void LLViewerThrottle::load()
 {
-	mMaxBandwidth = gSavedSettings.getF32("ThrottleBandwidthKBPS")*1024;
+	mMaxBandwidth = *LLViewerThrottle::sThrottleBandwidthKBPS*1024;
 	resetDynamicThrottle();
 	mCurrent.dump();
 }

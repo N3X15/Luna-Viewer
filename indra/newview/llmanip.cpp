@@ -106,11 +106,11 @@ LLManip::LLManip( const std::string& name, LLToolComposite* composite )
 {
 	initPivot();
 
-	gSavedSettings.getControl("AscentBuildPrefs_ActualRoot")->getSignal()->connect(boost::bind(&updateActualRoot));
-	gSavedSettings.getControl("AscentBuildPrefs_PivotIsPercent")->getSignal()->connect(boost::bind(&updatePivotIsPercent));
-	gSavedSettings.getControl("AscentBuildPrefs_PivotX")->getSignal()->connect(boost::bind(&updatePivotX));
-	gSavedSettings.getControl("AscentBuildPrefs_PivotY")->getSignal()->connect(boost::bind(&updatePivotY));
-	gSavedSettings.getControl("AscentBuildPrefs_PivotZ")->getSignal()->connect(boost::bind(&updatePivotZ));
+	gSavedSettings.getControl("AscentBuildPrefs_ActualRoot")->getSignal()->connect(&updateActualRoot);
+	gSavedSettings.getControl("AscentBuildPrefs_PivotIsPercent")->getSignal()->connect(&updatePivotIsPercent);
+	gSavedSettings.getControl("AscentBuildPrefs_PivotX")->getSignal()->connect(&updatePivotX);
+	gSavedSettings.getControl("AscentBuildPrefs_PivotY")->getSignal()->connect(&updatePivotY);
+	gSavedSettings.getControl("AscentBuildPrefs_PivotZ")->getSignal()->connect(&updatePivotZ);
 }
 //static
 void LLManip::initPivot()
@@ -122,37 +122,30 @@ void LLManip::initPivot()
 	sPivotZ		= gSavedSettings.getF32("AscentBuildPrefs_PivotZ");
 }
 //static
-bool LLManip::updateActualRoot()
+void LLManip::updateActualRoot(const LLSD &data)
 {
-	//sActualRoot = (bool)data.asBoolean();
-	sActualRoot = gSavedSettings.getBOOL("AscentBuildPrefs_ActualRoot");
-	return true;
+	sActualRoot = (bool)data.asBoolean();
 }
 //static
-bool LLManip::updatePivotIsPercent()
+void LLManip::updatePivotIsPercent(const LLSD &data)
 {
-	sPivotPerc = gSavedSettings.getBOOL("AscentBuildPrefs_PivotIsPercent");
-	return true;
+	sPivotPerc = (bool)data.asBoolean();
 }
 //static
-bool LLManip::updatePivotX()
+void LLManip::updatePivotX(const LLSD &data)
 {
-	sPivotX = gSavedSettings.getF32("AscentBuildPrefs_PivotX");
-	return true;
+	sPivotX = (F32)data.asReal();
 }
 //static
-bool LLManip::updatePivotY()
+void LLManip::updatePivotY(const LLSD &data)
 {
-	sPivotY = gSavedSettings.getF32("AscentBuildPrefs_PivotY");
-	return true;
+	sPivotY = (F32)data.asReal();
 }
 //static
-bool LLManip::updatePivotZ()
+void LLManip::updatePivotZ(const LLSD &data)
 {
-	sPivotZ = gSavedSettings.getF32("AscentBuildPrefs_PivotZ");
-	return true;
+	sPivotZ = (F32)data.asReal();
 }
-
 void LLManip::getManipNormal(LLViewerObject* object, EManipPart manip, LLVector3 &normal)
 {
 	LLVector3 grid_origin;
@@ -427,9 +420,9 @@ LLVector3 LLManip::getPivotPoint()
 		pos = pos + add;
 	}else
 	{
-		//pos[VX] = pos[VX] + gSavedSettings.getF32("EmeraldBuildPrefs_PivotX");
-		//pos[VY] = pos[VY] + gSavedSettings.getF32("EmeraldBuildPrefs_PivotY");
-		//pos[VZ] = pos[VZ] + gSavedSettings.getF32("EmeraldBuildPrefs_PivotZ");
+		//pos[VX] = pos[VX] + gSavedSettings.getF32("AscentBuildPrefs_PivotX");
+		//pos[VY] = pos[VY] + gSavedSettings.getF32("AscentBuildPrefs_PivotY");
+		//pos[VZ] = pos[VZ] + gSavedSettings.getF32("AscentBuildPrefs_PivotZ");
 		LLVector3 add(
 			sPivotX,
 			sPivotY,
@@ -440,7 +433,6 @@ LLVector3 LLManip::getPivotPoint()
 	//pos = pos * rot;
 	return pos;
 }
-
 
 
 void LLManip::renderGuidelines(BOOL draw_x, BOOL draw_y, BOOL draw_z)

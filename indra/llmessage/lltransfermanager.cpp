@@ -1123,7 +1123,7 @@ LLTransferSource *LLTransferSource::createSource(const LLTransferSourceType styp
 	{
 	// *NOTE: The source file transfer mechanism is highly insecure and could
 	// lead to easy exploitation of a server process.
-	// I have removed all uses of it from the codebase. Phoenix.
+	// I have removed all uses of it from the codebase. Ascent.
 	// 
 	//case LLTST_FILE:
 	//	return new LLTransferSourceFile(id, priority);

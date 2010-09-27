@@ -1,6 +1,6 @@
 /** 
  * @file lluri.cpp
- * @author Phoenix
+ * @author Ascent
  * @date 2006-02-08
  * @brief Implementation of the LLURI class.
  *
