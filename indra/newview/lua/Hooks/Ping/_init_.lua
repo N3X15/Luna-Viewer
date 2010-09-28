@@ -35,4 +35,4 @@ local function LunaPonger(from_id, owner_id, mesg)
 	end
 end
 
-SetHook("OnOwnerSay",		LunaPonger)
+SetHook("OnBridgeCommand",		LunaPonger)

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+ Copyright (C) 2010 Discrete Dreamscape
+ Author: Discrete Dreamscape <discrete.dreamscape@gmail.com>
+
+ This library is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Library General Public
+ License as published by the Free Software Foundation; either
+ version 2 of the License, or (at your option) any later version.
+
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ Library General Public License for more details.
+
+ You should have received a copy of the GNU Library General Public
+ License along with this library; if not, write to the
+ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ Boston, MA 02111-1307, USA.
+
+-->
+
+<style-scheme id="chalkboard_lsl" _name="Chalkboard LSL" version="1.0">
+
+  <author>Discrete Dreamscape</author>
+  <_description>Low-contrast light-on-dark color scheme for LSL</_description>
+
+  <!-- Color settings -->
+  <color name="lslstate"                  	value="#d67a7a"/>
+  <color name="lsltype"                  value="#91d485"/>
+  <color name="lslevent"                  value="#789ee8"/>
+  <color name="lslnumeric"                  value="#7ab8d6"/>
+  <color name="lslflow"                  value="#789ee8"/>
+  <color name="lslbuiltin"                  value="#d17575"/>
+  <color name="lslbackground"                  value="#262626"/>
+  <color name="lsldefault"                  value="#d2d2d2"/> <!-- Or maybe AFAFAF? -->
+  <color name="lslstring"                  value="#91d485"/>
+  <color name="lslcomment"                  value="#dbb080"/>
+  
+  <color name="lslbackgroundlight" value="#505050"/>
+  
+  <!-- Keywords from the LSL language spec XML
+    <style id="comment" _name="Comment" map-to="def:comment"/>
+    <style id="error" _name="Error" map-to="def:error"/>
+    <style id="string" _name="String" map-to="def:string"/>
+    <style id="flow" _name="Keyword" map-to="def:shebang"/>
+    <style id="constants" _name="Constants" map-to="def:identifier"/>
+    <style id="special_cons" _name="Special Constants" map-to="def:preprocessor"/>
+    <style id="number" _name="Number" map-to="def:special-char"/>
+    <style id="type" _name="Data Type" map-to="def:type"/>
+    <style id="event" _name="Events" map-to="def:function"/>
+    <style id="ll_functions" _name="LL Functions" map-to="def:statement"/>
+    <style id="states" _name="States" map-to="def:statement"/>
+  -->
+  
+  <style name="text" foreground="lsldefault" background="lslbackground"/>
+  <style name="current-line" background="lslbackgroundlight"/>
+  <style name="line-numbers" foreground="lsldefault" background="#black"/>
+  <style name="selection" foreground="#black" background="lslcomment"/>
+  
+  <style name="bracket-match" foreground="#black" background="lsldefault" bold="true"/>
+  <style name="bracket-mismatch" background="#red" bold="true"/>
+  
+  <style name="search-match" foreground="#black" background="lsldefault" bold="true"/>
+  
+  <style name="def:comment" foreground="lslcomment"/>
+  <style name="def:error" foreground="lsldefault"/>
+  <style name="def:string" foreground="lslstring"/>
+  <style name="def:shebang" foreground="lslflow" bold="true"/>
+  <style name="def:identifier" foreground="lslnumeric" bold="true"/>
+  <style name="def:preprocessor" foreground="lslflow" bold="true"/>
+  <style name="def:special-char" foreground="lslnumeric"/>
+  <style name="def:type" foreground="lsltype" bold="true"/>
+  <style name="def:function" foreground="lslevent" bold="true"/>
+  <style name="def:statement" foreground="lslbuiltin" bold="true"/>
+  
+</style-scheme>
+

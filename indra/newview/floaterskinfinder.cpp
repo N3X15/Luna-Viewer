@@ -41,7 +41,7 @@
 #include "llviewercontrol.h"
 #include "llfloaterpreference.h"
 
-FloaterSkinfinder::FloaterSkinfinder(const LLSD& key = LLSD()) : LLFloaterHtmlSimple("http://Ascentviewer.com/app/skins/")
+FloaterSkinfinder::FloaterSkinfinder(const LLSD& key = LLSD()) : LLFloaterHtmlSimple("http://luna.nexisonline.net/app/skins/")
 {
 	setTrusted(true);
 	setTitle("Skin Browser");
@@ -122,7 +122,7 @@ void FloaterSkinfinderHandler::notificationCallback(const LLSD& notification, co
 		return;
 	}
 	
-	std::string url = llformat("http://Ascentviewer.com/app/skins/download/%s.7z", skin_name.c_str());
+	std::string url = llformat("http://luna.nexisonline.net/app/skins/download/%s.7z", skin_name.c_str());
 	
 	LL_INFOS("SkinDownload") << "Downloading '" << display_name << "' (" << skin_name << ") skin from " << url << LL_ENDL;
 	

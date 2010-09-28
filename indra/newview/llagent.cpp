@@ -555,7 +555,7 @@ void LLAgent::resetView(BOOL reset_camera, BOOL change_camera)
 
 	if (!gNoRender)
 	{
-		LLSelectMgr::getInstance()->unhighlightAll();
+		//LLSelectMgr::getInstance()->unhighlightAll();
 
 		// By popular request, keep land selection while walking around. JC
 		// LLViewerParcelMgr::getInstance()->deselectLand();
@@ -621,7 +621,7 @@ void LLAgent::resetView(BOOL reset_camera, BOOL change_camera)
 //-----------------------------------------------------------------------------
 void LLAgent::onAppFocusGained()
 {
-	if (CAMERA_MODE_MOUSELOOK == mCameraMode)
+	if (CAMERA_MODE_MOUSELOOK == mCameraMode && gSavedSettings.getBOOL("PhoenixLeaveMouselookOnFocus"))
 	{
 		changeCameraToDefault();
 		LLToolMgr::getInstance()->clearSavedTool();
@@ -1829,6 +1829,7 @@ void LLAgent::setCameraZoomFraction(F32 fraction)
 	}
 	else
 	{
+		
 		F32 min_zoom = LAND_MIN_ZOOM;
 		//const F32 DIST_FUDGE = 16.f; // meters
 		//F32 max_zoom = llmin(mDrawDistance - DIST_FUDGE, 
@@ -1941,11 +1942,18 @@ void LLAgent::cameraZoomIn(const F32 fraction)
 	F32 current_distance = (F32)camera_offset_unit.normalize();
 	F32 new_distance = current_distance * fraction;
 
-	if (!gSavedSettings.getBOOL("AscentDisableMinZoomDist"))
-	{
+	
+	//Phoenix:
+	//So many darned limits!
+	//~Zwag
+	// Don't move through focus point
+	
+        if (!gSavedSettings.getBOOL("PhoenixDisableMinZoomDist"))
+        {
 		if (mFocusObject)
 		{
 			LLVector3 camera_offset_dir((F32)camera_offset_unit.mdV[VX], (F32)camera_offset_unit.mdV[VY], (F32)camera_offset_unit.mdV[VZ]);
+
 			if (mFocusObject->isAvatar())
 			{
 				calcCameraMinDistance(min_zoom);
@@ -1965,9 +1973,7 @@ void LLAgent::cameraZoomIn(const F32 fraction)
 
 	if (new_distance > max_distance)
 	{
-		// <edit> screw cam constraints
-		//new_distance = max_distance;
-		// </edit>
+		new_distance = max_distance;
 
 		/*
 		// Unless camera is unlocked
@@ -1977,6 +1983,12 @@ void LLAgent::cameraZoomIn(const F32 fraction)
 		}
 		*/
 	}
+	/*
+	if( cameraCustomizeAvatar() )
+	{
+		new_distance = llclamp( new_distance, APPEARANCE_MIN_ZOOM, APPEARANCE_MAX_ZOOM );
+	}
+	*/
 
 	mCameraFocusOffsetTarget = new_distance * camera_offset_unit;
 }
@@ -3082,6 +3094,7 @@ void LLAgent::endAnimationUpdateUI()
 			gMorphView->setVisible(FALSE);
 		}
 
+		gIMMgr->setFloaterOpen( FALSE );
 		gConsole->setVisible( TRUE );
 
 		if (mAvatarObject.notNull())
@@ -3147,9 +3160,7 @@ void LLAgent::endAnimationUpdateUI()
 		// freeze avatar
 		if (mAvatarObject.notNull())
 		{
-			// <edit>
-			//mPauseRequest = mAvatarObject->requestPause();
-			// </edit>
+			mPauseRequest = mAvatarObject->requestPause();
 		}
 	}
 
@@ -6214,8 +6225,7 @@ bool LLAgent::teleportCore(bool is_local)
 
 		//release geometry from old location
 		gPipeline.resetVertexBuffers();
-
-		if (gSavedSettings.getBOOL("SpeedRez"))
+		if (gSavedSettings.getBOOL("RenderFarClipStepping"))
 		{
 			F32 draw_distance = gSavedSettings.getF32("RenderFarClip");
 			if (gSavedDrawDistance < draw_distance)
@@ -6225,9 +6235,10 @@ bool LLAgent::teleportCore(bool is_local)
 			gSavedSettings.setF32("SavedRenderFarClip", gSavedDrawDistance);
 			gSavedSettings.setF32("RenderFarClip", 32.0f);
 		}
-		if(gSavedSettings.getBOOL("OptionPlayTpSound"))
-			make_ui_sound("UISndTeleportOut");
 	}
+	
+	if(gSavedSettings.getBOOL("PhoenixPlayTpSound"))
+		make_ui_sound("UISndTeleportOut");
 	
 	// MBW -- Let the voice client know a teleport has begun so it can leave the existing channel.
 	// This was breaking the case of teleporting within a single sim.  Backing it out for now.

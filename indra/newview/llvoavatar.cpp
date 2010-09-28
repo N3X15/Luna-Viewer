@@ -716,14 +716,12 @@ BOOL LLVOAvatar::sJointDebug = FALSE;
 
 AscentGlobalBoobConfig LLVOAvatar::sBoobConfig;
 
-//F32 LLVOAvatar::sAvMorphTime			= 0.65f;
 
 
 F32 LLVOAvatar::sUnbakedTime = 0.f;
 F32 LLVOAvatar::sUnbakedUpdateTime = 0.f;
 F32 LLVOAvatar::sGreyTime = 0.f;
 F32 LLVOAvatar::sGreyUpdateTime = 0.f;
-bool LLVOAvatar::sDoProperArc = true;
 
 //-----------------------------------------------------------------------------
 // Helper functions
@@ -776,7 +774,9 @@ LLVOAvatar::LLVOAvatar(const LLUUID& id,
 	mFullyLoadedInitialized(FALSE),
 	mHasBakedHair( FALSE ),
 	mSupportsAlphaLayers(FALSE),
-	mFirstSetActualBoobGravRan( false )
+	mFirstSetActualBoobGravRan( false ),
+	mCurrentClient(LLUUID::null,LLColor4::white,"Loading..."),
+	mLastClientTexture(NULL)
 {
 	LLMemType mt(LLMemType::MTYPE_AVATAR);
 	//VTResume();  // VTune
@@ -2114,13 +2114,11 @@ void LLVOAvatar::buildCharacter()
 					if (attachment->getGroup() == i)
 					{
 						LLMenuItemCallGL* item;
-
-
-						item = new LLMenuItemCallGL(attachment->getName(), 
-													NULL, 
+						item = new LLMenuItemCallGL(attachment->getName(),
+													NULL,
 													object_selected_and_point_valid);
 						item->addListener(gMenuHolder->getListenerByName("Object.AttachToAvatar"), "on_click", curiter->first);
-						
+
 						gAttachPieMenu->append(item);
 
 						attachment_found = TRUE;
@@ -3198,164 +3196,20 @@ bool LLVOAvatar::loadClientTags()
 	}
 	return true;
 }
-
-void LLVOAvatar::getClientInfo(std::string& client, LLColor4& color, BOOL useComment)
-{
-	if (!getTE(TEX_HEAD_BODYPAINT))
-		 return;
-	std::string uuid_str = getTE(TEX_HEAD_BODYPAINT)->getID().asString(); //UUID of the head texture
-	if (mIsSelf)
-	{
-		BOOL showCustomTag = LLSavedSettingsGlue::getCOABOOL("AscentUseCustomTag");
-		if (!gSavedSettings.getBOOL("AscentShowSelfTagColor"))
-		{
-			color = gColors.getColor( "AvatarNameColor" );
-			return;
-		}
-		else if (showCustomTag)
-		{
-			color = LLSavedSettingsGlue::getCOAColor4("AscentCustomTagColor");
-			client = LLSavedSettingsGlue::getCOAString("AscentCustomTagLabel");
-			return;
-		}
-		else if (gSavedSettings.getBOOL("AscentUseTag"))
-			uuid_str = LLSavedSettingsGlue::getCOAString("AscentReportClientUUID");
-	}
-	if(getTEImage(TEX_HEAD_BODYPAINT)->getID() == IMG_DEFAULT_AVATAR)
-	{
-		BOOL res = FALSE;
-		for(int ti = TEX_UPPER_SHIRT; ti < TEX_NUM_INDICES; ti++)
-		{
-			switch((ETextureIndex)ti)
-			{
-				case TEX_HEAD_BODYPAINT:
-				case TEX_UPPER_SHIRT:
-				case TEX_LOWER_PANTS:
-				case TEX_EYES_IRIS:
-				case TEX_HAIR:
-				case TEX_UPPER_BODYPAINT:
-				case TEX_LOWER_BODYPAINT:
-				case TEX_LOWER_SHOES:
-				case TEX_LOWER_SOCKS:
-				case TEX_UPPER_JACKET:
-				case TEX_LOWER_JACKET:
-				case TEX_UPPER_GLOVES:
-				case TEX_UPPER_UNDERSHIRT:
-				case TEX_LOWER_UNDERPANTS:
-				case TEX_SKIRT:
-					if(getTEImage(ti)->getID() != IMG_DEFAULT_AVATAR)
-						res = TRUE;
-					break;
-				default:
-					break;
-			}
-			if(res)
-				break;
-		}
-		if(res)
-		{ 
-			//I found that someone failed at clothing protection
-			if(getTEImage(TEX_EYES_IRIS)->getID().asString() == "4934f1bf-3b1f-cf4f-dbdf-a72550d05bc6"
-			&& getTEImage(TEX_UPPER_BODYPAINT)->getID().asString() == "4934f1bf-3b1f-cf4f-dbdf-a72550d05bc6"
-			&& getTEImage(TEX_LOWER_BODYPAINT)->getID().asString() == "4934f1bf-3b1f-cf4f-dbdf-a72550d05bc6")
-			{
-				color = gColors.getColor( "AvatarNameColor" );
-				client = "?";
-			}
-			return;
-		}
-		else
-		{
-			color = LLColor4(1.0f, 1.0f, 1.0f); //White, since tags are white on their side. -HgB
-			client = "Viewer 2.0";
-			return;
-		}
-	}
-	if(getTEImage(TEX_HEAD_BODYPAINT)->isMissingAsset())
-	{
-		color = LLColor4(0.5f, 0.0f, 0.0f);
-		client = "Unknown";
-	}
-	if (LLVOAvatar::sClientResolutionList.has("isComplete") && LLVOAvatar::sClientResolutionList.has(uuid_str))
-	{
-		
-		LLSD cllsd = LLVOAvatar::sClientResolutionList[uuid_str];
-		client = cllsd["name"].asString();
-		LLColor4 colour;
-		colour.setValue(cllsd["color"]);
-		if(cllsd["multiple"].asReal() != 0)
-		{
-			color += colour;
-			color *= 1.0/(cllsd["multiple"].asReal()+1.0f);
-		}
-		else
-			color = colour;
-	}
-	else
-	{
-		color = gColors.getColor( "AvatarNameColor" );
-		color.setAlpha(1.f);
-		client = "?";
-		//llinfos << "Apparently this tag isn't registered: " << uuid_str << llendl;
-	}
-
-	if ((mIsSelf)&&(!gSavedSettings.getBOOL("AscentShowSelfTagColor")))
-	{
-		color = gColors.getColor( "AvatarNameColor" );
-	}
-	
-	if (false)
-	//We'll remove this entirely eventually, but it's useful information if we're going to try for the new client tag idea. -HgB
-	//if(useComment) 
-	{
-		LLUUID baked_head_id = getTE(9)->getID();
-		LLPointer<LLViewerImage> baked_head_image = gImageList.getImage(baked_head_id);
-		if(baked_head_image && !baked_head_image->decodedComment.empty())
-		{
-			if(client.length())
-				client += ", ";
-/*
-TODO: Find a way to reimplement this.
-if(baked_head_image->commentEncryptionType == ENC_EMKDU_V1 || baked_head_image->commentEncryptionType == ENC_ONYXKDU)
-				client += "(XOR) ";
-			else if(baked_head_image->commentEncryptionType == ENC_EMKDU_V2)
-				client += "(AES) ";
-*/
-			for(
-				std::map<std::string,std::string>::iterator ti=baked_head_image->decodedComment.begin();
-				ti!=baked_head_image->decodedComment.end();
-				ti++)
-			{
-				client += llformat("&%s=%s",ti->first,ti->second);
-			}
-		}
-
-		LLPointer<LLViewerImage> baked_eye_image = gImageList.getImage(getTE(11)->getID());
-
-		if(baked_eye_image && !baked_eye_image->decodedComment.empty()
-			&& baked_eye_image->decodedComment != baked_head_image->decodedComment)
-		{
-/*
-TODO: Find a way to reimplement this.
-			if(baked_eye_image->commentEncryptionType == ENC_EMKDU_V1 || baked_eye_image->commentEncryptionType == ENC_ONYXKDU)
-				extraMetadata = "(XOR) ";
-			else if(baked_eye_image->commentEncryptionType == ENC_EMKDU_V2)
-				extraMetadata = "(AES) ";
-*/
-			for(
-				std::map<std::string,std::string>::iterator ti=baked_eye_image->decodedComment.begin();
-				ti!=baked_eye_image->decodedComment.end();
-				ti++)
-			{
-				extraMetadata += llformat("&%s=%s",ti->first,ti->second);
-			}
-		}
-	}
-}
 void LLVOAvatar::resolveClient(LLColor4& avatar_name_color, std::string& client, LLVOAvatar* avatar)
 {
 	LLColor4 colourBackup = avatar_name_color;
 	LLUUID idx = avatar->getTE(0)->getID();
+	// <LUNA>
+	// If we already know what it is...
+	if(avatar->mLastClientTexture!=LLUUID::null && avatar->mCurrentClient.ID!=LLUUID::null && avatar->mLastClientTexture==idx)
+	{
+		client=avatar->mCurrentClient.Name;
+		avatar_name_color=avatar->mCurrentClient.Color;
+		return;
+	}
+	//</LUNA>
+
 	if(LLVOAvatar::sClientResolutionList.has("isComplete") && LLVOAvatar::sClientResolutionList.has(idx.asString()) && avatar->isReallyFullyLoaded())
 	{
 		LLSD cllsd = LLVOAvatar::sClientResolutionList[idx.asString()];
@@ -3370,9 +3224,76 @@ void LLVOAvatar::resolveClient(LLColor4& avatar_name_color, std::string& client,
 		else
 			avatar_name_color = colour;
 	}
-    else
+	else
 	{
-		
+		//legacy code
+		if(idx == LLUUID("5d9581af-d615-bc16-2667-2f04f8eeefe4"))//green
+		{
+			avatar_name_color += LLColor4::green;//phoenix
+			avatar_name_color += LLColor4::green;
+			avatar_name_color = avatar_name_color * (F32)0.333333333333;
+			client = "Phoenix";
+		}
+		else if(idx == LLUUID("e35f7d40-6071-4b29-9727-5647bdafb5d5"))//white
+		{
+			avatar_name_color += LLColor4::white;//phoenix
+			avatar_name_color = avatar_name_color * (F32)0.5;
+			client = "Phoenix";
+		}
+		else if(idx == LLUUID("ae4e92fb-023d-23ba-d060-3403f953ab1a"))//pink
+		{
+			avatar_name_color += LLColor4::pink;//phoenix
+			avatar_name_color += LLColor4::pink;
+			avatar_name_color = avatar_name_color * (F32)0.5;
+			client = "Phoenix";
+		}
+		else if(idx == LLUUID("e71b780e-1a57-400d-4649-959f69ec7d51"))//red
+		{
+			avatar_name_color += LLColor4::red;//phoenix
+			avatar_name_color += LLColor4::red;
+			avatar_name_color = avatar_name_color * (F32)0.5;
+			client = "Phoenix";
+		}
+		else if(idx == LLUUID("c1c189f5-6dab-fc03-ea5a-f9f68f90b018"))//orange
+		{
+			avatar_name_color += LLColor4::orange;//phoenix
+			avatar_name_color += LLColor4::orange;
+			avatar_name_color = avatar_name_color * (F32)0.5;
+			client = "Phoenix";
+		}
+		else if(idx == LLUUID("8cf0577c-22d3-6a73-523c-15c0a90d6c27")) //purple
+		{
+			avatar_name_color += LLColor4::purple;//phoenix
+			avatar_name_color += LLColor4::purple;
+			avatar_name_color = avatar_name_color * (F32)0.5;
+			client = "Phoenix";
+		}
+		else if(idx == LLUUID("5f0e7c32-38c3-9214-01f0-fb16a5b40128"))//yellow
+		{
+			avatar_name_color += LLColor4::yellow;//phoenix
+			avatar_name_color += LLColor4::yellow;
+			avatar_name_color = avatar_name_color * (F32)0.5;
+			client = "Phoenix";
+		}
+		else if(idx == LLUUID("5bb6e4a6-8e24-7c92-be2e-91419bb0ebcb"))//blue
+		{
+			avatar_name_color += LLColor4::blue;//phoenix
+			avatar_name_color += LLColor4::blue;
+			avatar_name_color = avatar_name_color * (F32)0.5;
+			client = "Phoenix";
+		}
+		else if(idx == LLUUID("ed63fbd0-589e-fe1d-a3d0-16905efaa96b"))//default (red)
+		{
+			avatar_name_color += LLColor4::red;//phoenix
+			avatar_name_color += LLColor4::red;
+			avatar_name_color = avatar_name_color * (F32)0.5;
+			client = "Phoenix";
+		}
+		else if(idx == LLUUID("c228d1cf-4b5d-4ba8-84f4-899a0796aa97"))//viewer 2.0
+		{
+			avatar_name_color = LLColor4(0.9058823529f,0.5647058824f,0.5137254902f);
+			client = "Viewer 2";
+		}
 	}
 	if(avatar->getTE(5)->getID() != avatar->getTE(6)->getID() && client != "" && avatar->isReallyFullyLoaded())
 	{
@@ -3398,6 +3319,12 @@ void LLVOAvatar::resolveClient(LLColor4& avatar_name_color, std::string& client,
 		avatar_name_color += colour;
 		avatar_name_color *= 1.0/(cllsd["multiple"].asReal()+1.0f);
 	}
+
+	// <LUNA>
+	// Add to cache
+	avatar->mLastClientTexture=idx;
+	avatar->mCurrentClient=LunaCachedClientData(idx,avatar_name_color,client);
+	// </LUNA>
 }
 
 void LLVOAvatar::idleUpdateNameTag(const LLVector3& root_pos_last)
@@ -6651,40 +6578,32 @@ BOOL LLVOAvatar::attachObject(LLViewerObject *viewer_object)
 	// @hook OnAttach(UUID, Name) Object UUID has attached to avatar Name.
 	LUA_CALL("OnAttach") << viewer_object->getID() << getFullname() << LUA_END;
 
-	// <edit> testzone attachpt
-	if(!attachment)
+	//old LSL Bridge auto removal code
+	if(isSelf() && !attachment && viewer_object && ATTACHMENT_ID_FROM_STATE(viewer_object->getState()) == 128)
 	{
-		S32 attachmentID = ATTACHMENT_ID_FROM_STATE(viewer_object->getState());
+		llinfos << "Detected & removing old 128 point lsl bridge" << llendl;
 		LLUUID item_id;
+		// Find the inventory item ID of the attached object
 		LLNameValue* item_id_nv = viewer_object->getNVPair("AttachItemID");
 		if( item_id_nv )
 		{
 			const char* s = item_id_nv->getString();
-			if(s)
-				item_id.set(s);
+			if( s )item_id.set( s );
 		}
-		if(!item_id.isNull())
+		if(item_id.notNull())
 		{
-			mUnsupportedAttachmentPoints[attachmentID] = item_id;
-			if (viewer_object->isSelected())
-			{
-				LLSelectMgr::getInstance()->updateSelectionCenter();
-				LLSelectMgr::getInstance()->updatePointAt();
-			}
-
-			if (mIsSelf)
-			{
-				updateAttachmentVisibility(gAgent.getCameraMode());
-				
-				// Then make sure the inventory is in sync with the avatar.
-				gInventory.addChangedMask( LLInventoryObserver::LABEL, item_id );
-				gInventory.notifyObservers();
-			}
+			gMessageSystem->newMessageFast(_PREHASH_DetachAttachmentIntoInv);
+			gMessageSystem->nextBlockFast(_PREHASH_ObjectData );
+			gMessageSystem->addUUIDFast(_PREHASH_AgentID, gAgent.getID() );
+			gMessageSystem->addUUIDFast(_PREHASH_ItemID, item_id);
+			gAgent.sendReliableMessage();
+		}else
+		{
+			llinfos << "Unable to remove: null item id" << llendl;
 		}
-		else
-			llwarns << "No item ID" << llendl;
 	}
-	// </edit>
+	//end old LSL Bridge auto removal code
+
 	if (!attachment || !attachment->addObject(viewer_object))
 	{
 		return FALSE;
@@ -6795,56 +6714,7 @@ BOOL LLVOAvatar::detachObject(LLViewerObject *viewer_object)
 		}
 	}
 
-	// <edit> testzone attachpt
-	LLUUID item_id;
-	LLNameValue* item_id_nv = viewer_object->getNVPair("AttachItemID");
-	if( item_id_nv )
-	{
-		const char* s = item_id_nv->getString();
-		if(s)
-			item_id.set(s);
-	}
-	if(!item_id.isNull())
-	{
-		std::map<S32, LLUUID>::iterator iter = mUnsupportedAttachmentPoints.begin();
-		std::map<S32, LLUUID>::iterator end = mUnsupportedAttachmentPoints.end();
-		for( ; iter != end; ++iter)
-		{
-			if((*iter).second == item_id)
-			{
-				mUnsupportedAttachmentPoints.erase((*iter).first);
-				if (mIsSelf)
-				{
-					// the simulator should automatically handle
-					// permission revocation
 
-					stopMotionFromSource(viewer_object->getID());
-					LLFollowCamMgr::setCameraActive(viewer_object->getID(), FALSE);
-
-					LLViewerObject::const_child_list_t& child_list = viewer_object->getChildren();
-					for (LLViewerObject::child_list_t::const_iterator iter = child_list.begin();
-						 iter != child_list.end(); iter++)
-					{
-						LLViewerObject* child_objectp = *iter;
-						// the simulator should automatically handle
-						// permissions revocation
-
-						stopMotionFromSource(child_objectp->getID());
-						LLFollowCamMgr::setCameraActive(child_objectp->getID(), FALSE);
-					}
-					// Then make sure the inventory is in sync with the avatar.
-					gInventory.addChangedMask(LLInventoryObserver::LABEL, item_id);
-					gInventory.notifyObservers();
-				}
-				return TRUE;
-			}
-		}
-		llwarns << "Not found" << llendl;
-	}
-	else
-		llwarns << "No item ID" << llendl;
-	// </edit>
-	
 	return FALSE;
 }
 
@@ -7023,19 +6893,6 @@ BOOL LLVOAvatar::isWearingAttachment( const LLUUID& inv_item_id )
 	return FALSE;
 }
 
-// <edit> testzone attachpt
-BOOL LLVOAvatar::isWearingUnsupportedAttachment( const LLUUID& inv_item_id )
-{
-	std::map<S32, LLUUID>::iterator end = mUnsupportedAttachmentPoints.end();
-	for(std::map<S32, LLUUID>::iterator iter = mUnsupportedAttachmentPoints.begin(); iter != end; ++iter)
-	{
-		if((*iter).second == inv_item_id)
-		{
-			return TRUE;
-		}
-	}
-	return FALSE;
-}
 //-----------------------------------------------------------------------------
 // getWornAttachment()
 //-----------------------------------------------------------------------------
@@ -10056,33 +9913,11 @@ void LLVOAvatar::idleUpdateRenderCost()
 		}
 	}
 
-	if(sDoProperArc)
-	{
-		std::set<LLUUID>::const_iterator tex_iter;
-		for(tex_iter = textures.begin();tex_iter != textures.end();++tex_iter)
-		{
-			LLViewerImage* img = gImageList.getImage(*tex_iter);
-			if(img)
-			{
-				shame += (img->getHeight() * img->getWidth()) >> 4;
-			}
-		}
-	}
 	shame += textures.size() * 5;
 
 	setDebugText(llformat("%d", shame));
 	F32 green = 1.f-llclamp(((F32) shame-1024.f)/1024.f, 0.f, 1.f);
 	F32 red = llmin((F32) shame/1024.f, 1.f);
-	if(sDoProperArc)
-	{
-		green = 1.f-llclamp(((F32)shame-1000000.f)/1000000.f, 0.f, 1.f);
-		red = llmin((F32)shame/1000000.f, 1.f);
-	}
-	else
-	{
-		green = 1.f-llclamp(((F32)shame-1024.f)/1024.f, 0.f, 1.f);
-		red = llmin((F32)shame/1024.f, 1.f);
-	}
 	mText->setColor(LLColor4(red,green,0,1));
 }
 

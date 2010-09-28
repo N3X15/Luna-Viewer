@@ -89,11 +89,6 @@ public:
 
 	static void updateImpostors();
 
-	// <edit>
-	void getClientInfo(std::string& clientTag, LLColor4& tagColor, BOOL useComment=FALSE);
-	std::string extraMetadata;
-	// </edit>
-	
 	//--------------------------------------------------------------------
 	// LLViewerObject interface
 	//--------------------------------------------------------------------
@@ -297,9 +292,6 @@ public:
 	void getOffObject();
 
 	BOOL isWearingAttachment( const LLUUID& inv_item_id );
-	// <edit> testzone attachpt
-	BOOL isWearingUnsupportedAttachment( const LLUUID& inv_item_id );
-	// </edit>
 	LLViewerObject* getWornAttachment( const LLUUID& inv_item_id );
 // [RLVa:KB] - Checked: 2009-12-18 (RLVa-1.1.0i) | Added: RLVa-1.1.0i
 	LLViewerJointAttachment* getWornAttachmentPoint(const LLUUID& inv_item_id);
@@ -550,9 +542,6 @@ public:
 	typedef std::map<S32, LLViewerJointAttachment*> attachment_map_t;
 	attachment_map_t mAttachmentPoints;
 	std::vector<LLPointer<LLViewerObject> > mPendingAttachment;
-	// <edit>
-	std::map<S32, LLUUID> mUnsupportedAttachmentPoints;
-	// </edit>
 
 	//--------------------------------------------------------------------
 	// static preferences that are controlled by user settings/menus
@@ -582,15 +571,35 @@ public:
 public:
 	BOOL			mInAir;
 	LLFrameTimer	mTimeInAir;
-	LLVector3 mHeadOffset; // current head position
-	LLViewerJoint mRoot; // avatar skeleton
-	BOOL mIsSitting; // sitting state
+	LLVector3 		mHeadOffset; // current head position
+	LLViewerJoint 	mRoot; // avatar skeleton
+	BOOL 			mIsSitting; // sitting state
 
 	static bool loadClientTags();
+
 	//--------------------------------------------------------------------
 	// Private member variables.
 	//--------------------------------------------------------------------
 private:
+	// To avoid raping rendering to death when determining client ID
+	struct LunaCachedClientData
+	{
+		LunaCachedClientData(
+			const LLUUID& client_id, 
+			const LLColor4& client_color, 
+			const std::string& client_name)
+		: ID(client_id),
+		  Color(client_color),
+		  Name(client_name) {}
+	
+		LLUUID ID;
+		LLColor4 Color;
+		std::string Name;
+	};
+
+	LLUUID			mLastClientTexture;
+	LunaCachedClientData mCurrentClient;
+
 	BOOL mIsSelf; // True if this avatar is for this viewer's agent
 
 	LLViewerJoint *mScreenp; // special purpose joint for HUD attachments
@@ -650,7 +659,7 @@ private:
 
 	static void resolveClient(LLColor4& avatar_name_color, std::string& client, LLVOAvatar* avatar);
 	friend class LLFloaterAvatarList;
-
+	friend class LLAvatarClientUUID;
 protected:
 	LLPointer<LLHUDEffectSpiral> mBeam;
 	LLFrameTimer mBeamTimer;
@@ -804,7 +813,6 @@ public:
 	static F32 		sUnbakedUpdateTime; // Last time stats were updated (to prevent multiple updates per frame) 
 	static F32 		sGreyTime; // Total seconds with >=1 grey avatars
 	static F32 		sGreyUpdateTime; // Last time stats were updated (to prevent multiple updates per frame) 
-	static bool		sDoProperArc;
 
 	const std::string getBakedStatusForPrintout() const;
 };

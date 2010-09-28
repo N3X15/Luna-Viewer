@@ -2954,7 +2954,7 @@ class LLAvatarClientUUID : public view_listener_t
 		
 		std::string clientID;
 		LLColor4 color;
-		avatar->getClientInfo(clientID, color, false);
+		LLVOAvatar::resolveClient(color,clientID,avatar);
 		gViewerWindow->mWindow->copyTextToClipboard(utf8str_to_wstring(clientID));
 		return true;
 	}

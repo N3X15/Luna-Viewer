@@ -96,6 +96,19 @@ class Settings(object):
     def setType(self,key,t):
         try:
             self.stuff[key]['Type']=t
+            value=self.stuff[key]['Value']
+            if t=='BOOL':
+                if str(value).lower()=='true' or value==1:
+                    value=True
+                else:
+                    value=False
+            elif t=='S32' or t=='U32':
+                value=int(value)
+            elif t=='F32':
+                value=float(value)
+            elif t=='String':
+                value=str(value)
+            self.stuff[key]['Value']=value
         except KeyError:
             print "Key %s doesn't exist." % key
 
@@ -387,6 +400,7 @@ if __name__ == '__main__':
                 typ = chunkparts[1]
                 print ' * Setting %s to type %s...' % (key,typ)
                 hurr.setType(key,typ)
+                changed=True
 				
 	if len(options.find_key) > 0:
             for key in hurr.stuff:

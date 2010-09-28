@@ -63,9 +63,6 @@ extern "C" {
 
 /* Lua classes */
 #include "_LuaSL.h"	// SL module
-//#include "_LuaGL.h"	// GL module
-//#include "_LuaRegion.h"	// Region module
-//#include "_LuaObject.h"	// Object module
 
 #include "LuaBase_f.h"
 

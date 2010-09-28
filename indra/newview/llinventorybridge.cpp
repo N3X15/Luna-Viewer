@@ -3882,16 +3882,6 @@ std::string LLObjectBridge::getLabelSuffix() const
 	}
 	else
 	{
-		// <edit> testzone attachpt
-		if(avatar)
-		{
-			std::map<S32, LLUUID>::iterator iter = avatar->mUnsupportedAttachmentPoints.begin();
-			std::map<S32, LLUUID>::iterator end = avatar->mUnsupportedAttachmentPoints.end();
-			for( ; iter != end; ++iter)
-				if((*iter).second == mUUID)
-					return LLItemBridge::getLabelSuffix() + llformat(" (worn on unsupported point %d)", (*iter).first);
-		}
-		// </edit>
 		return LLItemBridge::getLabelSuffix();
 	}
 }
@@ -4020,14 +4010,6 @@ void LLObjectBridge::buildContextMenu(LLMenuGL& menu, U32 flags)
 				}
 			}
 			else
-			// <edit> testzone attachpt
-			if( avatarp->isWearingUnsupportedAttachment( mUUID ) )
-			{
-				items.push_back(std::string("Detach From Yourself"));
-			}
-			else
-			// </edit>
-			// <edit> don't allow attaching objects while importing attachments
 
 
 

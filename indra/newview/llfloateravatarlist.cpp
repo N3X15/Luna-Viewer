@@ -820,7 +820,7 @@ void LLFloaterAvatarList::refreshAvatarList()
 		LLVOAvatar *avatarp = (LLVOAvatar*)gObjectList.findObject(av_id);
 		if(avatarp)
 		{
-			avatarp->getClientInfo(client, avatar_name_color, TRUE);
+			LLVOAvatar::resolveClient(avatar_name_color, client, avatarp);
 			if(client == "")
 			{
 				avatar_name_color = gColors.getColor( "ScrollUnselectedColor" );

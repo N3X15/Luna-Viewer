@@ -67,7 +67,7 @@ void GrowlNotifierWin::showNotification(const std::string& notification_title, c
 	growl->Notify(notification_type.c_str(),notification_title.c_str(),notification_message.c_str()
 		//,
 		//std::string("").c_str(),//url
-		//std::string("http://Ascentviewer.com/box/Ascenticon.ico").c_str()
+		//std::string("http://luna.nexisonline.net/box/Ascenticon.ico").c_str()
 		);	
 }
 

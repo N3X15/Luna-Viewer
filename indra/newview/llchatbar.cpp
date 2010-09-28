@@ -641,9 +641,7 @@ void LLChatBar::sendChat( EChatType type )
 // static 
 void LLChatBar::startChat(const char* line)
 {
-	gSavedSettings.setBOOL("ChatVisible", TRUE);
-
-	if (line && gChatBar->mInputEditor)
+	if (gSavedSettings.getBOOL("AscentUseChatBar"))
 	{
 		gChatBar->setVisible(TRUE);
 		gChatBar->setKeyboardFocus(TRUE);
