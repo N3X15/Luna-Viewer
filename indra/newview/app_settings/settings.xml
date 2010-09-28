@@ -682,7 +682,7 @@
       <key>Type</key>
       <string>BOOL</string>
       <key>Value</key>
-      <boolean>false</boolean>
+      <string>False</string>
     </map>
     <key>AscentBuildBridge</key>
     <map>
@@ -10225,7 +10225,7 @@
       <key>Type</key>
       <string>BOOL</string>
       <key>Value</key>
-      <boolean>false</boolean>
+      <string>False</string>
     </map>
     <key>ProbeHardwareOnStartup</key>
     <map>

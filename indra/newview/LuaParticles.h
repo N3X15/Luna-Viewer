@@ -304,7 +304,7 @@ private:
 
 inline void ParticleSystem::AttachToObject(LLUUID ObjUUID,LLUUID OwnerUUID)
 {
-	new CB_Args3<LLPartSysData,LLUUID,LLUUID>(&ParticleSystem_AttachToObject_Event,asParticleSystem(),ObjUUID,OwnerUUID);
+	CB_Args3<LLPartSysData,LLUUID,LLUUID>(&ParticleSystem_AttachToObject_Event,asParticleSystem(),ObjUUID,OwnerUUID);
 }
 
 #ifdef SWIG
@@ -326,7 +326,7 @@ inline void ClearParticlesFromObject_Event(std::string &ObjUUID,std::string &Own
 
 inline void ClearParticlesFromObject(std::string ObjUUID,std::string OwnerUUID)
 {
-	new CB_Args2<std::string,std::string>(&ClearParticlesFromObject_Event,ObjUUID,OwnerUUID);
+	CB_Args2<std::string,std::string>(&ClearParticlesFromObject_Event,ObjUUID,OwnerUUID);
 }
 
 

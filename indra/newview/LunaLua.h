@@ -38,6 +38,8 @@ extern "C" {
 #include "llviewerimage.h"
 #include "llviewerregion.h"
 #include "llviewerobject.h"
+#include <boost/preprocessor.hpp>
+
 
 //Macros for Lua event calls
 //No arguments. LUA_CALL0("OnSomething");
@@ -184,9 +186,7 @@ private:
 	// Read in MAIN loop
 	LLAtomic32<bool> mPendingEvents;	//!mQueuedEvents.isEmpty()
 	
-};
-
-/*Ugly hacky code follows. Kludgy workaround for making SWIG (somewhat) thread-safe.
+};/*Ugly hacky code follows. Kludgy workaround for making SWIG (somewhat) thread-safe.
 
 	Client callback classes. Checked and executed every frame.
 	DONT USE POINTERS WITH THESE. These classes rely on static 
@@ -207,66 +207,50 @@ PLEASE DISCUSS ALTERNATIVES TO THIS HORRIBLE MESS @ http://www.nexisonline.net/f
 
 */
 
+//Some special stuff is done here to make sure to 
 struct CB_Base //If you don't want to bother with the odd templates below, just derive from this manually.
 {
 	static CB_Base *sent;
 	int pri;
 	virtual void OnCall(){}; //overridden by derived classes. Called by main thread on next frame.
-	virtual CB_Base *clone(){return this;}//overridden by derived classes. Default must be dynamic.
-	CB_Base(int _pri=5){pri=_pri;if(sent!=this)FLLua::regClientEvent(sent=clone());}; //Always called
+	virtual CB_Base *clone(){return new CB_Base(*this);}//overridden by derived classes. Default must be dynamic.
+	CB_Base() : pri(0){}
+	CB_Base(int _pri) : pri(_pri)
+	{FLLua::regClientEvent(clone());}; //A copy goes into the even queue
+	virtual ~CB_Base(){};
+protected:
+	//This is protected to ensure we don't create CB_ objects on heap unless it's expected.
+	void* CB_Base::operator new (size_t  size)
+	{
+		void *mem = malloc(size);
+		if (!mem)throw std::bad_alloc();
+		return mem; 
+	}
+	
 };
-struct CB_Dummy_Args0 : public CB_Base
-{
-	typedef void (*CB_FN)();
-	virtual void OnCall()	{fn();}
-	virtual CB_Base *clone(){return new CB_Dummy_Args0(*this);} //Pass a dynamically allocated copy to the queue
-	CB_FN fn;
-	CB_Dummy_Args0(CB_FN _fn, int _pri=5) : fn(_fn),CB_Base(_pri){}
-};
-// Compiler error C2530: refrences must be initialized. Hurf durf.
-inline void CB_Args0(void (*CB_FN)(),int _pri=5){new CB_Dummy_Args0(CB_FN,_pri);}
 
-template <typename T1>
-struct CB_Args1 : public CB_Base
-{
-	typedef void (*CB_FN)(T1& _t1);
-	virtual void OnCall()	{fn(t1);}
-	virtual CB_Base *clone(){return new CB_Args1(*this);}
-	CB_FN fn;
-	T1 t1;
-	CB_Args1(CB_FN _fn,const T1 &_t1, int _pri=5) : fn(_fn), t1(_t1), CB_Base(_pri){}
+//Holy cow. This makes me want to shoot myself. C++0x Variadic templates. Please. Microsoft...
+#define CB_ARG_MAX 10
+#define CB_ARG_INIT(z, NN, name) ,name##NN(_##name##NN)
+#define CB_ARG_MEMB(z, NN, name) name##NN t##NN;
+#define BOOST_PP_LOCAL_MACRO(N) \
+template <BOOST_PP_ENUM_PARAMS(N, class T)> \
+	LUA_SETUP_CB_ARG(N)
+#define LUA_SETUP_CB_ARG(N) \
+struct CB_Args##N : public CB_Base { \
+	typedef void (*CB_FN)(BOOST_PP_ENUM_BINARY_PARAMS(N, T, &t)); \
+	virtual void OnCall()	{fn(BOOST_PP_ENUM_PARAMS(N, t));} \
+	virtual CB_Base *clone(){return new CB_Args##N(*this);}; /*Pass a dynamically allocated copy to the queue*/ \
+	CB_FN fn; \
+	BOOST_PP_IF(N,BOOST_PP_EMPTY,CB_Args##N(){})() /*VS demands a default constructor for CB_Args0, so appease it..*/ \
+	CB_Args##N(CB_FN _fn, BOOST_PP_ENUM_BINARY_PARAMS(N, const T, &_t) BOOST_PP_COMMA_IF(N) int _pri=5 ) : fn(_fn), CB_Base(_pri) \
+	BOOST_PP_REPEAT(N, CB_ARG_INIT, t){}; \
+	BOOST_PP_REPEAT(N, CB_ARG_MEMB, T) \
 };
-template <typename T1,typename T2>
-struct CB_Args2 : public CB_Base
-{
-	typedef void (*CB_FN)(T1 &_t1,T2 &_t2);
-	virtual void OnCall()	{fn(t1,t2);}
-	virtual CB_Base *clone(){return new CB_Args2(*this);}
-	CB_FN fn;
-	T1 t1;	T2 t2;
-	CB_Args2(CB_FN _fn,const T1 &_t1,const T2 &_t2, int _pri=5) : fn(_fn), t1(_t1), t2(_t2), CB_Base(_pri){}
-};
-template <typename T1,typename T2,typename T3>
-struct CB_Args3 : public CB_Base
-{
-	typedef void (*CB_FN)(T1 &_t1,T2 &_t2,T3 &_t3);
-	virtual void OnCall()	{fn(t1,t2,t3);}
-	virtual CB_Base *clone(){return new CB_Args3(*this);}
-	CB_FN fn;
-	T1 t1;	T2 t2;	T3 t3;
-	CB_Args3(CB_FN _fn,const T1 &_t1,const T2 &_t2,const T3 &_t3, int _pri=5) : fn(_fn), t1(_t1), t2(_t2), t3(_t3), CB_Base(_pri){}
-};
-template <typename T1,typename T2,typename T3,typename T4>
-struct CB_Args4 : public CB_Base
-{
-	typedef void (*CB_FN)(T1 &_t1,T2 &_t2,T3 &_t3,T4 &_t4);
-	virtual void OnCall()	{fn(t1,t2,t3,t3,t4);}
-	virtual CB_Base *clone(){return new CB_Args4(*this);}
-	CB_FN fn;
-	T1 t1;	T2 t2;	T3 t3;  T4 t4;
-	CB_Args4(CB_FN _fn,const T1 &_t1,const T2 &_t2,const T3 &_t3, const T4 &_t4, int _pri=5) : fn(_fn), t1(_t1), t2(_t2), t3(_t3), t4(_t4), CB_Base(_pri){}
-};
-//etc...
+LUA_SETUP_CB_ARG(0) //Special case. Not a template.
+#define BOOST_PP_LOCAL_LIMITS (1, CB_ARG_MAX)
+#include BOOST_PP_LOCAL_ITERATE()
+
 
 int luaOnPanic(lua_State *L);
 std::string Lua_getErrorMessage(lua_State *L);
