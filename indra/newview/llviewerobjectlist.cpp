@@ -939,9 +939,6 @@ void LLViewerObjectList::killObjects(LLViewerRegion *regionp)
 		if (objectp->mRegionp == regionp)
 		{
 			killObject(objectp);
-			// invalidate region pointer. region will become invalid, but 
-			// refcounted objects may survive the cleanDeadObjects() call below
-			objectp->mRegionp = NULL;
 		}
 	}
 
@@ -1111,7 +1108,9 @@ void LLViewerObjectList::renderObjectsForMap(LLNetMap &netmap)
 
 		F32 approx_radius = (scale.mV[VX] + scale.mV[VY]) * 0.5f * 0.5f * 1.3f;  // 1.3 is a fudge
 
-		// DEV-17370 - megaprims of size > 4096 cause lag.  (go figger.)
+		// Limit the size of megaprims so they don't blot out everything on the minimap.
+		// Attempting to draw very large megaprims also causes client lag.
+		// See DEV-17370 and SNOW-79 for details.
 		approx_radius = llmin(approx_radius, max_radius);
 
 		LLColor4U color = above_water_color;
@@ -1244,18 +1243,22 @@ void LLViewerObjectList::generatePickList(LLCamera &camera)
 				LLViewerJointAttachment* attachmentp = curiter->second;
 				if (attachmentp->getIsHUDAttachment())
 				{
-					LLViewerObject* objectp = attachmentp->getObject();
-					if (objectp)
+					for (LLViewerJointAttachment::attachedobjs_vec_t::iterator attachment_iter = attachmentp->mAttachedObjects.begin();
+						 attachment_iter != attachmentp->mAttachedObjects.end();
+						 ++attachment_iter)
 					{
-						mSelectPickList.insert(objectp);		
-						LLViewerObject::const_child_list_t& child_list = objectp->getChildren();
-						for (LLViewerObject::child_list_t::const_iterator iter = child_list.begin();
-							 iter != child_list.end(); iter++)
+						if (LLViewerObject* objectp = (*attachment_iter))
 						{
-							LLViewerObject* childp = *iter;
-							if (childp)
+							mSelectPickList.insert(objectp);		
+							LLViewerObject::const_child_list_t& child_list = objectp->getChildren();
+							for (LLViewerObject::child_list_t::const_iterator iter = child_list.begin();
+								 iter != child_list.end(); iter++)
 							{
-								mSelectPickList.insert(childp);
+								LLViewerObject* childp = *iter;
+								if (childp)
+								{
+									mSelectPickList.insert(childp);
+								}
 							}
 						}
 					}

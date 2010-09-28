@@ -1,6 +1,6 @@
 /** 
  * @file lldate.cpp
- * @author Ascent
+ * @author Phoenix
  * @date 2006-02-05
  * @brief Implementation of the date class
  *

@@ -232,9 +232,7 @@ BOOL LLVorbisDecodeState::initDecode()
 	if(size_guess >= 157286400)
 	{
 		llwarns << "Bad sound caught by zmagic" << llendl;
-		delete mInFilep;
-		mInFilep = NULL;
-		return FALSE;
+		abort_decode = true;
 	}
 
 	else /* </edit> */if( vi->channels < 1 || vi->channels > LLVORBIS_CLIP_MAX_CHANNELS )

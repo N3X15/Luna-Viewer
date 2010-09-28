@@ -1,6 +1,6 @@
 /** 
  * @file llinstantmessage.cpp
- * @author Ascent
+ * @author Phoenix
  * @date 2005-08-29
  * @brief Constants and functions used in IM.
  *

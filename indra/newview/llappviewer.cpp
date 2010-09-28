@@ -261,7 +261,9 @@ F32 gLogoutMaxTime = LOGOUT_REQUEST_TIME;
 LLUUID gInventoryLibraryOwner;
 LLUUID gInventoryLibraryRoot;
 // <edit>
-LLUUID gLocalInventoryRoot;
+LLUUID gSystemFolderRoot;
+LLUUID gSystemFolderSettings;
+LLUUID gSystemFolderAssets;
 // </edit>
 
 BOOL				gDisconnected = FALSE;

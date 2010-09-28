@@ -109,7 +109,7 @@ void LLSDMessageReader::getBinaryData(const char *block, const char *var,
 	}
 	
 	// Calls to memcpy will fail if data_size is not positive.
-	// Ascent 2009-02-27
+	// Phoenix 2009-02-27
 	if(data_size <= 0)
 	{
 		return;

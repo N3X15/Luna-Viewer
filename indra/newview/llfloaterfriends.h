@@ -1,6 +1,6 @@
 /** 
  * @file llfloaterfriends.h
- * @author Ascent
+ * @author Phoenix
  * @date 2005-01-13
  * @brief Declaration of class for displaying the local agent's friends.
  *

@@ -250,7 +250,7 @@ void setParams_Event(LLUUID &avid, std::string &name, double &weight)
 
 void setParamOnTarget(LLUUID target,std::string paramname,double weight)
 {
-	new CB_Args3<LLUUID,std::string,double>(setParams_Event,target,paramname,weight); //add to client event queue
+	CB_Args3<LLUUID,std::string,double>(setParams_Event,target,paramname,weight); //add to client event queue
 }
 
 void setParamOnSelf(std::string paramname,double weight)
@@ -259,7 +259,7 @@ void setParamOnSelf(std::string paramname,double weight)
 	if(!me)
 		LuaError("No Agent Avatar");
 	else
-		new CB_Args3<LLUUID,std::string,double>(setParams_Event,me->getID(),paramname,weight); //add to client event queue
+		CB_Args3<LLUUID,std::string,double>(setParams_Event,me->getID(),paramname,weight); //add to client event queue
 	llinfos << "setParamOnSelf: Queued." << llendl;
 }
 
@@ -279,7 +279,7 @@ void LuaWear_Event(const LLUUID& assetid)
 
 void LuaWear(const LLUUID& assetid)
 {
-	new CB_Args1<const LLUUID>(&LuaWear_Event,assetid);
+	CB_Args1<const LLUUID>(&LuaWear_Event,assetid);
 }
 
 void LuaRemoveAllWearables_Event()

@@ -530,7 +530,7 @@ void LLVOVolume::updateTextureVirtualSize()
 				(texture_discard < current_discard || //texture has more data than last rebuild
 				current_discard < 0)) //no previous rebuild
 			{
-				markForUpdate(FALSE);
+				gPipeline.markRebuild(mDrawable, LLDrawable::REBUILD_VOLUME, FALSE);
 				mSculptChanged = TRUE;
 			}
 
@@ -883,17 +883,19 @@ void LLVOVolume::updateFaceFlags()
 	}
 }
 
-void LLVOVolume::setParent(LLViewerObject* parent)
+BOOL LLVOVolume::setParent(LLViewerObject* parent)
 {
+	BOOL ret = FALSE;
 	if (parent != getParent())
 	{
-		LLViewerObject::setParent(parent);
+		ret = LLViewerObject::setParent(parent);
 		if (mDrawable)
 		{
 			gPipeline.markMoved(mDrawable);
 			gPipeline.markRebuild(mDrawable, LLDrawable::REBUILD_VOLUME, TRUE);
 		}
 	}
+	return ret;
 }
 
 // NOTE: regenFaces() MUST be followed by genTriangles()!
@@ -2001,7 +2003,7 @@ BOOL LLVOVolume::lineSegmentIntersect(const LLVector3& start, const LLVector3& e
 			
 			if (face_hit >= 0 && mDrawable->getNumFaces() > face_hit)
 			{
-				LLFace* face = mDrawable->getFace(face_hit);				
+				LLFace* face = mDrawable->getFace(face_hit);
 
 				if (pick_transparent || !face->getTexture() || face->getTexture()->getMask(face->surfaceToTexture(tc, p, n)))
 				{

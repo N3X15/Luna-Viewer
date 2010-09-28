@@ -1,6 +1,6 @@
 /** 
  * @file llchainio.h
- * @author Ascent
+ * @author Phoenix
  * @date 2005-08-04
  * @brief This class declares the interface for constructing io chains.
  *

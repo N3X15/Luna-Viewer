@@ -1,6 +1,6 @@
 /** 
  * @file llrun.h
- * @author Ascent
+ * @author Phoenix
  * @date 2006-02-16
  * @brief Declaration of LLRunner and LLRunnable classes.
  *

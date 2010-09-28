@@ -47,6 +47,7 @@
 #include "llgesturemgr.h"
 #include "llhudeffecttrail.h"
 #include "llhudmanager.h"
+#include "llinventorybridge.h"
 #include "llinventorymodel.h"
 #include "llinventoryview.h"
 #include "llmutelist.h"
@@ -69,7 +70,7 @@
 #include "object_flags.h"
 #include "llimview.h"
 // <edit>
-#include "llappviewer.h" // gLocalInventoryRoot
+#include "llappviewer.h" // System Folders
 #include "llparcel.h" // always rez
 #include "llviewerparcelmgr.h" // always rez
 // </edit>
@@ -475,6 +476,15 @@ LLToolDragAndDrop::dragOrDrop3dImpl LLToolDragAndDrop::sDragAndDrop3d[DAD_COUNT]
 		&LLToolDragAndDrop::dad3dActivateGesture, // Dest: DT_SELF
 		&LLToolDragAndDrop::dad3dGiveInventory, // Dest: DT_AVATAR
 		&LLToolDragAndDrop::dad3dUpdateInventory, // Dest: DT_OBJECT
+		&LLToolDragAndDrop::dad3dNULL,//dad3dAssetOnLand, // Dest: DT_LAND
+	},
+	//	Source: DAD_LINK
+	// TODO: gesture on self could play it?  edit it?
+	{
+		&LLToolDragAndDrop::dad3dNULL, // Dest: DT_NONE
+		&LLToolDragAndDrop::dad3dNULL, // Dest: DT_SELF
+		&LLToolDragAndDrop::dad3dNULL, // Dest: DT_AVATAR
+		&LLToolDragAndDrop::dad3dNULL, // Dest: DT_OBJECT
 		&LLToolDragAndDrop::dad3dNULL,//dad3dAssetOnLand, // Dest: DT_LAND
 	},
 };
@@ -1151,13 +1161,11 @@ void LLToolDragAndDrop::dropTextureAllFaces(LLViewerObject* hit_obj,
 		return;
 	}
 	LLUUID asset_id = item->getAssetUUID();
-	// <edit>
-	/*BOOL success = handleDropTextureProtections(hit_obj, item, source, src_id);
+	BOOL success = handleDropTextureProtections(hit_obj, item, source, src_id);
 	if(!success)
 	{
 		return;
-	}*/
-	// </edit>
+	}
 	LLViewerImage* image = gImageList.getImage(asset_id);
 	LLViewerStats::getInstance()->incStat(LLViewerStats::ST_EDIT_TEXTURE_COUNT );
 	S32 num_faces = hit_obj->getNumTEs();
@@ -1195,13 +1203,11 @@ void LLToolDragAndDrop::dropTextureOneFace(LLViewerObject* hit_obj,
 		return;
 	}
 	LLUUID asset_id = item->getAssetUUID();
-	// <edit>
-	/*BOOL success = handleDropTextureProtections(hit_obj, item, source, src_id);
+	BOOL success = handleDropTextureProtections(hit_obj, item, source, src_id);
 	if(!success)
 	{
 		return;
-	}*/
-	// </edit>
+	}
 	// update viewer side image in anticipation of update from simulator
 	LLViewerImage* image = gImageList.getImage(asset_id);
 	LLViewerStats::getInstance()->incStat(LLViewerStats::ST_EDIT_TEXTURE_COUNT );
@@ -1373,8 +1379,11 @@ void LLToolDragAndDrop::dropObject(LLViewerObject* raycast_target,
 			msg->addUUIDFast(_PREHASH_GroupID, parcel->getGroupID());
 		else if(gAgent.isInGroup(parcel->getOwnerID()))
 			msg->addUUIDFast(_PREHASH_GroupID, parcel->getOwnerID());
-		else msg->addUUIDFast(_PREHASH_GroupID, gAgent.getGroupID());
-	} else msg->addUUIDFast(_PREHASH_GroupID, gAgent.getGroupID());
+		else 
+			msg->addUUIDFast(_PREHASH_GroupID, gAgent.getGroupID());
+	} 
+	else 
+		msg->addUUIDFast(_PREHASH_GroupID, gAgent.getGroupID());
 
 	msg->nextBlock("RezData");
 	// if it's being rezzed from task inventory, we need to enable
@@ -1984,8 +1993,9 @@ EAcceptance LLToolDragAndDrop::willObjectAcceptInventory(LLViewerObject* obj, LL
 	LLViewerInventoryItem* vitem = (LLViewerInventoryItem*)item;
 	// <edit>
 	//if(!vitem->isComplete()) return ACCEPT_NO;
-	if(!vitem->isComplete() && !(gInventory.isObjectDescendentOf(vitem->getUUID(), gLocalInventoryRoot))) return ACCEPT_NO;
+	if(!vitem->isComplete() && !(gInventory.isObjectDescendentOf(vitem->getUUID(), gSystemFolderRoot))) return ACCEPT_NO;
 	// </edit>
+	if (vitem->getIsLinkType()) return ACCEPT_NO; // No giving away links
 
 	// deny attempts to drop from an object onto itself. This is to
 	// help make sure that drops that are from an object to an object
@@ -2043,10 +2053,7 @@ EAcceptance LLToolDragAndDrop::willObjectAcceptInventory(LLViewerObject* obj, LL
 	{
 		return ACCEPT_NO_LOCKED;
 	}
-	// <edit> allow dropping textures onto objects
- 	//return ACCEPT_NO;
- 	return ACCEPT_YES_SINGLE;
- 	// </edit>
+	return ACCEPT_NO;
 }
 
 
@@ -2393,7 +2400,7 @@ EAcceptance LLToolDragAndDrop::dad3dTextureObject(
 	locateInventory(item, cat);
 	// <edit>
 	//if(!item || !item->isComplete()) return ACCEPT_NO;
-	if( !item || (!item->isComplete() && !(gInventory.isObjectDescendentOf(item->getUUID(), gLocalInventoryRoot))) ) return ACCEPT_NO;
+	if( !item || (!item->isComplete() && !(gInventory.isObjectDescendentOf(item->getUUID(), gSystemFolderRoot))) ) return ACCEPT_NO;
 	// </edit>
 	EAcceptance rv = willObjectAcceptInventory(obj, item);
 	if((mask & MASK_CONTROL))
@@ -2404,9 +2411,6 @@ EAcceptance LLToolDragAndDrop::dad3dTextureObject(
 		}
 		return rv;
 	}
-	// <edit>
-	/*
-	// </edit>
 	if(!obj->permModify())
 	{
 		return ACCEPT_NO_LOCKED;
@@ -2416,9 +2420,6 @@ EAcceptance LLToolDragAndDrop::dad3dTextureObject(
 	{
 		return ACCEPT_NO;
 	}
-	// <edit>
-	*/
-	// </edit>
 
 	if(drop && (ACCEPT_YES_SINGLE <= rv))
 	{
@@ -2846,13 +2847,11 @@ EAcceptance LLToolDragAndDrop::dad3dRezFromObjectOnLand(
 	locateInventory(item, cat);
 	if(!item || !item->isComplete()) return ACCEPT_NO;
 
-	// <edit>
-	//if(!gAgent.allowOperation(PERM_COPY, item->getPermissions())
-	//	|| !item->getPermissions().allowTransferTo(LLUUID::null))
-	//{
-	//	return ACCEPT_NO_LOCKED;
-	//}
-	// </edit>
+	if(!gAgent.allowOperation(PERM_COPY, item->getPermissions())
+		|| !item->getPermissions().allowTransferTo(LLUUID::null))
+	{
+		return ACCEPT_NO_LOCKED;
+	}
 	if(drop)
 	{
 		dropObject(obj, TRUE, TRUE, FALSE);
@@ -2882,14 +2881,12 @@ EAcceptance LLToolDragAndDrop::dad3dRezFromObjectOnObject(
 		//}
 		//return rv;
 	}
-	// <edit>
-	//if(!item->getPermissions().allowCopyBy(gAgent.getID(),
-	//									   gAgent.getGroupID())
-	//   || !item->getPermissions().allowTransferTo(LLUUID::null))
-	//{
-	//	return ACCEPT_NO_LOCKED;
-	//}
-	// </edit>a
+	if(!item->getPermissions().allowCopyBy(gAgent.getID(),
+										   gAgent.getGroupID())
+	   || !item->getPermissions().allowTransferTo(LLUUID::null))
+	{
+		return ACCEPT_NO_LOCKED;
+	}
 	if(drop)
 	{
 		dropObject(obj, FALSE, TRUE, FALSE);

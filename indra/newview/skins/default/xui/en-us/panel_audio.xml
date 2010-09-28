@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <panel border="false" follows="left|top|right|bottom" height="190"
      label="Audio &amp; Video" name="Media panel" width="175">
-        <check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16" initial_value="false" label="Mute Gestures" left="10" mouse_opaque="true" name="mute_gestures_toggle" radio_style="false" width="30" control_name="PhoenixMuteGestures" tool_tip="Check to mute all gestures"/>
+        <check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16" initial_value="false" label="Mute Gestures" left="10" mouse_opaque="true" name="mute_gestures_toggle" radio_style="false" width="30" control_name="AscentMuteGestures" tool_tip="Check to mute all gestures"/>
 	<slider bottom_delta="-20" control_name="AudioLevelMaster" follows="left|top|right"
 	     height="15" increment="0.05" initial_val="0.5" label="Master"
 	     label_width="55" left="10" max_val="1" min_val="0" mouse_opaque="true"

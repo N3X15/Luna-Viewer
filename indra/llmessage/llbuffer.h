@@ -1,6 +1,6 @@
 /** 
  * @file llbuffer.h
- * @author Ascent
+ * @author Phoenix
  * @date 2005-09-20
  * @brief Declaration of buffer and buffer arrays primarily used in I/O.
  *

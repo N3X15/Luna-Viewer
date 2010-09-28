@@ -1,6 +1,6 @@
 /** 
  * @file llsdappservices.cpp
- * @author Ascent
+ * @author Phoenix
  * @date 2006-09-12
  *
  * $LicenseInfo:firstyear=2006&license=viewergpl$

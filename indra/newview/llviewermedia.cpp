@@ -478,8 +478,8 @@ LLPluginClassMedia* LLViewerMediaImpl::newSourceFromMediaType(std::string media_
 		{
 			LLPluginClassMedia* media_source = new LLPluginClassMedia(owner);
 			media_source->setSize(default_width, default_height);
-			media_source->setUserDataPath(user_data_path);
-			if (media_source->init(launcher_name, plugin_name, false)) //No more user_data_path
+			//media_source->setUserDataPath(user_data_path);
+			if (media_source->init(launcher_name, plugin_name, false, user_data_path)) //No more user_data_path
 			{
 				return media_source;
 			}
@@ -797,9 +797,9 @@ bool LLViewerMediaImpl::handleKeyHere(KEY key, MASK mask)
 			
 			LLSD native_key_data;//gViewerWindow->getWindow()->getNativeKeyData();
 			
-			result = mMediaSource->keyEvent(LLPluginClassMedia::KEY_EVENT_DOWN ,key, mask, native_key_data);
+			result = mMediaSource->keyEvent(LLPluginClassMedia::KEY_EVENT_DOWN ,key, mask);
 			// Since the viewer internal event dispatching doesn't give us key-up events, simulate one here.
-			(void)mMediaSource->keyEvent(LLPluginClassMedia::KEY_EVENT_UP ,key, mask, native_key_data);
+			(void)mMediaSource->keyEvent(LLPluginClassMedia::KEY_EVENT_UP ,key, mask);
 		}
 	}
 	
@@ -818,7 +818,7 @@ bool LLViewerMediaImpl::handleUnicodeCharHere(llwchar uni_char)
 			&& uni_char != 127) // SDL thinks this is 'delete' - yuck.
 		{
 			LLSD native_key_data;
-			mMediaSource->textInput(wstring_to_utf8str(LLWString(1, uni_char)), gKeyboard->currentMask(FALSE), native_key_data);
+			mMediaSource->textInput(wstring_to_utf8str(LLWString(1, uni_char)), gKeyboard->currentMask(FALSE));
 		}
 	}
 	

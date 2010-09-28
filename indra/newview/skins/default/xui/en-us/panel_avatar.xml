@@ -147,7 +147,7 @@ Luna Support
         Groups:
       </text>
       <button follows="left|top" left="40"  bottom="-280" height="20" halign="center"
-              label="+" label_selected="+" name="PhoenixGroupInvite_Button" tool_tip="Invite to Group." width="40" />
+              label="+" label_selected="+" name="AscentGroupInvite_Button" tool_tip="Invite to Group." width="40" />
       <scroll_list background_visible="true" bottom="-282" column_padding="5" draw_border="true"
 			     follows="left|top" height="90" left="79" mouse_opaque="false"
 			     multi_select="false" name="groups" width="321" />

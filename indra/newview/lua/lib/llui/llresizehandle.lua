@@ -254,17 +254,18 @@ end
 
 BOOL LLResizeHandle::pointInHandle( S32 x, S32 y )
 then
-	if pointInView(x, y) )
-	then
-		const S32 TOP_BORDER = (getRect().getHeight() - RESIZE_BORDER_WIDTH)
-		const S32 RIGHT_BORDER = (getRect().getWidth() - RESIZE_BORDER_WIDTH)
+	if pointInView(x, y) then
+		TOP_BORDER = (getRect().getHeight() - RESIZE_BORDER_WIDTH)
+		RIGHT_BORDER = (getRect().getWidth() - RESIZE_BORDER_WIDTH)
 
-		switch( self:mCorner )
-		then
-		case LEFT_TOP then		return (x <= RESIZE_BORDER_WIDTH) || (y >= TOP_BORDER)
-		case LEFT_BOTTOM then	return (x <= RESIZE_BORDER_WIDTH) || (y <= RESIZE_BORDER_WIDTH)
-		case RIGHT_TOP then		return (x >= RIGHT_BORDER) || (y >= TOP_BORDER)
-		case RIGHT_BOTTOM then	return TRUE
+		if self:mCorner == LEFT_TOP then		
+			return (x <= RESIZE_BORDER_WIDTH) or (y >= TOP_BORDER)
+		elseif self:mCorner == LEFT_BOTTOM then	
+			return (x <= RESIZE_BORDER_WIDTH) or (y <= RESIZE_BORDER_WIDTH)
+		elseif self:mCorner == RIGHT_TOP then		
+			return (x >= RIGHT_BORDER) or (y >= TOP_BORDER)
+		elseif self:mCorner == RIGHT_BOTTOM then	
+			return true
 		end
 	end
 	return FALSE

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <floater bottom="-380" can_close="true" can_drag_on_left="false" can_minimize="true"
-    can_resize="true" height="350" left="400" min_height="200" min_width="375"
-    mouse_opaque="true" name="avatarpicker" title="Choose Resident" width="375">
+     can_resize="true" height="350" left="400" min_height="200" min_width="375"
+     mouse_opaque="true" name="avatarpicker" title="Choose Resident" width="375">
 
 	<tab_container bottom="30" follows="left|right|top|bottom" height="300" left="4"
 	     name="ResidentChooserTabs" tab_position="top" tab_width="65" width="365">

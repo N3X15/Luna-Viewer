@@ -36,20 +36,16 @@
 
 // project includes
 #include "llagent.h"
-
 #include "llfilepicker.h"
 #include "llfloateranimpreview.h"
 #include "llfloaterbuycurrency.h"
-
 #include "llfloaterimagepreview.h"
 #include "llfloaternamedesc.h"
 #include "llfloatersnapshot.h"
-
 #include "llinventorymodel.h"	// gInventory
 #include "llresourcedata.h"
 #include "llfloaterperms.h"
 #include "llstatusbar.h"
-
 #include "llviewercontrol.h"	// gSavedSettings
 #include "llviewerimagelist.h"
 #include "lluictrlfactory.h"
@@ -84,7 +80,7 @@
 // system libraries
 #include <boost/tokenizer.hpp>
 
-//#include "importtracker.h"
+#include "importtracker.h"
 
 typedef LLMemberListener<LLView> view_listener_t;
 
@@ -246,7 +242,7 @@ const std::string upload_pick(void* data)
 			args["EXTENSION"] = ext;
 			args["VALIDS"] = valid_extensions;
 			LLNotifications::instance().add("InvalidFileExtension", args);
-			return NULL;
+			return std::string();
 		}
 	}//end else (non-null extension)
 
@@ -254,7 +250,6 @@ const std::string upload_pick(void* data)
 	
 	//now we check to see
 	//if the file is actually a valid image/sound/etc.
-	//Consider completely disabling this, see how SL handles it. Maybe we can get full song uploads again! -HgB
 	if (type == LLFilePicker::FFLOAD_WAV)
 	{
 		// pre-qualify wavs to make sure the format is acceptable
@@ -269,6 +264,7 @@ const std::string upload_pick(void* data)
 		}
 	}//end if a wave/sound file
 
+	
 	return filename;
 }
 
@@ -378,25 +374,11 @@ class LLFileUploadBulk : public view_listener_t
 		// If an upload fails, refund the user for that one
 		//
 		// Also fix single upload to charge first, then refund
-		// <edit>
-		S32 expected_upload_cost = LLGlobalEconomy::Singleton::getInstance()->getPriceUpload();
-		LLSD args;
-		std::string msg = "Would you like to bulk upload the files as temporary files?\nOnly textures will upload as temporary on Agni and Aditi.";
-		if(expected_upload_cost)
-			msg.append(llformat("\nWARNING: Each upload costs L$%d if it's not temporary.",expected_upload_cost));
-		args["MESSAGE"] = msg;
-		LLNotifications::instance().add("GenericAlertYesNoCancel", args, LLSD(), onConfirmBulkUploadTemp);
-		/* moved to the callback for the above
+
 		LLFilePicker& picker = LLFilePicker::instance();
 		if (picker.getMultipleOpenFiles())
 		{
-			// <edit>
-			
-			//const std::string& filename = picker.getFirstFile();
-			std::string filename;
-			while(!(filename = picker.getNextFile()).empty())
-			{
-			// </edit>
+			const std::string& filename = picker.getFirstFile();
 			std::string name = gDirUtilp->getBaseFileName(filename, true);
 			
 			std::string asset_name = name;
@@ -416,14 +398,11 @@ class LLFileUploadBulk : public view_listener_t
 
 			// *NOTE: Ew, we don't iterate over the file list here,
 			// we handle the next files in upload_done_callback()
-			// </edit> not anymore!
-			}
 		}
 		else
 		{
 			llinfos << "Couldn't import objects from file" << llendl;
 		}
-		*/
 		return true;
 	}
 };
@@ -467,167 +446,6 @@ void upload_error(const std::string& error_message, const std::string& label, co
 	}
 	LLFilePicker::instance().reset();						
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 class LLFileEnableCloseWindow : public view_listener_t
 {
@@ -765,20 +583,6 @@ class LLFileTakeSnapshotToDisk : public view_listener_t
 			LLImageBase::setSizeOverride(FALSE);
 			gViewerWindow->saveImageNumbered(formatted);
 		}
-		return true;
-	}
-};
-
-class LLFileLogOut : public view_listener_t
-{
-	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
-	{
-		std::string command(gDirUtilp->getExecutableDir() + gDirUtilp->getDirDelimiter() + gDirUtilp->getExecutableFilename());
-		gSavedSettings.setBOOL("ShowConsoleWindow", FALSE);
-		gViewerWindow->getWindow()->ShellEx(command);
-		gSavedSettings.setBOOL("ShowConsoleWindow", FALSE);
-		LLAppViewer::instance()->userQuit();
-		gSavedSettings.setBOOL("ShowConsoleWindow", FALSE);
 		return true;
 	}
 };
@@ -959,6 +763,11 @@ void upload_new_resource(const std::string& src_filename, std::string name,
 			return;
 		}
 	}
+	else if(exten == "ogg")
+	{
+		asset_type = LLAssetType::AT_SOUND;  // tag it as audio
+		filename = src_filename;
+	}
 	else if(exten == "tmp")	 	
 	{	 	
 		// This is a generic .lin resource file	 	
@@ -1078,87 +887,19 @@ void upload_new_resource(const std::string& src_filename, std::string name,
 	}
 	else if (exten == "bvh")
 	{
-		// <edit> THE FUCK WE DON'T
-		//error_message = llformat("We do not currently support bulk upload of animation files\n");
-		//upload_error(error_message, "DoNotSupportBulkAnimationUpload", filename, args);
-		//return;
-		asset_type = LLAssetType::AT_ANIMATION;
-		S32 file_size;
-		LLAPRFile fp;
-		
-		if(!fp.open(src_filename, LL_APR_RB, LLAPRFile::local, &file_size))
-		{
-			args["ERROR_MESSAGE"] = llformat("Couldn't read file %s\n", src_filename.c_str());
-			LLNotifications::instance().add("ErrorMessage", args);
-			return;
-		}
-		char* file_buffer = new char[file_size + 1];
-		if(!fp.read(file_buffer, file_size))
-		{
-			fp.close();
-			delete[] file_buffer;
-			args["ERROR_MESSAGE"] = llformat("Couldn't read file %s\n", src_filename.c_str());
-			LLNotifications::instance().add("ErrorMessage", args);
-			return;
-		}
-		LLBVHLoader* loaderp = new LLBVHLoader(file_buffer);
-		if(!loaderp->isInitialized())
-		{
-			fp.close();
-			delete[] file_buffer;
-			args["ERROR_MESSAGE"] = llformat("Couldn't convert file %s to internal animation format\n", src_filename.c_str());
-			LLNotifications::instance().add("ErrorMessage", args);
-			return;
-		}
-		S32 buffer_size = loaderp->getOutputSize();
-		U8* buffer = new U8[buffer_size];
-		LLDataPackerBinaryBuffer dp(buffer, buffer_size);
-		loaderp->serialize(dp);
-		LLAPRFile apr_file;
-		apr_file.open(filename, LL_APR_WB, LLAPRFile::local);
-		apr_file.write(buffer, buffer_size);
-		delete[] file_buffer;
-		delete[] buffer;
-		fp.close();
-		apr_file.close();
-		// </edit>
+		error_message = llformat("We do not currently support bulk upload of animation files\n");
+		upload_error(error_message, "DoNotSupportBulkAnimationUpload", filename, args);
+		return;
 	}
 	// <edit>
-	// <edit>
-	else if(exten == "ogg")
-	{
-		asset_type = LLAssetType::AT_SOUND;  // tag it as audio
-		filename = src_filename;
-	}
-	// </edit>
-	else if (exten == "animatn")
+	else if (exten == "anim" || exten == "animatn")
 	{
 		asset_type = LLAssetType::AT_ANIMATION;
 		filename = src_filename;
 	}
-	else if(exten == "jp2" || exten == "j2k" || exten == "j2c")
+	else if(exten == "j2k" || exten == "jp2" || exten == "j2c")
 	{
 		asset_type = LLAssetType::AT_TEXTURE;
-		filename = src_filename;
-	}
-	else if(exten == "gesture")
-	{
-		asset_type = LLAssetType::AT_GESTURE;
-		filename = src_filename;
-	}
-	else if(exten == "notecard")
-	{
-		asset_type = LLAssetType::AT_NOTECARD;
-		filename = src_filename;
-	}
-	else if(exten == "lsl")
-	{
-		asset_type = LLAssetType::AT_LSL_TEXT;
-		filename = src_filename;
-	}
-	else if(exten == "eyes" || exten == "gloves" || exten == "hair" || exten == "jacket" || exten == "pants" || exten == "shape" || exten == "shirt" || exten == "shoes" || exten == "skin" || exten == "skirt" || exten == "socks" || exten == "underpants" || exten == "undershirt" || exten == "bodypart" || exten == "clothing")
-	{
-		asset_type = LLAssetType::AT_CLOTHING;
 		filename = src_filename;
 	}
 	// </edit>
@@ -1265,9 +1006,15 @@ void temp_upload_callback(const LLUUID& uuid, void* user_data, S32 result, LLExt
 		perms->setMaskGroup(PERM_ALL);
 		perms->setMaskNext(PERM_ALL);
 		
+		LLUUID destination = gInventory.findCategoryUUIDForType(LLAssetType::AT_TEXTURE);
+		BOOL bUseSystemInventory = (gSavedSettings.getBOOL("AscentUseSystemFolder") && gSavedSettings.getBOOL("AscentSystemTemporary"));
+		if (bUseSystemInventory)
+		{
+			destination = gSystemFolderAssets;
+		}
 		LLViewerInventoryItem* item = new LLViewerInventoryItem(
 				item_id,
-				gLocalInventoryRoot,
+				destination,
 				*perms,
 				uuid,
 				(LLAssetType::EType)data->mAssetInfo.mType,
@@ -1277,7 +1024,16 @@ void temp_upload_callback(const LLUUID& uuid, void* user_data, S32 result, LLExt
 				LLSaleInfo::DEFAULT,
 				0,
 				time_corrected());
-		LLLocalInventory::addItem(item);
+		if (bUseSystemInventory)
+		{
+			LLLocalInventory::addItem(item);
+		}
+		else
+		{
+			item->updateServer(TRUE);
+			gInventory.updateItem(item);
+			gInventory.notifyObservers();
+		}
 	}
 	else 
 	{
@@ -1563,8 +1319,7 @@ void init_menu_file()
 	(new LLFileTakeSnapshot())->registerListener(gMenuHolder, "File.TakeSnapshot");
 	(new LLFileTakeSnapshotToDisk())->registerListener(gMenuHolder, "File.TakeSnapshotToDisk");
 	(new LLFileQuit())->registerListener(gMenuHolder, "File.Quit");
-	(new LLFileLogOut())->registerListener(gMenuHolder, "File.LogOut");
-	//Emerald has a second llFileSaveTexture here... Same as the original. Odd. -HgB
+
 	(new LLFileEnableUpload())->registerListener(gMenuHolder, "File.EnableUpload");
 	(new LLFileEnableSaveAs())->registerListener(gMenuHolder, "File.EnableSaveAs");
 }

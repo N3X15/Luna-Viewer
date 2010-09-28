@@ -526,7 +526,7 @@ void LLInventoryView::init(LLInventoryModel* inventory)
 	if (mActivePanel)
 	{
 		// "All Items" is the previous only view, so it gets the InventorySortOrder
-
+		
 		//Fix for gSavedSettings use - rkeast
 		mActivePanel->getFilter()->setSearchType(search_type);
 		mActivePanel->getFilter()->setPartialSearch(partial_search);
@@ -545,7 +545,7 @@ void LLInventoryView::init(LLInventoryModel* inventory)
 		recent_items_panel->getFilter()->markDefault();
 		recent_items_panel->setSelectCallback(onSelectionChange, recent_items_panel);
 	}
-	
+
 	LLInventoryPanel* worn_items_panel = getChild<LLInventoryPanel>("Worn Items");
 	if (worn_items_panel)
 	{
@@ -579,6 +579,7 @@ void LLInventoryView::init(LLInventoryModel* inventory)
 			}
 		}
 	}
+
 
 	//Initialize item count - rkeast
 	mItemCount = gSavedPerAccountSettings.getS32("AscentInventoryPreviousCount");
@@ -666,20 +667,30 @@ void LLInventoryView::draw()
 {
  	if (LLInventoryModel::isEverythingFetched())
 	{
-		LLLocale locale(LLLocale::USER_LOCALE);
-		std::ostringstream title;
-		title << "Inventory";
-		std::string item_count_string;
-		LLResMgr::getInstance()->getIntegerString(item_count_string, gInventory.getItemCount());
-		title << " (" << item_count_string << " items)";
-		title << mFilterText;
-		setTitle(title.str());
+		S32 item_count = gInventory.getItemCount();
+
+		//don't let llfloater work more than necessary
+		if (item_count != mOldItemCount || mOldFilterText != mFilterText)
+		{
+			LLLocale locale(LLLocale::USER_LOCALE);
+			std::ostringstream title;
+			title << "Inventory"; //*TODO: make translatable
+			std::string item_count_string;
+			LLResMgr::getInstance()->getIntegerString(item_count_string, item_count);
+			title << " (" << item_count_string << " items)";
+			title << mFilterText;
+			setTitle(title.str());
+		}
+
+		mOldFilterText = mFilterText;
+		mOldItemCount = item_count;
+
 	}
 	if (mActivePanel && mSearchEditor)
 	{
 		mSearchEditor->setText(mActivePanel->getFilterSubString());
 	}
-
+	
 	if (mActivePanel && mQuickFilterCombo)
 	{
 		refreshQuickFilter( mQuickFilterCombo );
@@ -1933,11 +1944,14 @@ void LLInventoryPanel::buildNewViews(const LLUUID& id)
 		{
 			/*llwarns << "LLInventoryPanel::buildNewViews called with objectp->mType == " 
 				<< ((S32) objectp->getType())
+				<< " for object " << objectp->getName()
 				<< " (shouldn't happen)" << llendl;*/
 		}
-		else if (objectp->getType() == LLAssetType::AT_CATEGORY) // build new view for category
+		else if ((objectp->getType() == LLAssetType::AT_CATEGORY) &&
+				(objectp->getActualType() != LLAssetType::AT_LINK_FOLDER)) // build new view for category
 		{
 			LLInvFVBridge* new_listener = LLInvFVBridge::createBridge(objectp->getType(),
+													objectp->getType(),
 													LLInventoryType::IT_CATEGORY,
 													this,
 													objectp->getUUID());
@@ -1958,6 +1972,7 @@ void LLInventoryPanel::buildNewViews(const LLUUID& id)
 			LLInventoryItem* item = (LLInventoryItem*)objectp;
 			LLInvFVBridge* new_listener = LLInvFVBridge::createBridge(
 				item->getType(),
+				item->getActualType(),
 				item->getInventoryType(),
 				this,
 				item->getUUID(),
@@ -2036,11 +2051,13 @@ void LLInventoryPanel::buildNewViews(const LLInventoryObject* objectp)
 		{
 			llwarns << "LLInventoryPanel::buildNewViews called with objectp->mType == " 
 				<< ((S32) objectp->getType())
+				<< "Named " << objectp->getName()
 				<< " (shouldn't happen)" << llendl;
 		}
 		else if (objectp->getType() == LLAssetType::AT_CATEGORY) // build new view for category
 		{
 			LLInvFVBridge* new_listener = LLInvFVBridge::createBridge(objectp->getType(),
+													objectp->getType(),
 													LLInventoryType::IT_CATEGORY,
 													this,
 													objectp->getUUID());
@@ -2061,9 +2078,10 @@ void LLInventoryPanel::buildNewViews(const LLInventoryObject* objectp)
 			LLInventoryItem* item = (LLInventoryItem*)objectp;
 			LLInvFVBridge* new_listener = LLInvFVBridge::createBridge(
 				item->getType(),
-				item->getInventoryType(),
-				this,
-				item->getUUID(),
+				item->getActualType(),
+ 				item->getInventoryType(),
+ 				this,
+ 				item->getUUID(),
 				item->getFlags());
 			if (new_listener)
 			{

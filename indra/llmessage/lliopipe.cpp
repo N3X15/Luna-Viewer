@@ -1,6 +1,6 @@
 /** 
  * @file lliopipe.cpp
- * @author Ascent
+ * @author Phoenix
  * @date 2004-11-19
  * @brief Implementation of the LLIOPipe class
  *

@@ -331,7 +331,7 @@ public:
 		const LLHost& key,
 		circuit_data_map::iterator& first,
 		circuit_data_map::iterator& end);
-		
+
 	// <edit>
 	std::vector<LLCircuitData*> getCircuitDataList();
 	// </edit>

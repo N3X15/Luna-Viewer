@@ -1,6 +1,6 @@
 /** 
  * @file lliobuffer.h
- * @author Ascent
+ * @author Phoenix
  * @date 2005-05-04
  * @brief Declaration of buffers for use in IO Pipes.
  *

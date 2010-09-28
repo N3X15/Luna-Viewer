@@ -48,7 +48,7 @@ void StreamTitleDisplay::checkMetadata()
 {
 	if(!gAudiop)
 		return;
-	if(gAudiop->getStreamingAudioImpl()->hasNewMetadata() && gSavedSettings.getBOOL("PhoenixShowStreamMetadata"))
+	if(gAudiop->getStreamingAudioImpl()->hasNewMetadata() && gSavedSettings.getBOOL("AscentShowStreamMetadata"))
 	{
 		LLChat chat;
 		std::string title = gAudiop->getStreamingAudioImpl()->getCurrentTitle();

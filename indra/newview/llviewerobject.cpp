@@ -204,7 +204,8 @@ LLViewerObject::LLViewerObject(const LLUUID &id, const LLPCode pcode, LLViewerRe
 	mState(0),
 	mMedia(NULL),
 	mClickAction(0),
-	mSculptSurfaceArea(0.0)
+	mSculptSurfaceArea(0.0),
+	mAttachmentItemID(LLUUID::null)
 {
 	if(!is_global)
 	{
@@ -505,9 +506,20 @@ BOOL LLViewerObject::isOverGroupOwnedLand() const
 		&& mRegionp->getParcelOverlay()->isOwnedGroup(getPositionRegion());
 }
 
-void LLViewerObject::setParent(LLViewerObject* parent)
+BOOL LLViewerObject::setParent(LLViewerObject* parent)
 {
-	LLPrimitive::setParent(parent);
+	if (mParent != parent)
+	{
+		LLViewerObject* old_parent = (LLViewerObject*)mParent ;		
+		BOOL ret = LLPrimitive::setParent(parent);
+		if (ret && old_parent && parent)
+		{
+			old_parent->removeChild(this) ;
+		}
+		return ret ;
+	}
+
+	return FALSE ;
 }
 
 void LLViewerObject::addChild(LLViewerObject *childp)
@@ -526,8 +538,10 @@ void LLViewerObject::addChild(LLViewerObject *childp)
 		childp->mbCanSelect = mbCanSelect;
 	}
 
-	childp->setParent(this);
-	mChildList.push_back(childp);
+	if (childp->setParent(this))
+	{
+		mChildList.push_back(childp);
+	}
 }
 
 void LLViewerObject::removeChild(LLViewerObject *childp)
@@ -623,12 +637,16 @@ BOOL LLViewerObject::setDrawableParent(LLDrawable* parentp)
 	{
 		return FALSE;
 	}
+	BOOL ret = mDrawable->mXform.setParent(parentp ? &parentp->mXform : NULL);
+	if (!ret)
+	{
+		return FALSE ;
+	}
 
 	LLDrawable* old_parent = mDrawable->mParent;
 
 	mDrawable->mParent = parentp; 
 	
-	BOOL ret = mDrawable->mXform.setParent(parentp ? &parentp->mXform : NULL);
 	gPipeline.markRebuild(mDrawable, LLDrawable::REBUILD_VOLUME, TRUE);
 	if(	(old_parent != parentp && old_parent)
 		|| (parentp && parentp->isActive()))
@@ -5188,3 +5206,19 @@ std::string LLViewerObject::getAttachmentPointName()
 	return llformat("unsupported point %d", point);
 }
 // </edit>
+
+const LLUUID &LLViewerObject::extractAttachmentItemID()
+{
+	LLUUID item_id = LLUUID::null;
+	LLNameValue* item_id_nv = getNVPair("AttachItemID");
+	if (item_id_nv)
+	{
+		const char* s = item_id_nv->getString();
+		if (s)
+		{
+			item_id.set(s);
+		}
+	}
+	setAttachmentItemID(item_id);
+	return getAttachmentItemID();
+}

@@ -632,7 +632,7 @@ class LLSetSortBy : public inventory_listener_t
 		else if (sort_field == "foldersalwaysbyname")
 		{
 			U32 order = mPtr->getActivePanel()->getSortOrder();
-			if (order & LLInventoryFilter::SO_FOLDERS_BY_NAME)
+			if ( order & LLInventoryFilter::SO_FOLDERS_BY_NAME )
 			{
 				order &= ~LLInventoryFilter::SO_FOLDERS_BY_NAME;
 
@@ -649,7 +649,7 @@ class LLSetSortBy : public inventory_listener_t
 		else if (sort_field == "systemfolderstotop")
 		{
 			U32 order = mPtr->getActivePanel()->getSortOrder();
-			if (order & LLInventoryFilter::SO_SYSTEM_FOLDERS_TO_TOP)
+			if ( order & LLInventoryFilter::SO_SYSTEM_FOLDERS_TO_TOP )
 			{
 				order &= ~LLInventoryFilter::SO_SYSTEM_FOLDERS_TO_TOP;
 
@@ -661,7 +661,7 @@ class LLSetSortBy : public inventory_listener_t
 
 				mPtr->getControl("Inventory.SystemFoldersToTop")->setValue( TRUE );
 			}
-			mPtr->getActivePanel()->setSortOrder(order);
+			mPtr->getActivePanel()->setSortOrder( order );
 		}
 
 		return true;
@@ -696,6 +696,7 @@ class LLRefreshInvModel : public inventory_listener_t
 		return true;
 	}
 };
+
 
 class LLBeginIMSession : public inventory_panel_listener_t
 {
@@ -802,7 +803,7 @@ class LLBeginIMSession : public inventory_panel_listener_t
 	}
 };
 
-void rez_attachment(LLViewerInventoryItem* item, LLViewerJointAttachment* attachment);
+//void rez_attachment(LLViewerInventoryItem* item, LLViewerJointAttachment* attachment);
 
 class LLAttachObject : public inventory_panel_listener_t
 {
@@ -887,8 +888,7 @@ void init_inventory_actions(LLInventoryView *floater)
 	(new LLShowFilters())->registerListener(floater, "Inventory.ShowFilters");
 	(new LLResetFilter())->registerListener(floater, "Inventory.ResetFilter");
 	(new LLSetSortBy())->registerListener(floater, "Inventory.SetSortBy");
-	
-	//Register Search related listeners - RKeast
+
 	(new SetSearchType())->registerListener(floater, "Inventory.SetSearchBy");
 	(new SetPartialSearch())->registerListener(floater, "Inventory.PartialSearch");
 }

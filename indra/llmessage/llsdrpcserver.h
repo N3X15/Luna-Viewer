@@ -1,6 +1,6 @@
 /** 
  * @file llsdrpcserver.h
- * @author Ascent
+ * @author Phoenix
  * @date 2005-10-11
  * @brief Declaration of the structured data remote procedure call server.
  *

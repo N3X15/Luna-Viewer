@@ -66,6 +66,7 @@ extern "C" {
 
 #include "LuaBase_f.h"
 
+// If you enable this, you WILL crash.
 //#define LUA_HOOK_SPAM 
 
 extern LLAgent gAgent;
@@ -81,6 +82,11 @@ extern "C" {
 void HookRequest::Send()
 {
 	FLLua::callLuaHook(this);
+}
+// This should ONLY BE USED WHEN RENDERING.
+void HookRequest::Execute()
+{
+	FLLua::execClientEvent(this); // Do not queue, do not pass go, do not collect $500.
 }
 HookRequest& HookRequest::operator<<(const int &in)
 {
@@ -305,6 +311,26 @@ void FLLua::execClientEvents()
 			<< timer.getElapsedTimeF64()*(F64)1000.f << "ms. Yields=" << yields << llendl;
 	}	
 }
+
+// Static
+//	Called from MAIN thread
+void FLLua::execClientEvent(HookRequest *hook)
+{
+	if(!hook)
+		return;
+	if(!sInstance || !sInstance->listening)
+	{
+		delete hook;
+		return;
+	}
+	lldebugs << __LINE__ << ": Executing event " << hook->getName() << " directly." << llendl;
+	sInstance->lockData();
+	sInstance->ExecuteHook(hook);
+	delete hook; // No memory leaks kthx
+	sInstance->unlockData();
+		
+}
+
 // Static
 //	Called from lua thread
 bool FLLua::setCriticalSection(bool enter)

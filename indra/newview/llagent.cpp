@@ -621,7 +621,7 @@ void LLAgent::resetView(BOOL reset_camera, BOOL change_camera)
 //-----------------------------------------------------------------------------
 void LLAgent::onAppFocusGained()
 {
-	if (CAMERA_MODE_MOUSELOOK == mCameraMode && gSavedSettings.getBOOL("PhoenixLeaveMouselookOnFocus"))
+	if (CAMERA_MODE_MOUSELOOK == mCameraMode && gSavedSettings.getBOOL("AscentLeaveMouselookOnFocus"))
 	{
 		changeCameraToDefault();
 		LLToolMgr::getInstance()->clearSavedTool();
@@ -1948,7 +1948,7 @@ void LLAgent::cameraZoomIn(const F32 fraction)
 	//~Zwag
 	// Don't move through focus point
 	
-        if (!gSavedSettings.getBOOL("PhoenixDisableMinZoomDist"))
+        if (!gSavedSettings.getBOOL("AscentDisableMinZoomDist"))
         {
 		if (mFocusObject)
 		{
@@ -3532,13 +3532,18 @@ void LLAgent::updateCamera()
 		{
 			LLVOAvatar::attachment_map_t::iterator curiter = iter++;
 			LLViewerJointAttachment* attachment = curiter->second;
-			LLViewerObject *attached_object = attachment->getObject();
-			if (attached_object && !attached_object->isDead() && attached_object->mDrawable.notNull())
+			for (LLViewerJointAttachment::attachedobjs_vec_t::iterator attachment_iter = attachment->mAttachedObjects.begin();
+				 attachment_iter != attachment->mAttachedObjects.end();
+				 ++attachment_iter)
 			{
-				// clear any existing "early" movements of attachment
-				attached_object->mDrawable->clearState(LLDrawable::EARLY_MOVE);
-				gPipeline.updateMoveNormalAsync(attached_object->mDrawable);
-				attached_object->updateText();
+				LLViewerObject *attached_object = (*attachment_iter);
+				if (attached_object && !attached_object->isDead() && attached_object->mDrawable.notNull())
+				{
+					// clear any existing "early" movements of attachment
+					attached_object->mDrawable->clearState(LLDrawable::EARLY_MOVE);
+					gPipeline.updateMoveNormalAsync(attached_object->mDrawable);
+					attached_object->updateText();
+				}
 			}
 		}
 
@@ -6237,7 +6242,7 @@ bool LLAgent::teleportCore(bool is_local)
 		}
 	}
 	
-	if(gSavedSettings.getBOOL("PhoenixPlayTpSound"))
+	if(gSavedSettings.getBOOL("AscentPlayTpSound"))
 		make_ui_sound("UISndTeleportOut");
 	
 	// MBW -- Let the voice client know a teleport has begun so it can leave the existing channel.
@@ -7310,6 +7315,7 @@ void LLAgent::makeNewOutfit(
 		new_folder_name);
 
 	bool found_first_item = false;
+	BOOL no_link = !gSavedSettings.getBOOL("BeauchampUseInventoryLinks");
 
 	///////////////////
 	// Wearables
@@ -7319,7 +7325,6 @@ void LLAgent::makeNewOutfit(
 		// Then, iterate though each of the wearables and save copies of them in the folder.
 		S32 i;
 		S32 count = wearables_to_include.count();
-		LLDynamicArray<LLUUID> delete_items;
 		LLPointer<LLRefCount> cbdone = NULL;
 		for( i = 0; i < count; ++i )
 		{
@@ -7327,53 +7332,69 @@ void LLAgent::makeNewOutfit(
 			LLWearable* old_wearable = mWearableEntry[ index ].mWearable;
 			if( old_wearable )
 			{
-				std::string new_name;
-				LLWearable* new_wearable;
-				new_wearable = gWearableList.createCopy(old_wearable);
+				LLViewerInventoryItem* item = gInventory.getItem(mWearableEntry[index].mItemID);
+				std::string new_name = item->getName();
 				if (rename_clothing)
 				{
 					new_name = new_folder_name;
 					new_name.append(" ");
 					new_name.append(old_wearable->getTypeLabel());
 					LLStringUtil::truncate(new_name, DB_INV_ITEM_NAME_STR_LEN);
-					new_wearable->setName(new_name);
 				}
 
-				LLViewerInventoryItem* item = gInventory.getItem(mWearableEntry[index].mItemID);
-				S32 todo = addWearableToAgentInventoryCallback::CALL_NONE;
-				if (!found_first_item)
+				if (no_link || isWearableCopyable((EWearableType)index))
 				{
-					found_first_item = true;
-					/* set the focus to the first item */
-					todo |= addWearableToAgentInventoryCallback::CALL_MAKENEWOUTFITDONE;
-					/* send the agent wearables update when done */
-					cbdone = new sendAgentWearablesUpdateCallback;
-				}
-				LLPointer<LLInventoryCallback> cb =
-					new addWearableToAgentInventoryCallback(
-						cbdone,
-						index,
-						new_wearable,
-						todo);
-				if (isWearableCopyable((EWearableType)index))
-				{
-					copy_inventory_item(
-						gAgent.getID(),
-						item->getPermissions().getOwner(),
-						item->getUUID(),
-						folder_id,
-						new_name,
-						cb);
+					LLWearable* new_wearable = gWearableList.createCopy(old_wearable);
+					if (rename_clothing)
+					{
+						new_wearable->setName(new_name);
+					}
+
+					S32 todo = addWearableToAgentInventoryCallback::CALL_NONE;
+					if (!found_first_item)
+					{
+						found_first_item = true;
+						/* set the focus to the first item */
+						todo |= addWearableToAgentInventoryCallback::CALL_MAKENEWOUTFITDONE;
+						/* send the agent wearables update when done */
+						cbdone = new sendAgentWearablesUpdateCallback;
+					}
+					LLPointer<LLInventoryCallback> cb =
+						new addWearableToAgentInventoryCallback(
+							cbdone,
+							index,
+							new_wearable,
+							todo);
+					if (isWearableCopyable((EWearableType)index))
+					{
+						copy_inventory_item(
+							gAgent.getID(),
+							item->getPermissions().getOwner(),
+							item->getLinkedUUID(),
+							folder_id,
+							new_name,
+							cb);
+					}
+					else
+					{
+						move_inventory_item(
+							gAgent.getID(),
+							gAgent.getSessionID(),
+							item->getLinkedUUID(),
+							folder_id,
+							new_name,
+							cb);
+					}
 				}
 				else
 				{
-					move_inventory_item(
+					link_inventory_item(
 						gAgent.getID(),
-						gAgent.getSessionID(),
-						item->getUUID(),
+						item->getLinkedUUID(),
 						folder_id,
-						new_name,
-						cb);
+						item->getName(),		// Apparently, links cannot have arbitrary names...
+						LLAssetType::AT_LINK,
+						LLPointer<LLInventoryCallback>(NULL));
 				}
 			}
 		}
@@ -7386,39 +7407,55 @@ void LLAgent::makeNewOutfit(
 
 	if( attachments_to_include.count() )
 	{
-		BOOL msg_started = FALSE;
-		LLMessageSystem* msg = gMessageSystem;
 		for( S32 i = 0; i < attachments_to_include.count(); i++ )
 		{
 			S32 attachment_pt = attachments_to_include[i];
 			LLViewerJointAttachment* attachment = get_if_there(mAvatarObject->mAttachmentPoints, attachment_pt, (LLViewerJointAttachment*)NULL );
 			if(!attachment) continue;
-			LLViewerObject* attached_object = attachment->getObject();
-			if(!attached_object) continue;
-			const LLUUID& item_id = attachment->getItemID();
-			if(item_id.isNull()) continue;
-			LLInventoryItem* item = gInventory.getItem(item_id);
-			if(!item) continue;
-			if(!msg_started)
-			{
-				msg_started = TRUE;
-				msg->newMessage("CreateNewOutfitAttachments");
-				msg->nextBlock("AgentData");
-				msg->addUUID("AgentID", getID());
-				msg->addUUID("SessionID", getSessionID());
-				msg->nextBlock("HeaderData");
-				msg->addUUID("NewFolderID", folder_id);
+			for (LLViewerJointAttachment::attachedobjs_vec_t::iterator attachment_iter = attachment->mAttachedObjects.begin();
+				 attachment_iter != attachment->mAttachedObjects.end();
+				 ++attachment_iter)
+ 			{
+				LLViewerObject *attached_object = (*attachment_iter);
+				if (!attached_object) continue;
+				const LLUUID& item_id = attached_object->getAttachmentItemID();
+				if (item_id.isNull()) continue;
+				LLInventoryItem* item = gInventory.getItem(item_id);
+				if (!item) continue;
+				if (no_link || item->getPermissions().allowCopyBy(gAgent.getID()))
+				{
+					const LLUUID& old_folder_id = item->getParentUUID();
+					move_inventory_item(
+						gAgent.getID(),
+						gAgent.getSessionID(),
+						item->getLinkedUUID(),
+						folder_id,
+						item->getName(),
+						LLPointer<LLInventoryCallback>(NULL));
+
+					if (item->getPermissions().allowCopyBy(gAgent.getID()))
+					{
+						copy_inventory_item(
+							gAgent.getID(),
+							item->getPermissions().getOwner(),
+							item->getLinkedUUID(),
+							old_folder_id,
+							item->getName(),
+							LLPointer<LLInventoryCallback>(NULL));
+					}
+				}
+				else
+				{
+					link_inventory_item(
+						gAgent.getID(),
+						item->getLinkedUUID(),
+						folder_id,
+						item->getName(),
+						LLAssetType::AT_LINK,
+						LLPointer<LLInventoryCallback>(NULL));
+				}
 			}
-			msg->nextBlock("ObjectData");
-			msg->addUUID("OldItemID", item_id);
-			msg->addUUID("OldFolderID", item->getParentUUID());
 		}
-
-		if( msg_started )
-		{
-			sendReliableMessage();
-		}
-
 	} 
 }
 
@@ -7566,16 +7603,12 @@ void LLAgent::sendAgentSetAppearance()
 		 param;
 		 param = (LLViewerVisualParam*)mAvatarObject->getNextVisualParam())
 	{
-		if (param->getGroup() == VISUAL_PARAM_GROUP_TWEAKABLE)
+		if (param->getGroup() == VISUAL_PARAM_GROUP_TWEAKABLE) // do not transmit params of group VISUAL_PARAM_GROUP_TWEAKABLE_NO_TRANSMIT
 		{
 			msg->nextBlockFast(_PREHASH_VisualParam );
 			
 			// We don't send the param ids.  Instead, we assume that the receiver has the same params in the same sequence.
-			F32 param_value;
-			if(param->getID() == 507)
-				param_value = mAvatarObject->getActualBoobGrav();
-			else
-				param_value = param->getWeight();
+			const F32 param_value = param->getWeight();
 			const U8 new_weight = F32_to_U8(param_value, param->getMinWeight(), param->getMaxWeight());
 			msg->addU8Fast(_PREHASH_ParamValue, new_weight );
 			transmitted_params++;
@@ -8036,11 +8069,16 @@ void LLAgent::userRemoveAllAttachments( void* userdata )
 	{
 		LLVOAvatar::attachment_map_t::iterator curiter = iter++;
 		LLViewerJointAttachment* attachment = curiter->second;
-		LLViewerObject* objectp = attachment->getObject();
-		if (objectp)
+		for (LLViewerJointAttachment::attachedobjs_vec_t::iterator attachment_iter = attachment->mAttachedObjects.begin();
+			 attachment_iter != attachment->mAttachedObjects.end();
+			 ++attachment_iter)
 		{
-			gMessageSystem->nextBlockFast(_PREHASH_ObjectData);
-			gMessageSystem->addU32Fast(_PREHASH_ObjectLocalID, objectp->getLocalID());
+			LLViewerObject *attached_object = (*attachment_iter);
+			if (attached_object)
+			{
+				gMessageSystem->nextBlockFast(_PREHASH_ObjectData);
+				gMessageSystem->addU32Fast(_PREHASH_ObjectLocalID, attached_object->getLocalID());
+			}
 		}
 	}
 	gMessageSystem->sendReliable( gAgent.getRegionHost() );

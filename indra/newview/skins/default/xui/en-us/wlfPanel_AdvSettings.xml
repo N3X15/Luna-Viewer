@@ -5,5 +5,5 @@
 	<panel bottom="1" filename="panel_bg_tab.xml" height="22" left="0" width="30" />
 	<button bottom="0" height="22" label=""
 	     left="5" name="expand" scale_image="true" toggle="true"
-	     tool_tip="Show the Settings Panel" width="22"/>
+	     tool_tip="Show the Settings Panel" width="22" />
 </panel>

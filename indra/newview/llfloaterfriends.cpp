@@ -1,6 +1,6 @@
 /** 
  * @file llfloaterfriends.cpp
- * @author Ascent
+ * @author Phoenix
  * @date 2005-01-13
  * @brief Implementation of the friends floater
  *

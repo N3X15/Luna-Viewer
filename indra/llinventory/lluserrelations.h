@@ -1,6 +1,6 @@
 /** 
  * @file lluserrelations.h
- * @author Ascent
+ * @author Phoenix
  * @date 2006-10-12
  * @brief Declaration of a class for handling granted rights.
  *
@@ -144,7 +144,7 @@ public:
 	S32 getRightsGrantedFrom() const;
 
 	void setRightsTo(S32 to_agent) { mGrantToAgent = to_agent; mChangeSerialNum++; }
-	void setRightsFrom(S32 from_agent) { mGrantFromAgent = from_agent | (mGrantFromAgent & GRANT_ONLINE_STATUS); mChangeSerialNum++;}
+	void setRightsFrom(S32 from_agent) { mGrantFromAgent = from_agent; mChangeSerialNum++;}
 
 	/**
 	 * @brief Get the change count for this agent

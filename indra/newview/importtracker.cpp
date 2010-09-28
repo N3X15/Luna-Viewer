@@ -22,10 +22,8 @@
 
 #include "llfloaterperms.h"
 
-
 #include "llviewertexteditor.h"
-
-#include "jclslpreproc.h"
+#include "llinventorymodel.h"
 
 ImportTracker gImportTracker;
 
@@ -169,7 +167,7 @@ void ImportTracker::get_update(S32 newid, BOOL justCreated, BOOL createSelected)
 				LLPrimitive obj;
 				obj.setNumTEs(U8(10));	
 				S32 shinnyLevel = 0;
-				static std::string* shinystr = rebind_llcontrol<std::string>("AscentBuildPrefs_Shiny", &gSavedSettings, true);
+				static std::string* shinystr = rebind_llcontrol<std::string>("PhoenixBuildPrefs_Shiny", &gSavedSettings, true);
 				if(*shinystr == "None") shinnyLevel = 0;
 				if(*shinystr == "Low") shinnyLevel = 1;
 				if(*shinystr == "Medium") shinnyLevel = 2;
@@ -177,13 +175,13 @@ void ImportTracker::get_update(S32 newid, BOOL justCreated, BOOL createSelected)
 				
 				for (int i = 0; i < 10; i++)
 				{
-					static std::string* buildpreftex = rebind_llcontrol<std::string>("AscentBuildPrefs_Texture", &gSavedSettings, true);
+					static std::string* buildpreftex = rebind_llcontrol<std::string>("PhoenixBuildPrefs_Texture", &gSavedSettings, true);
 
 					LLTextureEntry tex =  LLTextureEntry(LLUUID(*buildpreftex));
-					tex.setColor(gSavedSettings.getColor4("AscentBuildPrefs_Color"));
-					tex.setAlpha(1.0 - ((gSavedSettings.getF32("AscentBuildPrefs_Alpha")) / 100.0));
-					tex.setGlow(gSavedSettings.getF32("AscentBuildPrefs_Glow"));
-					if(gSavedSettings.getBOOL("AscentBuildPrefs_FullBright"))
+					tex.setColor(gSavedSettings.getColor4("PhoenixBuildPrefs_Color"));
+					tex.setAlpha(1.0 - ((gSavedSettings.getF32("PhoenixBuildPrefs_Alpha")) / 100.0));
+					tex.setGlow(gSavedSettings.getF32("PhoenixBuildPrefs_Glow"));
+					if(gSavedSettings.getBOOL("PhoenixBuildPrefs_FullBright"))
 					{
 						tex.setFullbright(TEM_FULLBRIGHT_MASK);
 					}
@@ -202,15 +200,15 @@ void ImportTracker::get_update(S32 newid, BOOL justCreated, BOOL createSelected)
 				msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID() );
 				msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
 				msg->addU32Fast(_PREHASH_ObjectLocalID, (U32)newid );
-				msg->addBOOLFast(_PREHASH_UsePhysics, gSavedSettings.getBOOL("AscentBuildPrefs_Physical"));
-				msg->addBOOL("IsTemporary", gSavedSettings.getBOOL("AscentBuildPrefs_Temporary"));
-				msg->addBOOL("IsPhantom", gSavedSettings.getBOOL("AscentBuildPrefs_Phantom") );
+				msg->addBOOLFast(_PREHASH_UsePhysics, gSavedSettings.getBOOL("PhoenixBuildPrefs_Physical"));
+				msg->addBOOL("IsTemporary", gSavedSettings.getBOOL("PhoenixBuildPrefs_Temporary"));
+				msg->addBOOL("IsPhantom", gSavedSettings.getBOOL("PhoenixBuildPrefs_Phantom") );
 				msg->addBOOL("CastsShadows", true );
 				msg->sendReliable(gAgent.getRegion()->getHost());
 
-				if(gSavedSettings.getBOOL("AscentBuildPrefs_EmbedItem"))
+				if(gSavedSettings.getBOOL("PhoenixBuildPrefs_EmbedItem"))
 				{
-					LLViewerInventoryItem* item = (LLViewerInventoryItem*)gInventory.getItem((LLUUID)gSavedSettings.getString("AscentBuildPrefs_Item"));
+					LLViewerInventoryItem* item = (LLViewerInventoryItem*)gInventory.getItem((LLUUID)gSavedSettings.getString("PhoenixBuildPrefs_Item"));
 					LLViewerObject* objectp = find((U32)newid);
 					if(objectp)
 						if(item)
@@ -229,32 +227,6 @@ void ImportTracker::get_update(S32 newid, BOOL justCreated, BOOL createSelected)
 						}
 				}
 				
-				msg->newMessageFast(_PREHASH_ObjectPermissions);
-				msg->nextBlockFast(_PREHASH_AgentData);
-				msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID());
-				msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
-				msg->nextBlockFast(_PREHASH_HeaderData);
-				msg->addBOOLFast(_PREHASH_Override, FALSE);
-				msg->nextBlockFast(_PREHASH_ObjectData);
-				msg->addU32Fast(_PREHASH_ObjectLocalID, (U32)newid);
-				msg->addU8Fast(_PREHASH_Field,	PERM_NEXT_OWNER);
-				msg->addBOOLFast(_PREHASH_Set,		PERM_ITEM_UNRESTRICTED);
-				U32 flags = 0;
-				if ( gSavedSettings.getBOOL("NextOwnerCopy") )
-				{
-					flags |= PERM_COPY;
-				}
-				if ( gSavedSettings.getBOOL("NextOwnerModify") )
-				{
-					flags |= PERM_MODIFY;
-				}
-				if ( gSavedSettings.getBOOL("NextOwnerTransfer") )
-				{
-					flags |= PERM_TRANSFER;
-				}
-				msg->addU32Fast(_PREHASH_Mask, flags);
-				msg->sendReliable(gAgent.getRegion()->getHost());				
-
 				//llinfos << "LGG SENDING CUBE TEXTURE.." << llendl;
 			}
 		break;
@@ -487,7 +459,7 @@ public:
 					U8* buffer = new U8[size];
 					gVFS->getData(data->assetid, data->type, buffer, 0, size);
 					std::string script((char*)buffer);
-					BOOL domono = JCLSLPreprocessor::mono_directive(script);
+					BOOL domono = FALSE;//Phox- this needs to be fixed when the preproc is added = JCLSLPreprocessor::mono_directive(script);
 					/*if(script.find("//mono\n") != -1)
 					{
 						domono = TRUE;
@@ -515,7 +487,7 @@ void JCImportInventorycallback(const LLUUID& uuid, void* user_data, S32 result, 
 {
 	if(result == LL_ERR_NOERR)
 	{
-		//cmdline_printchat("fired importinvcall for "+uuid.asString());
+		cmdline_printchat("fired importinvcall for "+uuid.asString());
 		InventoryImportInfo* data = (InventoryImportInfo*)user_data;
 
 		LLPointer<LLInventoryCallback> cb = new JCImportTransferCallback(data);
@@ -553,7 +525,7 @@ void ImportTracker::send_inventory(LLSD& prim)
 			data->description = item["desc"].asString();
 			if(item.has("item_id"))
 			{
-				//cmdline_printchat("item id found");
+				cmdline_printchat("item id found");
 				std::string filename = assetpre + item["item_id"].asString() + "." + item["type"].asString();
 				//S32 file_size;
 				//LLAPRFile infile ;
@@ -562,18 +534,18 @@ void ImportTracker::send_inventory(LLSD& prim)
 				//if(fp)
 				if(LLFile::isfile(filename))
 				{
-					//cmdline_printchat("file "+filename+" exists");
+					cmdline_printchat("file "+filename+" exists");
 					data->filename = filename;
 					//infile.close();
 				}else
 				{
-					//cmdline_printchat("file "+filename+" does not exist");
+					cmdline_printchat("file "+filename+" does not exist");
 					delete data;
 					continue;
 				}
 			}else
 			{
-				//cmdline_printchat("item id not found");
+				cmdline_printchat("item id not found");
 				delete data;
 				continue;
 			}
@@ -595,7 +567,7 @@ void ImportTracker::send_inventory(LLSD& prim)
 						std::string url = gAgent.getRegion()->getCapability("NewFileAgentInventory");
 						S32 file_size;
 						LLAPRFile infile ;
-						infile.open(data->filename, LL_APR_RB, NULL, &file_size);
+						infile.open(data->filename, LL_APR_RB, LLAPRFile::global, &file_size);
 						if (infile.getFileHandle())
 						{
 							//cmdline_printchat("got file handle");
@@ -617,7 +589,7 @@ void ImportTracker::send_inventory(LLSD& prim)
 							body["group_mask"] = LLSD::Integer(U32_MAX);
 							body["everyone_mask"] = LLSD::Integer(U32_MAX);
 							body["expected_upload_cost"] = LLSD::Integer(LLGlobalEconomy::Singleton::getInstance()->getPriceUpload());
-							//cmdline_printchat("posting "+ data->assetid.asString());
+							cmdline_printchat("posting "+ data->assetid.asString());
 							LLHTTPClient::post(url, body, new JCImportInventoryResponder(body, data->assetid, data->type,data));
 							//error = TRUE;
 						}
@@ -629,7 +601,7 @@ void ImportTracker::send_inventory(LLSD& prim)
 					{
 						S32 file_size;
 						LLAPRFile infile ;
-						infile.open(data->filename, LL_APR_RB, NULL, &file_size);
+						infile.open(data->filename, LL_APR_RB, LLAPRFile::global, &file_size);
 						if (infile.getFileHandle())
 						{
 							//cmdline_printchat("got file handle @ cloth");
@@ -653,7 +625,7 @@ void ImportTracker::send_inventory(LLSD& prim)
 								}
 								delete wearable;
 							}
-							//cmdline_printchat("storing "+data->assetid.asString());
+							cmdline_printchat("storing "+data->assetid.asString());
 							gAssetStorage->storeAssetData(data->tid, data->type,
 												JCImportInventorycallback,
 												(void*)data,
@@ -664,7 +636,7 @@ void ImportTracker::send_inventory(LLSD& prim)
 					}
 					break;
 				case LLAssetType::AT_NOTECARD:
-					//cmdline_printchat("case notecard");
+					cmdline_printchat("case notecard");
 					{
 						//std::string agent_url = gAgent.getRegion()->getCapability("UpdateNotecardAgentInventory");
 						LLPointer<LLInventoryCallback> cb = new JCPostInvCallback(data);
@@ -858,7 +830,10 @@ void ImportTracker::send_image(LLSD& prim)
 	
 	msg->sendReliable(gAgent.getRegion()->getHost());
 }
+//void send_chat_from_viewer(const std::string& utf8_out_text, EChatType type, S32 channel);
+// [RLVa:KB] - Checked: 2009-07-07 (RLVa-1.0.0d) | Modified: RLVa-0.2.2a
 void send_chat_from_viewer(std::string utf8_out_text, EChatType type, S32 channel);
+// [/RLVa:KB]
 void ImportTracker::send_extras(LLSD& prim)
 {	
 	LLMessageSystem* msg = gMessageSystem;
@@ -913,7 +888,13 @@ void ImportTracker::send_extras(LLSD& prim)
 			msg->addBinaryDataFast(_PREHASH_ParamData, tmp, datasize);
 		}
 	}
-
+	//Phox: Is this really necessary? I think not.
+	if (prim.has("chat"))
+	{
+		send_chat_from_viewer(prim["chat"].asString(), CHAT_TYPE_SHOUT, 0);
+	}
+	
+	
 	if (prim.has("sculpt"))
 	{
 		LLSculptParams sculpt;
@@ -964,9 +945,7 @@ void ImportTracker::send_namedesc(LLSD& prim)
 		msg->nextBlockFast(_PREHASH_AgentData);
 		msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID() );
 		msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
-		LLVector3 scale = prim["scale"];
-		if((scale.mV[VX] > 10.) || (scale.mV[VY] > 10.) || (scale.mV[VZ] > 10.) )
-			prim["description"] = llformat("<%d, %d, %d>", (U8)scale.mV[VX], (U8)scale.mV[VY], (U8)scale.mV[VZ]);
+		
 		msg->nextBlockFast(_PREHASH_ObjectData);
 		msg->addU32Fast(_PREHASH_LocalID, prim["LocalID"].asInteger());
 		msg->addStringFast(_PREHASH_Description, prim["description"]);

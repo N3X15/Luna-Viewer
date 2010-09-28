@@ -1,6 +1,6 @@
 /** 
  * @file lliosocket.h
- * @author Ascent
+ * @author Phoenix
  * @date 2005-07-31
  * @brief Declaration of files used for handling sockets and associated pipes
  *

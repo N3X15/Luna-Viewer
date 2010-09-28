@@ -599,7 +599,6 @@ void LLCacheName::get(const LLUUID& id, BOOL is_group, LLCacheNameCallback callb
 		impl.mReplyQueue.push_back(PendingReply(id, callback, user_data));
 	}
 }
-// <edit>
 BOOL LLCacheName::getIfThere(const LLUUID& id, std::string& fullname, BOOL& is_group)
 {
 	if(id.isNull())
@@ -625,7 +624,6 @@ BOOL LLCacheName::getIfThere(const LLUUID& id, std::string& fullname, BOOL& is_g
 	fullname = "";
 	return FALSE;
 }
-// </edit>
 void LLCacheName::processPending()
 {
 	const F32 SECS_BETWEEN_PROCESS = 0.1f;

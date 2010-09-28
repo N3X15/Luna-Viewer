@@ -2,6 +2,10 @@
 
 project(media_plugin_example)
 
+if(WORD_SIZE EQUAL 64)
+    set(REQUIRE_PIC)
+endif(WORD_SIZE EQUAL 64)
+
 include(00-Common)
 include(LLCommon)
 include(LLImage)

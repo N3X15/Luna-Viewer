@@ -1,6 +1,6 @@
 /** 
  * @file llpumpio.h
- * @author Ascent
+ * @author Phoenix
  * @date 2004-11-19
  * @brief Declaration of pump class which manages io chains.
  *

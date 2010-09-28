@@ -1,6 +1,6 @@
 /** 
  * @file llsdappservices.h
- * @author Ascent
+ * @author Phoenix
  * @date 2006-09-12
  * @brief Header file to declare the /app common web services.
  *

@@ -47,6 +47,13 @@ class lua_done {};
 #define LUA_CALL(name) do{(*(new HookRequest(name))) 
 #define LUA_END (lua_done*)0;}while(0)
 
+
+// For the new UI rendering shit. DO NOT USE THIS OUTSIDE OF THE UI SHIT.
+//	LUA_CALL0_BLOCKING("RenderUI")
+//	LUA_CALL("RenderSomething") << lol << args << LUA_EXEC;
+class lua_do {};
+#define LUA_CALL0_BLOCKING(name) do{(new HookRequest(name))->Execute();}while(0)
+#define LUA_EXEC (lua_do*)0;}while(0)
 class HookRequest
 {
 public:
@@ -61,6 +68,8 @@ public:
 	HookRequest& operator<<(LLViewerObject *in);
 	HookRequest& operator<<(const lua_done *in)
 		{Send(); return *this;}//Send off.
+	HookRequest& operator<<(const lua_do *in)
+		{Execute(); return *this;}//Execute the hook immediately.
 
 	HookRequest(const char *Name) { mName=Name; }
 	HookRequest(const std::string& Name) { mName=Name; }
@@ -75,6 +84,7 @@ public:
 		{return mArgs.size(); };
 
 	void Send();
+	void Execute(); // For GL shit ONLY.
 private:
 	std::vector<std::string> mArgs;
 	std::string mName;
@@ -98,10 +108,13 @@ public:
 	static void callCommand(const std::string &cmd);
 
 	//Injection of events into MAIN thread. Needed for gl calls. Render context does NOT carry over threads.
-		//Called from lua thread
+	//Called from lua thread
 	static void regClientEvent(CB_Base *entry);
-		//Called from MAIN thread
+	//Called from MAIN thread
 	static void execClientEvents();
+
+	// Called from main thread
+	static void execClientEvent(HookRequest *hook);
 	
 	/*
 	The concept of CriticalSections in this implementation is to ensure thread safe shared memory accessing.

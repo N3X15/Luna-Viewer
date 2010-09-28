@@ -1,6 +1,6 @@
 /** 
  * @file llsdrpcclient.cpp
- * @author Ascent
+ * @author Phoenix
  * @date 2005-11-05
  * @brief Implementation of the llsd client classes.
  *

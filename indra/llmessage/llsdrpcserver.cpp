@@ -1,6 +1,6 @@
 /** 
  * @file llsdrpcserver.cpp
- * @author Ascent
+ * @author Phoenix
  * @date 2005-10-11
  * @brief Implementation of the LLSDRPCServer and related classes.
  *

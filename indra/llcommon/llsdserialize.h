@@ -1,6 +1,6 @@
 /** 
  * @file llsdserialize.h
- * @author Ascent
+ * @author Phoenix
  * @date 2006-02-26
  * @brief Declaration of parsers and formatters for LLSD
  *

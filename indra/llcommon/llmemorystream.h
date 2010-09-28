@@ -1,6 +1,6 @@
 /** 
  * @file llmemorystream.h
- * @author Ascent
+ * @author Phoenix
  * @date 2005-06-03
  * @brief Implementation of a simple fixed memory stream
  *

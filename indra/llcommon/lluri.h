@@ -1,6 +1,6 @@
 /** 
  * @file lluri.h
- * @author Ascent
+ * @author Phoenix
  * @date 2006-02-05
  * @brief Declaration of the URI class.
  *

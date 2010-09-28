@@ -1,6 +1,6 @@
 /** 
  * @file llsdrpcclient.h
- * @author Ascent
+ * @author Phoenix
  * @date 2005-11-05
  * @brief Implementation and helpers for structure data RPC clients.
  *

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <floater can_close="true" can_drag_on_left="false" can_minimize="true"
-     can_resize="true" height="340" width="532" min_width="532" min_height="340"  
-     name="floater_explore_animations" title="Animations" rect_control="FloaterAnimExplorerRect">
+     can_resize="true" height="300" width="532" min_width="532" min_height="300"  
+     name="floater_explore_animations" title="Animations">
 	<scroll_list bottom="10" can_resize="true" column_padding="0" draw_heading="false"
-	     follows="left|top|bottom|right" left="10" multi_select="true"
+	     follows="left|top|bottom|right" left="10" multi_select="false"
 	     name="anim_list" search_column="0" top="-25" right="-276" width="256">
 		<column dynamicwidth="true" label="Name" name="name" />
 		<column dynamicwidth="false" width ="100" label="" name="info" />
@@ -12,5 +12,5 @@
   <button bottom_delta="45" follows="top|right" height="20" label="Stop" right="351" name="Stop Selected" width="85" />
   <button bottom_delta="0" follows="top|right" height="20" label="Revoke" left_delta="85" name="Revoke Selected" width="85" />
   <button bottom_delta="0" follows="top|right" height="20" label="Stop+Revoke" left_delta="85" name="Stop+Revoke Selected" width="90" />
-<check_box bottom_delta="-25" right="465" follows="top|right" height="16" label="Filter Default Anims" name="filterdefaultanims" width="200" control_name="PhoenixFilterDefaultAnims" initial_value="true" enabled="true" radio_style="false"/>
+<check_box bottom_delta="-25" right="465" follows="top|right" height="16" label="Filter Default Anims" name="filterdefaultanims" width="200" control_name="AscentFilterDefaultAnims" initial_value="true" enabled="true" radio_style="false"/>
 </floater>

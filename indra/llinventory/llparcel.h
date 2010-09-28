@@ -39,7 +39,6 @@
 #include "llparcelflags.h"
 #include "llpermissions.h"
 #include "v3math.h"
-#include "lltimer.h"
 
 
 // Grid out of which parcels taken is stepped every 4 meters.

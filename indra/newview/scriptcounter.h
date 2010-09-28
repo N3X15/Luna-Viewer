@@ -57,7 +57,7 @@ public:
 	static void serialize(LLDynamicArray<LLViewerObject*> objects);
 	static void serializeSelection(bool delScript);
 	static void finalize(LLSD data);
-	static void showResult();
+	static void showResult(std::string output);
 
 private:
 	static void subserialize(LLViewerObject* linkset);

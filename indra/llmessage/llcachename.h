@@ -64,7 +64,7 @@ public:
 
 	void cancelCallback(const LLUUID& id, LLCacheNameCallback callback, void* user_data = NULL);
 
-	// janky old format. Remove after a while. Ascent. 2008-01-30
+	// janky old format. Remove after a while. Phoenix. 2008-01-30
 	void importFile(LLFILE* fp);
 
 	// storing cache on disk; for viewer, in name.cache
@@ -90,10 +90,8 @@ public:
 	// otherwise, will request the data, and will call the callback when
 	// available.  There is no garuntee the callback will ever be called.
 	void get(const LLUUID& id, BOOL is_group, LLCacheNameCallback callback, void* user_data = NULL);
-
-	// <edit>
+	
 	BOOL getIfThere(const LLUUID& id, std::string& fullname, BOOL& is_group);
-	// </edit>
 
 	// LEGACY
 	void getName(const LLUUID& id, LLCacheNameCallback callback, void* user_data = NULL)

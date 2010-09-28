@@ -1,6 +1,6 @@
 /** 
  * @file llmime.h
- * @author Ascent
+ * @author Phoenix
  * @date 2006-12-20
  * @brief Declaration of mime tools.
  *

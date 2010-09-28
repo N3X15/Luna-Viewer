@@ -116,10 +116,10 @@
   <check_box bottom_delta="-17" control_name="SnapEnabled" follows="left|top"
 	     font="SansSerifSmall" height="16" initial_value="true" label="Use Grid"
 	     left_delta="0" mouse_opaque="true" name="checkbox snap to grid" width="134" />
-  <check_box bottom_delta="-17" control_name="PhoenixBuildPrefs_ActualRoot" follows="left|top"
+  <check_box bottom_delta="-17" control_name="AscentBuildPrefs_ActualRoot" follows="left|top"
     font="SansSerifSmall" height="16" initial_value="true" label="Edit axis at root"
     left_delta="0" mouse_opaque="true" name="checkbox actual root" width="134" />
-  <check_box bottom_delta="-17" control_name="PhoenixRenderHighlightSelections" follows="left|top"
+  <check_box bottom_delta="-17" control_name="AscentRenderHighlightSelections" follows="left|top"
       font="SansSerifSmall" height="16" initial_value="true" label="Show Highlight"
       left_delta="0" mouse_opaque="true" name="checkbox show highlight" width="134" />
 
