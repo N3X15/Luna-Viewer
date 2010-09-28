@@ -41,6 +41,9 @@ include(ViewerArtwork.cmake)
 include(Growl)
 include(7zip)
 
+# OH BOY MORE HACKED-TOGETHER SHIT
+include(SWIG)
+
 if (WINDOWS)
   include(CopyWinLibs)
   set(VIEWER_RESOURCE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/res)
@@ -1319,28 +1322,6 @@ else (LINUX)
 endif (LINUX)
 set(PACKAGE ${PACKAGE_DEFAULT} CACHE BOOL
     "Add a package target that builds an installer package.")
-
-
-
-### SWIG SHIT
-# Swig is used to generate these horrendous Lua bindings.
-
-#swig -lua -c++ -o newview/_LuaSL.cpp -oh newview/_LuaSL.h newview/swig/SL.swig
-add_custom_command(
-	TARGET ${VIEWER_BINARY_NAME} PRE_BUILD
-	COMMAND swig
-	ARGS
-	  -lua
-	  -c++
-	  #-includeall
-	  -o  _LuaSL.cpp
-	  -oh _LuaSL.h
-	  ${CMAKE_CURRENT_SOURCE_DIR}/swig/SL.swig
-	COMMENT "Creating bindings."
-	)
-
-source_group("Swig Interfaces" FILES ${viewer_SWIG_FILES})
-### END SWIG
 
 if (WINDOWS)
     if(MSVC71)

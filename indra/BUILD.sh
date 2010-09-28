@@ -6,20 +6,12 @@ BUILDTYPE="Release"
 # IP/(Cores*2)
 export DISTCC_HOSTS="localhost/2 192.168.9.5/2 192.168.9.170/4"
 
-rm newview/_Lua*
+rm newview/_LuaSL.cpp
+echo "//Purposefully blank (SWIG is stupid)" > newview/_LuaSL.h
 
-# Modules have been combined until I figure out why the hell swig is a dick
-MODULES=""
-MODULES="${MODULES} SL" 	# Base module (handles types and stuff)
-#MODULES="${MODULES} GL" 	# GL module (rendering)
-#MODULES="${MODULES} Region"	# Region module
-#MODULES="${MODULES} Object"	# Object manipulation module.
-#MODULES="${MODULES} HUDEffects"	# HUD Effects module.
-
-#Build the SL and GL Lua modules.
-lua newview/swig/BuildModules.lua ${MODULES}
-
+#TODO: Turn this into a horrific python monstrosity.
 # Gather hooks in order to generate documentation.
 find newview/ -name "*.cpp" -print | lua ../scripts/GetHooks.lua
 
+echo "*** AND NOW FOR OUR FEATURE PRESENTATION"
 CXX="ccache distcc g++" ./develop.py --type=${BUILDTYPE} configure && ./develop.py --type=${BUILDTYPE} build #VERBOSE=1
