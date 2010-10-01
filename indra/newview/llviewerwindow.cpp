@@ -1912,6 +1912,8 @@ void LLViewerWindow::adjustRectanglesForFirstUse(const LLRect& window)
 
 	adjust_rect_bottom_left("FloaterDayCycleRect", window);
 
+	//adjust_rect_bottom_left("FloaterLuaRect", window);
+
 	adjust_rect_top_right("FloaterStatisticsRect", window);
 
 
@@ -2396,6 +2398,8 @@ void LLViewerWindow::draw()
 			drawMouselookInstructions();
 			stop_glerror();
 		}
+		// @hook PostUIDraw() Do GL stuff before drawing the UI. (BLOCKING)
+		LUA_CALL0_BLOCKING("PreUIDraw");
 
 		// Draw all nested UI views.
 		// No translation needed, this view is glued to 0,0
@@ -2452,6 +2456,9 @@ void LLViewerWindow::draw()
 				LLColor4(1, 1, 1, 0.4f),
 				LLFontGL::HCENTER, LLFontGL::TOP);
 		}
+
+		// @hook PostUIDraw() Do GL stuff after drawing the UI. (BLOCKING)
+		LUA_CALL0_BLOCKING("PostUIDraw");
 
 		LLUI::sGLScaleFactor = old_scale_factor;
 	}

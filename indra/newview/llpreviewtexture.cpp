@@ -383,8 +383,7 @@ void LLPreviewTexture::draw()
 					}
 				}
 			}
-			else
-			if( !mSavedFileTimer.hasExpired() )
+			else if(!mSavedFileTimer.hasExpired())
 			{
 				// *TODO: Translate
 				LLFontGL::getFontSansSerif()->renderUTF8(std::string("File Saved"), 0,
@@ -654,8 +653,8 @@ void LLPreviewTexture::updateDimensions()
 	window_rect.mTop -= (PREVIEW_HEADER_SIZE + CLIENT_RECT_VPAD);
 	window_rect.mBottom += PREVIEW_BORDER + button_height + CLIENT_RECT_VPAD + info_height + CLIENT_RECT_VPAD;
 
-	mClientRect.setLeftTopAndSize(window_rect.getCenterX() - (client_width / 2), window_rect.mTop, client_width, client_height);	
-	
+	mClientRect.setLeftTopAndSize(window_rect.getCenterX() - (client_width / 2), window_rect.mTop, client_width, client_height);
+
 	// Hide the aspect ratio label if the window is too narrow
 	// Assumes the label should be to the right of the dimensions
 	LLRect dim_rect, aspect_label_rect;

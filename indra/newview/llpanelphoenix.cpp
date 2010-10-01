@@ -1,6 +1,6 @@
 
 /** 
- * @file LLPanelAscent.cpp
+ * @file LLPanelPhoenix.cpp
  * @brief General preferences panel in preferences floater
  *
  * $LicenseInfo:firstyear=2001&license=viewergpl$
@@ -152,7 +152,7 @@ JCInvDropTarget * LLPanelAscent::mBuildObjectDropTarget;
 
 LLPanelAscent::LLPanelAscent()
 {
-	LLUICtrlFactory::getInstance()->buildPanel(this, "panel_preferences_Ascent.xml");
+	LLUICtrlFactory::getInstance()->buildPanel(this, "panel_preferences_phoenix.xml");
 	if(sInstance)delete sInstance;
 	sInstance = this;
 }

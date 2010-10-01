@@ -1516,69 +1516,74 @@ SWIG_Lua_dostring(lua_State *L, const char* str) {
 #define SWIGTYPE_p_LLColor3 swig_types[4]
 #define SWIGTYPE_p_LLColor4 swig_types[5]
 #define SWIGTYPE_p_LLColor4U swig_types[6]
-#define SWIGTYPE_p_LLJoint swig_types[7]
-#define SWIGTYPE_p_LLMatrix3 swig_types[8]
-#define SWIGTYPE_p_LLMatrix4 swig_types[9]
-#define SWIGTYPE_p_LLMotion swig_types[10]
-#define SWIGTYPE_p_LLMotionConstructor swig_types[11]
-#define SWIGTYPE_p_LLMotionController swig_types[12]
-#define SWIGTYPE_p_LLParcel swig_types[13]
-#define SWIGTYPE_p_LLPartSysData swig_types[14]
-#define SWIGTYPE_p_LLPauseRequestHandle swig_types[15]
-#define SWIGTYPE_p_LLPointerT_LLPauseRequestHandle_t swig_types[16]
-#define SWIGTYPE_p_LLPolyMesh swig_types[17]
-#define SWIGTYPE_p_LLQuaternion swig_types[18]
-#define SWIGTYPE_p_LLSD swig_types[19]
-#define SWIGTYPE_p_LLSafeHandleT_LLObjectSelection_t swig_types[20]
-#define SWIGTYPE_p_LLUUID swig_types[21]
-#define SWIGTYPE_p_LLVOAvatar swig_types[22]
-#define SWIGTYPE_p_LLVector2 swig_types[23]
-#define SWIGTYPE_p_LLVector3 swig_types[24]
-#define SWIGTYPE_p_LLVector3d swig_types[25]
-#define SWIGTYPE_p_LLVector4 swig_types[26]
-#define SWIGTYPE_p_LLViewerInventoryItem swig_types[27]
-#define SWIGTYPE_p_LLViewerRegion swig_types[28]
-#define SWIGTYPE_p_LLVisualParam swig_types[29]
-#define SWIGTYPE_p_LLWearable swig_types[30]
-#define SWIGTYPE_p_ParticleSystem swig_types[31]
-#define SWIGTYPE_p_WLSky swig_types[32]
-#define SWIGTYPE_p_WLWater swig_types[33]
-#define SWIGTYPE_p_child_list_t swig_types[34]
-#define SWIGTYPE_p_const_child_list_t swig_types[35]
-#define SWIGTYPE_p_double swig_types[36]
-#define SWIGTYPE_p_eLayoutOrientation swig_types[37]
-#define SWIGTYPE_p_eObjectPartitions swig_types[38]
-#define SWIGTYPE_p_e_action_type swig_types[39]
-#define SWIGTYPE_p_e_anim_request swig_types[40]
-#define SWIGTYPE_p_e_camera_modes swig_types[41]
-#define SWIGTYPE_p_e_camera_position swig_types[42]
-#define SWIGTYPE_p_e_grid_mode swig_types[43]
-#define SWIGTYPE_p_e_object_update_type swig_types[44]
-#define SWIGTYPE_p_e_selection_type swig_types[45]
-#define SWIGTYPE_p_e_send_type swig_types[46]
-#define SWIGTYPE_p_float swig_types[47]
-#define SWIGTYPE_p_int swig_types[48]
-#define SWIGTYPE_p_iterator swig_types[49]
-#define SWIGTYPE_p_list_t swig_types[50]
-#define SWIGTYPE_p_long_long swig_types[51]
-#define SWIGTYPE_p_root_iterator swig_types[52]
-#define SWIGTYPE_p_root_object_iterator swig_types[53]
-#define SWIGTYPE_p_short swig_types[54]
-#define SWIGTYPE_p_signed_char swig_types[55]
-#define SWIGTYPE_p_skip_list_t swig_types[56]
-#define SWIGTYPE_p_std__string swig_types[57]
-#define SWIGTYPE_p_std__vectorT_LLCharacter_p_t swig_types[58]
-#define SWIGTYPE_p_unsigned_char swig_types[59]
-#define SWIGTYPE_p_unsigned_int swig_types[60]
-#define SWIGTYPE_p_unsigned_long_long swig_types[61]
-#define SWIGTYPE_p_unsigned_short swig_types[62]
-#define SWIGTYPE_p_valid_iterator swig_types[63]
-#define SWIGTYPE_p_valid_root_iterator swig_types[64]
-#define SWIGTYPE_p_vobj_list_t swig_types[65]
-#define SWIGTYPE_p_void swig_types[66]
-#define SWIGTYPE_p_wchar_t swig_types[67]
-static swig_type_info *swig_types[69];
-static swig_module_info swig_module = {swig_types, 68, 0, 0, 0, 0};
+#define SWIGTYPE_p_LLInventoryModel swig_types[7]
+#define SWIGTYPE_p_LLJoint swig_types[8]
+#define SWIGTYPE_p_LLMatrix3 swig_types[9]
+#define SWIGTYPE_p_LLMatrix4 swig_types[10]
+#define SWIGTYPE_p_LLMotion swig_types[11]
+#define SWIGTYPE_p_LLMotionConstructor swig_types[12]
+#define SWIGTYPE_p_LLMotionController swig_types[13]
+#define SWIGTYPE_p_LLParcel swig_types[14]
+#define SWIGTYPE_p_LLPartSysData swig_types[15]
+#define SWIGTYPE_p_LLPauseRequestHandle swig_types[16]
+#define SWIGTYPE_p_LLPointerT_LLPauseRequestHandle_t swig_types[17]
+#define SWIGTYPE_p_LLPolyMesh swig_types[18]
+#define SWIGTYPE_p_LLQuaternion swig_types[19]
+#define SWIGTYPE_p_LLSD swig_types[20]
+#define SWIGTYPE_p_LLSafeHandleT_LLObjectSelection_t swig_types[21]
+#define SWIGTYPE_p_LLUUID swig_types[22]
+#define SWIGTYPE_p_LLVOAvatar swig_types[23]
+#define SWIGTYPE_p_LLVector2 swig_types[24]
+#define SWIGTYPE_p_LLVector3 swig_types[25]
+#define SWIGTYPE_p_LLVector3d swig_types[26]
+#define SWIGTYPE_p_LLVector4 swig_types[27]
+#define SWIGTYPE_p_LLViewerInventoryItem swig_types[28]
+#define SWIGTYPE_p_LLViewerRegion swig_types[29]
+#define SWIGTYPE_p_LLVisualParam swig_types[30]
+#define SWIGTYPE_p_LLWearable swig_types[31]
+#define SWIGTYPE_p_ParticleSystem swig_types[32]
+#define SWIGTYPE_p_WLSky swig_types[33]
+#define SWIGTYPE_p_WLWater swig_types[34]
+#define SWIGTYPE_p_cat_array_t swig_types[35]
+#define SWIGTYPE_p_child_list_t swig_types[36]
+#define SWIGTYPE_p_const_child_list_t swig_types[37]
+#define SWIGTYPE_p_double swig_types[38]
+#define SWIGTYPE_p_eLayoutOrientation swig_types[39]
+#define SWIGTYPE_p_eObjectPartitions swig_types[40]
+#define SWIGTYPE_p_e_action_type swig_types[41]
+#define SWIGTYPE_p_e_anim_request swig_types[42]
+#define SWIGTYPE_p_e_camera_modes swig_types[43]
+#define SWIGTYPE_p_e_camera_position swig_types[44]
+#define SWIGTYPE_p_e_grid_mode swig_types[45]
+#define SWIGTYPE_p_e_object_update_type swig_types[46]
+#define SWIGTYPE_p_e_selection_type swig_types[47]
+#define SWIGTYPE_p_e_send_type swig_types[48]
+#define SWIGTYPE_p_float swig_types[49]
+#define SWIGTYPE_p_int swig_types[50]
+#define SWIGTYPE_p_item_array_t swig_types[51]
+#define SWIGTYPE_p_iterator swig_types[52]
+#define SWIGTYPE_p_list_t swig_types[53]
+#define SWIGTYPE_p_long_long swig_types[54]
+#define SWIGTYPE_p_root_iterator swig_types[55]
+#define SWIGTYPE_p_root_object_iterator swig_types[56]
+#define SWIGTYPE_p_short swig_types[57]
+#define SWIGTYPE_p_signed_char swig_types[58]
+#define SWIGTYPE_p_skip_list_t swig_types[59]
+#define SWIGTYPE_p_std__string swig_types[60]
+#define SWIGTYPE_p_std__vectorT_LLCharacter_p_t swig_types[61]
+#define SWIGTYPE_p_std__vectorT_LLUUID_t swig_types[62]
+#define SWIGTYPE_p_std__vectorT_std__string_t swig_types[63]
+#define SWIGTYPE_p_unsigned_char swig_types[64]
+#define SWIGTYPE_p_unsigned_int swig_types[65]
+#define SWIGTYPE_p_unsigned_long_long swig_types[66]
+#define SWIGTYPE_p_unsigned_short swig_types[67]
+#define SWIGTYPE_p_valid_iterator swig_types[68]
+#define SWIGTYPE_p_valid_root_iterator swig_types[69]
+#define SWIGTYPE_p_vobj_list_t swig_types[70]
+#define SWIGTYPE_p_void swig_types[71]
+#define SWIGTYPE_p_wchar_t swig_types[72]
+static swig_type_info *swig_types[74];
+static swig_module_info swig_module = {swig_types, 73, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -1608,6 +1613,7 @@ typedef struct{} LANGUAGE_OBJ;
 #include "LuaBase_f.h"
 #include "LuaAvatar_f.h"
 #include "LuaAgent_f.h"
+#include "LuaInventory_f.h"
 #include "LuaParticles.h"
 #include "LuaWindlight.h"
 #include "llprimitive.h"
@@ -1621,6 +1627,8 @@ typedef struct{} LANGUAGE_OBJ;
 #include "v4color.h"
 #include "llcharacter.h"
 #include "llagent.h"
+#include "llinventorymodel.h"
+#include "llviewerinventory.h"
 
 
 	#include <string>
@@ -14300,6 +14308,51 @@ static int _wrap_lerp(lua_State* L) {
 }
 
 
+static int _wrap_gInventory_set(lua_State* L) {
+  int SWIG_arg = 0;
+  LLInventoryModel arg1 ;
+  LLInventoryModel *argp1 ;
+  
+  SWIG_check_num_args("gInventory",1,1)
+  if(!lua_isuserdata(L,1)) SWIG_fail_arg("gInventory",1,"LLInventoryModel");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&argp1,SWIGTYPE_p_LLInventoryModel,0))){
+    SWIG_fail_ptr("gInventory_set",1,SWIGTYPE_p_LLInventoryModel);
+  }
+  arg1 = *argp1;
+  
+  gInventory = arg1;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_gInventory_get(lua_State* L) {
+  int SWIG_arg = 0;
+  LLInventoryModel result;
+  
+  SWIG_check_num_args("gInventory",0,0)
+  result = gInventory;
+  {
+    LLInventoryModel * resultptr = new LLInventoryModel((const LLInventoryModel &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_LLInventoryModel,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
 static int _wrap_isUUID(lua_State* L) {
   int SWIG_arg = 0;
   std::string *arg1 = 0 ;
@@ -21193,6 +21246,94 @@ static swig_lua_class *swig_WLSky_bases[] = {0};
 static const char *swig_WLSky_base_names[] = {0};
 static swig_lua_class _wrap_class_WLSky = { "WLSky", &SWIGTYPE_p_WLSky,_wrap_new_WLSky, swig_delete_WLSky, swig_WLSky_methods, swig_WLSky_attributes, swig_WLSky_bases, swig_WLSky_base_names };
 
+static int _wrap_findInventoryInFolder(lua_State* L) {
+  int SWIG_arg = 0;
+  std::string *arg1 = 0 ;
+  std::vector< std::string > *arg2 = 0 ;
+  std::vector< LLUUID > *arg3 = 0 ;
+  std::string temp1 ;
+  
+  SWIG_check_num_args("findInventoryInFolder",3,3)
+  if(!lua_isstring(L,1)) SWIG_fail_arg("findInventoryInFolder",1,"std::string const &");
+  if(!lua_isuserdata(L,2)) SWIG_fail_arg("findInventoryInFolder",2,"std::vector< std::string > &");
+  if(!lua_isuserdata(L,3)) SWIG_fail_arg("findInventoryInFolder",3,"std::vector< LLUUID > &");
+  temp1.assign(lua_tostring(L,1),lua_strlen(L,1)); arg1=&temp1;
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_std__vectorT_std__string_t,0))){
+    SWIG_fail_ptr("findInventoryInFolder",2,SWIGTYPE_p_std__vectorT_std__string_t);
+  }
+  
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&arg3,SWIGTYPE_p_std__vectorT_LLUUID_t,0))){
+    SWIG_fail_ptr("findInventoryInFolder",3,SWIGTYPE_p_std__vectorT_LLUUID_t);
+  }
+  
+  findInventoryInFolder((std::string const &)*arg1,*arg2,*arg3);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_giveInventoryItem(lua_State* L) {
+  int SWIG_arg = 0;
+  LLUUID arg1 ;
+  LLUUID arg2 ;
+  LLUUID arg3 ;
+  
+  SWIG_check_num_args("giveInventoryItem",3,3)
+  if(!lua_isstring(L,1)) SWIG_fail_arg("giveInventoryItem",1,"LLUUID");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("giveInventoryItem",2,"LLUUID");
+  if(!lua_isstring(L,3)) SWIG_fail_arg("giveInventoryItem",3,"LLUUID");
+  
+  SWIG_contract_assert((&arg1)->set(lua_tostring(L,1),false),"Must be of UUID format.");
+  
+  
+  SWIG_contract_assert((&arg2)->set(lua_tostring(L,2),false),"Must be of UUID format.");
+  
+  
+  SWIG_contract_assert((&arg3)->set(lua_tostring(L,3),false),"Must be of UUID format.");
+  
+  giveInventoryItem(arg1,arg2,arg3);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_getCategoryUUID(lua_State* L) {
+  int SWIG_arg = 0;
+  std::string *arg1 = 0 ;
+  std::string temp1 ;
+  LLUUID result;
+  
+  SWIG_check_num_args("getCategoryUUID",1,1)
+  if(!lua_isstring(L,1)) SWIG_fail_arg("getCategoryUUID",1,"std::string const &");
+  temp1.assign(lua_tostring(L,1),lua_strlen(L,1)); arg1=&temp1;
+  result = getCategoryUUID((std::string const &)*arg1);
+  
+  lua_pushlstring(L,(&result)->asString().data(),(&result)->asString().size()); SWIG_arg++;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
 #ifdef __cplusplus
 }
 #endif
@@ -21321,6 +21462,9 @@ static const struct luaL_reg swig_commands[] = {
     { "WLSky_GetDistanceMult", _wrap_WLSky_GetDistanceMult},
     { "WLSky_SetCloudScale", _wrap_WLSky_SetCloudScale},
     { "WLSky_GetCloudScale", _wrap_WLSky_GetCloudScale},
+    { "findInventoryInFolder", _wrap_findInventoryInFolder},
+    { "giveInventoryItem", _wrap_giveInventoryItem},
+    { "getCategoryUUID", _wrap_getCategoryUUID},
     {0,0}
 };
 
@@ -21407,6 +21551,7 @@ static swig_lua_var_info swig_variables[] = {
     { "LLColor4_cyan4", _wrap_LLColor4_cyan4_get, _wrap_LLColor4_cyan4_set },
     { "LLColor4_cyan5", _wrap_LLColor4_cyan5_get, _wrap_LLColor4_cyan5_set },
     { "LLColor4_cyan6", _wrap_LLColor4_cyan6_get, _wrap_LLColor4_cyan6_set },
+    { "gInventory", _wrap_gInventory_get, _wrap_gInventory_set },
     { "gAllowWorldMap", _wrap_gAllowWorldMap_get, _wrap_gAllowWorldMap_set },
     { "LLCharacter_sInstances", _wrap_LLCharacter_sInstances_get, _wrap_LLCharacter_sInstances_set },
     {0,0,0}
@@ -21444,6 +21589,7 @@ static swig_type_info _swigt__p_LLCharacter = {"_p_LLCharacter", "LLCharacter *"
 static swig_type_info _swigt__p_LLColor3 = {"_p_LLColor3", "LLColor3 *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_LLColor4 = {"_p_LLColor4", "LLColor4 *", 0, 0, (void*)&_wrap_class_LLColor4, 0};
 static swig_type_info _swigt__p_LLColor4U = {"_p_LLColor4U", "LLColor4U *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_LLInventoryModel = {"_p_LLInventoryModel", "LLInventoryModel *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_LLJoint = {"_p_LLJoint", "LLJoint *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_LLMatrix3 = {"_p_LLMatrix3", "LLMatrix3 *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_LLMatrix4 = {"_p_LLMatrix4", "LLMatrix4 *", 0, 0, (void*)0, 0};
@@ -21471,6 +21617,7 @@ static swig_type_info _swigt__p_LLWearable = {"_p_LLWearable", "LLWearable *", 0
 static swig_type_info _swigt__p_ParticleSystem = {"_p_ParticleSystem", "ParticleSystem *", 0, 0, (void*)&_wrap_class_ParticleSystem, 0};
 static swig_type_info _swigt__p_WLSky = {"_p_WLSky", "WLSky *", 0, 0, (void*)&_wrap_class_WLSky, 0};
 static swig_type_info _swigt__p_WLWater = {"_p_WLWater", "WLWater *", 0, 0, (void*)&_wrap_class_WLWater, 0};
+static swig_type_info _swigt__p_cat_array_t = {"_p_cat_array_t", "cat_array_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_child_list_t = {"_p_child_list_t", "child_list_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_const_child_list_t = {"_p_const_child_list_t", "const_child_list_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_double = {"_p_double", "double *|F64 *", 0, 0, (void*)0, 0};
@@ -21486,6 +21633,7 @@ static swig_type_info _swigt__p_e_selection_type = {"_p_e_selection_type", "enum
 static swig_type_info _swigt__p_e_send_type = {"_p_e_send_type", "enum e_send_type *|ESendType *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_float = {"_p_float", "float *|F32 *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_int = {"_p_int", "BOOL *|int *|S32 *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_item_array_t = {"_p_item_array_t", "item_array_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_iterator = {"_p_iterator", "iterator *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_list_t = {"_p_list_t", "list_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_long_long = {"_p_long_long", "S64 *|long long *", 0, 0, (void*)0, 0};
@@ -21496,6 +21644,8 @@ static swig_type_info _swigt__p_signed_char = {"_p_signed_char", "signed char *|
 static swig_type_info _swigt__p_skip_list_t = {"_p_skip_list_t", "skip_list_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__string = {"_p_std__string", "std::string *", 0, 0, (void*)&_wrap_class_std_string, 0};
 static swig_type_info _swigt__p_std__vectorT_LLCharacter_p_t = {"_p_std__vectorT_LLCharacter_p_t", "std::vector< LLCharacter * > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_std__vectorT_LLUUID_t = {"_p_std__vectorT_LLUUID_t", "std::vector< LLUUID > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_std__vectorT_std__string_t = {"_p_std__vectorT_std__string_t", "std::vector< std::string > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_unsigned_char = {"_p_unsigned_char", "unsigned char *|KEY *|U8 *|LLPCode *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_unsigned_int = {"_p_unsigned_int", "unsigned int *|U32 *|MASK *|TPACKETID *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_unsigned_long_long = {"_p_unsigned_long_long", "unsigned long long *|U64 *", 0, 0, (void*)0, 0};
@@ -21514,6 +21664,7 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_LLColor3,
   &_swigt__p_LLColor4,
   &_swigt__p_LLColor4U,
+  &_swigt__p_LLInventoryModel,
   &_swigt__p_LLJoint,
   &_swigt__p_LLMatrix3,
   &_swigt__p_LLMatrix4,
@@ -21541,6 +21692,7 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_ParticleSystem,
   &_swigt__p_WLSky,
   &_swigt__p_WLWater,
+  &_swigt__p_cat_array_t,
   &_swigt__p_child_list_t,
   &_swigt__p_const_child_list_t,
   &_swigt__p_double,
@@ -21556,6 +21708,7 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_e_send_type,
   &_swigt__p_float,
   &_swigt__p_int,
+  &_swigt__p_item_array_t,
   &_swigt__p_iterator,
   &_swigt__p_list_t,
   &_swigt__p_long_long,
@@ -21566,6 +21719,8 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_skip_list_t,
   &_swigt__p_std__string,
   &_swigt__p_std__vectorT_LLCharacter_p_t,
+  &_swigt__p_std__vectorT_LLUUID_t,
+  &_swigt__p_std__vectorT_std__string_t,
   &_swigt__p_unsigned_char,
   &_swigt__p_unsigned_int,
   &_swigt__p_unsigned_long_long,
@@ -21584,6 +21739,7 @@ static swig_cast_info _swigc__p_LLCharacter[] = {  {&_swigt__p_LLCharacter, 0, 0
 static swig_cast_info _swigc__p_LLColor3[] = {  {&_swigt__p_LLColor3, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_LLColor4[] = {  {&_swigt__p_LLColor4, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_LLColor4U[] = {  {&_swigt__p_LLColor4U, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_LLInventoryModel[] = {  {&_swigt__p_LLInventoryModel, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_LLJoint[] = {  {&_swigt__p_LLJoint, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_LLMatrix3[] = {  {&_swigt__p_LLMatrix3, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_LLMatrix4[] = {  {&_swigt__p_LLMatrix4, 0, 0, 0},{0, 0, 0, 0}};
@@ -21611,6 +21767,7 @@ static swig_cast_info _swigc__p_LLWearable[] = {  {&_swigt__p_LLWearable, 0, 0, 
 static swig_cast_info _swigc__p_ParticleSystem[] = {  {&_swigt__p_ParticleSystem, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_WLSky[] = {  {&_swigt__p_WLSky, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_WLWater[] = {  {&_swigt__p_WLWater, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_cat_array_t[] = {  {&_swigt__p_cat_array_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_child_list_t[] = {  {&_swigt__p_child_list_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_const_child_list_t[] = {  {&_swigt__p_const_child_list_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_double[] = {  {&_swigt__p_double, 0, 0, 0},{0, 0, 0, 0}};
@@ -21626,6 +21783,7 @@ static swig_cast_info _swigc__p_e_selection_type[] = {  {&_swigt__p_e_selection_
 static swig_cast_info _swigc__p_e_send_type[] = {  {&_swigt__p_e_send_type, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_float[] = {  {&_swigt__p_float, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_int[] = {  {&_swigt__p_int, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_item_array_t[] = {  {&_swigt__p_item_array_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_iterator[] = {  {&_swigt__p_iterator, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_list_t[] = {  {&_swigt__p_list_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_long_long[] = {  {&_swigt__p_long_long, 0, 0, 0},{0, 0, 0, 0}};
@@ -21636,6 +21794,8 @@ static swig_cast_info _swigc__p_signed_char[] = {  {&_swigt__p_signed_char, 0, 0
 static swig_cast_info _swigc__p_skip_list_t[] = {  {&_swigt__p_skip_list_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__string[] = {  {&_swigt__p_std__string, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__vectorT_LLCharacter_p_t[] = {  {&_swigt__p_std__vectorT_LLCharacter_p_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_std__vectorT_LLUUID_t[] = {  {&_swigt__p_std__vectorT_LLUUID_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_std__vectorT_std__string_t[] = {  {&_swigt__p_std__vectorT_std__string_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_unsigned_char[] = {  {&_swigt__p_unsigned_char, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_unsigned_int[] = {  {&_swigt__p_unsigned_int, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_unsigned_long_long[] = {  {&_swigt__p_unsigned_long_long, 0, 0, 0},{0, 0, 0, 0}};
@@ -21654,6 +21814,7 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_LLColor3,
   _swigc__p_LLColor4,
   _swigc__p_LLColor4U,
+  _swigc__p_LLInventoryModel,
   _swigc__p_LLJoint,
   _swigc__p_LLMatrix3,
   _swigc__p_LLMatrix4,
@@ -21681,6 +21842,7 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_ParticleSystem,
   _swigc__p_WLSky,
   _swigc__p_WLWater,
+  _swigc__p_cat_array_t,
   _swigc__p_child_list_t,
   _swigc__p_const_child_list_t,
   _swigc__p_double,
@@ -21696,6 +21858,7 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_e_send_type,
   _swigc__p_float,
   _swigc__p_int,
+  _swigc__p_item_array_t,
   _swigc__p_iterator,
   _swigc__p_list_t,
   _swigc__p_long_long,
@@ -21706,6 +21869,8 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_skip_list_t,
   _swigc__p_std__string,
   _swigc__p_std__vectorT_LLCharacter_p_t,
+  _swigc__p_std__vectorT_LLUUID_t,
+  _swigc__p_std__vectorT_std__string_t,
   _swigc__p_unsigned_char,
   _swigc__p_unsigned_int,
   _swigc__p_unsigned_long_long,

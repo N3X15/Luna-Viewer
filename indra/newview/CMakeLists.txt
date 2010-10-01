@@ -509,6 +509,7 @@ set(viewer_SOURCE_FILES
     wlfPanel_AdvSettings.cpp
 	floaterblacklist.cpp
     lunaconsole.cpp
+    
 #    LunaVoxelSurface.cpp
 #    LunaVOVoxelSurface.cpp
     LuaUI.cpp
@@ -517,6 +518,7 @@ set(viewer_SOURCE_FILES
     LuaAvatar_f.cpp
     LuaBuild_f.cpp
     LuaBase_f.cpp
+    LuaInventory_f.cpp
     LuaWindlight.cpp
     _LuaSL.cpp 
 # GL Module -----------------

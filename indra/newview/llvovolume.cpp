@@ -2430,9 +2430,11 @@ void LLVolumeGeometryManager::rebuildGeom(LLSpatialGroup* group)
 
 void LLVolumeGeometryManager::rebuildMesh(LLSpatialGroup* group)
 {
+	static int warningsCount = 20;
+
 	if (group->isState(LLSpatialGroup::MESH_DIRTY))
 	{
-		S32 num_mapped_veretx_buffer = LLVertexBuffer::sMappedCount ;
+		S32 num_mapped_vertex_buffer = LLVertexBuffer::sMappedCount ;
 
 		group->mBuilt = 1.f;
 		
@@ -2491,9 +2493,13 @@ void LLVolumeGeometryManager::rebuildMesh(LLSpatialGroup* group)
 		}
 
 		//if not all buffers are unmapped
-		if(num_mapped_veretx_buffer != LLVertexBuffer::sMappedCount) 
+		if(num_mapped_vertex_buffer != LLVertexBuffer::sMappedCount) 
 		{
-			//llwarns << "Not all mapped vertex buffers are unmapped!" << llendl ; 
+			if (++warningsCount > 20)	// Do not spam the log file uselessly...
+			{
+				llwarns << "Not all mapped vertex buffers are unmapped!" << llendl ;
+				warningsCount = 1;
+			}
 			for (LLSpatialGroup::element_iter drawable_iter = group->getData().begin(); drawable_iter != group->getData().end(); ++drawable_iter)
 			{
 				LLDrawable* drawablep = *drawable_iter;

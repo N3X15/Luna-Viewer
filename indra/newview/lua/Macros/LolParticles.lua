@@ -8,7 +8,8 @@
 	particle_parameters.EndScale.y   = 0.02
 	particle_parameters.StartColor = Color4(1.0, 1.0, 1.0, 0.5)
 	particle_parameters.EndColor = Color4(1.0, 1.0, 1.0, 0.0)
-	particle_parameters.SetImageFromFile("cloud-particle.j2c")
+	--particle_parameters.SetImageFromFile("cloud-particle.j2c")
+	particle_parameters.SetImageFromUUID("6e1a3980-bf2d-4274-8970-91e60d85fb52")
 	particle_parameters.MaxAge = 0.0
 	particle_parameters.Pattern = ParticlePattern:ANGLE_CONE
 	particle_parameters.InnerAngle = 3.14159

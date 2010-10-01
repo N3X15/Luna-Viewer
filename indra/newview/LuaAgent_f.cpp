@@ -13,6 +13,8 @@
 // viewer project includes
 #include "llqueryflags.h"
 
+#include "chatbar_as_cmdline.h"
+
 
 /* No way to get LuaAgent object in lua. These functions seem pointless until such is added.
 std::string LuaAgent::LuaGetFullName()
@@ -63,13 +65,8 @@ std::string  LuaFindAvatarName(const LLUUID &id)
 std::string  LuaFindAvatarKey(const char* fullname)
 {
 	std::string  name(fullname);
-	LLVOAvatar *av=gObjectList.findAvatar(name);
-	if(!av)
-	{
-		LuaError("No Avatar Found");
-		return "";
-	}
-	return av->getID().asString();
+	LLUUID key = cmdline_partial_name2key(name);
+	return key.asString();
 }
 
 LLParcel* Lua_getCurrentParcel()

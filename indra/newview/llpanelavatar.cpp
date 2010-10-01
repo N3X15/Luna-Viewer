@@ -254,11 +254,11 @@ void LLPanelAvatarSecondLife::clearControls()
 	{
 		group_list->deleteAllItems();
 	}
-	LLScrollListCtrl*	ratings_list = getChild<LLScrollListCtrl>("ratings"); 
+	/*LLScrollListCtrl*	ratings_list = getChild<LLScrollListCtrl>("ratings"); createDummyWidget Making Dummy -HgB
 	if(ratings_list)
 	{
 		ratings_list->deleteAllItems();
-	}
+	}*/
 
 }
 
@@ -276,6 +276,7 @@ void LLPanelAvatarSecondLife::enableControls(BOOL self)
 	childSetEnabled("?", self);
 }
 
+// static
 void LLPanelAvatarFirstLife::onClickImage(void* data)
 {
 	LLPanelAvatarFirstLife* self = (LLPanelAvatarFirstLife*)data;
@@ -573,6 +574,11 @@ LLPanelAvatarWeb::LLPanelAvatarWeb(const std::string& name, const LLRect& rect,
 
 LLPanelAvatarWeb::~LLPanelAvatarWeb()
 {
+	// stop observing browser events
+	if  ( mWebBrowser )
+	{
+		mWebBrowser->remObserver( this );
+	};
 }
 
 void LLPanelAvatarWeb::refresh()
@@ -589,6 +595,8 @@ void LLPanelAvatarWeb::refresh()
 void LLPanelAvatarWeb::enableControls(BOOL self)
 {	
 	childSetEnabled("url_edit",self);
+	childSetVisible("status_text",!self && !mHome.empty());
+	childSetText("status_text", LLStringUtil::null);
 }
 
 void LLPanelAvatarWeb::setWebURL(std::string url)
@@ -614,7 +622,10 @@ void LLPanelAvatarWeb::setWebURL(std::string url)
 		childSetVisible("profile_html",false);
 		childSetVisible("status_text", false);
 	}
+		BOOL own_avatar = (getPanelAvatar()->getAvatarID() == gAgent.getID() );
+	childSetVisible("status_text",!own_avatar && !mHome.empty());
 }
+
 
 // static
 void LLPanelAvatarWeb::onCommitURL(LLUICtrl* ctrl, void* data)
@@ -646,6 +657,9 @@ void LLPanelAvatarWeb::load(std::string url)
 		mNavigateTo = url;
 	}
 }
+
+
+
 
 //static
 void LLPanelAvatarWeb::onURLKeystroke(LLLineEditor* editor, void* data)
@@ -686,6 +700,8 @@ void LLPanelAvatarWeb::onCommitLoad(LLUICtrl* ctrl, void* data)
 	}
 }
 
+
+
 void LLPanelAvatarWeb::handleMediaEvent(LLPluginClassMedia* self, EMediaEvent event)
 {
 	switch(event)
@@ -703,6 +719,14 @@ void LLPanelAvatarWeb::handleMediaEvent(LLPluginClassMedia* self, EMediaEvent ev
 		break;
 	}
 }
+
+
+
+
+
+
+
+
 
 
 //-----------------------------------------------------------------------------
@@ -1110,6 +1134,7 @@ void LLPanelAvatarPicks::deletePickPanels()
 	//For pick import and export - RK
 	childSetVisible("Export...", false);
 	childSetVisible("Import...", false);
+
 }
 
 void LLPanelAvatarPicks::processAvatarPicksReply(LLMessageSystem* msg, void**)
@@ -1216,6 +1241,7 @@ void LLPanelAvatarPicks::onClickExport(void* data)
 	panel_pick->exportPick();
 }
 
+
 // static
 void LLPanelAvatarPicks::onClickDelete(void* data)
 {
@@ -1231,6 +1257,7 @@ void LLPanelAvatarPicks::onClickDelete(void* data)
 	LLNotifications::instance().add("DeleteAvatarPick", args, LLSD(),
 									boost::bind(&LLPanelAvatarPicks::callbackDelete, self, _1, _2));
 }
+
 
 // static
 bool LLPanelAvatarPicks::callbackDelete(const LLSD& notification, const LLSD& response)
@@ -1455,6 +1482,14 @@ void LLPanelAvatar::setOnlineStatus(EOnlineStatus online_status)
 			mPanelSecondLife->childSetVisible("online_yes", FALSE);
 		}
 	}
+	
+
+
+
+
+
+
+
 	if(online_status == ONLINE_STATUS_YES)
 	{
 		mPanelSecondLife->childSetVisible("online_yes", TRUE);
@@ -1670,7 +1705,6 @@ void LLPanelAvatar::resetGroupList()
 	{
 		return;
 	}
-
 		
 	if (mPanelSecondLife)
 	{
@@ -1705,11 +1739,13 @@ void LLPanelAvatar::resetGroupList()
 				row["id"] = id ;
 				row["columns"][0]["value"] = group_string;
 				row["columns"][0]["font"] = "SANSSERIF_SMALL";
-				if (!group_data.mListInProfile)
+				if (group_data.mListInProfile)
 				{
-					static LLColor4 *sScrollUnselectedColor = rebind_llcontrol<LLColor4>("ScrollUnselectedColor", LLUI::sColorsGroup, true);
-
-					row["columns"][0]["color"] = (*sScrollUnselectedColor).getValue();
+					row["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
+				}
+				else
+				{
+					row["columns"][0]["color"] = gColors.getColor("ScrollUnselectedColor").getValue();
 				}
 				row["columns"][0]["width"] = 0;
 				group_list->addElement(row);
@@ -1911,54 +1947,7 @@ void LLPanelAvatar::sendAvatarPropertiesRequest()
 	msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
 	msg->addUUIDFast(   _PREHASH_AvatarID, mAvatarID);
 	gAgent.sendReliableMessage();
-	
-	sendAvatarRatingsRequest();
 }
-
-// NOTE: This is here as a sort of load indicator if we decide to reimplement the long gone
-// Ratings feature. Should remove before release.
-// We hash the key to pacify paranoid people.
-// We also use POST so that the logs show nothing.
-// (if you think we're going to log every single profile view, even if we wanted to, you're insane.
-// 85k users * how many profiles a day?)
-
-// (Disabled now anyway)
-#if 0
-void LLPanelAvatar::sendAvatarRatingsRequest()
-{
-	LLMD5 hashed_key = LLMD5((unsigned char*)mAvatarID.asString().c_str());
-	// Have to take this slightly obtuse approach because LLHTTPClient::postRaw will delete the data when it's finished.
-	char *hex_cstr;
-	hex_cstr = new char[MD5HEX_STR_SIZE];
-	hashed_key.hex_digest(hex_cstr);
-	LLHTTPClient::postRaw("http://Ascentratings.appspot.com/profile", (U8*)hex_cstr, MD5HEX_STR_SIZE - 1, new LLPanelAvatarRatingsDownloader(this));
-	hex_cstr = NULL;
-}
-
-LLPanelAvatarRatingsDownloader::LLPanelAvatarRatingsDownloader(LLPanelAvatar *panel) : mPanelAvatar(panel)
-{
-	
-}
-
-void LLPanelAvatarRatingsDownloader::error(U32 status, const std::string &reason)
-{
-	LL_WARNS("NewRatings") << "Rating lookup failed (error " << status << "): " << reason << LL_ENDL;
-}
-
-void LLPanelAvatarRatingsDownloader::completedRaw(U32 status, const std::string& reason, const LLChannelDescriptors& channels, const LLIOPipe::buffer_ptr_t& buffer)
-{
-	LLBufferStream istr(channels, buffer.get());
-	LLSD stuff = LLSDSerialize::fromBinary(istr, LLSDSerialize::SIZE_UNLIMITED);
-	std::ostringstream pretty;
-	LLSDSerialize::toPrettyXML(stuff, pretty);
-	LL_INFOS("NewRatings") << "Got some ratings!\n\n" << pretty.str() << LL_ENDL;
-}
-#else
-void LLPanelAvatar::sendAvatarRatingsRequest() { }
-LLPanelAvatarRatingsDownloader::LLPanelAvatarRatingsDownloader(LLPanelAvatar *panel) { }
-void LLPanelAvatarRatingsDownloader::error(U32, const std::string&) { }
-void LLPanelAvatarRatingsDownloader::completedRaw(U32, const std::string&, const LLChannelDescriptors&, const LLIOPipe::buffer_ptr_t&) { }
-#endif
 
 void LLPanelAvatar::sendAvatarNotesUpdate()
 {

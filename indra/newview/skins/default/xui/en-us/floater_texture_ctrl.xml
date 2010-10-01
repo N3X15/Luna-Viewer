@@ -65,39 +65,4 @@
 	<string name="pick title">
 		Pick:
 	</string>
-
-  	<tab_container border="false" bottom_delta="0" width="410" height="300" left="175" mouse_opaque="false" name="actions_tab_container" tab_position="top" follows="left|top|right|bottom">
-    <panel border="false" bottom_delta="0" follows="right|top" height="300" label="Server" left="0" mouse_opaque="false" name="server_tab" width="410">
-        <search_editor bottom_delta="-20" enabled="true" follows="left|top|right" height="16"
-	         label="Type here to search" left="0" mouse_opaque="true"
-	         name="inventory search editor" width="271" />
-        <inventory_panel allow_multi_select="false" border="true" bottom="-270" enabled="true"
-	         follows="left|top|right|bottom" height="245" left="0" mouse_opaque="true"
-	         name="inventory panel" sort_order="TexturePickerSortOrder" width="271" />
-    </panel>
-    <panel border="false" bottom_delta="0" follows="left|top" height="300" label="Local" left="175" mouse_opaque="false" name="local_tab" width="410">
-  <!-- tag: vaa phoenix local_asset_browser [begin] -->
-      <button bottom_delta="-26" enabled="true" follows="left|top" font="SansSerifSmall" halign="center" height="20" label="Add" label_selected="Add" left="4" mouse_opaque="true" name="Add" scale_image="true" width="64" visible="true" />
-      <button bottom_delta="0" enabled="true" follows="left|top" font="SansSerifSmall" halign="center" height="20" label="Remove" label_selected="Remove" left="72" mouse_opaque="true" name="Remove" scale_image="true" width="64" visible="true" />
-      <button bottom_delta="0" enabled="true" follows="left|top" font="SansSerifSmall" halign="center" height="20" label="Browser" label_selected="Browser" left="140" mouse_opaque="true" name="Browser" scale_image="true" width="64" visible="true" />
-	  <scroll_list
-	        name="local_name_list"
-	            left="0"
-	            bottom="-255"
-	            width="271"
-	            height="225"
-	        follows="left|top|right|bottom"
-	        column_padding="0"
-	        can_resize="false"
-	        draw_heading="true"
-	        multi_select="true"
-	        search_column="1"
-	            visible="true"
-		  	  >
-	    <column name="unit_name" label="Name" dynamicwidth="true" />
-	    <column name="unit_id_HIDDEN" label="ID" width="0" />
-	  </scroll_list>
-	  <!-- tag: vaa phoenix local_asset_browser [end] -->
-    </panel>
-  </tab_container>
 </floater>

@@ -75,13 +75,15 @@ function DumpEnv()
 	env = env.. tostring(WLSky_GetSceneLightStrength()).."^"
 	env = env.. tostring(WLSky_GetSunDeltaYaw()).."^"
 	env = env.. tostring(WLSky_GetSunlight())
-	print("string WLSky=\""..env.."\"; //"..env:len())
+	return env;
 end
 
 local function WLChatListener(from_id, owner_id, mesg)
 	--print("[WINDLIGHT]",from_id,key2name(owner_id),mesg)
 
-	if string.starts(mesg,"&FLEXLIFE;WLWater^"..getMyID()) then
+	if string.starts(mesg,"&FLEXLIFE;GetEnv^"..getMyID()) and tostring(owner_id) == tostring(getMyID()) then
+		say("&FLEXLIFE;DumpedEnv^"..DumpEnv())
+	elseif string.starts(mesg,"&FLEXLIFE;WLWater^"..getMyID()) then
 		local t = explode("^",mesg)
 		--DumpTable(t)
 		local p = getCurrentParcel()
@@ -166,25 +168,25 @@ local function WLChatListener(from_id, owner_id, mesg)
 					end
 				end
 			end
-			WLSky_SetAmbient(		parseVector4(	t[ 3]))
+			WLSky_SetAmbient(			parseVector4(	t[ 3]))
 			WLSky_SetBlueDensity(		parseVector4(	t[ 4]))
 			WLSky_SetBlueHorizon(		parseVector4(	t[ 5]))
 			WLSky_SetCloudColor(		parseVector4(	t[ 6]))
-			WLSky_SetCloudCoverage(		tonumber(	t[ 7]))
+			WLSky_SetCloudCoverage(		tonumber(		t[ 7]))
 			WLSky_SetCloudDensity1(		parseVector4(	t[ 8]))
 			WLSky_SetCloudDensity2(		parseVector4(	t[ 9]))
-			WLSky_SetCloudScale(		tonumber(	t[10]))
-			WLSky_SetDensityMultiplier(	tonumber(	t[11]))
-			WLSky_SetDistanceMult(		tonumber(	t[12]))
-			WLSky_SetGamma(			tonumber(	t[13]))
-			WLSky_SetGlow(			parseVector4(	t[14]))
+			WLSky_SetCloudScale(		tonumber(		t[10]))
+			WLSky_SetDensityMultiplier(	tonumber(		t[11]))
+			WLSky_SetDistanceMult(		tonumber(		t[12]))
+			WLSky_SetGamma(				tonumber(		t[13]))
+			WLSky_SetGlow(				parseVector4(	t[14]))
 			WLSky_SetHazeDensity(		parseVector4(	t[15]))
 			WLSky_SetHazeHorizon(		parseVector4(	t[16]))
-			WLSky_SetLightNorm(		parseVector4(	t[17]))
-			WLSky_SetMaxAltitude(		tonumber(	t[18]))
-			WLSky_SetSceneLightStrength(	tonumber(	t[19]))
-			WLSky_SetSunDeltaYaw(		tonumber(	t[20]))
-			WLSky_SetSunlight(		parseVector4(	t[21]))
+			WLSky_SetLightNorm(			parseVector4(	t[17]))
+			WLSky_SetMaxAltitude(		tonumber(		t[18]))
+			WLSky_SetSceneLightStrength(tonumber(		t[19]))
+			WLSky_SetSunDeltaYaw(		tonumber(		t[20]))
+			WLSky_SetSunlight(			parseVector4(	t[21]))
 			print("Windlight sky settings have been set by the landowner.")
 		end
 	end
@@ -195,4 +197,4 @@ local function WLBridgeListener(Channel, from_name,source_id,owner_id,message)
 end
 -- Equivalent to llListen(CHANNEL_DEBUG,"","","")
 SetHook("OnChatDebug",		WLChatListener)
-SetHook("OnBridgeMessage",	WLBridgeTranslator)
+SetHook("OnBridgeCommand",	WLBridgeTranslator)

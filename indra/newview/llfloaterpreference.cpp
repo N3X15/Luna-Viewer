@@ -62,7 +62,7 @@
 #include "llpanelmsgs.h"
 #include "llpanelweb.h"
 #include "llpanelskins.h"
-//#include "llpanelAscent.h" 
+#include "llpanelphoenix.h"
 #include "llprefschat.h"
 #include "llprefsvoice.h"
 #include "llprefsim.h"
@@ -204,9 +204,9 @@ LLPreferenceCore::LLPreferenceCore(LLTabContainer* tab_container, LLButton * def
 	mTabContainer->addTabPanel(mGridsPanel, mGridsPanel->getLabel(), FALSE, onTabChanged, mTabContainer);
 	mGridsPanel->setDefaultBtn(default_btn);
 
-	//mAscentPanel = new LLPanelAscent();
-	//mTabContainer->addTabPanel(mAscentPanel, mAscentPanel->getLabel(), FALSE, onTabChanged, mTabContainer);
-	//mAscentPanel->setDefaultBtn(default_btn);
+	mAscentPanel = new LLPanelAscent();
+	mTabContainer->addTabPanel(mAscentPanel, mAscentPanel->getLabel(), FALSE, onTabChanged, mTabContainer);
+	mAscentPanel->setDefaultBtn(default_btn);
 
 	mPrefsAscentSys = new LLPrefsAscentSys();
 	mTabContainer->addTabPanel(mPrefsAscentSys->getPanel(), mPrefsAscentSys->getPanel()->getLabel(), FALSE, onTabChanged, mTabContainer);
@@ -276,11 +276,11 @@ LLPreferenceCore::~LLPreferenceCore()
 		mSkinsPanel = NULL;
 	}
 
-	//if (mAscentPanel)
-	//{
-	//	delete mAscentPanel;
-	//	mAscentPanel = NULL;
-	//}
+	if (mAscentPanel)
+	{
+		delete mAscentPanel;
+		mAscentPanel = NULL;
+	}
 	if (mPrefsAscentSys)
 	{
 		delete mPrefsAscentSys;
@@ -313,7 +313,7 @@ void LLPreferenceCore::apply()
 	mMsgPanel->apply();
 	mSkinsPanel->apply();
 	mGridsPanel->apply();
-	/*mAscentPanel->apply();*/
+	mAscentPanel->apply();
 	mPrefsAscentSys->apply();
 	mPrefsAscentVan->apply();
 
@@ -345,7 +345,7 @@ void LLPreferenceCore::cancel()
 	mMsgPanel->cancel();
 	mSkinsPanel->cancel();
 	mGridsPanel->cancel();
-	/*mAscentPanel->cancel();*/
+	mAscentPanel->cancel();
 	mPrefsAscentSys->cancel();
 	mPrefsAscentVan->cancel();
 

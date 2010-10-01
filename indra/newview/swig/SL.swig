@@ -44,6 +44,7 @@
 #include "LuaBase_f.h"
 #include "LuaAvatar_f.h"
 #include "LuaAgent_f.h"
+#include "LuaInventory_f.h"
 #include "LuaParticles.h"
 #include "LuaWindlight.h"
 #include "llprimitive.h"
@@ -57,6 +58,8 @@
 #include "v4color.h"
 #include "llcharacter.h"
 #include "llagent.h"
+#include "llinventorymodel.h"
+#include "llviewerinventory.h"
 %}
 
 %include <std_string.i>
@@ -66,6 +69,8 @@
 %import "../../llcommon/stdtypes.h"
 %import "../../llprimitive/llprimitive.h"
 %import "../llagent.h"
+%import "../llviewerinventory.h"
+//%import "../llinventorymodel.h"
 %import "../llviewerregion.h"
 %import "../llviewerobject.h"
 %import "../llvovolume.h"
@@ -77,10 +82,13 @@
 
 %import "../llviewerpartsource.h"
 
+extern LLInventoryModel gInventory;
 
 %rename(SendChat)		LuaSendChat(const char *msg, bool IsDebug=false);
 
 %ignore				LuaPrint(const char *msg, const char *arg1=0,const char *arg2=0,const char *arg3=0,const char *arg4=0,const char *arg5=0);
+%ignore				LLInventoryModel::sCurrentInvCacheVersion;
+
 %native(print) int LuaBase_print(lua_State *L); 
 %{
 // Lua 5.2.x's print(...) method, from the sourcecode.
@@ -143,10 +151,9 @@ extern LLAgent *gAgent;
 
 %include "../LuaParticles.h"
 %include "../LuaWindlight.h"
+%include "../LuaInventory_f.h"
 
 %include "../../newview/llviewerobject.h"
-
-//%include "../../newview/LuaUI.h"
 
 %rename (Floater) 	LuaFloater;
 %rename (Button) 	LuaButton;

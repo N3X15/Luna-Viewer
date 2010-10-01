@@ -1169,8 +1169,9 @@ void LLMediaPluginTest::keyboard( int key )
 		exit( 0 );
 	};
 
-	mSelectedPanel->mMediaSource->keyEvent( LLPluginClassMedia::KEY_EVENT_DOWN, key, 0 );
-	mSelectedPanel->mMediaSource->keyEvent( LLPluginClassMedia::KEY_EVENT_UP, key, 0 );
+	LLSD native_key_data;
+	mSelectedPanel->mMediaSource->keyEvent( LLPluginClassMedia::KEY_EVENT_DOWN, key, 0,native_key_data);
+	mSelectedPanel->mMediaSource->keyEvent( LLPluginClassMedia::KEY_EVENT_UP, key, 0 ,native_key_data);
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1543,7 +1544,7 @@ void LLMediaPluginTest::addMediaPanel( std::string url )
 	std::string user_data_path = std::string( cwd ) + "/";
 #endif
 
-	media_source->init( launcher_name, plugin_name, false, user_data_path );
+	media_source->init( launcher_name, plugin_name, false);//, user_data_path );
 	media_source->setDisableTimeout(mDisableTimeout);
 
 	// make a new panel and save parameters
@@ -1780,7 +1781,7 @@ void LLMediaPluginTest::replaceMediaPanel( mediaPanel* panel, std::string url )
 	std::string user_data_path = std::string( cwd ) + "/";
 #endif
 
-	media_source->init( launcher_name, plugin_name, false, user_data_path );
+	media_source->init( launcher_name, plugin_name, false);//, user_data_path );
 	media_source->setDisableTimeout(mDisableTimeout);
 
 	// make a new panel and save parameters

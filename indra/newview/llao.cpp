@@ -1,9 +1,7 @@
-// TODO: Move all of this shit to Lua, to handle different notecard formats.
 // <edit>
 /* DOUBLE EDIT REACH AROUND
 Rewritten by Hg Beeks
 
-We will handle drag-and-drop in the future. Reminder - Look in llPreviewGesture for handleDragAndDrop. -HgB
 */
 
 #include "llviewerprecompiledheaders.h"
@@ -19,7 +17,7 @@ We will handle drag-and-drop in the future. Reminder - Look in llPreviewGesture 
 #include "llviewercontrol.h"
 #include "llvoavatar.h"
 //this is for debugging ;D
-#define AO_DEBUG
+//#define AO_DEBUG
 
 //static variables
 std::list<std::string>	LLAO::mStandOverrides;

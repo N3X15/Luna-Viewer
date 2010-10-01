@@ -34,3 +34,6 @@
 #include "llchatbar.h"
 
 bool cmd_line_chat(std::string revised_text, EChatType type, bool from_gesture = false);
+
+// LUNA: Moved here so its accessible.
+LLUUID cmdline_partial_name2key(std::string name);

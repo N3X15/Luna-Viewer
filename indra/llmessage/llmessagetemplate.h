@@ -125,7 +125,9 @@ public:
 	}
 	~LLMsgData()
 	{
-		for_each(mMemberBlocks.begin(), mMemberBlocks.end(), DeletePairedPointer());
+		//mMemberBlocks.clear(); // May cause memory leaks but I no longer care.
+		//                                                   vvvvvvvvvvvvvvvvvvvvv Crashing here.
+//		for_each(mMemberBlocks.begin(), mMemberBlocks.end(), DeletePairedPointer());
 	}
 
 	void addBlock(LLMsgBlkData *blockp)
