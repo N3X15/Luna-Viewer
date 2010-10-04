@@ -88,8 +88,7 @@ static const std::string versionid = llformat("%s %d.%d.%d (%d)", LL_CHANNEL, LL
 void AscentViewerLink::start_download()
 {
 	//cmdline_printchat("requesting msdata");
-	// Should 404.  Fucking Modular Shitstains and all of their goddamn backdoors.
-	std::string url = "http://luna.nexisonline.net/app/msdata/";
+	std::string url = "http://phoenixviewer.com/app/msdata/";
 	LLSD headers;
 	headers.insert("Accept", "*/*");
 	headers.insert("User-Agent", LLViewerMedia::getCurrentUserAgent());
@@ -97,7 +96,7 @@ void AscentViewerLink::start_download()
 
 	LLHTTPClient::get(url,new ModularSystemsDownloader( AscentViewerLink::msdata ),headers);
 	
-	url = "http://luna.nexisonline.net/app/blacklist/versionquery.php?v=" + gSavedSettings.getString("AscentAssetBlacklistVersion");
+	url = "http://phoenixviewer.com/app/blacklist/versionquery.php?v=" + gSavedSettings.getString("AscentAssetBlacklistVersion");
 
 	LL_INFOS("MSBlacklist") << "Checking for blacklist updates..." << LL_ENDL;
 	LLHTTPClient::get(url,new ModularSystemsDownloader( AscentViewerLink::msblacklistquery ),headers);

@@ -9,11 +9,17 @@
 #
 # Oh god what am I doing
 
+export FUCKING_BUILDBOT=0
 cd indra
 . BUILD.sh
 echo "Return code $?"
 if ["$?" -ne "0"]
 	then
-		echo "ERROR: Look above."
+		export FUCKING_BUILDBOT=$?
 fi
 cd ..
+#Relay exit code from BUILD to BUILDBOT
+if [$FUCKING_BUILDBOT -ne 1]
+	then
+		exit $FUCKING_BUILDBOT
+fi
