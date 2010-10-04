@@ -12,7 +12,8 @@
 cd indra
 . BUILD.sh
 echo Return code $?
-if ["$?" -ne "0"] then
-	echo "ERROR: Look above."
+if ["$?" -ne "0"]
+	then
+		echo "ERROR: Look above."
 fi
 cd ..
