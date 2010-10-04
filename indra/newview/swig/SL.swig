@@ -141,6 +141,7 @@ static int LuaBase_print (lua_State *L) {
 %include "../LuaAvatar_f.h"
 
 %include "../LuaAgent_f.h"
+%include "LuaAgent.i"
 
 %include "../../llcharacter/llcharacter.h"
 %include "../../newview/llagent.h"
@@ -162,8 +163,7 @@ extern LLAgent *gAgent;
 
 %rename (Agent) 		LuaAgent;
 %rename (alert) 		LuaAlert;
-%rename (dumpVisualParams) 	LuaDumpVisualParams;
-%rename (dumpVisualParamsToLuaCode) LuaDumpVisualParamsToLuaCode;
+%rename (DumpVisualParams) 	LuaDumpVisualParams;
 %rename (Floater) 		LuaFloater;
 %rename (getAvatar) 		LuaGetAvatar;
 %rename (LineEditor) 		LuaLineEditor;

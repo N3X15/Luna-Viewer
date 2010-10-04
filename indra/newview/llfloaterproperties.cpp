@@ -416,9 +416,7 @@ void LLFloaterProperties::refreshFromItem(LLInventoryItem* item)
 	}
 	else
 	{
-		std::string timestr;
-		timeToFormattedString(time_utc, gSavedSettings.getString("TimestampFormat"), timestr);
-		childSetText("LabelAcquiredDate", timestr);
+		childSetText("LabelAcquiredDate", std::string(ctime(&time_utc)) );
 	}
 
 	///////////////////////

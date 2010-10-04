@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<menu bottom="100" color="MenuDefaultBgColor" drop_shadow="true" height="101" left="100"
+	 mouse_opaque="false" name="popup" opaque="true" width="128">
+	<menu_item_call bottom_delta="-18" height="18" label="Profile" left="0"
+		 mouse_opaque="true" name="Profile" width="128">
+		<on_click function="Avatarlist.Profile" userdata="0" />
+	</menu_item_call>
+  <menu_item_call bottom_delta="-18" height="18" label="IM" left="0"
+		 mouse_opaque="true" name="IM" width="128">
+    <on_click function="Avatarlist.IM" userdata="0" />
+  </menu_item_call>
+  <menu bottom_delta="0" color="MenuDefaultBgColor" drop_shadow="true" height="175" left="0"
+	     mouse_opaque="false" name="Moderation" opaque="true" tear_off="false"
+	     width="125">
+    <on_enable function="Avatarlist.EnableModeration" />
+    <menu_item_call bottom_delta="-18" enabled = "true" height="18" label="Mute"
+			 left="0" mouse_opaque="true" name="Mute" width="128">
+      <on_click function="Avatarlist.Mute" />
+    </menu_item_call>
+    <menu_item_call bottom_delta="-18" enabled = "true" height="18" label="Unmute"
+			 left="0" mouse_opaque="true" name="Unmute" width="128">
+      <on_click function="Avatarlist.Unmute" />
+    </menu_item_call>
+    <menu_item_call bottom_delta="-18" enabled = "true" height="18" label="Report"
+			 left="0" mouse_opaque="true" name="Report" width="128">
+      <on_click function="Avatarlist.Ar" />
+    </menu_item_call>
+    <menu_item_separator />
+    <menu_item_call bottom_delta="-18" enabled = "true" height="18" label="Eject"
+			 left="0" mouse_opaque="true" name="Eject" width="128">
+      <on_click function="Avatarlist.Eject" />
+    </menu_item_call>
+    <menu_item_call bottom_delta="-18" enabled = "true" height="18" label="Ban"
+			 left="0" mouse_opaque="true" name="Ban" width="128">
+      <on_click function="Avatarlist.Ban" />
+    </menu_item_call>
+    <menu_item_call bottom_delta="-18" enabled = "true" height="18" label="Freeze"
+			 left="0" mouse_opaque="true" name="Freeze" width="128">
+      <on_click function="Avatarlist.Freeze" />
+    </menu_item_call>
+    <menu_item_call bottom_delta="-18" enabled = "true" height="18" label="Unfreeze"
+			 left="0" mouse_opaque="true" name="Unfreeze" width="128">
+      <on_click function="Avatarlist.Unfreeze" />
+    </menu_item_call>
+    <menu_item_separator />
+    <menu_item_call bottom_delta="-18" enabled = "true" height="18" label="Estatekick"
+			 left="0" mouse_opaque="true" name="Estatekick" width="128">
+      <on_click function="Avatarlist.Estatekick" />
+    </menu_item_call>
+    <menu_item_call bottom_delta="-18" enabled = "true" height="18" label="TP Home"
+			 left="0" mouse_opaque="true" name="Estatetphome" width="128">
+      <on_click function="Avatarlist.Estatetphome" />
+    </menu_item_call>
+    <menu_item_call bottom_delta="-18" enabled = "true" height="18" label="Estateban"
+			 left="0" mouse_opaque="true" name="Estateban" width="128">
+      <on_click function="Avatarlist.Estateban" />
+    </menu_item_call>
+    <menu_item_call bottom_delta="-18" enabled = "true" height="18" label="GTFO"
+			 left="0" mouse_opaque="true" name="Estategtfo" width="128">
+      <on_click function="Avatarlist.Estategtfo" />
+    </menu_item_call>
+  </menu>
+  <menu_item_separator />
+  <menu_item_call bottom_delta="-18" height="18" label="Copy Key" left="0"
+		 mouse_opaque="true" name="Getkey" width="128">
+    <on_click function="Avatarlist.Getkey" userdata="0" />
+  </menu_item_call>
+  <menu_item_call bottom_delta="-18" height="18" label="Chat command" left="0"
+		 mouse_opaque="true" name="Chatcmd" width="128">
+    <on_click function="Avatarlist.Chatcmd" userdata="0" />
+  </menu_item_call>
+  <menu_item_call bottom_delta="-18" height="18" label="Track" left="0"
+		 mouse_opaque="true" name="Track" width="128">
+    <on_click function="Avatarlist.Track" userdata="0" />
+  </menu_item_call>
+  <menu_item_call bottom_delta="-18" height="18" label="Mark" left="0"
+		 mouse_opaque="true" name="Mark" width="128">
+    <on_click function="Avatarlist.Mark" userdata="0" />
+  </menu_item_call>
+  <menu_item_call bottom_delta="-18" height="18" label="Script count" left="0"
+		 mouse_opaque="true" name="Scripts" width="128">
+    <on_click function="Avatarlist.Scripts" userdata="0" />
+  </menu_item_call>
+  <menu_item_separator />
+  <menu_item_call bottom_delta="-18" height="18" label="TP to" left="0"
+		 mouse_opaque="true" name="Tpto" width="128">
+    <on_click function="Avatarlist.Tpto" userdata="0" />
+  </menu_item_call>
+  <menu_item_call bottom_delta="-18" height="18" label="Offer TP" left="0"
+		 mouse_opaque="true" name="Offertp" width="128">
+    <on_click function="Avatarlist.Offertp" userdata="0" />
+  </menu_item_call>
+</menu>

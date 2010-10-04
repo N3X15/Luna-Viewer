@@ -1420,7 +1420,7 @@
       <key>Persist</key>
       <integer>1</integer>
       <key>Type</key>
-      <string>Boolean</string>
+      <string>BOOL</string>
       <key>Value</key>
       <integer>1</integer>
     </map>
@@ -10481,7 +10481,7 @@
       <key>Persist</key>
       <integer>1</integer>
       <key>Type</key>
-      <string>S32</string>
+      <string>BOOL</string>
       <key>Value</key>
       <integer>1</integer>
     </map>

@@ -99,9 +99,9 @@ class Settings(object):
             value=self.stuff[key]['Value']
             if t=='BOOL':
                 if str(value).lower()=='true' or value==1:
-                    value=True
+                    value=1
                 else:
-                    value=False
+                    value=0
             elif t=='S32' or t=='U32':
                 value=int(value)
             elif t=='F32':
@@ -188,7 +188,7 @@ class Settings(object):
                 'Type':assumed_type,
                 'Value':value
                 }
-		
+        
     def remove(self,key):
         newstuff={}
         for name in sorted(self.stuff):
@@ -232,21 +232,21 @@ def parse_args():
         default='',
         dest='set_llsd',
         help='key=value;key2=value...')
-		
+        
     parser.add_option(
         '--rm',
         type='string',
         default='',
         dest='remove_keys',
         help='Removes a key (comma-separated list)')
-		
+        
     parser.add_option(
         '--cp',
         type='string',
         default='',
         dest='copy_keys',
         help='Copies keys from --source-file to --target-file.  (comma-separated list)')
-		
+        
     parser.add_option(
         '--mv',
         type='string',
@@ -317,7 +317,7 @@ def StringToType(input):
                 return long(input)
             except ValueError:
                 return input
-				
+                
 def StringToLLSDType(input):
     try:
         int(input)
@@ -362,7 +362,7 @@ if __name__ == '__main__':
                 print ' * Setting %s=%s...' % (key,value)
                 hurr.set(key,value)
                 changed=True
-			
+            
         if len(options.remove_keys) > 0:
             for key in options.remove_keys.split(";"):
                 print ' * Removing %s...' % key
@@ -401,8 +401,8 @@ if __name__ == '__main__':
                 print ' * Setting %s to type %s...' % (key,typ)
                 hurr.setType(key,typ)
                 changed=True
-				
-	if len(options.find_key) > 0:
+                
+        if len(options.find_key) > 0:
             for key in hurr.stuff:
                 if re.search(options.find_key,key) is not None:
                     if options.find_action=='remove':

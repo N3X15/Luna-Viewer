@@ -145,6 +145,7 @@ void LLTemplateMessageBuilder::nextBlock(const char* blockname)
 	
 	// ok, have we already set this block?
 	LLMsgBlkData* block_data = mCurrentSMessageData->mMemberBlocks[bnamep];
+	if(!block_data) return;
 	if (block_data->mBlockNumber == 0)
 	{
 		// nope! set this as the current block
@@ -626,6 +627,8 @@ BOOL LLTemplateMessageBuilder::isMessageFull(const char* blockname) const
 
 static S32 buildBlock(U8* buffer, S32 buffer_size, const LLMessageBlock* template_data, LLMsgData* message_data)
 {
+	if(!template_data || !template_data->mType)
+		return 0;
 	S32 result = 0;
 	LLMsgData::msg_blk_data_map_t::const_iterator block_iter = message_data->mMemberBlocks.find(template_data->mName);
 	const LLMsgBlkData* mbci = block_iter->second;

@@ -7,6 +7,7 @@
 set PER_ACCT=../indra/newview/app_settings/settings_per_account.xml
 echo *** Editing indra/newview/app_settings/settings.xml...
 python.exe ../scripts/settings.py --set=LunaCmdLineLua=/lua;LunaCmdLineMacro=/m;AscentDoubleClickTeleport=1;RadarChatKeys=1;AscentBuildAlwaysEnabled=1;PrivateLookAt=1
+python.exe ../scripts/settings.py --set-type=AscentDoubleClickTeleport=BOOL;RadarChatKeys=BOOL;AscentBuildAlwaysEnabled=BOOL;PrivateLookAt=BOOL
 echo *** Editing indra/newview/app_settings/settings_per_account.xml...
 python.exe ../scripts/settings.py --target-file=%PER_ACCT% --set=LunaCmdLineLua=/lua;LunaCmdLineMacro=/m;AscentDoubleClickTeleport=1;RadarChatKeys=1;AscentBuildAlwaysEnabled=1
 

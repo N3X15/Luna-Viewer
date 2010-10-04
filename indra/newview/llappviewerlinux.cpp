@@ -670,7 +670,6 @@ bool LLAppViewerLinux::beingDebugged()
 					base += 1;
 				}
 				
-				//should valgrind be added here?
 				if (strcmp(base, "gdb") == 0)
 				{
 					debugged = yes;

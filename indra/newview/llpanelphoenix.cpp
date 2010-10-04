@@ -181,19 +181,19 @@ BOOL LLPanelAscent::postBuild()
 {
 	refresh();
 
-	LLComboBox* tagcombo = getChild<LLComboBox>("TagCombo");
+//	LLComboBox* tagcombo = getChild<LLComboBox>("TagCombo");
 
 	getChild<LLComboBox>("material")->setSimple(gSavedSettings.getString("AscentBuildPrefs_Material"));
 	getChild<LLComboBox>("combobox shininess")->setSimple(gSavedSettings.getString("AscentBuildPrefs_Shiny"));
 	
 
-	LLSliderCtrl* mShapeScaleSlider = getChild<LLSliderCtrl>("AscentBeamShapeScale",TRUE,FALSE);
-	mShapeScaleSlider->setCommitCallback(&LLPanelAscent::beamUpdateCall);
-	mShapeScaleSlider->setCallbackUserData(this);
+	//LLSliderCtrl* mShapeScaleSlider = getChild<LLSliderCtrl>("AscentBeamShapeScale",TRUE,FALSE);
+	//mShapeScaleSlider->setCommitCallback(&LLPanelAscent::beamUpdateCall);
+	//mShapeScaleSlider->setCallbackUserData(this);
 
-	LLSliderCtrl* mBeamsPerSecondSlider = getChild<LLSliderCtrl>("AscentMaxBeamsPerSecond",TRUE,FALSE);
-	mBeamsPerSecondSlider->setCommitCallback(&LLPanelAscent::beamUpdateCall);
-	mBeamsPerSecondSlider->setCallbackUserData(this);
+	//LLSliderCtrl* mBeamsPerSecondSlider = getChild<LLSliderCtrl>("AscentMaxBeamsPerSecond",TRUE,FALSE);
+	//mBeamsPerSecondSlider->setCommitCallback(&LLPanelAscent::beamUpdateCall);
+	//mBeamsPerSecondSlider->setCallbackUserData(this);
 
 	getChild<LLComboBox>("material")->setCommitCallback(onComboBoxCommit);
 	getChild<LLComboBox>("combobox shininess")->setCommitCallback(onComboBoxCommit);
@@ -380,7 +380,7 @@ BOOL LLPanelAscent::postBuild()
 void LLPanelAscent::refresh()
 {
 	
-	LLComboBox* comboBox = getChild<LLComboBox>("AscentBeamShape_combo");
+//	LLComboBox* comboBox = getChild<LLComboBox>("AscentBeamShape_combo");
 }
 
 void LLPanelAscent::IMAutoResponseItemDrop(LLViewerInventoryItem* item)

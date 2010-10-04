@@ -67,6 +67,9 @@ public:
 
 	/*virtual*/ void onOpen();
 	/*virtual*/ BOOL postBuild();
+// [RLVa:KB] - Checked: 2009-07-04 (RLVa-1.0.0a)
+	/*virtual*/ void open();
+// [/RLVa:KB]
 
 	static void processEstateOwnerRequest(LLMessageSystem* msg, void**);
 
@@ -191,7 +194,7 @@ protected:
 	static void onClickTopColliders(void*);
 	static void onClickTopScripts(void*);
 	static void onClickRestart(void* data);
-	bool callbackRestart(const LLSD& notification, const LLSD& response);
+	bool callbackRestart(const LLSD& notification, const LLSD& response, S32 seconds);
 	static void onClickCancelRestart(void* data);
 	
 private:

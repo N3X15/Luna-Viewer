@@ -19,27 +19,11 @@
  *  with this program; if not, write to the Free Software Foundation, Inc.,
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-///////////////////////////////////////////////////////
-// SWIG DIRECTIVES
-///////////////////////////////////////////////////////
-
-#ifdef SWIG
-// Don't bind internal events to Lua.
-%ignore setParams_Event(LLUUID,std::string,double);
-%ignore LuaWear_Event(LLUUID);
-%ignore LuaRemoveAllWearables_Event();
-%ignore LuaUpdateAppearance_Event();
-
-// Hide HasPermissions, since it's only used internally.
-%ignore HasPermissions(LLViewerInventoryItem);
-#endif
-
 #pragma once
 #include "llwearable.h"
 
 void LuaUpdateAppearance();
-void LuaDumpVisualParams();
-std::string LuaDumpVisualParamsToLuaCode();
+std::map<std::string,double> LuaDumpVisualParams();
 double getParamDefaultWeight(const LLUUID &avid,const char*paramname);
 double getParamCurrentWeight(const LLUUID &avid,const char*paramname);
 double getParamMax(const LLUUID &avid,const char*paramname);
@@ -51,8 +35,11 @@ void setParamOnTarget(LLUUID target,std::string paramname,double weight);
 void LuaWear(const LLUUID& assetid);
 void LuaRemoveAllWearables();
 
+void LuaStartAnimation(LLUUID avid, LLUUID movement);
+void LuaStopAnimation(LLUUID avid, LLUUID movement);
+std::map<LLUUID,S32> LuaGetPlayingAnimations(LLUUID avid);
+
 // Utility functions
 bool LuaSaveWearable(LLWearable *w);
 LLWearable * LuaLoadWearable(const LLUUID& uuid);
 void LuaSetTEImage(int index,const LLUUID& id);
-bool HasPermissions(LLViewerInventoryItem* item);

@@ -5066,6 +5066,9 @@ void LLAgent::requestStopMotion( LLMotion* motion )
 
 void LLAgent::onAnimStop(const LLUUID& id)
 {
+	// @hook onAnimStop(animation_id) Triggered when an animation stops
+	LUA_CALL("OnAnimStop") << id << LUA_END;
+
 	// handle automatic state transitions (based on completion of animation playback)
 	if(LLAO::isStand(id))
 	{
