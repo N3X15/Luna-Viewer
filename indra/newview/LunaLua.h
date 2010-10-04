@@ -220,7 +220,7 @@ struct CB_Base //If you don't want to bother with the odd templates below, just 
 	virtual ~CB_Base(){};
 protected:
 	//This is protected to ensure we don't create CB_ objects on heap unless it's expected.
-	void* CB_Base::operator new (size_t  size)
+	void* operator new (size_t  size)
 	{
 		void *mem = malloc(size);
 		if (!mem)throw std::bad_alloc();
@@ -247,7 +247,8 @@ struct CB_Args##N : public CB_Base { \
 	BOOST_PP_REPEAT(N, CB_ARG_INIT, t){}; \
 	BOOST_PP_REPEAT(N, CB_ARG_MEMB, T) \
 };
-LUA_SETUP_CB_ARG(0) //Special case. Not a template.
+// Fails to compile here on Debian with an expected unqualified-id before )
+LUA_SETUP_CB_ARG(0); //Special case. Not a template.
 #define BOOST_PP_LOCAL_LIMITS (1, CB_ARG_MAX)
 #include BOOST_PP_LOCAL_ITERATE()
 

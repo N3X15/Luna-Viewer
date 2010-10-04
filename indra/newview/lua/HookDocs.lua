@@ -16,28 +16,31 @@ RegisterHook("OnLeftMouseDown"	,"Left mouse button is DOWN.")
 -- defined in indra/newview/llviewermessage.cpp:2958
 RegisterHook("OnChatUnknown"	,"Triggered when someone uses an unknown chat method.")
 
--- defined in indra/newview/llvoavatar.cpp:3064
+-- defined in indra/newview/llvoavatar.cpp:3085
 RegisterHook("OnAvatarLoading"	,"Trigger loading effect plugin :V")
 
 -- defined in indra/newview/llagent.cpp:838
 RegisterHook("OnPhantom"	,"Tells the script engine whether a user has become phantom.")
 
+-- defined in indra/newview/llviewerwindow.cpp:2401
+RegisterHook("PostUIDraw"	,"Do GL stuff before drawing the UI. (BLOCKING)")
+
 -- defined in indra/newview/llagent.cpp:966
 RegisterHook("OnRegionChanged"	,"Tells Lua that you have moved into a new region.")
 
--- defined in indra/newview/LunaLua.cpp:185
+-- defined in indra/newview/LunaLua.cpp:191
 RegisterHook("OnLunaInit"	,"Luna's Lua engine has initialized.")
 
--- defined in indra/newview/llviewerobject.cpp:4251
+-- defined in indra/newview/llviewerobject.cpp:4269
 RegisterHook("OnAttachedParticles"	,"Particle data.")
 
--- defined in indra/newview/llvoavatar.cpp:3059
+-- defined in indra/newview/llvoavatar.cpp:3080
 RegisterHook("OnAvatarLoaded"	,"Triggered when an avatar has been fully loaded.")
 
--- defined in indra/newview/llvoavatar.cpp:6578
+-- defined in indra/newview/llvoavatar.cpp:6619
 RegisterHook("OnAttach"	,"Object UUID has attached to avatar Name.")
 
--- defined in indra/newview/llviewerobject.cpp:4377
+-- defined in indra/newview/llviewerobject.cpp:4395
 RegisterHook("OnAttachedSound"	,"Object playing a sound (includes looped sounds).")
 
 -- defined in indra/newview/llviewermessage.cpp:2916
@@ -49,10 +52,10 @@ RegisterHook("OnDoubleClick"	,"Right mouse button is DOWN.")
 -- defined in indra/newview/llviewermessage.cpp:2950
 RegisterHook("OnChatShout"	,"Triggered when someone shouts something in local chat.")
 
--- defined in indra/newview/llviewerobject.cpp:1004
+-- defined in indra/newview/llviewerobject.cpp:1022
 RegisterHook("OnSetText"	,"Someone set this object's llSetText.")
 
--- defined in indra/newview/llviewerobjectlist.cpp:1409
+-- defined in indra/newview/llviewerobjectlist.cpp:1412
 RegisterHook("OnObjectCreated"	,"An object has rezzed/appeared.")
 
 -- defined in indra/newview/llviewermessage.cpp:4046
