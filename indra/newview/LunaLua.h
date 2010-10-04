@@ -229,6 +229,7 @@ protected:
 	
 };
 
+// holy shit this is so broken on linux
 //Holy cow. This makes me want to shoot myself. C++0x Variadic templates. Please. Microsoft...
 #define CB_ARG_MAX 10
 #define CB_ARG_INIT(z, NN, name) ,name##NN(_##name##NN)
@@ -251,7 +252,6 @@ struct CB_Args##N : public CB_Base { \
 LUA_SETUP_CB_ARG(0); //Special case. Not a template.
 #define BOOST_PP_LOCAL_LIMITS (1, CB_ARG_MAX)
 #include BOOST_PP_LOCAL_ITERATE()
-
 
 int luaOnPanic(lua_State *L);
 std::string Lua_getErrorMessage(lua_State *L);
