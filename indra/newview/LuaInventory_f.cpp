@@ -23,7 +23,7 @@ LLUUID TraverseCategories(const std::string& target_cat, LLViewerInventoryCatego
 {
 	// Split the path into an array.
 	boost::char_separator<char> sep("/");
-	boost::tokenizer<boost::char_separator<char>> tok(target_cat,sep);
+	boost::tokenizer<boost::char_separator<char> > tok(target_cat,sep);
 	std::vector<std::string> vec;
 	vec.assign(tok.begin(),tok.end());
 
