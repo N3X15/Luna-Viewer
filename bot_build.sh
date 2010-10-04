@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # This is a the master build script - it is intended to be run by BuildBot
 # It is called by a wrapper script in the shared repository which sets up
@@ -11,4 +11,8 @@
 
 cd indra
 . BUILD.sh
+echo Return code $?
+if ["$?" -ne "0"] then
+	echo "ERROR: Look above."
+fi
 cd ..
