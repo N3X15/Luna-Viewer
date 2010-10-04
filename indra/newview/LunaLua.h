@@ -234,9 +234,6 @@ protected:
 #define CB_ARG_MAX 10
 #define CB_ARG_INIT(z, NN, name) ,name##NN(_##name##NN)
 #define CB_ARG_MEMB(z, NN, name) name##NN t##NN;
-#define BOOST_PP_LOCAL_MACRO(N) \
-template <BOOST_PP_ENUM_PARAMS(N, class T)> \
-	LUA_SETUP_CB_ARG(N)
 #define LUA_SETUP_CB_ARG(N) \
 struct CB_Args##N : public CB_Base { \
 	typedef void (*CB_FN)(BOOST_PP_ENUM_BINARY_PARAMS(N, T, &t)); \
@@ -248,6 +245,9 @@ struct CB_Args##N : public CB_Base { \
 	BOOST_PP_REPEAT(N, CB_ARG_INIT, t){}; \
 	BOOST_PP_REPEAT(N, CB_ARG_MEMB, T) \
 };
+#define BOOST_PP_LOCAL_MACRO(N) \
+template <BOOST_PP_ENUM_PARAMS(N, class T)> \
+	LUA_SETUP_CB_ARG(N)
 // Fails to compile here on Debian with an expected unqualified-id before )
 LUA_SETUP_CB_ARG(0); //Special case. Not a template.
 #define BOOST_PP_LOCAL_LIMITS (1, CB_ARG_MAX)
