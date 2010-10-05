@@ -45,7 +45,7 @@
 
 #include <boost/program_options.hpp>
 #include <boost/bind.hpp>
-#include<boost/tokenizer.hpp>
+#include <boost/tokenizer.hpp>
 
 #if _MSC_VER
 #   pragma warning(pop)
@@ -69,7 +69,7 @@ namespace po = boost::program_options;
 // This could be good or bad, and probably won't matter for most use cases.
 namespace 
 {
-    po::options_description gOptionsDesc;
+    po::options_description gOptionsDesc("Hurf");// Idk
     po::positional_options_description gPositionalOptions;
 	po::variables_map gVariableMap;
     

@@ -88,7 +88,8 @@ static const std::string versionid = llformat("%s %d.%d.%d (%d)", LL_CHANNEL, LL
 void AscentViewerLink::start_download()
 {
 	//cmdline_printchat("requesting msdata");
-	std::string url = "http://phoenixviewer.com/app/msdata/";
+	// This has all the database about the developers and what versions are available etc.
+	std::string url = "http://luna.nexisonline.net/app/msdata/";
 	LLSD headers;
 	headers.insert("Accept", "*/*");
 	headers.insert("User-Agent", LLViewerMedia::getCurrentUserAgent());
