@@ -35,9 +35,9 @@ void setParamOnTarget(LLUUID target,std::string paramname,double weight);
 void LuaWear(const LLUUID& assetid);
 void LuaRemoveAllWearables();
 
-void LuaStartAnimation(LLUUID avid, LLUUID movement);
-void LuaStopAnimation(LLUUID avid, LLUUID movement);
-std::map<LLUUID,S32> LuaGetPlayingAnimations(LLUUID avid);
+void startAnimation(LLUUID avid, LLUUID movement);
+void stopAnimation(LLUUID avid, LLUUID movement);
+bool getPlayingAnimations(LLUUID avid, LLUUID* anims);
 
 // Utility functions
 bool LuaSaveWearable(LLWearable *w);

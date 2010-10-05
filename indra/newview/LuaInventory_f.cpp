@@ -9,6 +9,9 @@
 #include "llfloatertools.h"
 #include "llimview.h"
 #include "LuaBase_f.h"
+#include "roles_constants.h"
+#include "llviewertexteditor.h"
+
 #include <algorithm>    // copy
 #include <iterator>     // ostream_operator
 
@@ -17,6 +20,7 @@
 
 void giveInventoryItem_Event(LLUUID to_agent, LLUUID item_id, LLUUID im_session_id);
 LLUUID TraverseCategories(const std::string& target_cat, LLViewerInventoryCategory *ccat=NULL, int i=0);
+void Lua_onAssetDownloaded(LLVFS *vfs,const LLUUID& asset_uuid,LLAssetType::EType type,void* user_data, S32 status, LLExtStat ext_status);
 
 // LLUUID catID=TraverseCategories("/My Inventory/#Luna/Durp")
 LLUUID TraverseCategories(const std::string& target_cat, LLViewerInventoryCategory *ccat, int i)
@@ -130,4 +134,78 @@ void giveInventoryItem_Event(LLUUID &to_agent, LLUUID &item_id, LLUUID &im_sessi
 void giveInventoryItem(LLUUID to_agent, LLUUID item_id, LLUUID im_session_id)
 {
 	CB_Args3<LLUUID,LLUUID,LLUUID>(giveInventoryItem_Event,to_agent,item_id,im_session_id);
+}
+
+LLUUID requestInventoryAsset(LLUUID item_id,LLUUID task_id)
+{
+	LLUUID new_item_id=LLUUID::generateNewID();
+	LLViewerInventoryItem *item = gInventory.getItem(item_id);
+	if(!item)
+	{
+		LuaError(llformat("Could not find item %s.",item_id.asString()).c_str());
+		return LLUUID::null;
+	}
+	
+	if (!gAgent.allowOperation(PERM_COPY, item->getPermissions(),GP_OBJECT_MANIPULATE) && gAgent.isGodlike())
+	{
+		LuaError(llformat("You do not have copy permission on %s %s.",
+			LLAssetType::lookupHumanReadable(item->getActualType()),
+			item->getName()).c_str());
+		return LLUUID::null;
+	}
+	LLHost source_sim = LLHost::invalid;
+	LLUUID invfolderid = item->getParentUUID();
+	gAssetStorage->getInvItemAsset(source_sim,
+									gAgent.getID(),
+									gAgent.getSessionID(),
+									item->getPermissions().getOwner(),
+									LLUUID::null,
+									item->getUUID(),
+									item->getAssetUUID(),
+									item->getType(),
+									&Lua_onAssetDownloaded,
+									(void*)new LLUUID(new_item_id),
+									TRUE);
+}
+						   
+
+void Lua_onAssetDownloaded(LLVFS *vfs,const LLUUID& asset_uuid,LLAssetType::EType type,void* user_data, S32 status, LLExtStat ext_status)
+{
+	// Pointer juggling.  Yay.
+	LLUUID req_key = *((LLUUID*)user_data);
+	if(status == LL_ERR_NOERR)
+	{
+		S32 size = vfs->getSize(asset_uuid, type);
+		U8* buffer = new U8[size];
+		vfs->getData(asset_uuid, type, buffer, 0, size);
+		
+		switch(type)
+		{
+		// Text-based assets only.
+		case LLAssetType::AT_NOTECARD:
+		case LLAssetType::AT_LSL_TEXT:
+			LLViewerTextEditor* edit = new LLViewerTextEditor("",LLRect(0,0,0,0),S32_MAX,"");
+			if(edit->importBuffer((char*)buffer, (S32)size))
+			{
+				std::string card = edit->getText();
+				// @hook OnAssetDownloaded(transfer_id,type,data) Asset successfully downloaded.
+				LUA_CALL("OnAssetDownloaded") << req_key << (S32)type << card << LUA_END;
+				edit->die();
+			}
+			else
+			{
+				// @hook OnAssetFailed(transfer_id) Asset failed to download or decode.
+				LUA_CALL("OnAssetFailed") << req_key << LUA_END;
+				return;
+			}
+			break;
+
+		}
+	}
+	else
+	{
+		llinfos << "ao nc read error" << llendl;
+		LUA_CALL("OnAssetFailed") << req_key << LUA_END;
+		return;
+	}
 }

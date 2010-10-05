@@ -638,25 +638,3 @@ std::string  Lua_getErrorMessage(lua_State *L)
 	}
 	return "";
 }
-
-#ifdef _WITH_CEGUI
-void FLLua::initUI(lua_State *L)
-{
-	CEGUI::OpenGLRenderer& mRenderer=CEGUI::OpenGLRenderer::create();
-	CEGUI::LuaScriptModule& mLuaModule=new CEGUI::LuaScriptModule(L);
-
-	// (Pass 0 for the second argument, which is the xml parser to use. 0 means the default one)
-	new CEGUI::System(mRenderer, 0, mLuaModule );
-}
-
-// static
-void FLLua::render()
-{
-	LUA_CALL0("PreUIRender");
-
-	// draw GUI (should not be between glBegin/glEnd pair)
-	CEGUI::System::getSingleton().renderGUI();
-
-	LUA_CALL0("PostUIRender");
-}
-#endif

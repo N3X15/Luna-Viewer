@@ -485,6 +485,15 @@ BOOL LLFloaterAO::handleDragAndDrop(S32 x, S32 y, MASK mask, BOOL drop,
 	BOOL handled = TRUE;
 	switch(cargo_type)
 	{
+	case DAD_NOTECARD:
+		{
+			// Pop off to Lua
+			LLInventoryItem* item = (LLInventoryItem*)cargo_data;
+			if (item && gInventory.getItem(item->getUUID()))
+			{
+				LUA_CALL("OnAONotecard") << item->getUUID() << LUA_END;
+			}
+		}
 	case DAD_ANIMATION:
 		{
 			LLInventoryItem* item = (LLInventoryItem*)cargo_data;

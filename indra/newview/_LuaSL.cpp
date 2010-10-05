@@ -1568,23 +1568,22 @@ SWIG_Lua_dostring(lua_State *L, const char* str) {
 #define SWIGTYPE_p_short swig_types[56]
 #define SWIGTYPE_p_signed_char swig_types[57]
 #define SWIGTYPE_p_skip_list_t swig_types[58]
-#define SWIGTYPE_p_std__mapT_LLUUID_int_t swig_types[59]
-#define SWIGTYPE_p_std__mapT_std__string_double_t swig_types[60]
-#define SWIGTYPE_p_std__string swig_types[61]
-#define SWIGTYPE_p_std__vectorT_LLCharacter_p_t swig_types[62]
-#define SWIGTYPE_p_std__vectorT_LLUUID_t swig_types[63]
-#define SWIGTYPE_p_std__vectorT_std__string_t swig_types[64]
-#define SWIGTYPE_p_unsigned_char swig_types[65]
-#define SWIGTYPE_p_unsigned_int swig_types[66]
-#define SWIGTYPE_p_unsigned_long_long swig_types[67]
-#define SWIGTYPE_p_unsigned_short swig_types[68]
-#define SWIGTYPE_p_valid_iterator swig_types[69]
-#define SWIGTYPE_p_valid_root_iterator swig_types[70]
-#define SWIGTYPE_p_vobj_list_t swig_types[71]
-#define SWIGTYPE_p_void swig_types[72]
-#define SWIGTYPE_p_wchar_t swig_types[73]
-static swig_type_info *swig_types[75];
-static swig_module_info swig_module = {swig_types, 74, 0, 0, 0, 0};
+#define SWIGTYPE_p_std__mapT_std__string_double_t swig_types[59]
+#define SWIGTYPE_p_std__string swig_types[60]
+#define SWIGTYPE_p_std__vectorT_LLCharacter_p_t swig_types[61]
+#define SWIGTYPE_p_std__vectorT_LLUUID_t swig_types[62]
+#define SWIGTYPE_p_std__vectorT_std__string_t swig_types[63]
+#define SWIGTYPE_p_unsigned_char swig_types[64]
+#define SWIGTYPE_p_unsigned_int swig_types[65]
+#define SWIGTYPE_p_unsigned_long_long swig_types[66]
+#define SWIGTYPE_p_unsigned_short swig_types[67]
+#define SWIGTYPE_p_valid_iterator swig_types[68]
+#define SWIGTYPE_p_valid_root_iterator swig_types[69]
+#define SWIGTYPE_p_vobj_list_t swig_types[70]
+#define SWIGTYPE_p_void swig_types[71]
+#define SWIGTYPE_p_wchar_t swig_types[72]
+static swig_type_info *swig_types[74];
+static swig_module_info swig_module = {swig_types, 73, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -1641,6 +1640,22 @@ typedef struct{} LANGUAGE_OBJ;
      ret = lua_isnil(L, idx);
     return ret;
   }
+
+
+static LLUUID *new_uuid_table(int nelements) { 
+  return new LLUUID[nelements]; 
+}
+
+static void delete_uuid_table(LLUUID *ary) { 
+  delete [] ary; 
+}
+
+static LLUUID uuid_table_getitem(LLUUID *ary, int index) {
+    return ary[index];
+}
+static void uuid_table_setitem(LLUUID *ary, int index, LLUUID value) {
+    ary[index] = value;
+}
 
 
 /**
@@ -2112,6 +2127,114 @@ static swig_lua_attribute swig_std_string_attributes[] = {
 static swig_lua_class *swig_std_string_bases[] = {0};
 static const char *swig_std_string_base_names[] = {0};
 static swig_lua_class _wrap_class_std_string = { "string", &SWIGTYPE_p_std__string,_wrap_new_string, swig_delete_string, swig_std_string_methods, swig_std_string_attributes, swig_std_string_bases, swig_std_string_base_names };
+
+static int _wrap_new_uuid_table(lua_State* L) {
+  int SWIG_arg = 0;
+  int arg1 ;
+  LLUUID *result = 0 ;
+  
+  SWIG_check_num_args("new_uuid_table",1,1)
+  if(!lua_isnumber(L,1)) SWIG_fail_arg("new_uuid_table",1,"int");
+  arg1 = (int)lua_tonumber(L, 1);
+  result = (LLUUID *)new_uuid_table(arg1);
+  SWIG_NewPointerObj(L,result,SWIGTYPE_p_LLUUID,0); SWIG_arg++; 
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_delete_uuid_table(lua_State* L) {
+  int SWIG_arg = 0;
+  LLUUID *arg1 = (LLUUID *) 0 ;
+  
+  SWIG_check_num_args("delete_uuid_table",1,1)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("delete_uuid_table",1,"LLUUID *");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLUUID,0))){
+    SWIG_fail_ptr("delete_uuid_table",1,SWIGTYPE_p_LLUUID);
+  }
+  
+  delete_uuid_table(arg1);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_uuid_table_getitem(lua_State* L) {
+  int SWIG_arg = 0;
+  LLUUID *arg1 = (LLUUID *) 0 ;
+  int arg2 ;
+  LLUUID result;
+  
+  SWIG_check_num_args("uuid_table_getitem",2,2)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("uuid_table_getitem",1,"LLUUID *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("uuid_table_getitem",2,"int");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLUUID,0))){
+    SWIG_fail_ptr("uuid_table_getitem",1,SWIGTYPE_p_LLUUID);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  result = uuid_table_getitem(arg1,arg2);
+  {
+    LLUUID * resultptr = new LLUUID((const LLUUID &) result);
+    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_LLUUID,1); SWIG_arg++;
+  }
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_uuid_table_setitem(lua_State* L) {
+  int SWIG_arg = 0;
+  LLUUID *arg1 = (LLUUID *) 0 ;
+  int arg2 ;
+  LLUUID arg3 ;
+  LLUUID *argp3 ;
+  
+  SWIG_check_num_args("uuid_table_setitem",3,3)
+  if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("uuid_table_setitem",1,"LLUUID *");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("uuid_table_setitem",2,"int");
+  if(!lua_isuserdata(L,3)) SWIG_fail_arg("uuid_table_setitem",3,"LLUUID");
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLUUID,0))){
+    SWIG_fail_ptr("uuid_table_setitem",1,SWIGTYPE_p_LLUUID);
+  }
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&argp3,SWIGTYPE_p_LLUUID,0))){
+    SWIG_fail_ptr("uuid_table_setitem",3,SWIGTYPE_p_LLUUID);
+  }
+  arg3 = *argp3;
+  
+  uuid_table_setitem(arg1,arg2,arg3);
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
 
 static int _wrap_new_UUID__SWIG_0(lua_State* L) {
   int SWIG_arg = 0;
@@ -15376,21 +15499,21 @@ fail:
 }
 
 
-static int _wrap_LuaStartAnimation(lua_State* L) {
+static int _wrap_startAnimation(lua_State* L) {
   int SWIG_arg = 0;
   LLUUID arg1 ;
   LLUUID arg2 ;
   
-  SWIG_check_num_args("LuaStartAnimation",2,2)
-  if(!lua_isstring(L,1)) SWIG_fail_arg("LuaStartAnimation",1,"LLUUID");
-  if(!lua_isstring(L,2)) SWIG_fail_arg("LuaStartAnimation",2,"LLUUID");
+  SWIG_check_num_args("startAnimation",2,2)
+  if(!lua_isstring(L,1)) SWIG_fail_arg("startAnimation",1,"LLUUID");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("startAnimation",2,"LLUUID");
   
   SWIG_contract_assert((&arg1)->set(lua_tostring(L,1),false),"Must be of UUID format.");
   
   
   SWIG_contract_assert((&arg2)->set(lua_tostring(L,2),false),"Must be of UUID format.");
   
-  LuaStartAnimation(arg1,arg2);
+  startAnimation(arg1,arg2);
   
   return SWIG_arg;
   
@@ -15402,21 +15525,21 @@ fail:
 }
 
 
-static int _wrap_LuaStopAnimation(lua_State* L) {
+static int _wrap_stopAnimation(lua_State* L) {
   int SWIG_arg = 0;
   LLUUID arg1 ;
   LLUUID arg2 ;
   
-  SWIG_check_num_args("LuaStopAnimation",2,2)
-  if(!lua_isstring(L,1)) SWIG_fail_arg("LuaStopAnimation",1,"LLUUID");
-  if(!lua_isstring(L,2)) SWIG_fail_arg("LuaStopAnimation",2,"LLUUID");
+  SWIG_check_num_args("stopAnimation",2,2)
+  if(!lua_isstring(L,1)) SWIG_fail_arg("stopAnimation",1,"LLUUID");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("stopAnimation",2,"LLUUID");
   
   SWIG_contract_assert((&arg1)->set(lua_tostring(L,1),false),"Must be of UUID format.");
   
   
   SWIG_contract_assert((&arg2)->set(lua_tostring(L,2),false),"Must be of UUID format.");
   
-  LuaStopAnimation(arg1,arg2);
+  stopAnimation(arg1,arg2);
   
   return SWIG_arg;
   
@@ -15428,21 +15551,25 @@ fail:
 }
 
 
-static int _wrap_LuaGetPlayingAnimations(lua_State* L) {
+static int _wrap_getPlayingAnimations(lua_State* L) {
   int SWIG_arg = 0;
   LLUUID arg1 ;
-  std::map< LLUUID,S32 > result;
+  LLUUID *arg2 = (LLUUID *) 0 ;
+  bool result;
   
-  SWIG_check_num_args("LuaGetPlayingAnimations",1,1)
-  if(!lua_isstring(L,1)) SWIG_fail_arg("LuaGetPlayingAnimations",1,"LLUUID");
+  SWIG_check_num_args("getPlayingAnimations",2,2)
+  if(!lua_isstring(L,1)) SWIG_fail_arg("getPlayingAnimations",1,"LLUUID");
+  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("getPlayingAnimations",2,"LLUUID *");
   
   SWIG_contract_assert((&arg1)->set(lua_tostring(L,1),false),"Must be of UUID format.");
   
-  result = LuaGetPlayingAnimations(arg1);
-  {
-    std::map< LLUUID,S32 > * resultptr = new std::map< LLUUID,S32 >((const std::map< LLUUID,S32 > &) result);
-    SWIG_NewPointerObj(L,(void *) resultptr,SWIGTYPE_p_std__mapT_LLUUID_int_t,1); SWIG_arg++;
+  
+  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_LLUUID,0))){
+    SWIG_fail_ptr("getPlayingAnimations",2,SWIGTYPE_p_LLUUID);
   }
+  
+  result = (bool)getPlayingAnimations(arg1,arg2);
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -21375,11 +21502,107 @@ fail:
 }
 
 
+static int _wrap_requestInventoryAsset__SWIG_0(lua_State* L) {
+  int SWIG_arg = 0;
+  LLUUID arg1 ;
+  LLUUID arg2 ;
+  LLUUID result;
+  
+  SWIG_check_num_args("requestInventoryAsset",2,2)
+  if(!lua_isstring(L,1)) SWIG_fail_arg("requestInventoryAsset",1,"LLUUID");
+  if(!lua_isstring(L,2)) SWIG_fail_arg("requestInventoryAsset",2,"LLUUID");
+  
+  SWIG_contract_assert((&arg1)->set(lua_tostring(L,1),false),"Must be of UUID format.");
+  
+  
+  SWIG_contract_assert((&arg2)->set(lua_tostring(L,2),false),"Must be of UUID format.");
+  
+  result = requestInventoryAsset(arg1,arg2);
+  
+  lua_pushlstring(L,(&result)->asString().data(),(&result)->asString().size()); SWIG_arg++;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_requestInventoryAsset__SWIG_1(lua_State* L) {
+  int SWIG_arg = 0;
+  LLUUID arg1 ;
+  LLUUID result;
+  
+  SWIG_check_num_args("requestInventoryAsset",1,1)
+  if(!lua_isstring(L,1)) SWIG_fail_arg("requestInventoryAsset",1,"LLUUID");
+  
+  SWIG_contract_assert((&arg1)->set(lua_tostring(L,1),false),"Must be of UUID format.");
+  
+  result = requestInventoryAsset(arg1);
+  
+  lua_pushlstring(L,(&result)->asString().data(),(&result)->asString().size()); SWIG_arg++;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_requestInventoryAsset(lua_State* L) {
+  int argc;
+  int argv[3]={
+    1,2,3
+  };
+  
+  argc = lua_gettop(L);
+  if (argc == 1) {
+    int _v;
+    {
+      _v = lua_isstring(L,argv[0]);
+    }
+    if (_v) {
+      return _wrap_requestInventoryAsset__SWIG_1(L);
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    {
+      _v = lua_isstring(L,argv[0]);
+    }
+    if (_v) {
+      {
+        _v = lua_isstring(L,argv[1]);
+      }
+      if (_v) {
+        return _wrap_requestInventoryAsset__SWIG_0(L);
+      }
+    }
+  }
+  
+  lua_pushstring(L,"Wrong arguments for overloaded function 'requestInventoryAsset'\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    requestInventoryAsset(LLUUID,LLUUID)\n"
+    "    requestInventoryAsset(LLUUID)\n");
+  lua_error(L);return 0;
+}
+
+
 #ifdef __cplusplus
 }
 #endif
 
 static const struct luaL_reg swig_commands[] = {
+    { "new_uuid_table", _wrap_new_uuid_table},
+    { "delete_uuid_table", _wrap_delete_uuid_table},
+    { "uuid_table_getitem", _wrap_uuid_table_getitem},
+    { "uuid_table_setitem", _wrap_uuid_table_setitem},
     { "UUID_validate", _wrap_UUID_validate},
     { "dist_vec_squared2D",_wrap_dist_vec_squared2D},
     { "projected_vec", _wrap_projected_vec},
@@ -21424,9 +21647,9 @@ static const struct luaL_reg swig_commands[] = {
     { "setParamOnTarget", _wrap_setParamOnTarget},
     { "wear", _wrap_wear},
     { "RemoveAllWearables", _wrap_RemoveAllWearables},
-    { "LuaStartAnimation", _wrap_LuaStartAnimation},
-    { "LuaStopAnimation", _wrap_LuaStopAnimation},
-    { "LuaGetPlayingAnimations", _wrap_LuaGetPlayingAnimations},
+    { "startAnimation", _wrap_startAnimation},
+    { "stopAnimation", _wrap_stopAnimation},
+    { "getPlayingAnimations", _wrap_getPlayingAnimations},
     { "LuaSaveWearable", _wrap_LuaSaveWearable},
     { "LuaLoadWearable", _wrap_LuaLoadWearable},
     { "setTEImage", _wrap_setTEImage},
@@ -21507,6 +21730,7 @@ static const struct luaL_reg swig_commands[] = {
     { "findInventoryInFolder", _wrap_findInventoryInFolder},
     { "giveInventoryItem", _wrap_giveInventoryItem},
     { "getCategoryUUID", _wrap_getCategoryUUID},
+    { "requestInventoryAsset",_wrap_requestInventoryAsset},
     {0,0}
 };
 
@@ -21683,7 +21907,6 @@ static swig_type_info _swigt__p_root_object_iterator = {"_p_root_object_iterator
 static swig_type_info _swigt__p_short = {"_p_short", "S16 *|short *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_signed_char = {"_p_signed_char", "signed char *|S8 *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_skip_list_t = {"_p_skip_list_t", "skip_list_t *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_std__mapT_LLUUID_int_t = {"_p_std__mapT_LLUUID_int_t", "std::map< LLUUID,S32 > *|std::map< LLUUID,int > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__mapT_std__string_double_t = {"_p_std__mapT_std__string_double_t", "std::map< std::string,double > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__string = {"_p_std__string", "std::string *", 0, 0, (void*)&_wrap_class_std_string, 0};
 static swig_type_info _swigt__p_std__vectorT_LLCharacter_p_t = {"_p_std__vectorT_LLCharacter_p_t", "std::vector< LLCharacter * > *", 0, 0, (void*)0, 0};
@@ -21759,7 +21982,6 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_short,
   &_swigt__p_signed_char,
   &_swigt__p_skip_list_t,
-  &_swigt__p_std__mapT_LLUUID_int_t,
   &_swigt__p_std__mapT_std__string_double_t,
   &_swigt__p_std__string,
   &_swigt__p_std__vectorT_LLCharacter_p_t,
@@ -21835,7 +22057,6 @@ static swig_cast_info _swigc__p_root_object_iterator[] = {  {&_swigt__p_root_obj
 static swig_cast_info _swigc__p_short[] = {  {&_swigt__p_short, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_signed_char[] = {  {&_swigt__p_signed_char, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_skip_list_t[] = {  {&_swigt__p_skip_list_t, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_std__mapT_LLUUID_int_t[] = {  {&_swigt__p_std__mapT_LLUUID_int_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__mapT_std__string_double_t[] = {  {&_swigt__p_std__mapT_std__string_double_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__string[] = {  {&_swigt__p_std__string, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__vectorT_LLCharacter_p_t[] = {  {&_swigt__p_std__vectorT_LLCharacter_p_t, 0, 0, 0},{0, 0, 0, 0}};
@@ -21911,7 +22132,6 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_short,
   _swigc__p_signed_char,
   _swigc__p_skip_list_t,
-  _swigc__p_std__mapT_LLUUID_int_t,
   _swigc__p_std__mapT_std__string_double_t,
   _swigc__p_std__string,
   _swigc__p_std__vectorT_LLCharacter_p_t,

@@ -346,7 +346,7 @@ bool HasPermissions(LLViewerInventoryItem* item)
 	return((perm_mask & PERM_MODIFY) && is_complete);
 }
 
-void LuaStopAnimation(LLUUID avid, LLUUID movement)
+void stopAnimation(LLUUID avid, LLUUID movement)
 {
 	LLViewerObject *o=gObjectList.findObject(avid);
 	if(!o->isAvatar())
@@ -356,9 +356,13 @@ void LuaStopAnimation(LLUUID avid, LLUUID movement)
 	}
 	LLVOAvatar *av=(LLVOAvatar *)o;
 	av->stopMotion(movement);
+	if(gAgent.getID() == avid)
+	{
+		gAgent.sendAnimationRequest(movement, ANIM_REQUEST_STOP);
+	}
 }
 
-void LuaStartAnimation(LLUUID avid, LLUUID movement)
+void startAnimation(LLUUID avid, LLUUID movement)
 {
 	LLViewerObject *o=gObjectList.findObject(avid);
 	if(!o->isAvatar())
@@ -368,17 +372,26 @@ void LuaStartAnimation(LLUUID avid, LLUUID movement)
 	}
 	LLVOAvatar *av=(LLVOAvatar *)o;
 	av->startMotion(movement);
+	if(gAgent.getID() == avid)
+	{
+		gAgent.sendAnimationRequest(movement, ANIM_REQUEST_START);
+	}
 }
 
-std::map<LLUUID,S32> LuaGetPlayingAnimations(LLUUID avid)
+bool getPlayingAnimations(LLUUID avid, LLUUID* anims)
 {
 	LLViewerObject *o=gObjectList.findObject(avid);
 	if(!o->isAvatar())
 	{
 		LuaError("Object is not an avatar.");
-		std::map<LLUUID,S32> out;
-		return out;
+		return false;
 	}
 	LLVOAvatar *av=(LLVOAvatar *)o;
-	return av->mPlayingAnimations;
+	anims = new LLUUID[av->mPlayingAnimations.size()];
+	LLVOAvatar::AnimIterator it = av->mPlayingAnimations.begin();
+	int i=0;
+	for(it;it!=av->mPlayingAnimations.end();it++)
+	{
+		anims[i++]=it->first;
+	}
 }

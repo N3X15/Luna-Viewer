@@ -24,6 +24,11 @@
 
 %module SL
 
+
+
+
+
+
 //Fixed for Visual Studio
 //Has to be in begin section. VS will choke if this include isn't the very
 //first thing in the file.
@@ -63,6 +68,10 @@
 %}
 
 %include <std_string.i>
+%include <carrays.i>
+
+%array_functions(LLUUID,uuid_table) // Hopefully get an array of LLUUIDs.
+
 %include "LLUUID.i"
 %include "LLVector.i"
 

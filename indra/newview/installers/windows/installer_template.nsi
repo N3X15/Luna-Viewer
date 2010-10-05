@@ -758,8 +758,14 @@ CreateDirectory	"$SMPROGRAMS\$INSTSHORTCUT"
 SetOutPath "$INSTDIR"
 CreateShortCut	"$SMPROGRAMS\$INSTSHORTCUT\$INSTSHORTCUT.lnk" \
 				"$INSTDIR\$INSTEXE" "$INSTFLAGS $SHORTCUT_LANG_PARAM"
+				
+; Run it as admin (Luna needs to write to Program Files for macros and plugin data)
+WriteRegStr HKLM "Software\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\layers" \
+				"$INSTDIR\$INSTEXE" "RUNASADMIN"
 
-
+WriteINIStr		"$SMPROGRAMS\$INSTSHORTCUT\Luna Wiki.url" \
+				"InternetShortcut" "URL" \
+				"http://luna.nexisonline.net/wiki/About_Luna"
 WriteINIStr		"$SMPROGRAMS\$INSTSHORTCUT\SL Create Account.url" \
 				"InternetShortcut" "URL" \
 				"http://www.secondlife.com/registration/"
