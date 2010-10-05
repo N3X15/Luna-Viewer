@@ -206,6 +206,7 @@ private:
 PLEASE DISCUSS ALTERNATIVES TO THIS HORRIBLE MESS @ http://www.nexisonline.net/forums/index.php?/topic/14-flexible-lua-main-thread-queue/
 
 */
+#if 0
 struct CB_Base //If you don't want to bother with the odd templates below, just derive from this manually.
 {
 	static CB_Base *sent;
@@ -266,9 +267,10 @@ struct CB_Args4 : public CB_Base
 	CB_Args4(CB_FN _fn,const T1 &_t1,const T2 &_t2,const T3 &_t3, const T4 &_t4, int _pri=5) : fn(_fn), t1(_t1), t2(_t2), t3(_t3), t4(_t4), CB_Base(_pri){}
 };
 //etc...
+#endif
 
 // holy shit this is so broken on linux
-#if 0
+//#if 0
 //Some special stuff is done here to make sure to 
 struct CB_Base //If you don't want to bother with the odd templates below, just derive from this manually.
 {
@@ -313,7 +315,7 @@ template <BOOST_PP_ENUM_PARAMS(N, class T)> \
 LUA_SETUP_CB_ARG(0); //Special case. Not a template.
 #define BOOST_PP_LOCAL_LIMITS (1, CB_ARG_MAX)
 #include BOOST_PP_LOCAL_ITERATE()
-#endif
+//#endif
 
 int luaOnPanic(lua_State *L);
 std::string Lua_getErrorMessage(lua_State *L);
