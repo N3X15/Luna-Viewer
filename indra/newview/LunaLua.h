@@ -303,7 +303,7 @@ struct CB_Args##N : public CB_Base { \
 	virtual void OnCall()	{fn(BOOST_PP_ENUM_PARAMS(N, t));} \
 	virtual CB_Base *clone(){return new CB_Args##N(*this);}; /*Pass a dynamically allocated copy to the queue*/ \
 	CB_FN fn; \
-	BOOST_PP_IF(N,BOOST_PP_EMPTY,CB_Args##N(){})() /*VS demands a default constructor for CB_Args0, so appease it..*/ \
+	BOOST_PP_IF(N,BOOST_PP_EMPTY,CB_Args##N(){})/*()*/ /*VS demands a default constructor for CB_Args0, so appease it..*/ \
 	CB_Args##N(CB_FN _fn, BOOST_PP_ENUM_BINARY_PARAMS(N, const T, &_t) BOOST_PP_COMMA_IF(N) int _pri=5 ) : fn(_fn), CB_Base(_pri) \
 	BOOST_PP_REPEAT(N, CB_ARG_INIT, t){}; \
 	BOOST_PP_REPEAT(N, CB_ARG_MEMB, T) \
