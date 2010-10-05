@@ -18,14 +18,14 @@
             <key>md5sum</key>
             <string>aa767999e0d405bdaed01fe3f7442dd9</string>
             <key>url</key>
-            <string>http://downloads.phoenixviewer.com/7zip-4.57-20100630.tar.bz2</string>
+            <uri>http://downloads.phoenixviewer.com/7zip-4.57-20100630.tar.bz2</uri>
           </map>
           <key>linux</key>
           <map>
             <key>md5sum</key>
             <string>a5a3c5f5d451a2bcaa8975dd349abf5a</string>
             <key>url</key>
-            <string>http://downloads.phoenixviewer.com/p7zip-standalone-linux-20100911.tar.bz2</string>
+            <uri>http://downloads.phoenixviewer.com/p7zip-standalone-linux-20100911.tar.bz2</uri>
           </map>
         </map>
       </map>
@@ -44,28 +44,28 @@
             <key>md5sum</key>
             <string>0bd2795a2afe09f6c563f2f888f24cc9</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/GL-darwin-20080613.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/GL-darwin-20080613.tar.bz2</uri>
           </map>
           <key>linux</key>
           <map>
             <key>md5sum</key>
             <string>2ab29212a7f3acdaebf10059af816be0</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/GL-linux-20080812.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/GL-linux-20080812.tar.bz2</uri>
           </map>
           <key>linux64</key>
           <map>
             <key>md5sum</key>
             <string>9c3dff3817f1105f9054401fdef1fe50</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/GL-linux64-20080909.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/GL-linux64-20080909.tar.bz2</uri>
           </map>
           <key>windows</key>
           <map>
             <key>md5sum</key>
             <string>91155239b02f576384603795d41eb971</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/GL-windows-20090505.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/GL-windows-20090505.tar.bz2</uri>
           </map>
         </map>
       </map>
@@ -84,21 +84,21 @@
             <key>md5sum</key>
             <string>f075e96d8e1bfdd1f518829f0d7b74af</string>
             <key>url</key>
-            <string>http://downloads.phoenixviewer.com/growl-1.2.1-darwin.tar.gz</string>
+            <uri>http://downloads.phoenixviewer.com/growl-1.2.1-darwin.tar.gz</uri>
           </map>
           <key>linux</key>
           <map>
             <key>md5sum</key>
-            <string>0d9bc8f051135799f86df230801f33c3</string>
+            <string>af06208ec80b1f170cc560141602e2dc</string>
             <key>url</key>
-            <string>http://downloads.phoenixviewer.com/libnotify-0.5.0-linux-20100910.tar.bz2</string>
+            <uri>http://downloads.phoenixviewer.com/libnotify-0.4.4-linux-20101003.tar.bz2</uri>
           </map>
           <key>windows</key>
           <map>
             <key>md5sum</key>
             <string>b017cc5f759eaeb862a8b94d43a39c04</string>
             <key>url</key>
-            <string>http://downloads.phoenixviewer.com/lggemwingrowllibraries.tar.bz2</string>
+            <uri>http://downloads.phoenixviewer.com/lggemwingrowllibraries.tar.bz2</uri>
           </map>
         </map>
       </map>
@@ -117,21 +117,21 @@
             <key>md5sum</key>
             <string>7b07e7121a3623b2553ed36fb9024b40</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/SDL-1.2.5-darwin-20080818.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/SDL-1.2.5-darwin-20080818.tar.bz2</uri>
           </map>
           <key>linux</key>
           <map>
             <key>md5sum</key>
             <string>25f8a8fc4ea94169fe6222571b8d5e55</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/SDL-1.2.12-linux-20081222c.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/SDL-1.2.12-linux-20081222c.tar.bz2</uri>
           </map>
           <key>windows</key>
           <map>
             <key>md5sum</key>
             <string>149626b0c10d7eb8b9f9be96b5318218</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/SDL-1.2.5-windows-20080613.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/SDL-1.2.5-windows-20080613.tar.bz2</uri>
           </map>
         </map>
       </map>
@@ -146,28 +146,28 @@
             <key>md5sum</key>
             <string>115d8ac44a91efdb173e9b3e478c46b6</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/apr_suite-1.3.7-darwin-20090805.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/apr_suite-1.3.7-darwin-20090805.tar.bz2</uri>
           </map>
           <key>linux</key>
           <map>
             <key>md5sum</key>
             <string>7b84cd6a3c601a104d9c09e58ef2f50c</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/apr_suite-1.2.8-linux-20080812.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/apr_suite-1.2.8-linux-20080812.tar.bz2</uri>
           </map>
           <key>linux64</key>
           <map>
             <key>md5sum</key>
             <string>1a7e1186855d48d8316ce86803095f70</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/apr_suite-1.2.8-linux64-20080909a.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/apr_suite-1.2.8-linux64-20080909a.tar.bz2</uri>
           </map>
           <key>windows</key>
           <map>
             <key>md5sum</key>
             <string>a02619c1e30a3db02d3883bf1ad7a1e6</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/apr_suite-1.3.8-windows-20090911.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/apr_suite-1.3.8-windows-20090911.tar.bz2</uri>
           </map>
         </map>
       </map>
@@ -186,28 +186,28 @@
             <key>md5sum</key>
             <string>d9ce3ace9235249b7edf6f564de83395</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/ares-1.4.0-darwin-20080731b.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/ares-1.4.0-darwin-20080731b.tar.bz2</uri>
           </map>
           <key>linux</key>
           <map>
             <key>md5sum</key>
             <string>91694429e391efeea1de974df26032a2</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/ares-1.7.1-linux-20100527.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/ares-1.7.1-linux-20100527.tar.bz2</uri>
           </map>
           <key>linux64</key>
           <map>
             <key>md5sum</key>
             <string>c4242416e0b2e642c0bf062a19a250e4</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/ares-1.3.0-linux64-20080909.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/ares-1.3.0-linux64-20080909.tar.bz2</uri>
           </map>
           <key>windows</key>
           <map>
             <key>md5sum</key>
             <string>f5cf8d121b26f2e7944f7e63cdbff04d</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/ares-1.6.0-windows-20091105.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/ares-1.6.0-windows-20091105.tar.bz2</uri>
           </map>
         </map>
       </map>
@@ -226,21 +226,21 @@
             <key>md5sum</key>
             <string>5e047437d73d1017bf270a6c6e936f23</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/artwork-common-20090415.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/artwork-common-20090415.tar.bz2</uri>
           </map>
           <key>linux</key>
           <map>
             <key>md5sum</key>
             <string>5e047437d73d1017bf270a6c6e936f23</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/artwork-common-20090415.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/artwork-common-20090415.tar.bz2</uri>
           </map>
           <key>windows</key>
           <map>
             <key>md5sum</key>
             <string>5e047437d73d1017bf270a6c6e936f23</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/artwork-common-20090415.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/artwork-common-20090415.tar.bz2</uri>
           </map>
         </map>
       </map>
@@ -268,21 +268,21 @@
             <key>md5sum</key>
             <string>51c98844053b718c40456bbe90d4fc51</string>
             <key>url</key>
-            <string>http://downloads.phoenixviewer.com/boost-1.41.0-darwin-20091229.tar.bz2</string>
+            <uri>http://downloads.phoenixviewer.com/boost-1.41.0-darwin-20091229.tar.bz2</uri>
           </map>
           <key>linux</key>
           <map>
             <key>md5sum</key>
             <string>fff58f38257077f5668f9953145c0392</string>
             <key>url</key>
-            <string>http://downloads.phoenixviewer.com/boost-1.42.0-linux-20100911.tar.bz2</string>
+            <uri>http://downloads.phoenixviewer.com/boost-1.42.0-linux-20100911.tar.bz2</uri>
           </map>
           <key>windows</key>
           <map>
             <key>md5sum</key>
             <string>3d4bd78f30f118c6e35f8d367ec25fc2</string>
             <key>url</key>
-            <string>http://downloads.phoenixviewer.com/boost-1.43.0-windows-20100902.tar.bz2</string>
+            <uri>http://downloads.phoenixviewer.com/boost-1.43.0-windows-20100902.tar.bz2</uri>
           </map>
         </map>
       </map>
@@ -301,28 +301,28 @@
             <key>md5sum</key>
             <string>752e295ccb17f0dcb7c0167db3ad1e69</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/curl-7.20.1-darwin-20100606.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/curl-7.20.1-darwin-20100606.tar.bz2</uri>
           </map>
           <key>linux</key>
           <map>
             <key>md5sum</key>
             <string>a20e73f2e7d6a032ff25a5161b1b7394</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/curl-7.20.1-linux-20100527.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/curl-7.20.1-linux-20100527.tar.bz2</uri>
           </map>
           <key>linux64</key>
           <map>
             <key>md5sum</key>
             <string>6994192cea7ab2d885a158a3de474273</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/curl-7.16.4a-linux64-20090303.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/curl-7.16.4a-linux64-20090303.tar.bz2</uri>
           </map>
           <key>windows</key>
           <map>
             <key>md5sum</key>
             <string>b28856d3d02ee680353ae440561a6579</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/curl-7.20.1-windows-20100611.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/curl-7.20.1-windows-20100611.tar.bz2</uri>
           </map>
         </map>
       </map>
@@ -341,7 +341,7 @@
             <key>md5sum</key>
             <string>b7563064037e032143ca2d610aae5153</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/dbghelp-6.11.1.404-windows-20090520.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/dbghelp-6.11.1.404-windows-20090520.tar.bz2</uri>
           </map>
         </map>
       </map>
@@ -358,9 +358,9 @@
           <key>linux</key>
           <map>
             <key>md5sum</key>
-            <string>eb25444142d4102b0ce1b7ffaadb071e</string>
+            <string>5a3883730ee2ebd9d1853124b9346443</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/dbusglib-linux-20080707.tar.bz2</string>
+            <uri>http://downloads.phoenixviewer.com/libdbus-glib-0.76-linux-20101003.tar.bz2</uri>
           </map>
         </map>
       </map>
@@ -375,7 +375,7 @@
             <key>md5sum</key>
             <string>82ea408af2f968cfe5f013ab241323ef</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/elfio-1.0.3-linux-20080812.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/elfio-1.0.3-linux-20080812.tar.bz2</uri>
           </map>
         </map>
       </map>
@@ -394,28 +394,28 @@
             <key>md5sum</key>
             <string>c457a0a041ac4946265889a503d26c3d</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/expat-1.95.8-darwin-20090805.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/expat-1.95.8-darwin-20090805.tar.bz2</uri>
           </map>
           <key>linux</key>
           <map>
             <key>md5sum</key>
             <string>67b470fd446b08c9831d1039674eae4e</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/expat-1.95.8-linux-20080812.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/expat-1.95.8-linux-20080812.tar.bz2</uri>
           </map>
           <key>linux64</key>
           <map>
             <key>md5sum</key>
             <string>278c61871419b9a4d50a4f88b7922403</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/expat-1.95.8-linux64-20080909.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/expat-1.95.8-linux64-20080909.tar.bz2</uri>
           </map>
           <key>windows</key>
           <map>
             <key>md5sum</key>
             <string>5dbbdb4a9b5bec86d180ef20a5f8ccfb</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/expat-1.95.8-windows-20090917.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/expat-1.95.8-windows-20090917.tar.bz2</uri>
           </map>
         </map>
       </map>
@@ -434,21 +434,21 @@
             <key>md5sum</key>
             <string>c7e317bec481b7efa2a0319e163dcc65</string>
             <key>url</key>
-            <string>scp:install-packages.lindenlab.com:/local/www/install-packages/doc/fmod-3.75-darwin-20080818.tar.bz2</string>
+            <uri>scp:install-packages.lindenlab.com:/local/www/install-packages/doc/fmod-3.75-darwin-20080818.tar.bz2</uri>
           </map>
           <key>linux</key>
           <map>
             <key>md5sum</key>
             <string>abd2b4ba4ac993f19d82804af387eb7c</string>
             <key>url</key>
-            <string>scp:install-packages.lindenlab.com:/local/www/install-packages/doc/fmod-3.75-linux-20080818.tar.bz2</string>
+            <uri>scp:install-packages.lindenlab.com:/local/www/install-packages/doc/fmod-3.75-linux-20080818.tar.bz2</uri>
           </map>
           <key>windows</key>
           <map>
             <key>md5sum</key>
             <string>1a55dec2907821f5f785648a660126c3</string>
             <key>url</key>
-            <string>scp:install-packages.lindenlab.com:/local/www/install-packages/doc/fmod-3.75-windows-20080611.tar.bz2</string>
+            <uri>scp:install-packages.lindenlab.com:/local/www/install-packages/doc/fmod-3.75-windows-20080611.tar.bz2</uri>
           </map>
         </map>
       </map>
@@ -463,7 +463,7 @@
             <key>md5sum</key>
             <string>9af6a1ed39fa540bfcaa402b0ea22f78</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/fontconfig-2.2.3-linux-20080613.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/fontconfig-2.2.3-linux-20080613.tar.bz2</uri>
           </map>
         </map>
       </map>
@@ -478,7 +478,7 @@
             <key>md5sum</key>
             <string>fcbb695ff203775fad96d184bf5f34fc</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/freeglut-2.4.0-windows-20090608.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/freeglut-2.4.0-windows-20090608.tar.bz2</uri>
           </map>
         </map>
       </map>
@@ -497,28 +497,28 @@
             <key>md5sum</key>
             <string>694173293a483c01472a30cc7d895c5a</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/freetype-2.1.5-darwin-20080812.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/freetype-2.1.5-darwin-20080812.tar.bz2</uri>
           </map>
           <key>linux</key>
           <map>
             <key>md5sum</key>
             <string>eeffb03bd6672b6e7751448e5306d874</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/freetype-2.1.5-linux-20081201.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/freetype-2.1.5-linux-20081201.tar.bz2</uri>
           </map>
           <key>linux64</key>
           <map>
             <key>md5sum</key>
             <string>35f6fa557ba90f9cda0a18d1af2055a4</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/freetype-2.1.5-linux64-20080909.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/freetype-2.1.5-linux64-20080909.tar.bz2</uri>
           </map>
           <key>windows</key>
           <map>
             <key>md5sum</key>
             <string>88980fd6d91ac541b62dea877ebe6ba6</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/freetype-2.3.9-windows-20090917.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/freetype-2.3.9-windows-20090917.tar.bz2</uri>
           </map>
         </map>
       </map>
@@ -537,28 +537,28 @@
             <key>md5sum</key>
             <string>23bd9a75e5a2365a827461e6c324f52b</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/glh_linear-darwin-20080613.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/glh_linear-darwin-20080613.tar.bz2</uri>
           </map>
           <key>linux</key>
           <map>
             <key>md5sum</key>
             <string>23bd9a75e5a2365a827461e6c324f52b</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/glh_linear-linux-20080812.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/glh_linear-linux-20080812.tar.bz2</uri>
           </map>
           <key>linux64</key>
           <map>
             <key>md5sum</key>
             <string>2965646aea1d2a6aec1fbc431c02733f</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/glh_linear-linux-20080613.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/glh_linear-linux-20080613.tar.bz2</uri>
           </map>
           <key>windows</key>
           <map>
             <key>md5sum</key>
             <string>38b9ddfe8dceff55ee4351016a937d1b</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/glh_linear-windows-20080613.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/glh_linear-windows-20080613.tar.bz2</uri>
           </map>
         </map>
       </map>
@@ -575,21 +575,21 @@
             <key>md5sum</key>
             <string>6cc5ce1fafd10299fdb890b3d4c3cf53</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/glib-2.0-darwin-20080817.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/glib-2.0-darwin-20080817.tar.bz2</uri>
           </map>
           <key>linux</key>
           <map>
             <key>md5sum</key>
             <string>2f1a9e14f9213c2c9564c1c1cfdd6d47</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/glib-2.0-linux-20080817.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/glib-2.0-linux-20080817.tar.bz2</uri>
           </map>
           <key>windows</key>
           <map>
             <key>md5sum</key>
             <string>3d5e29d444dde4815b36082eedfc775a</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/glib-2.0-windows-20080817.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/glib-2.0-windows-20080817.tar.bz2</uri>
           </map>
         </map>
       </map>
@@ -604,14 +604,14 @@
             <key>md5sum</key>
             <string>84f792a860691d0fad6d1de6eeb31baa</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/glui-2.36-darwin-20090623a.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/glui-2.36-darwin-20090623a.tar.bz2</uri>
           </map>
           <key>windows</key>
           <map>
             <key>md5sum</key>
             <string>5b8631fe510d4ebaeb965c673937e1e7</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/glui-2.3.6-windows-freeglut-20090608.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/glui-2.3.6-windows-freeglut-20090608.tar.bz2</uri>
           </map>
         </map>
       </map>
@@ -626,7 +626,7 @@
             <key>md5sum</key>
             <string>40db900872612615e849f17cbdfd2c27</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/google-linux-20080812.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/google-linux-20080812.tar.bz2</uri>
           </map>
         </map>
       </map>
@@ -641,14 +641,14 @@
             <key>md5sum</key>
             <string>c829b638b6eef71ca63418cb9aea46a2</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/gstreamer-linux-20080613.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/gstreamer-linux-20080613.tar.bz2</uri>
           </map>
           <key>linux64</key>
           <map>
             <key>md5sum</key>
             <string>befc7520fe01250f39458f65c29bc584</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/gstreamer-linux64-20080909.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/gstreamer-linux64-20080909.tar.bz2</uri>
           </map>
         </map>
       </map>
@@ -665,16 +665,16 @@
           <key>linux</key>
           <map>
             <key>md5sum</key>
-            <string>21c16a74f8fc9a62e3ab944a6eb7403d</string>
+            <string>61973c28541c6a426c18d944c42d7173</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/gtk-atk-pango-glib-linux-20080616.tar.bz</string>
+            <uri>http://downloads.phoenixviewer.com/gtk-atk-pango-glib-linux-20101003.tar.bz2</uri>
           </map>
           <key>windows</key>
           <map>
             <key>md5sum</key>
             <string>d963750bcd333a108b3697d220c87d09</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/gtk-atk-pango-glib-windows-20080613.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/gtk-atk-pango-glib-windows-20080613.tar.bz2</uri>
           </map>
         </map>
       </map>
@@ -693,28 +693,28 @@
             <key>md5sum</key>
             <string>f64c08771a4fc456db2a55b47302078b</string>
             <key>url</key>
-            <string>scp:install-packages.lindenlab.com:/local/www/install-packages/doc/havok-4.6-darwin-20080812.tar.bz2</string>
+            <uri>scp:install-packages.lindenlab.com:/local/www/install-packages/doc/havok-4.6-darwin-20080812.tar.bz2</uri>
           </map>
           <key>linux</key>
           <map>
             <key>md5sum</key>
             <string>af7b1fc9072443009f19e43fb3c8342f</string>
             <key>url</key>
-            <string>scp:install-packages.lindenlab.com:/local/www/install-packages/doc/havok-4.6.1-linux-20081029.tar.bz2</string>
+            <uri>scp:install-packages.lindenlab.com:/local/www/install-packages/doc/havok-4.6.1-linux-20081029.tar.bz2</uri>
           </map>
           <key>linux64</key>
           <map>
             <key>md5sum</key>
             <string>cd4076d6caf5fabff36bf48bd01e4ba8</string>
             <key>url</key>
-            <string>scp:install-packages.lindenlab.com:/local/www/install-packages/doc/havok-4.6.1-linux64-20081030.tar.bz2</string>
+            <uri>scp:install-packages.lindenlab.com:/local/www/install-packages/doc/havok-4.6.1-linux64-20081030.tar.bz2</uri>
           </map>
           <key>windows</key>
           <map>
             <key>md5sum</key>
             <string>f25fbb29c2275267233c79f0c68ca37f</string>
             <key>url</key>
-            <string>scp:install-packages.lindenlab.com:/local/www/install-packages/doc/havok-4.6.1-windows-20081030.tar.bz2</string>
+            <uri>scp:install-packages.lindenlab.com:/local/www/install-packages/doc/havok-4.6.1-windows-20081030.tar.bz2</uri>
           </map>
         </map>
       </map>
@@ -733,28 +733,28 @@
             <key>md5sum</key>
             <string>8d38d74c481e9aab4518c8f2a7d52800</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/jpeglib-6b-darwin-20080812.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/jpeglib-6b-darwin-20080812.tar.bz2</uri>
           </map>
           <key>linux</key>
           <map>
             <key>md5sum</key>
             <string>8aa8e01e0c21f60f0ede0ffb04e9214f</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/jpeglib-6b-linux-20081218.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/jpeglib-6b-linux-20081218.tar.bz2</uri>
           </map>
           <key>linux64</key>
           <map>
             <key>md5sum</key>
             <string>0e7facf7d48531d20c0cd6a3c3f04021</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/jpeglib-6b-linux64-20080909.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/jpeglib-6b-linux64-20080909.tar.bz2</uri>
           </map>
           <key>windows</key>
           <map>
             <key>md5sum</key>
             <string>6a6bb0143a2561e3276dab4bcfa425ef</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/jpeglib-6b-windows-20090917a.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/jpeglib-6b-windows-20090917a.tar.bz2</uri>
           </map>
         </map>
       </map>
@@ -773,28 +773,28 @@
             <key>md5sum</key>
             <string>4c6b949778099a63550898f00f3e6a5e</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/jsoncpp-svn-r69-darwin-20090923.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/jsoncpp-svn-r69-darwin-20090923.tar.bz2</uri>
           </map>
           <key>linux</key>
           <map>
             <key>md5sum</key>
             <string>a2a94b8ca1d32f23e3e668d64023514e</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/jsoncpp-svn-r69-linux-20090922.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/jsoncpp-svn-r69-linux-20090922.tar.bz2</uri>
           </map>
           <key>linux64</key>
           <map>
             <key>md5sum</key>
             <string>a06ab38628ab7b53b8f3326cd942a6a8</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/jsoncpp-svn-r69-linux64-20090922.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/jsoncpp-svn-r69-linux64-20090922.tar.bz2</uri>
           </map>
           <key>windows</key>
           <map>
             <key>md5sum</key>
             <string>8a6390824f5ad880d164cffafc5f3eeb</string>
             <key>url</key>
-            <string>http://downloads.phoenixviewer.com/json-windows-20100902.tar.bz2</string>
+            <uri>http://downloads.phoenixviewer.com/json-windows-20100902.tar.bz2</uri>
           </map>
         </map>
       </map>
@@ -803,7 +803,7 @@
         <key>copyright</key>
         <string>(C) 2005 Novell, Inc. http://www.novell.com</string>
         <key>description</key>
-        <string>An open source implementation of the ECMA/ISO ECMA-334 Common Language Infrstructure (CLI) international standard</string>
+        <string>An open source implementation of the ECMA/ISO ECMA-334 Common L\ anguage Infrstructure (CLI) international standard</string>
         <key>license</key>
         <string>lgpl</string>
         <key>packages</key>
@@ -813,28 +813,28 @@
             <key>md5sum</key>
             <string>39a803fcbe6f11b72358fc78b7777b6c</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/libmono-darwin-20080724.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/libmono-darwin-20080724.tar.bz2</uri>
           </map>
           <key>linux</key>
           <map>
             <key>md5sum</key>
             <string>9bc0f8b7d5e0ff194b6d5635daf9ae3a</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/libmono-1.2.6-linux-20080816a.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/libmono-1.2.6-linux-20080816a.tar.bz2</uri>
           </map>
           <key>linux64</key>
           <map>
             <key>md5sum</key>
             <string>451521b4cb57c35caf3efb8dcf99b99e</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/libmono-1.2.6-linux64-20080926.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/libmono-1.2.6-linux64-20080926.tar.bz2</uri>
           </map>
           <key>windows</key>
           <map>
             <key>md5sum</key>
             <string>6712a09311a914752f47d5d62562a239</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/libmono-1.2.6-windows-20080903.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/libmono-1.2.6-windows-20080903.tar.bz2</uri>
           </map>
         </map>
       </map>
@@ -853,28 +853,28 @@
             <key>md5sum</key>
             <string>82659b48831cbf58bf04b86602939e0b</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/libpng-1.2.35-darwin-20090304.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/libpng-1.2.35-darwin-20090304.tar.bz2</uri>
           </map>
           <key>linux</key>
           <map>
             <key>md5sum</key>
             <string>f5e84c991f6e3caacb26db259593cbea</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/libpng-1.2.35-linux-20090304.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/libpng-1.2.35-linux-20090304.tar.bz2</uri>
           </map>
           <key>linux64</key>
           <map>
             <key>md5sum</key>
             <string>5ee1e62bde38520c7f134c4afb9ac9b1</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/libpng-1.2.35-linux64-20090304.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/libpng-1.2.35-linux64-20090304.tar.bz2</uri>
           </map>
           <key>windows</key>
           <map>
             <key>md5sum</key>
             <string>c781cd9846cf20afb90ac40ad1a0ce9d</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/libpng-1.2.35-windows-20090917.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/libpng-1.2.35-windows-20090917.tar.bz2</uri>
           </map>
         </map>
       </map>
@@ -893,7 +893,7 @@
             <key>md5sum</key>
             <string>91b194aed4b38bc23493b198009a8c6a</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/libuuid-linux-20090417.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/libuuid-linux-20090417.tar.bz2</uri>
           </map>
         </map>
       </map>
@@ -908,14 +908,14 @@
             <key>md5sum</key>
             <string>4b5d2dcfe8a49b73fb69f10aab441092</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/libxml-2.6.24-linux-20080613.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/libxml-2.6.24-linux-20080613.tar.bz2</uri>
           </map>
           <key>linux64</key>
           <map>
             <key>md5sum</key>
             <string>921d7f980519101afb74623e29e9d175</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/libxml-2.6.24-linux64-20080909.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/libxml-2.6.24-linux64-20080909.tar.bz2</uri>
           </map>
         </map>
       </map>
@@ -930,21 +930,21 @@
             <key>md5sum</key>
             <string>becffca6bd8dcb239de284ea2a8b485b</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/llqtwebkit-4.6+cookies-darwin-20100617.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/llqtwebkit-4.6+cookies-darwin-20100617.tar.bz2</uri>
           </map>
           <key>linux</key>
           <map>
             <key>md5sum</key>
             <string>414d72dd59e3d83c96f0e1531360792e</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/llqtwebkit-linux-20100618.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/llqtwebkit-linux-20100618.tar.bz2</uri>
           </map>
           <key>windows</key>
           <map>
             <key>md5sum</key>
             <string>df1bdd683128e060d60e435f65d8f7e8</string>
             <key>url</key>
-            <string>http://viewer-source-downloads.s3.amazonaws.com/install_pkgs/llqtwebkit-windows-qt4.6-20100617.tar.bz2</string>
+            <uri>http://viewer-source-downloads.s3.amazonaws.com/install_pkgs/llqtwebkit-windows-qt4.6-20100617.tar.bz2</uri>
           </map>
         </map>
       </map>
@@ -963,21 +963,21 @@
             <key>md5sum</key>
             <string>70d0bbe1145fff29a0131349c898260e</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/mesa-7.0-linux-20080812.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/mesa-7.0-linux-20080812.tar.bz2</uri>
           </map>
           <key>linux64</key>
           <map>
             <key>md5sum</key>
             <string>56630977f9261bd82039b0da08a0685c</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/mesa-6.2.1-linux64-20081016.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/mesa-6.2.1-linux64-20081016.tar.bz2</uri>
           </map>
           <key>windows</key>
           <map>
             <key>md5sum</key>
             <string>82cdcdcb2d0615389a7480485ea35f4c</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/mesa-7.0-windows-20080613.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/mesa-7.0-windows-20080613.tar.bz2</uri>
           </map>
         </map>
       </map>
@@ -992,21 +992,21 @@
             <key>md5sum</key>
             <string>df27f2db244ea2762759a06cd75ada4e</string>
             <key>url</key>
-            <string>scp:install-packages.lindenlab.com:/local/www/install-packages/doc/mysql-darwin-20080812.tar.bz2</string>
+            <uri>scp:install-packages.lindenlab.com:/local/www/install-packages/doc/mysql-darwin-20080812.tar.bz2</uri>
           </map>
           <key>linux</key>
           <map>
             <key>md5sum</key>
             <string>cc86b4cc858655e23704d1168325d7b9</string>
             <key>url</key>
-            <string>scp:install-packages.lindenlab.com:/local/www/install-packages/doc/mysqlclient-linux-20090320.tar.bz2</string>
+            <uri>scp:install-packages.lindenlab.com:/local/www/install-packages/doc/mysqlclient-linux-20090320.tar.bz2</uri>
           </map>
           <key>windows</key>
           <map>
             <key>md5sum</key>
             <string>98bac06680dca907e783d8dd4aa9edde</string>
             <key>url</key>
-            <string>scp:install-packages.lindenlab.com:/local/www/install-packages/doc/mysql-windows-20080804.tar.bz2</string>
+            <uri>scp:install-packages.lindenlab.com:/local/www/install-packages/doc/mysql-windows-20080804.tar.bz2</uri>
           </map>
         </map>
       </map>
@@ -1025,21 +1025,21 @@
             <key>md5sum</key>
             <string>17999c47e17f2dd9e12a22372ce8ff14</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/ndofdev-darwin-20080812.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/ndofdev-darwin-20080812.tar.bz2</uri>
           </map>
           <key>linux</key>
           <map>
             <key>md5sum</key>
             <string>9469c3732a33a154fa0a2807b9f36ccc</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/ndofdev-linux-0.2-20080828.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/ndofdev-linux-0.2-20080828.tar.bz2</uri>
           </map>
           <key>windows</key>
           <map>
             <key>md5sum</key>
             <string>f0df8a1e60991095e3adca1450b8c9c0</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/ndofdev-windows-20090917.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/ndofdev-windows-20090917.tar.bz2</uri>
           </map>
         </map>
       </map>
@@ -1058,28 +1058,28 @@
             <key>md5sum</key>
             <string>a6843398b780645c4897c9776c688926</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/ogg-vorbis-1.03-1.1.2-darwin-20080812.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/ogg-vorbis-1.03-1.1.2-darwin-20080812.tar.bz2</uri>
           </map>
           <key>linux</key>
           <map>
             <key>md5sum</key>
             <string>46e954b4da0ae4358e53a8c247493bc2</string>
             <key>url</key>
-            <string>http://downloads.phoenixviewer.com/ogg-vorbis-1.3.1-linux-20100907.tar.bz2</string>
+            <uri>http://downloads.phoenixviewer.com/ogg-vorbis-1.3.1-linux-20100907.tar.bz2</uri>
           </map>
           <key>linux64</key>
           <map>
             <key>md5sum</key>
             <string>964c71e6ee22be1bcaf6d480e74cdd14</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/ogg-vorbis-1.2.0-linux64-20080909.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/ogg-vorbis-1.2.0-linux64-20080909.tar.bz2</uri>
           </map>
           <key>windows</key>
           <map>
             <key>md5sum</key>
             <string>67ee18297c580940ea3c0ae23d4dec65</string>
             <key>url</key>
-            <string>http://downloads.phoenixviewer.com/ogg-vorbis-1.2.0-1.3.1-windows-20100907.tar.bz2</string>
+            <uri>http://downloads.phoenixviewer.com/ogg-vorbis-1.2.0-1.3.1-windows-20100907.tar.bz2</uri>
           </map>
         </map>
       </map>
@@ -1094,28 +1094,28 @@
             <key>md5sum</key>
             <string>a7b49e0f3eedbd5de117a3524c414b3a</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/openSSL-0.9.7c-darwin-20080812.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/openSSL-0.9.7c-darwin-20080812.tar.bz2</uri>
           </map>
           <key>linux</key>
           <map>
             <key>md5sum</key>
             <string>f219ef07b02e2abb9282345c3a8f2b39</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/openSSL-0.9.7c-linux-20080812.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/openSSL-0.9.7c-linux-20080812.tar.bz2</uri>
           </map>
           <key>linux64</key>
           <map>
             <key>md5sum</key>
             <string>00b23f28a2457d9dabbaff0b29ee7323</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/openSSL-0.9.8g-linux64-20080909.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/openSSL-0.9.8g-linux64-20080909.tar.bz2</uri>
           </map>
           <key>windows</key>
           <map>
             <key>md5sum</key>
             <string>dd85209081b832e836de6e1538541d89</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/openSSL-0.9.8j-windows-20090129.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/openSSL-0.9.8j-windows-20090129.tar.bz2</uri>
           </map>
         </map>
       </map>
@@ -1134,28 +1134,28 @@
             <key>md5sum</key>
             <string>a0757244e3e6688fde2ffeea35cc1f96</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/openal-darwin-20080924.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/openal-darwin-20080924.tar.bz2</uri>
           </map>
           <key>linux</key>
           <map>
             <key>md5sum</key>
             <string>c8223e9454223e3d519fe40d71c3ddd2</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/openal-linux-20091216-56cc0386.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/openal-linux-20091216-56cc0386.tar.bz2</uri>
           </map>
           <key>linux64</key>
           <map>
             <key>md5sum</key>
             <string>5ad0a3ab623356c1ad61394ba238f99f</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/openal-soft-1.6.372-linux64-20081219.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/openal-soft-1.6.372-linux64-20081219.tar.bz2</uri>
           </map>
           <key>windows</key>
           <map>
             <key>md5sum</key>
             <string>a0757244e3e6688fde2ffeea35cc1f96</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/openal-windows-20080924.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/openal-windows-20080924.tar.bz2</uri>
           </map>
         </map>
       </map>
@@ -1174,7 +1174,7 @@
             <key>md5sum</key>
             <string>be45825cc14ede53790ac93c58307dcb</string>
             <key>url</key>
-            <string>scp:install-packages.lindenlab.com:/local/www/install-packages/doc/quicktime-sdk-windows-7.3-20091110.tar.bz2</string>
+            <uri>scp:install-packages.lindenlab.com:/local/www/install-packages/doc/quicktime-sdk-windows-7.3-20091110.tar.bz2</uri>
           </map>
         </map>
       </map>
@@ -1193,21 +1193,21 @@
             <key>md5sum</key>
             <string>f54131b5f228e805c64c2e4e6c96579a</string>
             <key>url</key>
-            <string>scp:install-packages.lindenlab.com:/local/www/install-packages/doc/smartheap-6.0.2-darwin-20080610.tar.bz2</string>
+            <uri>scp:install-packages.lindenlab.com:/local/www/install-packages/doc/smartheap-6.0.2-darwin-20080610.tar.bz2</uri>
           </map>
           <key>linux</key>
           <map>
             <key>md5sum</key>
             <string>499208522bf7d7843e1d014d64214e06</string>
             <key>url</key>
-            <string>scp:install-packages.lindenlab.com:/local/www/install-packages/doc/smartheap-6.0.2-linux-20080610.tar.bz2</string>
+            <uri>scp:install-packages.lindenlab.com:/local/www/install-packages/doc/smartheap-6.0.2-linux-20080610.tar.bz2</uri>
           </map>
           <key>windows</key>
           <map>
             <key>md5sum</key>
             <string>78fd47017f21d11eae43bca3e38a3e1e</string>
             <key>url</key>
-            <string>scp:install-packages.lindenlab.com:/local/www/install-packages/doc/smartheap-6.0.2-windows-20080611.tar.bz2</string>
+            <uri>scp:install-packages.lindenlab.com:/local/www/install-packages/doc/smartheap-6.0.2-windows-20080611.tar.bz2</uri>
           </map>
         </map>
       </map>
@@ -1226,7 +1226,7 @@
             <key>md5sum</key>
             <string>a1b8a118ba9df1f2a73f6aafa7980e83</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/tut-2008-11-30-common-20081208.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/tut-2008-11-30-common-20081208.tar.bz2</uri>
           </map>
         </map>
       </map>
@@ -1245,7 +1245,7 @@
             <key>md5sum</key>
             <string>6353aff33d7d03b22055aec76f53a866</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/unistd-windows-20080611.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/unistd-windows-20080611.tar.bz2</uri>
           </map>
         </map>
       </map>
@@ -1262,21 +1262,21 @@
             <key>md5sum</key>
             <string>8675b5eedef038b514338b17f0e55961</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/vivox-2.1.3010.6270-darwin-20090309.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/vivox-2.1.3010.6270-darwin-20090309.tar.bz2</uri>
           </map>
           <key>linux</key>
           <map>
             <key>md5sum</key>
             <string>01573510dce7f380f44e561ef2f3dd9f</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/vivox-2.1.3010.6270-linux-20090309.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/vivox-2.1.3010.6270-linux-20090309.tar.bz2</uri>
           </map>
           <key>windows</key>
           <map>
             <key>md5sum</key>
             <string>752daa90e07c05202d1f76980cb955eb</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/vivox-2.1.3010.6270-windows-20090309.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/vivox-2.1.3010.6270-windows-20090309.tar.bz2</uri>
           </map>
         </map>
       </map>
@@ -1295,28 +1295,28 @@
             <key>md5sum</key>
             <string>2d3a918c88d756422c1a8139ebe15f56</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/xmlrpc-epi-0.51-darwin-20080812.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/xmlrpc-epi-0.51-darwin-20080812.tar.bz2</uri>
           </map>
           <key>linux</key>
           <map>
             <key>md5sum</key>
             <string>84a219199240ea70f54439c02acef0cd</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/xmlrpc-epi-0.51-linux-20080812.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/xmlrpc-epi-0.51-linux-20080812.tar.bz2</uri>
           </map>
           <key>linux64</key>
           <map>
             <key>md5sum</key>
             <string>dc67b896c56116df8e18f2d1bbd07031</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/xmlrpc-epi-0.51-linux64-20080909.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/xmlrpc-epi-0.51-linux64-20080909.tar.bz2</uri>
           </map>
           <key>windows</key>
           <map>
             <key>md5sum</key>
             <string>262629bcaa39dcf7266caa50da01a599</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/xmlrpc-epi-0.51-windows-20091016.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/xmlrpc-epi-0.51-windows-20091016.tar.bz2</uri>
           </map>
         </map>
       </map>
@@ -1335,28 +1335,28 @@
             <key>md5sum</key>
             <string>c844e1b05723ce078dbbd5aea9cdd3ad</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/zlib-1.1.4-darwin-20080818.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/zlib-1.1.4-darwin-20080818.tar.bz2</uri>
           </map>
           <key>linux</key>
           <map>
             <key>md5sum</key>
             <string>26fe88213c213dc6153690ab142c25ca</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/zlib-1.2.3dfsg-linux-20091208.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/zlib-1.2.3dfsg-linux-20091208.tar.bz2</uri>
           </map>
           <key>linux64</key>
           <map>
             <key>md5sum</key>
             <string>4bddfb2c6dd7b1470a3ed675ac14bd9a</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/zlib-1.2.3-linux64-20080909.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/zlib-1.2.3-linux64-20080909.tar.bz2</uri>
           </map>
           <key>windows</key>
           <map>
             <key>md5sum</key>
             <string>73baf52a740d151fddbc2a008369c462</string>
             <key>url</key>
-            <string>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/zlib-1.2.3-windows-20090921.tar.bz2</string>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/zlib-1.2.3-windows-20090921.tar.bz2</uri>
           </map>
         </map>
       </map>
@@ -1376,7 +1376,7 @@
       <key>MSDTW</key>
       <map>
         <key>text</key>
-        <string>MICROSOFT SOFTWARE LICENSE TERMS MICROSOFT DEBUGGING TOOLS FOR WINDOWS These license terms are an agreement between Microsoft Corporation (or based on where you live, one of its affiliates) and you. Please read them. They apply to the software named above, which includes the media on which you received it, if any. The terms also apply to any Microsoft * updates, * supplements, * Internet-based services * support services, and * Debugging symbol files that you may access over the internet for this software, unless other terms accompany those items. If so, those terms apply. By using the software, you accept these terms. If you do not accept them, do not use the software. If you comply with these license terms, you have the rights below. 1. INSTALLATION AND USE RIGHTS. One user may install and use any number of copies of the software on your devices to design, develop, debug and test your programs. 2. ADDITIONAL LICENSING REQUIREMENTS AND/OR USE RIGHTS. a. Distributable Code. The software contains code that you are permitted to distribute in programs you develop if you comply with the terms below. i. Right to Use and Distribute. The code and text files listed below are ÃâDistributable Code.Ãâ * REDIST.TXT Files. You may copy and distribute the object code form of code listed in REDIST.TXT files. * Sample Code. You may modify, copy, and distribute the source and object code form of code marked as Ãâsample.Ãâ * Third Party Distribution. You may permit distributors of your programs to copy and distribute the Distributable Code as part of those programs. ii. Distribution Requirements. For any Distributable Code you distribute, you must * add significant primary functionality to it in your programs; * require distributors and external end users to agree to terms that protect it at least as much as this agreement; * display your valid copyright notice on your programs; and * indemnify, defend, and hold harmless Microsoft from any claims, including attorneysÃâ fees, related to the distribution or use of your programs. iii. Distribution Restrictions. You may not * alter any copyright, trademark or patent notice in the Distributable Code; * distribute any symbol files which you may access or use under these license terms for the software; * use MicrosoftÃâs trademarks in your programsÃâ names or in a way that suggests your programs come from or are endorsed by Microsoft; * distribute Distributable Code to run on a platform other than the Windows platform; * include Distributable Code in malicious, deceptive or unlawful programs; or * modify or distribute the source code of any Distributable Code so that any part of it becomes subject to an Excluded License. An Excluded License is one that requires, as a condition of use, modification or distribution, that * the code be disclosed or distributed in source code form; or * others have the right to modify it. 3. SCOPE OF LICENSE. The software is licensed, not sold. This agreement only gives you some rights to use the software. Microsoft reserves all other rights. Unless applicable law gives you more rights despite this limitation, you may use the software only as expressly permitted in this agreement. In doing so, you must comply with any technical limitations in the software that only allow you to use it in certain ways. You may not * work around any technical limitations in the software; * reverse engineer, decompile or disassemble the software, except and only to the extent that applicable law expressly permits, despite this limitation; * make more copies of the software than specified in this agreement or allowed by applicable law, despite this limitation; * publish the software for others to copy; * rent, lease or lend the software; * transfer the software or this agreement to any third party; or * use the software for commercial software hosting services. 4. INTERNET-BASED SERVICES. Microsoft provides Internet-based services with the software. It may change or cancel them at any time. a. Consent for Internet-Based Services. The software contains features which may connect to Microsoft or service provider computer systems over the Internet. In some cases, you will not receive a separate notice when they connect. You may switch these features on or you may choose not to use them. For more information about these features, see http://www.microsoft.com/info/privacy/default.mspx. By using these features, you consent to the transmission of this information. Microsoft does not use the information to identify or contact you. b. Misuse of Internet-based Services. You may not use these services in any way that could harm them or impair anyone elseÃâs use of them. You may not use the services to try to gain unauthorized access to any service, data, account or network by any means. 5. BACKUP COPY. You may make one backup copy of the software. You may use it only to reinstall the software. 6. DOCUMENTATION. Any person that has valid access to your computer or internal network may copy and use the documentation for your internal, reference purposes. 7. EXPORT RESTRICTIONS. The software is subject to United States export laws and regulations. You must comply with all domestic and international export laws and regulations that apply to the software. These laws include restrictions on destinations, end users and end use. For additional information, see www.microsoft.com/exporting. 8. SUPPORT SERVICES. Because this software is Ãâas is,Ãâ we may not provide support services for it. 9. ENTIRE AGREEMENT. This agreement, and the terms for supplements, updates, Internet-based services and support services that you use, are the entire agreement for the software and support services. 10. APPLICABLE LAW. a. United States. If you acquired the software in the United States, Washington state law governs the interpretation of this agreement and applies to claims for breach of it, regardless of conflict of laws principles. The laws of the state where you live govern all other claims, including claims under state consumer protection laws, unfair competition laws, and in tort. b. Outside the United States. If you acquired the software in any other country, the laws of that country apply. 11. LEGAL EFFECT. This agreement describes certain legal rights. You may have other rights under the laws of your country. You may also have rights with respect to the party from whom you acquired the software. This agreement does not change your rights under the laws of your country if the laws of your country do not permit it to do so. 12. DISCLAIMER OF WARRANTY. The software is licensed Ãâas-is.Ãâ You bear the risk of using it. Microsoft gives no express warranties, guarantees or conditions. You may have additional consumer rights under your local laws which this agreement cannot change. To the extent permitted under your local laws, Microsoft excludes the implied warranties of merchantability, fitness for a particular purpose and non-infringement. 13. LIMITATION ON AND EXCLUSION OF REMEDIES AND DAMAGES. You can recover from Microsoft and its suppliers only direct damages up to U.S. $5.00. You cannot recover any other damages, including consequential, lost profits, special, indirect or incidental damages. This limitation applies to * anything related to the software, services, content (including code) on third party Internet sites, or third party programs; and * claims for breach of contract, breach of warranty, guarantee or condition, strict liability, negligence, or other tort to the extent permitted by applicable law. It also applies even if Microsoft knew or should have known about the possibility of the damages. The above limitation or exclusion may not apply to you because your country may not allow the exclusion or limitation of incidental, consequential or other damages.</string>
+        <string>MICROSOFT SOFTWARE LICENSE TERMS MICROSOFT DEBUGGING TOOLS FOR WINDOWS These license terms are an agreement between Microsoft Corporation (or based on where you live, one of its affiliates) and you. Please read them. They apply to the software named above, which includes the media on which you received it, if any. The terms also apply to any Microsoft * updates, * supplements, * Internet-based services * support services, and * Debugging symbol files that you may access over the internet for this software, unless other terms accompany those items. If so, those terms apply. By using the software, you accept these terms. If you do not accept them, do not use the software. If you comply with these license terms, you have the rights below. 1. INSTALLATION AND USE RIGHTS. One user may install and use any number of copies of the software on your devices to design, develop, debug and test your programs. 2. ADDITIONAL LICENSING REQUIREMENTS AND/OR USE RIGHTS. a. Distributable Code. The software contains code that you are permitted to distribute in programs you develop if you comply with the terms below. i. Right to Use and Distribute. The code and text files listed below are Â“Distributable Code.Â” * REDIST.TXT Files. You may copy and distribute the object code form of code listed in REDIST.TXT files. * Sample Code. You may modify, copy, and distribute the source and object code form of code marked as Â“sample.Â” * Third Party Distribution. You may permit distributors of your programs to copy and distribute the Distributable Code as part of those programs. ii. Distribution Requirements. For any Distributable Code you distribute, you must * add significant primary functionality to it in your programs; * require distributors and external end users to agree to terms that protect it at least as much as this agreement; * display your valid copyright notice on your programs; and * indemnify, defend, and hold harmless Microsoft from any claims, including attorneysÂ’ fees, related to the distribution or use of your programs. iii. Distribution Restrictions. You may not * alter any copyright, trademark or patent notice in the Distributable Code; * distribute any symbol files which you may access or use under these license terms for the software; * use MicrosoftÂ’s trademarks in your programsÂ’ names or in a way that suggests your programs come from or are endorsed by Microsoft; * distribute Distributable Code to run on a platform other than the Windows platform; * include Distributable Code in malicious, deceptive or unlawful programs; or * modify or distribute the source code of any Distributable Code so that any part of it becomes subject to an Excluded License. An Excluded License is one that requires, as a condition of use, modification or distribution, that * the code be disclosed or distributed in source code form; or * others have the right to modify it. 3. SCOPE OF LICENSE. The software is licensed, not sold. This agreement only gives you some rights to use the software. Microsoft reserves all other rights. Unless applicable law gives you more rights despite this limitation, you may use the software only as expressly permitted in this agreement. In doing so, you must comply with any technical limitations in the software that only allow you to use it in certain ways. You may not * work around any technical limitations in the software; * reverse engineer, decompile or disassemble the software, except and only to the extent that applicable law expressly permits, despite this limitation; * make more copies of the software than specified in this agreement or allowed by applicable law, despite this limitation; * publish the software for others to copy; * rent, lease or lend the software; * transfer the software or this agreement to any third party; or * use the software for commercial software hosting services. 4. INTERNET-BASED SERVICES. Microsoft provides Internet-based services with the software. It may change or cancel them at any time. a. Consent for Internet-Based Services. The software contains features which may connect to Microsoft or service provider computer systems over the Internet. In some cases, you will not receive a separate notice when they connect. You may switch these features on or you may choose not to use them. For more information about these features, see http://www.microsoft.com/info/privacy/default.mspx. By using these features, you consent to the transmission of this information. Microsoft does not use the information to identify or contact you. b. Misuse of Internet-based Services. You may not use these services in any way that could harm them or impair anyone elseÂ’s use of them. You may not use the services to try to gain unauthorized access to any service, data, account or network by any means. 5. BACKUP COPY. You may make one backup copy of the software. You may use it only to reinstall the software. 6. DOCUMENTATION. Any person that has valid access to your computer or internal network may copy and use the documentation for your internal, reference purposes. 7. EXPORT RESTRICTIONS. The software is subject to United States export laws and regulations. You must comply with all domestic and international export laws and regulations that apply to the software. These laws include restrictions on destinations, end users and end use. For additional information, see www.microsoft.com/exporting. 8. SUPPORT SERVICES. Because this software is Â“as is,Â” we may not provide support services for it. 9. ENTIRE AGREEMENT. This agreement, and the terms for supplements, updates, Internet-based services and support services that you use, are the entire agreement for the software and support services. 10. APPLICABLE LAW. a. United States. If you acquired the software in the United States, Washington state law governs the interpretation of this agreement and applies to claims for breach of it, regardless of conflict of laws principles. The laws of the state where you live govern all other claims, including claims under state consumer protection laws, unfair competition laws, and in tort. b. Outside the United States. If you acquired the software in any other country, the laws of that country apply. 11. LEGAL EFFECT. This agreement describes certain legal rights. You may have other rights under the laws of your country. You may also have rights with respect to the party from whom you acquired the software. This agreement does not change your rights under the laws of your country if the laws of your country do not permit it to do so. 12. DISCLAIMER OF WARRANTY. The software is licensed Â“as-is.Â” You bear the risk of using it. Microsoft gives no express warranties, guarantees or conditions. You may have additional consumer rights under your local laws which this agreement cannot change. To the extent permitted under your local laws, Microsoft excludes the implied warranties of merchantability, fitness for a particular purpose and non-infringement. 13. LIMITATION ON AND EXCLUSION OF REMEDIES AND DAMAGES. You can recover from Microsoft and its suppliers only direct damages up to U.S. $5.00. You cannot recover any other damages, including consequential, lost profits, special, indirect or incidental damages. This limitation applies to * anything related to the software, services, content (including code) on third party Internet sites, or third party programs; and * claims for breach of contract, breach of warranty, guarantee or condition, strict liability, negligence, or other tort to the extent permitted by applicable law. It also applies even if Microsoft knew or should have known about the possibility of the damages. The above limitation or exclusion may not apply to you because your country may not allow the exclusion or limitation of incidental, consequential or other damages.</string>
       </map>
       <key>apache 2.0</key>
       <map>
@@ -1518,8 +1518,8 @@
         <string>on file (THEN WHERE THE HELL IS IT, IDIOTS)</string>
       </map>
       <key>things</key>
-      <array>
-      </array>
+      <map>
+      </map>
       <key>vivox</key>
       <map>
         <key>text</key>
