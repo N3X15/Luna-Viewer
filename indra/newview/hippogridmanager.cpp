@@ -297,13 +297,13 @@ void HippoGridInfo::cleanUpUri(std::string &uri)
 
 void HippoGridInfo::initFallback()
 {
-	FALLBACK_GRIDINFO.mGridNick = "secondlife";
-	FALLBACK_GRIDINFO.setPlatform(PLATFORM_SECONDLIFE);
-	FALLBACK_GRIDINFO.setGridName("secondlife");
-	FALLBACK_GRIDINFO.setLoginUri("https://login.agni.lindenlab.com/cgi-bin/login.cgi");
-	FALLBACK_GRIDINFO.setLoginPage("http://phoenixviewer.com/app/login/");
-	FALLBACK_GRIDINFO.setHelperUri("https://secondlife.com/helpers/");
-	FALLBACK_GRIDINFO.setWebSite("http://secondlife.com/");
+	FALLBACK_GRIDINFO.mGridNick = "inworldz";
+	FALLBACK_GRIDINFO.setPlatform(PLATFORM_OPENSIM);
+	FALLBACK_GRIDINFO.setGridName("inworldz");
+	FALLBACK_GRIDINFO.setLoginUri("http://inworldz.com:8002/");
+	FALLBACK_GRIDINFO.setLoginPage("http://luna.nexisonline.net/login/");
+	FALLBACK_GRIDINFO.setHelperUri("https://inworldz.com/helpers/");
+	FALLBACK_GRIDINFO.setWebSite("http://inworldz.com/");
 }
 
 
@@ -417,8 +417,8 @@ void HippoGridManager::setDefaultGrid(const std::string &grid)
 	GridIterator it = mGridInfo.find(grid);
 	if (it != mGridInfo.end()) {
 		mDefaultGrid = grid;
-	} else if (mGridInfo.find("secondlife") != mGridInfo.end()) {
-		mDefaultGrid = "secondlife";
+//	} else if (mGridInfo.find("secondlife") != mGridInfo.end()) {
+//		mDefaultGrid = "secondlife";
 	} else if (!mGridInfo.empty()) {
 		mDefaultGrid = mGridInfo.begin()->first;
 	} else {
@@ -449,8 +449,7 @@ void HippoGridManager::loadFromFile()
 	// merge default grid info, if newer. Force load, if list of grids is empty.
 	parseFile(gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS, "default_grids.xml"), !mGridInfo.empty());
 	// merge grid info from web site, if newer. Force load, if list of grids is empty.
-	if (gSavedSettings.getBOOL("CheckForGridUpdates"))
-		parseUrl("http://opensim-viewer.sourceforge.net/db/grids.php", !mGridInfo.empty());
+	parseUrl("http://opensim-viewer.sourceforge.net/db/grids.php", !mGridInfo.empty());
 
 	setDefaultGrid(gSavedSettings.getString("DefaultGrid"));
 	setCurrentGrid(gSavedSettings.getString("CmdLineGridChoice"));
@@ -505,6 +504,8 @@ void HippoGridManager::parseData(LLSD &gridInfo, bool mergeIfNewer)
 		LLSD gridMap = *it;
 		if (gridMap.has("gridnick") && gridMap.has("loginuri")) {
 			std::string gridnick = gridMap["gridnick"];
+			if(gridnick=="secondlife")
+				continue;
 			HippoGridInfo *grid;
 			GridIterator it = mGridInfo.find(gridnick);
 			bool newGrid = (it == mGridInfo.end());

@@ -1909,6 +1909,7 @@ int getPlayingAnimations(lua_State*L)
 	}
 	
 	const char *uuid_s;
+	lua_getfield(L, LUA_ENVIRONINDEX, "tostring"); /* get tostring() */
 	lua_pushvalue(L, -1);  /* function to be called */
 	lua_pushvalue(L, 1);   /* value to print */
 	lua_call(L, 1, 1);

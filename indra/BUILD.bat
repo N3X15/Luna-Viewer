@@ -11,6 +11,9 @@ python.exe ../scripts/settings.py --set-type=AscentDoubleClickTeleport=BOOL;Rada
 echo *** Editing indra/newview/app_settings/settings_per_account.xml...
 python.exe ../scripts/settings.py --target-file=%PER_ACCT% --set=LunaCmdLineLua=/lua;LunaCmdLineMacro=/m;AscentDoubleClickTeleport=1;RadarChatKeys=1;AscentBuildAlwaysEnabled=1
 
+:: LL fucking with the TPV again, let's take our business elsewhere.
+python.exe ../scripts/settings.py --set=DefaultGrid=inworldz
+
 : Set your build type here.  Release = no debugging symbols.  RelWithDebInfo = Optimized with debugging symbols. Debug = FAT AND SLOW, MUCH LIKE YOUR MOTHER
 set BUILDTYPE=Release
 
