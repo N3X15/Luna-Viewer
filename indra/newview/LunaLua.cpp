@@ -370,7 +370,7 @@ bool FLLua::load()
 		return false;
 	}
 
-	LL_INFOS("Lua") << __LINE__ << ": Skipping lua_atpanic" << llendl;
+	//LL_INFOS("Lua") << __LINE__ << ": Skipping lua_atpanic" << llendl;
 	lua_atpanic(pLuaStack, luaOnPanic);
 
 	LL_INFOS("Lua") << __LINE__ << ": Loading standard Lua libs" << llendl;

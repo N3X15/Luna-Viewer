@@ -377,21 +377,3 @@ void startAnimation(LLUUID avid, LLUUID movement)
 		gAgent.sendAnimationRequest(movement, ANIM_REQUEST_START);
 	}
 }
-
-bool getPlayingAnimations(LLUUID avid, LLUUID* anims)
-{
-	LLViewerObject *o=gObjectList.findObject(avid);
-	if(!o->isAvatar())
-	{
-		LuaError("Object is not an avatar.");
-		return false;
-	}
-	LLVOAvatar *av=(LLVOAvatar *)o;
-	anims = new LLUUID[av->mPlayingAnimations.size()];
-	LLVOAvatar::AnimIterator it = av->mPlayingAnimations.begin();
-	int i=0;
-	for(it;it!=av->mPlayingAnimations.end();it++)
-	{
-		anims[i++]=it->first;
-	}
-}

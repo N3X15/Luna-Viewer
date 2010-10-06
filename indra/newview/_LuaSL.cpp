@@ -1894,6 +1894,61 @@ static int LuaBase_print (lua_State *L) {
 	return 0;
 }
 
+
+// Returns a table of LLUUIDs.
+/*
+local anims = getPlayingAnimations(getMyID())
+...
+*/
+int getPlayingAnimations(lua_State*L)
+{
+	int n = lua_gettop(L);  /* number of arguments */
+	if(n!=1)
+	{
+		return luaL_error(L,"getPlayAnimation(target_id): Parameter 1 is missing.");
+	}
+	
+	const char *uuid_s;
+	lua_pushvalue(L, -1);  /* function to be called */
+	lua_pushvalue(L, 1);   /* value to print */
+	lua_call(L, 1, 1);
+	size_t l;
+	uuid_s = lua_tolstring(L, -1, &l);  /* get result */
+
+	if(!LLUUID::validate(std::string(uuid_s)))
+		return luaL_error(L,"getPlayAnimation(target_id): Parameter 1 is not a UUID.");
+
+	LLViewerObject *o=gObjectList.findObject(LLUUID(uuid_s));
+
+	if(!o || !o->isAvatar())
+		return luaL_error(L,"getPlayAnimation(target_id): Parameter 1 does not target an avatar.");
+
+	LLVOAvatar *av=(LLVOAvatar *)o;
+	LLVOAvatar::AnimIterator it = av->mPlayingAnimations.begin();
+	int i=0;
+	
+	lua_newtable(L);
+    int top = lua_gettop(L);
+    int index = 1;
+	for(it;it!=av->mPlayingAnimations.end();it++)
+	{
+		//key
+		lua_pushinteger(L,index);
+
+		//value
+		LLUUID *data=(LLUUID *)lua_newuserdata(L,sizeof(LLUUID));
+		data->set(it->first.asString());
+
+		// set the table entry
+		lua_settable(L, -3);
+
+		++index;
+	}
+    // push the new table
+    lua_pushvalue(L,-1);
+    return 1;
+}
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -15551,35 +15606,6 @@ fail:
 }
 
 
-static int _wrap_getPlayingAnimations(lua_State* L) {
-  int SWIG_arg = 0;
-  LLUUID arg1 ;
-  LLUUID *arg2 = (LLUUID *) 0 ;
-  bool result;
-  
-  SWIG_check_num_args("getPlayingAnimations",2,2)
-  if(!lua_isstring(L,1)) SWIG_fail_arg("getPlayingAnimations",1,"LLUUID");
-  if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("getPlayingAnimations",2,"LLUUID *");
-  
-  SWIG_contract_assert((&arg1)->set(lua_tostring(L,1),false),"Must be of UUID format.");
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_LLUUID,0))){
-    SWIG_fail_ptr("getPlayingAnimations",2,SWIGTYPE_p_LLUUID);
-  }
-  
-  result = (bool)getPlayingAnimations(arg1,arg2);
-  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
 static int _wrap_LuaSaveWearable(lua_State* L) {
   int SWIG_arg = 0;
   LLWearable *arg1 = (LLWearable *) 0 ;
@@ -21649,7 +21675,6 @@ static const struct luaL_reg swig_commands[] = {
     { "RemoveAllWearables", _wrap_RemoveAllWearables},
     { "startAnimation", _wrap_startAnimation},
     { "stopAnimation", _wrap_stopAnimation},
-    { "getPlayingAnimations", _wrap_getPlayingAnimations},
     { "LuaSaveWearable", _wrap_LuaSaveWearable},
     { "LuaLoadWearable", _wrap_LuaLoadWearable},
     { "setTEImage", _wrap_setTEImage},
@@ -21660,6 +21685,7 @@ static const struct luaL_reg swig_commands[] = {
     { "getMyID", _wrap_getMyID},
     { "getMyName", _wrap_getMyName},
     { "LuaGetAvatar", _wrap_LuaGetAvatar},
+    { "getPlayingAnimations",getPlayingAnimations},
     { "Vector42LLColor4", _wrap_Vector42LLColor4},
     { "LLColor42Vector4", _wrap_LLColor42Vector4},
     { "ParticleSystem_AttachToObject_Event", _wrap_ParticleSystem_AttachToObject_Event},

@@ -37,7 +37,6 @@ void LuaRemoveAllWearables();
 
 void startAnimation(LLUUID avid, LLUUID movement);
 void stopAnimation(LLUUID avid, LLUUID movement);
-bool getPlayingAnimations(LLUUID avid, LLUUID* anims);
 
 // Utility functions
 bool LuaSaveWearable(LLWearable *w);
