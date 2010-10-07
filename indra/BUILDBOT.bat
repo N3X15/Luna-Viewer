@@ -1,4 +1,5 @@
 @echo off
+:: %1 = VC version to use (VS2005/VS2008*/VS2010)
 
 :: Dick with settings
 call ..\scripts\automated_build_scripts\update_settings.bat
@@ -11,9 +12,12 @@ set BUILDTYPE=Release
 ::	Will fail without cygwin, so find a better way.
 ::find newview/ -name "*.cpp" -print | C:\lua5.1\lua ../scripts/GetHooks.lua
 
-:: Generator: VC80 = Visual C++ 2005, VC90 = Visual C++ 2008 (use this)
-set GEN="VC90"
+set GEN="NMake Buildscripts"
+
 python ./develop.py --type=%BUILDTYPE% -G "%GEN%" configure -DPACKAGE:BOOL=TRUE -DLL_TESTS:BOOL=FALSE
 ::python ./develop.py --type=%BUILDTYPE% -G "%GEN%" build
-rem VERBOSE=1
+
+:: Prep for nmake horseassery.
+..\scripts\automated_build_scripts\env\%1.bat
+
 pause
