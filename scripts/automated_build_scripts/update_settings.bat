@@ -21,3 +21,4 @@ echo *** Editing indra/newview/app_settings/settings_per_account.xml...
 python.exe ../scripts/settings.py --target-file=%PER_ACCT% --set=%FuckingSettings%
 python.exe ../scripts/settings.py --target-file=%PER_ACCT% --set-type=AscentDoubleClickTeleport=BOOL;RadarChatKeys=BOOL;AscentBuildAlwaysEnabled=BOOL;PrivateLookAt=BOOL
 
+cd

@@ -15,7 +15,10 @@ set BUILDTYPE=Release
 set GEN=NMake Makefiles
 
 @rem Prep for nmake horseassery.
-cmake -G "%GEN%" -DUNATTENDED:BOOL=OFF -DSTANDALONE:BOOL=OFF -DWORD_SIZE:STRING=32 -DOPENSIM_RULES:BOOL=OFF -DROOT_PROJECT_NAME:STRING=Luna
+md build-NMake90
+cd build-NMake90
+cmake -G "%GEN%" -DUNATTENDED:BOOL=OFF -DSTANDALONE:BOOL=OFF -DWORD_SIZE:STRING=32 -DOPENSIM_RULES:BOOL=OFF -DROOT_PROJECT_NAME:STRING=Luna ..
+cd ..
 @rem python ./develop.py --type=%BUILDTYPE% -G "%GEN%" build
 
 set
