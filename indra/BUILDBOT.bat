@@ -1,24 +1,21 @@
 @echo off
-:: %1 = VC version to use (VS2005/VS2008*/VS2010)
+@rem %1 = VC version to use (VS2005/VS2008*/VS2010)
 
-:: Dick with settings
+@rem Dick with settings
 call ..\scripts\automated_build_scripts\update_settings.bat
 
-:: Set your build type here.  Release = no debugging symbols.  RelWithDebInfo = Optimized with debugging symbols. Debug = FAT AND SLOW, MUCH LIKE YOUR MOTHER
+@rem Set your build type here.  Release = no debugging symbols.  RelWithDebInfo = Optimized with debugging symbols. Debug = FAT AND SLOW, MUCH LIKE YOUR MOTHER
 set BUILDTYPE=Release
 
-::TODO: Turn this into a horrific python monstrosity.
-::	Gather hooks in order to generate documentation.
-::	Will fail without cygwin, so find a better way.
-::find newview/ -name "*.cpp" -print | C:\lua5.1\lua ../scripts/GetHooks.lua
+@rem TODO: Turn this into a horrific python monstrosity.
+@rem	Gather hooks in order to generate documentation.
+@rem	Will fail without cygwin, so find a better way.
+@rem find newview/ -name "*.cpp" -print | C:\lua5.1\lua ../scripts/GetHooks.lua
 
-set GEN="NMake Makefiles"
+set GEN=NMake Makefiles
 
-:python ./develop.py --type=%BUILDTYPE% -G "%GEN%" configure -DPACKAGE:BOOL=TRUE -DLL_TESTS:BOOL=FALSE VERBOSE=1
+@rem Prep for nmake horseassery.
 cmake -G "%GEN%" -DUNATTENDED:BOOL=OFF -DSTANDALONE:BOOL=OFF -DWORD_SIZE:STRING=32 -DOPENSIM_RULES:BOOL=OFF -DROOT_PROJECT_NAME:STRING=Luna
-::python ./develop.py --type=%BUILDTYPE% -G "%GEN%" build
+@rem python ./develop.py --type=%BUILDTYPE% -G "%GEN%" build
 
-:: Prep for nmake horseassery.
-..\scripts\automated_build_scripts\env\%1.bat
-
-pause
+set
