@@ -14,4 +14,4 @@ echo "//Purposefully blank (SWIG is stupid)" > newview/_LuaSL.h
 find newview/ -name "*.cpp" -print | lua ../scripts/GetHooks.lua
 
 echo "*** AND NOW FOR OUR FEATURE PRESENTATION"
-CXX="ccache distcc g++" ./develop.py --type=${BUILDTYPE} configure && ./develop.py --type=${BUILDTYPE} build #VERBOSE=1
+CXX="ccache distcc g++" ./develop.py --type=${BUILDTYPE} configure -DSTANDALONE:BOOL=TRUE && ./develop.py --type=${BUILDTYPE} build #VERBOSE=1
