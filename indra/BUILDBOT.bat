@@ -1,4 +1,4 @@
-@echo off
+::@echo off
 @rem %1 = VC version to use (VS2005/VS2008*/VS2010)
 
 @rem Dick with settings
@@ -21,4 +21,6 @@ cmake -G "%GEN%" -DUNATTENDED:BOOL=OFF -DSTANDALONE:BOOL=OFF -DWORD_SIZE:STRING=
 cd ..
 @rem python ./develop.py --type=%BUILDTYPE% -G "%GEN%" build
 
+(set GEN=)
+(set BUILDTYPE=)
 set
