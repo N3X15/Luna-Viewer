@@ -12,9 +12,10 @@ set BUILDTYPE=Release
 ::	Will fail without cygwin, so find a better way.
 ::find newview/ -name "*.cpp" -print | C:\lua5.1\lua ../scripts/GetHooks.lua
 
-set GEN="NMake Buildscripts"
+set GEN="NMake Makefiles"
 
-python ./develop.py --type=%BUILDTYPE% -G "%GEN%" configure -DPACKAGE:BOOL=TRUE -DLL_TESTS:BOOL=FALSE
+:python ./develop.py --type=%BUILDTYPE% -G "%GEN%" configure -DPACKAGE:BOOL=TRUE -DLL_TESTS:BOOL=FALSE VERBOSE=1
+cmake -G "%GEN%" -DUNATTENDED:BOOL=OFF -DSTANDALONE:BOOL=OFF -DWORD_SIZE:STRING=32 -DOPENSIM_RULES:BOOL=OFF -DROOT_PROJECT_NAME:STRING=Luna
 ::python ./develop.py --type=%BUILDTYPE% -G "%GEN%" build
 
 :: Prep for nmake horseassery.
