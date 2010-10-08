@@ -32,8 +32,10 @@
 
 #include "linden_common.h"
 
+#include "lldir.h"
 #include "llpostprocess.h"
 #include "llglslshader.h"
+#include "llshadermgr.h"
 #include "llsdserialize.h"
 #include "llrender.h"
 
@@ -60,7 +62,7 @@ LLPostProcess::LLPostProcess(void) :
 	mNoiseTexture = NULL ;
 	mTempBloomTexture = NULL ;
 					
-	/*  Do nothing.  Needs to be updated to use our current shader system, and to work with the move into llrender.
+	//Do nothing.  Needs to be updated to use our current shader system, and to work with the move into llrender.
 	std::string pathName(gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS, "windlight", XML_FILENAME));
 	LL_DEBUGS2("AppInit", "Shaders") << "Loading PostProcess Effects settings from " << pathName << LL_ENDL;
 
@@ -108,7 +110,6 @@ LLPostProcess::LLPostProcess(void) :
 	}
 
 	setSelectedEffect("default");
-	*/
 }
 
 LLPostProcess::~LLPostProcess(void)
@@ -145,7 +146,7 @@ void LLPostProcess::setSelectedEffect(std::string const & effectName)
 
 void LLPostProcess::saveEffect(std::string const & effectName)
 {
-	/*  Do nothing.  Needs to be updated to use our current shader system, and to work with the move into llrender.
+	//Do nothing.  Needs to be updated to use our current shader system, and to work with the move into llrender.
 	mAllEffects[effectName] = tweaks;
 
 	std::string pathName(gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS, "windlight", XML_FILENAME));
@@ -156,7 +157,7 @@ void LLPostProcess::saveEffect(std::string const & effectName)
 	LLPointer<LLSDFormatter> formatter = new LLSDXMLFormatter();
 
 	formatter->format(mAllEffects, effectsXML);
-	*/
+
 }
 void LLPostProcess::invalidate()
 {
@@ -228,15 +229,15 @@ void LLPostProcess::applyShaders(void)
 
 void LLPostProcess::applyColorFilterShader(void)
 {	
-	/*  Do nothing.  Needs to be updated to use our current shader system, and to work with the move into llrender.
-	gPostColorFilterProgram.bind();
+	//Do nothing.  Needs to be updated to use our current shader system, and to work with the move into llrender.
+	//gPostColorFilterProgram.bind(); the fuck is this
 
 	gGL.getTexUnit(0)->activate();
 	gGL.getTexUnit(0)->enable(LLTexUnit::TT_RECT_TEXTURE);
 
-	gGL.getTexUnit(0)->bindManual(LLTexUnit::TT_RECT_TEXTURE, sceneRenderTexture);
+	gGL.getTexUnit(0)->bindManual(LLTexUnit::TT_RECT_TEXTURE, mSceneRenderTexture);
 
-	getShaderUniforms(colorFilterUniforms, gPostColorFilterProgram.mProgramObject);
+	getShaderUniforms(colorFilterUniforms, LLShaderMgr::instance()->mShaderObjects["effects/colorFilterF.glsl"]);
 	glUniform1iARB(colorFilterUniforms["RenderTexture"], 0);
 	glUniform1fARB(colorFilterUniforms["brightness"], tweaks.getBrightness());
 	glUniform1fARB(colorFilterUniforms["contrast"], tweaks.getContrast());
@@ -255,8 +256,7 @@ void LLPostProcess::applyColorFilterShader(void)
 		
 	/// Draw a screen space quad
 	drawOrthoQuad(screenW, screenH, QUAD_NORMAL);
-	gPostColorFilterProgram.unbind();
-	*/
+	//gPostColorFilterProgram.unbind(); // THE FUCK IS THIS
 }
 
 void LLPostProcess::createColorFilterShader(void)
@@ -272,7 +272,7 @@ void LLPostProcess::createColorFilterShader(void)
 
 void LLPostProcess::applyNightVisionShader(void)
 {	
-	/*  Do nothing.  Needs to be updated to use our current shader system, and to work with the move into llrender.
+	//Do nothing.  Needs to be updated to use our current shader system, and to work with the move into llrender.
 	gPostNightVisionProgram.bind();
 
 	gGL.getTexUnit(0)->activate();
@@ -305,7 +305,6 @@ void LLPostProcess::applyNightVisionShader(void)
 	drawOrthoQuad(screenW, screenH, QUAD_NOISE);
 	gPostNightVisionProgram.unbind();
 	gGL.getTexUnit(0)->activate();
-	*/
 }
 
 void LLPostProcess::createNightVisionShader(void)

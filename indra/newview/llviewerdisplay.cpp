@@ -885,6 +885,8 @@ void display(BOOL rebuild, F32 zoom_factor, int subfield, BOOL for_snapshot)
 		if (LLPipeline::sRenderDeferred && !LLPipeline::sUnderWaterRender)
 		{
 			gPipeline.renderDeferredLighting();
+			// LUNA: Be a dick
+			gPostProcess->apply(gViewerWindow->getWindowDisplayWidth(), gViewerWindow->getWindowDisplayHeight());
 		}
 
 		LLPipeline::sUnderWaterRender = FALSE;

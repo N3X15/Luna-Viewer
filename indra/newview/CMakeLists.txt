@@ -74,15 +74,15 @@ include_directories(
     )
 
 set(viewer_SOURCE_FILES
-	a_phoenixviewerlink.cpp
+    a_phoenixviewerlink.cpp
     ascentfloatercontactgroups.cpp
     ascentprefssys.cpp
     ascentprefsvan.cpp
     ascentuploadbrowser.cpp
     dhparam.cpp
     dsaparam.cpp
-	phoenix.cpp
-	phoenixboobutils.cpp
+    phoenix.cpp
+    phoenixboobutils.cpp
     dofloaterhex.cpp
     dohexeditor.cpp
     floatersculptpreview.cpp
@@ -93,10 +93,10 @@ set(viewer_SOURCE_FILES
     hippopanelgrids.cpp
     jcfloaterareasearch.cpp
     chatbar_as_cmdline.cpp
-	growlmanager.cpp
-	growlnotifier.cpp
-	streamtitledisplay.cpp
-	floaterskinfinder.cpp
+    growlmanager.cpp
+    growlnotifier.cpp
+    streamtitledisplay.cpp
+    floaterskinfinder.cpp
     llagent.cpp
     llagentaccess.cpp
     llagentdata.cpp
@@ -352,6 +352,7 @@ set(viewer_SOURCE_FILES
     llpatchvertexarray.cpp
     llpolymesh.cpp
     llpolymorph.cpp
+    llpostprocess.cpp
     llprefschat.cpp
     llprefsim.cpp
     llprefsvoice.cpp
@@ -507,9 +508,8 @@ set(viewer_SOURCE_FILES
     pipeline.cpp
     scriptcounter.cpp
     wlfPanel_AdvSettings.cpp
-	floaterblacklist.cpp
+    floaterblacklist.cpp
     lunaconsole.cpp
-    
 #    LunaVoxelSurface.cpp
 #    LunaVOVoxelSurface.cpp
     LuaUI.cpp
@@ -561,7 +561,7 @@ set(viewer_HEADER_FILES
     ascentprefsvan.h
     ascentuploadbrowser.h
     phoenix.h
-	phoenixboobutils.h
+    phoenixboobutils.h
     dofloaterhex.h
     dohexeditor.h
     floatersculptpreview.h
@@ -572,10 +572,10 @@ set(viewer_HEADER_FILES
     hippopanelgrids.h
     jcfloaterareasearch.h
     chatbar_as_cmdline.h
-	growlmanager.h
-	growlnotifier.h
-	streamtitledisplay.h
-	floaterskinfinder.h
+    growlmanager.h
+    growlnotifier.h
+    streamtitledisplay.h
+    floaterskinfinder.h
     llagent.h
     llagentaccess.h
     llagentdata.h
@@ -846,6 +846,7 @@ set(viewer_HEADER_FILES
     llpreviewtexture.h
     llproductinforequest.h
     llprogressview.h
+	llpostprocess.h
     llregionposition.h
     llremoteparcelrequest.h
     llresourcedata.h
@@ -996,7 +997,7 @@ set(viewer_HEADER_FILES
     VertexCache.h
     VorbisFramework.h
     wlfPanel_AdvSettings.h
-	floaterblacklist.h
+    floaterblacklist.h
     )
 
 source_group("CMake Rules" FILES ViewerInstall.cmake)
@@ -1637,10 +1638,10 @@ if (WINDOWS)
       TARGET ${VIEWER_BINARY_NAME} POST_BUILD
       COMMAND ${CMAKE_COMMAND}
       ARGS 
-	 -E
-	 copy_if_different
-	 ${mime_types_source}/mime_types_windows.xml 
-	 ${mime_types_dest}/mime_types.xml
+     -E
+     copy_if_different
+     ${mime_types_source}/mime_types_windows.xml 
+     ${mime_types_dest}/mime_types.xml
       COMMENT "Copying mime_types_windows.xml to mime_types.xml."
       )
   

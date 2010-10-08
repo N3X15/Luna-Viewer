@@ -32,7 +32,7 @@ set(llrender_SOURCE_FILES
     llgldbg.cpp
     llglslshader.cpp
     llimagegl.cpp
-    llpostprocess.cpp
+#    llpostprocess.cpp
     llrendersphere.cpp
     llshadermgr.cpp
     llvertexbuffer.cpp
@@ -53,7 +53,7 @@ set(llrender_HEADER_FILES
     llglstates.h
     llgltypes.h
     llimagegl.h
-    llpostprocess.h
+#    llpostprocess.h
     llrender.h
     llrendersphere.h
     llshadermgr.h

@@ -53,8 +53,7 @@ int getPlayingAnimations(lua_State*L)
 		lua_pushinteger(L,index);
 
 		//value
-		LLUUID *data=(LLUUID *)lua_newuserdata(L,sizeof(LLUUID));
-		data->set(it->first.asString());
+		lua_pushlstring(L,(&it->first)->asString().data(),(&it->first)->asString().size());
 
 		// set the table entry
 		lua_settable(L, -3);

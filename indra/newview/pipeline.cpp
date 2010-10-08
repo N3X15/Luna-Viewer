@@ -5404,6 +5404,7 @@ void LLPipeline::bindDeferredShader(LLGLSLShader& shader, U32 light_index)
 	}
 
 	shader.uniform4fv("shadow_clip", 1, mSunClipPlanes.mV);
+	// LUNA: What the hell, put these in a static variable or something, jesus christ
 	shader.uniform1f("sun_wash", gSavedSettings.getF32("RenderDeferredSunWash"));
 	shader.uniform1f("shadow_noise", gSavedSettings.getF32("RenderShadowNoise"));
 	shader.uniform1f("blur_size", gSavedSettings.getF32("RenderShadowBlurSize"));

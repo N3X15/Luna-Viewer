@@ -271,6 +271,10 @@ BOOL LLShaderMgr::attachShaderFeatures(LLGLSLShader * shader)
 			}
 		}
 	}
+
+	if(!shader->attachObject("effects/NightVisionF.glsl"))
+		return FALSE;
+
 	return TRUE;
 }
 
