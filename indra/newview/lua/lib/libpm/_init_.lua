@@ -5,7 +5,9 @@
 	Mostly version checking/Deptracking in here.
 ]]--
 Packages={}
-LPM={}
+LPM={
+	RemotePackages={} -- Package={Name,Version,Depends={},}
+}
 
 --dofile "download.lua"
 --dofile "config.lua"

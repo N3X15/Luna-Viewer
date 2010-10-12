@@ -1841,8 +1841,9 @@ bool idle_startup()
 	//---------------------------------------------------------------------
 	if (STATE_WORLD_INIT == LLStartUp::getStartupState())
 	{
-		//first of all, let's check if wind should be used
-		gAudiop->enableWind(gSavedSettings.getBOOL("WindEnabled"));
+		//first of all, let's check if wind <s>should be used</s> is null
+		if(gAudiop)
+			gAudiop->enableWind(gSavedSettings.getBOOL("WindEnabled"));
 		
 		set_startup_status(0.40f, LLTrans::getString("LoginInitializingWorld"), gAgent.mMOTD);
 		display_startup();

@@ -53,6 +53,6 @@ def main():
     f.close()
         
     return 0
-
-if __name__ == "__main__":
-    main()
+#Broken
+#if __name__ == "__main__":
+#    main()

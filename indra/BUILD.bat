@@ -12,7 +12,7 @@ call ..\scripts\automated_build_scripts\update_settings.bat
 @rem find newview/ -name "*.cpp" -print | C:\lua5.1\lua ../scripts/GetHooks.lua
 
 @rem  Generator: VC80 = Visual C++ 2005, VC90 = Visual C++ 2008 (use this)
-@set GEN="VC90"
+@set GEN="VC80"
 python ./develop.py --type=%BUILDTYPE% -G "%GEN%" configure -DPACKAGE:BOOL=TRUE -DLL_TESTS:BOOL=FALSE
 @rem python ./develop.py --type=%BUILDTYPE% -G "%GEN%" build
 rem VERBOSE=1

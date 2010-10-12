@@ -1,30 +1,39 @@
+@echo off
 @rem Shared settings configurator.
 @rem	Sets up settings.xml and company.
 @set BASEDIR=%~dp0\..\..\indra\newview\app_settings
 @set PER_ACCT=%BASEDIR%\settings_per_account.xml
 @set ALL_ACCT=%BASEDIR%\settings.xml
 
-FuckingSettings=""
-FuckingSettings=%FuckingSettings%LunaCmdLineLua=/lua;
-FuckingSettings=%FuckingSettings%LunaCmdLineMacro=/m;
-@rem 2010-09-26T22:06:21Z WARNING: LLControlGroup::getBOOL: Invalid BOOL control AscentBuildAlwaysEnabled
-@rem 2010-09-26T22:06:21Z WARNING: LLControlGroup::getBOOL: Invalid BOOL control PrivateLookAt
-FuckingSettings=%FuckingSettings%AscentDoubleClickTeleport=1;
-FuckingSettings=%FuckingSettings%RadarChatKeys=1;
-FuckingSettings=%FuckingSettings%AscentBuildAlwaysEnabled=1;
-FuckingSettings=%FuckingSettings%PrivateLookAt=1;
-FuckingSettings=%FuckingSettings%DefaultGrid=inworldz;
+@rem Settings values
+set Settings=""
+set Settings=%Settings%LunaCmdLineLua=/lua;
+set Settings=%Settings%LunaCmdLineMacro=/m;
+set Settings=%Settings%AscentDoubleClickTeleport=1;
+set Settings=%Settings%RadarChatKeys=1;
+set Settings=%Settings%AscentBuildAlwaysEnabled=1;
+set Settings=%Settings%PrivateLookAt=1;
+set Settings=%Settings%DefaultGrid=inworldz;
+set Settings=%Settings%RenderUseStreamVBO=False
 
-@REM set PER_ACCT=../indra/newview/app_settings/settings_per_account.xml
+@rem Fix types
+set Types=""
+set Types=%Types%AscentDoubleClickTeleport=Boolean;
+set Types=%Types%RadarChatKeys=Boolean;
+set Types=%Types%AscentBuildAlwaysEnabled=Boolean;
+set Types=%Types%PrivateLookAt=Boolean;
+set Types=%Types%RenderUseStreamVBO=Boolean
 
 echo *** Editing %ALL_ACCT%...
-python.exe ../scripts/settings.py --target-file=%ALL_ACCT% --set=%FuckingSettings%
-python.exe ../scripts/settings.py --target-file=%ALL_ACCT% --set-type=AscentDoubleClickTeleport=BOOL;RadarChatKeys=BOOL;AscentBuildAlwaysEnabled=BOOL;PrivateLookAt=BOOL
+python.exe ../scripts/settings.py --target-file=%ALL_ACCT% --set=%Settings%
+python.exe ../scripts/settings.py --target-file=%ALL_ACCT% --set-type=%Types%
 
 echo *** Editing %PER_ACCT%...
-python.exe ../scripts/settings.py --target-file=%PER_ACCT% --set=%FuckingSettings%
-python.exe ../scripts/settings.py --target-file=%PER_ACCT% --set-type=AscentDoubleClickTeleport=BOOL;RadarChatKeys=BOOL;AscentBuildAlwaysEnabled=BOOL;PrivateLookAt=BOOL
+python.exe ../scripts/settings.py --target-file=%PER_ACCT% --set=%Settings%
+python.exe ../scripts/settings.py --target-file=%PER_ACCT% --set-type=%Types%
 
 @(set BASEDIR=)
 @(set PER_ACCT=)
 @(set ALL_ACCT=)
+@(set Settings=)
+@(set Types=)

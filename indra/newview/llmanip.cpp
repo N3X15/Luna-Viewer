@@ -59,6 +59,8 @@
 #include "pipeline.h"
 #include "llglheaders.h"
 
+using boost::bind;
+
 // Local constants...
 const S32 VERTICAL_OFFSET = 50;
 
@@ -106,11 +108,11 @@ LLManip::LLManip( const std::string& name, LLToolComposite* composite )
 {
 	initPivot();
 
-	gSavedSettings.getControl("AscentBuildPrefs_ActualRoot")->getSignal()->connect(&updateActualRoot);
-	gSavedSettings.getControl("AscentBuildPrefs_PivotIsPercent")->getSignal()->connect(&updatePivotIsPercent);
-	gSavedSettings.getControl("AscentBuildPrefs_PivotX")->getSignal()->connect(&updatePivotX);
-	gSavedSettings.getControl("AscentBuildPrefs_PivotY")->getSignal()->connect(&updatePivotY);
-	gSavedSettings.getControl("AscentBuildPrefs_PivotZ")->getSignal()->connect(&updatePivotZ);
+	gSavedSettings.getControl("AscentBuildPrefs_ActualRoot")->getSignal()->connect(boost::bind(&updateActualRoot, _1));
+	gSavedSettings.getControl("AscentBuildPrefs_PivotIsPercent")->getSignal()->connect(boost::bind(&updatePivotIsPercent, _1));
+	gSavedSettings.getControl("AscentBuildPrefs_PivotX")->getSignal()->connect(boost::bind(&updatePivotX, _1));
+	gSavedSettings.getControl("AscentBuildPrefs_PivotY")->getSignal()->connect(boost::bind(&updatePivotY, _1));
+	gSavedSettings.getControl("AscentBuildPrefs_PivotZ")->getSignal()->connect(boost::bind(&updatePivotZ, _1));
 }
 //static
 void LLManip::initPivot()

@@ -97,7 +97,7 @@ class Settings(object):
         try:
             self.stuff[key]['Type']=t
             value=self.stuff[key]['Value']
-            if t=='BOOL':
+            if t=='Boolean':
                 if str(value).lower()=='true' or value==1:
                     value=1
                 else:

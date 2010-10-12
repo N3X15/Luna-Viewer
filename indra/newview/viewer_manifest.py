@@ -45,20 +45,20 @@ class ViewerManifest(LLManifest):
         self.exclude("*.svn*")
         self.path(src="../../scripts/messages/message_template.msg", dst="app_settings/message_template.msg")
         self.path(src="../../etc/message.xml", dst="app_settings/message.xml")
-	
-	self.path(src="../../doc/license.htm",dst="readme.htm")
-	
-	if self.prefix(src="lua"):
-            self.path("*.lua")
-            # Plugins
-            self.path("Hooks")
-            # Macros
-            self.path("Macros")
-            # Libraries
-            self.path("lib")
-            # Plugin data
-            self.path("data")
-            self.end_prefix("lua")
+    
+        self.path(src="../../doc/license.htm",dst="readme.htm")
+        
+        if self.prefix(src="lua"):
+                self.path("*.lua")
+                # Plugins
+                self.path("Hooks")
+                # Macros
+                self.path("Macros")
+                # Libraries
+                self.path("lib")
+                # Plugin data
+                self.path("data")
+                self.end_prefix("lua")
 
         if self.prefix(src="app_settings"):
             self.exclude("logcontrol.xml")
@@ -189,7 +189,7 @@ class WindowsManifest(ViewerManifest):
                                'llplugin', 'slplugin', self.args['configuration'], "SLPlugin.exe"),
                   "SLPlugin.exe")
         
-      	# need to get the kdu dll from any of the build directories as well
+          # need to get the kdu dll from any of the build directories as well
         #try:
         #    self.path(self.find_existing_file('../llkdu/%s/llkdu.dll' % self.args['configuration'],
         #        '../../libraries/i686-win32/lib/release/llkdu.dll'), 
@@ -198,14 +198,17 @@ class WindowsManifest(ViewerManifest):
         #except:
         #    print "Skipping llkdu.dll"
         #    pass
-		
-		
+        
+        
         if self.prefix(src=os.path.join(os.pardir, os.pardir, 'libraries', 'i686-win32', 'lib', self.args['configuration']), dst=""):
-            self.path('libapr-1.dll')
-            self.path('libaprutil-1.dll')
-            self.path('libapriconv-1.dll')
+            try:
+                self.path('libapr-1.dll')
+                self.path('libaprutil-1.dll')
+                self.path('libapriconv-1.dll')
+            except:
+                print("Skipping LibAPR, something broke.");
             self.end_prefix()
-		
+        
         self.path(src="licenses-win32.txt", dst="licenses.txt")
 
         self.path("featuretable.txt")
@@ -307,8 +310,8 @@ class WindowsManifest(ViewerManifest):
                     self.end_prefix()
 
                 self.end_prefix()
-			
-		# Lua modules, plugins, etc
+            
+        # Lua modules, plugins, etc
         if self.prefix(src="../../libraries/i686-win32/lib/release", dst=""):
             self.path("lfs.dll") # Lua filesystem module
             self.path("bit.dll") # Bitwise operators
@@ -320,7 +323,7 @@ class WindowsManifest(ViewerManifest):
 
         # These need to be installed as a SxS assembly, currently a 'private' assembly.
         # See http://msdn.microsoft.com/en-us/library/ms235291(VS.80).aspx
-		# WHAT THE HELL IS WRONG WITH YOU
+        # WHAT THE HELL IS WRONG WITH YOU
         #if self.prefix(src=self.args['configuration'], dst=""):
         #    if self.args['configuration'] == 'Debug':
         #        self.path("msvcr90d.dll")
@@ -333,7 +336,7 @@ class WindowsManifest(ViewerManifest):
         #    self.end_prefix()
 
         # The config file name needs to match the exe's name.
-		# Not required, and the VC90 build fucks this up anyway - N3X15
+        # Not required, and the VC90 build fucks this up anyway - N3X15
         #self.path(src="Luna.exe.config", dst=self.final_exe() + ".config")
 
         # pull in the crash logger and updater from other projects
@@ -344,7 +347,7 @@ class WindowsManifest(ViewerManifest):
                   dst="updater.exe")
 
     def nsi_file_commands(self, install=True):
-		
+        
         def wpath(path):
             if path.endswith('/') or path.endswith(os.path.sep):
                 path = path[:-1]
@@ -365,7 +368,7 @@ class WindowsManifest(ViewerManifest):
                 if install:
                     out_path = installed_dir
                     result += 'SetOutPath ' + out_path + '\n'
-			# TRY PUTTING QUOTES AROUND FILENAMES SO CRAP DOESN'T BREAK, IDIOTS
+            # TRY PUTTING QUOTES AROUND FILENAMES SO CRAP DOESN'T BREAK, IDIOTS
             if install:
                 result += 'File \"' + pkg_file + '\"\n'
             else:
@@ -663,9 +666,9 @@ class DarwinManifest(ViewerManifest):
         # one for release candidate and one for first look. Any other channels
         # will use the release .DS_Store, and will look broken.
         # - Ambroff 2008-08-20
-		# Added a .DS_Store for snowglobe - Merov 2009-06-17
-		
-		# We have a single branded installer for all snowglobe channels so snowglobe logic is a bit different
+        # Added a .DS_Store for snowglobe - Merov 2009-06-17
+        
+        # We have a single branded installer for all snowglobe channels so snowglobe logic is a bit different
         if (self.app_name()=="Snowglobe"):
             dmg_template = os.path.join ('installers', 'darwin', 'snowglobe-dmg')
         else:
@@ -781,7 +784,7 @@ class LinuxManifest(ViewerManifest):
             else:
                 installer_name += '_' + self.channel_oneword().upper()
 
-#	installer_name = 'Luna-git'
+#    installer_name = 'Luna-git'
 
         # Fix access permissions
         self.run_command("""
