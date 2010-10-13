@@ -677,10 +677,6 @@ bool LLAppViewer::init()
 	settings_to_globals();
 	// Setup settings listeners
 	settings_setup_listeners();
-	// <edit>
-	// Setup AO settings listener
-	LLAO::setup();
-	// </edit>
 	// Modify settings based on system configuration and compile options
 	settings_modify();
 
@@ -840,6 +836,12 @@ bool LLAppViewer::init()
 
 	// Luna Lua Engine startup!
 	FLLua::init();
+	
+	// LUNA: Moved here since it's dependent on Lua now.
+	// <edit>
+	// Setup AO settings listener
+	LLAO::setup();
+	// </edit>
 	return true;
 }
 
@@ -877,6 +879,7 @@ bool LLAppViewer::mainLoop()
 	while (!LLApp::isExiting())
 	{
 		LLFastTimer::reset(); // Should be outside of any timer instances
+		
 		try
 		{
 			LLFastTimer t(LLFastTimer::FTM_FRAME);

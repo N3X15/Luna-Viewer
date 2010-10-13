@@ -197,6 +197,7 @@ void LuaSendRawChat(const char* rawmsg, int rawtype, bool animate, S32 channel)
 
 void LuaError(const char* rawmsg)
 {
+	llwarns << rawmsg << llendl;
 	std::string msg(rawmsg);
 	LLChat err(msg);
 	err.mSourceType=CHAT_SOURCE_LUA;
