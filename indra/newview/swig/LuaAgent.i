@@ -9,6 +9,8 @@
 %rename (StartAnimation) 		LuaStartAnimation;
 %rename (StopAnimation) 		LuaStopAnimation;
 
+%native(findInventoryInFolder) int findInventoryInFolder(lua_State *L); 
+
 %native(getPlayingAnimations) int getPlayingAnimations(lua_State*L);
 %{
 // Returns a table of LLUUIDs.

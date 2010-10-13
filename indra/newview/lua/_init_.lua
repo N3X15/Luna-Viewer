@@ -60,6 +60,14 @@ function dirtree(dir)
 	return coroutine.wrap(function() yieldtree(dir) end)
 end
 
+function table.flip(t)
+	r={}
+	for v,k in ipairs(t) do
+		r[k]=v
+	end
+	return r
+end
+
 -- String functions
 function string.starts(String,Start)
    return string.sub(String,1,string.len(Start))==Start
@@ -68,6 +76,11 @@ end
 function string.ends(String,End)
    return End=='' or string.sub(String,-string.len(End))==End
 end
+
+function trim (s)
+	return (string.gsub(s, "^%s*(.-)%s*$", "%1"))
+end
+
 
 -- return a new array containing the concatenation of all of its 
 -- parameters. Scaler parameters are included in place, and array 

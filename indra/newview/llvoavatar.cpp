@@ -5342,9 +5342,10 @@ std::string LLVOAvatar::getIdleTime()
 BOOL LLVOAvatar::startMotion(const LLUUID& id, F32 time_offset)
 {
 	LLMemType mt(LLMemType::MTYPE_AVATAR);
+	BOOL is_female=(getSex() == SEX_FEMALE);
 	
-	// @hook OnAnimStart(is_self,is_female,id,time_offset) For AOs.
-	LUA_CALL("OnAnimStart") << mIsSelf << (getSex() == SEX_FEMALE) << id << time_offset << LUA_END;
+	// @hook OnAnimStart(is_self,id,time_offset) For AOs.
+	LUA_CALL("OnAnimStart") << mIsSelf << id << time_offset << LUA_END;
 
 	// <edit>
 	if(mIsSelf)

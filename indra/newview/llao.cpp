@@ -89,83 +89,17 @@ LLAOStandTimer::LLAOStandTimer(F32 period) : LLEventTimer(period)
 }
 BOOL LLAOStandTimer::tick()
 {
-	if(!mPaused && LLAO::isEnabled() && !LLAO::mStandOverrides.empty())
-	{
-#ifdef AO_DEBUG
-		llinfos << "tick" << llendl;
-#endif
-		LLVOAvatar* avatarp = gAgent.getAvatarObject();
-		if (avatarp)
-		{
-			for ( LLVOAvatar::AnimIterator anim_it =
-					  avatarp->mPlayingAnimations.begin();
-				  anim_it != avatarp->mPlayingAnimations.end();
-				  anim_it++)
-			{
-				if(LLAO::isStand(anim_it->first))
-				{
-					//back is always last played, front is next
-					avatarp->stopMotion(LLAO::getBackUUID());
-#ifdef AO_DEBUG
-					//llinfos << "Stopping " << LLAO::mStandOverrides.back() << llendl;
-#endif
-					avatarp->startMotion(LLAO::getFrontUUID());
-#ifdef AO_DEBUG
-					//llinfos << "Starting " << LLAO::mStandOverrides.front() << llendl;
-#endif
-					LLAO::mStandOverrides.push_back(LLAO::mStandOverrides.front());
-					LLAO::mStandOverrides.pop_front();
-					LLFloaterAO* ao = LLFloaterAO::sInstance;
-					if(ao)
-					{
-						//ao->mStandsCombo->setSimple(LLStringExplicit(LLAO::mStandOverrides.back().asString()));
-					}
-					break;
-				}
-			}
-		}
-	}
-	return FALSE;
+	return TRUE;
 }
 
 void LLAOStandTimer::pause()
 {
-	if(mPaused) return;
-#ifdef AO_DEBUG
-	llinfos << "Pausing AO Timer...." << llendl;
-#endif
-	LLVOAvatar* avatarp = gAgent.getAvatarObject();
-	if (avatarp)
-	{
-#ifdef AO_DEBUG
-		//llinfos << "Stopping " << LLAO::mStandOverrides.back() << llendl;
-#endif
-		gAgent.sendAnimationRequest(LLAO::getBackUUID(), ANIM_REQUEST_STOP);
-		avatarp->stopMotion(LLAO::getBackUUID());
-	}
-	mEventTimer.reset();
-	mEventTimer.stop();
-	mPaused = TRUE;
+	mPaused=TRUE;
 }
 
 void LLAOStandTimer::resume()
 {
-	if(!mPaused) return;
-#ifdef AO_DEBUG
-	llinfos << "Unpausing AO Timer...." << llendl;
-#endif
-	LLVOAvatar* avatarp = gAgent.getAvatarObject();
-	if (avatarp)
-	{
-#ifdef AO_DEBUG
-		//llinfos << "Starting " << LLAO::mStandOverrides.back() << llendl;
-#endif
-		gAgent.sendAnimationRequest(LLAO::getBackUUID(), ANIM_REQUEST_START);
-		avatarp->startMotion(LLAO::getBackUUID());
-	}
-	mEventTimer.reset();
-	mEventTimer.start();
-	mPaused = FALSE;
+	mPaused=false;
 }
 
 // Used for sorting
@@ -187,62 +121,29 @@ void LLAOStandTimer::reset()
 void LLAO::setup()
 {
 	mEnabled = gSavedSettings.getBOOL("AO.Enabled");
-	mPeriod = gSavedSettings.getF32("AO.Period");
-	mTimer = new LLAOStandTimer(mPeriod);
-	mAnimationIndex = 0;
-	mLastAnimation = LLUUID::null;
-	gSavedSettings.getControl("AO.Enabled")->getSignal()->connect(boost::bind(&handleAOEnabledChanged, _1));
+	
+	std::string ao_enabled_cmd="AO.Disabled=";
+	ao_enabled_cmd.append((mEnabled) ? "false" : "true"); // NOT
+	FLLua::callCommand(ao_enabled_cmd);
+
 	gSavedSettings.getControl("AO.Period")->getSignal()->connect(boost::bind(&handleAOPeriodChanged, _1));
 }
 //static
 void LLAO::runAnims(BOOL enabled)
 {
-	LLVOAvatar* avatarp = gAgent.getAvatarObject();
-	if (avatarp)
-	{
-		for ( LLVOAvatar::AnimIterator anim_it =
-				  avatarp->mPlayingAnimations.begin();
-			  anim_it != avatarp->mPlayingAnimations.end();
-			  anim_it++)
-		{
-			if(LLAO::mOverrides.find(anim_it->first) != LLAO::mOverrides.end())
-			{
-				LLUUID anim_id = mOverrides[anim_it->first];
-				// this is an override anim
-				if(enabled)
-				{
-					// make override start
-					avatarp->startMotion(anim_id);
-				}
-				else
-				{
-					avatarp->stopMotion(anim_id);
-					gAgent.sendAnimationRequest(anim_id, ANIM_REQUEST_STOP);
-				}
-			}
-		}
-		if(mTimer)
-		{
-			if(enabled)
-				mTimer->resume();
-			else
-				mTimer->pause();
-		}
-	}
 }
 //static
 bool LLAO::handleAOPeriodChanged(const LLSD& newvalue)
 {
-	F32 value = (F32)newvalue.asReal();
-	mPeriod = value;
 	return true;
 }
 //static
 bool LLAO::handleAOEnabledChanged(const LLSD& newvalue)
 {
 	BOOL value = newvalue.asBoolean();
-	mEnabled = value;
-	runAnims(value);
+	std::string ao_enabled_cmd="AO.Disabled=";
+	ao_enabled_cmd.append((value) ? "false" : "true"); // NOT
+	FLLua::callCommand(ao_enabled_cmd);
 	return true;
 }
 //static
@@ -287,9 +188,27 @@ void LLAO::refresh()
 	mOverrides.clear();
 	mAnimationOverrides.clear();
 	LLSD settings = gSavedPerAccountSettings.getLLSD("AO.Settings");
-	//S32 version = (S32)settings["version"].asInteger();
+
 	mAnimationOverrides = settings["overrides"];
-	llinfos << "Stand count: " << mAnimationOverrides["Stands"].size() << llendl;
+	
+	LLSD::map_iterator stateIter = settings["overrides"].beginMap();
+	LLSD::array_iterator animIter;
+
+	std::string ao_enabled_cmd="AO.AnimationOverrides={";
+	for(;stateIter!=settings.endMap();stateIter++)
+	{
+		std::string state = stateIter->first;
+		animIter=stateIter->second.beginArray();
+		ao_enabled_cmd.append("[\""+state+"\"]={");
+		for(;animIter!=stateIter->second.endArray();animIter++)
+		{
+			std::string anim = (*animIter).asUUID().asString();
+			ao_enabled_cmd.append("\""+anim+"\",");
+		}
+		ao_enabled_cmd.append("},");
+	}
+	ao_enabled_cmd.append("}");
+	FLLua::callCommand(ao_enabled_cmd);
 }
 
 //static ------------- Floater
@@ -468,10 +387,11 @@ void LLFloaterAO::onClickAnimAdd(void* user_data)
 		llinfos << "Actually adding animation, this should be refreshed. Count:" << LLAO::mAnimationOverrides[floater->mCurrentAnimType].size() << llendl;
 #endif
 		LLAO::mAnimationOverrides[floater->mCurrentAnimType].append(anim_name);
+		FLLua::callCommand("AO:AddAnimation(\""+floater->mCurrentAnimType+"\",\""+id.asString()+"\")");
 #ifdef AO_DEBUG
 		llinfos << "Added animation. Count:" << LLAO::mAnimationOverrides[floater->mCurrentAnimType].size() << llendl;
 #endif
-		LLAO::mTimer->reset();
+		//LLAO::mTimer->reset();
 	}
 	onCommitAnim(NULL,user_data);
 }
@@ -491,6 +411,7 @@ BOOL LLFloaterAO::handleDragAndDrop(S32 x, S32 y, MASK mask, BOOL drop,
 			LLInventoryItem* item = (LLInventoryItem*)cargo_data;
 			if (item && gInventory.getItem(item->getUUID()))
 			{
+				// @hook OnAONotecard(asset_id)
 				LUA_CALL("OnAONotecard") << item->getUUID() << LUA_END;
 			}
 		}
@@ -515,7 +436,7 @@ BOOL LLFloaterAO::handleDragAndDrop(S32 x, S32 y, MASK mask, BOOL drop,
 #ifdef AO_DEBUG
 						llinfos << "Added animation. Count:" << LLAO::mAnimationOverrides[mCurrentAnimType].size() << llendl;
 #endif
-						LLAO::mTimer->reset();
+						//LLAO::mTimer->reset();
 						onCommitAnim(NULL,this);
 					}
 					refresh();
@@ -549,7 +470,7 @@ void LLFloaterAO::onClickSave(void* user_data)
 	{
 		std::string file_name = file_picker.getFirstFile();
 		llofstream export_file(file_name);
-		LLSDSerialize::toPrettyXML(gSavedPerAccountSettings.getLLSD("AO.Settings"), export_file);
+		LLSDSerialize::toXML(gSavedPerAccountSettings.getLLSD("AO.Settings"), export_file);
 		export_file.close();
 	}
 }

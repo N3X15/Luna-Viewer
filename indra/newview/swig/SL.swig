@@ -26,8 +26,9 @@
 
 
 
-
-
+// Try and pass the lua_State to a function. (used for functions that return tables)
+%typemap(in, numinputs=0) lua_State* 
+%{ $1 = L; %}
 
 //Fixed for Visual Studio
 //Has to be in begin section. VS will choke if this include isn't the very

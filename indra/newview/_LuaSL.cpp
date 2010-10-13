@@ -1571,19 +1571,17 @@ SWIG_Lua_dostring(lua_State *L, const char* str) {
 #define SWIGTYPE_p_std__mapT_std__string_double_t swig_types[59]
 #define SWIGTYPE_p_std__string swig_types[60]
 #define SWIGTYPE_p_std__vectorT_LLCharacter_p_t swig_types[61]
-#define SWIGTYPE_p_std__vectorT_LLUUID_t swig_types[62]
-#define SWIGTYPE_p_std__vectorT_std__string_t swig_types[63]
-#define SWIGTYPE_p_unsigned_char swig_types[64]
-#define SWIGTYPE_p_unsigned_int swig_types[65]
-#define SWIGTYPE_p_unsigned_long_long swig_types[66]
-#define SWIGTYPE_p_unsigned_short swig_types[67]
-#define SWIGTYPE_p_valid_iterator swig_types[68]
-#define SWIGTYPE_p_valid_root_iterator swig_types[69]
-#define SWIGTYPE_p_vobj_list_t swig_types[70]
-#define SWIGTYPE_p_void swig_types[71]
-#define SWIGTYPE_p_wchar_t swig_types[72]
-static swig_type_info *swig_types[74];
-static swig_module_info swig_module = {swig_types, 73, 0, 0, 0, 0};
+#define SWIGTYPE_p_unsigned_char swig_types[62]
+#define SWIGTYPE_p_unsigned_int swig_types[63]
+#define SWIGTYPE_p_unsigned_long_long swig_types[64]
+#define SWIGTYPE_p_unsigned_short swig_types[65]
+#define SWIGTYPE_p_valid_iterator swig_types[66]
+#define SWIGTYPE_p_valid_root_iterator swig_types[67]
+#define SWIGTYPE_p_vobj_list_t swig_types[68]
+#define SWIGTYPE_p_void swig_types[69]
+#define SWIGTYPE_p_wchar_t swig_types[70]
+static swig_type_info *swig_types[72];
+static swig_module_info swig_module = {swig_types, 71, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -21440,40 +21438,6 @@ static swig_lua_class *swig_WLSky_bases[] = {0};
 static const char *swig_WLSky_base_names[] = {0};
 static swig_lua_class _wrap_class_WLSky = { "WLSky", &SWIGTYPE_p_WLSky,_wrap_new_WLSky, swig_delete_WLSky, swig_WLSky_methods, swig_WLSky_attributes, swig_WLSky_bases, swig_WLSky_base_names };
 
-static int _wrap_findInventoryInFolder(lua_State* L) {
-  int SWIG_arg = 0;
-  std::string *arg1 = 0 ;
-  std::vector< std::string > *arg2 = 0 ;
-  std::vector< LLUUID > *arg3 = 0 ;
-  std::string temp1 ;
-  
-  SWIG_check_num_args("findInventoryInFolder",3,3)
-  if(!lua_isstring(L,1)) SWIG_fail_arg("findInventoryInFolder",1,"std::string const &");
-  if(!lua_isuserdata(L,2)) SWIG_fail_arg("findInventoryInFolder",2,"std::vector< std::string > &");
-  if(!lua_isuserdata(L,3)) SWIG_fail_arg("findInventoryInFolder",3,"std::vector< LLUUID > &");
-  temp1.assign(lua_tostring(L,1),lua_strlen(L,1)); arg1=&temp1;
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,2,(void**)&arg2,SWIGTYPE_p_std__vectorT_std__string_t,0))){
-    SWIG_fail_ptr("findInventoryInFolder",2,SWIGTYPE_p_std__vectorT_std__string_t);
-  }
-  
-  
-  if (!SWIG_IsOK(SWIG_ConvertPtr(L,3,(void**)&arg3,SWIGTYPE_p_std__vectorT_LLUUID_t,0))){
-    SWIG_fail_ptr("findInventoryInFolder",3,SWIGTYPE_p_std__vectorT_LLUUID_t);
-  }
-  
-  findInventoryInFolder((std::string const &)*arg1,*arg2,*arg3);
-  
-  return SWIG_arg;
-  
-  if(0) SWIG_fail;
-  
-fail:
-  lua_error(L);
-  return SWIG_arg;
-}
-
-
 static int _wrap_giveInventoryItem(lua_State* L) {
   int SWIG_arg = 0;
   LLUUID arg1 ;
@@ -21685,6 +21649,7 @@ static const struct luaL_reg swig_commands[] = {
     { "getMyID", _wrap_getMyID},
     { "getMyName", _wrap_getMyName},
     { "LuaGetAvatar", _wrap_LuaGetAvatar},
+    { "findInventoryInFolder",findInventoryInFolder},
     { "getPlayingAnimations",getPlayingAnimations},
     { "Vector42LLColor4", _wrap_Vector42LLColor4},
     { "LLColor42Vector4", _wrap_LLColor42Vector4},
@@ -21753,7 +21718,6 @@ static const struct luaL_reg swig_commands[] = {
     { "WLSky_GetDistanceMult", _wrap_WLSky_GetDistanceMult},
     { "WLSky_SetCloudScale", _wrap_WLSky_SetCloudScale},
     { "WLSky_GetCloudScale", _wrap_WLSky_GetCloudScale},
-    { "findInventoryInFolder", _wrap_findInventoryInFolder},
     { "giveInventoryItem", _wrap_giveInventoryItem},
     { "getCategoryUUID", _wrap_getCategoryUUID},
     { "requestInventoryAsset",_wrap_requestInventoryAsset},
@@ -21936,8 +21900,6 @@ static swig_type_info _swigt__p_skip_list_t = {"_p_skip_list_t", "skip_list_t *"
 static swig_type_info _swigt__p_std__mapT_std__string_double_t = {"_p_std__mapT_std__string_double_t", "std::map< std::string,double > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__string = {"_p_std__string", "std::string *", 0, 0, (void*)&_wrap_class_std_string, 0};
 static swig_type_info _swigt__p_std__vectorT_LLCharacter_p_t = {"_p_std__vectorT_LLCharacter_p_t", "std::vector< LLCharacter * > *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_std__vectorT_LLUUID_t = {"_p_std__vectorT_LLUUID_t", "std::vector< LLUUID > *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_std__vectorT_std__string_t = {"_p_std__vectorT_std__string_t", "std::vector< std::string > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_unsigned_char = {"_p_unsigned_char", "unsigned char *|KEY *|U8 *|LLPCode *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_unsigned_int = {"_p_unsigned_int", "unsigned int *|U32 *|MASK *|TPACKETID *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_unsigned_long_long = {"_p_unsigned_long_long", "unsigned long long *|U64 *", 0, 0, (void*)0, 0};
@@ -22011,8 +21973,6 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_std__mapT_std__string_double_t,
   &_swigt__p_std__string,
   &_swigt__p_std__vectorT_LLCharacter_p_t,
-  &_swigt__p_std__vectorT_LLUUID_t,
-  &_swigt__p_std__vectorT_std__string_t,
   &_swigt__p_unsigned_char,
   &_swigt__p_unsigned_int,
   &_swigt__p_unsigned_long_long,
@@ -22086,8 +22046,6 @@ static swig_cast_info _swigc__p_skip_list_t[] = {  {&_swigt__p_skip_list_t, 0, 0
 static swig_cast_info _swigc__p_std__mapT_std__string_double_t[] = {  {&_swigt__p_std__mapT_std__string_double_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__string[] = {  {&_swigt__p_std__string, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__vectorT_LLCharacter_p_t[] = {  {&_swigt__p_std__vectorT_LLCharacter_p_t, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_std__vectorT_LLUUID_t[] = {  {&_swigt__p_std__vectorT_LLUUID_t, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_std__vectorT_std__string_t[] = {  {&_swigt__p_std__vectorT_std__string_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_unsigned_char[] = {  {&_swigt__p_unsigned_char, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_unsigned_int[] = {  {&_swigt__p_unsigned_int, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_unsigned_long_long[] = {  {&_swigt__p_unsigned_long_long, 0, 0, 0},{0, 0, 0, 0}};
@@ -22161,8 +22119,6 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_std__mapT_std__string_double_t,
   _swigc__p_std__string,
   _swigc__p_std__vectorT_LLCharacter_p_t,
-  _swigc__p_std__vectorT_LLUUID_t,
-  _swigc__p_std__vectorT_std__string_t,
   _swigc__p_unsigned_char,
   _swigc__p_unsigned_int,
   _swigc__p_unsigned_long_long,

@@ -66,22 +66,34 @@ LLUUID getCategoryUUID(const std::string& path)
 {
 	return TraverseCategories(path);
 }
-void findInventoryInFolder(const std::string& ifolder,std::vector<std::string>& rcats,std::vector<LLUUID>& ritems)
+int findInventoryInFolder(lua_State*L)
 {
-	LLUUID folder = gInventory.findCategoryByName(ifolder);
+	std::string *ifolder = new std::string(luaL_checkstring(L,1));
+
+	LLUUID folder = gInventory.findCategoryByName(*ifolder);
 	LLViewerInventoryCategory::cat_array_t cats;
 	LLViewerInventoryItem::item_array_t items;
 	//ObjectContentNameMatches objectnamematches(ifolder);
 	gInventory.collectDescendents(folder,cats,items,FALSE);//,objectnamematches);
 	
-	for(int i = 0;i<cats.count();++i)
+	std::map<std::string,std::string> table_cats;
+	std::map<std::string,std::string> table_items;
+
+	for(int i = 0;i<cats.count();i++)
 	{
-		rcats.push_back(((LLViewerInventoryCategory *)cats.get(i))->getName());
+		std::string name = ((LLViewerInventoryCategory *)cats.get(i))->getName();
+		std::string id = ((LLViewerInventoryCategory *)cats.get(i))->getLinkedUUID().asString();
+		table_cats[id]=name;
 	}
-	for(int i = 0;i<items.count();++i)
+	for(int i = 0;i<items.count();i++)
 	{
-		ritems.push_back(((LLViewerInventoryItem *)items.get(i))->getUUID());
+		std::string name = ((LLViewerInventoryItem *)items.get(i))->getName();
+		std::string id = ((LLViewerInventoryItem *)items.get(i))->getLinkedUUID().asString();
+		table_items[id]=name;
 	}
+	PushTable(L,table_cats);
+	PushTable(L,table_items);
+	return 2;
 }
 void giveInventoryItem_Event(LLUUID &to_agent, LLUUID &item_id, LLUUID &im_session_id)
 {

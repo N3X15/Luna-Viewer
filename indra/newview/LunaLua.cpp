@@ -638,3 +638,42 @@ std::string  Lua_getErrorMessage(lua_State *L)
 	}
 	return "";
 }
+
+void PushTable(lua_State*L, std::map<std::string,std::string> dongs)
+{
+	lua_newtable(L);
+	std::map<std::string,std::string>::iterator it=dongs.begin();
+	for(it;it!=dongs.end();it++)
+	{
+		//key
+		lua_pushlstring(L,(&it->first)->data(),(&it->first)->size());
+
+		//value
+		lua_pushlstring(L,(&it->second)->data(),(&it->second)->size());
+
+		// set the table entry
+		lua_settable(L, -3);
+	}
+    // push the new table
+    lua_pushvalue(L,-1);
+}
+
+void PushTable(lua_State*L, std::vector<std::string> dongs)
+{
+	lua_newtable(L);
+	std::vector<std::string>::iterator it=dongs.begin();
+	int idx=0;
+	for(it;it!=dongs.end();it++)
+	{
+		//key
+		lua_pushinteger(L,++idx);
+
+		//value
+		lua_pushlstring(L,(*it).data(),(*it).size());
+
+		// set the table entry
+		lua_settable(L, -3);
+	}
+    // push the new table
+    lua_pushvalue(L,-1);
+}

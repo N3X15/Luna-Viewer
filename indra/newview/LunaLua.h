@@ -338,5 +338,7 @@ struct CB_Args0 : public CB_Base
 int luaOnPanic(lua_State *L);
 std::string Lua_getErrorMessage(lua_State *L);
 
-
+// Utilities
+void PushTable(lua_State*L,std::map<std::string,std::string> dongs);
+void PushTable(lua_State*L,std::vector<std::string> dongs);
 #endif
