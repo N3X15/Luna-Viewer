@@ -1,7 +1,22 @@
 --[[
-Blah blah blah GPLv2, I don't care.
+	Luna Lua AO Plugin
+		by N3X15
 
-Rob N3X15 Nelson
+	Copyright (C) 2008-2010 Luna Contributors
+
+	This program is free software; you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation; either version 2 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License along
+	with this program; if not, write to the Free Software Foundation, Inc.,
+	51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 ]]--
 
 AO={}
@@ -13,6 +28,7 @@ AO.AnimationOverrides={}
 AO.CurrentAnimation=UUID_nil
 AO.CurrentState=""
 AO.Disabled=false
+AO.Debug=false -- TURN ON DEBUG MODE (/lua AO.Debug=true)
 
 --OnAnimStart(is_self,id,time_offset) For AOs.
 local function AOOnAnimStart(is_self,id,time_offset)
@@ -26,19 +42,21 @@ local function AOOnAnimStart(is_self,id,time_offset)
 	if AnimationStates[id] ~= nil and AO.CurrentAnimation~= id then
 		state=AnimationStates[id]
 		if AO.CurrentState ~= state then
-			print("[AO] State changed to "..state)
+			AO:DebugInfo("[AO] State changed to "..state)
 			AO.CurrentState=state
 		end
 		if (AO.AnimationOverrides==nil or AO.AnimationOverrides[id]==nil) then return end
 		numreplacements=table.getn(AO.AnimationOverrides[id])
 		replacements=AO.AnimationOverrides[id]
 		if AO.CurrentAnimation ~= UUID_nil then
-			stopAnimation(AO.CurrentAnimation)
+			AO:DebugInfo("Stopping motion "..AO.CurrentAnimation)
+			stopAnimation(getMyID(),AO.CurrentAnimation)
 		end
 		if numreplacements > 0 then
 			AO.CurrentAnimation=replacements[math.random(1,numreplacements)]
-			stopAnimation(id)
-			startAnimation(AO.CurrentAnimation)
+			stopAnimation(getMyID(),id)
+			AO:DebugInfo("Playing motion "..AO.CurrentAnimation)
+			startAnimation(getMyID(), AO.CurrentAnimation)
 		end
 	end
 end
@@ -50,6 +68,13 @@ function AO:AddOverride(state,anim)
 	i=table.getn(AO.AnimationOverrides[state])+1
 	self.AnimationOverrides[state][i]=anim
 end
+
+function AO:DebugInfo(msg)
+	if self.Debug==true then
+		print("[AO]: "..msg)
+	end
+end
+
 -- Lines
 function AO:ReadZHAO(input)
 --[[
