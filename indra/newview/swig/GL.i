@@ -34,6 +34,8 @@
 
 // Linden library includes
 // MIA: #include "audioengine.h"
+
+#include "llglheaders.h"
 #include "v2math.h"
 #include "v4color.h"
 #include "llrender.h"
@@ -47,10 +49,9 @@
 
 %include <std_string.i>
 %include "LLUUID.i"
-//%include "LLVector.i" // Getting lots of redefinition errors...
 
 //%include "../../llrender/llrender.h" // GL drawing methods
-//%include "../../llrender/llglheaders.h" // GL drawing methods
+%include "../../llrender/llglheaders.h" // GL drawing methods
 
 %include "../LunaGL.h"
 

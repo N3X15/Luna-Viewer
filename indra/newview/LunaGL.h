@@ -137,4 +137,28 @@ void debugTexUnits();
 
 void clearErrors();
 
+
+// Image shit
+LLViewerImage * getImage(const LLUUID &image_id,
+	   bool usemipmaps=true,
+	   bool level_immediate=false,
+	   int internal_format=0,
+	   int primary_format=0,
+	   LLHost request_from_host=LLHost());
+
+LLViewerImage * getImageFromUrl(const std::string& url,
+	   bool usemipmaps=true,
+	   bool level_immediate=false,
+	   int internal_format=0,
+	   int primary_format=0,
+	   const LLUUID& force_id=LLUUID::null);
+
+LLViewerImage * getImageFromFile(const std::string& filename,
+	   bool usemipmaps=true,
+	   bool level_immediate=false,
+	   int internal_format=0,
+	   int primary_format=0,
+	   const LLUUID& force_id=LLUUID::null);
+
+LLImageGL* getViewerImage2GL(LLViewerImage* in);
 #endif

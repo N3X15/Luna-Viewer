@@ -1549,7 +1549,7 @@ Returns the maximum number of prims allowed on the parcel at pos
   <string name="LSLTipText_llGetParcelDetails">
 list llGetParcelDetails(vector pos, list params)
 Returns the parcel details specified in params for the parcel at pos.
-Params is one or more of: PARCEL_DETAILS_NAME, _DESC, _OWNER, _GROUP, _AREA
+Params is one or more of: PARCEL_DETAILS_NAME, _DESC, _OWNER, _GROUP, _AREA, _ID
   </string>
   <string name="LSLTipText_llSetLinkPrimitiveParams">
 llSetLinkPrimitiveParams(integer linknumber, list rules)
@@ -1671,6 +1671,10 @@ Returns the value for header for request_id
   <string name="LSLTipText_llSetLinkTextureAnim">
     llSetLinkTextureAnim(integer link, integer mode, integer face, integer sizex, integer sizey, float start, float length, float rate)
     Animate the texture on the specified face/faces of the specified prim/prims by setting the texture scale and offset.
+  </string>
+  <string name="LSLTipText_llGetLinkNumberOfSides">
+    integer llGetLinkNumberOfSides(integer link)
+    Returns an integer that is the number of faces (or sides) of the prim link.
   </string>
 </strings>
 

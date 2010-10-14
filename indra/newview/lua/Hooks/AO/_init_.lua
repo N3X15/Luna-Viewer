@@ -23,7 +23,7 @@ local function AOOnAnimStart(is_self,id,time_offset)
 	
 	--print("[AO] Animation playing "..id)
 	
-	if AnimationStates[id] ~= nil then
+	if AnimationStates[id] ~= nil and AO.CurrentAnimation~= id then
 		state=AnimationStates[id]
 		if AO.CurrentState ~= state then
 			print("[AO] State changed to "..state)
@@ -43,6 +43,13 @@ local function AOOnAnimStart(is_self,id,time_offset)
 	end
 end
 
+function AO:AddOverride(state,anim)
+	if self.AnimationOverrides[state] == nil then
+		self.AnimationOverrides[state]={}
+	end
+	i=table.getn(AO.AnimationOverrides[state])+1
+	self.AnimationOverrides[state][i]=anim
+end
 -- Lines
 function AO:ReadZHAO(input)
 --[[

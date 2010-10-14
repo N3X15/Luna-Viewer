@@ -633,6 +633,10 @@ static S32 buildBlock(U8* buffer, S32 buffer_size, const LLMessageBlock* templat
 	LLMsgData::msg_blk_data_map_t::const_iterator block_iter = message_data->mMemberBlocks.find(template_data->mName);
 	const LLMsgBlkData* mbci = block_iter->second;
 		
+	// LUNA: Crashfix
+	if(mbci == NULL)
+		return 0;
+
 	// ok, if this is the first block of a repeating pack, set
 	// block_count and, if it's type MBT_VARIABLE encode a byte
 	// for how many there are

@@ -5,6 +5,8 @@
 #include "LunaGL.h"
 
 #include "llrender.h"
+#include "llviewerimage.h"
+#include "llviewerimagelist.h"
 
 
 // Refreshes renderer state to the cached values
@@ -76,3 +78,48 @@ bool verifyTexUnitActive(int unitToVerify) 						{ return gGL.verifyTexUnitActiv
 void debugTexUnits() 									{ gGL.debugTexUnits(); }
 
 void clearErrors() 									{ gGL.clearErrors(); }
+
+// Image shit
+LLViewerImage* getImage(const LLUUID &image_id,
+	   bool usemipmaps,
+	   bool level_immediate,
+	   int internal_format,
+	   int primary_format,
+	   LLHost request_from_host)
+{
+	return gImageList.getImage(image_id,(BOOL)usemipmaps,(BOOL)level_immediate,(LLGLint)internal_format,(LLGLenum)primary_format,request_from_host);
+}
+
+LLViewerImage* getImageFromUrl(const std::string& url,
+	   bool usemipmaps,
+	   bool level_immediate,
+	   int internal_format,
+	   int primary_format, 
+	   const LLUUID& force_id)
+{
+	return gImageList.getImageFromUrl(url,(BOOL)usemipmaps,(BOOL)level_immediate,(LLGLint)internal_format,(LLGLenum)primary_format,force_id);
+}
+
+LLViewerImage* getImageFromFile(const std::string& filename,
+	   bool usemipmaps,
+	   bool level_immediate,
+	   int internal_format,
+	   int primary_format, 
+	   const LLUUID& force_id)
+{
+	return gImageList.getImageFromFile(filename,(BOOL)usemipmaps,(BOOL)level_immediate,(LLGLint)internal_format,(LLGLenum)primary_format,force_id);
+}
+
+LLImageGL* getViewerImage2GL(LLViewerImage* in)
+{
+	LLPointer<LLImageGL> glimg = new LLImageGL( FALSE );
+	
+	LLPointer<LLImageRaw> raw = in->getCachedRawImage();
+	
+	raw->expandToPowerOfTwo();
+
+	glimg->createGLTexture(0, raw, 0, TRUE, LLViewerImageBoostLevel::OTHER);
+	LLPointer<LLImageGL> ret = glimg;
+	gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+	return ret;
+}

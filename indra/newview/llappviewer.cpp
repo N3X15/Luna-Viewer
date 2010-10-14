@@ -879,9 +879,10 @@ bool LLAppViewer::mainLoop()
 	while (!LLApp::isExiting())
 	{
 		LLFastTimer::reset(); // Should be outside of any timer instances
-		
+#ifdef CATCH_BAD_ALLOC
 		try
 		{
+#endif
 			LLFastTimer t(LLFastTimer::FTM_FRAME);
 			pingMainloopTimeout("Main:MiscNativeWindowEvents");
 
@@ -1079,7 +1080,7 @@ bool LLAppViewer::mainLoop()
 
 				pingMainloopTimeout("Main:End");
 			}
-
+#ifdef CATCH_BAD_ALLOC
 		}
 		catch(std::bad_alloc)
 		{
@@ -1097,6 +1098,7 @@ bool LLAppViewer::mainLoop()
 				llerrs << "Bad memory allocation in LLAppViewer::mainLoop()!" << llendl ;
 			}
 		}
+#endif
 	}
 
 	// Save snapshot for next time, if we made it through initialization

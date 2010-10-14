@@ -94,12 +94,12 @@ BOOL LLAOStandTimer::tick()
 
 void LLAOStandTimer::pause()
 {
-	mPaused=TRUE;
+	//mPaused=TRUE;
 }
 
 void LLAOStandTimer::resume()
 {
-	mPaused=false;
+	//mPaused=FALSE;
 }
 
 // Used for sorting
@@ -191,18 +191,21 @@ void LLAO::refresh()
 
 	mAnimationOverrides = settings["overrides"];
 	
-	LLSD::map_iterator stateIter = settings["overrides"].beginMap();
-	LLSD::array_iterator animIter;
+	
 
 	std::string ao_enabled_cmd="AO.AnimationOverrides={";
-	for(;stateIter!=settings.endMap();stateIter++)
+	for(
+		LLSD::map_iterator stateIter = mAnimationOverrides.beginMap();
+		stateIter!=mAnimationOverrides.endMap();
+		++stateIter)
 	{
 		std::string state = stateIter->first;
-		animIter=stateIter->second.beginArray();
+		int n = stateIter->second.size();
+		int i;
 		ao_enabled_cmd.append("[\""+state+"\"]={");
-		for(;animIter!=stateIter->second.endArray();animIter++)
+		for(i=0;i<n;i++)
 		{
-			std::string anim = (*animIter).asUUID().asString();
+			std::string anim = mAnimationOverrides[state][i].asString();
 			ao_enabled_cmd.append("\""+anim+"\",");
 		}
 		ao_enabled_cmd.append("},");
