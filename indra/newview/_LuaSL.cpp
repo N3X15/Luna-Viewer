@@ -1924,10 +1924,8 @@ int getPlayingAnimations(lua_State*L)
 
 	LLVOAvatar *av=(LLVOAvatar *)o;
 	LLVOAvatar::AnimIterator it = av->mPlayingAnimations.begin();
-	int i=0;
 	
 	lua_newtable(L);
-    int top = lua_gettop(L);
     int index = 1;
 	for(it;it!=av->mPlayingAnimations.end();it++)
 	{

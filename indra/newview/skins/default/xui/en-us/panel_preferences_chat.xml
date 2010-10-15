@@ -227,6 +227,9 @@
 		<combo_item type="string" length="1" enabled="true" name="Dutch" value="nl">
 			Nederlands (Dutch)
 		</combo_item>
+    <combo_item type="string" length="1" enabled="true" name="Pirate" value="xx-pirate">
+      Pirate (English)
+    </combo_item>
 		<combo_item type="string" length="1" enabled="true" name="Polish" value="pl">
 			Polski (Polish)
 		</combo_item>

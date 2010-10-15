@@ -30,16 +30,17 @@ AO.CurrentState=""
 AO.Disabled=false
 AO.Debug=false -- TURN ON DEBUG MODE (/lua AO.Debug=true)
 
---OnAnimStart(is_self,id,time_offset) For AOs.
-local function AOOnAnimStart(is_self,id,time_offset)
-	if is_self == "0" then return end
+--OnAnimStart(avid,id,time_offset) For AOs.
+local function AOOnAnimStart(av_id,id,time_offset)
+	
+	if av_id == tostring(getMyID()) then return end
 	if AO.Disabled==true then return end
 	
 	id=tostring(id)
 	
-	--print("[AO] Animation playing "..id)
+	print("[AO] Animation playing: "..id)
 	
-	if AnimationStates[id] ~= nil and AO.CurrentAnimation~= id then
+	if AnimationStates[id] ~= nil and AO.CurrentAnimation ~= id then
 		state=AnimationStates[id]
 		if AO.CurrentState ~= state then
 			AO:DebugInfo("[AO] State changed to "..state)

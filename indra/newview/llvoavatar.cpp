@@ -5279,7 +5279,7 @@ BOOL LLVOAvatar::processSingleAnimationStateChange( const LLUUID& anim_id, BOOL 
 		}
 
 
-		if (startMotion(anim_id))
+		if (startMotion(anim_id,0.f,false))
 		{
 			result = TRUE;
 		}
@@ -5339,64 +5339,15 @@ std::string LLVOAvatar::getIdleTime()
 // id is the asset id of the animation to start
 // time_offset is the offset into the animation at which to start playing
 //-----------------------------------------------------------------------------
-BOOL LLVOAvatar::startMotion(const LLUUID& id, F32 time_offset)
+BOOL LLVOAvatar::startMotion(const LLUUID& id, F32 time_offset, bool sentFromLua)
 {
 	LLMemType mt(LLMemType::MTYPE_AVATAR);
-	BOOL is_female=(getSex() == SEX_FEMALE);
 	
-	// @hook OnAnimStart(is_self,id,time_offset) For AOs.
-	LUA_CALL("OnAnimStart") << mIsSelf << id << time_offset << LUA_END;
-
-	// <edit>
-	if(mIsSelf)
+	if(sentFromLua==false)
 	{
-		if(LLAO::isEnabled())
-		{
-			std::string ao_id;
-			if (LLAO::isStand(id))
-			{
-				ao_id = "Stands";
-			}
-			else if (LLAO::isVoice(id))
-			{
-				ao_id = "Voices";
-			}
-			else
-			{
-				ao_id = id.asString();
-			}
-			if (LLAO::mAnimationOverrides[ao_id].size() > 0)
-			{
-				if (LLAO::mLastAnimation.notNull())
-				{
-					gAgent.sendAnimationRequest(LLAO::mLastAnimation, ANIM_REQUEST_STOP);
-					stopMotion(LLAO::mLastAnimation, true);
-				}
-				LLAO::mAnimationIndex++;
-				if (LLAO::mAnimationOverrides[ao_id].size() <= LLAO::mAnimationIndex)
-				{
-					LLAO::mAnimationIndex = 0;
-				}
-				LLUUID new_anim = LLAO::getAssetIDByName(LLAO::mAnimationOverrides[ao_id][LLAO::mAnimationIndex]);
-				llinfos << "Switching to anim #" << LLAO::mAnimationIndex << ": " << LLAO::mAnimationOverrides[ao_id][LLAO::mAnimationIndex] << llendl;
-				gAgent.sendAnimationRequest(new_anim, ANIM_REQUEST_START);
-				startMotion(new_anim, time_offset);
-				LLAO::mLastAnimation = new_anim;
-			}
-			/*if(LLAO::mOverrides.find(id) != LLAO::mOverrides.end())
-			{
-				// avoid infinite loops!
-				if( (id != LLAO::mOverrides[id])
-				 && (LLAO::mOverrides.find(LLAO::mOverrides[id]) == LLAO::mOverrides.end()) )
-				{
-					//llinfos << "AO: Replacing " << id.asString() << " with " << LLAO::mOverrides[id].asString() << llendl;
-					gAgent.sendAnimationRequest(LLAO::mOverrides[id], ANIM_REQUEST_START);
-					startMotion(LLAO::mOverrides[id], time_offset);
-				}
-			}*/
-		}
+		// @hook OnAnimStart(avID,animID,time_offset) For AOs.
+		LUA_CALL("OnAnimStart") << mID << id << time_offset << LUA_END;
 	}
-	// </edit>
 
 	// start special case female walk for female avatars
 	if (getSex() == SEX_FEMALE)
@@ -5452,51 +5403,17 @@ BOOL LLVOAvatar::startMotion(const LLUUID& id, F32 time_offset)
 //-----------------------------------------------------------------------------
 // stopMotion()
 //-----------------------------------------------------------------------------
-BOOL LLVOAvatar::stopMotion(const LLUUID& id, BOOL stop_immediate)
+BOOL LLVOAvatar::stopMotion(const LLUUID& id, BOOL stop_immediate, bool sentFromLua)
 {
 	if (mIsSelf)
 	{
-		
-		// <edit>
-		if(LLAO::isEnabled())
-		{
-			std::string ao_id;
-			if (LLAO::isStand(id))
-			{
-				ao_id = "Stands";
-			}
-			else if (LLAO::isVoice(id))
-			{
-				ao_id = "Voices";
-			}
-			else
-			{
-				ao_id = id.asString();
-			}
-			if (LLAO::mAnimationOverrides[ao_id].size() > 0)
-			{
-				LLUUID new_anim = LLAO::getAssetIDByName(LLAO::mAnimationOverrides[ao_id][LLAO::mAnimationIndex]);
-				gAgent.sendAnimationRequest(new_anim, ANIM_REQUEST_STOP);
-				stopMotion(new_anim, stop_immediate);
-				LLAO::mLastAnimation.setNull();
-			}
-			/*if( (LLAO::mOverrides.find(id) != LLAO::mOverrides.end())
-			 && (id != LLAO::mOverrides[id]) )
-			{
-				gAgent.sendAnimationRequest(LLAO::mOverrides[id], ANIM_REQUEST_STOP);
-				stopMotion(LLAO::mOverrides[id], stop_immediate);
-			}*/
-		}
-		else //if this code ever works without crashing the viewer -HgB
-		{
-			if (LLAO::mLastAnimation != LLUUID::null)
-			{
-				gAgent.sendAnimationRequest(LLAO::mLastAnimation, ANIM_REQUEST_STOP);
-				LLAO::mLastAnimation = LLUUID::null;
-			}
-		}
-		// </edit>
 		gAgent.onAnimStop(id);
+	}
+
+	if(!sentFromLua)
+	{
+		// @hook OnAnimStop(avID,animID) For AOs.
+		LUA_CALL("OnAnimStop") << mID << id << LUA_END;
 	}
 
 	if (id == ANIM_AGENT_WALK)

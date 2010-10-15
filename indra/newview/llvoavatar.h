@@ -198,8 +198,8 @@ public:
 	virtual LLVector3d getPosGlobalFromAgent(const LLVector3 &position);
 	virtual LLVector3 getPosAgentFromGlobal(const LLVector3d &position);
 	virtual void updateVisualParams();
-	virtual BOOL startMotion(const LLUUID& id, F32 time_offset = 0.f);
-	virtual BOOL stopMotion(const LLUUID& id, BOOL stop_immediate = FALSE);
+	virtual BOOL startMotion(const LLUUID& id, F32 time_offset = 0.f, bool sentByLua=false);
+	virtual BOOL stopMotion(const LLUUID& id, BOOL stop_immediate = FALSE, bool sentByLua=false);
 	virtual void stopMotionFromSource(const LLUUID& source_id);
 	virtual LLVector3 getVolumePos(S32 joint_index, LLVector3& volume_offset);
 	virtual LLJoint* findCollisionVolume(U32 volume_id);
