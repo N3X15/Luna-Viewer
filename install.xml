@@ -266,16 +266,16 @@
           <key>darwin</key>
           <map>
             <key>md5sum</key>
-            <string>51c98844053b718c40456bbe90d4fc51</string>
+            <string>bb8552f22769da81593f7d47a51d83d8</string>
             <key>url</key>
-            <uri>http://downloads.phoenixviewer.com/boost-1.41.0-darwin-20091229.tar.bz2</uri>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/boost-1.39.0-darwin-20100226.tar.bz2</uri>
           </map>
           <key>linux</key>
           <map>
             <key>md5sum</key>
-            <string>fff58f38257077f5668f9953145c0392</string>
+            <string>4db3d74e40d149eeec06f4d97a609bb1</string>
             <key>url</key>
-            <uri>http://downloads.phoenixviewer.com/boost-1.42.0-linux-20100911.tar.bz2</uri>
+            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/boost-1.39.0-linux-20100624.tar.bz2</uri>
           </map>
           <key>windows</key>
           <map>
