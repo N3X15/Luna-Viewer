@@ -163,13 +163,13 @@ public:
     }
 
 // Since boost 1.42+ is Windows-only...
-#ifdef LL_WINDOWS
+//#ifdef LL_WINDOWS
     // Needed for boost 1.42
     virtual bool is_required() const
     {
         return false; // All our command line options are optional.
     }
-#endif
+//#endif
 
     virtual bool apply_default(boost::any& value_store) const
     {
