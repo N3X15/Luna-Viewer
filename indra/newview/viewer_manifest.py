@@ -40,6 +40,14 @@ sys.path.append(os.path.join(viewer_dir, '../lib/python/indra/util'))
 from llmanifest import LLManifest, main, proper_windows_path, path_ancestors
 
 class ViewerManifest(LLManifest):
+    def is_packaging_viewer(self):
+        # Some commands, files will only be included
+        # if we are packaging the viewer on windows.
+        # This manifest is also used to copy
+        # files during the build (see copy_w_viewer_manifest
+        # and copy_l_viewer_manifest targets)
+        return 'package' in self.args['actions']
+
     def construct(self):
         super(ViewerManifest, self).construct()
         self.exclude("*.svn*")
@@ -210,7 +218,6 @@ class WindowsManifest(ViewerManifest):
             self.end_prefix()
         
         self.path(src="licenses-win32.txt", dst="licenses.txt")
-
         self.path("featuretable.txt")
 
         # For use in crash reporting (generates minidumps)
@@ -486,15 +493,24 @@ class WindowsManifest(ViewerManifest):
 
         # We use the Unicode version of NSIS, available from
         # http://www.scratchpaper.com/
-        NSIS_path = 'C:\\Program Files\\NSIS\\Unicode\\makensis.exe'
+        # Check two paths, one for Program Files, and one for Program Files (x86).
+        # Yay 64bit windows.
+        NSIS_path = os.path.expandvars('${ProgramFiles}\\NSIS\\Unicode\\makensis.exe')
+        if not os.path.exists(NSIS_path):
+            NSIS_path = os.path.expandvars('${ProgramFiles(x86)}\\NSIS\\Unicode\\makensis.exe')
         self.run_command('"' + proper_windows_path(NSIS_path) + '" ' + self.dst_path_of(tempfile))
         self.remove(self.dst_path_of(tempfile))
         # If we're on a build machine, sign the code using our Authenticode certificate. JC
-        sign_py = os.path.expandvars("{SIGN_PY}")
-        if sign_py == "" or sign_py == "{SIGN_PY}":
+        sign_py = os.path.expandvars("${SIGN}")
+        if not sign_py or sign_py == "${SIGN}":
             sign_py = 'C:\\buildscripts\\code-signing\\sign.py'
+        else:
+            sign_py = sign_py.replace('\\', '\\\\\\\\')
+        python = os.path.expandvars("${PYTHON}")
+        if not python or python == "${PYTHON}":
+            python = 'python'
         if os.path.exists(sign_py):
-            self.run_command('python ' + sign_py + ' ' + self.dst_path_of(installer_file))
+            self.run_command("%s %s %s" % (python, sign_py, self.dst_path_of(installer_file).replace('\\', '\\\\\\\\')))
         else:
             print "Skipping code signing,", sign_py, "does not exist"
         self.created_path(self.dst_path_of(installer_file))
@@ -784,7 +800,9 @@ class LinuxManifest(ViewerManifest):
             else:
                 installer_name += '_' + self.channel_oneword().upper()
 
-#    installer_name = 'Luna-git'
+        if self.args['buildtype'].lower() == 'release':
+            print "* Going strip-crazy on the packaged binaries, since this is a RELEASE build"
+            self.run_command("find %(d)r/bin %(d)r/lib -type f | xargs --no-run-if-empty strip -S" % {'d': self.get_dst_prefix()} ) # makes some small assumptions about our packaged dir structure
 
         # Fix access permissions
         self.run_command("""
@@ -811,7 +829,6 @@ class LinuxManifest(ViewerManifest):
                 'dir': self.get_build_prefix(),
                 'inst_name': installer_name,
                 'inst_path':self.build_path_of(installer_name)})
-            print ''
         finally:
             self.run_command("mv '%(inst)s' '%(dst)s'" % {
                 'dst': self.get_dst_prefix(),
@@ -857,7 +874,7 @@ class Linux_i686Manifest(LinuxManifest):
             self.path("libexpat.so.1")
             self.path("libssl.so.0.9.7")
             #self.path("libuuid.so.1") #PHOE-617
-            self.path("libSDL-1.2.so.0")
+            #self.path("libSDL-1.2.so.0")
             self.path("libELFIO.so")
             self.path("libalut.so")
             self.path("libopenal.so", "libopenal.so.1")
@@ -865,13 +882,13 @@ class Linux_i686Manifest(LinuxManifest):
             self.end_prefix("lib")
 
             # Vivox runtimes
-            if self.prefix(src="vivox-runtime/i686-linux", dst="bin"):
-                    self.path("SLVoice")
-                    self.end_prefix()
-            if self.prefix(src="vivox-runtime/i686-linux", dst="lib"):
-                    self.path("libortp.so")
-                    self.path("libvivoxsdk.so")
-                    self.end_prefix("lib")
+#            if self.prefix(src="vivox-runtime/i686-linux", dst="bin"):
+#                    self.path("SLVoice")
+#                    self.end_prefix()
+#            if self.prefix(src="vivox-runtime/i686-linux", dst="lib"):
+#                    self.path("libortp.so")
+#                    self.path("libvivoxsdk.so")
+#                    self.end_prefix("lib")
 
 class Linux_x86_64Manifest(LinuxManifest):
     def construct(self):
