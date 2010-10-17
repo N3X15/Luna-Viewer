@@ -716,7 +716,7 @@ F32 LLVOAvatar::sLODFactor = 1.f;
 BOOL LLVOAvatar::sUseImpostors = FALSE;
 BOOL LLVOAvatar::sJointDebug = FALSE;
 
-AscentGlobalBoobConfig LLVOAvatar::sBoobConfig;
+PhoenixGlobalBoobConfig LLVOAvatar::sBoobConfig;
 
 F32 LLVOAvatar::sAvMorphTime			= 0.65f;
 
@@ -1002,11 +1002,11 @@ LLVOAvatar::LLVOAvatar(const LLUUID& id,
 	}
 
 	// grab the boob savedparams (prob a better place for this)
-	sBoobConfig.mass             = AscentBoobUtils::convertMass(gSavedSettings.getF32("AscentBoobMass"));
-	sBoobConfig.hardness         = AscentBoobUtils::convertHardness(gSavedSettings.getF32("AscentBoobHardness"));
-	sBoobConfig.velMax           = AscentBoobUtils::convertVelMax(gSavedSettings.getF32("AscentBoobVelMax"));
-	sBoobConfig.velMin           = AscentBoobUtils::convertVelMin(gSavedSettings.getF32("AscentBoobVelMin"));
-	sBoobConfig.friction         = AscentBoobUtils::convertFriction(gSavedSettings.getF32("AscentBoobFriction"));
+	sBoobConfig.mass             = PhoenixBoobUtils::convertMass(gSavedSettings.getF32("AscentBoobMass"));
+	sBoobConfig.hardness         = PhoenixBoobUtils::convertHardness(gSavedSettings.getF32("AscentBoobHardness"));
+	sBoobConfig.velMax           = PhoenixBoobUtils::convertVelMax(gSavedSettings.getF32("AscentBoobVelMax"));
+	sBoobConfig.velMin           = PhoenixBoobUtils::convertVelMin(gSavedSettings.getF32("AscentBoobVelMin"));
+	sBoobConfig.friction         = PhoenixBoobUtils::convertFriction(gSavedSettings.getF32("AscentBoobFriction"));
 	sBoobConfig.enabled          = gSavedSettings.getBOOL("AscentBreastPhysicsToggle");
 	sBoobConfig.XYInfluence		 = gSavedSettings.getF32("AscentBoobXYInfluence");
 
@@ -3009,7 +3009,7 @@ void LLVOAvatar::idleUpdateBoobEffect()
 		// BOOBS
 		param = getVisualParam(105); //boob size
 		mLocalBoobConfig.boobSize = param->getCurrentWeight();
-		AscentBoobInputs boobInputs;
+		PhoenixBoobInputs boobInputs;
 		boobInputs.type = 0;
 		boobInputs.chestPosition	= mChestp->getWorldPosition();
 		boobInputs.chestRotation	= mChestp->getWorldRotation();
@@ -3017,7 +3017,7 @@ void LLVOAvatar::idleUpdateBoobEffect()
 		boobInputs.appearanceFlag	= getAppearanceFlag();
 
 
-		AscentBoobState newBoobState = AscentBoobUtils::idleUpdate(sBoobConfig, mLocalBoobConfig, mBoobState, boobInputs);
+		PhoenixBoobState newBoobState = PhoenixBoobUtils::idleUpdate(sBoobConfig, mLocalBoobConfig, mBoobState, boobInputs);
 
 		if(mBoobState.boobGrav != newBoobState.boobGrav)
 		{

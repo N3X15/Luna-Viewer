@@ -527,9 +527,9 @@ private:
 public:
 	bool			mFirstSetActualBoobGravRan;
 	LLFrameTimer	mBoobBounceTimer;
-	AscentAvatarLocalBoobConfig mLocalBoobConfig;
-	AscentBoobState mBoobState;
-	static AscentGlobalBoobConfig sBoobConfig;
+	PhoenixAvatarLocalBoobConfig mLocalBoobConfig;
+	PhoenixBoobState mBoobState;
+	static PhoenixGlobalBoobConfig sBoobConfig;
 
 public:
 	//boob

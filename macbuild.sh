@@ -25,7 +25,7 @@ set_channel()
 
 build()
 {
-        echo "Building..."
+        echo "Building version ${VERSION_VIEWER}.${REVISION}..."
         xcodebuild -target ALL_BUILD -configuration Release GCC_VERSION=4.0 > /dev/null
 }
 
@@ -48,12 +48,12 @@ make_disk_image()
 {
         if [ -n "$BUILD_RELEASE" ]; then
                 IMAGE="release-template.dmg"
-                VOLUME_NAME="Phoenix Viewer $REVISION"
-                OUTPUT_FILE="Phoenix_Viewer_1.5.1.${REVISION}_${1}.dmg"
+                VOLUME_NAME="Phoenix Viewer ${VERSION_VIEWER}.${REVISION}"
+                OUTPUT_FILE="Phoenix_Viewer_${VERSION_VIEWER}.${REVISION}_${1}.dmg"
         else
                 IMAGE="beta-template.dmg"
-                VOLUME_NAME="Phoenix Viewer $REVISION Beta"
-                OUTPUT_FILE="Phoenix_Viewer_1.5.1.${REVISION}_${1}_Beta.dmg"
+                VOLUME_NAME="Phoenix Viewer ${VERSION_VIEWER}.${REVISION} Beta"
+                OUTPUT_FILE="Phoenix_Viewer_${VERSION_VIEWER}.${REVISION}_${1}_Beta.dmg"
         fi
 
         # hdiutil convert won't overwrite an existing output file
@@ -91,6 +91,9 @@ upload()
 #		#Be sure to take the upload function out before pushing any changes as it contains server credentials and hidden URLs.
         echo "The final package can be found at $1."
 }
+
+# Get viewer version from source code: sets variable VERSION_VIEWER
+. ${INDRA_DIR}/Version
 
 case "$1" in
 	release)

@@ -1,5 +1,5 @@
-#ifndef __Ascentboobutils_h
-#define __Ascentboobutils_h
+#ifndef __phoenixboobutils_h
+#define __phoenixboobutils_h
 
 #include <iostream>
 #include <list>
@@ -8,7 +8,7 @@
 #include "v3math.h"
 #include "llquaternion.h"
 
-struct AscentGlobalBoobConfig
+struct PhoenixGlobalBoobConfig
 {
 	bool enabled;
 	F32 mass;
@@ -20,7 +20,7 @@ struct AscentGlobalBoobConfig
 	F32 friction;
 	F32 XYInfluence;
 
-	AscentGlobalBoobConfig()
+	PhoenixGlobalBoobConfig()
 		: enabled(false),
 			mass(6.4f),
 			hardness(0.67f),
@@ -33,7 +33,7 @@ struct AscentGlobalBoobConfig
 	{
 	}
 
-	bool operator==(const AscentGlobalBoobConfig &other) const
+	bool operator==(const PhoenixGlobalBoobConfig &other) const
 	{
 		return
 			enabled == other.enabled &&
@@ -47,16 +47,16 @@ struct AscentGlobalBoobConfig
 	}
 };
 
-std::ostream &operator<<(std::ostream &os, const AscentGlobalBoobConfig &v);
+std::ostream &operator<<(std::ostream &os, const PhoenixGlobalBoobConfig &v);
 
-struct AscentAvatarLocalBoobConfig
+struct PhoenixAvatarLocalBoobConfig
 {
 	F32 actualBoobGrav;
 	F32 actualButtGrav;
 	F32 actualFatGrav;
 	F32 boobSize;
 
-	AscentAvatarLocalBoobConfig()
+	PhoenixAvatarLocalBoobConfig()
 		: actualBoobGrav(0.0f),
 		  actualButtGrav(0.0f),
 		  actualFatGrav(0.0f),
@@ -64,7 +64,7 @@ struct AscentAvatarLocalBoobConfig
 	{
 	}
 
-	bool operator==(const AscentAvatarLocalBoobConfig &other) const
+	bool operator==(const PhoenixAvatarLocalBoobConfig &other) const
 	{
 		return
 			actualBoobGrav == other.actualBoobGrav &&
@@ -75,11 +75,11 @@ struct AscentAvatarLocalBoobConfig
 
 };
 
-std::ostream &operator<<(std::ostream &os, const AscentAvatarLocalBoobConfig &v);
+std::ostream &operator<<(std::ostream &os, const PhoenixAvatarLocalBoobConfig &v);
 
-struct AscentBoobBounceState;
+struct PhoenixBoobBounceState;
 
-struct AscentBoobState
+struct PhoenixBoobState
 {
 	F32 boobGrav;
 	LLVector3 chestPosition;
@@ -90,9 +90,9 @@ struct AscentBoobState
 	LLVector3 localChestDisplacement;
 	LLVector3 displacementForce;
 	F32 mysteryValue;
-	std::list<AscentBoobBounceState> bounceStates;
+	std::list<PhoenixBoobBounceState> bounceStates;
 
-	AscentBoobState()
+	PhoenixBoobState()
 		: boobGrav(0.0f),
 			chestPosition(0.0f,0.0f,0.0f),
 			chestRotation(0.0f,0.0f,0.0f,1.0f),
@@ -105,7 +105,7 @@ struct AscentBoobState
 	{
 	}
 
-	bool operator==(const AscentBoobState &other) const
+	bool operator==(const PhoenixBoobState &other) const
 	{
 		return
 			boobGrav == other.boobGrav &&
@@ -121,9 +121,9 @@ struct AscentBoobState
 	}
 };
 
-std::ostream &operator<<(std::ostream &os, const AscentBoobState &v);
+std::ostream &operator<<(std::ostream &os, const PhoenixBoobState &v);
 
-struct AscentBoobInputs
+struct PhoenixBoobInputs
 {
 	LLVector3 chestPosition;
 	LLQuaternion chestRotation;
@@ -132,7 +132,7 @@ struct AscentBoobInputs
 	bool appearanceAnimating;
 	S32 type;
 
-	AscentBoobInputs()
+	PhoenixBoobInputs()
 		: chestPosition(0.0f,0.0f,0.0f),
 			chestRotation(0.0f,0.0f,0.0f,1.0f),
 			elapsedTime(0.0f),
@@ -142,7 +142,7 @@ struct AscentBoobInputs
 	{
 	}
 
-	bool operator==(const AscentBoobInputs &other) const
+	bool operator==(const PhoenixBoobInputs &other) const
 	{
 		return
 			chestPosition == other.chestPosition &&
@@ -154,22 +154,22 @@ struct AscentBoobInputs
 	}
 };
 
-std::ostream &operator<<(std::ostream &os, const AscentBoobInputs &v);
+std::ostream &operator<<(std::ostream &os, const PhoenixBoobInputs &v);
 
-struct AscentBoobBounceState
+struct PhoenixBoobBounceState
 {
 	F32 bounceStart;
 	F32 bounceStartAmplitude;
 	F32 bounceStartFrameDuration;
 
-	AscentBoobBounceState()
+	PhoenixBoobBounceState()
 		: bounceStart(0.0f),
 			bounceStartAmplitude(0.0f),
 			bounceStartFrameDuration(0.0f)
 	{
 	};
 
-	bool operator==(const AscentBoobBounceState &other) const
+	bool operator==(const PhoenixBoobBounceState &other) const
 	{
 		return
 			bounceStart == other.bounceStart &&
@@ -178,13 +178,13 @@ struct AscentBoobBounceState
 	}
 };
 
-std::ostream &operator<<(std::ostream &os, const AscentBoobBounceState &v);
+std::ostream &operator<<(std::ostream &os, const PhoenixBoobBounceState &v);
 
 
-struct AscentBoobUtils
+struct PhoenixBoobUtils
 {
 public:
-	static AscentBoobState idleUpdate(const AscentGlobalBoobConfig &config, const AscentAvatarLocalBoobConfig &localConfig, const AscentBoobState &oldState, const AscentBoobInputs &inputs);
+	static PhoenixBoobState idleUpdate(const PhoenixGlobalBoobConfig &config, const PhoenixAvatarLocalBoobConfig &localConfig, const PhoenixBoobState &oldState, const PhoenixBoobInputs &inputs);
 
 	static F32 convertMass(F32 displayMass);
 	static F32 convertHardness(F32 displayHardness);

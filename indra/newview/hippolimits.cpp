@@ -6,6 +6,7 @@
 
 #include "llerror.h"
 
+#include "llviewercontrol.h"		// gSavedSettings
 
 HippoLimits *gHippoLimits = 0;
 
@@ -46,8 +47,19 @@ void HippoLimits::setOpenSimLimits()
 void HippoLimits::setSecondLifeLimits()
 {
 	llinfos << "Using Second Life limits." << llendl;
-	mMaxAgentGroups = 25;
-	mMaxPrimScale = 10.0f;
+	
+	if(gSavedSettings.getBOOL("Phoenix40GroupsSupport")) {
+		mMaxAgentGroups = 40;
+	} else {
+		mMaxAgentGroups = 25;
+	}
+	
+	if(gSavedSettings.getBOOL("Phoenix64mPrimSupport")) {
+		mMaxPrimScale = 64.0f;
+	} else {
+		mMaxPrimScale = 10.0f;
+	}
+	
 	mMaxHeight = 4096.0f;
 	mMinHoleSize = 0.05f;
 	mMaxHollow = 0.95f;

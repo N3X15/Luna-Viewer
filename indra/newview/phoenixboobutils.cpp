@@ -32,9 +32,9 @@
 
 #include "phoenixboobutils.h"
 
-std::ostream &operator<<(std::ostream &os, const AscentGlobalBoobConfig &v)
+std::ostream &operator<<(std::ostream &os, const PhoenixGlobalBoobConfig &v)
 {
-	os << "AscentBoobConfig" << std::endl;
+	os << "PhoenixBoobConfig" << std::endl;
 	os << "enabled: " << v.enabled << std::endl;
 	os << "mass: " << v.mass << std::endl;
 	os << "hardness: " << v.hardness << std::endl;
@@ -46,17 +46,17 @@ std::ostream &operator<<(std::ostream &os, const AscentGlobalBoobConfig &v)
 	return os;
 }
 
-std::ostream &operator<<(std::ostream &os, const AscentAvatarLocalBoobConfig &v)
+std::ostream &operator<<(std::ostream &os, const PhoenixAvatarLocalBoobConfig &v)
 {
-	os << "AscentAvatarLocalBoobConfig" << std::endl;
+	os << "PhoenixAvatarLocalBoobConfig" << std::endl;
 	os << "actualBoobGrav: " << v.actualBoobGrav << std::endl;
 	os << "boobSize: " << v.boobSize << std::endl;
 	return os;
 }
 
-std::ostream &operator<<(std::ostream &os, const AscentBoobState &v)
+std::ostream &operator<<(std::ostream &os, const PhoenixBoobState &v)
 {
-	os << "AscentBoobState" << std::endl;
+	os << "PhoenixBoobState" << std::endl;
 	os << "boobGrav: " << v.boobGrav << std::endl;
 	os << "chestPosition: " << v.chestPosition << std::endl;
 	os << "chestRotation: " << v.chestRotation << std::endl;
@@ -70,9 +70,9 @@ std::ostream &operator<<(std::ostream &os, const AscentBoobState &v)
 	return os;
 }
 
-std::ostream &operator<<(std::ostream &os, const AscentBoobInputs &v)
+std::ostream &operator<<(std::ostream &os, const PhoenixBoobInputs &v)
 {
-	os << "AscentBoobInputs" << std::endl;
+	os << "PhoenixBoobInputs" << std::endl;
 	os << "chestPosition: " << v.chestPosition << std::endl;
 	os << "chestRotation: " << v.chestRotation << std::endl;
 	os << "elapsedTime: " << v.elapsedTime << std::endl;
@@ -81,33 +81,33 @@ std::ostream &operator<<(std::ostream &os, const AscentBoobInputs &v)
 	return os;
 }
 
-std::ostream &operator<<(std::ostream &os, const AscentBoobBounceState &v)
+std::ostream &operator<<(std::ostream &os, const PhoenixBoobBounceState &v)
 {
-	os << "AscentBoobBounceState" << std::endl;
+	os << "PhoenixBoobBounceState" << std::endl;
 	os << "bounceStart: " << v.bounceStart << std::endl;
 	os << "bounceStartAmplitude: " << v.bounceStartAmplitude << std::endl;
 	os << "bounceStartFrameDuration: " << v.bounceStartFrameDuration << std::endl;
 	return os;
 }
 
-F32 AscentBoobUtils::convertMass(F32 displayMass)
+F32 PhoenixBoobUtils::convertMass(F32 displayMass)
 { return displayMass/100.f*150.f; };
 
-F32 AscentBoobUtils::convertHardness(F32 displayHardness)
+F32 PhoenixBoobUtils::convertHardness(F32 displayHardness)
 { return displayHardness/100.f*50; };
 
-F32 AscentBoobUtils::convertVelMax(F32 displayVelMax)
+F32 PhoenixBoobUtils::convertVelMax(F32 displayVelMax)
 { return displayVelMax/100.f*0.01f; };
 
-F32 AscentBoobUtils::convertFriction(F32 displayFriction)
+F32 PhoenixBoobUtils::convertFriction(F32 displayFriction)
 { return displayFriction/100.f*1.0f; };
 
-F32 AscentBoobUtils::convertVelMin(F32 displayVelMin)
+F32 PhoenixBoobUtils::convertVelMin(F32 displayVelMin)
 { return displayVelMin/100.f; };
 
-AscentBoobState AscentBoobUtils::idleUpdate(const AscentGlobalBoobConfig &config, const AscentAvatarLocalBoobConfig &localConfig, const AscentBoobState &oldState, const AscentBoobInputs &inputs)
+PhoenixBoobState PhoenixBoobUtils::idleUpdate(const PhoenixGlobalBoobConfig &config, const PhoenixAvatarLocalBoobConfig &localConfig, const PhoenixBoobState &oldState, const PhoenixBoobInputs &inputs)
 {
-	AscentBoobState newState;
+	PhoenixBoobState newState;
 	F32 avatarLocalMass = 0.0f;
 	F32 partMod = 1.f;
 
@@ -142,7 +142,7 @@ AscentBoobState AscentBoobUtils::idleUpdate(const AscentGlobalBoobConfig &config
 	newState.localChestDisplacement = newState.chestDisplacement * ~inputs.chestRotation;
 
 
-	std::list<AscentBoobBounceState> bounceStates = oldState.bounceStates;
+	std::list<PhoenixBoobBounceState> bounceStates = oldState.bounceStates;
 
 	if(fabs(newState.localChestDisplacement.length()) > 0.f)
 	{
@@ -156,7 +156,7 @@ AscentBoobState AscentBoobUtils::idleUpdate(const AscentGlobalBoobConfig &config
 			 boobVel = 0.0f;
 		 else
 		 {
-			AscentBoobBounceState bounceState;
+			PhoenixBoobBounceState bounceState;
 			bounceState.bounceStart = inputs.elapsedTime;
 			bounceState.bounceStartFrameDuration = newState.frameDuration;
 			bounceState.bounceStartAmplitude = boobVel;
@@ -172,7 +172,7 @@ AscentBoobState AscentBoobUtils::idleUpdate(const AscentGlobalBoobConfig &config
 		F32 clampedDisplacementInfluenceLength = llclamp(displacementInfluence.length(), 0.0f, config.velMax);
 		if(displacementInfluence[VZ]<0.f)
 			clampedDisplacementInfluenceLength= -clampedDisplacementInfluenceLength;
-		AscentBoobBounceState bounceState;
+		PhoenixBoobBounceState bounceState;
 		bounceState.bounceStart = inputs.elapsedTime;
 		bounceState.bounceStartFrameDuration = newState.frameDuration;
 		bounceState.bounceStartAmplitude = clampedDisplacementInfluenceLength;
@@ -189,7 +189,7 @@ AscentBoobState AscentBoobUtils::idleUpdate(const AscentGlobalBoobConfig &config
 	F32 totalNewAmplitude = 0.0f;
 	//std::cout << "Beginning bounce State processing at time " << inputs.elapsedTime << std::endl;
 	while(!bounceStates.empty()) {
-		AscentBoobBounceState bounceState = bounceStates.front();
+		PhoenixBoobBounceState bounceState = bounceStates.front();
 		//std::cout << "Now processing " << bounceState;
 		bounceStates.pop_front();
 		F32 bounceTime = newState.elapsedTime-bounceState.bounceStart;

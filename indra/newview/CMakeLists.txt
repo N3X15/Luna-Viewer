@@ -71,7 +71,7 @@ include_directories(
     ${LSCRIPT_INCLUDE_DIRS}/lscript_compile
     ${VIEWER_RESOURCE_DIRS}
     ${GROWL_INCLUDE_DIRS}
-    )
+)
 
 set(viewer_SOURCE_FILES
     a_phoenixviewerlink.cpp
@@ -1138,11 +1138,10 @@ if (WINDOWS)
       include_directories(${ARTWORK_DIR}/res)
     endif(NOT ARTWORK_IN_SOURCE)
 
-    set(viewer_RESOURCE_FILES 
-        res/resource.h
+    configure_files(viewer_GENERATED_RESOURCE_FILES
         res/viewerRes.rc 
-        ${viewer_RESOURCE_FILES}
         )
+    list(APPEND viewer_RESOURCE_FILES ${viewer_GENERATED_RESOURCE_FILES})
 
     SOURCE_GROUP("Resource Files" FILES ${viewer_RESOURCE_FILES})
 
@@ -1405,8 +1404,7 @@ if (WINDOWS)
 
     if (PACKAGE)
       add_custom_target(package ALL DEPENDS ${CMAKE_CFG_INTDIR}/touched.bat)
-       # fuck the crash logger/updater
-      #add_dependencies(package windows-updater windows-crash-logger)
+      add_dependencies(package windows-updater windows-crash-logger)
     endif (PACKAGE)
 endif (WINDOWS)
 

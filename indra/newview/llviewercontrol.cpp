@@ -71,7 +71,7 @@
 #include "llvowlsky.h"
 #include "llrender.h"
 #include "llfloaterchat.h"
-#include "emeraldboobutils.h"
+#include "phoenixboobutils.h"
 
 #ifdef TOGGLE_HACKED_GODLIKE_VIEWER
 BOOL 				gHackGodmode = FALSE;
@@ -122,32 +122,32 @@ static bool handleSetShaderChanged(const LLSD& newvalue)
 
 static bool handleAvatarBoobMassChanged(const LLSD& newvalue)
 {
-	LLVOAvatar::sBoobConfig.mass = EmeraldBoobUtils::convertMass((F32) newvalue.asReal());
+	LLVOAvatar::sBoobConfig.mass = PhoenixBoobUtils::convertMass((F32) newvalue.asReal());
 	return true;
 }
 
 static bool handleAvatarBoobHardnessChanged(const LLSD& newvalue)
 {
-	LLVOAvatar::sBoobConfig.hardness = EmeraldBoobUtils::convertHardness((F32) newvalue.asReal());
+	LLVOAvatar::sBoobConfig.hardness = PhoenixBoobUtils::convertHardness((F32) newvalue.asReal());
 	return true;
 }
 
 static bool handleAvatarBoobVelMaxChanged(const LLSD& newvalue)
 {
-	LLVOAvatar::sBoobConfig.velMax = EmeraldBoobUtils::convertVelMax((F32) newvalue.asReal());
+	LLVOAvatar::sBoobConfig.velMax = PhoenixBoobUtils::convertVelMax((F32) newvalue.asReal());
 	LLVOAvatar::sBoobConfig.velMin = LLVOAvatar::sBoobConfig.velMin*LLVOAvatar::sBoobConfig.velMax;
 	return true;
 }
 
 static bool handleAvatarBoobFrictionChanged(const LLSD& newvalue)
 {
-	LLVOAvatar::sBoobConfig.friction = EmeraldBoobUtils::convertFriction((F32) newvalue.asReal());
+	LLVOAvatar::sBoobConfig.friction = PhoenixBoobUtils::convertFriction((F32) newvalue.asReal());
 	return true;
 }
 
 static bool handleAvatarBoobVelMinChanged(const LLSD& newvalue)
 {
-	LLVOAvatar::sBoobConfig.velMin = EmeraldBoobUtils::convertVelMin((F32) newvalue.asReal())*LLVOAvatar::sBoobConfig.velMax;
+	LLVOAvatar::sBoobConfig.velMin = PhoenixBoobUtils::convertVelMin((F32) newvalue.asReal())*LLVOAvatar::sBoobConfig.velMax;
 	return true;
 }
 
