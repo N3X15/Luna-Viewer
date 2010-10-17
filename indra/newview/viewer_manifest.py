@@ -856,7 +856,7 @@ class Linux_i686Manifest(LinuxManifest):
             self.path("libcrypto.so.0.9.7")
             self.path("libexpat.so.1")
             self.path("libssl.so.0.9.7")
-            self.path("libuuid.so.1")
+            #self.path("libuuid.so.1") #PHOE-617
             self.path("libSDL-1.2.so.0")
             self.path("libELFIO.so")
             self.path("libalut.so")
