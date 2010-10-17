@@ -13,7 +13,13 @@ set BUILDTYPE=Release
 @rem find newview/ -name "*.cpp" -print | C:\lua5.1\lua ../scripts/GetHooks.lua
 
 @rem set GEN=NMake Makefiles
-set GEN=%1
+if /i %1 == vs2005		set GEN=Visual Studio 8 2005
+if /i %1 == vs2005-x64	set GEN=Visual Studio 8 2005 Win64
+if /i %1 == vs2008		set GEN=Visual Studio 9 2008
+if /i %1 == vs2008-x64	set GEN=Visual Studio 9 2008 Win64
+if /i %1 == vs2010		set GEN=Visual Studio 10
+if /i %1 == vs2010-x64	set GEN=Visual Studio 10 Win64
+
 
 @rem Prep for nmake horseassery.
 cmake -G "%GEN%" -DUNATTENDED:BOOL=OFF -DSTANDALONE:BOOL=OFF -DWORD_SIZE:STRING=32 -DOPENSIM_RULES:BOOL=OFF -DROOT_PROJECT_NAME:STRING=Luna .
@@ -21,4 +27,3 @@ cmake -G "%GEN%" -DUNATTENDED:BOOL=OFF -DSTANDALONE:BOOL=OFF -DWORD_SIZE:STRING=
 
 (set GEN=)
 (set BUILDTYPE=)
-set
