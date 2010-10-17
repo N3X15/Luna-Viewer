@@ -12,7 +12,8 @@ set BUILDTYPE=Release
 @rem	Will fail without cygwin, so find a better way.
 @rem find newview/ -name "*.cpp" -print | C:\lua5.1\lua ../scripts/GetHooks.lua
 
-set GEN=NMake Makefiles
+@rem set GEN=NMake Makefiles
+set GEN=%1
 
 @rem Prep for nmake horseassery.
 cmake -G "%GEN%" -DUNATTENDED:BOOL=OFF -DSTANDALONE:BOOL=OFF -DWORD_SIZE:STRING=32 -DOPENSIM_RULES:BOOL=OFF -DROOT_PROJECT_NAME:STRING=Luna .
