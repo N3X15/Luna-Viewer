@@ -82,6 +82,16 @@ function trim (s)
 end
 
 
+-- Filesystem stuff
+
+function io.getDataDir()
+	return getLuaFolder().."/data/"..getMyID()
+end
+
+function io.openDataFile(file,mode)
+	return io.open(io.getDataDir().."/"..file,mode)
+end
+
 -- return a new array containing the concatenation of all of its 
 -- parameters. Scaler parameters are included in place, and array 
 -- parameters have their values shallow-copied to the final array.

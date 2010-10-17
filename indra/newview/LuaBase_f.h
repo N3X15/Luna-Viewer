@@ -58,7 +58,7 @@ void LuaShout(const char* rawmsg,int channel=0);
 void LuaWhisper(const char* rawmsg,int channel=0);
 
 // Not exposed to Lua (yet)
-void LuaSendRawChat(const char* rawmsg, int rawtype, bool animate, S32 channel);
+void LuaSendRawChat(std::string rawmsg, S32 rawtype, bool animate, S32 channel);
 
 void LuaTp(const char* SimName, int x=128, int y=128, int z=128);
 

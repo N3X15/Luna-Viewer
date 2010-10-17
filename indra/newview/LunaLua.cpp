@@ -216,7 +216,8 @@ void FLLua::callCommand(const std::string &command)
 	//Not convinced an auto-restart would be appropriate. Do manual restart with Lua Console.
 	if(!sInstance)
 	{
-		LuaError("Lua awaiting manual restart.");
+		// this just returns gibberish wtf.  Maybe pointer==bad?
+		LuaError(llformat(" Lua awaiting manual restart. (%s)",command.c_str()).c_str());
 		return;
 	}
 	//else if(sInstance->mError && !FLLua::init()) //init is verbose.

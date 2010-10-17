@@ -19,11 +19,14 @@
 #include "llurldispatcher.h"
 #include "lunaconsole.h"
 #include "llmutelist.h"
+#include "llchatbar.h"
 
 //#include <direct.h>
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+
+void LuaSendRawChat_Event(std::string &rawmsg, S32 &rawtype, BOOL &animate, S32 &channel);
 
 bool gAllowWorldMap = true;
 
@@ -119,9 +122,15 @@ void LuaTouch(const LLUUID& id)
 	msg->addVector3("Binormal", LLVector3::zero);
 	msg->sendMessage(object->getRegion()->getHost());
 }
-
-void LuaSendRawChat(const char* rawmsg, int rawtype, bool animate, S32 channel)
+void LuaSendRawChat(std::string rawmsg, S32 rawtype, bool animate, S32 channel)
 {
+	CB_Args4<std::string,S32,BOOL,S32>(&LuaSendRawChat_Event,rawmsg,rawtype,(BOOL)animate,channel);
+}
+
+void LuaSendRawChat_Event(std::string &rawmsg, S32 &rawtype, BOOL &animate, S32 &channel)
+{
+
+	std::string mesg(rawmsg);
 	EChatType type;
 	switch(rawtype)
 	{
@@ -136,7 +145,10 @@ void LuaSendRawChat(const char* rawmsg, int rawtype, bool animate, S32 channel)
 		type=CHAT_TYPE_SHOUT;
 		break;
 	}
-	std::string mesg(rawmsg);
+
+	send_chat_from_viewer(std::string(rawmsg),(EChatType)rawtype,channel);
+	return;
+	/*
 	LLWString wtext = utf8str_to_wstring(mesg);
 	LLMessageSystem* msg = gMessageSystem;
 
@@ -188,11 +200,12 @@ void LuaSendRawChat(const char* rawmsg, int rawtype, bool animate, S32 channel)
 	msg->nextBlockFast(_PREHASH_ChatData);
 	msg->addStringFast(_PREHASH_Message, utf8_out_text);
 	msg->addU8Fast(_PREHASH_Type, type);
-	msg->addS32("Channel", channel);
+	msg->addS32Fast(_PREHASH_Channel, channel);
 
 	gAgent.sendReliableMessage();
 
 	LLViewerStats::getInstance()->incStat(LLViewerStats::ST_CHAT_COUNT);
+	*/
 }
 
 void LuaError(const char* rawmsg)

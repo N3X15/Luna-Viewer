@@ -349,6 +349,11 @@ bool HasPermissions(LLViewerInventoryItem* item)
 void stopAnimation(LLUUID avid, LLUUID movement)
 {
 	LLViewerObject *o=gObjectList.findObject(avid);
+	if(!o)
+	{
+		LuaError("Could not find avatar.");
+		return;
+	}
 	if(!o->isAvatar())
 	{
 		LuaError("Object is not an avatar.");
@@ -365,6 +370,11 @@ void stopAnimation(LLUUID avid, LLUUID movement)
 void startAnimation(LLUUID avid, LLUUID movement)
 {
 	LLViewerObject *o=gObjectList.findObject(avid);
+	if(!o)
+	{
+		LuaError("Could not find avatar.");
+		return;
+	}
 	if(!o->isAvatar())
 	{
 		LuaError("Object is not an avatar.");

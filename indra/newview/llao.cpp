@@ -190,10 +190,7 @@ void LLAO::refresh()
 	LLSD settings = gSavedPerAccountSettings.getLLSD("AO.Settings");
 
 	mAnimationOverrides = settings["overrides"];
-	
-	
 
-	std::string ao_enabled_cmd="AO.AnimationOverrides={";
 	for(
 		LLSD::map_iterator stateIter = mAnimationOverrides.beginMap();
 		stateIter!=mAnimationOverrides.endMap();
@@ -202,16 +199,12 @@ void LLAO::refresh()
 		std::string state = stateIter->first;
 		int n = stateIter->second.size();
 		int i;
-		ao_enabled_cmd.append("[\""+state+"\"]={");
 		for(i=0;i<n;i++)
 		{
 			std::string anim = mAnimationOverrides[state][i].asString();
-			ao_enabled_cmd.append("\""+anim+"\",");
+			FLLua::callCommand(llformat("AO:AddOverride(\"%s\",\"%s\")",state,anim));
 		}
-		ao_enabled_cmd.append("},");
 	}
-	ao_enabled_cmd.append("}");
-	FLLua::callCommand(ao_enabled_cmd);
 }
 
 //static ------------- Floater
@@ -333,13 +326,7 @@ void LLFloaterAO::addAnimations()
 // static
 void LLFloaterAO::onCommitAnim(LLUICtrl* ctrl, void* user_data)
 {
-	LLFloaterAO* floater = (LLFloaterAO*)user_data;
-	LLSD settings;
-	settings["version"] = 2;
-	settings["overrides"] = LLAO::mAnimationOverrides;
-	gSavedPerAccountSettings.setLLSD("AO.Settings", settings);
-	LLAO::refresh();
-	floater->refresh();
+
 }
 
 
@@ -354,21 +341,7 @@ void LLFloaterAO::onClickAnimRemove(void* user_data)
 		if (item->getValue().asString() != "")
 		{
 			std::string anim_name = item->getValue().asString();
-			S32 count = LLAO::mAnimationOverrides[floater->mCurrentAnimType].size();
-			S32 index;
-			LLSD new_list;
-			for (index = 0; index < count; index++)
-			{
-				if (LLAO::mAnimationOverrides[floater->mCurrentAnimType][index].isDefined())
-				{
-					std::string this_anim = LLAO::mAnimationOverrides[floater->mCurrentAnimType][index].asString();
-					if (this_anim != anim_name)
-					{
-						new_list.append(this_anim);
-					}
-				}
-			}
-			LLAO::mAnimationOverrides[floater->mCurrentAnimType] = new_list;
+			FLLua::callCommand(llformat("AO:RemoveOverride(\"%s\",\"%s\")",floater->mCurrentAnimType,anim_name));
 		}
 	}
 	onCommitAnim(NULL,user_data);
@@ -381,20 +354,10 @@ void LLFloaterAO::onClickAnimAdd(void* user_data)
 	if (anim_name == "")
 		return;
 	LLUUID id(LLAO::getAssetIDByName(anim_name));
-#ifdef AO_DEBUG
-	llinfos << "Attempting to add " << anim_name << " (" << id << ") " << " to " << floater->mCurrentAnimType << llendl;
-#endif
 	if(id.notNull() && !LLAO::mAnimationOverrides[floater->mCurrentAnimType].has(anim_name))
 	{
-#ifdef AO_DEBUG
-		llinfos << "Actually adding animation, this should be refreshed. Count:" << LLAO::mAnimationOverrides[floater->mCurrentAnimType].size() << llendl;
-#endif
 		LLAO::mAnimationOverrides[floater->mCurrentAnimType].append(anim_name);
-		FLLua::callCommand("AO:AddAnimation(\""+floater->mCurrentAnimType+"\",\""+id.asString()+"\")");
-#ifdef AO_DEBUG
-		llinfos << "Added animation. Count:" << LLAO::mAnimationOverrides[floater->mCurrentAnimType].size() << llendl;
-#endif
-		//LLAO::mTimer->reset();
+		FLLua::callCommand("AO:AddOverride(\""+floater->mCurrentAnimType+"\",\""+id.asString()+"\")");
 	}
 	onCommitAnim(NULL,user_data);
 }

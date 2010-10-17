@@ -83,10 +83,6 @@ LLChatBar *gChatBar = NULL;
 // legacy calllback glue
 void toggleChatHistory(void* user_data);
 void toggleChanSelect(void* user_data);
-//void send_chat_from_viewer(const std::string& utf8_out_text, EChatType type, S32 channel);
-// [RLVa:KB] - Checked: 2009-07-07 (RLVa-1.0.0d) | Modified: RLVa-0.2.2a
-void send_chat_from_viewer(std::string utf8_out_text, EChatType type, S32 channel);
-// [/RLVa:KB]
 void really_send_chat_from_viewer(const std::string& utf8_out_text, EChatType type, S32 channel);
 
 

@@ -14984,21 +14984,21 @@ static int _wrap_whisper(lua_State* L) {
 
 static int _wrap_LuaSendRawChat(lua_State* L) {
   int SWIG_arg = 0;
-  char *arg1 = (char *) 0 ;
-  int arg2 ;
+  std::string arg1 ;
+  S32 arg2 ;
   bool arg3 ;
   S32 arg4 ;
   
   SWIG_check_num_args("LuaSendRawChat",4,4)
-  if(!SWIG_lua_isnilstring(L,1)) SWIG_fail_arg("LuaSendRawChat",1,"char const *");
-  if(!lua_isnumber(L,2)) SWIG_fail_arg("LuaSendRawChat",2,"int");
+  if(!lua_isstring(L,1)) SWIG_fail_arg("LuaSendRawChat",1,"std::string");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("LuaSendRawChat",2,"S32");
   if(!lua_isboolean(L,3)) SWIG_fail_arg("LuaSendRawChat",3,"bool");
   if(!lua_isnumber(L,4)) SWIG_fail_arg("LuaSendRawChat",4,"S32");
-  arg1 = (char *)lua_tostring(L, 1);
-  arg2 = (int)lua_tonumber(L, 2);
+  (&arg1)->assign(lua_tostring(L,1),lua_strlen(L,1));
+  arg2 = (S32)lua_tonumber(L, 2);
   arg3 = (lua_toboolean(L, 3)!=0);
   arg4 = (S32)lua_tonumber(L, 4);
-  LuaSendRawChat((char const *)arg1,arg2,arg3,arg4);
+  LuaSendRawChat(arg1,arg2,arg3,arg4);
   
   return SWIG_arg;
   
@@ -21582,6 +21582,57 @@ static int _wrap_requestInventoryAsset(lua_State* L) {
 }
 
 
+static int _wrap_getInventoryItemUUID(lua_State* L) {
+  int SWIG_arg = 0;
+  std::string *arg1 = 0 ;
+  int arg2 ;
+  std::string temp1 ;
+  LLUUID result;
+  
+  SWIG_check_num_args("getInventoryItemUUID",2,2)
+  if(!lua_isstring(L,1)) SWIG_fail_arg("getInventoryItemUUID",1,"std::string const &");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("getInventoryItemUUID",2,"int");
+  temp1.assign(lua_tostring(L,1),lua_strlen(L,1)); arg1=&temp1;
+  arg2 = (int)lua_tonumber(L, 2);
+  result = getInventoryItemUUID((std::string const &)*arg1,arg2);
+  
+  lua_pushlstring(L,(&result)->asString().data(),(&result)->asString().size()); SWIG_arg++;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
+static int _wrap_getInventoryItemName(lua_State* L) {
+  int SWIG_arg = 0;
+  LLUUID arg1 ;
+  int arg2 ;
+  std::string result;
+  
+  SWIG_check_num_args("getInventoryItemName",2,2)
+  if(!lua_isstring(L,1)) SWIG_fail_arg("getInventoryItemName",1,"LLUUID");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("getInventoryItemName",2,"int");
+  
+  SWIG_contract_assert((&arg1)->set(lua_tostring(L,1),false),"Must be of UUID format.");
+  
+  arg2 = (int)lua_tonumber(L, 2);
+  result = getInventoryItemName(arg1,arg2);
+  lua_pushlstring(L,(&result)->data(),(&result)->size()); SWIG_arg++;
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
 #ifdef __cplusplus
 }
 #endif
@@ -21719,6 +21770,8 @@ static const struct luaL_reg swig_commands[] = {
     { "giveInventoryItem", _wrap_giveInventoryItem},
     { "getCategoryUUID", _wrap_getCategoryUUID},
     { "requestInventoryAsset",_wrap_requestInventoryAsset},
+    { "getInventoryItemUUID", _wrap_getInventoryItemUUID},
+    { "getInventoryItemName", _wrap_getInventoryItemName},
     {0,0}
 };
 

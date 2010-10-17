@@ -66,6 +66,50 @@ LLUUID getCategoryUUID(const std::string& path)
 {
 	return TraverseCategories(path);
 }
+
+
+class LunaFindItemByName : public LLInventoryCollectFunctor
+{
+public:
+	std::string mName;
+	LLAssetType::EType mType;
+
+	LunaFindItemByName(std::string name,LLAssetType::EType type)
+		:mName(name),mType(type) {}
+	~LunaFindItemByName() {}
+	bool operator()(LLInventoryCategory* cat,
+							LLInventoryItem* item)
+	{
+		if(item->getActualType() == mType)
+			if(item->getName()==mName)
+				return TRUE;
+		return FALSE;
+	}
+};
+
+LLUUID getInventoryItemUUID(const std::string& name, int type)
+{
+	LLViewerInventoryCategory::cat_array_t cats;
+	LLViewerInventoryItem::item_array_t items;
+	LunaFindItemByName byn(name,(LLAssetType::EType)type);
+	gInventory.collectDescendentsIf(gAgent.getInventoryRootID(),cats,items,false,byn);
+
+	if(items.size() == 0) return LLUUID::null;
+
+	return items.get(0)->getLinkedUUID();
+}
+
+std::string getInventoryItemName(LLUUID key, int type)
+{
+	LLInventoryItem *item = gInventory.getItem(key);
+	if(!item)
+	{
+		LuaError("getInventoryItemName(): Can't find object.");
+		return "";
+	}
+	return item->getName();
+}
+
 int findInventoryInFolder(lua_State*L)
 {
 	std::string *ifolder = new std::string(luaL_checkstring(L,1));
@@ -178,6 +222,7 @@ LLUUID requestInventoryAsset(LLUUID item_id,LLUUID task_id)
 									&Lua_onAssetDownloaded,
 									(void*)new LLUUID(new_item_id),
 									TRUE);
+	return new_item_id;
 }
 						   
 

@@ -1024,9 +1024,6 @@ bool idle_startup()
 		// Overwrite default user settings with user settings								 
 		LLAppViewer::instance()->loadSettingsFromDirectory("Account");
 
-		//User settings are loaded, get the AO settings - HgB
-		LLAO::refresh();
-
 		// Need to set the LastLogoff time here if we don't have one.  LastLogoff is used for "Recent Items" calculation
 		// and startup time is close enough if we don't have a real value.
 		if (gSavedPerAccountSettings.getU32("LastLogoff") == 0)
@@ -1785,6 +1782,11 @@ bool idle_startup()
 			if (!tmp.empty()) gHippoGridManager->getConnectedGrid()->setVoiceConnector(tmp);
 			gHippoGridManager->saveFile();
 			gHippoLimits->setLimits();
+
+			
+
+			//User settings are loaded, get the AO settings - HgB
+			LLAO::refresh();
 
 			// JC: gesture loading done below, when we have an asset system
 			// in place.  Don't delete/clear user_credentials until then.
