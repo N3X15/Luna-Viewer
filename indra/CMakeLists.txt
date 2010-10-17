@@ -56,6 +56,8 @@ else (LIBOPENJPEG2)
   add_subdirectory(${LIBS_OPEN_PREFIX}libopenjpeg)
 endif (LIBOPENJPEG2)
 
+add_subdirectory(${LIBS_OPEN_PREFIX}lua)
+  
 add_subdirectory(${LIBS_OPEN_PREFIX}llimagej2coj)
 add_subdirectory(${LIBS_OPEN_PREFIX}llinventory)
 add_subdirectory(${LIBS_OPEN_PREFIX}llmath)

@@ -71,6 +71,7 @@ include_directories(
     ${LSCRIPT_INCLUDE_DIRS}/lscript_compile
     ${VIEWER_RESOURCE_DIRS}
     ${GROWL_INCLUDE_DIRS}
+	${LUA_INCLUDE_DIR} # LUNA
 )
 
 set(viewer_SOURCE_FILES
