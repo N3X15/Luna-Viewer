@@ -4,6 +4,9 @@
 @rem Dick with settings
 call ..\scripts\automated_build_scripts\update_settings.bat
 
+@rem Get fmod
+call ..\prep-fmod.bat
+
 @rem Set your build type here.  Release = no debugging symbols.  RelWithDebInfo = Optimized with debugging symbols. Debug = FAT AND SLOW, MUCH LIKE YOUR MOTHER
 set BUILDTYPE=Release
 

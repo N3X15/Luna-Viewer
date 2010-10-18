@@ -1,12 +1,21 @@
-@echo off
-rem Requires Cygwin with unzip and wget
+@rem Requires Cygwin with unzip and wget
 
 wget -O fmod.zip http://www.fmod.org/files/fmod3/fmodapi375win.zip
 unzip fmod.zip
 rm fmod.zip
 
-::cp -v fmodapi375win/api/inc/fmod.h		libraries/include/
-::cp -v fmodapi375win/api/inc/fmod_errors.h	libraries/include/
+@rem cp -v fmodapi375win/api/inc/fmod.h		libraries/include/
+@rem ::cp -v fmodapi375win/api/inc/fmod_errors.h	libraries/include/
+
+mkdir libraries
+mkdir libraries\i686-win32\
+mkdir libraries\i686-win32\lib\
+mkdir libraries\i686-win32\lib\release
+mkdir libraries\i686-win32\lib\debug
+mkdir libraries\include
+
+cp -v fmodapi375win/api/fmod.dll		indra/BUILD-VC80/newview/Release/
+cp -v fmodapi375win/api/fmod.dll		indra/BUILD-VC80/newview/Debug/
 cp -v fmodapi375win/api/inc/*.h	libraries/include/
 cp -v fmodapi375win/api/lib/fmodvc.lib 	libraries/i686-win32/lib_release/
 cp -v fmodapi375win/api/lib/fmodvc.lib 	libraries/i686-win32/lib_debug/
