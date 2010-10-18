@@ -1022,12 +1022,18 @@ if (DARWIN)
     ${IOKIT_LIBRARY}
     )
 
+  # Fix the version numbers!
+  configure_files(viewer_GENERATED_PLISTS
+    Info-${VIEWER_BRANDING_NAME_CAMELCASE}.plist
+    English.lproj/InfoPlist.strings
+  )
+
   # Add resource files to the project.
   set(viewer_RESOURCE_FILES
     ${VIEWER_BRANDING_ID}.icns
     macview.r
     gpu_table.txt
-    Info-${VIEWER_BRANDING_NAME_CAMELCASE}.plist
+    ${viewer_GENERATED_PLISTS}
     SecondLife.nib/
     # CMake doesn't seem to support Xcode language variants well just yet
     English.lproj/InfoPlist.strings

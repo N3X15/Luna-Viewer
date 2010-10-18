@@ -125,4 +125,6 @@ For more information, please see JIRA DEV-14943 - Cmake Linux cannot build both 
   ")
 endif (LINUX AND SERVER AND VIEWER)
 
+set(LIBOPENJPEG2 OFF CACHE BOOL "Use libopenjpeg version 2 libraries")
+
 source_group("CMake Rules" FILES CMakeLists.txt)

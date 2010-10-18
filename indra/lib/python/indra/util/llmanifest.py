@@ -40,6 +40,8 @@ import sys
 import tarfile
 import errno
 
+from indra.util import llversion
+
 def path_ancestors(path):
     drive, path = os.path.splitdrive(os.path.normpath(path))
     result = []
@@ -75,31 +77,31 @@ def get_default_platform(dummy):
             'darwin':'darwin'
             }[sys.platform]
 
-def get_default_version(srctree):
-    # look up llversion.h and parse out the version info
-    paths = [os.path.join(srctree, x, 'llversionviewer.h') for x in ['llcommon', '../llcommon', '../../indra/llcommon.h']]
-    for p in paths:
-        if os.path.exists(p):
-            contents = open(p, 'r').read()
-            major = re.search("LL_VERSION_MAJOR\s=\s([0-9]+)", contents).group(1)
-            minor = re.search("LL_VERSION_MINOR\s=\s([0-9]+)", contents).group(1)
-            patch = re.search("LL_VERSION_PATCH\s=\s([0-9]+)", contents).group(1)
-            build = re.search("LL_VERSION_BUILD\s=\s([0-9]+)", contents).group(1)
-            return major, minor, patch, build
+#def get_default_version(srctree):
+#    # look up llversion.h and parse out the version info
+#    paths = [os.path.join(srctree, x, 'llversionviewer.h') for x in ['llcommon', '../llcommon', '../../indra/llcommon.h']]
+#    for p in paths:
+#        if os.path.exists(p):
+#            contents = open(p, 'r').read()
+#            major = re.search("LL_VERSION_MAJOR\s=\s([0-9]+)", contents).group(1)
+#            minor = re.search("LL_VERSION_MINOR\s=\s([0-9]+)", contents).group(1)
+#            patch = re.search("LL_VERSION_PATCH\s=\s([0-9]+)", contents).group(1)
+#            build = re.search("LL_VERSION_BUILD\s=\s([0-9]+)", contents).group(1)
+#            return major, minor, patch, build
 
-def get_channel(srctree):
-    # look up llversionserver.h and parse out the version info
-    paths = [os.path.join(srctree, x, 'llversionviewer.h') for x in ['llcommon', '../llcommon', '../../indra/llcommon.h']]
-    for p in paths:
-        if os.path.exists(p):
-            contents = open(p, 'r').read()
-            channel = re.search("LL_CHANNEL\s=\s\"(.+)\";\s*$", contents, flags = re.M).group(1)
-            return channel
+#def get_channel(srctree):
+#    # look up llversionserver.h and parse out the version info
+#    paths = [os.path.join(srctree, x, 'llversionviewer.h') for x in ['llcommon', '../llcommon', '../../indra/llcommon.h']]
+#    for p in paths:
+#        if os.path.exists(p):
+#            contents = open(p, 'r').read()
+#            channel = re.search("LL_CHANNEL\s=\s\"(.+)\";\s*$", contents, flags = re.M).group(1)
+#            return channel
     
 
 DEFAULT_SRCTREE = os.path.dirname(sys.argv[0])
-DEFAULT_CHANNEL = 'Second Life Release'
-DEFAULT_CHANNEL_SNOWGLOBE = 'Snowglobe Release'
+DEFAULT_CHANNEL = 'Luna Release'
+DEFAULT_CHANNEL_SNOWGLOBE = 'Luna Release'
 
 ARGUMENTS=[
     dict(name='actions',
@@ -138,7 +140,7 @@ ARGUMENTS=[
          default=""),
     dict(name='channel',
          description="""The channel to use for updates, packaging, settings name, etc.""",
-         default=get_channel),
+         default=DEFAULT_CHANNEL),
     dict(name='login_channel',
          description="""The channel to use for login handshake/updates only.""",
          default=None),
@@ -165,7 +167,7 @@ ARGUMENTS=[
     dict(name='version',
          description="""This specifies the version of Second Life that is
         being packaged up.""",
-         default=get_default_version)
+         default=None)
     ]
 
 def usage(srctree=""):
@@ -222,7 +224,9 @@ def main():
                 args[arg['name']] = default
 
     # fix up version
-    if isinstance(args.get('version'), str):
+    if args.get('version') is None:
+        args['version'] = llversion.get_viewer_version().split('.')
+    elif isinstance(args['version'], str):
         args['version'] = args['version'].split('.')
         
     # default and agni are default
@@ -629,31 +633,31 @@ class LLManifest(object):
         if dst == None:
             dst = src
         dst = os.path.join(self.get_dst_prefix(), dst)
-        count = 0
-        is_glob = False
 
-        # look under each prefix for matching paths
-        paths = [os.path.join(self.get_src_prefix(), src),
-                 os.path.join(self.get_artwork_prefix(), src),
-                 os.path.join(self.get_build_prefix(), src)]
-        for path in paths:
-            if self.wildcard_pattern.search(path):
-                is_glob = True
-                for s,d in self.expand_globs(path, dst):
+        def try_path(src):
+            # expand globs
+            count = 0
+            if self.wildcard_pattern.search(src):
+                for s,d in self.expand_globs(src, dst):
                     assert(s != d)
                     count += self.process_file(s, d)
             else:
+                # if we're specifying a single path (not a glob),
+                # we should error out if it doesn't exist
+                self.check_file_exists(src)
                 # if it's a directory, recurse through it
-                if os.path.isdir(path):
-                    count += self.process_directory(path, dst)
-                elif os.path.exists(path):
-                    count += self.process_file(path, dst)
-
-        # if we're specifying a single path (not a glob),
-        # we should error out if it doesn't exist
-        if count == 0 and not is_glob:
-            raise RuntimeError("No files match %s\n" % str(paths))
-
+                if os.path.isdir(src):
+                    count += self.process_directory(src, dst)
+                else:
+                    count += self.process_file(src, dst)
+            return count
+        try:
+            count = try_path(os.path.join(self.get_src_prefix(), src))
+        except RuntimeError:
+            try:
+                count = try_path(os.path.join(self.get_artwork_prefix(), src))
+            except RuntimeError:
+                count = try_path(os.path.join(self.get_build_prefix(), src))
         print "%d files" % count
 
     def do(self, *actions):
