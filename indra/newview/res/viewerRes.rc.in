@@ -61,8 +61,8 @@ END
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDI_LL_ICON             ICON                    "phoenix_icon.ico"
-IDI_LCD_LL_ICON         ICON                    "phoenix_icon.ico"
+IDI_LL_ICON             ICON                    "snowglobe_icon.ico"
+IDI_LCD_LL_ICON         ICON                    "snowglobe_icon.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
