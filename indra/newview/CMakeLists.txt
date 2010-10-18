@@ -1166,7 +1166,7 @@ if (WINDOWS)
         comdlg32
         ${DINPUT_LIBRARY}
         ${DXGUID_LIBRARY}
-        fmodvc
+        ${FMOD_LIBRARIES}
         gdi32
         kernel32
         odbc32
@@ -1447,8 +1447,6 @@ target_link_libraries(${VIEWER_BINARY_NAME}
     ${Boost_THREAD_LIBRARY}
     ${DBUSGLIB_LIBRARIES}
     ${OPENGL_LIBRARIES}
-    ${FMODWRAPPER_LIBRARY}
-    ${OPENGL_LIBRARIES}
     ${JSONCPP_LIBRARIES}
     ${SDL_LIBRARY}
     ${SMARTHEAP_LIBRARY}
@@ -1460,6 +1458,12 @@ target_link_libraries(${VIEWER_BINARY_NAME}
     ${GROWL_LIBRARY}
     )
 
+if (DARWIN)
+	target_link_libraries(${VIEWER_BINARY_NAME}
+		${FMODWRAPPER_LIBRARY}
+	)
+endif (DARWIN)
+
 if (LINUX)
   add_custom_command(
       OUTPUT secondlife-stripped
@@ -1468,7 +1472,7 @@ if (LINUX)
       DEPENDS ${VIEWER_BINARY_NAME}
       )
 
-  set(product ${VIEWER_BRANDING_NAME_CAMELCASE}-${ARCH}-${viewer_VERSION})
+  set(product ${VIEWER_BRANDING_NAME_CAMELCASE}-${ARCH}-${VERSION_VIEWER})
 
   add_custom_command(
       OUTPUT ${product}.tar.bz2
