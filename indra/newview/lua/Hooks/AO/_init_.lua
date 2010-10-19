@@ -216,6 +216,10 @@ function AO:AddOverride(state,anim)
 	end
 	
 	-- If there's no category in the overrides table for the desired state, add it.
+	if self.AnimationOverrides == nil then
+		self.AnimationOverrides={}
+	end
+	
 	if self.AnimationOverrides[state] == nil then
 		self.AnimationOverrides[state]={}
 	end
@@ -241,7 +245,7 @@ end
 
 function AO:Save()
 	if getMyID() ~= UUID_null and self.CacheFile ~= nil then
-		data=io.openDataDir("/AO.lua","w")
+		data=io.openDataFile("/AO.lua","w")
 		data:write("return "..table.serialize(self.AnimationOverrides))
 		data:close()
 	end

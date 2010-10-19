@@ -1,8 +1,13 @@
-function table.serialize(t)
-	local tmp="{"
-	for k,v in pairs(t) do
-		tmp=tmp..string.format("[%s]=%s,",serialize_data(k),serialize_data(v))
+function table.serialize(t,rl)
+	if rl==nil then
+		rl=0
 	end
+	local tmp="{\n"
+	for k,v in pairs(t) do
+		--print(k,v)
+		tmp=tmp..indent(string.format("[%s]=%s,\n",serialize_data(k),serialize_data(v)))
+	end
+	return tmp.."}\n"
 end
 
 function serialize_data(d)
@@ -14,5 +19,14 @@ function serialize_data(d)
 		return table.serialize(d)
 	else
 		error("WHAT THE HELL IS A "..type(d).."?!")
+		return "nil"
 	end
+end
+
+function indent(str)
+	t=""
+	for ln,line in pairs(explode("\n",str)) do
+		t=t.."\t"..line.."\n"
+	end
+	return t
 end
