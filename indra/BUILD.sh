@@ -1,5 +1,5 @@
-BUILDTYPE="Release"
-#BUILDTYPE="RelWithDebInfo"
+#BUILDTYPE="Release"
+BUILDTYPE="RelWithDebInfo"
 #BUILDTYPE="Debug"
 
 #distcc setup

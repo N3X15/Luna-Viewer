@@ -4,11 +4,11 @@
 @rem Dick with settings
 call ..\scripts\automated_build_scripts\update_settings.bat
 
-@rem Get fmod
-call ..\prep-fmod.bat
+@rem Clean installables cache
+rm ../installed.xml
 
 @rem Set your build type here.  Release = no debugging symbols.  RelWithDebInfo = Optimized with debugging symbols. Debug = FAT AND SLOW, MUCH LIKE YOUR MOTHER
-set BUILDTYPE=Release
+set BUILDTYPE=RelWithDebInfo
 
 @rem TODO: Turn this into a horrific python monstrosity.
 @rem	Gather hooks in order to generate documentation.
