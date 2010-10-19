@@ -191,6 +191,7 @@ void LLAO::refresh()
 
 	mAnimationOverrides = settings["overrides"];
 
+	std::string ffff="";
 	for(
 		LLSD::map_iterator stateIter = mAnimationOverrides.beginMap();
 		stateIter!=mAnimationOverrides.endMap();
@@ -201,10 +202,11 @@ void LLAO::refresh()
 		int i;
 		for(i=0;i<n;i++)
 		{
-			std::string anim = mAnimationOverrides[state][i].asString();
-			FLLua::callCommand(llformat("AO:AddOverride(\"%s\",\"%s\")",state,anim));
+			const char *anim = mAnimationOverrides[state][i].asString().c_str();
+			ffff.append(llformat("AO:AddOverride(\"%s\",\"%s\")\n",state.c_str(),anim));
 		}
 	}
+	FLLua::callCommand(ffff);
 }
 
 //static ------------- Floater
