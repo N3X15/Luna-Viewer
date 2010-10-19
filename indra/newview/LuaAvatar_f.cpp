@@ -381,9 +381,10 @@ void startAnimation(LLUUID avid, LLUUID movement)
 		return;
 	}
 	LLVOAvatar *av=(LLVOAvatar *)o;
-	av->startMotion(movement,0.f,true);
 	if(gAgent.getID() == avid)
 	{
 		gAgent.sendAnimationRequest(movement, ANIM_REQUEST_START);
+	} else {
+		av->startMotion(movement,0.f,true);
 	}
 }

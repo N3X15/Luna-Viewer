@@ -1,0 +1,17 @@
+# libopenjpeg was grabbed from the google code svn server of the project.
+# This patch was applied to fix a crash issue
+# If you upgrade libopenjpeg, be sure to edit openjpeg.h with the correct version numbers.
+# The last place in the version number string is the svn rev number.
+#
+Index: libopenjpeg/t2.c
+===================================================================
+--- libopenjpeg/t2.c	(revision 635)
++++ libopenjpeg/t2.c	(working copy)
+@@ -921,6 +921,7 @@
+ 			while (l_cblk->numnewpasses > 0);
+ 			++l_cblk;
+ 		}
++		++l_band;
+ 	}
+ 	return true;
+ }

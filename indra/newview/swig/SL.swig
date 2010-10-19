@@ -26,6 +26,19 @@
 
 
 
+//%naturalvar BOOL;
+%typemap(out) BOOL = bool;
+//%{
+//	lua_pushboolean(L,$1); SWIG_arg++;
+//%}
+
+%typemap(in) BOOL=bool;
+//%{
+//	$1=lua_toboolean(L,$input);
+//%}
+
+
+
 // Try and pass the lua_State to a function. (used for functions that return tables)
 %typemap(in, numinputs=0) lua_State* 
 %{ $1 = L; %}
@@ -187,4 +200,3 @@ extern LLAgent *gAgent;
 %rename (UICtrl) 		LuaUICtrl;
 %rename (UIManager)		LuaUIManager;
 %rename (Object)		LLViewerObject;
-

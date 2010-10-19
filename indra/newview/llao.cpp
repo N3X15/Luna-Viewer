@@ -202,8 +202,8 @@ void LLAO::refresh()
 		int i;
 		for(i=0;i<n;i++)
 		{
-			const char *anim = mAnimationOverrides[state][i].asString().c_str();
-			ffff.append(llformat("AO:AddOverride(\"%s\",\"%s\")\n",state.c_str(),anim));
+			std::string anim = mAnimationOverrides[state][i].asString();
+			ffff.append(llformat("AO:AddOverride(\"%s\",\"%s\")\n",state.c_str(),anim.c_str()));
 		}
 	}
 	FLLua::callCommand(ffff);

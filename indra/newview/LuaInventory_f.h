@@ -12,6 +12,7 @@ LLUUID getCategoryUUID(const std::string& path);
 LLUUID requestInventoryAsset(LLUUID item_id,LLUUID task_id=LLUUID::null);
 
 LLUUID		getInventoryItemUUID(const std::string& name,	int type);
+LLUUID      getInventoryAssetUUID(const std::string& name,	int type);
 std::string	getInventoryItemName(LLUUID name,				int type);
 
 #endif

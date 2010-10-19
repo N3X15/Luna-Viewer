@@ -2387,16 +2387,16 @@ static int _wrap_UUID_set__SWIG_0(lua_State* L) {
   SWIG_check_num_args("set",3,3)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("set",1,"LLUUID *");
   if(!lua_isstring(L,2)) SWIG_fail_arg("set",2,"std::string const &");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("set",3,"BOOL");
+  if(!lua_isboolean(L,3)) SWIG_fail_arg("set",3,"BOOL");
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLUUID,0))){
     SWIG_fail_ptr("UUID_set",1,SWIGTYPE_p_LLUUID);
   }
   
   temp2.assign(lua_tostring(L,2),lua_strlen(L,2)); arg2=&temp2;
-  arg3 = (BOOL)lua_tonumber(L, 3);
+  arg3 = (lua_toboolean(L, 3)!=0);
   result = (BOOL)(arg1)->set((std::string const &)*arg2,arg3);
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -2424,7 +2424,7 @@ static int _wrap_UUID_set__SWIG_1(lua_State* L) {
   
   temp2.assign(lua_tostring(L,2),lua_strlen(L,2)); arg2=&temp2;
   result = (BOOL)(arg1)->set((std::string const &)*arg2);
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -2507,7 +2507,7 @@ static int _wrap_UUID_isNull(lua_State* L) {
   }
   
   result = (BOOL)((LLUUID const *)arg1)->isNull();
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -2531,7 +2531,7 @@ static int _wrap_UUID_notNull(lua_State* L) {
   }
   
   result = (BOOL)((LLUUID const *)arg1)->notNull();
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -2575,7 +2575,7 @@ static int _wrap_UUID_validate(lua_State* L) {
   if(!lua_isstring(L,1)) SWIG_fail_arg("LLUUID::validate",1,"std::string const &");
   temp1.assign(lua_tostring(L,1),lua_strlen(L,1)); arg1=&temp1;
   result = (BOOL)LLUUID::validate((std::string const &)*arg1);
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -3476,7 +3476,7 @@ static int _wrap_LLVector2_abs(lua_State* L) {
   }
   
   result = (BOOL)(arg1)->abs();
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -3531,7 +3531,7 @@ static int _wrap_LLVector2_isNull(lua_State* L) {
   }
   
   result = (BOOL)(arg1)->isNull();
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -3555,7 +3555,7 @@ static int _wrap_LLVector2_isExactlyZero(lua_State* L) {
   }
   
   result = (BOOL)((LLVector2 const *)arg1)->isExactlyZero();
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -3778,7 +3778,7 @@ static int _wrap_are_parallel__SWIG_0(lua_State* L) {
   
   arg3 = (F32)lua_tonumber(L, 3);
   result = (BOOL)are_parallel((LLVector2 const &)*arg1,(LLVector2 const &)*arg2,arg3);
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -3809,7 +3809,7 @@ static int _wrap_are_parallel__SWIG_1(lua_State* L) {
   }
   
   result = (BOOL)are_parallel((LLVector2 const &)*arg1,(LLVector2 const &)*arg2);
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -4544,7 +4544,7 @@ static int _wrap_LLVector3_isFinite(lua_State* L) {
   }
   
   result = (BOOL)((LLVector3 const *)arg1)->isFinite();
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -4574,7 +4574,7 @@ static int _wrap_LLVector3_clamp(lua_State* L) {
   arg2 = (F32)lua_tonumber(L, 2);
   arg3 = (F32)lua_tonumber(L, 3);
   result = (BOOL)(arg1)->clamp(arg2,arg3);
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -4601,7 +4601,7 @@ static int _wrap_LLVector3_clampLength(lua_State* L) {
   
   arg2 = (F32)lua_tonumber(L, 2);
   result = (BOOL)(arg1)->clampLength(arg2);
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -4721,7 +4721,7 @@ static int _wrap_LLVector3_abs(lua_State* L) {
   }
   
   result = (BOOL)(arg1)->abs();
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -5583,7 +5583,7 @@ static int _wrap_LLVector3_inRange(lua_State* L) {
   arg2 = (F32)lua_tonumber(L, 2);
   arg3 = (F32)lua_tonumber(L, 3);
   result = (BOOL)((LLVector3 const *)arg1)->inRange(arg2,arg3);
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -5933,7 +5933,7 @@ static int _wrap_LLVector3_isNull(lua_State* L) {
   }
   
   result = (BOOL)((LLVector3 const *)arg1)->isNull();
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -5957,7 +5957,7 @@ static int _wrap_LLVector3_isExactlyZero(lua_State* L) {
   }
   
   result = (BOOL)((LLVector3 const *)arg1)->isExactlyZero();
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -6395,7 +6395,7 @@ static int _wrap_are_parallel__SWIG_2(lua_State* L) {
   
   arg3 = (F32)lua_tonumber(L, 3);
   result = (BOOL)are_parallel((LLVector3 const &)*arg1,(LLVector3 const &)*arg2,arg3);
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -6426,7 +6426,7 @@ static int _wrap_are_parallel__SWIG_3(lua_State* L) {
   }
   
   result = (BOOL)are_parallel((LLVector3 const &)*arg1,(LLVector3 const &)*arg2);
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -7200,7 +7200,7 @@ static int _wrap_LLVector4_isFinite(lua_State* L) {
   }
   
   result = (BOOL)((LLVector4 const *)arg1)->isFinite();
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -8185,7 +8185,7 @@ static int _wrap_LLVector4_abs(lua_State* L) {
   }
   
   result = (BOOL)(arg1)->abs();
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -8209,7 +8209,7 @@ static int _wrap_LLVector4_isExactlyClear(lua_State* L) {
   }
   
   result = (BOOL)((LLVector4 const *)arg1)->isExactlyClear();
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -8233,7 +8233,7 @@ static int _wrap_LLVector4_isExactlyZero(lua_State* L) {
   }
   
   result = (BOOL)((LLVector4 const *)arg1)->isExactlyZero();
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -9010,7 +9010,7 @@ static int _wrap_are_parallel__SWIG_4(lua_State* L) {
   
   arg3 = (F32)lua_tonumber(L, 3);
   result = (BOOL)are_parallel((LLVector4 const &)*arg1,(LLVector4 const &)*arg2,arg3);
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -9041,7 +9041,7 @@ static int _wrap_are_parallel__SWIG_5(lua_State* L) {
   }
   
   result = (BOOL)are_parallel((LLVector4 const &)*arg1,(LLVector4 const &)*arg2);
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -11267,7 +11267,7 @@ static int _wrap_LLColor4_isOpaque(lua_State* L) {
   }
   
   result = (BOOL)(arg1)->isOpaque();
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -14015,7 +14015,7 @@ static int _wrap_LLColor4_parseColor(lua_State* L) {
   }
   
   result = (BOOL)LLColor4::parseColor((std::string const &)*arg1,arg2);
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -14043,7 +14043,7 @@ static int _wrap_LLColor4_parseColor4(lua_State* L) {
   }
   
   result = (BOOL)LLColor4::parseColor4((std::string const &)*arg1,arg2);
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -16091,7 +16091,7 @@ static int _wrap_LLCharacter_allocateCharacterJoints(lua_State* L) {
   SWIG_contract_assert((lua_tonumber(L,2)>=0),"number must not be negative")
   arg2 = (U32)lua_tonumber(L, 2);
   result = (BOOL)(arg1)->allocateCharacterJoints(arg2);
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -16395,7 +16395,7 @@ static int _wrap_LLCharacter_registerMotion(lua_State* L) {
   arg3 = *argp3;
   
   result = (BOOL)(arg1)->registerMotion((LLUUID const &)*arg2,arg3);
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -16513,7 +16513,7 @@ static int _wrap_LLCharacter_startMotion__SWIG_0(lua_State* L) {
   arg2=&temp2;
   arg3 = (F32)lua_tonumber(L, 3);
   result = (BOOL)(arg1)->startMotion((LLUUID const &)*arg2,arg3);
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -16542,7 +16542,7 @@ static int _wrap_LLCharacter_startMotion__SWIG_1(lua_State* L) {
   SWIG_contract_assert(temp2.set(lua_tostring(L,2),false),"Must be of UUID format.")
   arg2=&temp2;
   result = (BOOL)(arg1)->startMotion((LLUUID const &)*arg2);
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -16623,7 +16623,7 @@ static int _wrap_LLCharacter_stopMotion__SWIG_0(lua_State* L) {
   SWIG_check_num_args("stopMotion",3,3)
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("stopMotion",1,"LLCharacter *");
   if(!lua_isstring(L,2)) SWIG_fail_arg("stopMotion",2,"LLUUID const &");
-  if(!lua_isnumber(L,3)) SWIG_fail_arg("stopMotion",3,"BOOL");
+  if(!lua_isboolean(L,3)) SWIG_fail_arg("stopMotion",3,"BOOL");
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
     SWIG_fail_ptr("LLCharacter_stopMotion",1,SWIGTYPE_p_LLCharacter);
@@ -16631,9 +16631,9 @@ static int _wrap_LLCharacter_stopMotion__SWIG_0(lua_State* L) {
   
   SWIG_contract_assert(temp2.set(lua_tostring(L,2),false),"Must be of UUID format.")
   arg2=&temp2;
-  arg3 = (BOOL)lua_tonumber(L, 3);
+  arg3 = (lua_toboolean(L, 3)!=0);
   result = (BOOL)(arg1)->stopMotion((LLUUID const &)*arg2,arg3);
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -16662,7 +16662,7 @@ static int _wrap_LLCharacter_stopMotion__SWIG_1(lua_State* L) {
   SWIG_contract_assert(temp2.set(lua_tostring(L,2),false),"Must be of UUID format.")
   arg2=&temp2;
   result = (BOOL)(arg1)->stopMotion((LLUUID const &)*arg2);
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -16750,7 +16750,7 @@ static int _wrap_LLCharacter_isMotionActive(lua_State* L) {
   SWIG_contract_assert(temp2.set(lua_tostring(L,2),false),"Must be of UUID format.")
   arg2=&temp2;
   result = (BOOL)(arg1)->isMotionActive((LLUUID const &)*arg2);
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -16857,7 +16857,7 @@ static int _wrap_LLCharacter_areAnimationsPaused(lua_State* L) {
   }
   
   result = (BOOL)(arg1)->areAnimationsPaused();
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -17371,7 +17371,7 @@ static int _wrap_LLCharacter_setVisualParamWeight__SWIG_0(lua_State* L) {
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setVisualParamWeight",1,"LLCharacter *");
   if(!SWIG_isptrtype(L,2)) SWIG_fail_arg("setVisualParamWeight",2,"LLVisualParam *");
   if(!lua_isnumber(L,3)) SWIG_fail_arg("setVisualParamWeight",3,"F32");
-  if(!lua_isnumber(L,4)) SWIG_fail_arg("setVisualParamWeight",4,"BOOL");
+  if(!lua_isboolean(L,4)) SWIG_fail_arg("setVisualParamWeight",4,"BOOL");
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
     SWIG_fail_ptr("LLCharacter_setVisualParamWeight",1,SWIGTYPE_p_LLCharacter);
@@ -17383,9 +17383,9 @@ static int _wrap_LLCharacter_setVisualParamWeight__SWIG_0(lua_State* L) {
   }
   
   arg3 = (F32)lua_tonumber(L, 3);
-  arg4 = (BOOL)lua_tonumber(L, 4);
+  arg4 = (lua_toboolean(L, 4)!=0);
   result = (BOOL)(arg1)->setVisualParamWeight(arg2,arg3,arg4);
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -17419,7 +17419,7 @@ static int _wrap_LLCharacter_setVisualParamWeight__SWIG_1(lua_State* L) {
   
   arg3 = (F32)lua_tonumber(L, 3);
   result = (BOOL)(arg1)->setVisualParamWeight(arg2,arg3);
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -17442,7 +17442,7 @@ static int _wrap_LLCharacter_setVisualParamWeight__SWIG_2(lua_State* L) {
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setVisualParamWeight",1,"LLCharacter *");
   if(!SWIG_lua_isnilstring(L,2)) SWIG_fail_arg("setVisualParamWeight",2,"char const *");
   if(!lua_isnumber(L,3)) SWIG_fail_arg("setVisualParamWeight",3,"F32");
-  if(!lua_isnumber(L,4)) SWIG_fail_arg("setVisualParamWeight",4,"BOOL");
+  if(!lua_isboolean(L,4)) SWIG_fail_arg("setVisualParamWeight",4,"BOOL");
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
     SWIG_fail_ptr("LLCharacter_setVisualParamWeight",1,SWIGTYPE_p_LLCharacter);
@@ -17450,9 +17450,9 @@ static int _wrap_LLCharacter_setVisualParamWeight__SWIG_2(lua_State* L) {
   
   arg2 = (char *)lua_tostring(L, 2);
   arg3 = (F32)lua_tonumber(L, 3);
-  arg4 = (BOOL)lua_tonumber(L, 4);
+  arg4 = (lua_toboolean(L, 4)!=0);
   result = (BOOL)(arg1)->setVisualParamWeight((char const *)arg2,arg3,arg4);
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -17482,7 +17482,7 @@ static int _wrap_LLCharacter_setVisualParamWeight__SWIG_3(lua_State* L) {
   arg2 = (char *)lua_tostring(L, 2);
   arg3 = (F32)lua_tonumber(L, 3);
   result = (BOOL)(arg1)->setVisualParamWeight((char const *)arg2,arg3);
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -17505,7 +17505,7 @@ static int _wrap_LLCharacter_setVisualParamWeightNoClamp__SWIG_0(lua_State* L) {
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setVisualParamWeightNoClamp",1,"LLCharacter *");
   if(!SWIG_lua_isnilstring(L,2)) SWIG_fail_arg("setVisualParamWeightNoClamp",2,"char const *");
   if(!lua_isnumber(L,3)) SWIG_fail_arg("setVisualParamWeightNoClamp",3,"F32");
-  if(!lua_isnumber(L,4)) SWIG_fail_arg("setVisualParamWeightNoClamp",4,"BOOL");
+  if(!lua_isboolean(L,4)) SWIG_fail_arg("setVisualParamWeightNoClamp",4,"BOOL");
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
     SWIG_fail_ptr("LLCharacter_setVisualParamWeightNoClamp",1,SWIGTYPE_p_LLCharacter);
@@ -17513,9 +17513,9 @@ static int _wrap_LLCharacter_setVisualParamWeightNoClamp__SWIG_0(lua_State* L) {
   
   arg2 = (char *)lua_tostring(L, 2);
   arg3 = (F32)lua_tonumber(L, 3);
-  arg4 = (BOOL)lua_tonumber(L, 4);
+  arg4 = (lua_toboolean(L, 4)!=0);
   result = (BOOL)(arg1)->setVisualParamWeightNoClamp((char const *)arg2,arg3,arg4);
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -17545,7 +17545,7 @@ static int _wrap_LLCharacter_setVisualParamWeightNoClamp__SWIG_1(lua_State* L) {
   arg2 = (char *)lua_tostring(L, 2);
   arg3 = (F32)lua_tonumber(L, 3);
   result = (BOOL)(arg1)->setVisualParamWeightNoClamp((char const *)arg2,arg3);
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -17637,7 +17637,7 @@ static int _wrap_LLCharacter_setVisualParamWeight__SWIG_4(lua_State* L) {
   if(!SWIG_isptrtype(L,1)) SWIG_fail_arg("setVisualParamWeight",1,"LLCharacter *");
   if(!lua_isnumber(L,2)) SWIG_fail_arg("setVisualParamWeight",2,"S32");
   if(!lua_isnumber(L,3)) SWIG_fail_arg("setVisualParamWeight",3,"F32");
-  if(!lua_isnumber(L,4)) SWIG_fail_arg("setVisualParamWeight",4,"BOOL");
+  if(!lua_isboolean(L,4)) SWIG_fail_arg("setVisualParamWeight",4,"BOOL");
   
   if (!SWIG_IsOK(SWIG_ConvertPtr(L,1,(void**)&arg1,SWIGTYPE_p_LLCharacter,0))){
     SWIG_fail_ptr("LLCharacter_setVisualParamWeight",1,SWIGTYPE_p_LLCharacter);
@@ -17645,9 +17645,9 @@ static int _wrap_LLCharacter_setVisualParamWeight__SWIG_4(lua_State* L) {
   
   arg2 = (S32)lua_tonumber(L, 2);
   arg3 = (F32)lua_tonumber(L, 3);
-  arg4 = (BOOL)lua_tonumber(L, 4);
+  arg4 = (lua_toboolean(L, 4)!=0);
   result = (BOOL)(arg1)->setVisualParamWeight(arg2,arg3,arg4);
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -17677,7 +17677,7 @@ static int _wrap_LLCharacter_setVisualParamWeight__SWIG_5(lua_State* L) {
   arg2 = (S32)lua_tonumber(L, 2);
   arg3 = (F32)lua_tonumber(L, 3);
   result = (BOOL)(arg1)->setVisualParamWeight(arg2,arg3);
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -18077,7 +18077,7 @@ static int _wrap_LLCharacter_visualParamWeightsAreDefault(lua_State* L) {
   }
   
   result = (BOOL)(arg1)->visualParamWeightsAreDefault();
-  lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
+  lua_pushboolean(L,(int)(result!=0)); SWIG_arg++;
   return SWIG_arg;
   
   if(0) SWIG_fail;
@@ -21608,6 +21608,32 @@ fail:
 }
 
 
+static int _wrap_getInventoryAssetUUID(lua_State* L) {
+  int SWIG_arg = 0;
+  std::string *arg1 = 0 ;
+  int arg2 ;
+  std::string temp1 ;
+  LLUUID result;
+  
+  SWIG_check_num_args("getInventoryAssetUUID",2,2)
+  if(!lua_isstring(L,1)) SWIG_fail_arg("getInventoryAssetUUID",1,"std::string const &");
+  if(!lua_isnumber(L,2)) SWIG_fail_arg("getInventoryAssetUUID",2,"int");
+  temp1.assign(lua_tostring(L,1),lua_strlen(L,1)); arg1=&temp1;
+  arg2 = (int)lua_tonumber(L, 2);
+  result = getInventoryAssetUUID((std::string const &)*arg1,arg2);
+  
+  lua_pushlstring(L,(&result)->asString().data(),(&result)->asString().size()); SWIG_arg++;
+  
+  return SWIG_arg;
+  
+  if(0) SWIG_fail;
+  
+fail:
+  lua_error(L);
+  return SWIG_arg;
+}
+
+
 static int _wrap_getInventoryItemName(lua_State* L) {
   int SWIG_arg = 0;
   LLUUID arg1 ;
@@ -21771,6 +21797,7 @@ static const struct luaL_reg swig_commands[] = {
     { "getCategoryUUID", _wrap_getCategoryUUID},
     { "requestInventoryAsset",_wrap_requestInventoryAsset},
     { "getInventoryItemUUID", _wrap_getInventoryItemUUID},
+    { "getInventoryAssetUUID", _wrap_getInventoryAssetUUID},
     { "getInventoryItemName", _wrap_getInventoryItemName},
     {0,0}
 };

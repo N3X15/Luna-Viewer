@@ -80,6 +80,7 @@ public:
 	bool operator()(LLInventoryCategory* cat,
 							LLInventoryItem* item)
 	{
+		if(!item) return FALSE;
 		if(item->getActualType() == mType)
 			if(item->getName()==mName)
 				return TRUE;
@@ -97,6 +98,18 @@ LLUUID getInventoryItemUUID(const std::string& name, int type)
 	if(items.size() == 0) return LLUUID::null;
 
 	return items.get(0)->getLinkedUUID();
+}
+
+LLUUID getInventoryAssetUUID(const std::string& name, int type)
+{
+	LLViewerInventoryCategory::cat_array_t cats;
+	LLViewerInventoryItem::item_array_t items;
+	LunaFindItemByName byn(name,(LLAssetType::EType)type);
+	gInventory.collectDescendentsIf(gAgent.getInventoryRootID(),cats,items,false,byn);
+
+	if(items.size() == 0) return LLUUID::null;
+
+	return items.get(0)->getAssetUUID();
 }
 
 std::string getInventoryItemName(LLUUID key, int type)

@@ -1,41 +1,12 @@
-print "_______________________________________"
-print "Lua Unit Testing"
-print ""
 
-dofile "tests/unittest.lua"
-dofile "tests/base.lua"
-
-gSuccessCount	= 0
-gFailCount		= 0
-
-function utAssert(funcname, test)
-	if(test==true) then
-		gSuccessCount=gSuccessCount+1
-		print(" - "..funcname..": [ OK ]")
+local i = 0
+for n,f in pairs(UnitTests) do
+	i=i+1
+	val=UnitTests[n]()
+	if val==true then
+		print("Test "..i..": "..n.." [ OK ]")
 	else
-		gFailCount=gFailCount+1
-		error(" - "..funcname..": [FAIL]")
+		print("Test "..i..": "..n.." [FAIL]")
+		print(val)
 	end
 end
-
-function utNotAssert(funcname, test)
-	if (test==true) then
-		gFailCount=gFailCount+1
-		error(" - "..funcname..": [FAIL]")
-	else
-		gSuccessCount=gSuccessCount+1
-		print(" - "..funcname..": [ OK ]")
-	end
-end
-
-print ("[BASIC FUNCTIONALITY]")
-utSendChat()
-utSay()
-utShout()
-utWhisper()
-
-SendChat ("[REGION FUNCTIONS]")
-region = getCurrentRegion()
-utAssert("getCurrentRegion()",(region == nil))
-utAssert("region.getPacketsLost()",(region:getPacketsLost()>0))
---utAssert("region.getPacketsLost()",(region.getPacketsLost()>0))

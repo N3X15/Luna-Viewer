@@ -27,6 +27,9 @@ AO.Parsers={}
 -- State={Replacements},
 AO.AnimationOverrides={}
 
+-- Anim=IDCache
+AO.AnimUUIDs={}
+
 -- Current Animations
 AO.CurrentAnimation=UUID_nil
 AO.CurrentState=""
@@ -35,8 +38,9 @@ AO.Debug=false -- TURN ON DEBUG MODE (/lua AO.Debug=true)
 
 --OnAnimStart(avid,id,time_offset) For AOs.
 function AO:OnAnimStart(av_id,id,time_offset)
+
 	-- Ensure that we're only receiving AnimationStarts that come from our own avatar.
-	if tostring(av_id) == tostring(getMyID()) then return end
+	if tostring(av_id) ~= tostring(getMyID()) then return end
 	
 	-- Also make sure that the AO is actually enabled.
 	if self.Disabled==true then return end
@@ -67,10 +71,10 @@ function AO:OnAnimStart(av_id,id,time_offset)
 	if(st8==nil) then
 		st8="???"
 	end
-	self:DebugInfo("Animation playing: "..id.." ("..name.." @ state "..state..")")
+	--self:DebugInfo("Animation playing: "..id.." ("..name.." @ state "..st8..")")
 	
 	-- If the animation changes state of the avatar, 
-	if AnimationStates[id] ~= nil and self.CurrentAnimation ~= id then
+	if name~="???" and AnimationStates[id] ~= nil and self.CurrentAnimation ~= id then
 		state=AnimationStates[id]
 		
 		-- Debugging shit
@@ -87,8 +91,9 @@ function AO:OnAnimStart(av_id,id,time_offset)
 		replacements=self.AnimationOverrides[id]
 		
 		-- If we're already playing an override animation, stop it.
-		if self.CurrentAnimation ~= UUID_nil then
-			self:DebugInfo("Stopping motion "..self.CurrentAnimation)
+		if self.CurrentAnimation ~= UUID_nil or self.CurrentAnimation ~= nil then
+			self:DebugInfo("Stopping AO motion "..self.CurrentAnimation)
+			self.CurrentAnimation=self:Name2Key(self.CurrentAnimation)
 			stopAnimation(getMyID(),self.CurrentAnimation)
 		end
 		
@@ -98,12 +103,45 @@ function AO:OnAnimStart(av_id,id,time_offset)
 			-- Get a random one
 			self.CurrentAnimation=replacements[math.random(1,numreplacements)]
 			self:DebugInfo("Playing motion "..self.CurrentAnimation)
+			
+			self.CurrentAnimation=self:Name2Key(self.CurrentAnimation)
+			
 			-- Stop the animation being overridden
-			stopAnimation(getMyID(),id)
+			--self:DebugInfo("Stopping natural motion "..id)
+			--stopAnimation(getMyID(), id)
 			-- And play the override.
 			startAnimation(getMyID(), self.CurrentAnimation)
 		end
 	end
+end
+
+function AO:Name2Key(anim)
+	-- If we're not looking at a UUID, it's probably a name. (God help us if they saved it as a UUID)
+	if not UUID_validate(anim) then
+		--print("Name2Key("..anim..")=false")
+		-- Get the UUID associated with this name, if possible.
+		if (self.AnimUUIDs[anim]~=nil) then
+			-- It's cached, no need to search through inventory.
+			return self.AnimUUIDs[anim]
+		end
+		
+		anim_name=anim
+		anim=getInventoryItemUUID(anim,AssetType.ANIMATION)
+		
+		-- If not possible, ABORT ABORT
+		if anim == UUID_null then
+			error("Could not find UUID for item "..anim_name)
+			return
+		end
+		
+		self.AnimUUIDs[anim_name]=anim
+		
+		-- Debugging
+		print("[AO] "..anim_name.." -> "..anim)
+		return anim
+	end
+	--print("Name2Key("..anim..")=true")
+	return anim
 end
 
 function AO:ClearOverrides()
@@ -191,7 +229,7 @@ local function AO_OnAnimStart(av_id,id,time_offset)
 	AO:OnAnimStart(av_id,id,time_offset)
 end
 
-SetHook("OnAnimStart",AO_OnAnimStart)
-SetHook("OnAONotecard",AO_OnAONotecard)
+SetHook("OnAnimStart",		AO_OnAnimStart)
+SetHook("OnAONotecard",		AO_OnAONotecard)
 SetHook("OnAssetDownloaded",AO_OnAssetDownloaded)
-SetHook("OnAssetFailed",AO_OnAssetFailed)
+SetHook("OnAssetFailed",	AO_OnAssetFailed)
