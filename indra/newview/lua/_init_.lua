@@ -83,7 +83,6 @@ end
 
 
 -- Filesystem stuff
-
 function io.getDataDir()
 	return getLuaFolder().."/data/"..getMyID()
 end
@@ -169,3 +168,14 @@ LunaLoadDir("lua/lib/",true)  -- User Libraries
 LunaLoadDir("lua/Hooks/",false) -- User Hooks
 
 --DumpAllHooks();
+
+local function SetUpUserdir(name, is_godlike)
+	lfs.mkdir(io.getDataDir())
+end
+
+SetHook("OnAgentInit",SetUpUserdir)
+
+-- Call OnAgentInit, just in case
+if (getMyID()~=UUID_null) then
+	CallHook("OnAgentInit",getMyName(),0)
+end

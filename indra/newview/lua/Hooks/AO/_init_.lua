@@ -45,13 +45,6 @@ function AO:OnAnimStart(av_id,id,time_offset)
 	-- Also make sure that the AO is actually enabled.
 	if self.Disabled==true then return end
 	
-	-- If nothing's loaded, see if cached.lua exists
-	-- Also set our cache folder
-	if self.AnimationOverrides == {} then
-		lfs.mkdir(getDataDir().."/AO/")
-		self.CacheFile=getDataDir().."/AO/cached.lua"
-		self:Load()
-	end
 	
 	-- If it's a known viewer-generated animation, ignore it.
 	if GeneratedAnims[id] ~= nil then
@@ -248,14 +241,16 @@ end
 
 function AO:Save()
 	if getMyID() ~= UUID_null and self.CacheFile ~= nil then
-		table.save(self.AnimationOverrides,self.CacheFile)
+		data=io.openDataDir("/AO.lua","w")
+		data:write("return "..table.serialize(self.AnimationOverrides))
+		data:close()
 	end
 end
 
 function AO:Load()
 	if getMyID() ~= UUID_null and self.CacheFile ~= nil then
-		if not exists(self.CacheFile) then return end
-		tmptable,err = table.load(self.AnimationOverrides,self.CacheFile)
+		if not exists(io.getDataDir().."/AO.lua") then return end
+		tmptable=dofile(io.getDataDir().."/AO.lua")
 		if err~=nil then
 			error("[AO] Failed to load cache: "..err)
 		else
@@ -272,6 +267,14 @@ end
 
 -- Detect what kind of notecard we're dealing with.
 function AO:DetectNotecardType(data)
+	for n,p in pairs(self.Parsers) do
+		if p:CanParse(data) then
+			print("[AO] Parsing "..n.." notecard...")
+			p:Parse(data)
+			return
+		end
+	end
+	error("Cannot read the specified notecard.")
 end
 
 ------------------------------------------------------------------------------------------------------------------
@@ -306,8 +309,17 @@ local function AO_OnAnimStop(av_id,id)
 	AO:OnAnimStop(av_id,id)
 end
 
+local function AO_OnAgentInit(name,godmode)
+	lfs.mkdir(io.getDataDir().."/AO/")
+	AO.CacheFile=io.getDataDir().."/AO/cached.lua"
+	AO:Load()
+end
+
 SetHook("OnAnimStart",		AO_OnAnimStart)
 SetHook("OnAnimStop",		AO_OnAnimStop)
 SetHook("OnAONotecard",		AO_OnAONotecard)
 SetHook("OnAssetDownloaded",AO_OnAssetDownloaded)
 SetHook("OnAssetFailed",	AO_OnAssetFailed)
+SetHook("OnAgentInit",	AO_OnAgentInit)
+
+dofile("lua/Hooks/AO/ZHAOParser.lua")

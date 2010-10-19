@@ -69,7 +69,7 @@
 #######################################################################################################################
 ]]--
 
-ZHAOParser={}
+local ZHAOParser={}
 
 function ZHAOParser:CanParse(data)
 	tmp = io.tmpfile()
@@ -89,19 +89,14 @@ function ZHAOParser:Parse(data)
 	tmp = io.tmpfile()
 	tmp:write(data)
 	tmp:flush()
+	AO:ClearOverrides()
 	for line in tmp:lines() do
 		line=trim(line)
 		if not string.starts(line,"#") and line ~= "" then 
 			state=string.gsub(line, "^%s*\[ (.-) \]%s*$", "%1")
 			chunks=explode("]",line)
 			anims=explode("|",chunks[2])
-			if AO.AnimationOverrides[state] == nil then
-				AO.AninimationOverrides[state]={}
-			end
-			for _,a in ipairs(anims) do
-				i=getn(AO.AnimationOverrides[state])+1
-				AO.AnimationOverrides[state][i]=getInventoryItemUUID(a)
-			end
+			AO:AddOverride(state,getInventoryAssetUUID(a))
 		end
 	end
 	tmp:close()

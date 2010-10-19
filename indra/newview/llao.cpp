@@ -377,11 +377,13 @@ BOOL LLFloaterAO::handleDragAndDrop(S32 x, S32 y, MASK mask, BOOL drop,
 		{
 			// Pop off to Lua
 			LLInventoryItem* item = (LLInventoryItem*)cargo_data;
-			if (item && gInventory.getItem(item->getUUID()))
+			if (item && gInventory.getItem(item->getAssetUUID()))
 			{
 				// @hook OnAONotecard(asset_id)
-				LUA_CALL("OnAONotecard") << item->getUUID() << LUA_END;
+				LUA_CALL("OnAONotecard") << item->getAssetUUID() << LUA_END;
 			}
+			*accept = ACCEPT_YES_COPY_MULTI;
+			break;
 		}
 	case DAD_ANIMATION:
 		{
