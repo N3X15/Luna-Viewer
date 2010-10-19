@@ -520,6 +520,7 @@ set(viewer_SOURCE_FILES
     LuaBuild_f.cpp
     LuaBase_f.cpp
     LuaInventory_f.cpp
+    LuaSettings.cpp
     LuaWindlight.cpp
     _LuaSL.cpp 
 # GL Module -----------------

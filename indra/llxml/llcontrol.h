@@ -155,6 +155,8 @@ protected:
 
 	eControlType typeStringToEnum(const std::string& typestr);
 	std::string typeEnumToString(eControlType typeenum);	
+private:
+	void (*mChangeCallback)(std::string, std::string);
 public:
 	LLControlGroup();
 	~LLControlGroup();
@@ -218,7 +220,10 @@ public:
 	void	setColor3(const std::string& name, const LLColor3 &val);
 	void    setLLSD(const std::string& name, const LLSD& val);
 	void	setValue(const std::string& name, const LLSD& val);
-	
+	void	setChangeCallback(void (*callback)(std::string, std::string))
+	{
+		mChangeCallback=callback;
+	}
 	
 	BOOL    controlExists(const std::string& name);
 

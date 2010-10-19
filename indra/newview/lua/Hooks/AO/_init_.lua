@@ -71,7 +71,8 @@ function AO:OnAnimStart(av_id,id,time_offset)
 	if(st8==nil) then
 		st8="???"
 	end
-	--self:DebugInfo("Animation playing: "..id.." ("..name.." @ state "..st8..")")
+	
+	self:DebugInfo("Animation playing: "..id.." ("..name.." @ state "..st8..")")
 	
 	-- If the animation changes state of the avatar, 
 	if name~="???" and AnimationStates[id] ~= nil and self.CurrentAnimation ~= id then
@@ -84,11 +85,11 @@ function AO:OnAnimStart(av_id,id,time_offset)
 		end
 		
 		-- Check if the state has overrides assigned.  If not, abort and let the defaults play.
-		if (self.AnimationOverrides==nil or self.AnimationOverrides[id]==nil) then return end
+		if (self.AnimationOverrides==nil or self.AnimationOverrides[state]==nil) then return end
 		
 		-- Fetch the number and collection of overrides.
-		numreplacements=table.getn(self.AnimationOverrides[id])
-		replacements=self.AnimationOverrides[id]
+		numreplacements=table.getn(self.AnimationOverrides[state])
+		replacements=self.AnimationOverrides[state]
 		
 		-- If we're already playing an override animation, stop it.
 		if self.CurrentAnimation ~= UUID_nil or self.CurrentAnimation ~= nil then
@@ -115,6 +116,68 @@ function AO:OnAnimStart(av_id,id,time_offset)
 	end
 end
 
+function AO:OnAnimStop(av_id,id)
+-- Ensure that we're only receiving AnimationStarts that come from our own avatar.
+	if tostring(av_id) ~= tostring(getMyID()) then return end
+	
+	-- Also make sure that the AO is actually enabled.
+	if self.Disabled==true then return end
+	
+	-- If nothing's loaded, see if cached.lua exists
+	-- Also set our cache folder
+	if self.AnimationOverrides == {} then
+		lfs.mkdir(getDataDir().."/AO/")
+		self.CacheFile=getDataDir().."/AO/cached.lua"
+		self:Load()
+	end
+	
+	-- If it's a known viewer-generated animation, ignore it.
+	if GeneratedAnims[id] ~= nil then
+		return
+	end
+	
+	-- Just in case.
+	id=tostring(id)
+	
+	-- this is all for debugging.
+	name=AnimationNames[id]
+	if (name==nil) then
+		name = "???"
+	end
+	
+	st8=AnimationStates[id]
+	if(st8==nil) then
+		st8="???"
+	end
+	--self:DebugInfo("Animation playing: "..id.." ("..name.." @ state "..st8..")")
+	
+	-- If the animation changes state of the avatar, 
+	if name~="???" and self.CurrentAnimation ~= nil and AnimationStates[id] ~= nil and self.CurrentAnimation ~= id then
+		state=AnimationStates[id]
+		
+		if st8 == "Walking" then
+			stopAnimation(getMyID(),self.CurrentAnimation)
+			
+			numreplacements=table.getn(self.AnimationOverrides["Standing"])
+			replacements=self.AnimationOverrides["Standing"]
+			if numreplacements > 0 then
+			
+				-- Get a random one
+				self.CurrentAnimation=replacements[math.random(1,numreplacements)]
+				self:DebugInfo("Playing motion "..self.CurrentAnimation)
+				
+				self.CurrentAnimation=self:Name2Key(self.CurrentAnimation)
+				
+				-- Stop the animation being overridden
+				--self:DebugInfo("Stopping natural motion "..id)
+				--stopAnimation(getMyID(), id)
+				-- And play the override.
+				startAnimation(getMyID(), self.CurrentAnimation)
+			end
+		end
+	end
+end
+
 function AO:Name2Key(anim)
 	-- If we're not looking at a UUID, it's probably a name. (God help us if they saved it as a UUID)
 	if not UUID_validate(anim) then
@@ -126,7 +189,7 @@ function AO:Name2Key(anim)
 		end
 		
 		anim_name=anim
-		anim=getInventoryItemUUID(anim,AssetType.ANIMATION)
+		anim=getInventoryAssetUUID(anim,AssetType.ANIMATION)
 		
 		-- If not possible, ABORT ABORT
 		if anim == UUID_null then
@@ -149,6 +212,16 @@ function AO:ClearOverrides()
 end
 
 function AO:AddOverride(state,anim)
+	if UUID_validate(state) then
+		-- What the hell are you doing
+		state=AnimationStates[state]
+	end
+	
+	-- Standardize names
+	if state=="Stands" then
+		state="Standing"
+	end
+	
 	-- If there's no category in the overrides table for the desired state, add it.
 	if self.AnimationOverrides[state] == nil then
 		self.AnimationOverrides[state]={}
@@ -158,12 +231,12 @@ function AO:AddOverride(state,anim)
 	if not UUID_validate(anim) then
 		-- Get the UUID associated with this name, if possible.
 		anim_name=anim
-		anim=getInventoryItemUUID(anim,AssetType.ANIMATION)
+		anim=getInventoryAssetUUID(anim,AssetType.ANIMATION)
 		-- If not possible, ABORT ABORT
 		if anim == UUID_null then return end
 		
 		-- Debugging
-		print("[AO] "..anim_name.." -> "..anim)
+		--print("[AO] "..anim_name.." -> ["..state.."]="..anim)
 	end
 	-- Add animation override to the overrides table in the desired State category.
 	i=table.getn(self.AnimationOverrides[state])+1
@@ -229,7 +302,12 @@ local function AO_OnAnimStart(av_id,id,time_offset)
 	AO:OnAnimStart(av_id,id,time_offset)
 end
 
+local function AO_OnAnimStop(av_id,id)
+	AO:OnAnimStop(av_id,id)
+end
+
 SetHook("OnAnimStart",		AO_OnAnimStart)
+SetHook("OnAnimStop",		AO_OnAnimStop)
 SetHook("OnAONotecard",		AO_OnAONotecard)
 SetHook("OnAssetDownloaded",AO_OnAssetDownloaded)
 SetHook("OnAssetFailed",	AO_OnAssetFailed)

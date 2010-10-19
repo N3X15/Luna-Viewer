@@ -276,6 +276,7 @@ LLControlGroup::LLControlGroup()
 	mTypeString[TYPE_COL3] = "Color3";
 	mTypeString[TYPE_COL4U] = "Color4u";
 	mTypeString[TYPE_LLSD] = "LLSD";
+	mChangeCallback=NULL;
 }
 
 LLControlGroup::~LLControlGroup()
@@ -615,6 +616,8 @@ void LLControlGroup::setBOOL(const std::string& name, BOOL val)
 	if (control && control->isType(TYPE_BOOLEAN))
 	{
 		control->set(val);
+		if(mChangeCallback)
+			mChangeCallback(name,(val) ? "1" : "0");
 	}
 	else
 	{
@@ -630,6 +633,8 @@ void LLControlGroup::setS32(const std::string& name, S32 val)
 	if (control && control->isType(TYPE_S32))
 	{
 		control->set(val);
+		if(mChangeCallback)
+			mChangeCallback(name,llformat("%d",val));
 	}
 	else
 	{
@@ -645,6 +650,8 @@ void LLControlGroup::setF32(const std::string& name, F32 val)
 	if (control && control->isType(TYPE_F32))
 	{
 		control->set(val);
+		if(mChangeCallback)
+			mChangeCallback(name,llformat("%f",val));
 	}
 	else
 	{
@@ -660,6 +667,8 @@ void LLControlGroup::setU32(const std::string& name, U32 val)
 	if (control && control->isType(TYPE_U32))
 	{
 		control->set((LLSD::Integer) val);
+		if(mChangeCallback)
+			mChangeCallback(name,llformat("%d",val));
 	}
 	else
 	{
@@ -675,6 +684,8 @@ void LLControlGroup::setString(const std::string& name, const std::string &val)
 	if (control && control->isType(TYPE_STRING))
 	{
 		control->set(val);
+		if(mChangeCallback)
+			mChangeCallback(name,val);
 	}
 	else
 	{
@@ -690,6 +701,8 @@ void LLControlGroup::setVector3(const std::string& name, const LLVector3 &val)
 	if (control && control->isType(TYPE_VEC3))
 	{
 		control->set(val.getValue());
+		if(mChangeCallback)
+			mChangeCallback(name,llformat("<%f,%f,%f>",val.mV[VX],val.mV[VY],val.mV[VZ]));
 	}
 	else
 	{
@@ -704,6 +717,8 @@ void LLControlGroup::setVector3d(const std::string& name, const LLVector3d &val)
 	if (control && control->isType(TYPE_VEC3D))
 	{
 		control->set(val.getValue());
+		if(mChangeCallback)
+			mChangeCallback(name,llformat("<%f,%f,%f>",val.mdV[VX],val.mdV[VY],val.mdV[VZ]));
 	}
 	else
 	{
@@ -718,6 +733,8 @@ void LLControlGroup::setRect(const std::string& name, const LLRect &val)
 	if (control && control->isType(TYPE_RECT))
 	{
 		control->set(val.getValue());
+		if(mChangeCallback)
+			mChangeCallback(name,llformat("[%f,%f,%f,%f]",val.mBottom,val.mLeft,val.mRight,val.mTop));
 	}
 	else
 	{
@@ -732,6 +749,8 @@ void LLControlGroup::setColor4U(const std::string& name, const LLColor4U &val)
 	if (control && control->isType(TYPE_COL4U))
 	{
 		control->set(val.getValue());
+		if(mChangeCallback)
+			mChangeCallback(name,llformat("<%f,%f,%f,%f>",val.mV[VX],val.mV[VY],val.mV[VZ],val.mV[VW]));
 	}
 	else
 	{
@@ -746,6 +765,8 @@ void LLControlGroup::setColor4(const std::string& name, const LLColor4 &val)
 	if (control && control->isType(TYPE_COL4))
 	{
 		control->set(val.getValue());
+		if(mChangeCallback)
+			mChangeCallback(name,llformat("<%f,%f,%f,%f>",val.mV[VX],val.mV[VY],val.mV[VZ],val.mV[VW]));
 	}
 	else
 	{

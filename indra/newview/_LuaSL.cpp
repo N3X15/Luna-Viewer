@@ -1613,6 +1613,7 @@ typedef struct{} LANGUAGE_OBJ;
 #include "LuaAgent_f.h"
 #include "LuaInventory_f.h"
 #include "LuaParticles.h"
+#include "LuaSettings.h"
 #include "LuaWindlight.h"
 #include "llprimitive.h"
 #include "llviewerobject.h"

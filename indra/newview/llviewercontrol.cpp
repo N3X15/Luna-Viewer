@@ -485,11 +485,17 @@ bool handleTranslateChatPrefsChanged(const LLSD& newvalue)
 	return true;
 }
 
+void LunaSettingsChangeListener(std::string name, std::string value)
+{
+	// @hook  OnSavedSettingsChanged(name,value) Saved Settings has changed.
+	LUA_CALL("OnSavedSettingsChanged") << name << value << LUA_END;
+}
 
 ////////////////////////////////////////////////////////////////////////////
 
 void settings_setup_listeners()
 {
+	gSavedSettings.setChangeCallback(LunaSettingsChangeListener);
 	gSavedSettings.getControl("FirstPersonAvatarVisible")->getSignal()->connect(boost::bind(&handleRenderAvatarMouselookChanged, _1));
 	gSavedSettings.getControl("RenderFarClip")->getSignal()->connect(boost::bind(&handleRenderFarClipChanged, _1));
 	gSavedSettings.getControl("RenderTerrainDetail")->getSignal()->connect(boost::bind(&handleTerrainDetailChanged, _1));

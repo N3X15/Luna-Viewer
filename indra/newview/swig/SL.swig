@@ -65,6 +65,7 @@
 #include "LuaAgent_f.h"
 #include "LuaInventory_f.h"
 #include "LuaParticles.h"
+#include "LuaSettings.h"
 #include "LuaWindlight.h"
 #include "llprimitive.h"
 #include "llviewerobject.h"
@@ -102,6 +103,8 @@
 %import "../../llui/llpanel.h"
 %import "../../llui/llbutton.h"
 %import "../../llui/lliconctrl.h"
+
+%import "../LuaSettings.h"
 
 %import "../llviewerpartsource.h"
 
