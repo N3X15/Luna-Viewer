@@ -220,7 +220,7 @@ endif (DARWIN)
 
 
 if (LINUX OR DARWIN)
-  set(GCC_WARNINGS "-Wall -Wno-sign-compare -Wno-trigraphs -Wno-non-virtual-dtor -Woverloaded-virtual")
+  set(GCC_WARNINGS "-Wall -Wno-sign-compare -Wno-trigraphs -Wno-non-virtual-dtor")
 
   # Whoever did this:  I hate you.
   ##if (NOT GCC_DISABLE_FATAL_WARNINGS)
