@@ -64,8 +64,6 @@ class ViewerManifest(LLManifest):
                 self.path("Macros")
                 # Libraries
                 self.path("lib")
-                # Plugin data
-                self.path("data")
                 self.end_prefix("lua")
 
         if self.prefix(src="app_settings"):
@@ -78,6 +76,10 @@ class ViewerManifest(LLManifest):
 
             # include the entire shaders directory recursively
             self.path("shaders")
+            
+	    # Get bridge assets
+	    self.path("bridge_assets")
+
             # ... and the entire windlight directory
             self.path("windlight")
             self.end_prefix("app_settings")
@@ -96,7 +98,7 @@ class ViewerManifest(LLManifest):
 
         # skins
         if self.prefix(src="skins"):
-                self.path("paths.xml")
+                self.path("*.xml") # Get the config files too.
                 # include the entire textures directory recursively
                 if self.prefix(src="*/textures"):
                         self.path("*.tga")
@@ -105,9 +107,6 @@ class ViewerManifest(LLManifest):
                         self.path("*.png")
                         self.path("textures.xml")
                         self.end_prefix("*/textures")
-                self.exclude("default/xui/en_us/mime_types_windows.xml")
-                self.exclude("default/xui/en_us/mime_types_mac.xml")
-                self.exclude("default/xui/en_us/mime_types_linux.xml")
                 self.path("*/xui/*/*.xml")
                 self.path("*/*.xml")
                 
@@ -225,7 +224,7 @@ class WindowsManifest(ViewerManifest):
 
         try:
             # For using FMOD for sound... DJS
-            self.path("fmod.dll")
+            self.path("../../fmodapi375win/api/fmod.dll", "fmod.dll");
         except:
             print("Skipping FMOD not found")
         
@@ -322,7 +321,7 @@ class WindowsManifest(ViewerManifest):
         if self.prefix(src="../../libraries/i686-win32/lib/release", dst=""):
             self.path("lfs.dll") # Lua filesystem module
             self.path("bit.dll") # Bitwise operators
-            self.path("Lua5.1.dll") # I think it's linked statically, but just to be sure...
+            #self.path("Lua5.1.dll") # I think it's linked statically, but just to be sure...
             self.end_prefix()
 
         # Per platform MIME config on the cheap.  See SNOW-307 / DEV-41388
@@ -822,8 +821,6 @@ class LinuxManifest(ViewerManifest):
         try:
             # --numeric-owner hides the username of the builder for
             # security etc.
-            # I'm leaving this disabled for speed
-            # Eat 12 dicks, I have patience.
             self.run_command("tar -C '%(dir)s' --numeric-owner -cjf "
                              "'%(inst_path)s.tar.bz2' %(inst_name)s" % {
                 'dir': self.get_build_prefix(),
@@ -839,29 +836,10 @@ class Linux_i686Manifest(LinuxManifest):
     def construct(self):
         super(Linux_i686Manifest, self).construct()
 
-        # install either the libllkdu we just built, or a prebuilt one, in
-        # decreasing order of preference.  for linux package, this goes to bin/
-        try:
-            self.path(self.find_existing_file('../llkdu/libllkdu.so',
-                '../../libraries/i686-linux/lib_release_client/libllkdu.so'), 
-                  dst='bin/libllkdu.so')
-            # keep this one to preserve syntax, open source mangling removes previous lines
-            pass
-        except:
-            print "Skipping libllkdu.so - not found"
-            pass
-
         if self.prefix("../../libraries/i686-linux/lib_release_client", dst="lib"):
 
             try:
-                self.path("libkdu_v42R.so", "libkdu.so")
-                pass
-            except:
-                print "Skipping libkdu_v42R.so - not found"
-                pass
-
-            try:
-                self.path("libfmod-3.75.so")
+                self.path("../../fmodapi375linux/api/libfmod-3.75.so", "libfmod-3.75.so");
                 pass
             except:
                 print "Skipping libfmod-3.75.so - not found"
