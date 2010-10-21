@@ -1,0 +1,336 @@
+//***********************************************************************//
+//* Phoenix LSL bridge script version 0.10                              *//
+//*                                                                     *//
+//* This script has five functions:                                     *//
+//* 1) Send radar informaion to the viewer                              *//
+//* 2) Retrieve true online/offline status for a requested user         *//
+//* 3) Perform local teleports via llMoveToTarget()                     *//
+//* 4) Listen on any desired channel and return data to the viewer      *//
+//* 5) Play a sound repeatedly                                          *//
+//*                                                                     *//
+//***********************************************************************//
+
+
+//**** BEGIN VARIABLES ****//
+
+integer debugger = FALSE;	// TRUE to enable debugging messages
+integer receive_channel;	// Fixed channel to receive from viewer on
+integer tid;			// Listener ID for fixed channel
+integer altListenHandler = 0;	// Listener handle for general listener
+integer listenReq;		// ID of listen request from viewer
+integer startTime;		// Time an llMoveToTarget() teleport began
+vector  moveToTarget;		// Destinstion of llMoveToTarget() teleport
+
+integer tid2;			// Listener ID for random channel
+integer l2c;			// Random channel to listen on
+
+list onlinereqs;		// List of avatar keys to check online
+
+//**** END VARIABLES ****//
+
+// This function prints debugging messages if selected at the top of this
+//  file.
+debug(string message)
+{
+	if (debugger)
+	{
+		llOwnerSay("Phoenix Bridge: "+message);
+	}
+}
+
+// This function initializes the script's communications channel. It'll be
+//  reset later to a randomized value, but we have to start somewhere. The
+//  initial channel is set from an MD5 hash of the user's UUID.
+init()
+{
+	receive_channel = (integer)("0x"+llGetSubString(
+				llMD5String((string)llGetOwner(),1),0,6));
+	debug("init: Receive channel: "+(string) receive_channel);
+	connect();
+}
+
+// This function restarts the listeners to get data from the viewer.
+connect()
+{
+	// Remove old main listener.
+	llListenRemove(tid);
+	// Start new main listener.
+	tid = llListen(receive_channel,"",llGetOwner(),"");
+
+	// If there was an old secondary listener,
+	if(l2c != 0)
+	{
+		// remove it,
+		llListenRemove(tid2);
+		// and start a new one.
+		tid2 = llListen(l2c,"",llGetOwner(),"");
+	}// End If
+
+	// If the bridge is attached (instead of rezzed on the ground),
+	if(llGetAttached() != 0)
+	{
+		// take the viewer's controls so we still work in noscript
+		//  areas. We don't actually do anything with them.
+		llRequestPermissions(llGetOwner(),PERMISSION_TAKE_CONTROLS);
+	}// End If
+}
+
+// This function sends data to the viewer, prefixed with a flag that tells
+//  the viewer it came from the bridge.
+send(string data)
+{
+	//if (llStringLength(data) > (1023 - 5))
+	//	llOwnerSay("ERR: string too long");
+	llOwnerSay("#@#@#"+data);
+	debug("send: Sending '"+data+"'");
+}
+
+// This function returns a very large integer between 100000001 and 999999999.
+//  Note that there will only be somewhere in the neighborhood of 24 bits
+//  of randomness. See the Second Life Wiki's article on llFrand() for
+//  details.
+integer max_rand_integer()
+{
+	return (integer)((
+		(llFrand(0.999998) + 0.000001) + // 0.000001 through 0.999999
+		((llFrand(0.899) + 0.1) * 1000)  // 100 through 999
+		) * 1000000);
+}
+
+// This function processes the command sent from the viewer.
+receive(string data)
+{
+	// Split the message into tokens, using the | character as separator.
+	list instruction = llParseString2List(data,["|"],[]);
+
+	// The first token is the UUID of the target of the command.
+	integer id = (integer)llList2String(instruction,0);
+
+	// The second token is the command itself.
+	string cmd = llList2String(instruction,1);
+
+	// This checks the online status of an avatar. We request the status
+	//  here; the result is returned to the viewer in the dataserver event
+	//  handler.
+	if (cmd == "online_status")
+	{
+		onlinereqs += [id, llRequestAgentData((key)llList2String(instruction,2), DATA_ONLINE)];
+		debug("receive: Processing online request");
+	}// End If
+
+	// This retrieves the position of requested object(s) or avatar(s).
+	//  The command can request more than one position by simply listing
+	//  them, and we will return them in the same order.
+	else if (cmd == "pos")
+	{
+		// Build the reply, starting with the requested UUID.
+		list positions = [id];
+		// Loop through the request list and add the position of each
+		//  item to the reply list.
+		integer increment = 2;
+		for (;increment<(instruction!=[]);increment++)
+		{
+			positions += [(string)llGetObjectDetails(
+				(key)llList2String(instruction,increment),
+							[OBJECT_POS])];
+		}
+		// Send the list to the viewer.
+		send(llDumpList2String(positions,"|"));
+	}// End Else If
+
+	// This adds another listener on whatever channel the command
+	//  specifies, or removes the existing listener if the channel is 0.
+	//  The listen event handler just sends the received data back to the
+	//  viewer.
+	else if (cmd == "listen")
+	{
+		// Save the request ID for the return value string.
+		listenReq = id;
+		// Remove the existing listener, if any.
+		if (altListenHandler != 0)
+		{
+			llListenRemove(altListenHandler);
+		}
+		// Figure out what channel to listen to now.
+		integer channelToListenOn = 
+			(integer)llList2String(instruction,2);
+		// If we were actually given a channel, start the listener.
+		if (channelToListenOn != 0)
+		{
+			altListenHandler = 
+				llListen(channelToListenOn,"",NULL_KEY,"");
+		}
+	}// End Else If
+
+	// This will move the user to the specified position using
+	//  llMoveToTarget, breaking up a long move into steps if needed. The
+	//  real work happens in the timer event handler; this code just sets
+	//  up the actual move.
+	else if (cmd == "move")
+	{
+		// Figure out where we're going.
+		moveToTarget=(vector)llList2String(instruction,2);
+		// Save the starting time so we don't try forever.
+		startTime=llGetUnixTime();
+		// Start the timer to do the actual work.
+		llSetTimerEvent(.05);
+	}// End Else If
+
+	// This command sets up the random high channel to use to communicate
+	//  with the viewer.
+	else if (cmd == "l2c")
+	{
+		// Get an integer between 100000000 and 999999999.
+		l2c = max_rand_integer();
+		// Start the listener on that channel.
+		connect();
+		// Tell the viewer what channel we picked.
+		llOwnerSay("l2c"+(string)l2c);
+	}// End Else If
+
+	// This command will play a sound repeatedly. The viewer uses this
+	//  for the "Loop sound" selection when right-clicking a sound in
+	//  inventory.
+	else if (cmd == "loopsound")
+	{
+		// Get the UUID of the sound we want to play.
+		string sound = llList2String(instruction,2);
+		// Play it repeatedly, at full volume.
+		llLoopSound((key)sound, 1.0);
+	}// End Else If
+
+	// This command stops the sound started by the loopsound command.
+	else if (cmd == "stopsound")
+	{
+		llStopSound();
+	}// End Else If
+}
+
+//**** END FUNCTIONS ****//
+
+//**** BEGIN MAIN CODE ****//
+default
+{
+	// This event fires when the default state is entered on script
+	//  startup. We generate the fixed channel number and then connect
+	//  to the viewer. 
+	state_entry()
+	{
+		init();
+	} //End state entry
+
+	// This event fires when the bridge object is rezzed. That happens at
+	//  initial attachment and login. We re-do the initialization to make
+	//  sure the listeners are properly set up.
+	on_rez(integer p)
+	{
+		init();
+	}// End on rez
+
+	// This event fires when the server sends a message that matches the
+	//  parameters in an outstanding listen request. If it's on the
+	//  command channel, either fixed or randomized, we take the message
+	//  text and feed it to the receive() function to process. Otherwise,
+	//  it's in reply to a request to listen on some other channel; we
+	//  return the data to the viewer for processing there, prefixed with
+	//  the ID passed on the listen command.
+	listen(integer channel, string name, key id, string message){
+		if(channel == receive_channel || channel == l2c)
+		{
+			// This is a viewer command. Deal with it.
+			receive(message);
+		}
+		else
+		{
+			// Not a command, so just send it to the viewer.
+			send(llDumpList2String(
+				[listenReq,channel,name,id,message],"|"));
+		}
+	} //End listen
+
+	// This event fires when the permissions granted to the script change.
+	//  For this script, that only happens at initialization. Normally, a
+	//  script is stopped when the user enters a no-script parcel. That's
+	//  not the case for a script that has taken the user's controls,
+	//  since it might make their behavior change drastically and
+	//  unexpectedly. We take advantage of that fact to keep running even
+	//  in no-script parcels: we take the user's controls, even though we
+	//  do nothing with them.
+	run_time_permissions(integer p)
+	{
+		// Only do something if we got permissions.
+		if(p)
+		{
+			// 1024 is a nonzero value that doesn't do anything
+			//  in the viewer.
+			llTakeControls(1024,TRUE,TRUE);
+		}
+	} //End run time permissions
+
+	// This event fires when the dataserver returns requested information.
+	//  For this script, the only information requested is online status
+	//  for avatars.
+	dataserver(key id, string data)
+	{
+		// Are we checking status for the avatar we just got?
+		integer i = llListFindList(onlinereqs,[id]);
+		if(i != -1)
+		{
+			// If so, tell the viewer the status.
+			debug("dataserver: Returning online status");
+			send((string)llList2Integer(onlinereqs,i-1)+"|"+data);
+			// Remove the avatar we just reported from the list.
+			onlinereqs = llDeleteSubList(onlinereqs,i-1,i);
+		}// End If
+	} //End dataserver
+
+	// This event fires when the timer has expired. For this script, that
+	//  happens during a teleport within the sim when the preference
+	//  "Use llMoveToTarget TP" is selected on the Phoenix/Misc panel. At
+	//  each timer pop, we move a little closer until we're there.
+	timer()
+	{
+		// Turn off the timer while we're calculating.
+		llSetTimerEvent(0.0);
+
+		// If we've been at this for more than 10 seconds, give up.
+		if(llGetUnixTime() - 10 > startTime)
+		{
+			llStopMoveToTarget();
+			return;
+		}// End If
+
+		// Figure out where we are and where we're going. The variable
+		//  mag is the distance left to go in meters.
+		vector us = llGetPos();
+		vector dist = moveToTarget - us;
+		float mag = llVecMag(dist);
+
+		// Are we there yet, daddy? If we're within a meter, call it
+		//  good.
+		if(mag < 1.0)
+		{
+			// Stop moving to target so we're not frozen in place.
+			llStopMoveToTarget();
+			return;
+		}// End If
+
+		// If we're more than 45 meters away, just move that much to
+		//  make sure we're within the llMoveToTarget distance limit.
+		if(mag>45)
+		{
+			llMoveToTarget(us+llVecNorm(dist)*45,.05);
+		}// End If
+		else
+		{
+			// We're less than 45 meters away, so do the whole
+			//  move.
+			llMoveToTarget(moveToTarget,.05);
+		} //End Else
+
+		// Re-enable the timer to try again.
+		llSetTimerEvent(.05);
+	} //End timer
+} //End Default
+
+//**** END MAIN CODE ****//
