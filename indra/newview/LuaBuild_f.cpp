@@ -2,220 +2,80 @@
 #include "LuaBuild_f.h"
 
 #include "llprimitive.h"
+#include "llviewerobject.h"
 #include "llvolume.h" // PCodes.
 #include "llworld.h"
 #include "llviewerregion.h"
 #include "llworldmap.h"
 #include "llagent.h"
+#include "llviewerobjectlist.h"
 #include "object_flags.h"
 #include "llvolumemessage.h"
 
 extern LLAgent gAgent;
 
-LuaPrimBuilder::LuaPrimBuilder(void)
-: mPrim()
+int Object::mWaiting=0;
+LLUUID Object::mReady=LLUUID::null;
+
+void Object::Object(int pcode,bool viewerside)
 {
-	mPrim.init_primitive(PCODE_CUBE);
-	mPhysx=false;
-}
-LuaPrimBuilder::~LuaPrimBuilder(void)
-{}
-
-void LuaPrimBuilder::SetSize(const double x, const double y, const double z)
-{
-	mPrim.setScale(x,y,z);
-}
-	
-void LuaPrimBuilder::SetLocation(const double x, const double y, const double z)
-{
-	mPrim.setPosition(x,y,z);
-}
-
-void LuaPrimBuilder::SetTexture(const char* uuid,const U8 FaceID)
-{
-	LLUUID what(uuid);
-	LLTextureEntry te(what);
-	mPrim.setTE(FaceID,te);
-}
-
-bool LuaPrimBuilder::Commit()
-{
-	LLVector3 ray_start_region;
-	LLVector3 ray_end_region;
-	LLViewerRegion* regionp = gAgent.getRegion();
-	
-	ray_start_region	= regionp->getPosRegionFromAgent(LLVector3::zero);
-	ray_end_region		= ray_start_region;
-
-	LLQuaternion	rotation = mPrim.getRotation();
-	LLVector3		scale = mPrim.getScale();
-	U8				material = mPrim.getMaterial();
-	LLVolumeParams	volume_params;
-
-	gMessageSystem->newMessageFast(_PREHASH_ObjectAdd);
-	gMessageSystem->nextBlockFast(_PREHASH_AgentData);
-	gMessageSystem->addUUIDFast(_PREHASH_AgentID, gAgent.getID());
-	gMessageSystem->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID()); 
-	gMessageSystem->addUUIDFast(_PREHASH_GroupID, gAgent.getGroupID());
-	gMessageSystem->nextBlockFast(_PREHASH_ObjectData);
-	gMessageSystem->addU8Fast(_PREHASH_Material,	material);
-
-	volume_params=VolumeParams;
-	U32 flags = 0;		// not selected
-
-	if (mPhysx)
+	if(viewerside)
+		mObject=gObjectList.createObjectViewer((LLPCode)pcode, gAgent.getRegion());
+	else
 	{
-		flags |= FLAGS_USE_PHYSICS;
+		mObject=NULL;
+		mWaiting++;
+		CB_Args0(plywood_above_head);
+		while(true)
+		{
+			// lock to main
+			{
+				FLLua::CriticalSection cs();
+				if(mReady.notNull())
+				{
+					mObject=gObjectList.findObject(mReady);
+					break;
+				}
+			}
+			FLLua::yield();
+		}
 	}
-	
-	flags |= FLAGS_CREATE_SELECTED;
-
-	gMessageSystem->addU32Fast(_PREHASH_AddFlags, flags );
-
-	LLPCode volume_pcode;	// ...PCODE_VOLUME, or the original on error
-	switch (mPrim.getPCode())
-	{
-		case LL_PCODE_SPHERE:
-			rotation.setQuat(90.f * DEG_TO_RAD, LLVector3::y_axis);
-
-			VolumeParams.setType( LL_PCODE_PROFILE_CIRCLE_HALF, LL_PCODE_PATH_CIRCLE );
-			LLVolumeMessage::packVolumeParams(&VolumeParams, gMessageSystem);
-			volume_pcode = LL_PCODE_VOLUME;
-			break;
-
-		case LL_PCODE_TORUS:
-			rotation.setQuat(90.f * DEG_TO_RAD, LLVector3::y_axis);
-
-			VolumeParams.setType( LL_PCODE_PROFILE_CIRCLE, LL_PCODE_PATH_CIRCLE );
-			
-			LLVolumeMessage::packVolumeParams(&VolumeParams, gMessageSystem);
-			volume_pcode = LL_PCODE_VOLUME;
-			break;
-
-		case LLViewerObject::LL_VO_SQUARE_TORUS:
-			rotation.setQuat(90.f * DEG_TO_RAD, LLVector3::y_axis);
-
-			VolumeParams.setType( LL_PCODE_PROFILE_SQUARE, LL_PCODE_PATH_CIRCLE );
-
-			LLVolumeMessage::packVolumeParams(&VolumeParams, gMessageSystem);
-			volume_pcode = LL_PCODE_VOLUME;
-			break;
-
-		case LLViewerObject::LL_VO_TRIANGLE_TORUS:
-			rotation.setQuat(90.f * DEG_TO_RAD, LLVector3::y_axis);
-
-			VolumeParams.setType( LL_PCODE_PROFILE_EQUALTRI, LL_PCODE_PATH_CIRCLE );
-			
-			LLVolumeMessage::packVolumeParams(&VolumeParams, gMessageSystem);
-			volume_pcode = LL_PCODE_VOLUME;
-			break;
-
-		case LL_PCODE_SPHERE_HEMI:
-			VolumeParams.setType( LL_PCODE_PROFILE_CIRCLE_HALF, LL_PCODE_PATH_CIRCLE );
-
-			LLVolumeMessage::packVolumeParams(&VolumeParams, gMessageSystem);
-
-			volume_pcode = LL_PCODE_VOLUME;
-			break;
-
-		case LL_PCODE_CUBE:
-			VolumeParams.setType( LL_PCODE_PROFILE_SQUARE, LL_PCODE_PATH_LINE );
-			
-			LLVolumeMessage::packVolumeParams(&VolumeParams, gMessageSystem);
-			volume_pcode = LL_PCODE_VOLUME;
-			break;
-
-		case LL_PCODE_PRISM:
-			VolumeParams.setType( LL_PCODE_PROFILE_SQUARE, LL_PCODE_PATH_LINE );
-			
-			LLVolumeMessage::packVolumeParams(&VolumeParams, gMessageSystem);
-			volume_pcode = LL_PCODE_VOLUME;
-			break;
-
-		case LL_PCODE_PYRAMID:
-			VolumeParams.setType( LL_PCODE_PROFILE_SQUARE, LL_PCODE_PATH_LINE );
-			
-			LLVolumeMessage::packVolumeParams(&VolumeParams, gMessageSystem);
-
-			volume_pcode = LL_PCODE_VOLUME;
-			break;
-
-		case LL_PCODE_TETRAHEDRON:
-			VolumeParams.setType( LL_PCODE_PROFILE_EQUALTRI, LL_PCODE_PATH_LINE );
-			
-			LLVolumeMessage::packVolumeParams(&VolumeParams, gMessageSystem);
-
-			volume_pcode = LL_PCODE_VOLUME;
-			break;
-
-		case LL_PCODE_CYLINDER:
-			VolumeParams.setType( LL_PCODE_PROFILE_CIRCLE, LL_PCODE_PATH_LINE );
-			
-			LLVolumeMessage::packVolumeParams(&VolumeParams, gMessageSystem);
-			volume_pcode = LL_PCODE_VOLUME;
-			break;
-
-		case LL_PCODE_CYLINDER_HEMI:
-			VolumeParams.setType( LL_PCODE_PROFILE_CIRCLE, LL_PCODE_PATH_LINE );
-			
-			LLVolumeMessage::packVolumeParams(&VolumeParams, gMessageSystem);
-			volume_pcode = LL_PCODE_VOLUME;
-			break;
-
-		case LL_PCODE_CONE:
-			VolumeParams.setType( LL_PCODE_PROFILE_CIRCLE, LL_PCODE_PATH_LINE );
-			
-			LLVolumeMessage::packVolumeParams(&VolumeParams, gMessageSystem);
-			volume_pcode = LL_PCODE_VOLUME;
-			break;
-
-		case LL_PCODE_CONE_HEMI:
-			VolumeParams.setType( LL_PCODE_PROFILE_CIRCLE, LL_PCODE_PATH_LINE );
-
-			LLVolumeMessage::packVolumeParams(&VolumeParams, gMessageSystem);
-			volume_pcode = LL_PCODE_VOLUME;
-			break;
-
-		default:
-			LLVolumeMessage::packVolumeParams(0, gMessageSystem);
-			volume_pcode = mPrim.getPCode();
-			break;
-	}
-	gMessageSystem->addU8Fast(_PREHASH_PCode, volume_pcode);
-
-	gMessageSystem->addVector3Fast(_PREHASH_Scale,				mPrim.getScale() );
-	gMessageSystem->addQuatFast(_PREHASH_Rotation,				rotation );
-	gMessageSystem->addVector3Fast(_PREHASH_RayStart,			ray_start_region );
-	gMessageSystem->addVector3Fast(_PREHASH_RayEnd,				ray_end_region );
-	gMessageSystem->addU8Fast(_PREHASH_BypassRaycast,			(U8)TRUE );
-	gMessageSystem->addU8Fast(_PREHASH_RayEndIsIntersection,	(U8)FALSE );
-	gMessageSystem->addU8Fast(_PREHASH_State,					(U8)0);
-
-	// Limit raycast to a single object.  
-	// Speeds up server raycast + avoid problems with server ray hitting objects
-	// that were clipped by the near plane or culled on the viewer.
-	LLUUID ray_target_id;
-	ray_target_id.setNull();
-	gMessageSystem->addUUIDFast(_PREHASH_RayTargetID,			ray_target_id );
-	
-	// Pack in name value pairs
-	gMessageSystem->sendReliable(regionp->getHost());
-
-	// Spawns a message, so must be after above send
-//	if (create_selected)
-//	{
-//		LLSelectMgr::getInstance()->deselectAll();
-//		gViewerWindow->getWindow()->incBusyCount();
-//	}
-
-	// VEFFECT: AddObject
-	/*
-	LLHUDEffectSpiral *effectp = (LLHUDEffectSpiral *)LLHUDManager::getInstance()->createViewerEffect(LLHUDObject::LL_HUD_EFFECT_BEAM, TRUE);
-	effectp->setSourceObject((LLViewerObject*)gAgent.getAvatarObject());
-	effectp->setPositionGlobal(regionp->getPosGlobalFromRegion(ray_end_region));
-	effectp->setDuration(LL_HUD_DUR_SHORT);
-	effectp->setColor(LLColor4U(gAgent.getEffectColor()));*/
-
-//	LLViewerStats::getInstance()->incStat(LLViewerStats::ST_CREATE_COUNT);
-	return true;
 }
+
+void plywood_above_head()
+{
+		LLMessageSystem* msg = gMessageSystem;
+		msg->newMessageFast(_PREHASH_ObjectAdd);
+		msg->nextBlockFast(_PREHASH_AgentData);
+		msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID());
+		msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
+		msg->addUUIDFast(_PREHASH_GroupID, gAgent.getGroupID());
+		msg->nextBlockFast(_PREHASH_ObjectData);
+		msg->addU8Fast(_PREHASH_Material, 3);
+		//msg->addU32Fast(_PREHASH_AddFlags, ); // CREATE_SELECTED
+		LLVolumeParams	volume_params;
+		volume_params.setType(0x01, 0x10);
+		volume_params.setBeginAndEndS(0.f, 1.f);
+		volume_params.setBeginAndEndT(0.f, 1.f);
+		volume_params.setRatio(1, 1);
+		volume_params.setShear(0, 0);
+		LLVolumeMessage::packVolumeParams(&volume_params, msg);
+		msg->addU8Fast(_PREHASH_PCode, 9);
+		msg->addVector3Fast(_PREHASH_Scale, LLVector3(0.52346f, 0.52347f, 0.52348f));
+		LLQuaternion rot;
+		msg->addQuatFast(_PREHASH_Rotation, rot);
+		LLViewerRegion *region = gAgent.getRegion();
+		
+		if (!localids.size())
+			root = (initialPos + linksetoffset);
+		
+		msg->addVector3Fast(_PREHASH_RayStart, root);
+		msg->addVector3Fast(_PREHASH_RayEnd, root);
+		msg->addU8Fast(_PREHASH_BypassRaycast, (U8)TRUE );
+		msg->addU8Fast(_PREHASH_RayEndIsIntersection, (U8)FALSE );
+		msg->addU8Fast(_PREHASH_State, (U8)0);
+		msg->addUUIDFast(_PREHASH_RayTargetID, LLUUID::null);
+		msg->sendReliable(region->getHost());
+}
+
+

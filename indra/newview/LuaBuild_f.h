@@ -1,9 +1,9 @@
 #ifndef LUABUILD_F_H
 #define LUABUILD_F_H
-#include "llprimitive.h"
+#include "llviewerobject.h"
 
 //Determines the shape of the prim.
-enum LuaPCode
+enum PCode
 {
 	PCODE_CUBE 			= 1,
 	PCODE_PRISM 		= 2,
@@ -17,29 +17,27 @@ enum LuaPCode
 };
 
 //Makes this shit MUCH easier.
-class LuaPrimBuilder
+class Object
 {
 public:
-	LuaPrimBuilder(void);
-	~LuaPrimBuilder(void);
+	Object(int pcode,bool viewerside=false);
+	Object(LLUUID objID);
+	~Object(void);
 
 	void SetSize(		const double x, const double y, const double z);
 	void SetLocation(	const double x, const double y, const double z);
-	void SetTexture(const char* uuid,	const U8 FaceID);
+	void SetTexture(	const char* uuid,	const U8 FaceID);
 	void SetShape(LuaPCode pc);
 
 	bool Commit();
-	
-	//Volume params.
-	LLVolumeParams VolumeParams;
 
+	// Cube waiting
+	static LLUUID mReady;
 private:
 	//Primitive to fuck with.
-	LLPrimitive mPrim;
+	LLViewerObject *mObject;
 
-	
-
-	//Physics?
-	bool mPhysx;
+	// Waiting for cube.
+	static bool mWaiting;
 };
 #endif //LUABUILD_F_H
