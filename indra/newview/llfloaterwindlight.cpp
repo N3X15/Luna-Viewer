@@ -47,7 +47,12 @@
 #include "llcombobox.h"
 #include "lllineeditor.h"
 #include "llfloaterdaycycle.h"
+#include "lltabcontainer.h"
 #include "llboost.h"
+
+#include "llagent.h"
+#include "llinventorymodel.h"
+#include "llviewerinventory.h"
 
 #include "v4math.h"
 #include "llviewerdisplay.h"
@@ -219,8 +224,8 @@ void LLFloaterWindLight::initCallbacks(void) {
 
 	//childSetAction("WLLoadPreset", onLoadPreset, comboBox);
 	childSetAction("WLNewPreset", onNewPreset, comboBox);
-	childSetAction("WLSavePreset", onSavePreset, comboBox);
 	childSetAction("WLDeletePreset", onDeletePreset, comboBox);
+	childSetCommitCallback("WLSavePreset", onSavePreset, this);
 
 	comboBox->setCommitCallback(onChangePresetName);
 
@@ -228,6 +233,10 @@ void LLFloaterWindLight::initCallbacks(void) {
 	// Dome
 	childSetCommitCallback("WLGamma", onFloatControlMoved, &param_mgr->mWLGamma);
 	childSetCommitCallback("WLStarAlpha", onStarAlphaMoved, NULL);
+
+	// next/prev buttons
+	childSetAction("next", onClickNext, this);
+	childSetAction("prev", onClickPrev, this);
 }
 
 void LLFloaterWindLight::onClickHelp(void* data)
@@ -313,6 +322,15 @@ void LLFloaterWindLight::syncMenu()
 
 	LLWLParamSet& currentParams = param_mgr->mCurParams;
 	//std::map<std::string, LLVector4> & currentParams = param_mgr->mCurParams.mParamValues;
+
+// [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g)
+	// Fixes LL "bug" (preset name isn't kept synchronized)
+	LLComboBox* comboBox = getChild<LLComboBox>("WLPresetsCombo");
+	if (comboBox->getSelectedItemLabel() != currentParams.mName)
+	{
+		comboBox->setSimple(currentParams.mName);
+	}
+// [/RLVa:KB]
 
 	// blue horizon
 	param_mgr->mBlueHorizon = currentParams.getVector(param_mgr->mBlueHorizon.mName, err);
@@ -451,14 +469,26 @@ LLFloaterWindLight* LLFloaterWindLight::instance()
 }
 void LLFloaterWindLight::show()
 {
-	LLFloaterWindLight* windLight = instance();
-	windLight->syncMenu();
+	if (!sWindLight)
+	{
+		LLFloaterWindLight* windLight = instance();
+		windLight->syncMenu();
 
-	// comment in if you want the menu to rebuild each time
-	//LLUICtrlFactory::getInstance()->buildFloater(windLight, "floater_windlight_options.xml");
-	//windLight->initCallbacks();
-
-	windLight->open();
+		// comment in if you want the menu to rebuild each time
+		//LLUICtrlFactory::getInstance()->buildFloater(windLight, "floater_windlight_options.xml");
+		//windLight->initCallbacks();
+	}
+	else
+	{
+		if (sWindLight->getVisible())
+		{
+			sWindLight->close();
+		}
+		else
+		{
+			sWindLight->open();
+		}
+	}
 }
 
 bool LLFloaterWindLight::isOpen()
@@ -784,7 +814,23 @@ void LLFloaterWindLight::onNewPreset(void* userData)
 	LLNotifications::instance().add("NewSkyPreset", LLSD(), LLSD(), newPromptCallback);
 }
 
-void LLFloaterWindLight::onSavePreset(void* userData)
+class KVFloaterWindLightNotecardCreatedCallback : public LLInventoryCallback
+{
+public:
+	void fire(const LLUUID& inv_item);
+};
+
+void KVFloaterWindLightNotecardCreatedCallback::fire(const LLUUID& inv_item)
+{
+	LLWLParamManager * param_mgr = LLWLParamManager::instance();
+	param_mgr->setParamSet(param_mgr->mCurParams.mName, param_mgr->mCurParams);
+	param_mgr->mParamList[param_mgr->mCurParams.mName].mInventoryID = inv_item;
+	param_mgr->mCurParams.mInventoryID = inv_item;
+	LL_INFOS("WindLight") << "Created inventory item " << inv_item << LL_ENDL;
+	param_mgr->savePresetToNotecard(param_mgr->mCurParams.mName);
+}
+
+void LLFloaterWindLight::onSavePreset(LLUICtrl* ctrl, void* userData)
 {
 	// get the name
 	LLComboBox* comboBox = sWindLight->getChild<LLComboBox>( 
@@ -796,19 +842,66 @@ void LLFloaterWindLight::onSavePreset(void* userData)
 		return;
 	}
 
-	// check to see if it's a default and shouldn't be overwritten
-	std::set<std::string>::iterator sIt = sDefaultPresets.find(
-		comboBox->getSelectedItemLabel());
-	if(sIt != sDefaultPresets.end() && !gSavedSettings.getBOOL("SkyEditPresets")) 
+	if (ctrl->getValue().asString() == "save_inventory_item")
 	{
-		LLNotifications::instance().add("WLNoEditDefault");
-		return;
+		// Check if this is already a notecard.
+		if(LLWLParamManager::instance()->mCurParams.mInventoryID.notNull())
+		{
+			LLNotifications::instance().add("KittyWLSaveNotecardAlert", LLSD(), LLSD(), saveNotecardCallback);
+		}
+		else
+		{
+			// Make sure we have a ".wl" extension.
+			std::string name = comboBox->getSelectedItemLabel();
+			if(name.length() > 2 && name.compare(name.length() - 3, 3, ".wl") != 0)
+			{
+				name += ".wl";
+			}
+			LLPointer<KVFloaterWindLightNotecardCreatedCallback> cb = new KVFloaterWindLightNotecardCreatedCallback();
+			// Create a notecard and then save it.
+			create_inventory_item(gAgent.getID(), 
+								  gAgent.getSessionID(),
+								  LLUUID::null,
+								  LLTransactionID::tnull,
+								  name,
+								  "WindLight settings (Imprudence compatible)",
+								  LLAssetType::AT_NOTECARD,
+								  LLInventoryType::IT_NOTECARD,
+								  NOT_WEARABLE,
+								  PERM_ITEM_UNRESTRICTED,
+								  cb);
+			
+		}
 	}
+	else
+	{
+		// check to see if it's a default and shouldn't be overwritten
+		std::set<std::string>::iterator sIt = sDefaultPresets.find(
+			comboBox->getSelectedItemLabel());
+		if(sIt != sDefaultPresets.end() && !gSavedSettings.getBOOL("SkyEditPresets")) 
+		{
+			LLNotifications::instance().add("WLNoEditDefault");
+			return;
+		}
 
-	LLWLParamManager::instance()->mCurParams.mName = 
-		comboBox->getSelectedItemLabel();
+		LLWLParamManager::instance()->mCurParams.mName = 
+			comboBox->getSelectedItemLabel();
 
-	LLNotifications::instance().add("WLSavePresetAlert", LLSD(), LLSD(), saveAlertCallback);
+		LLNotifications::instance().add("WLSavePresetAlert", LLSD(), LLSD(), saveAlertCallback);
+	}
+}
+
+bool LLFloaterWindLight::saveNotecardCallback(const LLSD& notification, const LLSD& response)
+{
+	S32 option = LLNotification::getSelectedOption(notification, response);
+	// if they choose save, do it.  Otherwise, don't do anything
+	if(option == 0) 
+	{
+		LLWLParamManager * param_mgr = LLWLParamManager::instance();
+		param_mgr->setParamSet(param_mgr->mCurParams.mName, param_mgr->mCurParams);
+		param_mgr->savePresetToNotecard(param_mgr->mCurParams.mName);
+	}
+	return false;
 }
 
 bool LLFloaterWindLight::saveAlertCallback(const LLSD& notification, const LLSD& response)
@@ -897,6 +990,14 @@ bool LLFloaterWindLight::deleteAlertCallback(const LLSD& notification, const LLS
 		if(combo_box->getItemCount() > 0) 
 		{
 			combo_box->setCurrentByIndex(new_index);
+
+			// If we don't update the name here, we crash on next/prev -- MC
+			LLWLParamManager::instance()->mCurParams.mName = combo_box->getSelectedValue().asString();
+			if (LLWLParamManager::instance()->mCurParams.mName.empty())
+			{
+				LLWLParamManager::instance()->mCurParams.mName = "Default";
+			}
+			LLWLParamManager::instance()->loadPreset(LLWLParamManager::instance()->mCurParams.mName, true);
 		}
 	}
 	return false;
@@ -913,9 +1014,10 @@ void LLFloaterWindLight::onChangePresetName(LLUICtrl* ctrl, void * userData)
 	{
 		return;
 	}
-	
-	LLWLParamManager::instance()->loadPreset(
-		combo_box->getSelectedValue().asString());
+	//impfixme fix of an mystherious crash? : kittyviewer: if(!data.empty())
+	//
+	LLWLParamManager::instance()->loadPreset(combo_box->getSelectedValue().asString());
+	LL_INFOS("WindLight") << "Current inventory ID: " << LLWLParamManager::instance()->mCurParams.mInventoryID << LL_ENDL;
 	sWindLight->syncMenu();
 }
 
@@ -992,4 +1094,70 @@ void LLFloaterWindLight::deactivateAnimator()
 {
 	LLWLParamManager::instance()->mAnimator.mIsRunning = false;
 	LLWLParamManager::instance()->mAnimator.mUseLindenTime = false;
+}
+
+void LLFloaterWindLight::onClickNext(void* user_data)
+{
+	// find place of current param
+	std::map<std::string, LLWLParamSet>::iterator mIt = 
+		LLWLParamManager::instance()->mParamList.find(LLWLParamManager::instance()->mCurParams.mName);
+
+	// shouldn't happen unless you delete every preset but Default
+	if (mIt == LLWLParamManager::instance()->mParamList.end())
+	{
+		llwarns << "No more presets left!" << llendl;
+		return;
+	}
+
+	// if at the end, loop
+	std::map<std::string, LLWLParamSet>::iterator last = LLWLParamManager::instance()->mParamList.end(); --last;
+	if(mIt == last) 
+	{
+		mIt = LLWLParamManager::instance()->mParamList.begin();
+	}
+	else
+	{
+		mIt++;
+	}
+	LLWLParamManager::instance()->mAnimator.mIsRunning = false;
+	LLWLParamManager::instance()->mAnimator.mUseLindenTime = false;
+	LLWLParamManager::instance()->loadPreset(mIt->first, true);
+}
+
+void LLFloaterWindLight::onClickPrev(void* user_data)
+{
+	// find place of current param
+	std::map<std::string, LLWLParamSet>::iterator mIt = 
+		LLWLParamManager::instance()->mParamList.find(LLWLParamManager::instance()->mCurParams.mName);
+
+	// shouldn't happen unless you delete every preset but Default
+	if (mIt == LLWLParamManager::instance()->mParamList.end())
+	{
+		llwarns << "No more presets left!" << llendl;
+		return;
+	}
+
+	// if at the beginning, loop
+	if(mIt == LLWLParamManager::instance()->mParamList.begin()) 
+	{
+		std::map<std::string, LLWLParamSet>::iterator last = LLWLParamManager::instance()->mParamList.end(); --last;
+		mIt = last;
+	}
+	else
+	{
+		mIt--;
+	}
+	LLWLParamManager::instance()->mAnimator.mIsRunning = false;
+	LLWLParamManager::instance()->mAnimator.mUseLindenTime = false;
+	LLWLParamManager::instance()->loadPreset(mIt->first, true);
+}
+
+//static
+void LLFloaterWindLight::selectTab(std::string tab_name)
+{
+	if (!tab_name.empty())
+	{
+		LLTabContainer* tabs = LLFloaterWindLight::instance()->getChild<LLTabContainer>("WindLight Tabs");
+		tabs->selectTabByName(tab_name);
+	}
 }

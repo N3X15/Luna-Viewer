@@ -648,10 +648,6 @@ public:
  */
 void send_stats()
 {
-	// <edit> Don't want to send ViewerStats
-	// LUNA Double-edit: Quit being griffers
-	//if(1) return;
-	// </edit>
 	// IW 9/23/02 I elected not to move this into LLViewerStats
 	// because it depends on too many viewer.cpp globals.
 	// Someday we may want to merge all our stats into a central place

@@ -75,12 +75,11 @@
 
 #include "llappviewer.h"
 
-// <edit>
-#include "llimportobject.h"
-// </edit>
-
 extern F32 gMinObjectDistance;
 extern BOOL gAnimateTextures;
+
+#include "importtracker.h"
+extern ImportTracker gImportTracker;
 
 void dialog_refresh_all();
 
@@ -260,6 +259,20 @@ void LLViewerObjectList::processUpdateCore(LLViewerObject* objectp,
 	// so that the drawable parent is set properly
 	findOrphans(objectp, msg->getSenderIP(), msg->getSenderPort());
 	
+	if(just_created && objectp)
+	{
+		if((gImportTracker.getState() == ImportTracker::WAND) || (
+			gImportTracker.getState() == ImportTracker::BUILDING))
+		{
+			if(objectp->mCreateSelected &&
+				objectp->permYouOwner() && 
+				objectp->permModify() && objectp->permCopy() && objectp->permTransfer())
+			{
+					gImportTracker.get_update(objectp->mLocalID, just_created, objectp->mCreateSelected);
+			}
+		}
+	}
+
 	// If we're just wandering around, don't create new objects selected.
 	if (just_created 
 		&& update_type != OUT_TERSE_IMPROVED 
@@ -548,28 +561,6 @@ void LLViewerObjectList::processObjectUpdate(LLMessageSystem *mesgsys,
 			}
 			processUpdateCore(objectp, user_data, i, update_type, NULL, justCreated);
 		}
-		// <edit>
-		if(justCreated && LLXmlImport::sImportInProgress)
-		{
-			if(objectp)
-			{
-				LLViewerObject* parent = (LLViewerObject*)objectp->getParent();
-				if(parent)
-				{
-					if(parent->getID() == gAgent.getID())
-					{
-						LLXmlImport::onNewAttachment(objectp);
-					}
-				}
-				else if( objectp->permYouOwner()
-					&& (objectp->getPCode() == LLXmlImport::sSupplyParams->getPCode())
-					&& (objectp->getScale() == LLXmlImport::sSupplyParams->getScale()))
-				{
-					LLXmlImport::onNewPrim(objectp);
-				}
-			}
-		}
-		// </edit>
 	}
 
 	LLVOAvatar::cullAvatarsByPixelArea();
@@ -939,6 +930,9 @@ void LLViewerObjectList::killObjects(LLViewerRegion *regionp)
 		if (objectp->mRegionp == regionp)
 		{
 			killObject(objectp);
+			// invalidate region pointer. region will become invalid, but 
+			// refcounted objects may survive the cleanDeadObjects() call below
+			objectp->mRegionp = NULL;
 		}
 	}
 
@@ -1243,22 +1237,18 @@ void LLViewerObjectList::generatePickList(LLCamera &camera)
 				LLViewerJointAttachment* attachmentp = curiter->second;
 				if (attachmentp->getIsHUDAttachment())
 				{
-					for (LLViewerJointAttachment::attachedobjs_vec_t::iterator attachment_iter = attachmentp->mAttachedObjects.begin();
-						 attachment_iter != attachmentp->mAttachedObjects.end();
-						 ++attachment_iter)
+					LLViewerObject* objectp = attachmentp->getObject();
+					if (objectp)
 					{
-						if (LLViewerObject* objectp = (*attachment_iter))
+						mSelectPickList.insert(objectp);		
+						LLViewerObject::const_child_list_t& child_list = objectp->getChildren();
+						for (LLViewerObject::child_list_t::const_iterator iter = child_list.begin();
+							 iter != child_list.end(); iter++)
 						{
-							mSelectPickList.insert(objectp);		
-							LLViewerObject::const_child_list_t& child_list = objectp->getChildren();
-							for (LLViewerObject::child_list_t::const_iterator iter = child_list.begin();
-								 iter != child_list.end(); iter++)
+							LLViewerObject* childp = *iter;
+							if (childp)
 							{
-								LLViewerObject* childp = *iter;
-								if (childp)
-								{
-									mSelectPickList.insert(childp);
-								}
+								mSelectPickList.insert(childp);
 							}
 						}
 					}

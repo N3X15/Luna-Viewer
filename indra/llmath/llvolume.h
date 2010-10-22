@@ -154,7 +154,9 @@ const U8    LL_PCODE_PATH_IGNORE    = 0x00;
 const U8	LL_PCODE_PATH_MIN		= 0x01;		// min/max needs to be >> 4 of real min/max
 const U8    LL_PCODE_PATH_LINE      = 0x10;
 const U8    LL_PCODE_PATH_CIRCLE    = 0x20;
+//<-- Working33 by Gregory Maurer
 const U8    LL_PCODE_PATH_CIRCLE_33 = 0x21;
+//Working33 -->
 const U8    LL_PCODE_PATH_CIRCLE2   = 0x30;
 const U8    LL_PCODE_PATH_TEST      = 0x40;
 const U8    LL_PCODE_PATH_FLEXIBLE  = 0x80;
@@ -945,10 +947,10 @@ public:
 	U32					mFaceMask;			// bit array of which faces exist in this volume
 	LLVector3			mLODScaleBias;		// vector for biasing LOD based on scale
 	
-	void sculpt(U16 sculpt_width, U16 sculpt_height, S8 sculpt_components, const U8* sculpt_data, S32 sculpt_level);
+	void sculpt(U16 sculpt_width, U16 sculpt_height, S8 sculpt_components, const U8* sculpt_data, S32 sculpt_level, const BOOL OblongSculptLODHack = FALSE);
+	F32 sculptGetSurfaceArea();
 
 	void sculptGenerateMapVertices(U16 sculpt_width, U16 sculpt_height, S8 sculpt_components, const U8* sculpt_data, U8 sculpt_type);
-	F32 sculptGetSurfaceArea();
 	void sculptGeneratePlaceholder();
 	void sculptCalcMeshResolution(U16 width, U16 height, U8 type, S32& s, S32& t);
 

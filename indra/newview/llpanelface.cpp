@@ -67,6 +67,7 @@
 #include "llviewerstats.h"
 #include "lluictrlfactory.h"
 #include "llpluginclassmedia.h"
+#include "llinventorymodel.h"
 
 //
 // Methods
@@ -492,13 +493,13 @@ void LLPanelFace::sendTextureInfo()
 void LLPanelFace::getState()
 {
 	LLViewerObject* objectp = LLSelectMgr::getInstance()->getSelection()->getFirstObject();
+
 	LLCalc* calcp = LLCalc::getInstance();
 	if( objectp
 		&& objectp->getPCode() == LL_PCODE_VOLUME
 		&& objectp->permModify())
 	{
 		BOOL editable = objectp->permModify();
-
 
 		// only turn on auto-adjust button if there is a media renderer and the media is loaded
 		childSetEnabled("textbox autofix",FALSE);
@@ -1158,6 +1159,7 @@ void LLPanelFace::onClickAutoFix(void* userdata)
 	LLPanelFaceSendFunctor sendfunc;
 	LLSelectMgr::getInstance()->getSelection()->applyToObjects(&sendfunc);
 }
+
 // static
 void LLPanelFace::onCommitPlanarAlign(LLUICtrl* ctrl, void* userdata)
 {
@@ -1166,10 +1168,38 @@ void LLPanelFace::onCommitPlanarAlign(LLUICtrl* ctrl, void* userdata)
 	self->sendTextureInfo();
 }
 
+const LLUUID& LLPanelFace::findItemID(const LLUUID& asset_id)
+{
+	LLViewerInventoryCategory::cat_array_t cats;
+	LLViewerInventoryItem::item_array_t items;
+	LLAssetIDMatches asset_id_matches(asset_id);
+	gInventory.collectDescendentsIf(LLUUID::null,
+							cats,
+							items,
+							LLInventoryModel::INCLUDE_TRASH,
+							asset_id_matches);
+
+	if (items.count())
+	{
+		// search for copyable version first
+		for (S32 i = 0; i < items.count(); i++)
+		{
+			LLInventoryItem* itemp = items[i];
+			LLPermissions item_permissions = itemp->getPermissions();
+			if (item_permissions.allowCopyBy(gAgent.getID(), gAgent.getGroupID()))
+			{
+				return itemp->getUUID();
+			}
+		}
+	}
+	return LLUUID::null;
+}
+
 static LLSD textures;
 
 void LLPanelFace::onClickCopy(void* userdata)
 {
+	LLPanelFace* self = (LLPanelFace*) userdata;
 	LLViewerObject* objectp = LLSelectMgr::getInstance()->getSelection()->getFirstRootObject();
 	if(!objectp)
 	{
@@ -1183,8 +1213,33 @@ void LLPanelFace::onClickCopy(void* userdata)
 	textures.clear();
 	for (S32 i = 0; i < te_count; i++)
 	{
-		llinfos << "Copying params on face " << i << "." << llendl;
-		textures.append(objectp->getTE(i)->asLLSD());
+		//llinfos << "Copying params on face " << i << "." << llendl;
+		LLSD face = objectp->getTE(i)->asLLSD();
+		LLUUID image_id = objectp->getTE(i)->getID();
+		BOOL allow_texture = FALSE;
+		if (gInventory.isObjectDescendentOf(face["imageid"], gInventoryLibraryRoot)
+			|| image_id == LLUUID(gSavedSettings.getString( "DefaultObjectTexture" ))
+			|| image_id == LLUUID(gSavedSettings.getString( "UIImgWhiteUUID" ))
+			|| image_id == LLUUID(gSavedSettings.getString( "UIImgInvisibleUUID" ))
+		)
+			allow_texture = TRUE;
+		else
+		{
+			LLUUID inventory_item_id  = self->findItemID(image_id);
+			if (inventory_item_id.notNull())
+			{
+				LLInventoryItem* itemp = gInventory.getItem(inventory_item_id);
+				if (itemp)
+				{
+					LLPermissions perm = itemp->getPermissions();
+					if ( (perm.getMaskBase() & PERM_ITEM_UNRESTRICTED) == PERM_ITEM_UNRESTRICTED )
+						allow_texture = TRUE;
+				}
+			}
+		}
+		if (!allow_texture)
+			face.erase("imageid");
+		textures.append(face);
 	}
 }
 
@@ -1214,9 +1269,11 @@ void LLPanelFace::onClickPaste(void* userdata)
 	
 	for (int i = 0; i < textures.size(); i++)
 	{
-		llinfos << "Pasting params on face " << i << "." << llendl;
+		//llinfos << "Pasting params on face " << i << "." << llendl;
 		LLTextureEntry tex;
 		tex.fromLLSD(textures[i]);
+		if (!textures[i].has("imageid"))
+			tex.setID(objectp->getTE(U8(i))->getID());
 		obj.setTE(U8(i), tex);
 	}
 	

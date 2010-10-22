@@ -2192,7 +2192,7 @@ void sculpt_calc_mesh_resolution(U16 width, U16 height, U8 type, F32 detail, S32
 }
 
 // sculpt replaces generate() for sculpted surfaces
-void LLVolume::sculpt(U16 sculpt_width, U16 sculpt_height, S8 sculpt_components, const U8* sculpt_data, S32 sculpt_level)
+void LLVolume::sculpt(U16 sculpt_width, U16 sculpt_height, S8 sculpt_components, const U8* sculpt_data, S32 sculpt_level, const BOOL OblongSculptLODHack)
 {
 	LLMemType m1(LLMemType::MTYPE_VOLUME);
     U8 sculpt_type = mParams.getSculptType();
@@ -2210,7 +2210,7 @@ void LLVolume::sculpt(U16 sculpt_width, U16 sculpt_height, S8 sculpt_components,
 
 	// create oblong sculpties with high LOD always
 	F32 sculpt_detail = mDetail;
-	if (sculpt_width != sculpt_height && sculpt_detail < 4.0)
+	if (OblongSculptLODHack && sculpt_width != sculpt_height && sculpt_detail < 4.0)
 	{
 		sculpt_detail = 4.0;
 	}

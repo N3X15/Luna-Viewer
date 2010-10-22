@@ -81,10 +81,6 @@ public:
 			LLView *parent_view = NULL);
 	~LLInventoryPanel();
 
-	// <edit>
-	static std::list<LLInventoryPanel*> sInstances;
-	// </edit>
-
 	LLInventoryModel* getModel() { return mInventory; }
 
 	BOOL postBuild();
@@ -149,9 +145,6 @@ protected:
 	// Given the id and the parent, build all of the folder views.
 	void rebuildViewsFor(const LLUUID& id, U32 mask);
 	void buildNewViews(const LLUUID& id);
-	// <edit>
-	void buildNewViews(const LLInventoryObject* objectp);
-	// </edit>
 
 public:
 	// TomY TODO: Move this elsewhere?
@@ -315,17 +308,16 @@ protected:
 
 protected:
 	LLSearchEditor*				mSearchEditor;
-	LLComboBox*					mQuickFilterCombo;
+	LLComboBox*						mQuickFilterCombo;
 	LLTabContainer*				mFilterTabs;
-	LLHandle<LLFloater>			mFinderHandle;
+	LLHandle<LLFloater>				mFinderHandle;
 	LLInventoryPanel*			mActivePanel;
 	LLSaveFolderState*			mSavedFolderState;
 
 	std::string					mFilterText;
-	std::string					mOldFilterText;
 
 	S32							mItemCount;
-	S32 						mOldItemCount;
+
 
 	// This container is used to hold all active inventory views. This
 	// is here to support the inventory toggle show button.
@@ -419,6 +411,8 @@ BOOL move_inv_category_world_to_agent(const LLUUID& object_id,
 
 const BOOL TAKE_FOCUS_YES = TRUE;
 const BOOL TAKE_FOCUS_NO  = FALSE;
+
+void rez_attachment(LLViewerInventoryItem* item, LLViewerJointAttachment* attachment);
 
 #endif // LL_LLINVENTORYVIEW_H
 

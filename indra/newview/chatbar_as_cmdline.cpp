@@ -50,7 +50,8 @@
 #include "llurldispatcher.h"
 #include "llworld.h"
 #include "llworldmap.h"
-#include "llfloateravatarlist.h"
+#include "floateravatarlist.h"
+#include "floaterao.h"
 #include "llviewerobjectlist.h"
 #include "llviewertexteditor.h"
 #include "llvoavatar.h"
@@ -224,29 +225,31 @@ void invrepair()
 
 bool cmd_line_chat(std::string revised_text, EChatType type, bool from_gesture)
 {
-	static BOOL *sAscentCmdLine = rebind_llcontrol<BOOL>("AscentCmdLine", &gSavedSettings, true);
-	static std::string *sAscentCmdLinePos = rebind_llcontrol<std::string>("AscentCmdLinePos", &gSavedSettings, true);
-	static std::string *sAscentCmdLineDrawDistance = rebind_llcontrol<std::string>("AscentCmdLineDrawDistance", &gSavedSettings, true);
-	static std::string *sAscentCmdTeleportToCam = rebind_llcontrol<std::string>("AscentCmdTeleportToCam", &gSavedSettings, true);
-	static std::string *sAscentCmdLineAO = rebind_llcontrol<std::string>("AscentCmdLineAO", &gSavedSettings, true);
-	static std::string *sAscentCmdLineKeyToName = rebind_llcontrol<std::string>("AscentCmdLineKeyToName", &gSavedSettings, true);
-	static std::string *sAscentCmdLineOfferTp = rebind_llcontrol<std::string>("AscentCmdLineOfferTp", &gSavedSettings, true);
-	static std::string *sAscentCmdLineGround = rebind_llcontrol<std::string>("AscentCmdLineGround", &gSavedSettings, true);
-	static std::string *sAscentCmdLineHeight = rebind_llcontrol<std::string>("AscentCmdLineHeight", &gSavedSettings, true);
-	static std::string *sAscentCmdLineTeleportHome = rebind_llcontrol<std::string>("AscentCmdLineTeleportHome", &gSavedSettings, true);
-	static std::string *sAscentCmdLineRezPlatform = rebind_llcontrol<std::string>("AscentCmdLineRezPlatform", &gSavedSettings, true);
-	static std::string *sAscentCmdLineMapTo = rebind_llcontrol<std::string>("AscentCmdLineMapTo", &gSavedSettings, true);
-	static BOOL *sAscentCmdLineMapToKeepPos = rebind_llcontrol<BOOL>("AscentCmdLineMapToKeepPos", &gSavedSettings, true);
-	static std::string *sAscentCmdLineCalc = rebind_llcontrol<std::string>("AscentCmdLineCalc", &gSavedSettings, true);
-	static std::string *sAscentCmdLineTP2 = rebind_llcontrol<std::string>("AscentCmdLineTP2", &gSavedSettings, true);
-	static std::string *sAscentCmdLineClearChat = rebind_llcontrol<std::string>("AscentCmdLineClearChat", &gSavedSettings, true);
-	static std::string *sAscentCmdLineMedia = rebind_llcontrol<std::string>("AscentCmdLineMedia", &gSavedSettings, true);
-	static std::string *sAscentCmdLineMusic = rebind_llcontrol<std::string>("AscentCmdLineMusic", &gSavedSettings, true);
-	static std::string *sAscentCmdLineAutocorrect = rebind_llcontrol<std::string>("AscentCmdLineAutocorrect", &gSavedSettings, true);
-	//static std::string *sAscentCmdUndeform = rebind_llcontrol<std::string>("AscentCmdUndeform", &gSavedSettings, true);
-	//gSavedSettings.getString("AscentCmdUndeform")
+	static BOOL *sPhoenixCmdLine = rebind_llcontrol<BOOL>("PhoenixCmdLine", &gSavedSettings, true);
+	static std::string *sPhoenixCmdLinePos = rebind_llcontrol<std::string>("PhoenixCmdLinePos", &gSavedSettings, true);
+	static std::string *sPhoenixCmdLineDrawDistance = rebind_llcontrol<std::string>("PhoenixCmdLineDrawDistance", &gSavedSettings, true);
+	static std::string *sPhoenixCmdTeleportToCam = rebind_llcontrol<std::string>("PhoenixCmdTeleportToCam", &gSavedSettings, true);
+	static std::string *sPhoenixCmdLineAO = rebind_llcontrol<std::string>("PhoenixCmdLineAO", &gSavedSettings, true);
+	static std::string *sPhoenixCmdLineKeyToName = rebind_llcontrol<std::string>("PhoenixCmdLineKeyToName", &gSavedSettings, true);
+	static std::string *sPhoenixCmdLineOfferTp = rebind_llcontrol<std::string>("PhoenixCmdLineOfferTp", &gSavedSettings, true);
+	static std::string *sPhoenixCmdLineGround = rebind_llcontrol<std::string>("PhoenixCmdLineGround", &gSavedSettings, true);
+	static std::string *sPhoenixCmdLineHeight = rebind_llcontrol<std::string>("PhoenixCmdLineHeight", &gSavedSettings, true);
+	static std::string *sPhoenixCmdLineTeleportHome = rebind_llcontrol<std::string>("PhoenixCmdLineTeleportHome", &gSavedSettings, true);
+	static std::string *sPhoenixCmdLineRezPlatform = rebind_llcontrol<std::string>("PhoenixCmdLineRezPlatform", &gSavedSettings, true);
+	static std::string *sPhoenixCmdLineMapTo = rebind_llcontrol<std::string>("PhoenixCmdLineMapTo", &gSavedSettings, true);
+	static BOOL *sPhoenixCmdLineMapToKeepPos = rebind_llcontrol<BOOL>("PhoenixCmdLineMapToKeepPos", &gSavedSettings, true);
+	static std::string *sPhoenixCmdLineCalc = rebind_llcontrol<std::string>("PhoenixCmdLineCalc", &gSavedSettings, true);
+	static std::string *sPhoenixCmdLineTP2 = rebind_llcontrol<std::string>("PhoenixCmdLineTP2", &gSavedSettings, true);
+	static std::string *sPhoenixCmdLineClearChat = rebind_llcontrol<std::string>("PhoenixCmdLineClearChat", &gSavedSettings, true);
+	static std::string *sPhoenixCmdLineMedia = rebind_llcontrol<std::string>("PhoenixCmdLineMedia", &gSavedSettings, true);
+	static std::string *sPhoenixCmdLineMusic = rebind_llcontrol<std::string>("PhoenixCmdLineMusic", &gSavedSettings, true);
+	static std::string *sPhoenixCmdLineAutocorrect = rebind_llcontrol<std::string>("PhoenixCmdLineAutocorrect", &gSavedSettings, true);
+	static std::string *sLunaCmdLineLua = rebind_llcontrol<std::string>("LunaCmdLineLua", &gSavedSettings, true);
+	static std::string *sLunaCmdLineMacro = rebind_llcontrol<std::string>("LunaCmdLineMacro", &gSavedSettings, true);
+	//static std::string *sPhoenixCmdUndeform = rebind_llcontrol<std::string>("PhoenixCmdUndeform", &gSavedSettings, true);
+	//gSavedSettings.getString("PhoenixCmdUndeform")
 	
-	if(*sAscentCmdLine)
+	if(*sPhoenixCmdLine)
 	{
 		std::istringstream i(revised_text);
 		std::string command;
@@ -254,7 +257,7 @@ bool cmd_line_chat(std::string revised_text, EChatType type, bool from_gesture)
 		command = utf8str_tolower(command);
 		if(command != "")
 		{
-			if(command == *sAscentCmdLinePos)
+			if(command == *sPhoenixCmdLinePos)
 			{
 				F32 x,y,z;
 				if (i >> x)
@@ -277,7 +280,7 @@ bool cmd_line_chat(std::string revised_text, EChatType type, bool from_gesture)
 					}
 				}
 			}
-			else if(command == *sAscentCmdLineDrawDistance)
+			else if(command == *sPhoenixCmdLineDrawDistance)
 			{
 				if(from_gesture)
 				{
@@ -296,18 +299,18 @@ bool cmd_line_chat(std::string revised_text, EChatType type, bool from_gesture)
 					return false;
                 }
 			}
-			else if(command == *sAscentCmdTeleportToCam)
+			else if(command == *sPhoenixCmdTeleportToCam)
             {
 				gAgent.teleportViaLocation(gAgent.getCameraPositionGlobal());
 				return false;
             }
-			/*else if(command == *sAscentCmdUndeform)
+			/*else if(command == *sPhoenixCmdUndeform)
             {
 				llinfos << "UNDEFORM: Do you feel your bones cracking back into place?" << llendl;
 				gAgent.getAvatarObject()->undeform();
 				return false;
             }*/ //what the fuck is this shit, thought it would be something useful like repairing the skeleton but its some shitty playing of inworld anims
-			else if(command == *sAscentCmdLineMedia)
+			else if(command == *sPhoenixCmdLineMedia)
 			{
 				std::string url;
 				std::string type;
@@ -325,7 +328,7 @@ bool cmd_line_chat(std::string revised_text, EChatType type, bool from_gesture)
 					}
 				}
 			}
-			else if(command == *sAscentCmdLineMusic)
+			else if(command == *sPhoenixCmdLineMusic)
 			{
 				std::string status;
 				if(i >> status)
@@ -338,9 +341,10 @@ bool cmd_line_chat(std::string revised_text, EChatType type, bool from_gesture)
 					return false;
 				}
 			}
-			else if(command == *sAscentCmdLineAO)
+			else if(command == *sPhoenixCmdLineAO)
             {
 				std::string status;
+				int flags = gSavedPerAccountSettings.getS32("AO.Flags",0);
                 if(i >> status)
                 {
 					if (status == "on" )
@@ -351,12 +355,36 @@ bool cmd_line_chat(std::string revised_text, EChatType type, bool from_gesture)
 					{
 						gSavedPerAccountSettings.setBOOL("AO.Enabled",FALSE);
 					}
-/*
 					else if (status == "sit" )
 					{
-						gSavedPerAccountSettings.setBOOL("AscentAOSitsEnabled",!gSavedPerAccountSettings.getBOOL("AscentAOSitsEnabled"));
+						// SIT: 1
+						bool status=(flags&1)==1;
+						std::string toggle;
+						if(i >> toggle)
+						{
+							toggle=utf8str_tolower(toggle);
+							switch(toggle)
+							{
+								case "on":
+								case "enabled":
+								case "yes":
+									status=true;
+									break;
+								case "off":
+								case "disabled":
+								case "no":
+									status=false;
+									break;
+								default:
+									cmdline_printchat("Use on/off to state sit status.");
+									return;
+							}
+						} else {
+							status=!status;
+						}
+
+						gSavedPerAccountSettings.setS32("AO.Flags",
 					}
-*/
 				}
 				return false;
             }

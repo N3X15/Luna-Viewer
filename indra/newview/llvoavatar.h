@@ -38,7 +38,6 @@
 #include <deque>
 #include <string>
 #include <vector>
-
 #include "imageids.h"			// IMG_INVISIBLE
 #include "llchat.h"
 #include "lldrawpoolalpha.h"
@@ -67,14 +66,11 @@ class LLTexLayerSet;
 class LLVoiceVisualizer;
 class LLHUDText;
 class LLHUDEffectSpiral;
-
 class LLTexGlobalColor;
 
 class LLVOAvatarBoneInfo;
 class LLVOAvatarSkeletonInfo;
 class LLVOAvatarXmlInfo;
-
-
 
 //------------------------------------------------------------------------
 // LLVOAvatar
@@ -150,7 +146,6 @@ public:
 	void updateAttachmentVisibility(U32 camera_mode);
 	void clampAttachmentPositions();
 	S32 getAttachmentCount(); // Warning: order(N) not order(1)
-	BOOL canAttachMoreObjects() const;
 
 	// HUD functions
 	BOOL hasHUDAttachment() const;
@@ -214,9 +209,6 @@ public:
 public:
 	static void		onCustomizeStart();
 	static void		onCustomizeEnd();
-
-
-
 
 	LLFrameTimer 	mIdleTimer;
 
@@ -287,8 +279,7 @@ public:
 	LLPolyMesh* getMesh( LLPolyMeshSharedData *shared_data );
 	void hideSkirt();
 
-
-	virtual BOOL setParent(LLViewerObject* parent);
+	virtual void setParent(LLViewerObject* parent);
 	virtual void addChild(LLViewerObject *childp);
 	virtual void removeChild(LLViewerObject *childp);
 
@@ -361,7 +352,6 @@ public:
 
 	BOOL			isWearingWearableType( EWearableType type );
 	void			wearableUpdated(EWearableType type, BOOL upload_result = TRUE);
-
 	//--------------------------------------------------------------------
 	// texture compositing
 	//--------------------------------------------------------------------
@@ -553,7 +543,6 @@ public:
 	attachment_map_t mAttachmentPoints;
 	std::vector<LLPointer<LLViewerObject> > mPendingAttachment;
 
-	U32					getNumAttachments() const; // O(N), not O(1) <---- Fix if possible, I guess it's not worst case scenario - HgB
 	//--------------------------------------------------------------------
 	// static preferences that are controlled by user settings/menus
 	//--------------------------------------------------------------------
@@ -573,7 +562,6 @@ public:
 	static F32		sLODFactor; // user-settable LOD factor
 	static BOOL		sJointDebug; // output total number of joints being touched for each avatar
 	static BOOL     sDebugAvatarRotation;
-	static F32		sAvMorphTime;
 
 	static S32 sNumVisibleAvatars; // Number of instances of this class
 	
@@ -611,7 +599,6 @@ public:
 	// Private member variables.
 	//--------------------------------------------------------------------
 private:
-
 	BOOL mIsSelf; // True if this avatar is for this viewer's agent
 
 	LLViewerJoint *mScreenp; // special purpose joint for HUD attachments
@@ -669,10 +656,9 @@ private:
 
 	static LLSD sClientResolutionList;
 
-	bool isUnknownClient();
 	static void resolveClient(LLColor4& avatar_name_color, std::string& client, LLVOAvatar* avatar);
 	friend class LLFloaterAvatarList;
-	friend class LLAvatarClientUUID;
+
 protected:
 	LLPointer<LLHUDEffectSpiral> mBeam;
 	LLFrameTimer mBeamTimer;
@@ -826,7 +812,6 @@ public:
 	static F32 		sUnbakedUpdateTime; // Last time stats were updated (to prevent multiple updates per frame) 
 	static F32 		sGreyTime; // Total seconds with >=1 grey avatars
 	static F32 		sGreyUpdateTime; // Last time stats were updated (to prevent multiple updates per frame) 
-	static bool		sDoProperArc;
 
 	const std::string getBakedStatusForPrintout() const;
 };

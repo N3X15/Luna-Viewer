@@ -64,6 +64,10 @@
 #include "llselectmgr.h"
 #include "pipeline.h"
 
+// [RLVa:KB]
+#include "rlvhandler.h"
+// [/RLVa:KB]
+
 const S32 MIN_QUIET_FRAMES_COALESCE = 30;
 const F32 FORCE_SIMPLE_RENDER_AREA = 512.f;
 const F32 FORCE_CULL_AREA = 8.f;
@@ -530,7 +534,7 @@ void LLVOVolume::updateTextureVirtualSize()
 				(texture_discard < current_discard || //texture has more data than last rebuild
 				current_discard < 0)) //no previous rebuild
 			{
-				gPipeline.markRebuild(mDrawable, LLDrawable::REBUILD_VOLUME, FALSE);
+				markForUpdate(FALSE);
 				mSculptChanged = TRUE;
 			}
 
@@ -555,6 +559,32 @@ void LLVOVolume::updateTextureVirtualSize()
 	else if (gPipeline.hasRenderDebugMask(LLPipeline::RENDER_DEBUG_FACE_AREA))
 	{
 		setDebugText(llformat("%.0f:%.0f", fsqrtf(min_vsize),fsqrtf(max_vsize)));
+	}else if(gPipeline.hasRenderDebugMask(LLPipeline::RENDER_DEBUG_TEXTURE_COMMENT))
+	{
+		const S32 num_faces = mDrawable->getNumFaces();
+		std::string allInfo("");
+		for (S32 i = 0; i < num_faces; i++)
+		{
+			LLFace* face = mDrawable->getFace(i);
+			LLViewerImage *imagep = face->getTexture();
+			std::string faceinfo("");
+			if(imagep)
+			{
+				std::map<std::string,std::string>::iterator it;
+				for ( it=imagep->decodedComment.begin() ; it != imagep->decodedComment.end(); it++ )
+				{
+					faceinfo+=llformat("(%d)",i)+(*it).first+" => "+(*it).second+"\n";
+				}
+			}
+			if(faceinfo!="")
+			{
+				allInfo+=faceinfo+"\n";
+			}
+		}
+		if(allInfo!="")
+		{
+			setDebugText(allInfo);
+		}
 	}
 
 	if (mPixelArea == 0)
@@ -750,7 +780,8 @@ void LLVOVolume::sculpt()
 					   
 			sculpt_data = raw_image->getData();
 		}
-		getVolume()->sculpt(sculpt_width, sculpt_height, sculpt_components, sculpt_data, discard_level);
+		static LLCachedControl<bool> sPhoenixOblongSculptLODHack("PhoenixOblongSculptLODHack", 0);
+		getVolume()->sculpt(sculpt_width, sculpt_height, sculpt_components, sculpt_data, discard_level, sPhoenixOblongSculptLODHack);
 	}
 }
 
@@ -883,19 +914,17 @@ void LLVOVolume::updateFaceFlags()
 	}
 }
 
-BOOL LLVOVolume::setParent(LLViewerObject* parent)
+void LLVOVolume::setParent(LLViewerObject* parent)
 {
-	BOOL ret = FALSE;
 	if (parent != getParent())
 	{
-		ret = LLViewerObject::setParent(parent);
+		LLViewerObject::setParent(parent);
 		if (mDrawable)
 		{
 			gPipeline.markMoved(mDrawable);
 			gPipeline.markRebuild(mDrawable, LLDrawable::REBUILD_VOLUME, TRUE);
 		}
 	}
-	return ret;
 }
 
 // NOTE: regenFaces() MUST be followed by genTriangles()!
@@ -1940,7 +1969,11 @@ BOOL LLVOVolume::lineSegmentIntersect(const LLVector3& start, const LLVector3& e
 	
 {
 	if (!mbCanSelect ||
-		(gHideSelectedObjects && isSelected()) ||
+//		(gHideSelectedObjects && isSelected()) ||
+// [RLVa:KB] - Checked: 2009-10-10 (RLVa-1.0.5a) | Modified: RLVa-1.0.5a
+		( (gHideSelectedObjects && isSelected()) && 
+		  ((!rlv_handler_t::isEnabled()) || (!isHUDAttachment()) || (!gRlvHandler.isLockedAttachment(this, RLV_LOCK_REMOVE))) ) ||
+// [/RLVa:KB]
 			mDrawable->isDead() || 
 			!gPipeline.hasRenderType(mDrawable->getRenderType()))
 	{
@@ -2003,7 +2036,7 @@ BOOL LLVOVolume::lineSegmentIntersect(const LLVector3& start, const LLVector3& e
 			
 			if (face_hit >= 0 && mDrawable->getNumFaces() > face_hit)
 			{
-				LLFace* face = mDrawable->getFace(face_hit);
+				LLFace* face = mDrawable->getFace(face_hit);				
 
 				if (pick_transparent || !face->getTexture() || face->getTexture()->getMask(face->surfaceToTexture(tc, p, n)))
 				{
@@ -2082,10 +2115,18 @@ void LLVolumeGeometryManager::registerFace(LLSpatialGroup* group, LLFace* facep,
 {
 	LLMemType mt(LLMemType::MTYPE_SPACE_PARTITION);
 
-	if (facep->getViewerObject()->isSelected() && gHideSelectedObjects)
+//	if (facep->getViewerObject()->isSelected() && gHideSelectedObjects)
+//	{
+//		return;
+//	}
+// [RLVa:KB] - Checked: 2009-10-10 (RLVa-1.0.5a) | Modified: RLVa-1.0.5a
+	LLViewerObject* pObj = facep->getViewerObject();
+	if ( (pObj->isSelected() && gHideSelectedObjects) && 
+		 ((!rlv_handler_t::isEnabled()) || (!pObj->isHUDAttachment()) || (!gRlvHandler.isLockedAttachment(pObj, RLV_LOCK_REMOVE))) )
 	{
 		return;
 	}
+// [/RVLa:KB]
 
 	//add face to drawmap
 	LLSpatialGroup::drawmap_elem_t& draw_vec = group->mDrawMap[type];	
@@ -2430,11 +2471,9 @@ void LLVolumeGeometryManager::rebuildGeom(LLSpatialGroup* group)
 
 void LLVolumeGeometryManager::rebuildMesh(LLSpatialGroup* group)
 {
-	static int warningsCount = 20;
-
 	if (group->isState(LLSpatialGroup::MESH_DIRTY))
 	{
-		S32 num_mapped_vertex_buffer = LLVertexBuffer::sMappedCount ;
+		S32 num_mapped_veretx_buffer = LLVertexBuffer::sMappedCount ;
 
 		group->mBuilt = 1.f;
 		
@@ -2493,13 +2532,9 @@ void LLVolumeGeometryManager::rebuildMesh(LLSpatialGroup* group)
 		}
 
 		//if not all buffers are unmapped
-		if(num_mapped_vertex_buffer != LLVertexBuffer::sMappedCount) 
+		if(num_mapped_veretx_buffer != LLVertexBuffer::sMappedCount) 
 		{
-			if (++warningsCount > 20)	// Do not spam the log file uselessly...
-			{
-				llwarns << "Not all mapped vertex buffers are unmapped!" << llendl ;
-				warningsCount = 1;
-			}
+			//llwarns << "Not all mapped vertex buffers are unmapped!" << llendl ; 
 			for (LLSpatialGroup::element_iter drawable_iter = group->getData().begin(); drawable_iter != group->getData().end(); ++drawable_iter)
 			{
 				LLDrawable* drawablep = *drawable_iter;

@@ -319,6 +319,12 @@ public:
 
 	void        addFace(LLFace* facep) ;
 	void        removeFace(LLFace* facep) ;
+
+	void        setCanUseHTTP(bool can_use_http) {mCanUseHTTP = can_use_http;};
+
+
+	//friend class LocalBitmap; // tag: vaa phoenix local_asset_browser
+
 private:
 	/*virtual*/ void cleanup(); // Cleanup the LLViewerImage (so we can reinitialize it)
 
@@ -422,6 +428,8 @@ private:
 
 	typedef std::list<LLFace*> ll_face_list_t ;
 	ll_face_list_t mFaceList ; //reverse pointer pointing to the faces using this image as texture
+
+	bool mCanUseHTTP; // can this image be fetched by http
 
 public:
 	static const U32 sCurrentFileVersion;

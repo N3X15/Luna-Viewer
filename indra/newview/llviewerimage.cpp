@@ -399,6 +399,8 @@ void LLViewerImage::init(bool firstinit)
 	mForceToSaveRawImage  = FALSE ;
 	mSavedRawDiscardLevel = -1 ;
 	mDesiredSavedRawDiscardLevel = -1 ;
+
+	mCanUseHTTP = true; //default on if cap/settings allows us
 }
 
 // virtual
@@ -599,10 +601,12 @@ BOOL LLViewerImage::createTexture(S32 usename/*= 0*/)
 			return FALSE;
 		}
 
-		// <edit>
-		CommentCacheReadResponder* responder = new CommentCacheReadResponder(this);
-		LLAppViewer::getTextureCache()->readFromCache(getID(),LLWorkerThread::PRIORITY_HIGH,0,999999,responder);
-		// </edit>
+		static LLCachedControl<BOOL> PhoenixShowCommentsForAll("PhoenixShowCommentsForAll",0);
+		if(PhoenixShowCommentsForAll)
+		{
+			CommentCacheReadResponder* responder = new CommentCacheReadResponder(this);
+			LLAppViewer::getTextureCache()->readFromCache(getID(),LLWorkerThread::PRIORITY_HIGH,0,999999,responder);
+		}
 
 		res = LLImageGL::createGLTexture(mRawDiscardLevel, mRawImage, usename);
 	}
@@ -1098,7 +1102,7 @@ bool LLViewerImage::updateFetch()
 		else
 		{
 			mFetchState = LLAppViewer::getTextureFetch()->getFetchState(mID, mDownloadProgress, mRequestedDownloadPriority,
-																		mFetchPriority, mFetchDeltaTime, mRequestDeltaTime);
+																		mFetchPriority, mFetchDeltaTime, mRequestDeltaTime, mCanUseHTTP);
 		}
 		
 		// We may have data ready regardless of whether or not we are finished (e.g. waiting on write)
@@ -1236,7 +1240,7 @@ bool LLViewerImage::updateFetch()
 		// bypass texturefetch directly by pulling from LLTextureCache
 		bool fetch_request_created = false;
 		fetch_request_created = LLAppViewer::getTextureFetch()->createRequest(mUrl, getID(),getTargetHost(), decode_priority,
-																			  w, h, c, desired_discard, needsAux());
+																			  w, h, c, desired_discard, needsAux(), mCanUseHTTP);
 
 		if (fetch_request_created)
 		{				
@@ -1245,7 +1249,7 @@ bool LLViewerImage::updateFetch()
 			mRequestedDiscardLevel = desired_discard;
 
 			mFetchState = LLAppViewer::getTextureFetch()->getFetchState(mID, mDownloadProgress, mRequestedDownloadPriority,
-																		mFetchPriority, mFetchDeltaTime, mRequestDeltaTime);
+																		mFetchPriority, mFetchDeltaTime, mRequestDeltaTime, mCanUseHTTP);
 		}	
 
 		// if createRequest() failed, we're finishing up a request for this UUID,
@@ -1315,7 +1319,7 @@ BOOL LLViewerImage::forceFetch()
 		c = getComponents();
 	}
 	fetch_request_created = LLAppViewer::getTextureFetch()->createRequest(mUrl, getID(),getTargetHost(), maxDecodePriority(),
-																		  w, h, c, desired_discard, needsAux());
+																		  w, h, c, desired_discard, needsAux(), mCanUseHTTP);
 
 	if (fetch_request_created)
 	{
@@ -1327,7 +1331,7 @@ BOOL LLViewerImage::forceFetch()
 		mRequestedDiscardLevel = desired_discard ;
 
 		mFetchState = LLAppViewer::getTextureFetch()->getFetchState(mID, mDownloadProgress, mRequestedDownloadPriority,
-																	mFetchPriority, mFetchDeltaTime, mRequestDeltaTime);
+																	mFetchPriority, mFetchDeltaTime, mRequestDeltaTime, mCanUseHTTP);
 	}	
 
 	return mIsFetching ? true : false;
@@ -1758,15 +1762,17 @@ void LLViewerImage::destroySavedRawImage()
 
 void LLViewerImage::destroyRawImage()
 {
-	if (mRawImage.notNull()) sRawCount--;
 	if (mAuxRawImage.notNull()) sAuxCount--;
 
-	if(mForceToSaveRawImage)
+	if (mRawImage.notNull())
 	{
-		saveRawImage() ;
+		sRawCount--;
+		if(mForceToSaveRawImage)
+		{
+			saveRawImage() ;
+		}
+		setCachedRawImage() ;
 	}
-	
-	setCachedRawImage() ;
 
 	mRawImage = NULL;
 	mAuxRawImage = NULL;
@@ -1821,7 +1827,8 @@ void LLViewerImage::setCachedRawImage()
 			mRawImage->scale(w >> i, h >> i) ;
 		}
 		mCachedRawImage = mRawImage ;
-		mCachedRawDiscardLevel = mRawDiscardLevel + i ;			
+		mRawDiscardLevel += i ;
+		mCachedRawDiscardLevel = mRawDiscardLevel ;
 	}
 }
 

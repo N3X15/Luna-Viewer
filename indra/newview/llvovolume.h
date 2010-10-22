@@ -105,7 +105,7 @@ public:
 	/*virtual*/ BOOL	isHUDAttachment() const;
 
 				void	generateSilhouette(LLSelectNode* nodep, const LLVector3& view_point);
-	/*virtual*/	BOOL	setParent(LLViewerObject* parent);
+	/*virtual*/	void	setParent(LLViewerObject* parent);
 				S32		getLOD() const							{ return mLOD; }
 	const LLVector3		getPivotPositionAgent() const;
 	const LLMatrix4&	getRelativeXform() const				{ return mRelativeXform; }
@@ -211,6 +211,9 @@ public:
 	BOOL isVolumeGlobal() const;
 	BOOL canBeFlexible() const;
 	BOOL setIsFlexible(BOOL is_flexible);
+
+	// tag: vaa phoenix local_asset_browser
+	void setSculptChanged(BOOL has_changed) { mSculptChanged = has_changed; }
 			
 protected:
 	S32	computeLODDetail(F32	distance, F32 radius);

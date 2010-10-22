@@ -86,9 +86,9 @@
 
 #include "llsdserialize.h"
 
-// <edit>
-#include "llbuildnewviewsscheduler.h"
-// </edit>
+// [RLVa:KB]
+#include "rlvhandler.h"
+// [/RLVa:KB]
 
 static LLRegisterWidget<LLInventoryPanel> r("inventory_panel");
 
@@ -499,7 +499,7 @@ void LLInventoryView::init(LLInventoryModel* inventory)
 	addBoolControl("Inventory.SystemFoldersToTop", sort_system_folders_to_top );
 
 	//Search Controls - RKeast
-	U32 search_type = gSavedPerAccountSettings.getU32("AscentInventorySearchType");
+	U32 search_type = gSavedPerAccountSettings.getU32("PhoenixInventorySearchType");
 	BOOL search_by_name = (search_type == 0);
 
 	addBoolControl("Inventory.SearchByName", search_by_name);
@@ -510,7 +510,7 @@ void LLInventoryView::init(LLInventoryModel* inventory)
 	addBoolControl("Inventory.SearchByAll", !search_by_name);
 	
 	//Bool for toggling the partial search results - RKeast
-	BOOL partial_search = gSavedPerAccountSettings.getBOOL("AscentInventoryPartialSearch");
+	BOOL partial_search = gSavedPerAccountSettings.getBOOL("PhoenixInventoryPartialSearch");
 	
 	addBoolControl("Inventory.PartialSearchToggle", partial_search);
 
@@ -526,7 +526,7 @@ void LLInventoryView::init(LLInventoryModel* inventory)
 	if (mActivePanel)
 	{
 		// "All Items" is the previous only view, so it gets the InventorySortOrder
-		
+
 		//Fix for gSavedSettings use - rkeast
 		mActivePanel->getFilter()->setSearchType(search_type);
 		mActivePanel->getFilter()->setPartialSearch(partial_search);
@@ -545,7 +545,7 @@ void LLInventoryView::init(LLInventoryModel* inventory)
 		recent_items_panel->getFilter()->markDefault();
 		recent_items_panel->setSelectCallback(onSelectionChange, recent_items_panel);
 	}
-
+	
 	LLInventoryPanel* worn_items_panel = getChild<LLInventoryPanel>("Worn Items");
 	if (worn_items_panel)
 	{
@@ -580,9 +580,8 @@ void LLInventoryView::init(LLInventoryModel* inventory)
 		}
 	}
 
-
 	//Initialize item count - rkeast
-	mItemCount = gSavedPerAccountSettings.getS32("AscentInventoryPreviousCount");
+	mItemCount = gSavedPerAccountSettings.getS32("PhoenixInventoryPreviousCount");
 
 
 	mSearchEditor = getChild<LLSearchEditor>("inventory search editor");
@@ -667,30 +666,20 @@ void LLInventoryView::draw()
 {
  	if (LLInventoryModel::isEverythingFetched())
 	{
-		S32 item_count = gInventory.getItemCount();
-
-		//don't let llfloater work more than necessary
-		if (item_count != mOldItemCount || mOldFilterText != mFilterText)
-		{
-			LLLocale locale(LLLocale::USER_LOCALE);
-			std::ostringstream title;
-			title << "Inventory"; //*TODO: make translatable
-			std::string item_count_string;
-			LLResMgr::getInstance()->getIntegerString(item_count_string, item_count);
-			title << " (" << item_count_string << " items)";
-			title << mFilterText;
-			setTitle(title.str());
-		}
-
-		mOldFilterText = mFilterText;
-		mOldItemCount = item_count;
-
+		LLLocale locale(LLLocale::USER_LOCALE);
+		std::ostringstream title;
+		title << "Inventory";
+		std::string item_count_string;
+		LLResMgr::getInstance()->getIntegerString(item_count_string, gInventory.getItemCount());
+		title << " (" << item_count_string << " items)";
+		title << mFilterText;
+		setTitle(title.str());
 	}
 	if (mActivePanel && mSearchEditor)
 	{
 		mSearchEditor->setText(mActivePanel->getFilterSubString());
 	}
-	
+
 	if (mActivePanel && mQuickFilterCombo)
 	{
 		refreshQuickFilter( mQuickFilterCombo );
@@ -783,7 +772,17 @@ void LLInventoryView::setVisible( BOOL visible )
 // Destroy all but the last floater, which is made invisible.
 void LLInventoryView::onClose(bool app_quitting)
 {
-	S32 count = sActiveViews.count();
+//	S32 count = sActiveViews.count();
+// [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g)
+	// See LLInventoryView::closeAll() on why we're doing it this way
+	S32 count = 0;
+	for (S32 idx = 0, cnt = sActiveViews.count(); idx < cnt; idx++)
+	{
+		if (!sActiveViews.get(idx)->isDead())
+			count++;
+	}
+// [/RLVa:KB]
+
 	if (count > 1)
 	{
 		destroy();
@@ -849,8 +848,8 @@ void LLInventoryView::changed(U32 mask)
 		//Displays a progress indication for loading the inventory, but not if it hasn't been loaded before on this PC, or we load more than expected - rkeast
 		if(mItemCount == -1)
 		{
-			title << " (Fetched " << item_count_string << " items...)";
-		}
+		title << " (Fetched " << item_count_string << " items...)";
+	}
 		else
 		{
 			S32 remaining = mItemCount - gInventory.getItemCount();
@@ -862,7 +861,7 @@ void LLInventoryView::changed(U32 mask)
 			else title << " (Fetched " << item_count_string << " items of ~" << total_items << " - ~" << items_remaining << " remaining...)";
 		}
 	}
-	else gSavedPerAccountSettings.setS32("AscentInventoryPreviousCount", gInventory.getItemCount());
+	else gSavedPerAccountSettings.setS32("PhoenixInventoryPreviousCount", gInventory.getItemCount());
 	title << mFilterText;
 	setTitle(title.str());
 
@@ -876,6 +875,13 @@ LLInventoryView* LLInventoryView::showAgentInventory(BOOL take_keyboard_focus)
 	{
 		return NULL;
 	}
+
+// [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g)
+	if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWINV))
+	{
+		return NULL;
+	}
+// [/RLVa:KB]
 
 	LLInventoryView* iv = LLInventoryView::getActiveInventory();
 #if 0 && !LL_RELEASE_FOR_DOWNLOAD
@@ -1591,10 +1597,6 @@ const std::string LLInventoryPanel::RECENTITEMS_SORT_ORDER = std::string("Recent
 const std::string LLInventoryPanel::WORNITEMS_SORT_ORDER = std::string("WornItemsSortOrder");
 const std::string LLInventoryPanel::INHERIT_SORT_ORDER = std::string("");
 
-// <edit>
-std::list<LLInventoryPanel*> LLInventoryPanel::sInstances;
-// </edit>
-
 LLInventoryPanel::LLInventoryPanel(const std::string& name,
 								    const std::string& sort_order_setting,
 									const LLRect& rect,
@@ -1609,9 +1611,6 @@ LLInventoryPanel::LLInventoryPanel(const std::string& name,
 	mAllowMultiSelect(allow_multi_select),
 	mSortOrderSetting(sort_order_setting)
 {
-	// <edit>
-	sInstances.push_back(this);
-	// </edit>
 	setBackgroundColor(gColors.getColor("InventoryBackgroundColor"));
 	setBackgroundVisible(TRUE);
 	setBackgroundOpaque(TRUE);
@@ -1664,10 +1663,6 @@ BOOL LLInventoryPanel::postBuild()
 
 LLInventoryPanel::~LLInventoryPanel()
 {
-	// <edit>
-	sInstances.remove(this);
-	gBuildNewViewsScheduler->cancel(this);
-	// </edit>
 	// should this be a global setting?
 	U32 sort_order = mFolders->getSortOrder();
 	if (mSortOrderSetting != INHERIT_SORT_ORDER)
@@ -1944,14 +1939,11 @@ void LLInventoryPanel::buildNewViews(const LLUUID& id)
 		{
 			/*llwarns << "LLInventoryPanel::buildNewViews called with objectp->mType == " 
 				<< ((S32) objectp->getType())
-				<< " for object " << objectp->getName()
 				<< " (shouldn't happen)" << llendl;*/
 		}
-		else if ((objectp->getType() == LLAssetType::AT_CATEGORY) &&
-				(objectp->getActualType() != LLAssetType::AT_LINK_FOLDER)) // build new view for category
+		else if (objectp->getType() == LLAssetType::AT_CATEGORY) // build new view for category
 		{
 			LLInvFVBridge* new_listener = LLInvFVBridge::createBridge(objectp->getType(),
-													objectp->getType(),
 													LLInventoryType::IT_CATEGORY,
 													this,
 													objectp->getUUID());
@@ -1972,7 +1964,6 @@ void LLInventoryPanel::buildNewViews(const LLUUID& id)
 			LLInventoryItem* item = (LLInventoryItem*)objectp;
 			LLInvFVBridge* new_listener = LLInvFVBridge::createBridge(
 				item->getType(),
-				item->getActualType(),
 				item->getInventoryType(),
 				this,
 				item->getUUID(),
@@ -1991,9 +1982,6 @@ void LLInventoryPanel::buildNewViews(const LLUUID& id)
 
 		if (itemp)
 		{
-			// <edit>
-			itemp->mDelayedDelete = TRUE;
-			// </edit>
 			if (parent_folder)
 			{
 				itemp->addToFolder(parent_folder, mFolders);
@@ -2019,9 +2007,7 @@ void LLInventoryPanel::buildNewViews(const LLUUID& id)
 			for(S32 i = 0; i < count; ++i)
 			{
 				LLInventoryCategory* cat = categories->get(i);
-				// <edit>
-				gBuildNewViewsScheduler->addJob(this, cat);
-				// </edit>
+				buildNewViews(cat->getUUID());
 			}
 		}
 		if(items)
@@ -2030,116 +2016,12 @@ void LLInventoryPanel::buildNewViews(const LLUUID& id)
 			for(S32 i = 0; i < count; ++i)
 			{
 				LLInventoryItem* item = items->get(i);
-				// <edit>
-				gBuildNewViewsScheduler->addJob(this, item);
-				// </edit>
+				buildNewViews(item->getUUID());
 			}
 		}
 		mInventory->unlockDirectDescendentArrays(id);
 	}
 }
-
-// <edit>
-void LLInventoryPanel::buildNewViews(const LLInventoryObject* objectp)
-{
-	LLFolderViewItem* itemp = NULL;
-
-	if (objectp)
-	{		
-		if (objectp->getType() <= LLAssetType::AT_NONE ||
-			objectp->getType() >= LLAssetType::AT_COUNT)
-		{
-			llwarns << "LLInventoryPanel::buildNewViews called with objectp->mType == " 
-				<< ((S32) objectp->getType())
-				<< "Named " << objectp->getName()
-				<< " (shouldn't happen)" << llendl;
-		}
-		else if (objectp->getType() == LLAssetType::AT_CATEGORY) // build new view for category
-		{
-			LLInvFVBridge* new_listener = LLInvFVBridge::createBridge(objectp->getType(),
-													objectp->getType(),
-													LLInventoryType::IT_CATEGORY,
-													this,
-													objectp->getUUID());
-
-			if (new_listener)
-			{
-				LLFolderViewFolder* folderp = new LLFolderViewFolder(new_listener->getDisplayName(),
-													new_listener->getIcon(),
-													mFolders,
-													new_listener);
-				
-				folderp->setItemSortOrder(mFolders->getSortOrder());
-				itemp = folderp;
-			}
-		}
-		else // build new view for item
-		{
-			LLInventoryItem* item = (LLInventoryItem*)objectp;
-			LLInvFVBridge* new_listener = LLInvFVBridge::createBridge(
-				item->getType(),
-				item->getActualType(),
- 				item->getInventoryType(),
- 				this,
- 				item->getUUID(),
-				item->getFlags());
-			if (new_listener)
-			{
-				itemp = new LLFolderViewItem(new_listener->getDisplayName(),
-												new_listener->getIcon(),
-												new_listener->getCreationDate(),
-												mFolders,
-												new_listener);
-			}
-		}
-
-		LLFolderViewFolder* parent_folder = (LLFolderViewFolder*)mFolders->getItemByID(objectp->getParentUUID());
-
-		if (itemp)
-		{
-			// <edit>
-			itemp->mDelayedDelete = TRUE;
-			// </edit>
-			if (parent_folder)
-			{
-				itemp->addToFolder(parent_folder, mFolders);
-			}
-			else
-			{
-				llwarns << "Couldn't find parent folder for child " << itemp->getLabel() << llendl;
-				delete itemp;
-			}
-		}
-	}
-
-	if (!objectp || (objectp && (objectp->getType() == LLAssetType::AT_CATEGORY)))
-	{
-		LLViewerInventoryCategory::cat_array_t* categories;
-		LLViewerInventoryItem::item_array_t* items;
-
-		mInventory->lockDirectDescendentArrays((objectp != NULL) ? objectp->getUUID() : LLUUID::null, categories, items);
-		if(categories)
-		{
-			S32 count = categories->count();
-			for(S32 i = 0; i < count; ++i)
-			{
-				LLInventoryCategory* cat = categories->get(i);
-				buildNewViews(cat);
-			}
-		}
-		if(items)
-		{
-			S32 count = items->count();
-			for(S32 i = 0; i < count; ++i)
-			{
-				LLInventoryItem* item = items->get(i);
-				buildNewViews(item);
-			}
-		}
-		mInventory->unlockDirectDescendentArrays(objectp->getUUID());
-	}
-}
-// </edit>
 
 struct LLConfirmPurgeData
 {

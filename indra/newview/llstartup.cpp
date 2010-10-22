@@ -86,7 +86,6 @@
 
 #include "llagent.h"
 #include "llagentpilot.h"
-#include "llfloateravatarlist.h"
 #include "llfloateravatarpicker.h"
 #include "llcallbacklist.h"
 #include "llcallingcard.h"
@@ -194,6 +193,7 @@
 #include "llwaterparammanager.h"
 #include "llagentlanguage.h"
 #include "llsocks5.h"
+#include "floateravatarlist.h"
 #include "jcfloaterareasearch.h"
 
 // <edit>
@@ -201,7 +201,7 @@
 //#include "llfloateravatars.h"
 //#include "llactivation.h"
 #include "wlfPanel_AdvSettings.h" //Lower right Windlight and Rendering options
-#include "llao.h"
+//#include "llao.h"
 #include "llfloaterblacklist.h"
 #include "scriptcounter.h"
 // </edit>
@@ -213,13 +213,18 @@
 
 #include "LunaVoxelSurface.h"
 
+// [RLVa:KB]
+#include "rlvhandler.h"
+// [/RLVa:KB]
 
 #if LL_WINDOWS
 #include "llwindebug.h"
 #include "lldxhardware.h"
 #endif
 
+#include "jc_lslviewerbridge.h"
 
+#include "floaterao.h"
 
 #include "a_phoenixviewerlink.h"
 

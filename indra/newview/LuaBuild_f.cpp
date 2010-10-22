@@ -14,18 +14,15 @@
 
 extern LLAgent gAgent;
 
-int Object::mWaiting=0;
-LLUUID Object::mReady=LLUUID::null;
-
-void Object::Object(int pcode,bool viewerside)
+Object::Object(int pcode,bool viewerside)
 {
 	if(viewerside)
 		mObject=gObjectList.createObjectViewer((LLPCode)pcode, gAgent.getRegion());
 	else
 	{
 		mObject=NULL;
-		mWaiting++;
-		CB_Args0(plywood_above_head);
+		mWaiting=true;
+		CB_Args0(plyWood);
 		while(true)
 		{
 			// lock to main
@@ -34,6 +31,7 @@ void Object::Object(int pcode,bool viewerside)
 				if(mReady.notNull())
 				{
 					mObject=gObjectList.findObject(mReady);
+					mWaiting=false;
 					break;
 				}
 			}
@@ -42,7 +40,12 @@ void Object::Object(int pcode,bool viewerside)
 	}
 }
 
-void plywood_above_head()
+Object::Object(LLUUID id)
+{
+	mObject=gObjectList.findObject(mReady);
+}
+
+void Object::plyWood()
 {
 		LLMessageSystem* msg = gMessageSystem;
 		msg->newMessageFast(_PREHASH_ObjectAdd);
@@ -65,10 +68,8 @@ void plywood_above_head()
 		LLQuaternion rot;
 		msg->addQuatFast(_PREHASH_Rotation, rot);
 		LLViewerRegion *region = gAgent.getRegion();
-		
-		if (!localids.size())
-			root = (initialPos + linksetoffset);
-		
+		LLVector3 root(0.f,0.f,0.1f);
+		root+=gAgent.getCameraPositionAgent();
 		msg->addVector3Fast(_PREHASH_RayStart, root);
 		msg->addVector3Fast(_PREHASH_RayEnd, root);
 		msg->addU8Fast(_PREHASH_BypassRaycast, (U8)TRUE );

@@ -98,6 +98,10 @@
 #include "llvowlsky.h"
 #include "llmanip.h"
 
+// [RLVa:KB]
+#include "rlvhandler.h"
+// [/RLVa:KB]
+
 //#define DEBUG_UPDATE_TYPE
 
 BOOL gVelocityInterpolate = TRUE;
@@ -204,8 +208,7 @@ LLViewerObject::LLViewerObject(const LLUUID &id, const LLPCode pcode, LLViewerRe
 	mState(0),
 	mMedia(NULL),
 	mClickAction(0),
-	mSculptSurfaceArea(0.0),
-	mAttachmentItemID(LLUUID::null)
+	mSculptSurfaceArea(0.0)
 {
 	if(!is_global)
 	{
@@ -506,20 +509,9 @@ BOOL LLViewerObject::isOverGroupOwnedLand() const
 		&& mRegionp->getParcelOverlay()->isOwnedGroup(getPositionRegion());
 }
 
-BOOL LLViewerObject::setParent(LLViewerObject* parent)
+void LLViewerObject::setParent(LLViewerObject* parent)
 {
-	if (mParent != parent)
-	{
-		LLViewerObject* old_parent = (LLViewerObject*)mParent ;		
-		BOOL ret = LLPrimitive::setParent(parent);
-		if (ret && old_parent && parent)
-		{
-			old_parent->removeChild(this) ;
-		}
-		return ret ;
-	}
-
-	return FALSE ;
+	LLPrimitive::setParent(parent);
 }
 
 void LLViewerObject::addChild(LLViewerObject *childp)
@@ -538,10 +530,8 @@ void LLViewerObject::addChild(LLViewerObject *childp)
 		childp->mbCanSelect = mbCanSelect;
 	}
 
-	if (childp->setParent(this))
-	{
-		mChildList.push_back(childp);
-	}
+	childp->setParent(this);
+	mChildList.push_back(childp);
 }
 
 void LLViewerObject::removeChild(LLViewerObject *childp)
@@ -637,16 +627,12 @@ BOOL LLViewerObject::setDrawableParent(LLDrawable* parentp)
 	{
 		return FALSE;
 	}
-	BOOL ret = mDrawable->mXform.setParent(parentp ? &parentp->mXform : NULL);
-	if (!ret)
-	{
-		return FALSE ;
-	}
 
 	LLDrawable* old_parent = mDrawable->mParent;
 
 	mDrawable->mParent = parentp; 
 	
+	BOOL ret = mDrawable->mXform.setParent(parentp ? &parentp->mXform : NULL);
 	gPipeline.markRebuild(mDrawable, LLDrawable::REBUILD_VOLUME, TRUE);
 	if(	(old_parent != parentp && old_parent)
 		|| (parentp && parentp->isActive()))
@@ -1018,6 +1004,12 @@ U32 LLViewerObject::processUpdateMessage(LLMessageSystem *mesgsys,
 					coloru.mV[3] = 255 - coloru.mV[3];
 					mText->setColor(LLColor4(coloru));
 					mText->setStringUTF8(temp_string);
+// [RLVa:KB] - Checked: 2009-07-09 (RLVa-1.0.0f) | Added: RLVa-1.0.0f
+					if (rlv_handler_t::isEnabled())
+					{
+						mText->setObjectText(temp_string);
+					}
+// [/RLVa:KB]
 
 					// @hook OnSetText(id,string) Someone set this object's llSetText.
 					LUA_CALL("OnSetText") << getID() << temp_string << LUA_END;
@@ -1438,6 +1430,12 @@ U32 LLViewerObject::processUpdateMessage(LLMessageSystem *mesgsys,
 					coloru.mV[3] = 255 - coloru.mV[3];
 					mText->setColor(LLColor4(coloru));
 					mText->setStringUTF8(temp_string);
+// [RLVa:KB] - Version: 1.23.4 | Checked: 2009-07-09 (RLVa-1.0.0f) | Added: RLVa-1.0.0f
+					if (rlv_handler_t::isEnabled())
+					{
+						mText->setObjectText(temp_string);
+					}
+// [/RLVa:KB]
 
 					setChanged(TEXTURE);
 					LUA_CALL("OnSetText") << temp_string << getID() << LUA_END;
@@ -1628,6 +1626,24 @@ U32 LLViewerObject::processUpdateMessage(LLMessageSystem *mesgsys,
 								gObjectList.killObject(this);
 								return retval;
 							}
+// [RLVa:KB] - Checked: 2009-12-27 (RLVa-1.1.0k) | Added: RLVa-1.1.0k
+							if ( (rlv_handler_t::isEnabled()) && (sent_parentp->isAvatar()) && (sent_parentp->getID() == gAgent.getID()) )
+							{
+								// Rezzed object that's being worn as an attachment (we're assuming this will be due to llAttachToAvatar())
+								S32 idxAttachPt = ATTACHMENT_ID_FROM_STATE(getState());
+								if (gRlvHandler.isLockedAttachment(idxAttachPt, RLV_LOCK_ANY))
+								{
+									// If this will end up on an "add locked" attachment point then treat the attach as a user action
+									LLNameValue* nvItem = getNVPair("AttachItemID");
+									if (nvItem)
+									{
+										LLUUID idItem(nvItem->getString());
+										if (idItem.notNull())
+											gRlvHandler.onWearAttachment(idItem);
+									}
+								}
+							}
+// [/RLVa:KB]
 							sent_parentp->addChild(this);
 							// make sure this object gets a non-damped update
 							if (sent_parentp->mDrawable.notNull())
@@ -1903,11 +1919,10 @@ U32 LLViewerObject::processUpdateMessage(LLMessageSystem *mesgsys,
 
 	if ( gShowObjectUpdates )
 	{
-		// <edit> We want to see updates from our own avatar
+		// We want to see updates from our own avatar
 		//if (!((mPrimitiveCode == LL_PCODE_LEGACY_AVATAR) && (((LLVOAvatar *) this)->mIsSelf))
 		//	&& mRegionp)
 		if(mRegionp)
-		// </edit>
 		{
 			LLViewerObject* object = gObjectList.createObjectViewer(LL_PCODE_LEGACY_TEXT_BUBBLE, mRegionp);
 			LLVOTextBubble* bubble = (LLVOTextBubble*) object;
@@ -1958,11 +1973,9 @@ U32 LLViewerObject::processUpdateMessage(LLMessageSystem *mesgsys,
 
 	if (needs_refresh)
 	{
-		// <edit>
 		if(isChanged(MOVED))	// Update "center" if this or children are selected,
 								// and translate, scale, or rotate occurred on this.
 								// Leave dialog refresh to happen always, as before.
-		// </edit>
 		LLSelectMgr::getInstance()->updateSelectionCenter();
 		dialog_refresh_all();
 	} 
@@ -4110,14 +4123,12 @@ void LLViewerObject::setDebugText(const std::string &utf8text)
 	mText->setDoFade(FALSE);
 	updateText();
 }
-// <edit>
 std::string LLViewerObject::getDebugText()
 {
 	if(mText)
 		return mText->getStringUTF8();
 	return "";
 }
-// </edit>
 
 void LLViewerObject::setIcon(LLViewerImage* icon_image)
 {
@@ -4864,7 +4875,10 @@ BOOL LLViewerObject::permTransfer() const
 // given you modify rights to.  JC
 BOOL LLViewerObject::allowOpen() const
 {
-	return !flagInventoryEmpty() && (permYouOwner() || permModify());
+// [RLVa:KB] - Checked: 2009-07-04 (RLVa-1.0.0b)
+	return !flagInventoryEmpty() && (permYouOwner() || permModify()) && (!gRlvHandler.hasBehaviour(RLV_BHVR_EDIT));
+// [/RLVa:KB]
+//	return !flagInventoryEmpty() && (permYouOwner() || permModify());
 }
 
 LLViewerObject::LLInventoryCallbackInfo::~LLInventoryCallbackInfo()
@@ -5189,36 +5203,3 @@ void LLViewerObject::resetChildrenPosition(const LLVector3& offset, BOOL simplif
 	return ;
 }
 
-
-// <edit>
-S32 LLViewerObject::getAttachmentPoint()
-{
-	return ((S32)((((U8)mState & AGENT_ATTACH_MASK) >> 4) | (((U8)mState & ~AGENT_ATTACH_MASK) << 4)));
-}
-
-std::string LLViewerObject::getAttachmentPointName()
-{
-	S32 point = getAttachmentPoint();
-	if((point > 0) && (point < 39))
-	{
-		return gAgent.getAvatarObject()->mAttachmentPoints[point]->getName();
-	}
-	return llformat("unsupported point %d", point);
-}
-// </edit>
-
-const LLUUID &LLViewerObject::extractAttachmentItemID()
-{
-	LLUUID item_id = LLUUID::null;
-	LLNameValue* item_id_nv = getNVPair("AttachItemID");
-	if (item_id_nv)
-	{
-		const char* s = item_id_nv->getString();
-		if (s)
-		{
-			item_id.set(s);
-		}
-	}
-	setAttachmentItemID(item_id);
-	return getAttachmentItemID();
-}

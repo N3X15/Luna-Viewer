@@ -99,7 +99,7 @@
 #include "llimageworker.h"
 
 // <edit>
-#include "llao.h" //for setting up listener
+//#include "llao.h" //for setting up listener
 #include "lldelayeduidelete.h"
 #include "llbuildnewviewsscheduler.h"
 // </edit>
@@ -140,6 +140,7 @@
 #include "llvectorperfoptions.h"
 #include "llurlsimstring.h"
 #include "llwatchdog.h"
+#include "llsavedlogins.h"
 
 // Included so that constants/settings might be initialized
 // in save_settings_to_globals()
@@ -178,6 +179,10 @@
 #include "llinventoryview.h"
 
 #include "llcommandlineparser.h"
+
+// [RLVa:KB]
+#include "rlvhandler.h"
+// [/RLVa:KB]
 
 // *FIX: These extern globals should be cleaned up.
 // The globals either represent state/config/resource-storage of either
@@ -836,12 +841,6 @@ bool LLAppViewer::init()
 
 	// Luna Lua Engine startup!
 	FLLua::init();
-	
-	// LUNA: Moved here since it's dependent on Lua now.
-	// <edit>
-	// Setup AO settings listener
-	LLAO::setup();
-	// </edit>
 	return true;
 }
 
@@ -932,6 +931,9 @@ bool LLAppViewer::mainLoop()
 					&& !gFocusMgr.focusLocked())
 				{
 					joystick->scanJoystick();
+					if(gSavedSettings.getBOOL("PhoenixCrouchToggle"))
+						if(gSavedSettings.getBOOL("PhoenixCrouchToggleStatus"))
+							gAgent.moveUp(-1);
 					gKeyboard->scanKeyboard();
 				}
 

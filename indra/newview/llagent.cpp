@@ -138,10 +138,16 @@
 #include "llappviewer.h"
 #include "llviewerjoystick.h"
 #include "llfollowcam.h"
-// <edit>
-#include "llao.h"
+#include "llfloaterteleporthistory.h"
+#include "jc_lslviewerbridge.h"
+
+//#include "llfloaterstats.h"
+#include "floaterao.h"
 #include "llworldmapmessage.h"
-// </edit>
+// [RLVa:KB]
+#include "rlvhandler.h"
+// [/RLVa:KB]
+
 using namespace LLVOAvatarDefines;
 
 extern LLMenuBarGL* gMenuBarView;
@@ -564,6 +570,7 @@ void LLAgent::resetView(BOOL reset_camera, BOOL change_camera)
 		// this is so people don't wig out when their avatar moves without animating
 		if (LLSelectMgr::getInstance()->getSelection()->isAttachment())
 		{
+			LLSelectMgr::getInstance()->unhighlightAll();
 			LLSelectMgr::getInstance()->deselectAll();
 		}
 
@@ -765,9 +772,14 @@ void LLAgent::moveUp(S32 direction)
 	else if (direction < 0)
 	{
 		setControlFlags(AGENT_CONTROL_UP_NEG | AGENT_CONTROL_FAST_UP);
+
+		if(!gSavedSettings.getBOOL("PhoenixCrouchToggleStatus"))
+			resetView();
+		else if(!gSavedSettings.getBOOL("PhoenixCrouchToggle"))
+			resetView();
 	}
 
-	resetView();
+
 }
 
 //-----------------------------------------------------------------------------
@@ -813,6 +825,9 @@ void LLAgent::movePitch(F32 mag)
 // Does this parcel allow you to fly?
 BOOL LLAgent::canFly()
 {
+// [RLVa:KB] - Checked: 2009-07-05 (RLVa-1.0.0c)
+	if (gRlvHandler.hasBehaviour(RLV_BHVR_FLY)) return FALSE;
+// [/RLVa:KB]
 	if (isGodlike()) return TRUE;
 	//LGG always fly code
 	if(AscentForceFly) return TRUE;
@@ -865,6 +880,13 @@ void LLAgent::setFlying(BOOL fly)
 
 	if (fly)
 	{
+// [RLVa:KB] - Checked: 2009-07-05 (RLVa-1.0.0c)
+		if (gRlvHandler.hasBehaviour(RLV_BHVR_FLY))
+		{
+			return;
+		}
+// [/RLVa:KB]
+
 		BOOL was_flying = getFlying();
 		if (!canFly() && !was_flying)
 		{
@@ -3532,18 +3554,13 @@ void LLAgent::updateCamera()
 		{
 			LLVOAvatar::attachment_map_t::iterator curiter = iter++;
 			LLViewerJointAttachment* attachment = curiter->second;
-			for (LLViewerJointAttachment::attachedobjs_vec_t::iterator attachment_iter = attachment->mAttachedObjects.begin();
-				 attachment_iter != attachment->mAttachedObjects.end();
-				 ++attachment_iter)
+			LLViewerObject *attached_object = attachment->getObject();
+			if (attached_object && !attached_object->isDead() && attached_object->mDrawable.notNull())
 			{
-				LLViewerObject *attached_object = (*attachment_iter);
-				if (attached_object && !attached_object->isDead() && attached_object->mDrawable.notNull())
-				{
-					// clear any existing "early" movements of attachment
-					attached_object->mDrawable->clearState(LLDrawable::EARLY_MOVE);
-					gPipeline.updateMoveNormalAsync(attached_object->mDrawable);
-					attached_object->updateText();
-				}
+				// clear any existing "early" movements of attachment
+				attached_object->mDrawable->clearState(LLDrawable::EARLY_MOVE);
+				gPipeline.updateMoveNormalAsync(attached_object->mDrawable);
+				attached_object->updateText();
 			}
 		}
 
@@ -4358,8 +4375,14 @@ void LLAgent::changeCameraToCustomizeAvatar(BOOL avatar_animate, BOOL camera_ani
 	}
 
 	if(gSavedSettings.getBOOL("AscentAppearanceForceStand"))
-		setControlFlags(AGENT_CONTROL_STAND_UP); // force stand up
-
+// [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g)
+	if ( (gRlvHandler.hasBehaviour(RLV_BHVR_UNSIT)) && (mAvatarObject.notNull()) && (mAvatarObject->mIsSitting) )
+	{
+		return;
+	}
+// [/RLVa:KB]
+	if(gSavedSettings.getBOOL("AscentAppearanceForceStand"))
+	setControlFlags(AGENT_CONTROL_STAND_UP); // force stand up
 	gViewerWindow->getWindow()->resetBusyCount();
 
 	if (gFaceEditToolset)
@@ -5066,9 +5089,8 @@ void LLAgent::requestStopMotion( LLMotion* motion )
 
 void LLAgent::onAnimStop(const LLUUID& id)
 {
-
 	// handle automatic state transitions (based on completion of animation playback)
-	if(LLAO::isStand(id))
+	if (id == ANIM_AGENT_STAND)
 	{
 		// <edit>
 		if(LLAO::isEnabled())
@@ -5078,7 +5100,15 @@ void LLAgent::onAnimStop(const LLUUID& id)
 	}
 	else if (id == ANIM_AGENT_AWAY)
 	{
+		//clearAFK();
+// [RLVa:KB] - Checked: 2009-10-19 (RLVa-1.1.0g) | Added: RLVa-1.1.0g
+#ifdef RLV_EXTENSION_CMD_ALLOWIDLE
+		if (!gRlvHandler.hasBehaviour(RLV_BHVR_ALLOWIDLE))
+			clearAFK();
+#else
 		clearAFK();
+#endif // RLV_EXTENSION_CMD_ALLOWIDLE
+// [/RLVa:KB]
 	}
 	else if (id == ANIM_AGENT_STANDUP)
 	{
@@ -5423,6 +5453,14 @@ BOOL LLAgent::setUserGroupFlags(const LLUUID& group_id, BOOL accept_notices, BOO
 // utility to build a location string
 void LLAgent::buildLocationString(std::string& str)
 {
+// [RLVa:KB] - Checked: 2009-07-04 (RLVa-1.0.0a)
+	if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC))
+	{
+		str = RlvStrings::getString(RLV_STRING_HIDDEN);
+		return;
+	}
+// [/RLVa:KB]
+
 	const LLVector3& agent_pos_region = getPositionAgent();
 	S32 pos_x = S32(agent_pos_region.mV[VX]);
 	S32 pos_y = S32(agent_pos_region.mV[VY]);
@@ -6294,6 +6332,15 @@ void LLAgent::teleportRequest(
 // Landmark ID = LLUUID::null means teleport home
 void LLAgent::teleportViaLandmark(const LLUUID& landmark_asset_id)
 {
+// [RLVa:KB] - Checked: 2009-07-07 (RLVa-1.0.0d)
+	if ( (rlv_handler_t::isEnabled()) &&
+		 ( (gRlvHandler.hasBehaviour(RLV_BHVR_TPLM)) || 
+		   ((gRlvHandler.hasBehaviour(RLV_BHVR_UNSIT)) && (mAvatarObject.notNull()) && (mAvatarObject->mIsSitting)) ))
+	{
+		return;
+	}
+// [/RLVa:KB]
+
 	LLViewerRegion *regionp = getRegion();
 	// Set last region data for teleport history
 	gAgent.setLastRegionData(regionp->getName(),gAgent.getPositionAgent());
@@ -6362,6 +6409,24 @@ void LLAgent::teleportCancel()
 
 void LLAgent::teleportViaLocation(const LLVector3d& pos_global)
 {
+// [RLVa:KB] - Alternate: Snowglobe-1.2.4 | Checked: 2010-03-02 (RLVa-1.1.1a) | Modified: RLVa-1.2.0a
+	if (rlv_handler_t::isEnabled()) 
+	{
+		// If we're getting teleported due to @tpto we should disregard any @tploc=n or @unsit=n restrictions from the same object
+		if ( (gRlvHandler.hasBehaviourExcept(RLV_BHVR_TPLOC, gRlvHandler.getCurrentObject())) ||
+		     ( (mAvatarObject.notNull()) && (mAvatarObject->mIsSitting) && 
+			   (gRlvHandler.hasBehaviourExcept(RLV_BHVR_UNSIT, gRlvHandler.getCurrentObject()))) )
+		{
+			return;
+		}
+
+		if ( (gRlvHandler.getCurrentCommand()) && (RLV_BHVR_TPTO == gRlvHandler.getCurrentCommand()->getBehaviourType()) )
+		{
+			gRlvHandler.setCanCancelTp(false);
+		}
+	}
+// [/RLVa:KB]
+
 	LLViewerRegion* regionp = getRegion();
 	U64 handle = to_region_handle(pos_global);
 	LLSimInfo* info = LLWorldMap::getInstance()->simInfoFromHandle(handle);
@@ -6447,6 +6512,12 @@ void LLAgent::setTeleportState(ETeleportState state)
 		// We're outa here. Save "back" slurl.
 		mTeleportSourceSLURL = getSLURL();
 	}
+// [RLVa:KB] - Alternate: Snowglobe-1.2.4 | Version: 1.23.4 | Checked: 2009-07-07 (RLVa-1.0.0d) | Added: RLVa-0.2.0b
+	if ( (rlv_handler_t::isEnabled()) && (TELEPORT_NONE == mTeleportState) )
+	{
+		gRlvHandler.setCanCancelTp(true);
+	}
+// [/RLVa:KB]
 }
 
 void LLAgent::stopCurrentAnimations()
@@ -7090,11 +7161,18 @@ void LLAgent::processAgentInitialWearablesUpdate( LLMessageSystem* mesgsys, void
 		}
 
 		// now that we have the asset ids...request the wearable assets
+// [RLVa:KB] - Alternate: Snowglobe-1.2.4 | Checked: 2009-08-08 (RLVa-1.0.1g) | Added: RLVa-1.0.1g
+		LLInventoryFetchObserver::item_ref_t rlvItems;
+// [/RLVa:KB]
 		for( i = 0; i < WT_COUNT; i++ )
 		{
 			LL_DEBUGS("Wearables") << "      fetching " << asset_id_array[i] << LL_ENDL;
 			if( !gAgent.mWearableEntry[i].mItemID.isNull() )
 			{
+// [RLVa:KB] - Alternate: Snowglobe-1.2.4 | Checked: 2009-08-08 (RLVa-1.0.1g) | Added: RLVa-1.0.1g
+				if (rlv_handler_t::isEnabled())
+					rlvItems.push_back(gAgent.mWearableEntry[i].mItemID);
+// [/RLVa:KB]
 				gWearableList.getAsset( 
 					asset_id_array[i],
 					LLStringUtil::null,
@@ -7102,6 +7180,15 @@ void LLAgent::processAgentInitialWearablesUpdate( LLMessageSystem* mesgsys, void
 					LLAgent::onInitialWearableAssetArrived, (void*)(intptr_t)i );
 			}
 		}
+
+// [RLVa:KB] - Alternate: Snowglobe-1.2.4 | Checked: 2009-08-08 (RLVa-1.0.1g) | Added: RLVa-1.0.1g
+		// TODO-RLVa: checking that we're in STATE_STARTED is probably not needed, but leave it until we can be absolutely sure
+		if ( (rlv_handler_t::isEnabled()) && (LLStartUp::getStartupState() == STATE_STARTED) )
+		{
+			RlvCurrentlyWorn f;
+			f.fetchItems(rlvItems);
+		}
+// [/RLVa:KB]
 	}
 }
 
@@ -7408,55 +7495,39 @@ void LLAgent::makeNewOutfit(
 
 	if( attachments_to_include.count() )
 	{
+		BOOL msg_started = FALSE;
+		LLMessageSystem* msg = gMessageSystem;
 		for( S32 i = 0; i < attachments_to_include.count(); i++ )
 		{
 			S32 attachment_pt = attachments_to_include[i];
 			LLViewerJointAttachment* attachment = get_if_there(mAvatarObject->mAttachmentPoints, attachment_pt, (LLViewerJointAttachment*)NULL );
 			if(!attachment) continue;
-			for (LLViewerJointAttachment::attachedobjs_vec_t::iterator attachment_iter = attachment->mAttachedObjects.begin();
-				 attachment_iter != attachment->mAttachedObjects.end();
-				 ++attachment_iter)
- 			{
-				LLViewerObject *attached_object = (*attachment_iter);
-				if (!attached_object) continue;
-				const LLUUID& item_id = attached_object->getAttachmentItemID();
-				if (item_id.isNull()) continue;
-				LLInventoryItem* item = gInventory.getItem(item_id);
-				if (!item) continue;
-				if (no_link || item->getPermissions().allowCopyBy(gAgent.getID()))
-				{
-					const LLUUID& old_folder_id = item->getParentUUID();
-					move_inventory_item(
-						gAgent.getID(),
-						gAgent.getSessionID(),
-						item->getLinkedUUID(),
-						folder_id,
-						item->getName(),
-						LLPointer<LLInventoryCallback>(NULL));
-
-					if (item->getPermissions().allowCopyBy(gAgent.getID()))
-					{
-						copy_inventory_item(
-							gAgent.getID(),
-							item->getPermissions().getOwner(),
-							item->getLinkedUUID(),
-							old_folder_id,
-							item->getName(),
-							LLPointer<LLInventoryCallback>(NULL));
-					}
-				}
-				else
-				{
-					link_inventory_item(
-						gAgent.getID(),
-						item->getLinkedUUID(),
-						folder_id,
-						item->getName(),
-						LLAssetType::AT_LINK,
-						LLPointer<LLInventoryCallback>(NULL));
-				}
+			LLViewerObject* attached_object = attachment->getObject();
+			if(!attached_object) continue;
+			const LLUUID& item_id = attachment->getItemID();
+			if(item_id.isNull()) continue;
+			LLInventoryItem* item = gInventory.getItem(item_id);
+			if(!item) continue;
+			if(!msg_started)
+			{
+				msg_started = TRUE;
+				msg->newMessage("CreateNewOutfitAttachments");
+				msg->nextBlock("AgentData");
+				msg->addUUID("AgentID", getID());
+				msg->addUUID("SessionID", getSessionID());
+				msg->nextBlock("HeaderData");
+				msg->addUUID("NewFolderID", folder_id);
 			}
+			msg->nextBlock("ObjectData");
+			msg->addUUID("OldItemID", item_id);
+			msg->addUUID("OldFolderID", item->getParentUUID());
 		}
+
+		if( msg_started )
+		{
+			sendReliableMessage();
+		}
+
 	} 
 }
 
@@ -7609,7 +7680,11 @@ void LLAgent::sendAgentSetAppearance()
 			msg->nextBlockFast(_PREHASH_VisualParam );
 			
 			// We don't send the param ids.  Instead, we assume that the receiver has the same params in the same sequence.
-			const F32 param_value = param->getWeight();
+			F32 param_value;
+			if(param->getID() == 507)
+				param_value = mAvatarObject->getActualBoobGrav();
+			else
+				param_value = param->getWeight();
 			const U8 new_weight = F32_to_U8(param_value, param->getMinWeight(), param->getMaxWeight());
 			msg->addU8Fast(_PREHASH_ParamValue, new_weight );
 			transmitted_params++;
@@ -7639,6 +7714,13 @@ void LLAgent::removeWearable( EWearableType type )
 		// Can't take off underclothing in simple UI mode or on PG accounts
 		return;
 	}
+
+// [RLVa:KB] - Version: 1.23.4 | Checked: 2009-07-07 (RLVa-1.0.0d)
+	if ( (rlv_handler_t::isEnabled()) && (!gRlvHandler.isRemovable(type)) )
+	{
+		return;
+	}
+// [/RLVa:KB]
 
 	if( old_wearable )
 	{
@@ -7766,17 +7848,19 @@ void LLAgent::setWearableOutfit(
 	wearables_to_remove[WT_SKIN]		= FALSE;
 	wearables_to_remove[WT_HAIR]		= FALSE;
 	wearables_to_remove[WT_EYES]		= FALSE;
-	wearables_to_remove[WT_SHIRT]		= remove;
-	wearables_to_remove[WT_PANTS]		= remove;
-	wearables_to_remove[WT_SHOES]		= remove;
-	wearables_to_remove[WT_SOCKS]		= remove;
-	wearables_to_remove[WT_JACKET]		= remove;
-	wearables_to_remove[WT_GLOVES]		= remove;
-	wearables_to_remove[WT_UNDERSHIRT]	= (!gAgent.isTeen()) & remove;
-	wearables_to_remove[WT_UNDERPANTS]	= (!gAgent.isTeen()) & remove;
-	wearables_to_remove[WT_SKIRT]		= remove;
-	wearables_to_remove[WT_ALPHA]		= remove;
-	wearables_to_remove[WT_TATTOO]		= remove;
+// [RLVa:KB] - Checked: 2009-07-06 (RLVa-1.0.0c) | Added: RLVa-0.2.2a
+	wearables_to_remove[WT_SHIRT]		= remove && gRlvHandler.isRemovable(WT_SHIRT);
+	wearables_to_remove[WT_PANTS]		= remove && gRlvHandler.isRemovable(WT_PANTS);
+	wearables_to_remove[WT_SHOES]		= remove && gRlvHandler.isRemovable(WT_SHOES);
+	wearables_to_remove[WT_SOCKS]		= remove && gRlvHandler.isRemovable(WT_SOCKS);
+	wearables_to_remove[WT_JACKET]		= remove && gRlvHandler.isRemovable(WT_JACKET);
+	wearables_to_remove[WT_GLOVES]		= remove && gRlvHandler.isRemovable(WT_GLOVES);
+	wearables_to_remove[WT_UNDERSHIRT]	= (!gAgent.isTeen()) && remove && gRlvHandler.isRemovable(WT_UNDERSHIRT);
+	wearables_to_remove[WT_UNDERPANTS]	= (!gAgent.isTeen()) && remove && gRlvHandler.isRemovable(WT_UNDERPANTS);
+	wearables_to_remove[WT_SKIRT]		= remove && gRlvHandler.isRemovable(WT_SKIRT);
+	wearables_to_remove[WT_ALPHA]		= remove && gRlvHandler.isRemovable(WT_ALPHA);
+	wearables_to_remove[WT_TATTOO]		= remove && gRlvHandler.isRemovable(WT_TATTOO);
+// [/RLVa:KB]
 
 	S32 count = wearables.count();
 	llassert( items.count() == count );
@@ -7866,6 +7950,15 @@ void LLAgent::setWearable( LLInventoryItem* new_item, LLWearable* new_wearable )
 	EWearableType type = new_wearable->getType();
 
 	LLWearable* old_wearable = mWearableEntry[ type ].mWearable;
+
+// [RLVa:KB] - Checked: 2009-07-07 (RLVa-1.0.0d)
+	// Block if: we can't wear on that layer; or we're already wearing something there we can't take off
+	if ( (rlv_handler_t::isEnabled()) && ((!gRlvHandler.isWearable(type)) || ((old_wearable) && (!gRlvHandler.isRemovable(type)))) )
+	{
+		return;
+	}
+// [/RLVa:KB]
+
 	if( old_wearable )
 	{
 		const LLUUID& old_item_id = mWearableEntry[ type ].mItemID;
@@ -8060,29 +8153,38 @@ void LLAgent::userRemoveAllAttachments( void* userdata )
 		return;
 	}
 
-	gMessageSystem->newMessage("ObjectDetach");
-	gMessageSystem->nextBlockFast(_PREHASH_AgentData);
-	gMessageSystem->addUUIDFast(_PREHASH_AgentID, gAgent.getID() );
-	gMessageSystem->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
-
-	for (LLVOAvatar::attachment_map_t::iterator iter = avatarp->mAttachmentPoints.begin(); 
-		 iter != avatarp->mAttachmentPoints.end(); )
+// [RLVa:KB] - Checked: 2009-11-24 (RLVa-1.1.0f) | Modified: RLVa-1.1.0e
+	std::list<U32> LocalIDs;
+	for (LLVOAvatar::attachment_map_t::iterator iter = avatarp->mAttachmentPoints.begin(); iter != avatarp->mAttachmentPoints.end(); )
 	{
 		LLVOAvatar::attachment_map_t::iterator curiter = iter++;
 		LLViewerJointAttachment* attachment = curiter->second;
-		for (LLViewerJointAttachment::attachedobjs_vec_t::iterator attachment_iter = attachment->mAttachedObjects.begin();
-			 attachment_iter != attachment->mAttachedObjects.end();
-			 ++attachment_iter)
+		LLViewerObject* objectp = attachment->getObject();
+		if (objectp)
 		{
-			LLViewerObject *attached_object = (*attachment_iter);
-			if (attached_object)
-			{
-				gMessageSystem->nextBlockFast(_PREHASH_ObjectData);
-				gMessageSystem->addU32Fast(_PREHASH_ObjectLocalID, attached_object->getLocalID());
-			}
+			if ( (rlv_handler_t::isEnabled()) && (gRlvHandler.isLockedAttachment(curiter->first, RLV_LOCK_REMOVE)) )
+				continue;
+			LocalIDs.push_back(objectp->getLocalID());
 		}
 	}
-	gMessageSystem->sendReliable( gAgent.getRegionHost() );
+
+	// Only send the message if we actually have something to detach
+	if (LocalIDs.size() > 0)
+	{
+		gMessageSystem->newMessage("ObjectDetach");
+		gMessageSystem->nextBlockFast(_PREHASH_AgentData);
+		gMessageSystem->addUUIDFast(_PREHASH_AgentID, gAgent.getID() );
+		gMessageSystem->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
+
+		for (std::list<U32>::const_iterator itLocalID = LocalIDs.begin(); itLocalID != LocalIDs.end(); ++itLocalID)
+		{
+			gMessageSystem->nextBlockFast(_PREHASH_ObjectData);
+			gMessageSystem->addU32Fast(_PREHASH_ObjectLocalID, *itLocalID);
+		}
+
+		gMessageSystem->sendReliable(gAgent.getRegionHost());
+	}
+// [/RLVa:KB]
 }
 
 void LLAgent::observeFriends()
@@ -8245,7 +8347,7 @@ void LLAgent::onFoundLureDestination()
 	std::string sim_name;
 	LLWorldMap::getInstance()->simNameFromPosGlobal( LLAgent::lure_posglobal, sim_name );
 
-	if(siminfo)
+	if(siminfo && (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC)))
 	{
 		llinfos << LLAgent::lure_name << " is offering a TP to " << sim_name.c_str() << " (" << LLAgent::lure_maturity << ")" << llendl;
 		std::string url = LLURLDispatcher::buildSLURL(sim_name.c_str(), S32(LLAgent::lure_x), S32(LLAgent::lure_y), S32(LLAgent::lure_z));
