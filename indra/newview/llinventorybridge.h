@@ -33,6 +33,7 @@
 #include "llfloaterproperties.h"
 #include "llwearable.h"
 #include "llviewercontrol.h"
+#include "llinventoryview.h"
 #include "llcallingcard.h"
 
 enum EInventoryIcon
@@ -163,7 +164,9 @@ public:
 class LLInventoryPanelObserver : public LLInventoryObserver
 {
 public:
-	LLInventoryPanelObserver(LLInventoryPanel* ip) : mIP(ip) {}
+	LLInventoryPanelObserver(LLInventoryPanel* ip)
+		:mIP(ip)
+	{}
 	virtual ~LLInventoryPanelObserver() {}
 	virtual void changed(U32 mask) { mIP->modelChanged(mask); }
 protected:

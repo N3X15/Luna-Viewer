@@ -33,6 +33,7 @@
 #ifndef LL_LLAPPVIEWER_H
 #define LL_LLAPPVIEWER_H
 
+#include "llsys.h"	// LLOSInfo
 class LLTextureCache;
 class LLImageDecodeThread;
 class LLTextureFetch;
@@ -307,11 +308,6 @@ extern F32 gSimFrames;
 
 extern LLUUID gInventoryLibraryOwner;
 extern LLUUID gInventoryLibraryRoot;
-// <edit>
-extern LLUUID gSystemFolderRoot;
-extern LLUUID gSystemFolderSettings;
-extern LLUUID gSystemFolderAssets;
-// </edit>
 
 extern BOOL		gDisconnected;
 

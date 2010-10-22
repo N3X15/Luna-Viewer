@@ -265,11 +265,6 @@ F32 gLogoutMaxTime = LOGOUT_REQUEST_TIME;
 
 LLUUID gInventoryLibraryOwner;
 LLUUID gInventoryLibraryRoot;
-// <edit>
-LLUUID gSystemFolderRoot;
-LLUUID gSystemFolderSettings;
-LLUUID gSystemFolderAssets;
-// </edit>
 
 BOOL				gDisconnected = FALSE;
 
@@ -313,9 +308,6 @@ const std::string ERROR_MARKER_FILE_NAME("SecondLife.error_marker");
 const std::string LLERROR_MARKER_FILE_NAME("SecondLife.llerror_marker");
 const std::string LOGOUT_MARKER_FILE_NAME("SecondLife.logout_marker");
 static BOOL gDoDisconnect = FALSE;
-// <edit>
-//static BOOL gBusyDisconnect = FALSE;
-// </edit>
 static std::string gLaunchFileOnQuit;
 
 // Used on Win32 for other apps to identify our window (eg, win_setup)
@@ -335,7 +327,15 @@ LLAppViewer::LLUpdaterInfo *LLAppViewer::sUpdaterInfo = NULL ;
 void idle_afk_check()
 {
 	// check idle timers
+	//if (gAllowIdleAFK && (gAwayTriggerTimer.getElapsedTimeF32() > gSavedSettings.getF32("AFKTimeout")))
+// [RLVa:KB] - Checked: 2009-10-19 (RLVa-1.1.0g) | Added: RLVa-1.1.0g
+#ifdef RLV_EXTENSION_CMD_ALLOWIDLE
+	if ( (gAllowIdleAFK || gRlvHandler.hasBehaviour(RLV_BHVR_ALLOWIDLE)) &&
+		 (gAwayTriggerTimer.getElapsedTimeF32() > gSavedSettings.getF32("AFKTimeout")))
+#else
 	if (gAllowIdleAFK && (gAwayTriggerTimer.getElapsedTimeF32() > gSavedSettings.getF32("AFKTimeout")))
+#endif // RLV_EXTENSION_CMD_ALLOWIDLE
+// [/RLVa:KB]
 	{
 		gAgent.setAFK();
 	}
