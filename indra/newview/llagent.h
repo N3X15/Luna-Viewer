@@ -527,7 +527,7 @@ public:
 
 	// to a global location - this will probably need to be
 	// deprecated.
-	void teleportViaLocation(const LLVector3d& pos_global); 
+	void teleportViaLocation(const LLVector3d& pos_global, bool go_to = false); 
 
 	// to a global location, preserving camera rotation
 	void teleportViaLocationLookAt(const LLVector3d& pos_global);

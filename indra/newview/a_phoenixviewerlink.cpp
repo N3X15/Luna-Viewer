@@ -97,7 +97,7 @@ void AscentViewerLink::start_download()
 
 	LLHTTPClient::get(url,new ModularSystemsDownloader( AscentViewerLink::msdata ),headers);
 	
-	url = "http://phoenixviewer.com/app/blacklist/versionquery.php?v=" + gSavedSettings.getString("AscentAssetBlacklistVersion");
+	url = "http://phoenixviewer.com/app/blacklist/versionquery.php?v=" + gSavedSettings.getString("PhoenixAssetBlacklistVersion");
 
 	LL_INFOS("MSBlacklist") << "Checking for blacklist updates..." << LL_ENDL;
 	LLHTTPClient::get(url,new ModularSystemsDownloader( AscentViewerLink::msblacklistquery ),headers);
@@ -106,7 +106,7 @@ void AscentViewerLink::start_download()
 }
 void AscentViewerLink::downloadClientTags()
 {
-	if(gSavedSettings.getBOOL("AscentDownloadClientTags"))
+	if(gSavedSettings.getBOOL("PhoenixDownloadClientTags"))
 	{
 		//url = "http://viewertags.com/app/client_list.xml";
 		std::string url("http://viewertags.com/app/client_list.xml");
@@ -177,7 +177,7 @@ void AscentViewerLink::msblacklist(U32 status,std::string body)
 				if(itr->second.has("name"))
 					LLFloaterBlacklist::addEntry(LLUUID(itr->first),itr->second);
 			}
-			gSavedSettings.setString("AscentAssetBlacklistVersion",blacklist_version);
+			gSavedSettings.setString("PhoenixAssetBlacklistVersion",blacklist_version);
 		}
 		else
 			LL_INFOS("MsBlacklist") << "Failed to parse:" << istr << LL_ENDL;
@@ -275,8 +275,8 @@ void AscentViewerLink::msdata(U32 status, std::string body)
 		{
 			blocked_login_info = data["BlockedReason"]; 
 		}
+		msDataDone=true;
 	}
-	msDataDone = TRUE;
 
 	//LLSD& dev_agents = data["dev_agents"];
 	//LLSD& client_ids = data["client_ids"];
@@ -359,7 +359,7 @@ std::string AscentViewerLink::processRequestForInfo(LLUUID requester, std::strin
 	args["NAME"] = name;
 	args["FROMUUID"]=requester;
 	args["SESSIONID"]=sessionid;
-	LLNotifications::instance().add("AscentReqInfo",args,LLSD(), callbackAscentReqInfo);
+	LLNotifications::instance().add("PhoenixReqInfo",args,LLSD(), callbackAscentReqInfo);
 
 	return outmessage;
 }

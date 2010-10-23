@@ -59,6 +59,8 @@
 
 #include "llpreeditor.h"
 
+#include "llfasttimer.h"
+
 // culled from winuser.h
 #ifndef WM_MOUSEWHEEL /* Added to be compatible with later SDK's */
 const S32	WM_MOUSEWHEEL = 0x020A;
@@ -620,6 +622,17 @@ LLWindowWin32::~LLWindowWin32()
 
 	delete mWindowClassName;
 	mWindowClassName = NULL;
+}
+
+void LLWindowWin32::setWindowTitle(std::string &title)
+{
+	int len = title.size() + 1;
+	wchar_t *wText = new wchar_t[len];
+	if (wText == 0) return;
+	memset(wText, 0, len);
+	MultiByteToWideChar(CP_ACP, NULL, title.c_str(), -1, wText, len);
+	SetWindowText(mWindowHandle, wText);
+	delete [] wText;
 }
 
 void LLWindowWin32::show()
@@ -2916,6 +2929,19 @@ S32 OSMessageBoxWin32(const std::string& text, const std::string& caption, U32 t
 	}
 
 	return retval;
+}
+
+void LLWindowWin32::openFile(const std::string& file_name )
+{
+	LLWString url_wstring = utf8str_to_wstring( file_name );
+	llutf16string url_utf16 = wstring_to_utf16str( url_wstring );
+	
+	SHELLEXECUTEINFO sei = { sizeof( sei ) };
+	sei.fMask = SEE_MASK_FLAG_DDEWAIT;
+	sei.nShow = SW_SHOWNORMAL;
+	sei.lpVerb = L"open";
+	sei.lpFile = url_utf16.c_str();
+	ShellExecuteEx( &sei );
 }
 
 void LLWindowWin32::ShellEx(const std::string& command )

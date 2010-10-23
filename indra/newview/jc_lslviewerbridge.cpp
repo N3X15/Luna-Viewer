@@ -100,7 +100,7 @@ JCLSLBridge::JCLSLBridge() : LLEventTimer( (F32)1.0 )
 		lastcall = 0;
 		l2c = 0;
 		l2c_inuse = false;
-		gSavedSettings.getControl("PhoenixBuildBridge")->getSignal()->connect(&updateBuildBridge);
+		gSavedSettings.getControl("PhoenixBuildBridge")->getSignal()->connect(boost::bind(&updateBuildBridge, _1));
 		sBuildBridge = gSavedSettings.getBOOL("PhoenixBuildBridge");
 		//getPermissions();
 	}

@@ -94,7 +94,7 @@ public:
 	};
 
 	/*virtual*/  void draw();
-
+	void showMore(BOOL show_more); //Banana:KC
 	void dirty();
 	void showPanel(EInfoPanel panel);
 
@@ -143,7 +143,8 @@ public:
 	LLComboBox*		mComboGridMode;
 	LLCheckBoxCtrl*	mCheckStretchUniform;
 	LLCheckBoxCtrl*	mCheckStretchTexture;
-	LLCheckBoxCtrl*	mCheckLimitDrag;
+	LLCheckBoxCtrl*	mCheckShowHighlight; //Banana:KC
+	LLCheckBoxCtrl*	mCheckActualRoot; //Banana:KC
 
 	LLButton	*mBtnRotateLeft;
 	LLButton	*mBtnRotateReset;
@@ -192,6 +193,10 @@ public:
 private:
 	BOOL					mDirty;
 
+	//Banana:KC
+	S32					mSmallHeight;
+	S32					mLargeHeight;
+	BOOL					mShowHighlight; //Banana:KC - make changes to show highlight only temporary during build mode, and restore on close
 	std::map<std::string, std::string> mStatusText;
 };
 

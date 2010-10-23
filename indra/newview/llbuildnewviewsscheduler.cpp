@@ -64,7 +64,6 @@ void LLBuildNewViewsScheduler::buildNewViews(LLInventoryPanel* panelp, LLInvento
 		{
 			LLInvFVBridge* new_listener = LLInvFVBridge::createBridge(
 													objectp->getType(),
-													objectp->getType(),
 													LLInventoryType::IT_CATEGORY,
 													panelp,
 													objectp->getUUID());
@@ -85,7 +84,6 @@ void LLBuildNewViewsScheduler::buildNewViews(LLInventoryPanel* panelp, LLInvento
 			LLInventoryItem* item = (LLInventoryItem*)objectp;
 			LLInvFVBridge* new_listener = LLInvFVBridge::createBridge(
 				item->getType(),
-				item->getActualType(),
 				item->getInventoryType(),
 				panelp,
 				item->getUUID(),

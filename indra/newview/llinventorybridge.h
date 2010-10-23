@@ -33,7 +33,6 @@
 #include "llfloaterproperties.h"
 #include "llwearable.h"
 #include "llviewercontrol.h"
-#include "llinventoryview.h"
 #include "llcallingcard.h"
 
 enum EInventoryIcon

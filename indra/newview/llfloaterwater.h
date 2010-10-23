@@ -95,7 +95,10 @@ public:
 	static void onNewPreset(void* userData);
 
 	/// when user hits the save preset button
-	static void onSavePreset(void* userData);
+	static void onSavePreset(LLUICtrl* ctrl, void* userData);
+	
+	/// prompts a user when overwriting a preset notecard
+	static bool saveNotecardCallback(const LLSD& notification, const LLSD& response);
 
 	/// prompts a user when overwriting a preset
 	static bool saveAlertCallback(const LLSD& notification, const LLSD& response);
@@ -128,6 +131,9 @@ private:
 	static LLFloaterWater* sWaterMenu;
 
 	static std::set<std::string> sDefaultPresets;
+
+	static void onClickNext(void* user_data);
+	static void onClickPrev(void* user_data);
 };
 
 

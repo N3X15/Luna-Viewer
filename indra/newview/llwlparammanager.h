@@ -40,7 +40,17 @@
 #include "llwldaycycle.h"
 #include "llviewercamera.h"
 
+#include "llassettype.h" // Ugh.
+class LLVFS;
+
 class LLGLSLShader;
+
+class LLWLPresetsObserver
+{
+public:
+	virtual ~LLWLPresetsObserver() { };
+	virtual void changed() = 0;
+};
  
 // color control
 struct WLColorControl {
@@ -136,10 +146,20 @@ public:
 	void savePresets(const std::string & fileName);
 
 	/// load an individual preset into the sky
-	void loadPreset(const std::string & name,bool propogate=true);
+	void loadPreset(const std::string & name, bool propogate=true);
 
+	/// load an individual preset into the sky from an LLSD stream
+	/// Returns whether the stream was actually reasonable XML to load from.
+	bool loadPresetXML(const std::string& name, std::istream& preset_stream, bool propogate=false, bool check_if_real=false);
+	
+	/// Load an individual preset from a notecard.
+	void loadPresetNotecard(const std::string& name, const LLUUID& asset_id, const LLUUID& inv_id);
+	
 	/// save the parameter presets to file
 	void savePreset(const std::string & name);
+	
+	/// save the parameter presets to file
+	bool savePresetToNotecard(const std::string & name);
 
 	/// Set shader uniforms dirty, so they'll update automatically.
 	void propagateParameters(void);
@@ -195,6 +215,11 @@ public:
 
 	// singleton pattern implementation
 	static LLWLParamManager * instance();
+
+	// manage observers
+	static void addObserver(LLWLPresetsObserver* observer);
+	static void removeObserver(LLWLPresetsObserver* observer);
+	static void notifyObservers();
 
 public:
 
@@ -256,6 +281,9 @@ public:
 private:
 	// our parameter manager singleton instance
 	static LLWLParamManager * sInstance;
+	static std::vector<LLWLPresetsObserver*> sObservers;
+
+	static void loadWindlightNotecard(LLVFS *vfs, const LLUUID& asset_id, LLAssetType::EType asset_type, void *user_data, S32 status, LLExtStat ext_status);
 
 };
 

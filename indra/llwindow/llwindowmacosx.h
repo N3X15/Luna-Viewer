@@ -34,6 +34,7 @@
 #define LL_LLWINDOWMACOSX_H
 
 #include "llwindow.h"
+#include "lltimer.h"
 
 #include <Carbon/Carbon.h>
 #include <AGL/agl.h>
@@ -47,6 +48,7 @@
 class LLWindowMacOSX : public LLWindow
 {
 public:
+	/*virtual*/ void setWindowTitle(std::string &title);
 	/*virtual*/ void show();
 	/*virtual*/ void hide();
 	/*virtual*/ void close();

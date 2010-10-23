@@ -160,61 +160,7 @@ bool LLInventoryBackup::itemIsFolder(LLInventoryItem* item)
 // static
 LLFilePicker::ESaveFilter LLInventoryBackup::getSaveFilter(LLInventoryItem* item)
 {
-	LLAssetType::EType type = item->getType();
-	EWearableType wear = (EWearableType)(item->getFlags() & 0xFF);
-	switch(type)
-	{
-	case LLAssetType::AT_TEXTURE:
-		return LLFilePicker::FFSAVE_TGA;
-	case LLAssetType::AT_SOUND:
-		return LLFilePicker::FFSAVE_OGG;
-	case LLAssetType::AT_SCRIPT:
-	case LLAssetType::AT_LSL_TEXT:
-		return LLFilePicker::FFSAVE_LSL;
-	case LLAssetType::AT_ANIMATION:
-		return LLFilePicker::FFSAVE_ANIMATN;
-	case LLAssetType::AT_GESTURE:
-		return LLFilePicker::FFSAVE_GESTURE;
-	case LLAssetType::AT_NOTECARD:
-		return LLFilePicker::FFSAVE_NOTECARD;
-	case LLAssetType::AT_LANDMARK:
-		return LLFilePicker::FFSAVE_LANDMARK;
-	case LLAssetType::AT_BODYPART:
-	case LLAssetType::AT_CLOTHING:
-		switch(wear)
-		{
-		case WT_EYES:
-			return LLFilePicker::FFSAVE_EYES;
-		case WT_GLOVES:
-			return LLFilePicker::FFSAVE_GLOVES;
-		case WT_HAIR:
-			return LLFilePicker::FFSAVE_HAIR;
-		case WT_JACKET:
-			return LLFilePicker::FFSAVE_JACKET;
-		case WT_PANTS:
-			return LLFilePicker::FFSAVE_PANTS;
-		case WT_SHAPE:
-			return LLFilePicker::FFSAVE_SHAPE;
-		case WT_SHIRT:
-			return LLFilePicker::FFSAVE_SHIRT;
-		case WT_SHOES:
-			return LLFilePicker::FFSAVE_SHOES;
-		case WT_SKIN:
-			return LLFilePicker::FFSAVE_SKIN;
-		case WT_SKIRT:
-			return LLFilePicker::FFSAVE_SKIRT;
-		case WT_SOCKS:
-			return LLFilePicker::FFSAVE_SOCKS;
-		case WT_UNDERPANTS:
-			return LLFilePicker::FFSAVE_UNDERPANTS;
-		case WT_UNDERSHIRT:
-			return LLFilePicker::FFSAVE_UNDERSHIRT;
-		default:
-			return LLFilePicker::FFSAVE_ALL;
-		}
-	default:
-		return LLFilePicker::FFSAVE_ALL;
-	}
+	return LLFilePicker::FFSAVE_ALL;
 }
 
 // static

@@ -107,6 +107,7 @@ public:
 		// currently unused
 	};
 public:
+	virtual void setWindowTitle(std::string &title) {} ;
 	virtual void show() = 0;
 	virtual void hide() = 0;
 	virtual void close() = 0;
@@ -202,6 +203,7 @@ public:
 	virtual void updateLanguageTextInputArea() {}
 	virtual void interruptLanguageTextInput() {}
 	virtual void spawnWebBrowser(const std::string& escaped_url) {};
+	virtual void openFile(const std::string& file_name) {};
 	virtual void ShellEx(const std::string& command) {};
 
 	static std::vector<std::string> getDynamicFallbackFontList();

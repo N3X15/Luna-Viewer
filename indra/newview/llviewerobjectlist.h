@@ -66,6 +66,8 @@ public:
 	~LLViewerObjectList();
 
 	void destroy();
+	
+	friend class LocalBitmap; // tag: vaa phoenix local_asset_browser
 
 	// LUNA HACK.  
 	//

@@ -58,15 +58,6 @@
 #include "message.h"
 #include "raytrace.h"
 #include "llsdserialize.h"
-#include "llsdutil.h"
-// <edit>
-#include "lllocalinventory.h"
-#include "llfloaterimport.h"
-#include "llfloaterexport.h"
-#include "llfloaterexploreanimations.h"
-#include "llfloaterexploresounds.h"
-#include "llfloaterblacklist.h"
-// </edit>
 #include "lltimer.h"
 #include "llvfile.h"
 #include "llvolumemgr.h"
@@ -74,15 +65,12 @@
 // newview includes
 #include "llagent.h"
 
-#include "jcfloaterareasearch.h"
-
 #include "llagentpilot.h"
 #include "llbox.h"
 #include "llcallingcard.h"
 #include "llclipboard.h"
 #include "llcompilequeue.h"
 #include "llconsole.h"
-#include "llcontrol.h"
 #include "llviewercontrol.h"
 #include "lldebugview.h"
 #include "lldir.h"
@@ -109,8 +97,6 @@
 #include "llfloaterchat.h"
 #include "llfloatercustomize.h"
 #include "llfloaterdaycycle.h"
-//#include "llfloaterdickdongs.h" No need for the custom floater right now, I think. -HgB
-#include "ascentuploadbrowser.h" //New customer floater attempts
 #include "llfloaterdirectory.h"
 #include "llfloatereditui.h"
 #include "llfloaterchatterbox.h"
@@ -142,8 +128,6 @@
 #include "llfloatersettingsdebug.h"
 #include "llfloaterenvsettings.h"
 #include "llfloaterstats.h"
-#include "llfloaterteleport.h"
-#include "llfloaterteleporthistory.h"
 #include "llfloatertest.h"
 #include "llfloatertools.h"
 #include "llfloaterwater.h"
@@ -233,19 +217,20 @@
 
 #include "llpolymesh.h"
 #include "floaterexploreanimations.h"
+#include "floaterexploresounds.h"
+#include "floaterblacklist.h"
+#include "llfloatermediabrowser.h"
+#include "llfloaterteleporthistory.h"
+#include "floaterlocalassetbrowse.h"
 #include "floateravatarlist.h"
+#include "jcfloater_areasearch.h"
 #include "exporttracker.h"
 #include "floaterao.h"
-
-// <edit>
-#include "dofloaterhex.h"
-#include "hgfloatertexteditor.h"
-#include "llfloatermessagelog.h"
-#include "llfloatervfs.h"
-#include "llfloatervfsexplorer.h"
-// </edit>
-
 #include "scriptcounter.h"
+
+#include "llfloatermessagelog.h"
+
+#include "floatermediaplayer.h"
 
 #include "lunaconsole.h"
 
@@ -318,7 +303,6 @@ LLPieMenu* gDetachPieMenu = NULL;
 LLPieMenu* gDetachScreenPieMenu = NULL;
 LLPieMenu* gDetachBodyPartPieMenus[8];
 
-LLMenuItemCallGL* gFakeAway = NULL;
 LLMenuItemCallGL* gAFKMenu = NULL;
 LLMenuItemCallGL* gBusyMenu = NULL;
 
@@ -414,30 +398,6 @@ void handle_god_mode(void*);
 
 // God menu
 void handle_leave_god_mode(void*);
-
-// <edit>
-void handle_fake_away_status(void*);
-void handle_area_search(void*);
-void handle_pose_stand_ltao(void*);
-void handle_pose_stand_ltah(void*);
-void handle_pose_stand_ltad(void*);
-void handle_pose_stand_loau(void*);
-void handle_pose_stand_loao(void*);
-void handle_pose_stand_lhao(void*);
-void handle_pose_stand_stop(void*);
-
-void handle_force_ground_sit(void*);
-void handle_phantom_avatar(void*);
-void handle_hide_typing_notification(void*);
-void handle_close_all_notifications(void*);
-void handle_reopen_with_hex_editor(void*);
-void handle_open_message_log(void*);
-void handle_edit_ao(void*);
-void handle_local_assets(void*);
-void handle_vfs_explorer(void*);
-void handle_sounds_explorer(void*);
-void handle_blacklist(void*);
-// </edit>
 
 BOOL is_inventory_visible( void* user_data );
 void handle_reset_view();
@@ -562,9 +522,6 @@ BOOL enable_detach(void*);
 BOOL enable_region_owner(void*);
 void menu_toggle_attached_lights(void* user_data);
 void menu_toggle_attached_particles(void* user_data);
-
-// <dogmode> for pose stand
-LLUUID current_pose = LLUUID::null;
 
 class LLMenuParcelObserver : public LLParcelObserver
 {
@@ -786,7 +743,7 @@ void init_client_menu(LLMenuGL* menu)
 
 	//menu->append(new LLMenuItemCallGL("Permissions Control", &show_permissions_control));
 	// this is now in the view menu so we don't need it here!
-
+	
 	{
 		// *TODO: Translate
 		LLMenuGL* sub = new LLMenuGL("Consoles");
@@ -911,7 +868,6 @@ void init_client_menu(LLMenuGL* menu)
 	
 
 
-// <dogmode> 
 #ifdef TOGGLE_HACKED_GODLIKE_VIEWER
 	if (!LLViewerLogin::getInstance()->isInProductionGrid())
 	{
@@ -922,7 +878,7 @@ void init_client_menu(LLMenuGL* menu)
 										   (void*)"HackedGodmode"));
 	}
 #endif
-// </dogmode>
+
 	menu->append(new LLMenuItemCallGL("Clear Group Cache", 
 									  LLGroupMgr::debugClearAllGroups));
 	menu->appendSeparator();
@@ -939,8 +895,7 @@ void init_client_menu(LLMenuGL* menu)
 	if (gSavedSettings.getBOOL("OpenGridProtocol"))
 	{
 		sub_menu = new LLMenuGL("Interop");
-		sub_menu->append(new LLMenuItemCallGL("Teleport Region...", 
-			&LLFloaterTeleport::show, NULL, NULL));
+		//sub_menu->append(new LLMenuItemCallGL("Teleport Region...",&LLFloaterTeleport::show, NULL, NULL, 'R', MASK_CONTROL|MASK_ALT|MASK_SHIFT));
 		menu->appendMenu(sub_menu);
 	}
 
@@ -1200,10 +1155,7 @@ void init_debug_xui_menu(LLMenuGL* menu)
 	menu->append(new LLMenuItemCallGL("Export Menus to XML...", handle_export_menus_to_xml));
 	menu->append(new LLMenuItemCallGL("Edit UI...", LLFloaterEditUI::show));	
 	menu->append(new LLMenuItemCallGL("Load from XML...", handle_load_from_xml));
-	// <edit>
-	//menu->append(new LLMenuItemCallGL("Save to XML...", handle_save_to_xml));
-	menu->append(new LLMenuItemCallGL("Save to XML...", handle_save_to_xml, NULL, NULL, 'X', MASK_CONTROL | MASK_ALT | MASK_SHIFT));
-	// </edit>
+	menu->append(new LLMenuItemCallGL("Save to XML...", handle_save_to_xml));
 	menu->append(new LLMenuItemCheckGL("Show XUI Names", toggle_show_xui_names, NULL, check_show_xui_names, NULL));
 
 	//menu->append(new LLMenuItemCallGL("Buy Currency...", handle_buy_currency));
@@ -3384,180 +3336,6 @@ void process_grant_godlike_powers(LLMessageSystem* msg, void**)
 		llwarns << "Grant godlike for wrong agent " << agent_id << llendl;
 	}
 }
-
-// <edit>
-
-void handle_reopen_with_hex_editor(void*)
-{
-
-}
-
-void handle_open_message_log(void*)
-{
-	LLFloaterMessageLog::show();
-}
-
-
-void handle_local_assets(void*)
-{
-
-}
-
-void handle_vfs_explorer(void*)
-{
-
-}
-
-void handle_sounds_explorer(void*)
-{
-	LLFloaterExploreSounds::toggle();
-}
-
-void handle_blacklist(void*)
-{
-	LLFloaterBlacklist::show();
-}
-
-void handle_close_all_notifications(void*)
-{
-	LLView::child_list_t child_list(*(gNotifyBoxView->getChildList()));
-	for(LLView::child_list_iter_t iter = child_list.begin();
-		iter != child_list.end();
-		iter++)
-	{
-		gNotifyBoxView->removeChild(*iter);
-	}
-}
-
-// <dogmode>
-// The following animations were made by Charley Levenque and are
-// not public property or free to use via UUID. When replicating 
-// this code, please supply your own animations.
-
-void set_current_pose(std::string anim)
-{
-	if (current_pose == LLUUID::null)
-		gSavedSettings.setF32("AscentAvatarZModifier", gSavedSettings.getF32("AscentAvatarZModifier") + 7.5);
-
-	gAgent.sendAgentSetAppearance();
-	gAgent.sendAnimationRequest(current_pose, ANIM_REQUEST_STOP);
-	current_pose.set(anim);
-	gAgent.sendAnimationRequest(current_pose, ANIM_REQUEST_START);
-}
-void handle_pose_stand_ltao(void*)
-{
-	set_current_pose("6c082c7b-f70e-9da0-0451-54793f869ff4");
-}
-void handle_pose_stand_ltah(void*)
-{
-	set_current_pose("45e59c14-913b-c58c-2a55-c0a5c1eeef53");
-}
-void handle_pose_stand_ltad(void*)
-{
-	set_current_pose("421d6bb4-94a9-3c42-4593-f2bc1f6a26e6");
-}
-void handle_pose_stand_loau(void*)
-{
-	set_current_pose("8b3bb239-d610-1c0f-4d1a-69d29bc17e2c");
-}
-void handle_pose_stand_loao(void*)
-{
-	set_current_pose("4d70e328-48b6-dc6a-0be1-85dd6b333e81");
-}
-void handle_pose_stand_lhao(void*)
-{
-	set_current_pose("f088eaf0-f1c9-8cf1-99c8-09df96bb13ae");
-}
-void handle_pose_stand_stop(void*)
-{
-	if (current_pose != LLUUID::null)
-	{
-		gSavedSettings.setF32("AscentAvatarZModifier", gSavedSettings.getF32("AscentAvatarZModifier") - 7.5);
-		gAgent.sendAgentSetAppearance();
-		gAgent.sendAnimationRequest(current_pose, ANIM_REQUEST_STOP);
-		current_pose = LLUUID::null;
-	}
-}
-// </dogmode> ---------------------------------------------------
-void handle_area_search(void*)
-{
-	JCFloaterAreaSearch::toggle();
-}
-
-void handle_fake_away_status(void*)
-{
-	if (!gSavedSettings.controlExists("FakeAway")) gSavedSettings.declareBOOL("FakeAway", FALSE, "", NO_PERSIST);
-
-	if (gSavedSettings.getBOOL("FakeAway") == TRUE)
-	{
-		gSavedSettings.declareBOOL("FakeAway", FALSE, "", NO_PERSIST);
-		gSavedSettings.setBOOL("FakeAway", FALSE);
-		gAgent.sendAnimationRequest(ANIM_AGENT_AWAY, ANIM_REQUEST_STOP);
-	}
-	else
-	{
-		gSavedSettings.declareBOOL("FakeAway", TRUE, "", NO_PERSIST);
-		gSavedSettings.setBOOL("FakeAway", TRUE);
-		gAgent.sendAnimationRequest(ANIM_AGENT_AWAY, ANIM_REQUEST_START);
-	}
-}
-
-void handle_hide_typing_notification(void*)
-{
-	if (!gSavedSettings.controlExists("HideTypingNotification")) 
-		gSavedSettings.declareBOOL("HideTypingNotification", FALSE, "Hide your 'Name is typing...' message when Instant Messaging.");
-
-	BOOL hide = gSavedSettings.getBOOL("HideTypingNotification");
-	if (hide)
-	{
-		gSavedSettings.declareBOOL("HideTypingNotification", FALSE, "Hide your 'Name is typing...' message when Instant Messaging.");
-		gSavedSettings.setBOOL("HideTypingNotification", FALSE);
-	}
-	else
-	{
-		gSavedSettings.declareBOOL("HideTypingNotification", TRUE, "Hide your 'Name is typing...' message when Instant Messaging.");
-		gSavedSettings.setBOOL("HideTypingNotification", TRUE);
-	}
-
-	LLChat chat;
-	chat.mSourceType = CHAT_SOURCE_SYSTEM;
-	chat.mText = llformat("IM Typing Notifications: %s",(hide ? "On" : "Off"));
-	LLFloaterChat::addChat(chat);
-}
-
-void handle_force_ground_sit(void*)
-{
-	if (gAgent.getAvatarObject())
-	{
-		if(!gAgent.getAvatarObject()->mIsSitting)
-		{
-			gAgent.setControlFlags(AGENT_CONTROL_SIT_ON_GROUND);
-		} 
-		else 
-		{
-			gAgent.setControlFlags(AGENT_CONTROL_STAND_UP);
-		}
-	}
-}
-
-void handle_phantom_avatar(void*)
-{
-	BOOL ph = LLAgent::getPhantom();
-
-	if (ph)
-		gAgent.setControlFlags(AGENT_CONTROL_STAND_UP);
-	else
-		gAgent.setControlFlags(AGENT_CONTROL_SIT_ON_GROUND);
-	
-	LLAgent::togglePhantom();
-	ph = LLAgent::getPhantom();
-	LLChat chat;
-	chat.mSourceType = CHAT_SOURCE_SYSTEM;
-	chat.mText = llformat("%s%s","Phantom ",(ph ? "On" : "Off"));
-	LLFloaterChat::addChat(chat);
-}
-
-// </edit>
 
 /*
 class LLHaveCallingcard : public LLInventoryCollectFunctor
@@ -6336,7 +6114,7 @@ class LLShowFloater : public view_listener_t
 		}
 		else if (floater_name == "media_player")
         {
-//			FloaterMediaPlayer::showInstance();
+			FloaterMediaPlayer::showInstance();
         }
         else if (floater_name == "animationexplorer")
         {
@@ -6346,6 +6124,22 @@ class LLShowFloater : public view_listener_t
         {
 			LLFloaterExploreSounds::toggle();
 		}
+        else if (floater_name == "assetblacklist")
+        {
+			LLFloaterBlacklist::show();
+        }
+        else if (floater_name == "areasearch")
+        {
+        	JCFloaterAreaSearch::toggle();
+        }
+		else if (floater_name == "mediabrowser")
+        {
+			LLFloaterMediaBrowser::showInstance("http://");
+        }
+		else if (floater_name == "localassetbrowser")
+        {
+        	FloaterLocalAssetBrowser::show(NULL);
+        }
 		else if (floater_name == "ao")
         {
         	LLFloaterAO::toggle(NULL);
@@ -6377,10 +6171,6 @@ class LLFloaterVisible : public view_listener_t
 		{
 			new_value = LLFloaterChat::instanceVisible();
 		}
-		else if (floater_name == "teleport history")
-		{
-			new_value = gFloaterTeleportHistory->getVisible();
-		}
 		else if (floater_name == "im")
 		{
 			new_value = LLFloaterMyFriends::instanceVisible(0);
@@ -6408,10 +6198,6 @@ class LLFloaterVisible : public view_listener_t
 		else if (floater_name == "beacons")
 		{
 			new_value = LLFloaterBeacons::instanceVisible(LLSD());
-		}
-		else if (floater_name == "dickdongs")
-		{
-//			new_value = LLFloaterDickDongs::instanceVisible(LLSD()); Not needed any more.
 		}
 		else if (floater_name == "inventory")
 		{

@@ -31,7 +31,7 @@
 #include "llpanelinventory.h"
 #include "llinventorybridge.h"
 
-#include "DiamondAoInt.h"
+//#include "DiamondAoInt.h"
 #include "jc_lslviewerbridge.h"
 #include "floaterexploreanimations.h"
 #include "llboost.h"
@@ -59,8 +59,7 @@ BOOL AOStandTimer::tick()
 {
 	if (gSavedPerAccountSettings.getBOOL("PhoenixAOStandCycling"))
 	{
-		LLFloaterAO::stand_iterator++;
-		LLFloaterAO::ChangeStand(FALSE);
+		LUA_CALL0("AOChangeStand");
 	}
 	return FALSE;
 }
@@ -302,34 +301,16 @@ BOOL LLFloaterAO::postBuild()
 		mAOItemDropTarget = new AONoteCardDropTarget("drop target", target_view->getRect(), AOItemDrop);//, mAvatarID);
 		addChild(mAOItemDropTarget);
 	}
-	if(LLStartUp::getStartupState() == STATE_STARTED)
-	{
-		LLUUID itemidimport = (LLUUID)gSavedPerAccountSettings.getString("PhoenixAOConfigNotecardID");
-		LLViewerInventoryItem* itemimport = gInventory.getItem(itemidimport);
-		if(itemimport)
-		{
-			childSetValue("ao_nc_text","Currently set to: "+itemimport->getName());
-		}
-		else if(itemidimport.isNull())
-		{
-			childSetValue("ao_nc_text","Currently not set");
-		}
-		else
-		{
-			childSetValue("ao_nc_text","Currently set to a item not on this account");
-		}
-	}
-	else
-	{
-		childSetValue("ao_nc_text","Not logged in");
-	}
+	
+	childSetValue("ao_nc_text","(Lua handles this)");
+	
 	childSetAction("more_btn", onClickMore, this);
 	childSetAction("less_btn", onClickLess, this);
 
 	childSetAction("reloadcard",onClickReloadCard,this);
-	childSetAction("opencard",onClickOpenCard,this);
-	childSetAction("prevstand",onClickPrevStand,this);
-	childSetAction("nextstand",onClickNextStand,this);
+	childSetAction("opencard",	onClickOpenCard,this);
+	childSetAction("prevstand",	onClickPrevStand,this);
+	childSetAction("nextstand",	onClickNextStand,this);
 	
 	childSetCommitCallback("PhoenixAOEnabled",onClickToggleAO);
 	childSetCommitCallback("PhoenixAOSitsEnabled",onClickToggleSits);
@@ -415,412 +396,28 @@ BOOL LLFloaterAO::fullfetch = FALSE;
 
 BOOL LLFloaterAO::init()
 {
-	BOOL success = FALSE;
-
-	mAnimTypes.clear();
-	struct_anim_types loader_anim_types;
-	loader_anim_types.name = "stand";			loader_anim_types.state = STATE_AGENT_STAND;			mAnimTypes.push_back(loader_anim_types);
-	loader_anim_types.name = "walk";				loader_anim_types.state = STATE_AGENT_WALK;			mAnimTypes.push_back(loader_anim_types);
-	loader_anim_types.name = "run";				loader_anim_types.state = STATE_AGENT_RUN;			mAnimTypes.push_back(loader_anim_types);
-	loader_anim_types.name = "jump";				loader_anim_types.state = STATE_AGENT_JUMP;			mAnimTypes.push_back(loader_anim_types);
-	loader_anim_types.name = "sit";				loader_anim_types.state = STATE_AGENT_SIT;			mAnimTypes.push_back(loader_anim_types);
-	loader_anim_types.name = "gsit";				loader_anim_types.state = STATE_AGENT_GROUNDSIT;			mAnimTypes.push_back(loader_anim_types);
-	loader_anim_types.name = "crouch";			loader_anim_types.state = STATE_AGENT_CROUCH;			mAnimTypes.push_back(loader_anim_types);
-	loader_anim_types.name = "cwalk";			loader_anim_types.state = STATE_AGENT_CROUCHWALK;			mAnimTypes.push_back(loader_anim_types);
-	loader_anim_types.name = "fall";				loader_anim_types.state = STATE_AGENT_FALLDOWN;			mAnimTypes.push_back(loader_anim_types);
-	loader_anim_types.name = "hover";			loader_anim_types.state = STATE_AGENT_HOVER;			mAnimTypes.push_back(loader_anim_types);
-	loader_anim_types.name = "fly";				loader_anim_types.state = STATE_AGENT_FLY;			mAnimTypes.push_back(loader_anim_types);
-	loader_anim_types.name = "flyslow";			loader_anim_types.state = STATE_AGENT_FLYSLOW;			mAnimTypes.push_back(loader_anim_types);
-	loader_anim_types.name = "flyup";			loader_anim_types.state = STATE_AGENT_HOVER_UP;			mAnimTypes.push_back(loader_anim_types);
-	loader_anim_types.name = "flydown";			loader_anim_types.state = STATE_AGENT_HOVER_DOWN;			mAnimTypes.push_back(loader_anim_types);
-	loader_anim_types.name = "land";				loader_anim_types.state = STATE_AGENT_LAND;			mAnimTypes.push_back(loader_anim_types);
-	loader_anim_types.name = "standup";			loader_anim_types.state = STATE_AGENT_STANDUP;			mAnimTypes.push_back(loader_anim_types);
-	loader_anim_types.name = "prejump";			loader_anim_types.state = STATE_AGENT_PRE_JUMP;			mAnimTypes.push_back(loader_anim_types);
-	loader_anim_types.name = "turnleft";			loader_anim_types.state = STATE_AGENT_TURNLEFT;			mAnimTypes.push_back(loader_anim_types);
-	loader_anim_types.name = "turnright";		loader_anim_types.state = STATE_AGENT_TURNRIGHT;			mAnimTypes.push_back(loader_anim_types);
-	loader_anim_types.name = "typing";			loader_anim_types.state = STATE_AGENT_TYPING;			mAnimTypes.push_back(loader_anim_types);
-	loader_anim_types.name = "floating";			loader_anim_types.state = STATE_AGENT_FLOATING;			mAnimTypes.push_back(loader_anim_types);
-	loader_anim_types.name = "swimmingforward";	loader_anim_types.state = STATE_AGENT_SWIMMINGFORWARD;			mAnimTypes.push_back(loader_anim_types);
-	loader_anim_types.name = "swimmingup";		loader_anim_types.state = STATE_AGENT_SWIMMINGUP;			mAnimTypes.push_back(loader_anim_types);
-	loader_anim_types.name = "swimmingdown";		loader_anim_types.state = STATE_AGENT_SWIMMINGDOWN;			mAnimTypes.push_back(loader_anim_types);
-
-    if (!sInstance)
-	sInstance = new LLFloaterAO();
-
-	LLUUID configncitem = (LLUUID)gSavedPerAccountSettings.getString("PhoenixAOConfigNotecardID");
-	if(LLStartUp::getStartupState() >= STATE_INVENTORY_SEND)
-	{
-		LLUUID phoenix_category = JCLSLBridge::findCategoryByNameOrCreate(phoenix_category_name);
-		if(gInventory.isCategoryComplete(phoenix_category))
-		{
-			if (configncitem.notNull())
-			{
-				success = FALSE;
-				const LLInventoryItem* item = gInventory.getItem(configncitem);
-				if(item)
-				{
-					BOOL in_emcat = FALSE;
-					LLUUID parent_id = item->getParentUUID();
-					LLViewerInventoryCategory* parent = gInventory.getCategory(item->getParentUUID());
-					if(parent_id != phoenix_category)
-					{
-						while(parent)
-						{
-							parent_id = parent->getParentUUID();
-							if(parent_id == phoenix_category)
-							{
-								in_emcat = TRUE;
-								break;
-							}else if(parent_id.isNull())break;
-							parent = gInventory.getCategory(parent_id);
-						}
-					}else in_emcat = TRUE;
-					
-					if(in_emcat == FALSE)
-					{
-						cmdline_printchat("Your AO notecard and animations must be in the #Phoenix folder in order to function correctly.");
-						/*LLViewerInventoryCategory* parent = gInventory.getCategory(item->getParentUUID());
-						if(parent->getPreferredType() == LLAssetType::AT_NONE)
-						{
-							LLNotifications::instance().add("NotifyAOMove", LLSD(),LLSD());
-							move_inventory_item(gAgent.getID(),gAgent.getSessionID(),parent->getUUID(),phoenix_category,parent->getName(), NULL);
-						}else
-						{
-							cmdline_printchat("Unable to move AO, as its containing folder is a category.");
-						}
-						*/
-					}
-
-					if (gAgent.allowOperation(PERM_COPY, item->getPermissions(),GP_OBJECT_MANIPULATE) || gAgent.isGodlike())
-					{
-						if(!item->getAssetUUID().isNull())
-						{
-							///////////////////////////
-							mAOStands.clear();
-							mAOTokens.clear();
-							mAODefaultAnims.clear();
-
-							struct_tokens tokenloader;
-							tokenloader.token = 
-							tokenloader.token = "[ Sitting On Ground ]";	tokenloader.state = STATE_AGENT_GROUNDSIT; mAOTokens.push_back(tokenloader);    // 0
-							tokenloader.token = "[ Sitting ]";				tokenloader.state = STATE_AGENT_SIT; mAOTokens.push_back(tokenloader);              // 1
-							tokenloader.token = "[ Crouching ]";			tokenloader.state = STATE_AGENT_CROUCH; mAOTokens.push_back(tokenloader);            // 3
-							tokenloader.token = "[ Crouch Walking ]";		tokenloader.state = STATE_AGENT_CROUCHWALK; mAOTokens.push_back(tokenloader);       // 4
-							tokenloader.token = "[ Standing Up ]";			tokenloader.state = STATE_AGENT_STANDUP; mAOTokens.push_back(tokenloader);          // 6
-							tokenloader.token = "[ Falling ]";				tokenloader.state = STATE_AGENT_FALLDOWN; mAOTokens.push_back(tokenloader);              // 7
-							tokenloader.token = "[ Flying Down ]";			tokenloader.state = STATE_AGENT_HOVER_DOWN; mAOTokens.push_back(tokenloader);          // 8
-							tokenloader.token = "[ Flying Up ]";			tokenloader.state = STATE_AGENT_HOVER_UP; mAOTokens.push_back(tokenloader);            // 9
-							tokenloader.token = "[ Flying Slow ]";			tokenloader.state = STATE_AGENT_FLYSLOW; mAOTokens.push_back(tokenloader);          // 10
-							tokenloader.token = "[ Flying ]";				tokenloader.state = STATE_AGENT_FLY; mAOTokens.push_back(tokenloader);               // 11
-							tokenloader.token = "[ Hovering ]";				tokenloader.state = STATE_AGENT_HOVER; mAOTokens.push_back(tokenloader);             // 12
-							tokenloader.token = "[ Jumping ]";				tokenloader.state = STATE_AGENT_JUMP; mAOTokens.push_back(tokenloader);              // 13
-							tokenloader.token = "[ Pre Jumping ]";			tokenloader.state = STATE_AGENT_PRE_JUMP; mAOTokens.push_back(tokenloader);          // 14
-							tokenloader.token = "[ Running ]";				tokenloader.state = STATE_AGENT_RUN; mAOTokens.push_back(tokenloader);              // 15
-							tokenloader.token = "[ Turning Right ]";		tokenloader.state = STATE_AGENT_TURNRIGHT; mAOTokens.push_back(tokenloader);        // 16
-							tokenloader.token = "[ Turning Left ]";			tokenloader.state = STATE_AGENT_TURNLEFT; mAOTokens.push_back(tokenloader);         // 17
-							tokenloader.token = "[ Walking ]";				tokenloader.state = STATE_AGENT_WALK; mAOTokens.push_back(tokenloader);              // 18
-							tokenloader.token = "[ Landing ]";				tokenloader.state = STATE_AGENT_LAND; mAOTokens.push_back(tokenloader);              // 19
-							tokenloader.token = "[ Standing ]";				tokenloader.state = STATE_AGENT_STAND; mAOTokens.push_back(tokenloader);             // 20
-							tokenloader.token = "[ Swimming Down ]";		tokenloader.state = STATE_AGENT_SWIMMINGDOWN; mAOTokens.push_back(tokenloader);        // 21
-							tokenloader.token = "[ Swimming Up ]";			tokenloader.state = STATE_AGENT_SWIMMINGUP; mAOTokens.push_back(tokenloader);          // 22
-							tokenloader.token = "[ Swimming Forward ]";		tokenloader.state = STATE_AGENT_SWIMMINGFORWARD; mAOTokens.push_back(tokenloader);     // 23
-							tokenloader.token = "[ Floating ]";				tokenloader.state = STATE_AGENT_FLOATING; mAOTokens.push_back(tokenloader);             // 24
-							tokenloader.token = "[ Typing ]";				tokenloader.state = STATE_AGENT_TYPING; mAOTokens.push_back(tokenloader); //25
- 
-							struct_default_anims default_anims_loader;
-							default_anims_loader.orig_id = ANIM_AGENT_WALK;					default_anims_loader.ao_id = LLUUID::null; default_anims_loader.state = STATE_AGENT_WALK;			mAODefaultAnims.push_back(default_anims_loader);
-							default_anims_loader.orig_id = ANIM_AGENT_RUN;					default_anims_loader.ao_id = LLUUID::null; default_anims_loader.state = STATE_AGENT_RUN;			mAODefaultAnims.push_back(default_anims_loader);
-							default_anims_loader.orig_id = ANIM_AGENT_PRE_JUMP;				default_anims_loader.ao_id = LLUUID::null; default_anims_loader.state = STATE_AGENT_PRE_JUMP;		mAODefaultAnims.push_back(default_anims_loader);
-							default_anims_loader.orig_id = ANIM_AGENT_JUMP;					default_anims_loader.ao_id = LLUUID::null; default_anims_loader.state = STATE_AGENT_JUMP;			mAODefaultAnims.push_back(default_anims_loader);
-							default_anims_loader.orig_id = ANIM_AGENT_TURNLEFT;				default_anims_loader.ao_id = LLUUID::null; default_anims_loader.state = STATE_AGENT_TURNLEFT;		mAODefaultAnims.push_back(default_anims_loader);
-							default_anims_loader.orig_id = ANIM_AGENT_TURNRIGHT;				default_anims_loader.ao_id = LLUUID::null; default_anims_loader.state = STATE_AGENT_TURNRIGHT;		mAODefaultAnims.push_back(default_anims_loader);
-
-							default_anims_loader.orig_id = ANIM_AGENT_SIT;					default_anims_loader.ao_id = LLUUID::null; default_anims_loader.state = STATE_AGENT_SIT;			mAODefaultAnims.push_back(default_anims_loader);
-							default_anims_loader.orig_id = ANIM_AGENT_SIT_FEMALE;				default_anims_loader.ao_id = LLUUID::null; default_anims_loader.state = STATE_AGENT_SIT;			mAODefaultAnims.push_back(default_anims_loader);
-							default_anims_loader.orig_id = ANIM_AGENT_SIT_GENERIC;			default_anims_loader.ao_id = LLUUID::null; default_anims_loader.state = STATE_AGENT_SIT;			mAODefaultAnims.push_back(default_anims_loader);
-							default_anims_loader.orig_id = ANIM_AGENT_SIT_GROUND;				default_anims_loader.ao_id = LLUUID::null; default_anims_loader.state = STATE_AGENT_GROUNDSIT;		mAODefaultAnims.push_back(default_anims_loader);
-							default_anims_loader.orig_id = ANIM_AGENT_SIT_GROUND_CONSTRAINED;	default_anims_loader.ao_id = LLUUID::null; default_anims_loader.state = STATE_AGENT_GROUNDSIT;		mAODefaultAnims.push_back(default_anims_loader);
-
-							default_anims_loader.orig_id = ANIM_AGENT_HOVER;					default_anims_loader.ao_id = LLUUID::null; default_anims_loader.state = STATE_AGENT_HOVER;			mAODefaultAnims.push_back(default_anims_loader);
-							default_anims_loader.orig_id = ANIM_AGENT_HOVER_DOWN;				default_anims_loader.ao_id = LLUUID::null; default_anims_loader.state = STATE_AGENT_HOVER_DOWN;		mAODefaultAnims.push_back(default_anims_loader);
-							default_anims_loader.orig_id = ANIM_AGENT_HOVER_UP;				default_anims_loader.ao_id = LLUUID::null; default_anims_loader.state = STATE_AGENT_HOVER_UP;		mAODefaultAnims.push_back(default_anims_loader);
-
-							default_anims_loader.orig_id = ANIM_AGENT_CROUCH;					default_anims_loader.ao_id = LLUUID::null; default_anims_loader.state = STATE_AGENT_CROUCH;			mAODefaultAnims.push_back(default_anims_loader);
-							default_anims_loader.orig_id = ANIM_AGENT_CROUCHWALK;				default_anims_loader.ao_id = LLUUID::null; default_anims_loader.state = STATE_AGENT_CROUCHWALK;		mAODefaultAnims.push_back(default_anims_loader);
-
-							default_anims_loader.orig_id = ANIM_AGENT_FALLDOWN;				default_anims_loader.ao_id = LLUUID::null; default_anims_loader.state = STATE_AGENT_FALLDOWN;		mAODefaultAnims.push_back(default_anims_loader);
-							default_anims_loader.orig_id = ANIM_AGENT_STANDUP;				default_anims_loader.ao_id = LLUUID::null; default_anims_loader.state = STATE_AGENT_STANDUP;		mAODefaultAnims.push_back(default_anims_loader);
-							default_anims_loader.orig_id = ANIM_AGENT_LAND;					default_anims_loader.ao_id = LLUUID::null; default_anims_loader.state = STATE_AGENT_LAND;			mAODefaultAnims.push_back(default_anims_loader);
-
-							default_anims_loader.orig_id = ANIM_AGENT_FLY;					default_anims_loader.ao_id = LLUUID::null; default_anims_loader.state = STATE_AGENT_FLY;			mAODefaultAnims.push_back(default_anims_loader);
-							default_anims_loader.orig_id = ANIM_AGENT_FLYSLOW;				default_anims_loader.ao_id = LLUUID::null; default_anims_loader.state = STATE_AGENT_FLYSLOW;		mAODefaultAnims.push_back(default_anims_loader);
-
-							default_anims_loader.orig_id = ANIM_AGENT_TYPE;					default_anims_loader.ao_id = LLUUID::null; default_anims_loader.state = STATE_AGENT_TYPING;			mAODefaultAnims.push_back(default_anims_loader);
-							default_anims_loader.orig_id = LLUUID("159258dc-f57c-4662-8afd-c55b81d13849");	default_anims_loader.ao_id = LLUUID::null; default_anims_loader.state = STATE_AGENT_FLOATING;		mAODefaultAnims.push_back(default_anims_loader);
-
-							default_anims_loader.orig_id = LLUUID("159258dc-f57c-4662-8afd-c55b81d13849");	default_anims_loader.ao_id = LLUUID::null; default_anims_loader.state = STATE_AGENT_SWIMMINGFORWARD;		mAODefaultAnims.push_back(default_anims_loader);
-							default_anims_loader.orig_id = LLUUID("159258dc-f57c-4662-8afd-c55b81d13849");	default_anims_loader.ao_id = LLUUID::null; default_anims_loader.state = STATE_AGENT_SWIMMINGUP;		mAODefaultAnims.push_back(default_anims_loader);
-							default_anims_loader.orig_id = LLUUID("159258dc-f57c-4662-8afd-c55b81d13849");	default_anims_loader.ao_id = LLUUID::null; default_anims_loader.state = STATE_AGENT_SWIMMINGDOWN;	mAODefaultAnims.push_back(default_anims_loader);
-							///////////////////////////
-							LLUUID* new_uuid = new LLUUID(configncitem);
-							LLHost source_sim = LLHost::invalid;
-							invfolderid = item->getParentUUID();
-							gAssetStorage->getInvItemAsset(source_sim,
-															gAgent.getID(),
-															gAgent.getSessionID(),
-															item->getPermissions().getOwner(),
-															LLUUID::null,
-															item->getUUID(),
-															item->getAssetUUID(),
-															item->getType(),
-															&onNotecardLoadComplete,
-															(void*)new_uuid,
-															TRUE);
-							success = TRUE;
-						}
-					}
-				}else
-				{
-					//static BOOL startedfetch = FALSE;
-					if(fullfetch == FALSE)
-					{
-						fullfetch = TRUE;
-						//no choice, can't move the AO till we find it, should only have to happen once
-						gInventory.startBackgroundFetch();
-						return FALSE;
-					}
-				}
-			}
-		}
-	}
-
-	if (!success)
-	{
-		if(configncitem.notNull())
-		{
-			cmdline_printchat("Could not read the specified Config Notecard");
-			cmdline_printchat("If your specified notecard is not in the #phoenix folder, please move it there.");
-		}
-		gSavedPerAccountSettings.setBOOL("PhoenixAOEnabled",FALSE);
-	}
-	return success;
+	return TRUE;
 }
 
 // AO LOGIC -------------------------------------------------------
 
 void LLFloaterAO::run()
 {
-	setAnimationState(STATE_AGENT_IDLE); // reset state
-	int state = getAnimationState(); // check if sitting or hovering
-	if (gSavedPerAccountSettings.getBOOL("PhoenixAOEnabled"))
-	{
-		DiamondAoInt::AOStatusUpdate(true);
-		//if we are sitting but sits are disabled, dont play any anims but start the stand timer in the background
-		//otherwise just start overriding
-		if (!((state == STATE_AGENT_SIT) && !gSavedPerAccountSettings.getBOOL("PhoenixAOSitsEnabled")))
-		startAOMotion(GetAnimIDFromState(state),TRUE, FALSE);
-
-		if (mAOStandTimer)
-		{
-			mAOStandTimer->reset();
-			ChangeStand(FALSE);
-		}
-		else
-		{
-			mAOStandTimer =	new AOStandTimer();
-		}
-	}
-	else
-	{
-		DiamondAoInt::AOStatusUpdate(false);
-		//ao is off so stop everything
-		for (std::vector<struct_all_anims>::iterator iter = mAOAllAnims.begin(); iter != mAOAllAnims.end(); ++iter)
-		{
-			if (iter->isPlaying)
-			{
-				stopAOMotion(iter->ao_id,TRUE);
-			}
-		}
-
-	}
 }
 
 void LLFloaterAO::startAOMotion(const LLUUID& id, const BOOL stand, const BOOL announce)
 {
-	int startmotionstate = STATE_AGENT_IDLE;
-	LLUUID override_id;
-	BOOL sitting = FALSE;
-	BOOL underwater = FALSE;
-
-	if (gAgent.getAvatarObject())
-	{
-		sitting = gAgent.getAvatarObject()->mIsSitting;
-		underwater = gAgent.getAvatarObject()->mBelowWater;
-	}
-
-	if (!stand) // we are moving, it's a default linden anim uuid, try to override it
-	{
-		startmotionstate = GetStateFromOrigAnimID(id);
-
-		// if under water, modify states to underwater behaviour
-		if (underwater) startmotionstate = modifyUnderwaterState(startmotionstate);
-
-		// is this anim category marked as random?
-		if (isRandom(startmotionstate) && !announce)
-		{
-			override_id = GetRandomAnimIDFromState(startmotionstate);
-		}
-		else
-		{
-			if (underwater) override_id = GetAnimIDFromState(startmotionstate);
-			else override_id = GetAnimID(id);
-		}
-	}
-	else // it's an override anim uuid, probably a stand
-	{
-		startmotionstate = GetStateFromAOAnimID(id);
-
-		// if under water, modify states to underwater behaviour
-		if (underwater) startmotionstate = modifyUnderwaterState(startmotionstate);
-
-		// is this anim category marked as random?
-		if (isRandom(startmotionstate) && !announce)
-		{
-			override_id = GetRandomAnimIDFromState(startmotionstate);
-		}
-		else
-		{
-			if (underwater) override_id = GetAnimIDFromState(startmotionstate);
-			else override_id = id;
-		}
-	}
-
-	if ((sitting) && (startmotionstate != STATE_AGENT_SIT) && (startmotionstate != STATE_AGENT_GROUNDSIT)) return;
-//	if ((!sitting) && ((startmotionstate == STATE_AGENT_SIT) || (startmotionstate == STATE_AGENT_GROUNDSIT))) return;
-	if (startmotionstate == STATE_AGENT_IDLE) return;
-	if ((startmotionstate == STATE_AGENT_SIT) && !(gSavedPerAccountSettings.getBOOL("PhoenixAOSitsEnabled"))) return;
-	if (override_id.isNull() || !gSavedPerAccountSettings.getBOOL("PhoenixAOEnabled")) return;
-
-	for (std::vector<struct_all_anims>::iterator iter = mAOAllAnims.begin(); iter != mAOAllAnims.end(); ++iter)
-	{
-		if ((iter->isPlaying) && (iter->ao_id != override_id)) //(iter->state != startmotionstate) && 
-		{
-			iter->isPlaying = FALSE;
-			//cmdline_printchat(llformat("startmotionstate animtypefromstate %s stopping %s",GetAnimTypeFromState(startmotionstate).c_str(),iter->ao_id.asString().c_str()));
-			gAgent.sendAnimationRequest(iter->ao_id, ANIM_REQUEST_STOP);
-		}
-		else if ((!iter->isPlaying) && (iter->ao_id == override_id))
-		{
-			iter->isPlaying = TRUE;
-			//cmdline_printchat(llformat("startmotionstate: %d stand %d / isRandom %d / sitting %d // animtypefromstate %s // id %s",startmotionstate,stand,isRandom(startmotionstate),sitting,GetAnimTypeFromState(startmotionstate).c_str(),override_id.asString().c_str()));
-			if (announce) cmdline_printchat(llformat("Changing animation to %s.",iter->anim_name.c_str()));
-			if ((startmotionstate == STATE_AGENT_STAND)&&(sInstance)&&(mcomboBox_stands)) mcomboBox_stands->selectByValue(iter->anim_name.c_str());
-
-			gAgent.sendAnimationRequest(override_id, ANIM_REQUEST_START);
-			setAnimationState(startmotionstate);
-		}
-	}
-	// cleanup timer checking for duplicate or stuck anims due to packet loss/lag
-	if(mAODelayTimer.getElapsedTimeF32() >= F32(1.f))
-	{
-	    std::list<LLAnimHistoryItem*> history = LLFloaterExploreAnimations::animHistory[gAgent.getID()];
-	    for (std::list<LLAnimHistoryItem*>::iterator iter = history.begin(); iter != history.end(); ++iter)
-	    {
-		    LLAnimHistoryItem* item = (*iter);
-		    int state = GetStateFromAOAnimID(item->mAssetID);
-		    if (!state) continue;
-		    if  ( (item->mPlaying) && (state != getAnimationState()) )
-		    {
-				//cmdline_printchat(llformat("stopping duplicate anim: %d // %s // %s",getAnimationState(),GetAnimTypeFromState(getAnimationState()).c_str(),item->mAssetID.asString().c_str()));
-			    gAgent.sendAnimationRequest(item->mAssetID, ANIM_REQUEST_STOP);
-		    }
-	    }
-	    mAODelayTimer.reset();
-	}
+	
 }
 
 void LLFloaterAO::stopAOMotion(const LLUUID& id, const BOOL stand)
 {
-	int stopmotionstate = STATE_AGENT_IDLE;
-	LLUUID override_id;
-
-	if (!stand)
-	{
-		override_id = GetAnimID(id);
-		stopmotionstate = GetStateFromOrigAnimID(id);
-	}
-	else
-	{
-		override_id = id;
-		stopmotionstate = GetStateFromAOAnimID(id);
-	}
-
-	if (stopmotionstate == STATE_AGENT_IDLE) return;
-	if (override_id.isNull()) return; //|| !gSavedPerAccountSettings.getBOOL("PhoenixAOEnabled") //always stop, enabled or not
-
-	BOOL stopped = FALSE;
-	for (std::vector<struct_all_anims>::iterator iter = mAOAllAnims.begin(); iter != mAOAllAnims.end(); ++iter)
-	{
-		if ((iter->isPlaying) && (iter->state == stopmotionstate)) // let's see if this works properly with both random and normal anims
-		// if ((iter->isPlaying) && (iter->ao_id == override_id))  // used to be this 
-		{
-			iter->isPlaying = FALSE;
-			//cmdline_printchat(llformat("stopmotionstate: %d stand %d / isRandom %d / sitting %d // animtypefromstate %s // id %s",stopmotionstate,stand,isRandom(stopmotionstate),0,GetAnimTypeFromState(stopmotionstate).c_str(),iter->ao_id.asString().c_str()));
-			gAgent.sendAnimationRequest(iter->ao_id, ANIM_REQUEST_STOP);
-			setAnimationState(STATE_AGENT_IDLE);
-			stopped = TRUE;
-		}
-	}
-	if (stopped)
-	{
-		if(!mAODelayTimer.getStarted())
-		{
-			mAODelayTimer.start();
-		}
-		else
-		{
-			mAODelayTimer.reset();
-		}
-		ChangeStand(FALSE);
-	}
+	
 }
 
 void LLFloaterAO::ChangeStand(const BOOL announce)
 {
-	if (gSavedPerAccountSettings.getBOOL("PhoenixAOEnabled"))
-	{
-		if (gAgent.getAvatarObject())
-		{
-			if (gSavedPerAccountSettings.getBOOL("PhoenixAONoStandsInMouselook") && gAgent.cameraMouselook()) return;
-			if (gAgent.getAvatarObject()->mIsSitting) return;
-		}
-		if ((getAnimationState() == STATE_AGENT_IDLE) || (getAnimationState() == STATE_AGENT_STAND))// stands have lowest priority
-		{
-			if (!(mAOStands.size() > 0)) return;
-			if (gSavedPerAccountSettings.getBOOL("PhoenixAORandomizestand"))
-			{
-				stand_iterator = ll_rand(mAOStands.size()-1);
-			}
-			if (stand_iterator < 0) stand_iterator = int( mAOStands.size()-stand_iterator);
-			if (stand_iterator > int( mAOStands.size()-1)) stand_iterator = 0;
-
-			int stand_iterator_previous = stand_iterator -1;
-
-			if (stand_iterator_previous < 0) stand_iterator_previous = int( mAOStands.size()-1);
-			
-			if (mAOStands[stand_iterator].ao_id.notNull())
-			{
-				startAOMotion(mAOStands[stand_iterator].ao_id, TRUE, announce);
-
-				setAnimationState(STATE_AGENT_STAND);
-				setCurrentStandId(mAOStands[stand_iterator].ao_id);
-			}
-		}
-	} 
-	else
-	{
-		stopAOMotion(getCurrentStandId(), TRUE); //stop if ao is off
-	}
+	
 }
 
 int LLFloaterAO::getAnimationState()
@@ -863,7 +460,8 @@ void LLFloaterAO::setCurrentStandId(const LLUUID& id)
 
 void LLFloaterAO::AOItemDrop(LLViewerInventoryItem* item)
 {
-	gSavedPerAccountSettings.setString("PhoenixAOConfigNotecardID", item->getUUID().asString());
+	LUA_CALL("OnAONotecard") << item->getUUID() << LUA_END;
+	gSavedPerAccountSettings.setString("PhoenixAOConfigNotecardID",item->getAssetUUID().asString());
 	sInstance->childSetValue("ao_nc_text","Currently set to: "+item->getName());
 }
 

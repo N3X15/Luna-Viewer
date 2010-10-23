@@ -628,7 +628,7 @@ void LLAgent::resetView(BOOL reset_camera, BOOL change_camera)
 //-----------------------------------------------------------------------------
 void LLAgent::onAppFocusGained()
 {
-	if (CAMERA_MODE_MOUSELOOK == mCameraMode && gSavedSettings.getBOOL("AscentLeaveMouselookOnFocus"))
+	if (CAMERA_MODE_MOUSELOOK == mCameraMode && gSavedSettings.getBOOL("PhoenixLeaveMouselookOnFocus"))
 	{
 		changeCameraToDefault();
 		LLToolMgr::getInstance()->clearSavedTool();
@@ -1787,7 +1787,7 @@ F32 LLAgent::getCameraZoomFraction()
 		// already [0,1]
 		return mHUDTargetZoom;
 	}
-	else if (gSavedSettings.getBOOL("AscentDisableMinZoomDist"))
+	else if (gSavedSettings.getBOOL("PhoenixDisableMinZoomDist"))
 	{
 		return mCameraZoomFraction;
 	}
@@ -1834,7 +1834,7 @@ void LLAgent::setCameraZoomFraction(F32 fraction)
 	// 0.f -> camera zoomed all the way out
 	// 1.f -> camera zoomed all the way in
 	LLObjectSelectionHandle selection = LLSelectMgr::getInstance()->getSelection();
-	BOOL disable_min = gSavedSettings.getBOOL("AscentDisableMinZoomDist");
+	BOOL disable_min = gSavedSettings.getBOOL("PhoenixDisableMinZoomDist");
 	if (selection->getObjectCount() && selection->getSelectType() == SELECT_TYPE_HUD)
 	{
 		mHUDTargetZoom = fraction;
@@ -1970,7 +1970,7 @@ void LLAgent::cameraZoomIn(const F32 fraction)
 	//~Zwag
 	// Don't move through focus point
 	
-        if (!gSavedSettings.getBOOL("AscentDisableMinZoomDist"))
+        if (!gSavedSettings.getBOOL("PhoenixDisableMinZoomDist"))
         {
 		if (mFocusObject)
 		{
@@ -2891,7 +2891,7 @@ void LLAgent::startTyping()
 		sendAnimationRequest(ANIM_AGENT_TYPE, ANIM_REQUEST_START);
 	}
 
-	if (gSavedSettings.getBOOL("AscentVoiceAnimWhileTyping")){
+	if (gSavedSettings.getBOOL("PhoenixVoiceAnimWhileTyping")){
 		sendAnimationRequest(LLUUID("37694185-3107-d418-3a20-0181424e542d"), ANIM_REQUEST_START);
 	}
 
@@ -2907,7 +2907,7 @@ void LLAgent::stopTyping()
 	{
 		clearRenderState(AGENT_STATE_TYPING);
 		sendAnimationRequest(ANIM_AGENT_TYPE, ANIM_REQUEST_STOP);
-		if(gSavedSettings.getBOOL("AscentVoiceAnimWhileTyping")) sendAnimationRequest(LLUUID("37694185-3107-d418-3a20-0181424e542d"), ANIM_REQUEST_STOP);
+		if(gSavedSettings.getBOOL("PhoenixVoiceAnimWhileTyping")) sendAnimationRequest(LLUUID("37694185-3107-d418-3a20-0181424e542d"), ANIM_REQUEST_STOP);
 		gChatBar->sendChatFromViewer("", CHAT_TYPE_STOP, FALSE);
 	}
 }
@@ -2939,8 +2939,8 @@ U8 LLAgent::getRenderState()
 		return 0;
 	}
 
-	static LLCachedControl<BOOL> AscentVoiceAnimWhileTyping("AscentVoiceAnimWhileTyping", 0);
-	if((mRenderState & AGENT_STATE_TYPING) && AscentVoiceAnimWhileTyping){ // If we are typing and voice anim should be played
+	static LLCachedControl<BOOL> PhoenixVoiceAnimWhileTyping("PhoenixVoiceAnimWhileTyping", 0);
+	if((mRenderState & AGENT_STATE_TYPING) && PhoenixVoiceAnimWhileTyping){ // If we are typing and voice anim should be played
 		LLVOAvatar* avatarp = gAgent.getAvatarObject();
 		if (avatarp)
 		{
@@ -2986,8 +2986,8 @@ static const LLFloaterView::skip_list_t& get_skip_list()
 {
 	static LLFloaterView::skip_list_t skip_list;
 	skip_list.insert(LLFloaterMap::getInstance());
-//	static BOOL *sAscentShowStatusBarInMouselook = rebind_llcontrol<BOOL>("AscentShowStatusBarInMouselook", &gSavedSettings, true);
-//	if(*sAscentShowStatusBarInMouselook)
+//	static BOOL *sPhoenixShowStatusBarInMouselook = rebind_llcontrol<BOOL>("PhoenixShowStatusBarInMouselook", &gSavedSettings, true);
+//	if(*sPhoenixShowStatusBarInMouselook)
 //	{
 //		skip_list.insert(LLFloaterStats::getInstance());
 //	}
@@ -3775,7 +3775,7 @@ F32	LLAgent::calcCameraFOVZoomFactor()
 		// don't FOV zoom on mostly transparent objects
 		LLVector3 focus_offset = mFocusObjectOffset;
 		F32 obj_min_dist = 0.f;
-		if (!gSavedSettings.getBOOL("AscentDisableMinZoomDist"))
+		if (!gSavedSettings.getBOOL("PhoenixDisableMinZoomDist"))
 			calcCameraMinDistance(obj_min_dist);
 		F32 current_distance = llmax(0.001f, camera_offset_dir.magVec());
 
@@ -4374,14 +4374,14 @@ void LLAgent::changeCameraToCustomizeAvatar(BOOL avatar_animate, BOOL camera_ani
 		return;
 	}
 
-	if(gSavedSettings.getBOOL("AscentAppearanceForceStand"))
+	if(gSavedSettings.getBOOL("PhoenixAppearanceForceStand"))
 // [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g)
 	if ( (gRlvHandler.hasBehaviour(RLV_BHVR_UNSIT)) && (mAvatarObject.notNull()) && (mAvatarObject->mIsSitting) )
 	{
 		return;
 	}
 // [/RLVa:KB]
-	if(gSavedSettings.getBOOL("AscentAppearanceForceStand"))
+	if(gSavedSettings.getBOOL("PhoenixAppearanceForceStand"))
 	setControlFlags(AGENT_CONTROL_STAND_UP); // force stand up
 	gViewerWindow->getWindow()->resetBusyCount();
 
@@ -4432,7 +4432,7 @@ void LLAgent::changeCameraToCustomizeAvatar(BOOL avatar_animate, BOOL camera_ani
 
 	if (mAvatarObject.notNull())
 	{
-		if(avatar_animate  && gSavedSettings.getBOOL("AscentAppearanceAnimate"))
+		if(avatar_animate  && gSavedSettings.getBOOL("PhoenixAppearanceAnimate"))
 		{
 			// Remove any pitch from the avatar
 			LLVector3 at = mFrameAgent.getAtAxis();
@@ -5092,10 +5092,6 @@ void LLAgent::onAnimStop(const LLUUID& id)
 	// handle automatic state transitions (based on completion of animation playback)
 	if (id == ANIM_AGENT_STAND)
 	{
-		// <edit>
-		if(LLAO::isEnabled())
-			LLAO::mTimer->pause();//Timer only pauses if its not paused, check is inside function.
-		// </edit>
 		stopFidget();
 	}
 	else if (id == ANIM_AGENT_AWAY)
@@ -5113,7 +5109,7 @@ void LLAgent::onAnimStop(const LLUUID& id)
 	else if (id == ANIM_AGENT_STANDUP)
 	{
         // send stand up command
-        if(!gSavedSettings.getBOOL("AscentIgnoreFinishAnimation"))
+        if(!gSavedSettings.getBOOL("PhoenixIgnoreFinishAnimation"))
         {
                 setControlFlags(AGENT_CONTROL_FINISH_ANIM);
         }
@@ -5124,7 +5120,7 @@ void LLAgent::onAnimStop(const LLUUID& id)
 	}
 	else if (id == ANIM_AGENT_PRE_JUMP || id == ANIM_AGENT_LAND || id == ANIM_AGENT_MEDIUM_LAND)
 	{
-        if(!gSavedSettings.getBOOL("AscentIgnoreFinishAnimation"))
+        if(!gSavedSettings.getBOOL("PhoenixIgnoreFinishAnimation"))
         {
                 setControlFlags(AGENT_CONTROL_FINISH_ANIM);
         }
@@ -6281,7 +6277,7 @@ bool LLAgent::teleportCore(bool is_local)
 		}
 	}
 	
-	if(gSavedSettings.getBOOL("AscentPlayTpSound"))
+	if(gSavedSettings.getBOOL("PhoenixPlayTpSound"))
 		make_ui_sound("UISndTeleportOut");
 	
 	// MBW -- Let the voice client know a teleport has begun so it can leave the existing channel.
@@ -6315,7 +6311,7 @@ void LLAgent::teleportRequest(
 		msg->addVector3("Position", pos_local);
 		//Chalice - 2 dTP modes: 0 - standard, 1 - TP AV with cam Z axis rotation.
 		LLVector3 look_at;
-		if (gSavedSettings.getBOOL("AscentDoubleClickTeleportMode") == 0)
+		if (gSavedSettings.getBOOL("PhoenixDoubleClickTeleportMode") == 0)
 		{
 			LLVOAvatar* avatarp = gAgent.getAvatarObject();
 			look_at=avatarp->getRotation().packToVector3();
@@ -6407,7 +6403,7 @@ void LLAgent::teleportCancel()
 }
 
 
-void LLAgent::teleportViaLocation(const LLVector3d& pos_global)
+void LLAgent::teleportViaLocation(const LLVector3d& pos_global, bool go_to)
 {
 // [RLVa:KB] - Alternate: Snowglobe-1.2.4 | Checked: 2010-03-02 (RLVa-1.1.1a) | Modified: RLVa-1.2.0a
 	if (rlv_handler_t::isEnabled()) 
@@ -6428,12 +6424,15 @@ void LLAgent::teleportViaLocation(const LLVector3d& pos_global)
 // [/RLVa:KB]
 
 	LLViewerRegion* regionp = getRegion();
+//	LLSimInfo* info = LLWorldMap::getInstance()->simInfoFromPosGlobal(pos_global);
+	bool isLocal = regionp->getHandle() == to_region_handle_global((F32)pos_global.mdV[VX], (F32)pos_global.mdV[VY]);
+	bool ml = gSavedSettings.getBOOL("PhoenixUseBridgeMoveToTarget");
+	bool tpchat = gSavedSettings.getBOOL("PhoenixDoubleClickTeleportChat");
+
+	LLVector3 offset = LLVector3(0.f,0.f,0.f);
+
 	U64 handle = to_region_handle(pos_global);
 	LLSimInfo* info = LLWorldMap::getInstance()->simInfoFromHandle(handle);
-	bool calc = gSavedSettings.getBOOL("OptionOffsetTPByAgentHeight");
-	LLVector3 offset = LLVector3(0.f,0.f,0.f);
-	if(calc)
-		offset += LLVector3(0.f,0.f,gAgent.getAvatarObject()->getScale().mV[2] / 2.0);
 	if(regionp && info)
 	{
 		LLVector3d region_origin = info->getGlobalOrigin();
@@ -6441,7 +6440,6 @@ void LLAgent::teleportViaLocation(const LLVector3d& pos_global)
 			(F32)(pos_global.mdV[VX] - region_origin.mdV[VX]),
 			(F32)(pos_global.mdV[VY] - region_origin.mdV[VY]),
 			(F32)(pos_global.mdV[VZ]));
-		pos_local += offset;
 		teleportRequest(handle, pos_local);
 	}
 	else if(regionp && 
@@ -6468,7 +6466,7 @@ void LLAgent::teleportViaLocation(const LLVector3d& pos_global)
 		pos.mV[VX] += 1;
 		LLVector3 look_at;
 		//Chalice - 2 dTP modes: 0 - standard, 1 - TP AV with cam Z axis rotation.
-		if (gSavedSettings.getBOOL("AscentDoubleClickTeleportMode") == 0)
+		if (gSavedSettings.getBOOL("PhoenixDoubleClickTeleportMode") == 0)
 		{
 			LLVOAvatar* avatarp = gAgent.getAvatarObject();
 			look_at=avatarp->getRotation().packToVector3();
@@ -6479,6 +6477,40 @@ void LLAgent::teleportViaLocation(const LLVector3d& pos_global)
 		}
 		msg->addVector3Fast(_PREHASH_LookAt, look_at);
 		sendReliableMessage();
+	}
+	if(isLocal)
+	{
+		F32 width = regionp->getWidth();
+		LLVector3 pos_local(fmod((F32)pos_global.mdV[VX], width),
+						fmod((F32)pos_global.mdV[VY], width),
+						(F32)pos_global.mdV[VZ]);
+
+		std::stringstream strstr;
+		strstr << std::setiosflags(std::ios::fixed) << std::setprecision(6); // delicious iomanip
+		strstr << "<" << pos_local.mV[VX] << ", " << pos_local.mV[VY] << ", "  << pos_local.mV[VZ] << ">";
+
+		if(tpchat)
+		{
+			gMessageSystem->newMessage("ScriptDialogReply");
+			gMessageSystem->nextBlock("AgentData");
+			gMessageSystem->addUUID("AgentID", gAgent.getID());
+			gMessageSystem->addUUID("SessionID", gAgent.getSessionID());
+			gMessageSystem->nextBlock("Data");
+			gMessageSystem->addUUID("ObjectID", gAgent.getID());
+			gMessageSystem->addS32("ChatChannel", gSavedSettings.getS32("PhoenixDoubleClickTeleportChannel"));
+			gMessageSystem->addS32("ButtonIndex", 1);
+			std::stringstream strstr;
+			strstr << std::setiosflags(std::ios::fixed) << std::setprecision(6); // delicious iomanip
+			strstr << "<" << pos_local.mV[VX] << ", " << pos_local.mV[VY] << ", "  << pos_local.mV[VZ] << ">";		 
+			gMessageSystem->addString("ButtonLabel",strstr.str());
+			gAgent.sendReliableMessage();
+		}
+		if(ml)
+		{
+			gAgent.setControlFlags(AGENT_CONTROL_STAND_UP); //GIT UP
+			JCLSLBridge::bridgetolsl("move|"+strstr.str(),NULL); //o i c wut u did thar.
+			//I presume this will be the new format instead of a naked vector on a specified channel... -tG
+		}
 	}
 }
 
@@ -6570,12 +6602,8 @@ void LLAgent::fidget()
 
 			if (mCurrentFidget != oldFidget)
 			{
-				//LLAgent::stopFidget();
-				// <edit>
-				// for the sack of smaller packets, make this cancel the last one only
-				if(oldFidget != 0)
-					sendAnimationRequest(AGENT_STAND_ANIMS[oldFidget],ANIM_REQUEST_STOP);
-				// </edit>
+				LLAgent::stopFidget();
+
 				
 				switch(mCurrentFidget)
 				{
@@ -7403,7 +7431,6 @@ void LLAgent::makeNewOutfit(
 		new_folder_name);
 
 	bool found_first_item = false;
-	BOOL no_link = !gSavedSettings.getBOOL("BeauchampUseInventoryLinks");
 
 	///////////////////
 	// Wearables
@@ -7413,6 +7440,7 @@ void LLAgent::makeNewOutfit(
 		// Then, iterate though each of the wearables and save copies of them in the folder.
 		S32 i;
 		S32 count = wearables_to_include.count();
+		LLDynamicArray<LLUUID> delete_items;
 		LLPointer<LLRefCount> cbdone = NULL;
 		for( i = 0; i < count; ++i )
 		{
@@ -7420,69 +7448,53 @@ void LLAgent::makeNewOutfit(
 			LLWearable* old_wearable = mWearableEntry[ index ].mWearable;
 			if( old_wearable )
 			{
-				LLViewerInventoryItem* item = gInventory.getItem(mWearableEntry[index].mItemID);
-				std::string new_name = item->getName();
+				std::string new_name;
+				LLWearable* new_wearable;
+				new_wearable = gWearableList.createCopy(old_wearable);
 				if (rename_clothing)
 				{
 					new_name = new_folder_name;
 					new_name.append(" ");
 					new_name.append(old_wearable->getTypeLabel());
 					LLStringUtil::truncate(new_name, DB_INV_ITEM_NAME_STR_LEN);
+					new_wearable->setName(new_name);
 				}
 
-				if (no_link || isWearableCopyable((EWearableType)index))
+				LLViewerInventoryItem* item = gInventory.getItem(mWearableEntry[index].mItemID);
+				S32 todo = addWearableToAgentInventoryCallback::CALL_NONE;
+				if (!found_first_item)
 				{
-					LLWearable* new_wearable = gWearableList.createCopy(old_wearable);
-					if (rename_clothing)
-					{
-						new_wearable->setName(new_name);
-					}
-
-					S32 todo = addWearableToAgentInventoryCallback::CALL_NONE;
-					if (!found_first_item)
-					{
-						found_first_item = true;
-						/* set the focus to the first item */
-						todo |= addWearableToAgentInventoryCallback::CALL_MAKENEWOUTFITDONE;
-						/* send the agent wearables update when done */
-						cbdone = new sendAgentWearablesUpdateCallback;
-					}
-					LLPointer<LLInventoryCallback> cb =
-						new addWearableToAgentInventoryCallback(
-							cbdone,
-							index,
-							new_wearable,
-							todo);
-					if (isWearableCopyable((EWearableType)index))
-					{
-						copy_inventory_item(
-							gAgent.getID(),
-							item->getPermissions().getOwner(),
-							item->getLinkedUUID(),
-							folder_id,
-							new_name,
-							cb);
-					}
-					else
-					{
-						move_inventory_item(
-							gAgent.getID(),
-							gAgent.getSessionID(),
-							item->getLinkedUUID(),
-							folder_id,
-							new_name,
-							cb);
-					}
+					found_first_item = true;
+					/* set the focus to the first item */
+					todo |= addWearableToAgentInventoryCallback::CALL_MAKENEWOUTFITDONE;
+					/* send the agent wearables update when done */
+					cbdone = new sendAgentWearablesUpdateCallback;
+				}
+				LLPointer<LLInventoryCallback> cb =
+					new addWearableToAgentInventoryCallback(
+						cbdone,
+						index,
+						new_wearable,
+						todo);
+				if (isWearableCopyable((EWearableType)index))
+				{
+					copy_inventory_item(
+						gAgent.getID(),
+						item->getPermissions().getOwner(),
+						item->getUUID(),
+						folder_id,
+						new_name,
+						cb);
 				}
 				else
 				{
-					link_inventory_item(
+					move_inventory_item(
 						gAgent.getID(),
-						item->getLinkedUUID(),
+						gAgent.getSessionID(),
+						item->getUUID(),
 						folder_id,
-						item->getName(),		// Apparently, links cannot have arbitrary names...
-						LLAssetType::AT_LINK,
-						LLPointer<LLInventoryCallback>(NULL));
+						new_name,
+						cb);
 				}
 			}
 		}
@@ -7594,11 +7606,9 @@ void LLAgent::sendAgentSetAppearance()
 	// to compensate for the COLLISION_TOLERANCE ugliness we will have 
 	// to tweak this number again
 	LLVector3 body_size = mAvatarObject->mBodySize;
-
-	body_size.mV[VX] = body_size.mV[VX] + gSavedSettings.getF32("AscentAvatarXModifier");
-	body_size.mV[VY] = body_size.mV[VY] + gSavedSettings.getF32("AscentAvatarYModifier");
-	body_size.mV[VZ] = body_size.mV[VZ] + gSavedSettings.getF32("AscentAvatarZModifier");
-
+        body_size.mV[VX] = body_size.mV[VX] + gSavedPerAccountSettings.getF32("PhoenixAvatarXModifier");
+        body_size.mV[VY] = body_size.mV[VY] + gSavedPerAccountSettings.getF32("PhoenixAvatarYModifier");
+        body_size.mV[VZ] = body_size.mV[VZ] + gSavedPerAccountSettings.getF32("PhoenixAvatarZModifier");
 	msg->addVector3Fast(_PREHASH_Size, body_size);	
 
 	// To guard against out of order packets

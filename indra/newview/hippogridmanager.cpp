@@ -297,6 +297,15 @@ void HippoGridInfo::cleanUpUri(std::string &uri)
 
 void HippoGridInfo::initFallback()
 {
+#ifdef TPV_COMPLIANT
+	FALLBACK_GRIDINFO.mGridNick = "secondlife";
+	FALLBACK_GRIDINFO.setPlatform(PLATFORM_SECONDLIFE);
+	FALLBACK_GRIDINFO.setGridName("secondlife");
+	FALLBACK_GRIDINFO.setLoginUri("https://login.agni.lindenlab.com/cgi-bin/login.cgi");
+	FALLBACK_GRIDINFO.setLoginPage("http://phoenixviewer.com/app/login/");
+	FALLBACK_GRIDINFO.setHelperUri("https://secondlife.com/helpers/");
+	FALLBACK_GRIDINFO.setWebSite("http://secondlife.com/");
+#else
 	FALLBACK_GRIDINFO.mGridNick = "inworldz";
 	FALLBACK_GRIDINFO.setPlatform(PLATFORM_OPENSIM);
 	FALLBACK_GRIDINFO.setGridName("inworldz");
@@ -304,6 +313,7 @@ void HippoGridInfo::initFallback()
 	FALLBACK_GRIDINFO.setLoginPage("http://luna.nexisonline.net/login/");
 	FALLBACK_GRIDINFO.setHelperUri("https://inworldz.com/helpers/");
 	FALLBACK_GRIDINFO.setWebSite("http://inworldz.com/");
+#endif
 }
 
 
@@ -417,8 +427,10 @@ void HippoGridManager::setDefaultGrid(const std::string &grid)
 	GridIterator it = mGridInfo.find(grid);
 	if (it != mGridInfo.end()) {
 		mDefaultGrid = grid;
-//	} else if (mGridInfo.find("secondlife") != mGridInfo.end()) {
-//		mDefaultGrid = "secondlife";
+#ifdef TPV_COMPLIANT
+	} else if (mGridInfo.find("secondlife") != mGridInfo.end()) {
+		mDefaultGrid = "secondlife";
+#endif
 	} else if (!mGridInfo.empty()) {
 		mDefaultGrid = mGridInfo.begin()->first;
 	} else {
@@ -504,8 +516,10 @@ void HippoGridManager::parseData(LLSD &gridInfo, bool mergeIfNewer)
 		LLSD gridMap = *it;
 		if (gridMap.has("gridnick") && gridMap.has("loginuri")) {
 			std::string gridnick = gridMap["gridnick"];
+#ifndef TPV_COMPLIANT
 			if(gridnick=="secondlife")
 				continue;
+#endif
 			HippoGridInfo *grid;
 			GridIterator it = mGridInfo.find(gridnick);
 			bool newGrid = (it == mGridInfo.end());

@@ -42,6 +42,7 @@
 #include "llstring.h"
 #include "lldir.h"
 #include "llfindlocale.h"
+#include "lltimer.h"
 
 #include "indra_constants.h"
 
@@ -411,6 +412,11 @@ static int x11_detect_VRAM_kb()
 #endif // LL_SOLARIS
 }
 #endif // LL_X11
+
+void LLWindowSDL::setWindowTitle(std::string &title)
+{
+	SDL_WM_SetCaption(title.c_str(), title.c_str());
+}
 
 BOOL LLWindowSDL::createContext(int x, int y, int width, int height, int bits, BOOL fullscreen, BOOL disable_vsync)
 {

@@ -261,10 +261,10 @@ void DOFloaterHex::assetCallback(LLVFS *vfs,
 	}
 
 	// Never enable save if it's a pretend item
-	if(gInventory.isObjectDescendentOf(item->getUUID(), gSystemFolderRoot))
-	{
+//	if(gInventory.isObjectDescendentOf(item->getUUID(), gSystemFolderRoot))
+//	{
 		floater->childSetEnabled("save_btn", false);
-	}
+//	}
 }
 
 // static

@@ -12,16 +12,26 @@
 #ifndef LUAUI_H
 #define LUAUI_H
 
+#include "llui.h"
+#include "llfloater.h"
+#include "v2math.h"
 #include "LunaLua.h"
-#include "LunaUI.h"
 
-
-
-class UI
+class Floater: public LLFloater
 {
+private:
+	LLFloater mFloater;
 public:
-//	static bool RequestFloater(std::string name);
-//	static bool RequestTextbox(std::string name);
+	Floater(std::string name)
+	{
+		FLLua::CriticalSection cs();
+		this->LLFloater(name);
+		//self::LLFloater(name);
+	}
 };
+Floater * createFloater(std::string name, LLVector2 scale, LLVector2 pos=LLVector2(0.f,0.f))
+{
+	Floater *f = new Floater(name);
+}
 
 #endif //Lua_H

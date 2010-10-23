@@ -552,22 +552,6 @@ BOOL LLFolderViewItem::changeSelection(LLFolderViewItem* selection, BOOL selecte
 	return FALSE;
 }
 
-void LLFolderViewItem::recursiveDeselect(BOOL deselect_self)
-{
-	if (mIsSelected && deselect_self)
-	{
-		mIsSelected = FALSE;
-
-		// update ancestors' count of selected descendents
-		LLFolderViewFolder* parent_folder = getParentFolder();
-		while(parent_folder)
-		{
-			parent_folder->mNumDescendantsSelected--;
-			parent_folder = parent_folder->getParentFolder();
-		}
-	}
-}
-
 void LLFolderViewItem::deselectItem(void)
 {
 	llassert(mIsSelected);
@@ -666,7 +650,7 @@ void LLFolderViewItem::preview( void )
 {
 	if (mListener)
 	{
-		if (mListener->getInventoryType() == LLInventoryType::IT_OBJECT && gSavedSettings.getBOOL("AscentDoubleClickWearInventoryObjects"))
+		if (mListener->getInventoryType() == LLInventoryType::IT_OBJECT && gSavedSettings.getBOOL("PhoenixDoubleClickWearInventoryObjects"))
 		{
 			LLVOAvatar* avatar = gAgent.getAvatarObject();
 			if(avatar->isWearingAttachment(mListener->getUUID()))
@@ -798,12 +782,6 @@ BOOL LLFolderViewItem::handleHover( S32 x, S32 y, MASK mask )
 				{
 					src = LLToolDragAndDrop::SOURCE_LIBRARY;
 				}
-				// <edit>
-				else if(mListener && gInventory.isObjectDescendentOf(mListener->getUUID(), gSystemFolderRoot))
-				{ // Note: this is only ok if all future pretend folders are subcategories of Pretend Inventory
-					src = LLToolDragAndDrop::SOURCE_LIBRARY;
-				}
-				// </edit>
 
 				can_drag = root->startDrag(src);
 				if (can_drag)
@@ -1080,7 +1058,8 @@ void LLFolderViewItem::draw()
 		{
 			// don't draw backgrounds for zero-length strings
 			S32 filter_string_length = mRoot->getFilterSubString().size();
-			std::string combined_string = mLabel + mLabelSuffix;
+
+				std::string combined_string = mLabel + mLabelSuffix;
 			
 			//fix so that highlighting works properly again - rkeast
 			std::string check = combined_string;
@@ -1606,17 +1585,14 @@ BOOL LLFolderViewFolder::changeSelection(LLFolderViewItem* selection, BOOL selec
 	return rv;
 }
 
-S32 LLFolderViewFolder::extendSelection(LLFolderViewItem* selection, LLFolderViewItem* last_selected, LLDynamicArray<LLFolderViewItem*>& selected_items)
+void LLFolderViewFolder::extendSelection(LLFolderViewItem* selection, LLFolderViewItem* last_selected, LLDynamicArray<LLFolderViewItem*>& selected_items)
 {
-	S32 num_selected = 0;
-
 	// pass on to child folders first
 	for (folders_t::iterator iter = mFolders.begin();
 		 iter != mFolders.end();)
 	{
 		folders_t::iterator fit = iter++;
-		num_selected += (*fit)->extendSelection(selection, last_selected, selected_items);
-		mNumDescendantsSelected += num_selected;
+		(*fit)->extendSelection(selection, last_selected, selected_items);
 	}
 
 	// handle selection of our immediate children...
@@ -1709,8 +1685,6 @@ S32 LLFolderViewFolder::extendSelection(LLFolderViewItem* selection, LLFolderVie
 			if (item->changeSelection(item, TRUE))
 			{
 				selected_items.put(item);
-				mNumDescendantsSelected++;
-				num_selected++;
 			}
 		}
 	}
@@ -1720,12 +1694,8 @@ S32 LLFolderViewFolder::extendSelection(LLFolderViewItem* selection, LLFolderVie
 		if (selection->changeSelection(selection, TRUE))
 		{
 			selected_items.put(selection);
-			mNumDescendantsSelected++;
-			num_selected++;
 		}
 	}
-
-	return num_selected;
 }
 
 void LLFolderViewFolder::recursiveDeselect(BOOL deselect_self)
@@ -3111,29 +3081,24 @@ BOOL LLFolderView::changeSelection(LLFolderViewItem* selection, BOOL selected)
 	return rv;
 }
 
-S32 LLFolderView::extendSelection(LLFolderViewItem* selection, LLFolderViewItem* last_selected, LLDynamicArray<LLFolderViewItem*>& items)
+void LLFolderView::extendSelection(LLFolderViewItem* selection, LLFolderViewItem* last_selected, LLDynamicArray<LLFolderViewItem*>& items)
 {
-	S32 rv = 0;
-
 	// now store resulting selection
 	if (mAllowMultiSelect)
 	{
 		LLFolderViewItem *cur_selection = getCurSelectedItem();
-		rv = LLFolderViewFolder::extendSelection(selection, cur_selection, items);
+		LLFolderViewFolder::extendSelection(selection, cur_selection, items);
 		for (S32 i = 0; i < items.count(); i++)
 		{
 			addToSelectionList(items[i]);
-			rv++;
 		}
 	}
 	else
 	{
 		setSelection(selection, FALSE, FALSE);
-		rv++;
 	}
 
 	mSignalSelectCallback = SIGNAL_KEYBOARD_FOCUS;
-	return rv;
 }
 
 void LLFolderView::sanitizeSelection()
@@ -4636,7 +4601,7 @@ void LLFolderViewEventListener::arrangeAndSet(LLFolderViewItem* focus,
 											  BOOL set_selection,
 											  BOOL take_keyboard_focus)
 {
-	if(gSavedSettings.getBOOL("AscentFreezeInventoryArrangement"))return;
+	if(gSavedSettings.getBOOL("PhoenixFreezeInventoryArrangement"))return;
 	if(!focus) return;
 	LLFolderView* root = focus->getRoot();
 	focus->getParentFolder()->requestArrange();

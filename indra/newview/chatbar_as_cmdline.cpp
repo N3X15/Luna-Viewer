@@ -246,6 +246,7 @@ bool cmd_line_chat(std::string revised_text, EChatType type, bool from_gesture)
 	static std::string *sPhoenixCmdLineAutocorrect = rebind_llcontrol<std::string>("PhoenixCmdLineAutocorrect", &gSavedSettings, true);
 	static std::string *sLunaCmdLineLua = rebind_llcontrol<std::string>("LunaCmdLineLua", &gSavedSettings, true);
 	static std::string *sLunaCmdLineMacro = rebind_llcontrol<std::string>("LunaCmdLineMacro", &gSavedSettings, true);
+	static std::string *sLunaCmdLineShortMacro = rebind_llcontrol<std::string>("LunaCmdLineShortMacro", &gSavedSettings, true);
 	//static std::string *sPhoenixCmdUndeform = rebind_llcontrol<std::string>("PhoenixCmdUndeform", &gSavedSettings, true);
 	//gSavedSettings.getString("PhoenixCmdUndeform")
 	
@@ -344,7 +345,7 @@ bool cmd_line_chat(std::string revised_text, EChatType type, bool from_gesture)
 			else if(command == *sPhoenixCmdLineAO)
             {
 				std::string status;
-				int flags = gSavedPerAccountSettings.getS32("AO.Flags",0);
+				int flags = gSavedPerAccountSettings.getS32("AO.Flags");
                 if(i >> status)
                 {
 					if (status == "on" )
@@ -363,39 +364,24 @@ bool cmd_line_chat(std::string revised_text, EChatType type, bool from_gesture)
 						if(i >> toggle)
 						{
 							toggle=utf8str_tolower(toggle);
-							switch(toggle)
-							{
-								case "on":
-								case "enabled":
-								case "yes":
-									status=true;
-									break;
-								case "off":
-								case "disabled":
-								case "no":
-									status=false;
-									break;
-								default:
-									cmdline_printchat("Use on/off to state sit status.");
-									return;
-							}
+							status=(toggle=="on");
 						} else {
 							status=!status;
 						}
 
-						gSavedPerAccountSettings.setS32("AO.Flags",
+						gSavedPerAccountSettings.setS32("AO.Flags",status);
 					}
 				}
 				return false;
             }
-			else if(command == *sAscentCmdLineKeyToName)
+			else if(command == *sPhoenixCmdLineKeyToName)
             {
                 LLUUID targetKey;
                 if(i >> targetKey)
                 {
                     std::string object_name;
                     gCacheName->getFullName(targetKey, object_name);
-                    char buffer[DB_IM_MSG_BUF_SIZE * 2];  /* Flawfinder: ignore */
+                    char buffer[DB_IM_MSG_BUF_SIZE * 2]; 
                     snprintf(buffer,sizeof(buffer),"%s: (%s)",targetKey.asString().c_str(), object_name.c_str());
 					cmdline_printchat(std::string(buffer));
                 }
@@ -490,7 +476,7 @@ bool cmd_line_chat(std::string revised_text, EChatType type, bool from_gesture)
 				cmdline_printchat(std::string("Standing up"));
 				return false;
             }
-			else if(command == *sAscentCmdLineOfferTp)
+			else if(command == *sPhoenixCmdLineOfferTp)
             {
                 std::string avatarKey;
 //				llinfos << "CMD DEBUG 0 " << command << " " << avatarName << llendl;
@@ -500,7 +486,7 @@ bool cmd_line_chat(std::string revised_text, EChatType type, bool from_gesture)
                     LLUUID tempUUID;
                     if(LLUUID::parseUUID(avatarKey, &tempUUID))
                     {
-                        char buffer[DB_IM_MSG_BUF_SIZE * 2];  /* Flawfinder: ignore */
+                        char buffer[DB_IM_MSG_BUF_SIZE * 2];
                         LLDynamicArray<LLUUID> ids;
                         ids.push_back(tempUUID);
                         std::string tpMsg="Join me!";
@@ -526,7 +512,7 @@ bool cmd_line_chat(std::string revised_text, EChatType type, bool from_gesture)
                 }
             }
 			
-			else if(command == *sAscentCmdLineGround)
+			else if(command == *sPhoenixCmdLineGround)
 			{
 				LLVector3 agentPos = gAgent.getPositionAgent();
 				U64 agentRegion = gAgent.getRegion()->getHandle();
@@ -535,7 +521,7 @@ bool cmd_line_chat(std::string revised_text, EChatType type, bool from_gesture)
 				pos_global += LLVector3d((F64)targetPos.mV[0],(F64)targetPos.mV[1],(F64)targetPos.mV[2]);
 				gAgent.teleportViaLocation(pos_global);
 				return false;
-			}else if(command == *sAscentCmdLineHeight)
+			}else if(command == *sPhoenixCmdLineHeight)
 			{
 				F32 z;
 				if(i >> z)
@@ -548,17 +534,17 @@ bool cmd_line_chat(std::string revised_text, EChatType type, bool from_gesture)
 					gAgent.teleportViaLocation(pos_global);
 					return false;
 				}
-			}else if(command == *sAscentCmdLineTeleportHome)
+			}else if(command == *sPhoenixCmdLineTeleportHome)
 			{
 				gAgent.teleportHome();
 				return false;
-            }else if(command == *sAscentCmdLineRezPlatform)
+            }else if(command == *sPhoenixCmdLineRezPlatform)
             {
 				F32 width;
 				if (i >> width) cmdline_rezplat(false, width);
 				else cmdline_rezplat();
 				return false;
-			}else if(command == *sAscentCmdLineMapTo)
+			}else if(command == *sPhoenixCmdLineMapTo)
 			{
 				if (revised_text.length() > command.length() + 1) //Typing this command with no argument was causing a crash. -Madgeek
 				{
@@ -569,7 +555,7 @@ bool cmd_line_chat(std::string revised_text, EChatType type, bool from_gesture)
 					std::string region_name = LLWeb::escapeURL(revised_text.substr(command.length()+1));
 					std::string url;
 
-					if(!*sAscentCmdLineMapToKeepPos)
+					if(!*sPhoenixCmdLineMapToKeepPos)
 					{
 						agent_x = 128;
 						agent_y = 128;
@@ -580,7 +566,7 @@ bool cmd_line_chat(std::string revised_text, EChatType type, bool from_gesture)
 					LLURLDispatcher::dispatch(url, NULL, true);
 				}
 				return false;
-			}else if(command == *sAscentCmdLineCalc)//Cryogenic Blitz
+			}else if(command == *sPhoenixCmdLineCalc)//Cryogenic Blitz
 			{
 				bool success;
 				F32 result = 0.f;
@@ -609,7 +595,7 @@ bool cmd_line_chat(std::string revised_text, EChatType type, bool from_gesture)
 					cmdline_printchat(out);
 					return false;
 				}
-			}else if(command == *sAscentCmdLineTP2)
+			}else if(command == *sPhoenixCmdLineTP2)
 			{
 				if (revised_text.length() > command.length() + 1) //Typing this command with no argument was causing a crash. -Madgeek
 				{
@@ -635,15 +621,15 @@ bool cmd_line_chat(std::string revised_text, EChatType type, bool from_gesture)
 				cmdline_printchat("Displaying AutoCorrection Floater.");
 				return false;
 			}
-			else if(command == *sAscentCmdLineAutocorrect)
+			else if(command == *sPhoenixCmdLineAutocorrect)
 			{
-				std::string info = revised_text.substr((*sAscentCmdLineAutocorrect).length()+1);
+				std::string info = revised_text.substr((*sPhoenixCmdLineAutocorrect).length()+1);
 				//addac list name|wrong word|right word
 				int bar = info.find("|");
 				if (bar==std::string::npos)
 				{
 					cmdline_printchat("Wrong usage, correct usage is"+
-				*sAscentCmdLineAutocorrect+" list Name|wrong word|right word.");
+				*sPhoenixCmdLineAutocorrect+" list Name|wrong word|right word.");
 					return false;
 				}
 				
@@ -655,7 +641,7 @@ bool cmd_line_chat(std::string revised_text, EChatType type, bool from_gesture)
 				if (bar==std::string::npos)
 				{
 					cmdline_printchat("Wrong usage, correct usage is"+
-						*sAscentCmdLineAutocorrect+" list Name|wrong word|right word.");
+						*sPhoenixCmdLineAutocorrect+" list Name|wrong word|right word.");
 					return false;
 				}
 
@@ -686,7 +672,7 @@ bool cmd_line_chat(std::string revised_text, EChatType type, bool from_gesture)
 					gChatBar->sendChatFromViewer(text, CHAT_TYPE_STOP, FALSE);
 				}
 			}
-			else if(command == *sAscentCmdLineClearChat)
+			else if(command == *sPhoenixCmdLineClearChat)
 			{
 				LLFloaterChat* chat = LLFloaterChat::getInstance(LLSD());
 				if(chat)
@@ -697,14 +683,103 @@ bool cmd_line_chat(std::string revised_text, EChatType type, bool from_gesture)
 					history_editor_with_mute->clear();
 					return false;
 				}
-			}else if(command == "invrepair")
+			}
+			else if(command == "zdrop")
+			{
+				cmdline_printchat("Zdrop running");
+				std::string lolfolder;
+				if(i >> lolfolder)
+				{
+					cmdline_printchat("Looking for folder");
+					std::stack<LLViewerInventoryItem*> lolstack;
+					LLDynamicArray<LLPointer<LLViewerInventoryItem> > lolinv = findInventoryInFolder(lolfolder);
+					for(LLDynamicArray<LLPointer<LLViewerInventoryItem> >::iterator it = lolinv.begin(); it != lolinv.end(); ++it)
+					{
+						LLViewerInventoryItem* item = *it;
+						lolstack.push(item);
+					}
+
+					if(lolstack.size())
+					{
+						std::string loldest;
+						if(i >> loldest)
+						{
+							cmdline_printchat("Found destination");
+							LLUUID sdest = LLUUID(loldest);
+							new JCZface(lolstack, sdest, 2.5f);
+						}
+					}
+					else
+					{
+						cmdline_printchat("Couldn't find folder.");
+					}
+				}
+			}
+			else if(command == "ztake")
+			{
+				std::string setting;
+				if(i >> setting)
+				{
+					if(setting == "on")
+					{
+						if(ztake != NULL)
+						{
+							cmdline_printchat("You're already doing that, I think.");
+						}
+						else
+						{
+							std::string folder_name;
+							if(i >> folder_name)
+							{
+								LLUUID folder = gInventory.findCategoryByName(folder_name);
+								if(folder.notNull())
+								{
+									ztake = new JCZtake(folder);
+								}
+								else
+								{
+									cmdline_printchat(llformat("You can't see any %s here!", folder_name.c_str()));
+								}
+							}
+							else
+							{
+								cmdline_printchat("What do you want to put the objects in?");
+							}
+						}
+					}
+					else if(setting == "off")
+					{
+						if(ztake == NULL)
+						{
+							cmdline_printchat("You weren't doing that anyway, were you?");
+						}
+						else
+						{
+							ztake->mRunning = TRUE;
+							delete ztake;
+							ztake = NULL;
+						}
+					}
+					else
+					{
+						cmdline_printchat(llformat("I don't know the word \"%s\".", setting.c_str()));
+					}
+					return false;
+				}
+				else
+				{
+					cmdline_printchat("I beg your pardon?");
+				}
+				return false;
+			}
+			else if(command == "invrepair")
 			{
 				invrepair();
 			}
 			//
 			// Luna
 			//
-			else if(command == "/lua")
+			else if(command == *sLunaCmdLineLua)
 			{
 				// Luna:  Raw Lua Command from chatbar.
 				// And yes, it currently just shoves the command into the same queue as a macro.
@@ -712,7 +787,7 @@ bool cmd_line_chat(std::string revised_text, EChatType type, bool from_gesture)
 				FLLua::callCommand(revised_text.substr(sz));
 				return false;
 			}
-			else if(command == "/m" || command=="/macro")
+			else if(command == *sLunaCmdLineMacro || command==*sLunaCmdLineShortMacro)
 			{
 				// Luna:  Macros
 				//  /m MacroName arg u ments
@@ -826,9 +901,9 @@ void cmdline_rezplat(bool use_saved_value, F32 visual_radius) //cmdline_rezplat(
     LLQuaternion rotation;
     rotation.setQuat(90.f * DEG_TO_RAD, LLVector3::y_axis);
 
-	static F32 *sAscentCmdLinePlatformSize = rebind_llcontrol<F32>("AscentCmdLinePlatformSize", &gSavedSettings, true);
+	static F32 *sPhoenixCmdLinePlatformSize = rebind_llcontrol<F32>("PhoenixCmdLinePlatformSize", &gSavedSettings, true);
 
-	if (use_saved_value) visual_radius = *sAscentCmdLinePlatformSize;
+	if (use_saved_value) visual_radius = *sPhoenixCmdLinePlatformSize;
 	F32 realsize = visual_radius / 3.0f;
 	if (realsize < 0.01f) realsize = 0.01f;
 	else if (realsize > 10.0f) realsize = 10.0f;

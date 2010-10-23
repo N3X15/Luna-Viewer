@@ -564,20 +564,35 @@ void LLPreviewGesture::addModifiers()
 	combo->setCurrentByIndex(0);
 }
 
+std::string magic_key(KEY key)
+{
+	char buffer[2];		/* Flawfinder: ignore */
+	buffer[0] = key;
+	buffer[1] = '\0';
+	std::string res = std::string(buffer);
+	std::string lolk = LLKeyboard::stringFromKey(key);
+	if(res == lolk)
+	{
+		if( key >= ' ' && key <= '~' )
+		{
+			return lolk;
+		}else
+		{
+			return "";
+		}
+	}
+	return lolk;
+}
 void LLPreviewGesture::addKeys()
 {
 	LLComboBox* combo = mKeyCombo;
 
 	combo->add( NONE_LABEL );
-
-	// <edit>
-	//define for the lulz
-#define addKey(k) combo->add( LLKeyboard::stringFromKey(k), ADD_BOTTOM );
-	for (KEY key = KEY_F2; key <= KEY_F12; key++)
-		addKey(key)
-	for (KEY key = ' '; key <= '~'; key++)
-		addKey(key)
-	// </edit>
+	for (KEY key = ' '; key < KEY_NONE; key++)
+	{
+		std::string keystr = magic_key(key);
+		if(keystr != "")combo->add( keystr, ADD_BOTTOM );
+	}
 	combo->setCurrentByIndex(0);
 }
 
@@ -724,9 +739,6 @@ void LLPreviewGesture::refresh()
 		mWaitTimeEditor->setEnabled(FALSE);
 		mActiveCheck->setEnabled(FALSE);
 		mSaveBtn->setEnabled(FALSE);
-		// <edit>
-		mStepList->setEnabled(TRUE);
-		// </edit>
 
 		// Make sure preview button is enabled, so we can stop it
 		mPreviewBtn->setEnabled(TRUE);
@@ -1120,10 +1132,7 @@ void LLPreviewGesture::saveIfNeeded()
 
 	BOOL ok = gesture->serialize(dp);
 
-	// <edit>
-	//if (dp.getCurrentSize() > 1000)
-	if(0)
-	// </edit>
+	if (dp.getCurrentSize() > 1000)
 	{
 		LLNotifications::instance().add("GestureSaveFailedTooManySteps");
 

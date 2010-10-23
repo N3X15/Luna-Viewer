@@ -36,6 +36,7 @@
 // Simple Directmedia Layer (http://libsdl.org/) implementation of LLWindow class
 
 #include "llwindow.h"
+#include "lltimer.h"
 
 #include "SDL/SDL.h"
 #include "SDL/SDL_endian.h"
@@ -54,6 +55,7 @@
 class LLWindowSDL : public LLWindow
 {
 public:
+	/*virtual*/ void setWindowTitle(std::string &title);
 	/*virtual*/ void show();
 	/*virtual*/ void hide();
 	/*virtual*/ void close();

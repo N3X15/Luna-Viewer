@@ -69,7 +69,7 @@
 #include "lltrans.h"
 // <edit>
 #include "llmenugl.h"
-#include "lllocalinventory.h"
+//#include "lllocalinventory.h"
 // </edit>
 
 

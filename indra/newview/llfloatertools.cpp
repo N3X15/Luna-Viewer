@@ -80,11 +80,9 @@
 #include "llviewercontrol.h"
 #include "llviewerjoystick.h"
 #include "lluictrlfactory.h"
+#include "llselectmgr.h" //Banana:KC
 
-#include "qtoolalign.h"
-
-
-
+#include "llfloaterland.h"
 // Globals
 LLFloaterTools *gFloaterTools = NULL;
 
@@ -120,7 +118,7 @@ void commit_radio_orbit(LLUICtrl *, void*);
 void commit_radio_pan(LLUICtrl *, void*);
 void commit_grid_mode(LLUICtrl *, void*);
 void commit_slider_zoom(LLUICtrl *, void*);
-
+void commit_show_highlight(LLUICtrl *, void*); //Banana:KC
 
 //static
 void*	LLFloaterTools::createPanelPermissions(void* data)
@@ -187,7 +185,7 @@ BOOL	LLFloaterTools::postBuild()
 	// make sounds on visibility changes.
 	setSoundFlags(LLView::SILENT);
 
-	getDragHandle()->setEnabled( !gSavedSettings.getBOOL("ToolboxAutoMove") );
+	getDragHandle()->setEnabled( true );
 
 	LLRect rect;
 	mBtnFocus = getChild<LLButton>("button focus");//btn;
@@ -236,11 +234,19 @@ BOOL	LLFloaterTools::postBuild()
 	childSetValue("checkbox uniform",(BOOL)gSavedSettings.getBOOL("ScaleUniform"));
 	mCheckStretchTexture = getChild<LLCheckBoxCtrl>("checkbox stretch textures");
 	childSetValue("checkbox stretch textures",(BOOL)gSavedSettings.getBOOL("ScaleStretchTextures"));
-	mCheckLimitDrag = getChild<LLCheckBoxCtrl>("checkbox limit drag distance");
-	childSetValue("checkbox limit drag distance",(BOOL)gSavedSettings.getBOOL("LimitDragDistance"));
 	mTextGridMode = getChild<LLTextBox>("text ruler mode");
 	mComboGridMode = getChild<LLComboBox>("combobox grid mode");
 	childSetCommitCallback("combobox grid mode",commit_grid_mode, this);
+	
+	//Banana:KC - stuff for show highlight
+	mShowHighlight = (BOOL)gSavedSettings.getBOOL("PhoenixRenderHighlightSelections"); //Banana: save show highlight state on open so it can be restored on close
+	mCheckShowHighlight = getChild<LLCheckBoxCtrl>("checkbox show highlight");
+	childSetValue("checkbox show highlight",mShowHighlight);
+	childSetCommitCallback("checkbox show highlight",commit_show_highlight, this);
+	
+	//Banana:KC - handiness
+	mCheckActualRoot = getChild<LLCheckBoxCtrl>("checkbox actual root");	
+
 	//
 	// Create Buttons
 	//
@@ -324,10 +330,15 @@ BOOL	LLFloaterTools::postBuild()
 	// the setting stores the actual force multiplier, but the slider is logarithmic, so we convert here
 	childSetValue( "slider force", log10(gSavedSettings.getF32("LandBrushForce")));
 
+	childSetAction("button more", click_show_more, this); //Banana:KC
+	childSetAction("button less", click_show_more, this); //Banana:KC
+
 	mTab = getChild<LLTabContainer>("Object Info Tabs");
 	if(mTab)
 	{
+		mTab->setVisible( gSavedSettings.getBOOL("BananaToolboxShowMore") ); //Banana:KC
 		mTab->setFollows(FOLLOWS_TOP | FOLLOWS_LEFT);
+		mTab->setVisible( gSavedSettings.getBOOL("BananaToolboxShowMore") ); //Banana:KC
 		mTab->setBorderVisible(FALSE);
 		mTab->selectFirstTab();
 	}
@@ -375,7 +386,8 @@ LLFloaterTools::LLFloaterTools()
 	mComboGridMode(NULL),
 	mCheckStretchUniform(NULL),
 	mCheckStretchTexture(NULL),
-	mCheckLimitDrag(NULL),
+	mCheckShowHighlight(NULL), //Banana:KC
+	mCheckActualRoot(NULL), //Banana:KC
 
 	mBtnRotateLeft(NULL),
 	mBtnRotateReset(NULL),
@@ -422,6 +434,20 @@ LLFloaterTools::LLFloaterTools()
 	factory_map["land info panel"] = LLCallbackMap(createPanelLandInfo, this);//LLPanelLandInfo
 
 	LLUICtrlFactory::getInstance()->buildFloater(this,"floater_tools.xml",&factory_map,FALSE);
+		
+	//Banana:KC - added back more/less button
+	mLargeHeight = getRect().getHeight();
+	mSmallHeight = mLargeHeight;
+	if (mTab) mSmallHeight -= mTab->getRect().getHeight();
+	
+	// force a toggle initially. seems to be needed to correctly initialize 
+	// both "more" and "less" cases. it also seems to be important to begin
+	// with the user's preference first so that it's initial position will
+	// be correct (SL-51192) -MG
+	BOOL show_more = gSavedSettings.getBOOL("BananaToolboxShowMore"); // get user's preference
+	gSavedSettings.setBOOL("BananaToolboxShowMore", show_more); // sets up forced toggle below
+	showMore( !show_more ); // does the toggle
+	showMore(  show_more ); // reset the real user's preference
 }
 
 LLFloaterTools::~LLFloaterTools()
@@ -690,7 +716,8 @@ void LLFloaterTools::updatePopup(LLCoordGL center, MASK mask)
 	//mCheckSelectLinked	->setVisible( edit_visible );
 	if (mCheckStretchUniform) mCheckStretchUniform->setVisible( edit_visible );
 	if (mCheckStretchTexture) mCheckStretchTexture->setVisible( edit_visible );
-	if (mCheckLimitDrag) mCheckLimitDrag->setVisible( edit_visible );
+	if (mCheckShowHighlight) mCheckShowHighlight->setVisible( edit_visible ); //Banana:KC
+	if (mCheckActualRoot) mCheckActualRoot->setVisible( edit_visible ); //Banana:KC
 
 	// Create buttons
 	BOOL create_visible = (tool == LLToolCompCreate::getInstance());
@@ -790,10 +817,13 @@ void LLFloaterTools::updatePopup(LLCoordGL center, MASK mask)
 		childSetVisible("Strength:", land_visible);
 	}
 	
+	BOOL show_more = gSavedSettings.getBOOL("BananaToolboxShowMore"); //Banana:KC
 	childSetVisible("link_num_obj_count", !land_visible);
 	childSetVisible("prim_count", !land_visible);
-	mTab->setVisible(!land_visible);
-	mPanelLandInfo->setVisible(land_visible);
+	//mTab->setVisible(!land_visible);
+	//mPanelLandInfo->setVisible(land_visible);
+	mTab->setVisible(show_more && !land_visible); //Banana:KC
+	mPanelLandInfo->setVisible(show_more && land_visible); //Banana:KC
 }
 
 
@@ -807,7 +837,10 @@ BOOL LLFloaterTools::canClose()
 // virtual
 void LLFloaterTools::onOpen()
 {
+	if (!LLFloaterLand::isOpen())
+	{
 	mParcelSelection = LLViewerParcelMgr::getInstance()->getFloatingParcelSelection();
+	}
 	mObjectSelection = LLSelectMgr::getInstance()->getEditSelection();
 	
 	// gMenuBarView->setItemVisible(std::string("Tools"), TRUE);
@@ -830,12 +863,18 @@ void LLFloaterTools::onClose(bool app_quitting)
 	// exit component selection mode
 	LLSelectMgr::getInstance()->promoteSelectionToRoot();
 	gSavedSettings.setBOOL("EditLinkedParts", FALSE);
-
+	//Banana:KC - restore show highlight state
+	gSavedSettings.setBOOL("PhoenixRenderHighlightSelections", mShowHighlight);
+	LLSelectMgr::getInstance()->enableSilhouette(mShowHighlight);
+	
 	gViewerWindow->showCursor();
 
 	resetToolState();
 
+	if (!LLFloaterLand::isOpen())
+	{
 	mParcelSelection = NULL;
+	}
 	mObjectSelection = NULL;
 
 	if (!gAgent.cameraMouselook())
@@ -858,13 +897,46 @@ void LLFloaterTools::onClose(bool app_quitting)
 	// gMenuBarView->setItemVisible(std::string("Tools"), FALSE);
 	// gMenuBarView->arrange();
 }
+//Banana:KC
+void LLFloaterTools::showMore(BOOL show_more)
+{
+	BOOL showing_more = gSavedSettings.getBOOL("BananaToolboxShowMore");
+	if (show_more == showing_more)
+	{
+		return;
+	}
+	
+	gSavedSettings.setBOOL("BananaToolboxShowMore", show_more);
+
+	// Visibility updated next frame - JC
+	// mTab->setVisible(show_more);
+
+	if (show_more)
+	{
+		reshape( getRect().getWidth(), mLargeHeight, TRUE);
+		translate( 0, mSmallHeight - mLargeHeight );
+	}
+	else
+	{
+		reshape( getRect().getWidth(), mSmallHeight, TRUE);
+		translate( 0, mLargeHeight - mSmallHeight );
+	}
+	childSetVisible("button less",  show_more);
+	childSetVisible("button more", !show_more);
+}
 
 void LLFloaterTools::showPanel(EInfoPanel panel)
 {
 	llassert(panel >= 0 && panel < PANEL_COUNT);
 	mTab->selectTabByName(PANEL_NAMES[panel]);
 }
-
+//Banana:KC
+void click_show_more(void *userdata)
+{
+	LLFloaterTools *f = (LLFloaterTools *)userdata;
+	BOOL show_more = !gSavedSettings.getBOOL("BananaToolboxShowMore");
+	f->showMore( show_more );
+}
 void click_popup_info(void*)
 {
 //	gBuildView->setPropertiesPanelOpen(TRUE);
@@ -970,7 +1042,9 @@ void click_apply_to_selection(void* user)
 
 void commit_select_tool(LLUICtrl *ctrl, void *data)
 {
-	S32 show_owners = gSavedSettings.getBOOL("ShowParcelOwners");
+	static BOOL* sShowParcelOwners = rebind_llcontrol<BOOL>("ShowParcelOwners", &gSavedSettings, true);
+	
+	S32 show_owners = *sShowParcelOwners;
 	gFloaterTools->setEditTool(data);
 	gSavedSettings.setBOOL("ShowParcelOwners", show_owners);
 }
@@ -1005,6 +1079,12 @@ void commit_grid_mode(LLUICtrl *ctrl, void *data)
     
 	LLSelectMgr::getInstance()->setGridMode((EGridMode)combo->getCurrentIndex());
 } 
+
+//Banana:KC update the show highlight state nao :O
+void commit_show_highlight(LLUICtrl *ctrl, void*)
+{
+	LLSelectMgr::getInstance()->enableSilhouette(gSavedSettings.getBOOL("PhoenixRenderHighlightSelections"));
+}
 
 // static 
 void LLFloaterTools::setObjectType( void* data )

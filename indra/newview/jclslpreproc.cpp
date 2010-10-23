@@ -650,7 +650,7 @@ void JCLSLPreprocessor::preprocess_script(BOOL close, BOOL defcache)
 	std::string script = mCore->mEditor->getText();
 	if(mMainScriptName == "")//more sanity
 	{
-		LLViewerInventoryItem* item = NULL;
+		const LLViewerInventoryItem *item = NULL;
 		LLPreview* preview = (LLPreview*)mCore->mUserdata;
 		if(preview)
 		{

@@ -76,31 +76,31 @@ include_directories(
 
 set(viewer_SOURCE_FILES
 	ascentfloatercontactgroups.cpp
-	ascentprefssys.cpp
-	ascentprefsvan.cpp
 	ascentuploadbrowser.cpp
 	a_phoenixviewerlink.cpp
 	chatbar_as_cmdline.cpp
 	dhparam.cpp
-	dofloaterhex.cpp
-	dohexeditor.cpp
 	dsaparam.cpp
 	exporttracker.cpp
 	floaterao.cpp
 	floateravatarlist.cpp
 	floaterblacklist.cpp
 	floaterexploreanimations.cpp
+	floaterexploresounds.cpp
 	floatersculptpreview.cpp
+	floaterlocalassetbrowse.cpp
+	floatermediaplayer.cpp
 	floaterskinfinder.cpp
 	growlmanager.cpp
 	growlnotifier.cpp
-	hgfloatertexteditor.cpp
+	hbfloatergrouptitles.cpp
 	hippogridmanager.cpp
 	hippolimits.cpp
 	hippopanelgrids.cpp
 	hipporestrequest.cpp
 	importtracker.cpp
-	jcfloaterareasearch.cpp
+	jcfloater_areasearch.cpp
+	jclslpreproc.cpp
 	jc_lslviewerbridge.cpp
 	llagent.cpp
 	llagentaccess.cpp
@@ -167,7 +167,6 @@ set(viewer_SOURCE_FILES
 	llfloateranimpreview.cpp
 	llfloaterauction.cpp
 	llfloateravatarinfo.cpp
-	llfloateravatarlist.cpp
 	llfloateravatarpicker.cpp
 	llfloateravatartextures.cpp
 	llfloaterbeacons.cpp
@@ -190,8 +189,6 @@ set(viewer_SOURCE_FILES
 	llfloatereditui.cpp
 	llfloaterenvsettings.cpp
 	llfloaterevent.cpp
-	llfloaterexploresounds.cpp
-	llfloaterexport.cpp
 	llfloaterfonttest.cpp
 	llfloaterfriends.cpp
 	llfloatergesture.cpp
@@ -205,7 +202,6 @@ set(viewer_SOURCE_FILES
 	llfloaterhtmlsimple.cpp
 	llfloaterhud.cpp
 	llfloaterimagepreview.cpp
-	llfloaterimport.cpp
 	llfloaterinspect.cpp
 	llfloaterjoystick.cpp
 	llfloaterlagmeter.cpp
@@ -246,8 +242,7 @@ set(viewer_SOURCE_FILES
 	llfloatertos.cpp
 	llfloaterurldisplay.cpp
 	llfloaterurlentry.cpp
-	llfloatervfs.cpp
-	llfloatervfsexplorer.cpp
+	llfloaterurlentry_mp.cpp
 	llfloatervoicedevicesettings.cpp
 	llfloaterwater.cpp
 	llfloaterwindlight.cpp
@@ -275,7 +270,6 @@ set(viewer_SOURCE_FILES
 	llhudtext.cpp
 	llhudview.cpp
 	llimpanel.cpp
-	llimportobject.cpp
 	llimview.cpp
 	llinventoryactions.cpp
 	llinventorybackup.cpp
@@ -285,7 +279,6 @@ set(viewer_SOURCE_FILES
 	llinventoryview.cpp
 	lljoystickbutton.cpp
 	lllandmarklist.cpp
-	lllocalinventory.cpp
 	lllogchat.cpp
 	llloginhandler.cpp
 	llmanip.cpp
@@ -569,27 +562,31 @@ set(viewer_HEADER_FILES
     CMakeLists.txt
     ViewerInstall.cmake
 	ascentfloatercontactgroups.h
-	ascentprefssys.h
-	ascentprefsvan.h
 	ascentuploadbrowser.h
 	a_phoenixviewerlink.h
 	chatbar_as_cmdline.h
-	dofloaterhex.h
-	dohexeditor.h
 	exporttracker.h
 	floaterao.h
+	floateravatarlist.h
 	floaterblacklist.h
 	floaterexploreanimations.h
+	floaterexploresounds.h
+	floaterlocalassetbrowse.h
+	floatermediaplayer.h
 	floatersculptpreview.h
 	floaterskinfinder.h
 	growlmanager.h
 	growlnotifier.h
-	hgfloatertexteditor.h
+	hbfloatergrouptitles.h
 	hippogridmanager.h
 	hippolimits.h
 	hippopanelgrids.h
 	hipporestrequest.h
-	jcfloaterareasearch.h
+	importtracker.h
+
+	jcfloater_areasearch.h
+	jclslpreproc.h
+	jc_lslviewerbridge.h
 	llagent.h
 	llagentaccess.h
 	llagentdata.h
@@ -657,7 +654,6 @@ set(viewer_HEADER_FILES
 	llfloateranimpreview.h
 	llfloaterauction.h
 	llfloateravatarinfo.h
-	llfloateravatarlist.h
 	llfloateravatarpicker.h
 	llfloateravatartextures.h
 	llfloaterbeacons.h
@@ -680,8 +676,6 @@ set(viewer_HEADER_FILES
 	llfloatereditui.h
 	llfloaterenvsettings.h
 	llfloaterevent.h
-	llfloaterexploresounds.h
-	llfloaterexport.h
 	llfloaterfonttest.h
 	llfloaterfriends.h
 	llfloatergesture.h
@@ -695,7 +689,6 @@ set(viewer_HEADER_FILES
 	llfloaterhtmlsimple.h
 	llfloaterhud.h
 	llfloaterimagepreview.h
-	llfloaterimport.h
 	llfloaterinspect.h
 	llfloaterjoystick.h
 	llfloaterlagmeter.h
@@ -722,6 +715,7 @@ set(viewer_HEADER_FILES
 	llfloaterregioninfo.h
 	llfloaterreporter.h
 	llfloaterscriptdebug.h
+	llfloatersearchreplace.h
 	llfloatersellland.h
 	llfloatersettingsdebug.h
 	llfloatersnapshot.h
@@ -735,8 +729,7 @@ set(viewer_HEADER_FILES
 	llfloatertos.h
 	llfloaterurldisplay.h
 	llfloaterurlentry.h
-	llfloatervfs.h
-	llfloatervfsexplorer.h
+	llfloaterurlentry_mp.h
 	llfloatervoicedevicesettings.h
 	llfloaterwater.h
 	llfloaterwindlight.h
@@ -763,7 +756,6 @@ set(viewer_HEADER_FILES
 	llhudtext.h
 	llhudview.h
 	llimpanel.h
-	llimportobject.h
 	llimview.h
 	llinventorybackup.h
 	llinventorybridge.h
@@ -773,7 +765,6 @@ set(viewer_HEADER_FILES
 	lljoystickbutton.h
 	lllandmarklist.h
 	lllightconstants.h
-	lllocalinventory.h
 	lllogchat.h
 	llloginhandler.h
 	llmanip.h
@@ -1007,6 +998,13 @@ set(viewer_HEADER_FILES
 	phoenixboobutils.h
 	pipeline.h
 	randgauss.h
+	rlvcommon.h
+	rlvdefines.h
+	rlvextensions.h
+	rlvfloaterbehaviour.h
+	rlvhandler.h
+	rlvhelper.h
+	rlvmultistringsearch.h
 	scriptcounter.h
 	streamtitledisplay.h
 	VertexCache.h

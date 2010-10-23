@@ -549,10 +549,17 @@ bool LLAppViewer::init()
 	// into the log files during normal startup until AFTER
 	// we run the "program crashed last time" error handler below.
 	//
-	
-	// Need to do this initialization before we do anything else, since anything
-	// that touches files should really go through the lldir API
-	gDirUtilp->initAppDirs("SecondLife");
+
+	if(gDebugInfo.has("PhoenixPortableMode"))
+	{
+		gDirUtilp->initAppDirs("*Portable*"); // *HACK: Special magic string for portable mode
+		mPurgeOnExit = true;
+	}else
+	{
+		// Need to do this initialization before we do anything else, since anything
+		// that touches files should really go through the lldir API
+		gDirUtilp->initAppDirs("SecondLife");
+	}
 	// set skin search path to default, will be overridden later
 	// this allows simple skinned file lookups to work
 	gDirUtilp->setSkinFolder("default");
@@ -675,8 +682,16 @@ bool LLAppViewer::init()
 
 	LLViewerJointMesh::updateVectorize();
 
-	// load MIME type -> media impl mappings
-	LLMIMETypes::parseMIMETypes( std::string("mime_types.xml") );
+        // load MIME type -> media impl mappings
+        std::string mime_types_name;
+#if LL_DARWIN
+        mime_types_name = "mime_types_mac.xml";
+#elif LL_LINUX
+        mime_types_name = "mime_types_linux.xml";
+#else
+        mime_types_name = "mime_types_windows.xml";
+#endif
+        LLMIMETypes::parseMIMETypes( mime_types_name );
 
 	// Copy settings to globals. *TODO: Remove or move to appropriage class initializers
 	settings_to_globals();
@@ -1343,6 +1358,30 @@ bool LLAppViewer::cleanup()
 		LLStartUp::deletePasswordFromDisk();
 	}
 
+	if(!gSavedSettings.getBOOL("PhoenixSaveLoginInfoOnLogin"))
+	{
+		// Save the login history data to disk
+		std::string history_file = gDirUtilp->getExpandedFilename(LL_PATH_USER_SETTINGS, "saved_logins_phoenix.xml");
+
+		LLSavedLogins history_data = LLSavedLogins::loadFile(history_file);
+		static std::string firstname = gSavedSettings.getString("FirstName");
+		static std::string lastname = gSavedSettings.getString("LastName");
+		history_data.deleteEntry(firstname, lastname);
+		if (gSavedSettings.getBOOL("RememberLogin"))
+		{
+			LLSavedLoginEntry login_entry(firstname, lastname, gSavedSettings.getString("PhoenixPasswordTempSpace"));
+			history_data.addEntry(login_entry);
+		}
+		else
+		{
+			// Clear the old-style login data as well
+			gSavedSettings.setString("FirstName", std::string(""));
+			gSavedSettings.setString("LastName", std::string(""));
+		}
+
+		LLSavedLogins::saveFile(history_data, history_file);
+	}
+
 	// Store the time of our current logoff
 	gSavedPerAccountSettings.setU32("LastLogoff", time_corrected());
 
@@ -1776,7 +1815,15 @@ bool LLAppViewer::initConfiguration()
 	LLFirstUse::addConfigVariable("FirstVoice");
 	LLFirstUse::addConfigVariable("FirstMedia");
 	LLFirstUse::addConfigVariable("FirstTPV");
-		
+// [RLVa:KB] - Checked: RLVa-1.0.3a (2009-09-10) | Added: RLVa-1.0.3a
+	//LLFirstUse::addConfigVariable(RLV_SETTING_FIRSTUSE_DETACH);
+	//LLFirstUse::addConfigVariable(RLV_SETTING_FIRSTUSE_ENABLEWEAR);
+	//LLFirstUse::addConfigVariable(RLV_SETTING_FIRSTUSE_FARTOUCH);
+// [/RLVa:KB]
+
+
+
+
 	// - read command line settings.
 	LLControlGroupCLP clp;
 	std::string	cmd_line_config	= gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS,
@@ -2883,10 +2930,10 @@ bool LLAppViewer::initCache()
 			gSavedSettings.setS32("LocalCacheVersion", cache_version);
 		}
 	}
-	std::string invcache = gSavedSettings.getString("AscentPurgeInvCache");
+	std::string invcache = gSavedSettings.getString("PhoenixPurgeInvCache");
 	if(invcache != "")
 	{
-		gSavedSettings.setString("AscentPurgeInvCache","");
+		gSavedSettings.setString("PhoenixPurgeInvCache","");
 		std::string agent_id_str = invcache;
 		std::string inventory_filename;
 		std::string path(gDirUtilp->getExpandedFilename(LL_PATH_CACHE, agent_id_str));
@@ -2900,22 +2947,27 @@ bool LLAppViewer::initCache()
 	// We have moved the location of the cache directory over time.
 	migrateCacheDirectory();
 
-	// Setup and verify the cache location
-	std::string cache_location = gSavedSettings.getString("CacheLocation");
-	std::string new_cache_location = gSavedSettings.getString("NewCacheLocation");
-	if (new_cache_location != cache_location)
+	if(!gSavedSettings.getBOOL("PhoenixPortableMode"))
 	{
-		gDirUtilp->setCacheDir(gSavedSettings.getString("CacheLocation"));
-		purgeCache(); // purge old cache
-		gSavedSettings.setString("CacheLocation", new_cache_location);
+
+		// Setup and verify the cache location
+		std::string cache_location = gSavedSettings.getString("CacheLocation");
+		std::string new_cache_location = gSavedSettings.getString("NewCacheLocation");
+//		gDirUtilp->mm_setsnddir(gSavedSettings.getString("Phoenixmm_sndcacheloc"));
+		if (new_cache_location != cache_location)
+		{
+			gDirUtilp->setCacheDir(gSavedSettings.getString("CacheLocation"));
+			purgeCache(); // purge old cache
+			gSavedSettings.setString("CacheLocation", new_cache_location);
+		}
+
+		if (!gDirUtilp->setCacheDir(gSavedSettings.getString("CacheLocation")))
+		{
+			LL_WARNS("AppCache") << "Unable to set cache location" << LL_ENDL;
+			gSavedSettings.setString("CacheLocation", "");
+		}
 	}
-	
-	if (!gDirUtilp->setCacheDir(gSavedSettings.getString("CacheLocation")))
-	{
-		LL_WARNS("AppCache") << "Unable to set cache location" << LL_ENDL;
-		gSavedSettings.setString("CacheLocation", "");
-	}
-	
+
 	if (mPurgeCache)
 	{
 		LLSplashScreen::update("Clearing cache...");
@@ -3159,11 +3211,13 @@ void LLAppViewer::forceDisconnect(const std::string& mesg)
 		// Tell users what happened
 		args["ERROR_MESSAGE"] = big_reason;
 		LLNotifications::instance().add("ErrorMessage", args, LLSD(), &finish_forced_disconnect);
+		LL_WARNS("Messaging") << "forceDisconnect: " << mesg << LL_ENDL; //Kadah: TP fail debuging
 	}
 	else
 	{
 		args["MESSAGE"] = big_reason;
 		LLNotifications::instance().add("YouHaveBeenLoggedOut", args, LLSD(), &finish_disconnect );
+		LL_WARNS("Messaging") << "forceDisconnect: " << mesg << LL_ENDL; //Kadah: TP fail debuging
 	}
 }
 
@@ -3367,7 +3421,7 @@ void LLAppViewer::idle()
 	    F32 agent_update_time = agent_update_timer.getElapsedTimeF32();
 
 	    BOOL flags_changed = gAgent.controlFlagsDirty() || (last_control_flags != gAgent.getControlFlags());
-		static F32 *sPhoenixAgentUpdateFrequency = rebind_llcontrol<F32>("AscentAgentUpdatesPerSecond", &gSavedSettings, true);
+		static F32 *sPhoenixAgentUpdateFrequency = rebind_llcontrol<F32>("PhoenixAgentUpdatesPerSecond", &gSavedSettings, true);
 		if (flags_changed || (agent_update_time > (1.0f / llmax(*sPhoenixAgentUpdateFrequency , 0.0001f))))
 	    {
 		    // Send avatar and camera info
@@ -3700,7 +3754,7 @@ void LLAppViewer::idleShutdown()
 		static S32 total_uploads = 0;
 		// Sometimes total upload count can change during logout.
 		total_uploads = llmax(total_uploads, pending_uploads);
-		gViewerWindow->setShowProgress(!gSavedSettings.getBOOL("AscentDisableLogoutScreens"));
+		gViewerWindow->setShowProgress(!gSavedSettings.getBOOL("PhoenixDisableLogoutScreens"));
 		S32 finished_uploads = total_uploads - pending_uploads;
 		F32 percent = 100.f * finished_uploads / total_uploads;
 		gViewerWindow->setProgressPercent(percent);
@@ -3714,7 +3768,7 @@ void LLAppViewer::idleShutdown()
 		sendLogoutRequest();
 
 		// Wait for a LogoutReply message
-		gViewerWindow->setShowProgress(!gSavedSettings.getBOOL("AscentDisableLogoutScreens"));
+		gViewerWindow->setShowProgress(!gSavedSettings.getBOOL("PhoenixDisableLogoutScreens"));
 		gViewerWindow->setProgressPercent(100.f);
 		gViewerWindow->setProgressString("Logging out...");
 		return;
@@ -4121,5 +4175,22 @@ void LLAppViewer::handleLoginComplete()
 		gDebugInfo["MainloopTimeoutState"] = LLAppViewer::instance()->mMainloopTimeout->getState();
 	}
 	writeDebugInfo();
+
+// [RLVa:KB] - Alternate: Snowglobe-1.2.4 | Checked: 2009-08-05 (RLVa-1.0.1e) | Modified: RLVa-1.0.1e
+	// TODO-RLVa: find some way to initialize the lookup table when we need them *and* support toggling RLVa at runtime
+	gRlvHandler.initLookupTables();
+
+	if (rlv_handler_t::isEnabled())
+	{
+		RlvCurrentlyWorn::fetchWorn();
+		rlv_handler_t::fetchSharedInventory();
+
+		#ifdef RLV_EXTENSION_STARTLOCATION
+			RlvSettings::updateLoginLastLocation();
+		#endif // RLV_EXTENSION_STARTLOCATION
+
+		gRlvHandler.processRetainedCommands();
+	}
+// [/RLVa:KB]
 }
 

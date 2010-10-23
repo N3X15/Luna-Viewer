@@ -638,9 +638,10 @@ protected:
 	typedef std::deque<LLScrollListItem *> item_list;
 	item_list&		getItemList() { return mItemList; }
 
-private:
+public:
 	void			selectPrevItem(BOOL extend_selection);
 	void			selectNextItem(BOOL extend_selection);
+private:
 	void			drawItems();
 	void			updateLineHeight();
 	void            updateLineHeightInsert(LLScrollListItem* item);

@@ -323,7 +323,7 @@ public:
 	void        setCanUseHTTP(bool can_use_http) {mCanUseHTTP = can_use_http;};
 
 
-	//friend class LocalBitmap; // tag: vaa phoenix local_asset_browser
+	friend class LocalBitmap; // tag: vaa phoenix local_asset_browser
 
 private:
 	/*virtual*/ void cleanup(); // Cleanup the LLViewerImage (so we can reinitialize it)
