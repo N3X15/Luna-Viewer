@@ -14,6 +14,9 @@
 
 extern LLAgent gAgent;
 
+LLUUID Object::mReady = LLUUID::null;
+bool Object::mWaiting = false;
+
 Object::Object(int pcode,bool viewerside)
 {
 	if(viewerside)

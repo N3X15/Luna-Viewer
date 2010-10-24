@@ -4346,7 +4346,7 @@ void LLSelectMgr::processObjectProperties(LLMessageSystem* msg, void** user_data
 		}
 
 		// <edit> Send to export floaters
-		LLFloaterExport::receiveObjectProperties(id, name, desc);
+		//LLFloaterExport::receiveObjectProperties(id, name, desc);
 		// </edit>
 
 		// <LUNA>
@@ -4493,7 +4493,7 @@ void LLSelectMgr::processObjectPropertiesFamily(LLMessageSystem* msg, void** use
 	msg->getStringFast(_PREHASH_ObjectData, _PREHASH_Description, desc);
 
 	// <edit> Send to export floaters
-	LLFloaterExport::receiveObjectProperties(id, name, desc);
+	//LLFloaterExport::receiveObjectProperties(id, name, desc);
 	// </edit>
 
 	// <LUNA>

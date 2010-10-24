@@ -104,8 +104,6 @@
 %import "../../llui/llbutton.h"
 %import "../../llui/lliconctrl.h"
 
-%import "../LuaSettings.h"
-
 %import "../llviewerpartsource.h"
 
 extern LLInventoryModel gInventory;
@@ -182,11 +180,6 @@ extern LLAgent *gAgent;
 
 %include "../../newview/llviewerobject.h"
 
-%rename (Floater) 	LuaFloater;
-%rename (Button) 	LuaButton;
-%rename (LineEditor) 	LuaLineEditor;
-%rename (IconCtrl)	LuaIconCtrl;
-
 %rename (Agent) 		LuaAgent;
 %rename (alert) 		LuaAlert;
 %rename (DumpVisualParams) 	LuaDumpVisualParams;
@@ -203,3 +196,7 @@ extern LLAgent *gAgent;
 %rename (UICtrl) 		LuaUICtrl;
 %rename (UIManager)		LuaUIManager;
 %rename (Object)		LLViewerObject;
+
+%import "../LuaSettings.h"
+
+%import "../LuaUI.h"
