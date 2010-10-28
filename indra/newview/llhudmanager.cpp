@@ -79,9 +79,9 @@ void LLHUDManager::updateEffects()
 
 void LLHUDManager::sendEffects()
 {
-	static BOOL* sAscentBroadcastEffects = rebind_llcontrol<BOOL>("AscentBroadcastEffects", &gSavedSettings, true);
+	static BOOL* sPhoenixBroadcastEffects = rebind_llcontrol<BOOL>("PhoenixBroadcastEffects", &gSavedSettings, true);
 
-	if(!(*sAscentBroadcastEffects))return;
+	if(!(*sPhoenixBroadcastEffects))return;
 	S32 i;
 	for (i = 0; i < mHUDEffects.count(); i++)
 	{
@@ -106,8 +106,7 @@ void LLHUDManager::sendEffects()
 			msg->nextBlockFast(_PREHASH_Effect);
 			hep->packData(msg);
 			hep->setNeedsSendToSim(FALSE);
-			if (!hep->isDead())
-				gAgent.sendMessage();
+			gAgent.sendMessage();
 		}
 	}
 }

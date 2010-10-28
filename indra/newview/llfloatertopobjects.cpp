@@ -33,6 +33,7 @@
 #include "llviewerprecompiledheaders.h"
 
 #include "llfloatertopobjects.h"
+#include "llfloaterregioninfo.h"
 
 #include "message.h"
 #include "llfontgl.h"
@@ -40,6 +41,7 @@
 #include "llagent.h"
 #include "llbutton.h"
 #include "llfloatergodtools.h"
+#include "llfloateravatarinfo.h"
 #include "llparcel.h"
 #include "llscrolllistctrl.h"
 #include "lllineeditor.h"
@@ -49,7 +51,13 @@
 #include "llviewerparcelmgr.h"
 #include "llviewerregion.h"
 #include "lluictrlfactory.h"
+#include "llviewercontrol.h"
 #include "llviewerwindow.h"
+
+#include "llviewerobject.h"
+#include "llviewerobjectlist.h"
+
+void cmdline_printchat(std::string message);
 
 LLFloaterTopObjects* LLFloaterTopObjects::sInstance = NULL;
 
@@ -103,6 +111,11 @@ BOOL LLFloaterTopObjects::postBuild()
 	childSetAction("disable_selected_btn", onDisableSelected, this);
 	childSetAction("disable_all_btn", onDisableAll, this);
 	childSetAction("refresh_btn", onRefresh, this);	
+
+	childSetAction("lagwarning", onLagWarningBtn, this);	
+	childSetAction("profile", onProfileBtn, this);	
+	childSetAction("kick", onKickBtn, this);	
+	childSetAction("tpto", onTPBtn, this);	
 
 
 	childSetAction("filter_object_btn", onGetByObjectNameClicked, this);
@@ -187,10 +200,11 @@ void LLFloaterTopObjects::handleReply(LLMessageSystem *msg, void** data)
 			have_extended_data = true;
 			msg->getU32("DataExtended", "TimeStamp", time_stamp, block);
 			msg->getF32("DataExtended", "MonoScore", mono_score, block);
-			msg->getS32(_PREHASH_ReportData,"PublicURLs",public_urls,block);
+			//msg->getS32(_PREHASH_ReportData,"PublicURLs",public_urls,block);
 		}
 
 		LLSD element;
+
 
 		element["id"] = task_id;
 		element["object_name"] = name_buf;
@@ -202,28 +216,52 @@ void LLFloaterTopObjects::handleReply(LLMessageSystem *msg, void** data)
 		element["columns"][1]["column"] = "name";
 		element["columns"][1]["value"] = name_buf;
 		element["columns"][1]["font"] = "SANSSERIF";
+		if (name_buf == owner_buf) 
+		{
+			element["columns"][1]["color"] = LLColor4::red.getValue();
+		}
+		
 		element["columns"][2]["column"] = "owner";
 		element["columns"][2]["value"] = owner_buf;
 		element["columns"][2]["font"] = "SANSSERIF";
 		element["columns"][3]["column"] = "location";
 		element["columns"][3]["value"] = llformat("<%0.1f,%0.1f,%0.1f>", location_x, location_y, location_z);
 		element["columns"][3]["font"] = "SANSSERIF";
-		element["columns"][4]["column"] = "time";
-		element["columns"][4]["value"] = formatted_time((time_t)time_stamp);
+
+		element["columns"][4]["column"] = "X location";
+		element["columns"][4]["value"] = llformat("%0.1f", location_x);
 		element["columns"][4]["font"] = "SANSSERIF";
+
+		element["columns"][5]["column"] = "Y location";
+		element["columns"][5]["value"] = llformat("%0.1f", location_y);
+			element["columns"][5]["font"] = "SANSSERIF";
+
+		element["columns"][6]["column"] = "Z location";
+		element["columns"][6]["value"] = llformat("%0.1f", location_z);
+			element["columns"][6]["font"] = "SANSSERIF";
+
+		element["columns"][7]["column"] = "time";
+		element["columns"][7]["value"] = formatted_time((time_t)time_stamp);
+		element["columns"][7]["font"] = "SANSSERIF";
 
 		if (mCurrentMode == STAT_REPORT_TOP_SCRIPTS
 			&& have_extended_data)
 		{
-			element["columns"][5]["column"] = "mono_time";
-			element["columns"][5]["value"] = llformat("%0.3f", mono_score);
-			element["columns"][5]["font"] = "SANSSERIF";
+			element["columns"][8]["column"] = "mono_time";
+			element["columns"][8]["value"] = llformat("%0.3f", mono_score);
+			element["columns"][8]["font"] = "SANSSERIF";
 
-			element["columns"][6]["column"] = "URLs";
-			element["columns"][6]["value"] = llformat("%d", public_urls);
-			element["columns"][6]["font"] = "SANSSERIF";
+			element["columns"][9]["column"] = "URLs";
+			element["columns"][9]["value"] = llformat("%d", public_urls);
+			element["columns"][9]["font"] = "SANSSERIF";
 		}
 		
+		//for storing ids etc
+		element["columns"][10]["column"] = "hiddentaskid";
+		element["columns"][10]["value"] = task_id;
+		element["columns"][11]["column"] = "hiddenscore";
+		element["columns"][11]["value"] = score;
+
 		list->addElement(element);
 		
 		mObjectListData.append(element);
@@ -288,10 +326,39 @@ void LLFloaterTopObjects::updateSelectionInfo()
 }
 
 // static
+/*
 void LLFloaterTopObjects::onDoubleClickObjectsList(void* data)
 {
 	LLFloaterTopObjects* self = (LLFloaterTopObjects*)data;
 	self->showBeacon();
+}
+*/
+void LLFloaterTopObjects::onDoubleClickObjectsList(void *userdata)
+{
+	LLFloaterTopObjects* self = (LLFloaterTopObjects*)userdata;
+	self->showBeacon();
+	self->lookAtAvatar();
+}
+
+void LLFloaterTopObjects::lookAtAvatar()
+{
+	LLScrollListCtrl* list = getChild<LLScrollListCtrl>("objects_list");
+	if (!list) return;
+	LLScrollListItem* first_selected = list->getFirstSelected();
+	if (!first_selected) return;
+	LLUUID taskid = first_selected->getColumn(10)->getValue();
+
+    LLViewerObject* voavatar = gObjectList.findObject(taskid);
+    if(voavatar && voavatar->isAvatar())
+    {
+        gAgent.setFocusOnAvatar(FALSE, FALSE);
+        gAgent.changeCameraToThirdPerson();
+        gAgent.setFocusGlobal(voavatar->getPositionGlobal(),taskid);
+        gAgent.setCameraPosAndFocusGlobal(voavatar->getPositionGlobal() 
+                + LLVector3d(3.5,1.35,0.75) * voavatar->getRotation(), 
+                                                voavatar->getPositionGlobal(), 
+                                                taskid );
+    }
 }
 
 // static
@@ -380,6 +447,130 @@ void LLFloaterTopObjects::onReturnSelected(void* data)
 {
 	sInstance->doToObjects(ACTION_RETURN, false);
 }
+
+void LLFloaterTopObjects::onLagWarningBtn(void* data)
+{
+	LLFloaterTopObjects* self = (LLFloaterTopObjects*)data;
+
+	self->onLagWarning(data);
+}
+
+void LLFloaterTopObjects::onLagWarning(void* data)
+{
+	LLScrollListCtrl* list = getChild<LLScrollListCtrl>("objects_list");
+		if (!list) return;
+	LLScrollListItem* first_selected = list->getFirstSelected();
+	if (!first_selected) return;
+	LLUUID taskid = first_selected->getColumn(10)->getValue();
+	
+//	LLUUID taskid = LLUUID(first_selected->getColumn(7)->getValue());
+	std::string name = first_selected->getColumn(1)->getValue().asString();
+	std::string score = first_selected->getColumn(11)->getValue().asString();
+
+	std::istringstream stm;
+	stm.str(score);
+	F32 f_score;
+	stm >> f_score;
+	F32 percentage = 100.f * (f_score / 22);
+
+	//llinfos << taskid << " --- " << name << " -- " << score << " -- " << f_score << llendl;
+
+	std::string message = llformat(
+		"Hello %s, you are receiving this automated message because you are wearing heavily scripted attachments/HUDs, "
+		"causing excessive script lag (%5.2f ms, that's ca. %5.2f%% of the region's resources.)\n\n"
+		"Please remove resizer scripts or attachments to reduce your script time, thank you.",
+		name.c_str(),
+		(F32)f_score,
+		(F32)percentage
+		);
+
+	std::string my_name;
+	gAgent.buildFullname(my_name);
+
+	cmdline_printchat(llformat("Script time warning sent to %s: (%5.2f ms)",
+		name.c_str(),(F32)f_score));
+
+	send_improved_im(LLUUID(taskid),
+				 my_name,
+				 message,
+				 IM_ONLINE,
+				 IM_NOTHING_SPECIAL,
+				 LLUUID::null,
+				 NO_TIMESTAMP,
+				 (U8*)EMPTY_BINARY_BUCKET,
+				 EMPTY_BINARY_BUCKET_SIZE);
+}
+
+void LLFloaterTopObjects::onProfileBtn(void* data)
+{
+	LLFloaterTopObjects* self = (LLFloaterTopObjects*)data;
+	self->onProfile(data);
+}
+
+void LLFloaterTopObjects::onProfile(void* data)
+{
+	LLScrollListCtrl* list = getChild<LLScrollListCtrl>("objects_list");
+		if (!list) return;
+	LLScrollListItem* first_selected = list->getFirstSelected();
+	if (!first_selected) return;
+	LLUUID taskid = first_selected->getColumn(10)->getValue();
+	LLFloaterAvatarInfo::showFromDirectory(taskid);
+}
+
+void LLFloaterTopObjects::onKickBtn(void* data)
+{
+	LLFloaterTopObjects* self = (LLFloaterTopObjects*)data;
+	self->onKick(data);
+}
+
+void LLFloaterTopObjects::onKick(void* data)
+{
+	LLScrollListCtrl* list = getChild<LLScrollListCtrl>("objects_list");
+		if (!list) return;
+	LLScrollListItem* first_selected = list->getFirstSelected();
+	if (!first_selected) return;
+	LLUUID taskid = first_selected->getColumn(10)->getValue();
+
+	LLMessageSystem* msg = gMessageSystem;
+	msg->newMessage("EstateOwnerMessage");
+	msg->nextBlockFast(_PREHASH_AgentData);
+	msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID());
+	msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
+	msg->addUUIDFast(_PREHASH_TransactionID, LLUUID::null); //not used
+	msg->nextBlock("MethodData");
+	msg->addString("Method", "kickestate");
+	msg->addUUID("Invoice", LLUUID::null);
+	msg->nextBlock("ParamList");
+	msg->addString("Parameter", taskid.asString().c_str());
+	msg->sendReliable(gAgent.getRegionHost());
+}
+
+void LLFloaterTopObjects::onTPBtn(void* data)
+{
+	LLFloaterTopObjects* self = (LLFloaterTopObjects*)data;
+	self->onTP(data);
+}
+
+void LLFloaterTopObjects::onTP(void* data)
+{
+	LLScrollListCtrl* list = getChild<LLScrollListCtrl>("objects_list");
+		if (!list) return;
+	LLScrollListItem* first_selected = list->getFirstSelected();
+	if (!first_selected) return;
+
+	std::string name = first_selected->getColumn(1)->getValue().asString();
+	std::string pos_string =  first_selected->getColumn(3)->getValue().asString();
+
+	F32 x, y, z;
+	S32 matched = sscanf(pos_string.c_str(), "<%g,%g,%g>", &x, &y, &z);
+	if (matched != 3) return;
+
+	LLVector3 pos_agent(x, y, z);
+	LLVector3d pos_global = gAgent.getPosGlobalFromAgent(pos_agent);
+
+	gAgent.teleportViaLocation( pos_global );
+}
+
 
 
 //static

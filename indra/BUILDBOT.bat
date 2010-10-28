@@ -19,10 +19,12 @@ rm CMakeCache*
 @rem Set your build type here.  Release = no debugging symbols.  RelWithDebInfo = Optimized with debugging symbols. Debug = FAT AND SLOW, MUCH LIKE YOUR MOTHER
 set BUILDTYPE=RelWithDebInfo
 
-@rem TODO: Turn this into a horrific python monstrosity.
-@rem	Gather hooks in order to generate documentation.
-@rem	Will fail without cygwin, so find a better way.
+@rem Gather hooks in order to generate documentation.
+@rem 	(Used to be this:)
 @rem find newview/ -name "*.cpp" -print | C:\lua5.1\lua ../scripts/GetHooks.lua
+cd newview
+python ../../scripts/GetHooks.py
+cd ..
 
 @rem Prep for nmake horseassery.
 cmake -G "%GEN%" -DUNATTENDED:BOOL=OFF -DSTANDALONE:BOOL=OFF -DWORD_SIZE:STRING=32 -DOPENSIM_RULES:BOOL=OFF -DROOT_PROJECT_NAME:STRING=Luna .

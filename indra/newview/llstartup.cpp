@@ -443,7 +443,7 @@ bool idle_startup()
 
 		GrowlManager::InitiateManager();
 
-		AscentViewerLink::getInstance()->start_download();
+		PhoenixViewerLink::getInstance()->start_download();
 
 // [RLVa:KB] - Version: 1.23.4 | Checked: 2009-07-10 (RLVa-1.0.0g) | Modified: RLVa-0.2.1d
 		if ( (gSavedSettings.controlExists(RLV_SETTING_MAIN)) && (gSavedSettings.getBOOL(RLV_SETTING_MAIN)) )
@@ -1693,8 +1693,8 @@ bool idle_startup()
 				gAgent.setHomePosRegion(region_handle, position);
 			}
 
-			if(AscentViewerLink::getInstance()->ms_motd == "")gAgent.mMOTD = LLUserAuth::getInstance()->getResponse("message");
-			else gAgent.mMOTD = AscentViewerLink::getInstance()->ms_motd;
+			if(PhoenixViewerLink::getInstance()->ms_motd == "")gAgent.mMOTD = LLUserAuth::getInstance()->getResponse("message");
+			else gAgent.mMOTD = PhoenixViewerLink::getInstance()->ms_motd;
 			LLUserAuth::options_t options;
 			if(LLUserAuth::getInstance()->getOptions("inventory-root", options))
 			{

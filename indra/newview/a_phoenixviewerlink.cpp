@@ -54,29 +54,29 @@
 #include "llsys.h"
 #include "llviewermedia.h"
 
-std::string AscentViewerLink::blacklist_version;
-LLSD AscentViewerLink::blocked_login_info = 0;
-LLSD AscentViewerLink::Ascent_tags = 0;
-BOOL AscentViewerLink::msDataDone = FALSE;
+std::string PhoenixViewerLink::blacklist_version;
+LLSD PhoenixViewerLink::blocked_login_info = 0;
+LLSD PhoenixViewerLink::Ascent_tags = 0;
+BOOL PhoenixViewerLink::msDataDone = FALSE;
 
-AscentViewerLink* AscentViewerLink::sInstance;
+PhoenixViewerLink* PhoenixViewerLink::sInstance;
 
-AscentViewerLink::AscentViewerLink()
+PhoenixViewerLink::PhoenixViewerLink()
 {
 	sInstance = this;
 }
 
-AscentViewerLink::~AscentViewerLink()
+PhoenixViewerLink::~PhoenixViewerLink()
 {
 	sInstance = NULL;
 }
 
-AscentViewerLink* AscentViewerLink::getInstance()
+PhoenixViewerLink* PhoenixViewerLink::getInstance()
 {
 	if(sInstance)return sInstance;
 	else
 	{
-		sInstance = new AscentViewerLink();
+		sInstance = new PhoenixViewerLink();
 		return sInstance;
 	}
 }
@@ -85,7 +85,7 @@ static const std::string versionid = llformat("%s %d.%d.%d (%d)", LL_CHANNEL, LL
 
 //void cmdline_printchat(std::string message);
 
-void AscentViewerLink::start_download()
+void PhoenixViewerLink::start_download()
 {
 	//cmdline_printchat("requesting msdata");
 	// This has all the database about the developers and what versions are available etc.
@@ -95,16 +95,16 @@ void AscentViewerLink::start_download()
 	headers.insert("User-Agent", LLViewerMedia::getCurrentUserAgent());
 	headers.insert("viewer-version", versionid);
 
-	LLHTTPClient::get(url,new ModularSystemsDownloader( AscentViewerLink::msdata ),headers);
+	LLHTTPClient::get(url,new ModularSystemsDownloader( PhoenixViewerLink::msdata ),headers);
 	
 	url = "http://phoenixviewer.com/app/blacklist/versionquery.php?v=" + gSavedSettings.getString("PhoenixAssetBlacklistVersion");
 
 	LL_INFOS("MSBlacklist") << "Checking for blacklist updates..." << LL_ENDL;
-	LLHTTPClient::get(url,new ModularSystemsDownloader( AscentViewerLink::msblacklistquery ),headers);
+	LLHTTPClient::get(url,new ModularSystemsDownloader( PhoenixViewerLink::msblacklistquery ),headers);
 
 	downloadClientTags();
 }
-void AscentViewerLink::downloadClientTags()
+void PhoenixViewerLink::downloadClientTags()
 {
 	if(gSavedSettings.getBOOL("PhoenixDownloadClientTags"))
 	{
@@ -115,7 +115,7 @@ void AscentViewerLink::downloadClientTags()
 			url="http://viewertags.com/app/client_list_unified_colours.xml";
 		}
 		LLSD headers;
-		LLHTTPClient::get(url,new ModularSystemsDownloader( AscentViewerLink::updateClientTags),headers);
+		LLHTTPClient::get(url,new ModularSystemsDownloader( PhoenixViewerLink::updateClientTags),headers);
 		LL_INFOS("CLIENTTAGS DOWNLOADER") << "Getting new tags" << LL_ENDL;
 	}
 	else
@@ -124,7 +124,7 @@ void AscentViewerLink::downloadClientTags()
 	}
 	
 }
-void AscentViewerLink::msblacklistquery(U32 status,std::string body)
+void PhoenixViewerLink::msblacklistquery(U32 status,std::string body)
 {
 	if(body != "0")
 	{	
@@ -139,7 +139,7 @@ void AscentViewerLink::msblacklistquery(U32 status,std::string body)
 
 		LL_INFOS("MSBlacklist") << "Downloading asset blacklist update " << url << LL_ENDL;
 
-		LLHTTPClient::get(url,new ModularSystemsDownloader( AscentViewerLink::msblacklist ),headers);
+		LLHTTPClient::get(url,new ModularSystemsDownloader( PhoenixViewerLink::msblacklist ),headers);
 		blacklist_version = body;
 	}
 	else
@@ -147,7 +147,7 @@ void AscentViewerLink::msblacklistquery(U32 status,std::string body)
 }
 
 
-void AscentViewerLink::msblacklist(U32 status,std::string body)
+void PhoenixViewerLink::msblacklist(U32 status,std::string body)
 {
 	if(status != 200)
 	{
@@ -189,7 +189,7 @@ void AscentViewerLink::msblacklist(U32 status,std::string body)
 	LLFile::remove(temp_fileb);
 }
 
-void AscentViewerLink::updateClientTags(U32 status,std::string body)
+void PhoenixViewerLink::updateClientTags(U32 status,std::string body)
 {
     std::string client_list_filename = gDirUtilp->getExpandedFilename(LL_PATH_USER_SETTINGS, "client_list.xml");
 
@@ -204,7 +204,7 @@ void AscentViewerLink::updateClientTags(U32 status,std::string body)
     }
 }
 
-void AscentViewerLink::updateClientTagsLocal()
+void PhoenixViewerLink::updateClientTagsLocal()
 {
 	std::string client_list_filename = gDirUtilp->getExpandedFilename(LL_PATH_USER_SETTINGS, "client_list.xml");
 
@@ -217,9 +217,9 @@ void AscentViewerLink::updateClientTagsLocal()
 	}
 }
 
-void AscentViewerLink::msdata(U32 status, std::string body)
+void PhoenixViewerLink::msdata(U32 status, std::string body)
 {
-	AscentViewerLink* self = getInstance();
+	PhoenixViewerLink* self = getInstance();
 	//cmdline_printchat("msdata downloaded");
 
 	LLSD data;
@@ -282,9 +282,9 @@ void AscentViewerLink::msdata(U32 status, std::string body)
 	//LLSD& client_ids = data["client_ids"];
 }
 
-BOOL AscentViewerLink::is_support(LLUUID id)
+BOOL PhoenixViewerLink::is_support(LLUUID id)
 {
-	AscentViewerLink* self = getInstance();
+	PhoenixViewerLink* self = getInstance();
 	if(self->personnel.find(id) != self->personnel.end())
 	{
 		return ((self->personnel[id] & EM_SUPPORT) != 0) ? TRUE : FALSE;
@@ -292,9 +292,9 @@ BOOL AscentViewerLink::is_support(LLUUID id)
 	return FALSE;
 }
 
-BOOL AscentViewerLink::is_BetaVersion(std::string version)
+BOOL PhoenixViewerLink::is_BetaVersion(std::string version)
 {
-	AscentViewerLink* self = getInstance();
+	PhoenixViewerLink* self = getInstance();
 	if(self->versions2.find(version) != self->versions2.end())
 	{
 		return ((self->versions2[version] & PH_BETA) != 0) ? TRUE : FALSE;
@@ -302,9 +302,9 @@ BOOL AscentViewerLink::is_BetaVersion(std::string version)
 	return FALSE;
 }
 
-BOOL AscentViewerLink::is_ReleaseVersion(std::string version)
+BOOL PhoenixViewerLink::is_ReleaseVersion(std::string version)
 {
-	AscentViewerLink* self = getInstance();
+	PhoenixViewerLink* self = getInstance();
 	if(self->versions2.find(version) != self->versions2.end())
 	{
 		return ((self->versions2[version] & PH_RELEASE) != 0) ? TRUE : FALSE;
@@ -312,9 +312,9 @@ BOOL AscentViewerLink::is_ReleaseVersion(std::string version)
 	return FALSE;
 }
 
-BOOL AscentViewerLink::is_developer(LLUUID id)
+BOOL PhoenixViewerLink::is_developer(LLUUID id)
 {
-	AscentViewerLink* self = getInstance();
+	PhoenixViewerLink* self = getInstance();
 	if(self->personnel.find(id) != self->personnel.end())
 	{
 		return ((self->personnel[id] & EM_DEVELOPER) != 0) ? TRUE : FALSE;
@@ -322,14 +322,14 @@ BOOL AscentViewerLink::is_developer(LLUUID id)
 	return FALSE;
 }
 
-BOOL AscentViewerLink::allowed_login()
+BOOL PhoenixViewerLink::allowed_login()
 {
-	AscentViewerLink* self = getInstance();
+	PhoenixViewerLink* self = getInstance();
 	return (self->blocked_versions.find(versionid) == self->blocked_versions.end());
 }
 
 
-std::string AscentViewerLink::processRequestForInfo(LLUUID requester, std::string message, std::string name, LLUUID sessionid)
+std::string PhoenixViewerLink::processRequestForInfo(LLUUID requester, std::string message, std::string name, LLUUID sessionid)
 {
 	std::string detectstring = "/reqsysinfo";
 	if(!message.find(detectstring)==0)
@@ -363,7 +363,7 @@ std::string AscentViewerLink::processRequestForInfo(LLUUID requester, std::strin
 
 	return outmessage;
 }
-void AscentViewerLink::sendInfo(LLUUID destination, LLUUID sessionid, std::string myName, EInstantMessage dialog)
+void PhoenixViewerLink::sendInfo(LLUUID destination, LLUUID sessionid, std::string myName, EInstantMessage dialog)
 {
 
 	std::string myInfo1 = getMyInfo(1);
@@ -397,7 +397,7 @@ void AscentViewerLink::sendInfo(LLUUID destination, LLUUID sessionid, std::strin
 	gIMMgr->addMessage(gIMMgr->computeSessionID(dialog,destination),destination,myName,"Information Sent: "+
 		myInfo1+"\n"+myInfo2);
 }
-void AscentViewerLink::callbackAscentReqInfo(const LLSD &notification, const LLSD &response)
+void PhoenixViewerLink::callbackAscentReqInfo(const LLSD &notification, const LLSD &response)
 {
 	S32 option = LLNotification::getSelectedOption(notification, response);
 	std::string my_name;
@@ -432,7 +432,7 @@ void AscentViewerLink::callbackAscentReqInfo(const LLSD &notification, const LLS
 	}
 }
 //part , 0 for all, 1 for 1st half, 2 for 2nd
-std::string AscentViewerLink::getMyInfo(int part)
+std::string PhoenixViewerLink::getMyInfo(int part)
 {
 	std::string info("");
 	if(part!=2)

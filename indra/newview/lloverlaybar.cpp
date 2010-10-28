@@ -38,7 +38,6 @@
 #include "lloverlaybar.h"
 
 #include "llaudioengine.h"
-#include "importtracker.h"
 #include "llrender.h"
 #include "llagent.h"
 #include "llbutton.h"
@@ -59,7 +58,6 @@
 #include "llviewerparcelmedia.h"
 #include "llviewerparcelmgr.h"
 #include "lluictrlfactory.h"
-#include "llviewercontrol.h"
 #include "llviewerwindow.h"
 #include "llvoiceclient.h"
 #include "llvoavatar.h"
@@ -68,8 +66,9 @@
 #include "llselectmgr.h"
 #include "wlfPanel_AdvSettings.h"
 
-
-
+// [RLVa:KB]
+#include "rlvhandler.h"
+// [/RLVa:KB]
 
 #include "llcontrol.h"
 
@@ -80,10 +79,8 @@
 LLOverlayBar *gOverlayBar = NULL;
 
 extern S32 MENU_BAR_HEIGHT;
-//extern ImportTracker gImportTracker;
 
 BOOL LLOverlayBar::sAdvSettingsPopup;
-BOOL LLOverlayBar::sChatVisible;
 
 //
 // Functions
@@ -122,12 +119,11 @@ LLOverlayBar::LLOverlayBar()
 	:	LLPanel(),
 		mMediaRemote(NULL),
 		mVoiceRemote(NULL),
-		mMusicState(STOPPED),
-		mOriginalIMLabel("")
+		mMusicState(STOPPED)
 {
 	setMouseOpaque(FALSE);
 	setIsChrome(TRUE);
-	
+
 	mBuilt = false;
 
 	LLCallbackMap::map_t factory_map;
@@ -139,23 +135,9 @@ LLOverlayBar::LLOverlayBar()
 	LLUICtrlFactory::getInstance()->buildPanel(this, "panel_overlaybar.xml", &factory_map);
 }
 
-bool updateAdvSettingsPopup(const LLSD &data)
-{
-	LLOverlayBar::sAdvSettingsPopup = gSavedSettings.getBOOL("wlfAdvSettingsPopup");
-	gOverlayBar->childSetVisible("AdvSettings_container", !LLOverlayBar::sAdvSettingsPopup);
-	gOverlayBar->childSetVisible("AdvSettings_container_exp", LLOverlayBar::sAdvSettingsPopup);
-	return true;
-}
-
-bool updateChatVisible(const LLSD &data)
-{
-	LLOverlayBar::sChatVisible = data.asBoolean();
-	return true;
-}
-
 BOOL LLOverlayBar::postBuild()
 {
-	childSetAction("New IM",onClickIMReceived,this);
+	childSetAction("IM Received",onClickIMReceived,this);
 	childSetAction("Set Not Busy",onClickSetNotBusy,this);
 	childSetAction("Mouselook",onClickMouselook,this);
 	childSetAction("Stand Up",onClickStandUp,this);
@@ -167,19 +149,28 @@ BOOL LLOverlayBar::postBuild()
 	setFocusRoot(TRUE);
 	mBuilt = true;
 
-	mOriginalIMLabel = getChild<LLButton>("New IM")->getLabelSelected();
+	mOriginalIMLabel = getChild<LLButton>("IM Received")->getLabelSelected();
 
 	layoutButtons();
 
 	sAdvSettingsPopup = gSavedSettings.getBOOL("wlfAdvSettingsPopup");
-	sChatVisible = gSavedSettings.getBOOL("ChatVisible");
+	
+	gSavedSettings.getControl("wlfAdvSettingsPopup")->getSignal()->connect(boost::bind(&updateAdvSettingsPopup,_1));
+	
+	
+	
 
-	gSavedSettings.getControl("wlfAdvSettingsPopup")->getSignal()->connect(&updateAdvSettingsPopup);
-	gSavedSettings.getControl("ChatVisible")->getSignal()->connect(&updateChatVisible);
 	childSetVisible("AdvSettings_container", !sAdvSettingsPopup);
 	childSetVisible("AdvSettings_container_exp", sAdvSettingsPopup);
 
 	return TRUE;
+}
+
+void LLOverlayBar::updateAdvSettingsPopup(const LLSD &data)
+{
+	sAdvSettingsPopup = data.asBoolean();
+	gOverlayBar->childSetVisible("AdvSettings_container", !sAdvSettingsPopup);
+	gOverlayBar->childSetVisible("AdvSettings_container_exp", sAdvSettingsPopup);
 }
 
 LLOverlayBar::~LLOverlayBar()
@@ -242,7 +233,7 @@ void LLOverlayBar::refresh()
 
 	BOOL im_received = gIMMgr->getIMReceived();
 	int unread_count = gIMMgr->getIMUnreadCount();
-	LLButton* button = getChild<LLButton>("New IM");
+	LLButton* button = getChild<LLButton>("IM Received");
 
 	if ((button && button->getVisible() != im_received) ||
 			(button && button->getVisible()))
@@ -302,7 +293,10 @@ void LLOverlayBar::refresh()
 	BOOL sitting = FALSE;
 	if (gAgent.getAvatarObject())
 	{
-		sitting = gAgent.getAvatarObject()->mIsSitting;
+//		sitting = gAgent.getAvatarObject()->mIsSitting;
+// [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g)
+		sitting = gAgent.getAvatarObject()->mIsSitting && !gRlvHandler.hasBehaviour(RLV_BHVR_UNSIT);
+// [/RLVa:KB]
 	}
 	button = getChild<LLButton>("Stand Up");
 
@@ -320,7 +314,10 @@ void LLOverlayBar::refresh()
 		(gAgent.getTeleportState() == LLAgent::TELEPORT_MOVING) ||
 		(gAgent.getTeleportState() == LLAgent::TELEPORT_START))
 	{
-		teleporting = TRUE;
+		//teleporting = TRUE;
+// [RLVa:KB] - Checked: 2009-10-15 (RLVa-1.0.5e)
+		teleporting = (!rlv_handler_t::isEnabled()) || (gRlvHandler.getCanCancelTp());
+// [/RLVa:KB]
 	}
 	else
 	{
@@ -341,11 +338,11 @@ void LLOverlayBar::refresh()
 	moveChildToBackOfTabGroup(mMediaRemote);
 	moveChildToBackOfTabGroup(mVoiceRemote);
 
-	// turn off the whole bar in mouselook
-	static BOOL last_mouselook = FALSE;
 
+	static BOOL last_mouselook = FALSE;
 	BOOL in_mouselook = gAgent.cameraMouselook();
 
+	// turn off the whole bar in mouselook
 	if(last_mouselook != in_mouselook)
 	{
 		last_mouselook = in_mouselook;
@@ -364,14 +361,16 @@ void LLOverlayBar::refresh()
 			childSetVisible("voice_remote_container", LLVoiceClient::voiceEnabled());
 			childSetVisible("AdvSettings_container", !sAdvSettingsPopup);//!gSavedSettings.getBOOL("wlfAdvSettingsPopup")); 
 			childSetVisible("AdvSettings_container_exp", sAdvSettingsPopup);//gSavedSettings.getBOOL("wlfAdvSettingsPopup")); 
+			
 			childSetVisible("state_buttons", TRUE);
 		}
 	}
-	if(!in_mouselook)
-		childSetVisible("voice_remote_container", LLVoiceClient::voiceEnabled());
+	if(!in_mouselook)childSetVisible("voice_remote_container", LLVoiceClient::voiceEnabled());
 
+	static BOOL *sChatVisible = rebind_llcontrol<BOOL>("ChatVisible", &gSavedSettings, true);
 	// always let user toggle into and out of chatbar
-	childSetVisible("chat_bar", gSavedSettings.getBOOL("ChatVisible"));
+	childSetVisible("chat_bar", *sChatVisible);//gSavedSettings.getBOOL("ChatVisible"));
+
 
 	if (buttons_changed)
 	{
@@ -418,6 +417,13 @@ void LLOverlayBar::onClickMouselook(void*)
 //static
 void LLOverlayBar::onClickStandUp(void*)
 {
+// [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g)
+	if ( (gRlvHandler.hasBehaviour(RLV_BHVR_UNSIT)) && (gAgent.getAvatarObject()) && (gAgent.getAvatarObject()->mIsSitting) )
+	{
+		return;
+	}
+// [/RLVa:KB]
+
 	LLSelectMgr::getInstance()->deselectAllForStandingUp();
 	gAgent.setControlFlags(AGENT_CONTROL_STAND_UP);
 }
@@ -463,10 +469,12 @@ void LLOverlayBar::toggleMediaPlay(void*)
 	
 	if (LLViewerParcelMedia::getStatus() == LLViewerMediaImpl::MEDIA_PAUSED)
 	{
+		LLViewerParcelMedia::sManuallyAllowedScriptedMedia=TRUE;
 		LLViewerParcelMedia::start();
 	}
 	else if(LLViewerParcelMedia::getStatus() == LLViewerMediaImpl::MEDIA_PLAYING)
 	{
+		LLViewerParcelMedia::sManuallyAllowedScriptedMedia=FALSE;
 		LLViewerParcelMedia::pause();
 	}
 	else
@@ -474,6 +482,7 @@ void LLOverlayBar::toggleMediaPlay(void*)
 		LLParcel* parcel = LLViewerParcelMgr::getInstance()->getAgentParcel();
 		if (parcel)
 		{
+			LLViewerParcelMedia::sManuallyAllowedScriptedMedia=TRUE;
 			LLViewerParcelMedia::play(parcel);
 		}
 	}

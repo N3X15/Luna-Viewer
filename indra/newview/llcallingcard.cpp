@@ -340,7 +340,7 @@ const LLRelationship* LLAvatarTracker::getBuddyInfo(const LLUUID& id) const
 	return get_ptr_in_map(mBuddyInfo, id);
 }
 
-//Ascent:KC - from v2
+//Phoenix:KC - from v2
 bool LLAvatarTracker::isBuddy(const LLUUID& id) const
 {
 	LLRelationship* info = get_ptr_in_map(mBuddyInfo, id);

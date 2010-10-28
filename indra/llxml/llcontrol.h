@@ -122,7 +122,7 @@ public:
 	bool isSaveValueDefault();
 	bool isPersisted() { return mPersist; }
 	bool isHiddenFromSettingsEditor() { return mHideFromSettingsEditor; }
-	LLSD get()			const	{ return getValue(); }
+	LLSD get()			const;
 	LLSD getValue()		const	{ return mValues.back(); }
 	LLSD getDefault()	const	{ return mValues.front(); }
 	LLSD getSaveValue() const;
@@ -285,8 +285,10 @@ public:
 				llinfos << "pulling type from map for " << name << llendl;
 #endif
 				type = (RBTYPE*)(references[controlgroup][name]);
-				if(type == NULL)llerrs << "bad type stored" << llendl;
-			}else
+				if(type == NULL)
+					llerrs << "bad type stored" << llendl;
+			}
+			else
 			{
 #ifdef binder_debug
 				llinfos << "creating type in map for " << name << llendl;
@@ -307,8 +309,10 @@ public:
 #endif
 						signal->connect(boost::bind(&jc_rebind::rebind_callback<RBTYPE>, _1, type));
 						if(init)jc_rebind::rebind_callback<RBTYPE>(control->getValue(),type);
-					}else llerrs << "no signal!" << llendl;
-				}else llerrs << "no control for " << name << "!" << llendl;
+					}
+					else llerrs << "no signal!" << llendl;
+				}
+				else llerrs << "no control for " << name << "!" << llendl;
 			}
 		}
 		return type;

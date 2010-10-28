@@ -2048,7 +2048,7 @@ BOOL LLFloaterSnapshot::postBuild()
 	sInstance->getRootView()->addChild(previewp);
 	sInstance->getRootView()->addChild(gSnapshotFloaterView);
 
-	gSavedSettings.setBOOL("AscentTemporaryUpload",FALSE);
+	gSavedSettings.setBOOL("PhoenixTemporaryUpload",FALSE);
 	childSetValue("temp_check",FALSE);
 
 	Impl::sPreviewHandle = previewp->getHandle();

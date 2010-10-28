@@ -79,7 +79,6 @@ public:
 	static LLView* fromXML(LLXMLNodePtr node, LLView *parent, LLUICtrlFactory *factory);
 
 	virtual BOOL	handleMouseDown(S32 x, S32 y, MASK mask);
-
 	virtual BOOL	handleDragAndDrop(S32 x, S32 y, MASK mask,
 						BOOL drop, EDragAndDropType cargo_type, void *cargo_data,
 						EAcceptance *accept,
@@ -95,6 +94,7 @@ public:
 	virtual void	resetDirty();
 
 	void			setValid(BOOL valid);
+	void			setIsMasked(BOOL masked);
 
 	// LLUICtrl interface
 	virtual void	clear();
@@ -141,6 +141,7 @@ public:
 
 	void			onFloaterClose();
 	void			onFloaterCommit(ETexturePickOp op);
+	void			onFloaterCommit(ETexturePickOp op, LLUUID id); // tag: vaa phoenix local_asset_browser
 
 	// This call is returned when a drag is detected. Your callback
 	// should return TRUE if the drag is acceptable.
@@ -190,10 +191,8 @@ private:
 	LLViewBorder*			 mBorder;
 	BOOL					 mValid;
 	BOOL					 mDirty;
+	BOOL					 mIsMasked;
 	BOOL					 mShowLoadingPlaceholder;
-	// <edit>
-	BOOL					 mEnable;
-	// </edit>
 	std::string				 mLoadingPlaceholderString;
 };
 

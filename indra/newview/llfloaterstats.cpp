@@ -565,7 +565,7 @@ LLFloaterStats::LLFloaterStats(const LLSD& val)
 {
 	LLUICtrlFactory::getInstance()->buildFloater(this, "floater_statistics.xml", NULL, FALSE);
 
-	if(gSavedSettings.getBOOL("AscentStatsBarChrome"))
+	if(gSavedSettings.getBOOL("PhoenixStatsBarChrome"))
 	{
 		setIsChrome(TRUE);
 	}

@@ -1,11 +1,11 @@
-/** 
+/**
  * @file llfloatergroups.cpp
  * @brief LLPanelGroups class implementation
  *
  * $LicenseInfo:firstyear=2002&license=viewergpl$
- * 
+ *
  * Copyright (c) 2002-2009, Linden Research, Inc.
- * 
+ *
  * Second Life Viewer Source Code
  * The source code in this file ("Source Code") is provided by Linden Lab
  * to you under the terms of the GNU General Public License, version 2.0
@@ -13,17 +13,17 @@
  * ("Other License"), formally executed by you and Linden Lab.  Terms of
  * the GPL can be found in doc/GPL-license.txt in this distribution, or
  * online at http://secondlifegrid.net/programs/open_source/licensing/gplv2
- * 
+ *
  * There are special exceptions to the terms and conditions of the GPL as
  * it is applied to this Source Code. View the full text of the exception
  * in the file doc/FLOSS-exception.txt in this software distribution, or
  * online at
  * http://secondlifegrid.net/programs/open_source/licensing/flossexception
- * 
+ *
  * By copying, modifying or distributing this software, you acknowledge
  * that you have read and understood your obligations described above,
  * and agree to abide by those obligations.
- * 
+ *
  * ALL LINDEN LAB SOURCE CODE IS PROVIDED "AS IS." LINDEN LAB MAKES NO
  * WARRANTIES, EXPRESS, IMPLIED OR OTHERWISE, REGARDING ITS ACCURACY,
  * COMPLETENESS OR PERFORMANCE.
@@ -33,17 +33,19 @@
 /*
  * Shown from Edit -> Groups...
  * Shows the agent's groups and allows the edit window to be invoked.
- * Also overloaded to allow picking of a single group for assigning 
+ * Also overloaded to allow picking of a single group for assigning
  * objects and land to groups.
  */
 
 #include "llviewerprecompiledheaders.h"
 
 #include "llfloatergroups.h"
+#include "llfloatergroupinvite.h"
 
 #include "message.h"
 #include "roles_constants.h"
 
+#include "hbfloatergrouptitles.h"
 #include "llagent.h"
 #include "llbutton.h"
 #include "llfloatergroupinfo.h"
@@ -54,14 +56,18 @@
 #include "llscrolllistctrl.h"
 #include "lltextbox.h"
 #include "lluictrlfactory.h"
+#include "llviewercontrol.h"
 #include "llviewerwindow.h"
 #include "llimview.h"
+
+#include "hippolimits.h"
+
 
 // static
 std::map<const LLUUID, LLFloaterGroupPicker*> LLFloaterGroupPicker::sInstances;
 
 // helper functions
-void init_group_list(LLScrollListCtrl* ctrl, const LLUUID& highlight_id, U64 powers_mask = GP_ALL_POWERS);
+void init_group_list(LLScrollListCtrl* ctrl, const LLUUID& highlight_id, const std::string& none_text, U64 powers_mask = GP_ALL_POWERS);
 
 ///----------------------------------------------------------------------------
 /// Class LLFloaterGroupPicker
@@ -86,7 +92,7 @@ LLFloaterGroupPicker* LLFloaterGroupPicker::createInstance(const LLSD &seed)
 	return pickerp;
 }
 
-LLFloaterGroupPicker::LLFloaterGroupPicker(const LLSD& seed) : 
+LLFloaterGroupPicker::LLFloaterGroupPicker(const LLSD& seed) :
 	mSelectCallback(NULL),
 	mCallbackUserdata(NULL),
 	mPowersMask(GP_ALL_POWERS)
@@ -100,7 +106,7 @@ LLFloaterGroupPicker::~LLFloaterGroupPicker()
 	sInstances.erase(mID);
 }
 
-void LLFloaterGroupPicker::setSelectCallback(void (*callback)(LLUUID, void*), 
+void LLFloaterGroupPicker::setSelectCallback(void (*callback)(LLUUID, void*),
 									void* userdata)
 {
 	mSelectCallback = callback;
@@ -116,7 +122,8 @@ void LLFloaterGroupPicker::setPowersMask(U64 powers_mask)
 
 BOOL LLFloaterGroupPicker::postBuild()
 {
-	init_group_list(getChild<LLScrollListCtrl>("group list"), gAgent.getGroupID(), mPowersMask);
+	const std::string none_text = getString("none");
+	init_group_list(getChild<LLScrollListCtrl>("group list"), gAgent.getGroupID(), none_text, mPowersMask);
 
 	childSetAction("OK", onBtnOK, this);
 
@@ -198,9 +205,10 @@ void LLPanelGroups::reset()
 		group_list->operateOnAll(LLCtrlListInterface::OP_DELETE);
 	}
 	childSetTextArg("groupcount", "[COUNT]", llformat("%d",gAgent.mGroups.count()));
-	childSetTextArg("groupcount", "[MAX]", llformat("%d",MAX_AGENT_GROUPS));
+	childSetTextArg("groupcount", "[MAX]", llformat("%d", gHippoLimits->getMaxAgentGroups()));
 
-	init_group_list(getChild<LLScrollListCtrl>("group list"), gAgent.getGroupID());
+	const std::string none_text = getString("none");
+	init_group_list(getChild<LLScrollListCtrl>("group list"), gAgent.getGroupID(), none_text);
 	enableButtons();
 }
 
@@ -209,9 +217,10 @@ BOOL LLPanelGroups::postBuild()
 	childSetCommitCallback("group list", onGroupList, this);
 
 	childSetTextArg("groupcount", "[COUNT]", llformat("%d",gAgent.mGroups.count()));
-	childSetTextArg("groupcount", "[MAX]", llformat("%d",MAX_AGENT_GROUPS));
+	childSetTextArg("groupcount", "[MAX]", llformat("%d", gHippoLimits->getMaxAgentGroups()));
 
-	init_group_list(getChild<LLScrollListCtrl>("group list"), gAgent.getGroupID());
+	const std::string none_text = getString("none");
+	init_group_list(getChild<LLScrollListCtrl>("group list"), gAgent.getGroupID(), none_text);
 
 	childSetAction("Activate", onBtnActivate, this);
 
@@ -224,6 +233,10 @@ BOOL LLPanelGroups::postBuild()
 	childSetAction("Create", onBtnCreate, this);
 
 	childSetAction("Search...", onBtnSearch, this);
+
+	childSetAction("Invite...", onBtnInvite, this);
+
+	childSetAction("Titles...", onBtnTitles, this);
 
 	setDefaultBtn("IM");
 
@@ -264,7 +277,7 @@ void LLPanelGroups::enableButtons()
 		childDisable("IM");
 		childDisable("Leave");
 	}
-	if(gAgent.mGroups.count() < MAX_AGENT_GROUPS)
+	if(gAgent.mGroups.count() < gHippoLimits->getMaxAgentGroups())
 	{
 		childEnable("Create");
 	}
@@ -272,6 +285,15 @@ void LLPanelGroups::enableButtons()
 	{
 		childDisable("Create");
 	}
+	if (group_id.notNull() && gAgent.hasPowerInGroup(group_id, GP_MEMBER_INVITE))
+	{
+		LLPanelGroups::childEnable("Invite...");
+	}
+	else
+	{
+		LLPanelGroups::childDisable("Invite...");
+	}
+
 }
 
 
@@ -279,6 +301,12 @@ void LLPanelGroups::onBtnCreate(void* userdata)
 {
 	LLPanelGroups* self = (LLPanelGroups*)userdata;
 	if(self) self->create();
+}
+
+void LLPanelGroups::onBtnInvite(void* userdata)
+{
+	LLPanelGroups* self = (LLPanelGroups*)userdata;
+	if(self) self->invite();
 }
 
 void LLPanelGroups::onBtnActivate(void* userdata)
@@ -309,6 +337,12 @@ void LLPanelGroups::onBtnSearch(void* userdata)
 {
 	LLPanelGroups* self = (LLPanelGroups*)userdata;
 	if(self) self->search();
+}
+
+void LLPanelGroups::onBtnTitles(void* userdata)
+{
+	LLPanelGroups* self = (LLPanelGroups*)userdata;
+	if(self) self->titles();
 }
 
 void LLPanelGroups::create()
@@ -403,6 +437,27 @@ void LLPanelGroups::search()
 	LLFloaterDirectory::showGroups();
 }
 
+void LLPanelGroups::invite()
+{
+	LLCtrlListInterface *group_list = childGetListInterface("group list");
+	LLUUID group_id;
+
+	//if (group_list && (group_id = group_list->getCurrentID()).notNull())
+
+	if (group_list)
+	{
+		group_id = group_list->getCurrentID();
+	}
+
+		LLFloaterGroupInvite::showForGroup(group_id);
+}
+
+void LLPanelGroups::titles()
+{
+	HBFloaterGroupTitles::toggle();
+}
+
+
 // static
 bool LLPanelGroups::callbackLeaveGroup(const LLSD& notification, const LLSD& response)
 {
@@ -428,12 +483,13 @@ void LLPanelGroups::onGroupList(LLUICtrl* ctrl, void* userdata)
 	if(self) self->enableButtons();
 }
 
-void init_group_list(LLScrollListCtrl* ctrl, const LLUUID& highlight_id, U64 powers_mask)
+void init_group_list(LLScrollListCtrl* ctrl, const LLUUID& highlight_id, const std::string& none_text, U64 powers_mask)
 {
 	S32 count = gAgent.mGroups.count();
 	LLUUID id;
 	LLCtrlListInterface *group_list = ctrl->getListInterface();
 	if (!group_list) return;
+
 
 	group_list->operateOnAll(LLCtrlListInterface::OP_DELETE);
 

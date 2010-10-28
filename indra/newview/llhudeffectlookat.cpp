@@ -50,13 +50,10 @@
 #include "llresmgr.h"
 
 #include "llxmltree.h"
-// <edit>
-#include "llresmgr.h"
-#include "llhudrender.h"
-#include "llviewerwindow.h"
-#include "llviewercontrol.h"
-// </edit>
 
+// [RLVa:KB] - Phoenix specific
+#include "rlvhandler.h"
+// [/RLVa:KB]
 
 BOOL LLHUDEffectLookAt::sDebugLookAt = FALSE;
 
@@ -512,9 +509,9 @@ void LLHUDEffectLookAt::setSourceObject(LLViewerObject* objectp)
 //-----------------------------------------------------------------------------
 void LLHUDEffectLookAt::render()
 {
-	static BOOL *sAscentDontShowMyLookAt = rebind_llcontrol<BOOL>("AscentDontShowMyLookAt", &gSavedSettings, true);
+	static BOOL *sPhoenixDontShowMyLookAt = rebind_llcontrol<BOOL>("PhoenixDontShowMyLookAt", &gSavedSettings, true);
 	
-	if (*sAscentDontShowMyLookAt &&
+	if (*sPhoenixDontShowMyLookAt &&
         (gAgent.getAvatarObject() == ((LLVOAvatar*)(LLViewerObject*)mSourceObject))) return;
 		if (sDebugLookAt && mSourceObject.notNull())
 		{
@@ -540,8 +537,8 @@ void LLHUDEffectLookAt::render()
 			} gGL.end();
 			gGL.popMatrix();
 
-			static BOOL *sAscentShowLookAtNames = rebind_llcontrol<BOOL>("AscentShowLookAtNames", &gSavedSettings, true);
-			if (*sAscentShowLookAtNames)
+			static BOOL *sPhoenixShowLookAtNames = rebind_llcontrol<BOOL>("PhoenixShowLookAtNames", &gSavedSettings, true);
+			if (*sPhoenixShowLookAtNames)
 				{
 					const LLFontGL* fontp = LLResMgr::getInstance()->getRes( LLFONT_SANSSERIF_SMALL );
 					LLGLEnable color_mat(GL_COLOR_MATERIAL);
@@ -560,6 +557,14 @@ void LLHUDEffectLookAt::render()
 					LLVector3 render_pos = target + LLVector3( 0.f, 0.f, 0.25f );
 					LLColor4 Color = LLColor4( (*mAttentions)[mTargetType].mColor, 1.0f ); 
 					std::string text = ((LLVOAvatar*)(LLViewerObject*)mSourceObject)->getFullname();
+					
+// [RLVa:KB] - Alternate: Phoenix-370
+					// Show anonyms in place of actual names when @shownames=n restricted
+					if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES))
+					{
+						text = RlvStrings::getAnonym(text);
+					}
+// [/RLVa:KB]
 
 					gViewerWindow->setupViewport();
 					hud_render_utf8text(text, render_pos, *fontp, LLFontGL::NORMAL, -0.5f * fontp->getWidthF32(text), 3.f, Color, FALSE );

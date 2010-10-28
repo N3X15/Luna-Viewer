@@ -30,8 +30,8 @@
  * $/LicenseInfo$
  */
 
-#ifndef LL_LLPanelAscent_H
-#define LL_LLPanelAscent_H
+#ifndef LL_LLPanelPhoenix_H
+#define LL_LLPanelPhoenix_H
 
 #include "llpanel.h"
 
@@ -57,11 +57,11 @@ protected:
 	void	(*mDownCallback)(LLViewerInventoryItem*);
 };
 
-class LLPanelAscent : public LLPanel
+class LLPanelPhoenix : public LLPanel
 {
 public:
-	LLPanelAscent();
-	virtual ~LLPanelAscent();
+	LLPanelPhoenix();
+	virtual ~LLPanelPhoenix();
 
 	virtual BOOL postBuild();
 	void refresh();
@@ -83,8 +83,8 @@ private:
 	static void onSpellEditCustom(void* data);
 
 	static void onStealth(void* data);
-	static void callbackAscentStealth(const LLSD &notification, const LLSD &response);
-	static void callbackAscentNoStealth(const LLSD &notification, const LLSD &response);
+	static void callbackPhoenixStealth(const LLSD &notification, const LLSD &response);
+	static void callbackPhoenixNoStealth(const LLSD &notification, const LLSD &response);
 	static void onNoStealth(void* data);
 	static void onClickVoiceRevertDebug(void* data);
 	static void onRefresh(void* data);
@@ -108,11 +108,11 @@ private:
 	//static void onCommitVoiceDebugServerName(LLUICtrl* caller, void* user_data);
 	//static void onCommitAvatarEffectsChange(LLUICtrl* caller, void* user_data);
 	//static void onCommitAutoResponse(LLUICtrl* caller, void* user_data);
-	static void onAscentInstantMessageAnnounceIncoming(LLUICtrl* ctrl, void* userdata);
+	static void onPhoenixInstantMessageAnnounceIncoming(LLUICtrl* ctrl, void* userdata);
 
 private:
 	std::string mSkin;
-	static LLPanelAscent* sInstance;
+	static LLPanelPhoenix* sInstance;
 	static JCInvDropTarget* mObjectDropTarget;
 	static JCInvDropTarget* mBuildObjectDropTarget;
 	static void IMAutoResponseItemDrop(LLViewerInventoryItem* item);
@@ -124,4 +124,4 @@ protected:
 
 };
 
-#endif // LL_LLPanelAscent_H
+#endif // LL_LLPanelPhoenix_H

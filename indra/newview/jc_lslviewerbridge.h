@@ -63,7 +63,7 @@ public:
 	//3 = finished
 	//4 = failed
 
-	static void	updateBuildBridge(const LLSD &data);
+	static void	updateBuildBridge(const LLSD& data);
 	static BOOL sBuildBridge;
 
 	enum BridgeStat

@@ -136,7 +136,7 @@ LLPreferenceCore::LLPreferenceCore(LLTabContainer* tab_container, LLButton * def
 	mSkinsPanel(NULL),
 	mGridsPanel(NULL),
 	mLCDPanel(NULL),
-	mAscentPanel(NULL)
+	mPhoenixPanel(NULL)
 {
 	mGeneralPanel = new LLPanelGeneral();
 	mTabContainer->addTabPanel(mGeneralPanel, mGeneralPanel->getLabel(), FALSE, onTabChanged, mTabContainer);
@@ -200,9 +200,9 @@ LLPreferenceCore::LLPreferenceCore(LLTabContainer* tab_container, LLButton * def
 	mTabContainer->addTabPanel(mGridsPanel, mGridsPanel->getLabel(), FALSE, onTabChanged, mTabContainer);
 	mGridsPanel->setDefaultBtn(default_btn);
 
-	mAscentPanel = new LLPanelAscent();
-	mTabContainer->addTabPanel(mAscentPanel, mAscentPanel->getLabel(), FALSE, onTabChanged, mTabContainer);
-	mAscentPanel->setDefaultBtn(default_btn);
+	mPhoenixPanel = new LLPanelPhoenix();
+	mTabContainer->addTabPanel(mPhoenixPanel, mPhoenixPanel->getLabel(), FALSE, onTabChanged, mTabContainer);
+	mPhoenixPanel->setDefaultBtn(default_btn);
 
 	if (!mTabContainer->selectTab(gSavedSettings.getS32("LastPrefTab")))
 	{
@@ -264,10 +264,10 @@ LLPreferenceCore::~LLPreferenceCore()
 		mSkinsPanel = NULL;
 	}
 
-	if (mAscentPanel)
+	if (mPhoenixPanel)
 	{
-		delete mAscentPanel;
-		mAscentPanel = NULL;
+		delete mPhoenixPanel;
+		mPhoenixPanel = NULL;
 	}
 
 	if (mGridsPanel)
@@ -291,7 +291,7 @@ void LLPreferenceCore::apply()
 	mMsgPanel->apply();
 	mSkinsPanel->apply();
 	mGridsPanel->apply();
-	mAscentPanel->apply();
+	mPhoenixPanel->apply();
 
 	// hardware menu apply
 	LLFloaterHardwareSettings::instance()->apply();
@@ -321,7 +321,7 @@ void LLPreferenceCore::cancel()
 	mMsgPanel->cancel();
 	mSkinsPanel->cancel();
 	mGridsPanel->cancel();
-	mAscentPanel->cancel();
+	mPhoenixPanel->cancel();
 
 	// cancel hardware menu
 	LLFloaterHardwareSettings::instance()->cancel();

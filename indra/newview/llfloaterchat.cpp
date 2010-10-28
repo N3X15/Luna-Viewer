@@ -87,6 +87,10 @@
 #include "llwindow.h"
 #include "message.h"
 
+// [RLVa:KB]
+#include "rlvhandler.h"
+// [/RLVa:KB]
+
 //
 // Global statics
 //
@@ -206,7 +210,12 @@ void add_timestamped_line(LLViewerTextEditor* edit, LLChat chat, const LLColor4&
 	// If the msg is from an agent (not yourself though),
 	// extract out the sender name and replace it with the hotlinked name.
 	if (chat.mSourceType == CHAT_SOURCE_AGENT &&
-		chat.mFromID != LLUUID::null)
+//		chat.mFromID != LLUUID::null)
+// [RLVa:KB] - Version: 1.23.4 | Checked: 2009-07-08 (RLVa-1.0.0e)
+		chat.mFromID != LLUUID::null &&
+
+		(!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES)) )
+// [/RLVa:KB]
 	{
 		chat.mURL = llformat("secondlife:///app/agent/%s/about",chat.mFromID.asString().c_str());
 	}
@@ -237,6 +246,30 @@ void log_chat_text(const LLChat& chat)
 // static
 void LLFloaterChat::addChatHistory(const LLChat& chat, bool log_to_file)
 {	
+// [RLVa:KB] - Checked: 2009-07-08 (RLVa-1.0.0e)
+	if (rlv_handler_t::isEnabled())
+	{
+		// TODO-RLVa: we might cast too broad a net by filtering here, needs testing
+		if ( (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC)) && (!chat.mRlvLocFiltered) && (CHAT_SOURCE_AGENT != chat.mSourceType) )
+		{
+			LLChat& rlvChat = const_cast<LLChat&>(chat);
+			gRlvHandler.filterLocation(rlvChat.mText);
+			rlvChat.mRlvLocFiltered = TRUE;
+		}
+		if ( (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES)) && (!chat.mRlvNamesFiltered) )
+		{
+			// NOTE: this will also filter inventory accepted/declined text in the chat history
+			LLChat& rlvChat = const_cast<LLChat&>(chat);
+			if (CHAT_SOURCE_AGENT != chat.mSourceType)
+			{
+				// Filter object and system chat (names are filtered elsewhere to save ourselves an gObjectList lookup)
+				gRlvHandler.filterNames(rlvChat.mText);
+			}
+			rlvChat.mRlvNamesFiltered = TRUE;
+		}
+	}
+// [/RLVa:KB]
+
 	if ( gSavedPerAccountSettings.getBOOL("LogChat") && log_to_file) 
 	{
 		log_chat_text(chat);
@@ -382,13 +415,38 @@ void LLFloaterChat::updateSettings()
 // Put a line of chat in all the right places
 void LLFloaterChat::addChat(const LLChat& chat, 
 			  BOOL from_instant_message, 
-			  BOOL local_agent)
+			  BOOL local_agent,
+			  BOOL log_to_file)
 {
 	LLColor4 text_color = get_text_color(chat);
 
 	BOOL invisible_script_debug_chat = 
 			chat.mChatType == CHAT_TYPE_DEBUG_MSG
 			&& !gSavedSettings.getBOOL("ScriptErrorsAsChat");
+
+// [RLVa:KB] - Checked: 2009-07-08 (RLVa-1.0.0e)
+	if (rlv_handler_t::isEnabled())
+	{
+		// TODO-RLVa: we might cast too broad a net by filtering here, needs testing
+		if ( (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC)) && (!chat.mRlvLocFiltered) && (CHAT_SOURCE_AGENT != chat.mSourceType) )
+		{
+			LLChat& rlvChat = const_cast<LLChat&>(chat);
+			if (!from_instant_message)
+				gRlvHandler.filterLocation(rlvChat.mText);
+			rlvChat.mRlvLocFiltered = TRUE;
+		}
+		if ( (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES)) && (!chat.mRlvNamesFiltered) )
+		{
+			LLChat& rlvChat = const_cast<LLChat&>(chat);
+			if ( (!from_instant_message) && (CHAT_SOURCE_AGENT != chat.mSourceType) )
+			{
+				// Filter object and system chat (names are filtered elsewhere to save ourselves an gObjectList lookup)
+				gRlvHandler.filterNames(rlvChat.mText);
+			}
+			rlvChat.mRlvNamesFiltered = TRUE;
+		}
+	}
+// [/RLVa:KB]
 
 #if LL_LCD_COMPILE
 	// add into LCD displays
@@ -419,9 +477,9 @@ void LLFloaterChat::addChat(const LLChat& chat,
 		}
 		else if(from_instant_message)
 		{
-			//Ascent:KC - color chat from friends. taking care not to color when RLV hide names is in effect, lol
-			static BOOL* sAscentColorFriendsChat = rebind_llcontrol<BOOL>("AscentColorFriendsChat", &gSavedSettings, true);
-			if (!*sAscentColorFriendsChat
+			//Phoenix:KC - color chat from friends. taking care not to color when RLV hide names is in effect, lol
+			static BOOL* sPhoenixColorFriendsChat = rebind_llcontrol<BOOL>("PhoenixColorFriendsChat", &gSavedSettings, true);
+			if (!*sPhoenixColorFriendsChat
 			|| !LLAvatarTracker::instance().isBuddy(chat.mFromID))
 			{
 				text_color = gSavedSettings.getColor("IMChatColor");
@@ -444,7 +502,7 @@ void LLFloaterChat::addChat(const LLChat& chat,
 	triggerAlerts(chat.mText);
 
 	if(!from_instant_message)
-		addChatHistory(chat);
+		addChatHistory(chat, log_to_file);
 }
 
 // Moved from lltextparser.cpp to break llui/llaudio library dependency.
@@ -511,14 +569,14 @@ LLColor4 get_text_color(const LLChat& chat)
 			}
 			else
 			{
-				//Ascent:KC - color chat from friends. taking care not to color when RLV hide names is in effect, lol
-				static BOOL* sAscentColorFriendsChat = rebind_llcontrol<BOOL>("AscentColorFriendsChat", &gSavedSettings, true);
-				if (*sAscentColorFriendsChat
-				&& LLAvatarTracker::instance().isBuddy(chat.mFromID))
-				//&& (!rlv_handler_t::isEnabled()
-				//|| !gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES)))
+				//Phoenix:KC - color chat from friends. taking care not to color when RLV hide names is in effect, lol
+				static BOOL* sPhoenixColorFriendsChat = rebind_llcontrol<BOOL>("PhoenixColorFriendsChat", &gSavedSettings, true);
+				if (*sPhoenixColorFriendsChat
+				&& LLAvatarTracker::instance().isBuddy(chat.mFromID)
+				&& (!rlv_handler_t::isEnabled()
+				|| !gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES)))
 				{
-					text_color = gSavedSettings.getColor4("AscentFriendChatColor");
+					text_color = gSavedSettings.getColor4("PhoenixFriendChatColor");
 				}
 				else if(gAgent.getID() == chat.mFromID)
 				{
@@ -543,6 +601,9 @@ LLColor4 get_text_color(const LLChat& chat)
 			{
 				text_color = gSavedSettings.getColor4("ObjectChatColor");
 			}
+			break;
+		case CHAT_SOURCE_OBJECT_IM:
+			text_color = gSavedSettings.getColor4("ObjectIMColor");
 			break;
 		default:
 			text_color.setToWhite();
@@ -609,7 +670,11 @@ void LLFloaterChat::onClickToggleActiveSpeakers(void* userdata)
 {
 	LLFloaterChat* self = (LLFloaterChat*)userdata;
 
-	self->childSetVisible("active_speakers_panel", !self->childIsVisible("active_speakers_panel"));
+// [RLVa:KB] - Checked: 2009-07-08 (RLVa-1.0.0e)
+	self->childSetVisible("active_speakers_panel", 
+		(!self->childIsVisible("active_speakers_panel")) && (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES)) );
+// [/RLVa:KB]
+	//self->childSetVisible("active_speakers_panel", !self->childIsVisible("active_speakers_panel"));
 }
 
 //static 

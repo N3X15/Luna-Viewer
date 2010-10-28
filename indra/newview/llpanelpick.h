@@ -69,9 +69,9 @@ public:
 	// initial position, etc.
 	void initNewPick();
 
-	//Pick import and export - RK
-	bool importNewPick();
-	void exportPick();
+	// importer && exporter
+	bool importNewPick(void);
+	void exportPick(void);
 
 	// We need to know the creator id so the database knows which partition
 	// to query for the pick data.
@@ -102,7 +102,6 @@ protected:
 	//Pick import and export - RK
 	BOOL mImporting;
 	std::string mLocationText;
-
 	BOOL mTopPick;
     LLUUID mPickID;
 	LLUUID mCreatorID;

@@ -79,16 +79,22 @@
 
 #include "llglheaders.h"
 
-// <edit>
 #include "llappviewer.h"
-#include "llspinctrl.h"
-#include "llviewermessage.h"
-#include <boost/lexical_cast.hpp>
-// </edit>
+
+#include "a_phoenixviewerlink.h"
+
+// [RLVa:KB]
+#include "rlvhandler.h"
+// [/RLVa:KB]
+
+#ifdef LL_DARWIN
+#include <Carbon/Carbon.h>
+#endif
+
 #define USE_VIEWER_AUTH 0
 
 const S32 BLACK_BORDER_HEIGHT = 160;
-const S32 MAX_PASSWORD = 16;
+const S32 MAX_PASSWORD = 16;//*cough* LOL WE'LL GIVE YOU UNLIMITED INVENTORY BUT LETS LIMIT YOUR PWD TO 16 CHARS
 
 LLPanelLogin *LLPanelLogin::sInstance = NULL;
 BOOL LLPanelLogin::sCapslockDidNotification = FALSE;
@@ -115,7 +121,8 @@ LLLoginRefreshHandler gLoginRefreshHandler;
 std::string gFullName;
 // </edit>
 
-// helper class that trys to download a URL from a web site and calls a method 
+
+// helper class that trys to download a URL from a web site and calls a method
 // on parent class indicating if the web server is working or not
 class LLIamHereLogin : public LLHTTPClient::Responder
 {
@@ -144,7 +151,7 @@ class LLIamHereLogin : public LLHTTPClient::Responder
 		{
 			completed(status, reason, LLSD()); // will call result() or error()
 		}
-	
+
 		virtual void result( const LLSD& content )
 		{
 			if ( mParent )
@@ -204,10 +211,10 @@ LLPanelLogin::LLPanelLogin(const LLRect &rect,
 	mLogoImage = LLUI::getUIImage("startup_logo.j2c");
 
 	LLUICtrlFactory::getInstance()->buildPanel(this, "panel_login.xml");
-	
+
 #if USE_VIEWER_AUTH
 	//leave room for the login menu bar
-	setRect(LLRect(0, rect.getHeight()-18, rect.getWidth(), 0)); 
+	setRect(LLRect(0, rect.getHeight()-18, rect.getWidth(), 0));
 #endif
 	reshape(rect.getWidth(), rect.getHeight());
 
@@ -235,9 +242,9 @@ LLPanelLogin::LLPanelLogin(const LLRect &rect,
 	LLLineEditor* edit = getChild<LLLineEditor>("password_edit");
 	if (edit) edit->setDrawAsterixes(TRUE);
 
-	//OGPX : This keeps the uris in a history file 
+	//OGPX : This keeps the uris in a history file
 	//OGPX TODO: should this be inside an OGP only check?
-	LLComboBox* regioncombo = getChild<LLComboBox>("regionuri_edit"); 
+	LLComboBox* regioncombo = getChild<LLComboBox>("regionuri_edit");
 	regioncombo->setAllowTextEntry(TRUE, 256, FALSE);
 	std::string  current_regionuri = gSavedSettings.getString("CmdLineRegionURI");
 
@@ -251,15 +258,15 @@ LLPanelLogin::LLPanelLogin(const LLRect &rect,
 		regioncombo->addSimpleElement((*iter_history).asString());
 	}
 
-	if ( LLURLHistory::appendToURLCollection("regionuri",current_regionuri)) 
+	if ( LLURLHistory::appendToURLCollection("regionuri",current_regionuri))
 	{
-		// since we are in login, another read of urlhistory file is going to happen 
+		// since we are in login, another read of urlhistory file is going to happen
 		// so we need to persist the new value we just added (or maybe we should do it in startup.cpp?)
 
 		// since URL history only populated on create of sInstance, add to combo list directly
 		regioncombo->addSimpleElement(current_regionuri);
 	}
-	
+
 	// select which is displayed if we have a current URL.
 	regioncombo->setSelectedByValue(LLSD(current_regionuri),TRUE);
 
@@ -313,14 +320,14 @@ LLPanelLogin::LLPanelLogin(const LLRect &rect,
 	channel_text->setTextArg("[VERSION]", version);
 	channel_text->setClickedCallback(onClickVersion);
 	channel_text->setCallbackUserData(this);
-	
+
 	LLTextBox* forgot_password_text = getChild<LLTextBox>("forgot_password_text");
 	forgot_password_text->setClickedCallback(onClickForgotPassword);
 
 	LLTextBox* create_new_account_text = getChild<LLTextBox>("create_new_account_text");
 	create_new_account_text->setClickedCallback(onClickNewAccount);
-#endif    
-	
+#endif
+
 	// get the web browser control
 	LLMediaCtrl* web_browser = getChild<LLMediaCtrl>("login_html");
 	web_browser->addObserver(this);
@@ -360,6 +367,7 @@ LLPanelLogin::LLPanelLogin(const LLRect &rect,
 	if (login_page.empty())
 	{
 		login_page = getString( "real_url" );
+		//setSiteIsAlive(false);
 	}
 	else
 	{
@@ -372,48 +380,6 @@ LLPanelLogin::LLPanelLogin(const LLRect &rect,
 #endif
 
 }
-
-// Luna: Don't like this.  At all.
-// TODO: Ask Ascent devs, then LL.
-// <edit>
-void LLPanelLogin::fillMAC()
-{
-
-}
-
-void LLPanelLogin::fillID0()
-{
-
-}
-
-void LLPanelLogin::fillVer()
-{
-
-}
-
-// static
-void LLPanelLogin::onCheckMAC(LLUICtrl* ctrl, void* userData)
-{
-
-}
-
-// static
-void LLPanelLogin::onCheckID0(LLUICtrl* ctrl, void* userData)
-{
-
-}
-// static
-void LLPanelLogin::onClickMACRandom(void* userData)
-{
-
-}
-
-// static
-void LLPanelLogin::onClickID0Random(void* userData)
-{
-
-}
-// </edit>
 
 void LLPanelLogin::setSiteIsAlive( bool alive )
 {
@@ -445,7 +411,7 @@ void LLPanelLogin::setSiteIsAlive( bool alive )
 #else
 
 		if ( web_browser )
-		{	
+		{
 			web_browser->navigateToLocalPage( "loading-error" , "index.html" );
 
 			// mark as available
@@ -481,7 +447,7 @@ LLPanelLogin::~LLPanelLogin()
 
 	//// We know we're done with the image, so be rid of it.
 	//gImageList.deleteImage( mLogoImage );
-	
+
 	if ( gFocusMgr.getDefaultKeyboardFocus() == this )
 	{
 		gFocusMgr.setDefaultKeyboardFocus(NULL);
@@ -563,7 +529,7 @@ BOOL LLPanelLogin::handleKeyHere(KEY key, MASK mask)
 		new LLFloaterSimple("floater_test.xml");
 		return TRUE;
 	}
-	
+
 	if ( KEY_F1 == key )
 	{
 		llinfos << "Spawning HTML help window" << llendl;
@@ -590,7 +556,7 @@ BOOL LLPanelLogin::handleKeyHere(KEY key, MASK mask)
 	return LLPanel::handleKeyHere(key, mask);
 }
 
-// virtual 
+// virtual
 void LLPanelLogin::setFocus(BOOL b)
 {
 	if(b != hasFocus())
@@ -691,7 +657,7 @@ void LLPanelLogin::setFields(const std::string& firstname,
 	if (gSavedSettings.getBOOL("OpenGridProtocol"))
 	{
 		LLComboBox* regioncombo = sInstance->getChild<LLComboBox>("regionuri_edit");
-		
+
 		// select which is displayed if we have a current URL.
 		regioncombo->setSelectedByValue(LLSD(gSavedSettings.getString("CmdLineRegionURI")),TRUE);
 	}
@@ -701,8 +667,8 @@ void LLPanelLogin::setFields(const std::string& firstname,
 	if (password.length() == 32)
 	{
 		// This is a MD5 hex digest of a password.
-		// We don't actually use the password input field, 
-		// fill it with MAX_PASSWORD characters so we get a 
+		// We don't actually use the password input field,
+		// fill it with MAX_PASSWORD characters so we get a
 		// nice row of asterixes.
 		const std::string filler("123456789!123456");
 		sInstance->childSetText("password_edit", filler);
@@ -802,7 +768,7 @@ void LLPanelLogin::getLocation(std::string &location)
 		llwarns << "Attempted getLocation with no login view shown" << llendl;
 		return;
 	}
-	
+
 	LLComboBox* combo = sInstance->getChild<LLComboBox>("start_location_combo");
 	location = combo->getValue().asString();
 }
@@ -830,13 +796,23 @@ void LLPanelLogin::refreshLocation( bool force_visible )
 
 	BOOL show_start = TRUE;
 
-	if ( ! force_visible )
-		show_start = gSavedSettings.getBOOL("ShowStartLocation");
+//	if ( ! force_visible )
+//		show_start = gSavedSettings.getBOOL("ShowStartLocation");
+
+// [RLVa:KB] - Alternate: Snowglobe-1.2.4 | Checked: 2009-07-08 (RLVa-1.0.0e)
+	// TODO-RLVa: figure out some way to make this work with RLV_EXTENSION_STARTLOCATION
+	#ifndef RLV_EXTENSION_STARTLOCATION
+		if (rlv_handler_t::isEnabled())
+		{
+			show_start = FALSE;
+		}
+	#endif // RLV_EXTENSION_STARTLOCATION
+// [/RLVa:KB]
 
 	// OGPX : if --ogp on the command line (or --set OpenGridProtocol TRUE), then
-	// the start location is hidden, and regionuri shows in its place. 
+	// the start location is hidden, and regionuri shows in its place.
 	// "Home", and "Last" have no meaning in OGPX, so it's OK to not have the start_location combo
-	// box unavailable on the menu panel. 
+	// box unavailable on the menu panel.
 	if (gSavedSettings.getBOOL("OpenGridProtocol"))
 	{
 		sInstance->childSetVisible("start_location_combo", FALSE); // hide legacy box
@@ -963,28 +939,30 @@ void LLPanelLogin::loadLoginPage()
 	// Language
 	std::string language = LLUI::getLanguage();
 	oStr << first_query_delimiter<<"lang=" << language;
-	
+
 	// First Login?
 	if (gSavedSettings.getBOOL("FirstLoginThisInstall"))
 	{
 		oStr << "&firstlogin=TRUE";
 	}
-	
-// <edit>
+
 	// Channel and Version
 	std::string version = llformat("%d.%d.%d (%d)",
 						LL_VERSION_MAJOR, LL_VERSION_MINOR, LL_VERSION_PATCH, LL_VIEWER_BUILD);
 
 	char* curl_channel = curl_escape(LL_CHANNEL, 0);
 	char* curl_version = curl_escape(version.c_str(), 0);
-
+	
 	oStr << "&channel=" << curl_channel;
 	oStr << "&version=" << curl_version;
+	
+//	if(LL_CHANNEL != PHOENIX_RELEASE_CHANNEL)
+//		oStr << "&unsupported=1";
 
 	curl_free(curl_channel);
 	curl_free(curl_version);
 
-	// grid=blah code was here. Due to the implementation of the Ascent login manager, sending
+	// grid=blah code was here. Due to the implementation of the Phoenix login manager, sending
 	// this information is a very bad idea. Don't do it.
 
 	// This is to work out if dropping Tiger support is sane. Also to suggest updates on the login screen.
@@ -1031,7 +1009,7 @@ void LLPanelLogin::loadLoginPage()
 	std::string location;
 	std::string region;
 	std::string password;
-	
+
 	if (LLURLSimString::parse())
 	{
 		std::ostringstream oRegionStr;
@@ -1052,7 +1030,7 @@ void LLPanelLogin::loadLoginPage()
 			location = "home";
 		}
 	}
-	
+
 	std::string firstname, lastname;
 
     if(gSavedSettings.getLLSD("UserLoginInfo").size() == 3)
@@ -1062,22 +1040,22 @@ void LLPanelLogin::loadLoginPage()
 		lastname = cmd_line_login[1].asString();
         password = cmd_line_login[2].asString();
     }
-    	
+
 	if (firstname.empty())
 	{
 		firstname = gSavedSettings.getString("FirstName");
 	}
-	
+
 	if (lastname.empty())
 	{
 		lastname = gSavedSettings.getString("LastName");
 	}
-	
+
 	char* curl_region = curl_escape(region.c_str(), 0);
 
 	oStr <<"firstname=" << firstname <<
 		"&lastname=" << lastname << "&location=" << location <<	"&region=" << curl_region;
-	
+
 	curl_free(curl_region);
 
 	if (!password.empty())
@@ -1092,18 +1070,17 @@ void LLPanelLogin::loadLoginPage()
 	{
 		oStr << "&auto_login=TRUE";
 	}
-	if (gSavedSettings.getBOOL("ShowStartLocation"))
-	{
+//	if (gSavedSettings.getBOOL("ShowStartLocation"))
+//	{
 		oStr << "&show_start_location=TRUE";
-	}	
+//	}
 	if (gSavedSettings.getBOOL("RememberPassword"))
 	{
 		oStr << "&remember_password=TRUE";
 	}
 #endif
-	
+
 	LLMediaCtrl* web_browser = sInstance->getChild<LLMediaCtrl>("login_html");
-	
 
 	/**
 	* Luna Splash Screen version auto-append
@@ -1175,11 +1152,38 @@ bool LLPanelLogin::getRememberLogin()
 //---------------------------------------------------------------------------
 
 // static
+bool LLPanelLogin::confirm_version(const LLSD& notification, const LLSD& response)
+{
+	S32 option = LLNotification::getSelectedOption(notification, response);
+
+	if (option == 1)
+	{
+		LLAppViewer::instance()->requestQuit();
+	}
+	else if (option == 0)
+	{
+		LLPanelLogin::onClickConnectReal(NULL);
+	}
+	return false;
+}
+static LLNotificationFunctorRegistration confirm_version_reg("ConfirmVersionNew", LLPanelLogin::confirm_version);
+
 void LLPanelLogin::onClickConnect(void *)
+{
+	if(PhoenixViewerLink::isMSDone() && !(PhoenixViewerLink::is_ReleaseVersion(LLFloaterAbout::get_viewer_version()) ||
+		PhoenixViewerLink::is_BetaVersion(LLFloaterAbout::get_viewer_version())))
+	{
+		LLNotifications::instance().add("ConfirmVersionNew");
+	}
+	else
+	{
+		LLPanelLogin::onClickConnectReal(NULL);
+	}
+}
+void LLPanelLogin::onClickConnectReal(void *)
 {
 	if (sInstance && sInstance->mCallback)
 	{
-
 		// tell the responder we're not here anymore
 		if ( gResponsePtr )
 			gResponsePtr->setParent( 0 );
@@ -1189,20 +1193,27 @@ void LLPanelLogin::onClickConnect(void *)
 
 		std::string first = sInstance->childGetText("first_name_combo");
 		std::string last  = sInstance->childGetText("last_name_edit");
-		if (!first.empty() && !last.empty())
+		if(PhoenixViewerLink::allowed_login())
 		{
-			// has both first and last name typed
-			sInstance->mCallback(0, sInstance->mCallbackData);
-		}
-		else
-		{
-			// empty first or last name
-			if (gHippoGridManager->getConnectedGrid()->getRegisterUrl().empty()) {
-				LLNotifications::instance().add("MustHaveAccountToLogInNoLinks");
-			} else {
-				LLNotifications::instance().add("MustHaveAccountToLogIn", LLSD(), LLSD(),
-											LLPanelLogin::newAccountAlertCallback);
+			if (!first.empty() && !last.empty())
+			{
+				// has both first and last name typed
+				sInstance->mCallback(0, sInstance->mCallbackData);
 			}
+			else
+			{
+				// empty first or last name
+				if (gHippoGridManager->getConnectedGrid()->getRegisterUrl().empty()) {
+					LLNotifications::instance().add("MustHaveAccountToLogInNoLinks");
+				} else {
+					LLNotifications::instance().add("MustHaveAccountToLogIn", LLSD(), LLSD(),
+												LLPanelLogin::newAccountAlertCallback);
+				}
+			}
+		}else
+		{
+			LLSD args = PhoenixViewerLink::blocked_login_info;
+			LLNotifications::instance().add("BlockLoginInfo", args, LLSD());
 		}
 	}
 }
@@ -1241,7 +1252,7 @@ void LLPanelLogin::onClickNewAccount(void*)
 // static
 void LLPanelLogin::onClickGrids(void*)
 {
-//	LLFloaterPreference::overrideLastTab(LLPreferenceCore::TAB_GRIDS);
+	LLFloaterPreference::overrideLastTab(LLPreferenceCore::TAB_GRIDS);
 	LLFloaterPreference::show(NULL);
 }
 

@@ -60,8 +60,16 @@ BOOL LLPanelNetwork::postBuild()
 	childSetText("cache_location", cache_location);
 		
 	childSetAction("clear_cache", onClickClearCache, this);
+	childSetAction("clear_inv_cache", onClickClearInvCache, this);
+	if(LLStartUp::getStartupState() >= STATE_INVENTORY_SEND)childSetEnabled("clear_inv_cache",true);
 	childSetAction("set_cache", onClickSetCache, this);
 	childSetAction("reset_cache", onClickResetCache, this);
+	childSetAction("set_sound_cache", onClickSetSoundCache, this);
+	childSetAction("reset_sound_cache", onClickResetSoundCache, this);
+
+	childSetAction("em_open_logs_loc",onClickBrowseLogs,this);
+	childSetAction("em_open_soundcache_loc",onClickBrowseSoundCache,this);
+	childSetAction("em_open_cache_loc",onClickBrowseCache,this);
 	
 	childSetEnabled("connection_port", gSavedSettings.getBOOL("ConnectionPortEnabled"));
 	childSetCommitCallback("connection_port_enabled", onCommitPort, this);
@@ -77,7 +85,6 @@ BOOL LLPanelNetwork::postBuild()
 
 	//Socks 5 proxy settings, saved data
 	childSetValue("socks5_proxy_enabled",   gSavedSettings.getBOOL("Socks5ProxyEnabled"));
-	//childSetValue("socks5_http_enabled",   gSavedSettings.getBOOL("Socks5HttpEnabled"));
 	childSetValue("socks5_http_proxy_type", gSavedSettings.getString("Socks5HttpProxyType"));
 
 	childSetValue("socks5_proxy_host",     gSavedSettings.getString("Socks5ProxyHost"));
@@ -146,6 +153,11 @@ void LLPanelNetwork::onClickClearCache(void*)
 	gSavedSettings.setBOOL("PurgeCacheOnNextStartup", TRUE);
 	LLNotifications::instance().add("CacheWillClear");
 }
+void LLPanelNetwork::onClickClearInvCache(void*)
+{
+	gSavedSettings.setString("PhoenixPurgeInvCache",gAgent.getID().asString());
+	LLNotifications::instance().add("CacheWillClear");
+}
 
 // static
 void LLPanelNetwork::onClickSetCache(void* user_data)
@@ -186,6 +198,60 @@ void LLPanelNetwork::onClickResetCache(void* user_data)
 	}
 	std::string cache_location = gDirUtilp->getCacheDir(true);
 	self->childSetText("cache_location", cache_location);
+}
+
+// static
+void LLPanelNetwork::onClickSetSoundCache(void* user_data)
+{
+// LUNA
+	return;
+
+	LLPanelNetwork* self = (LLPanelNetwork*)user_data;
+
+	std::string cur_name(gSavedSettings.getString("Phoenixmm_sndcacheloc"));
+	std::string proposed_name(cur_name);
+	
+	LLDirPicker& picker = LLDirPicker::instance();
+	if (! picker.getDir(&proposed_name ) )
+	{
+		return; //Canceled!
+	}
+
+	std::string dir_name = picker.getDirName();
+	if (!dir_name.empty() && dir_name != cur_name)
+	{
+		self->childSetText("sound_cache_location", dir_name);
+		gSavedSettings.setString("Phoenixmm_sndcacheloc", dir_name);
+	}
+	else
+	{
+		self->childSetText("sound_cache_location",cur_name);
+	}
+}
+
+// static
+void LLPanelNetwork::onClickResetSoundCache(void* user_data)
+{
+	LLPanelNetwork* self = (LLPanelNetwork*)user_data;
+ 	gSavedSettings.setString("Phoenixmm_sndcacheloc","");
+	self->childSetText("sound_cache_location",std::string("None"));
+}
+
+//static
+void LLPanelNetwork::onClickBrowseLogs(void* user_data)
+{
+	gViewerWindow->getWindow()->openFile(gDirUtilp->getExpandedFilename(LL_PATH_LOGS,""));
+}
+//static
+void LLPanelNetwork::onClickBrowseCache(void* user_data)
+{
+	gViewerWindow->getWindow()->openFile(gDirUtilp->getExpandedFilename(LL_PATH_CACHE,""));
+}
+//static
+void LLPanelNetwork::onClickBrowseSoundCache(void* user_data)
+{
+//	std::string path = gDirUtilp->getExpandedFilename(MM_SNDLOC, "");
+//	if(path!="")gViewerWindow->getWindow()->openFile(path);
 }
 
 // static
@@ -241,7 +307,7 @@ void LLPanelNetwork::updateProxyEnabled(LLPanelNetwork * self, bool enabled, std
 	self->childSetEnabled("socks5_proxy_port",  enabled);
 	self->childSetEnabled("socks5_proxy_host",  enabled);
 	self->childSetEnabled("socks5_host_label",  enabled);
-	//self->childSetEnabled("socks5_proxy_label", enabled); Making Dummy View -HgB
+	self->childSetEnabled("socks5_proxy_label", enabled);
 	self->childSetEnabled("socks5_proxy_port",  enabled);
 	self->childSetEnabled("socks5_auth_label",  enabled);
 	self->childSetEnabled("socks5_auth",        enabled);

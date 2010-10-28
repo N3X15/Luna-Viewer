@@ -50,6 +50,7 @@
 #include "lltextbox.h"
 #include "lltrans.h"
 #include "lluiconstants.h"
+#include "llviewercontrol.h"
 #include "llviewermessage.h"
 #include "lluictrlfactory.h"
 
@@ -106,6 +107,7 @@ BOOL LLFloaterLandHoldings::postBuild()
 
 	LLCtrlListInterface *list = childGetListInterface("grant list");
 	if (!list) return TRUE;
+
 
 	S32 count = gAgent.mGroups.count();
 	for(S32 i = 0; i < count; ++i)
@@ -243,6 +245,7 @@ void LLFloaterLandHoldings::processPlacesReply(LLMessageSystem* msg, void**)
 		
 		std::string hidden;
 		hidden = llformat("%f %f", global_x, global_y);
+
 
 		LLSD element;
 		element["columns"][0]["column"] = "name";

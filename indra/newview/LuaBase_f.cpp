@@ -127,6 +127,9 @@ void LuaSendRawChat(std::string rawmsg, S32 rawtype, bool animate, S32 channel)
 	CB_Args4<std::string,S32,BOOL,S32>(&LuaSendRawChat_Event,rawmsg,rawtype,(BOOL)animate,channel);
 }
 
+// Because Phoenix is dildos.
+void send_chat_from_viewer(std::string utf8_out_text, EChatType type, S32 channel);
+
 void LuaSendRawChat_Event(std::string &rawmsg, S32 &rawtype, BOOL &animate, S32 &channel)
 {
 
@@ -147,65 +150,6 @@ void LuaSendRawChat_Event(std::string &rawmsg, S32 &rawtype, BOOL &animate, S32 
 	}
 
 	send_chat_from_viewer(std::string(rawmsg),(EChatType)rawtype,channel);
-	return;
-	/*
-	LLWString wtext = utf8str_to_wstring(mesg);
-	LLMessageSystem* msg = gMessageSystem;
-
-	std::string utf8_out_text = mesg;
-	std::string utf8_text = mesg;
-
-	utf8_text = utf8str_trim(utf8_text);
-	if (!utf8_text.empty())
-	{
-		utf8_text = utf8str_truncate(utf8_text, MAX_STRING - 1);
-	}
-
-	// Don't animate for chats people can't hear (chat to scripts)
-	if (animate && (channel == 0))
-	{
-		if (type == CHAT_TYPE_WHISPER)
-		{
-			lldebugs << "You whisper " << utf8_text << llendl;
-			gAgent.sendAnimationRequest(ANIM_AGENT_WHISPER, ANIM_REQUEST_START);
-		}
-		else if (type == CHAT_TYPE_NORMAL)
-		{
-			lldebugs << "You say " << utf8_text << llendl;
-			gAgent.sendAnimationRequest(ANIM_AGENT_TALK, ANIM_REQUEST_START);
-		}
-		else if (type == CHAT_TYPE_SHOUT)
-		{
-			lldebugs << "You shout " << utf8_text << llendl;
-			gAgent.sendAnimationRequest(ANIM_AGENT_SHOUT, ANIM_REQUEST_START);
-		}
-		else
-		{
-			llinfos << "send_chat_from_viewer() - invalid volume" << llendl;
-			return;
-		}
-	}
-	else
-	{
-		if (type != CHAT_TYPE_START && type != CHAT_TYPE_STOP)
-		{
-			lldebugs << "Channel chat: " << utf8_text << llendl;
-		}
-	}
-
-	msg->newMessageFast(_PREHASH_ChatFromViewer);
-	msg->nextBlockFast(_PREHASH_AgentData);
-	msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID());
-	msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
-	msg->nextBlockFast(_PREHASH_ChatData);
-	msg->addStringFast(_PREHASH_Message, utf8_out_text);
-	msg->addU8Fast(_PREHASH_Type, type);
-	msg->addS32Fast(_PREHASH_Channel, channel);
-
-	gAgent.sendReliableMessage();
-
-	LLViewerStats::getInstance()->incStat(LLViewerStats::ST_CHAT_COUNT);
-	*/
 }
 
 void LuaError(const char* rawmsg)

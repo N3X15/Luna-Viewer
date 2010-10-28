@@ -45,7 +45,11 @@
 #include "llweb.h"
 
 #include "apr_time.h"
+
+// [RLVa:KB] - Phoenix specific
+#include "rlvhandler.h"
 #include "llsdserialize.h"
+// [/RLVa:KB]
 
 // globals
 LLFloaterTeleportHistory* gFloaterTeleportHistory;
@@ -104,6 +108,7 @@ BOOL LLFloaterTeleportHistory::postBuild()
 	childSetAction("teleport", onTeleport, this);
 	childSetAction("show_on_map", onShowOnMap, this);
 	childSetAction("copy_slurl", onCopySLURL, this);
+	childSetAction("clear_history", onClearHistory,this);
 	loadEntrys();
 
 	return TRUE;
@@ -117,7 +122,13 @@ void LLFloaterTeleportHistory::saveEntry(LLSD toSave)
 	LLSDSerialize::toPrettyXML(tpList, file);
 	file.close();
 }
-
+void LLFloaterTeleportHistory::clearHistory()
+{
+	tpList.clear();
+	saveEntry(tpList);
+	mPlacesOutList->clearRows();
+	mPlacesInList->clearRows();
+}
 std::string LLFloaterTeleportHistory::getFileName()
 {
 	std::string path=gDirUtilp->getExpandedFilename(LL_PATH_PER_SL_ACCOUNT, "");
@@ -199,6 +210,16 @@ void LLFloaterTeleportHistory::addEntry(std::string regionName, S16 x, S16 y, S1
 		value["columns"][4]["column"] = "simstring";
 		value["columns"][4]["value"] = simString;
 		value["out"]=outList;
+
+// [RLVa:KB] - Alternate: Phoenix-370
+		if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC))
+		{
+			value["columns"][0]["value"] = RlvStrings::getString(RLV_STRING_HIDDEN_REGION);
+			value["columns"][1]["value"] = RlvStrings::getString(RLV_STRING_HIDDEN);
+			value["columns"][3]["value"] = RlvStrings::getString(RLV_STRING_HIDDEN);
+			value["columns"][4]["value"] = RlvStrings::getString(RLV_STRING_HIDDEN);
+		}
+// [/RLVa:KB]
 		saveEntry(value);
 		// add the new list entry on top of the list, deselect all and disable the buttons
 		pItemPointer->addElement(value, ADD_TOP);
@@ -214,6 +235,16 @@ void LLFloaterTeleportHistory::addEntry(std::string regionName, S16 x, S16 y, S1
 
 void LLFloaterTeleportHistory::setButtonsEnabled(BOOL on)
 {
+// [RLVa:KB] - Alternate: Phoenix-370
+	if (rlv_handler_t::isEnabled())
+	{
+		if ( (pItem) && (pItem->getColumn(4)) && (RlvStrings::getString(RLV_STRING_HIDDEN) == pItem->getColumn(4)->getValue().asString()) )
+		{
+			on = FALSE;
+		}
+	}
+// [/RLVa:K]
+
 	// enable or disable buttons
 	childSetEnabled("teleport", on);
 	childSetEnabled("show_on_map", on);
@@ -277,6 +308,14 @@ void LLFloaterTeleportHistory::onTeleport(void* data)
 	std::string slapp="secondlife:///app/teleport/" + self->pItem->getColumn(4)->getValue().asString();
 	LLURLDispatcher::dispatch(slapp, NULL, true);
 }
+void LLFloaterTeleportHistory::onClearHistory(void* data)
+{
+	LLFloaterTeleportHistory* self = (LLFloaterTeleportHistory*) data;
+	self->clearHistory();
+}
+
+//static
+
 
 // static
 void LLFloaterTeleportHistory::onShowOnMap(void* data)

@@ -59,8 +59,6 @@
 #include "pipeline.h"
 #include "llglheaders.h"
 
-using boost::bind;
-
 // Local constants...
 const S32 VERTICAL_OFFSET = 50;
 
@@ -108,20 +106,20 @@ LLManip::LLManip( const std::string& name, LLToolComposite* composite )
 {
 	initPivot();
 
-	gSavedSettings.getControl("AscentBuildPrefs_ActualRoot")->getSignal()->connect(boost::bind(&updateActualRoot, _1));
-	gSavedSettings.getControl("AscentBuildPrefs_PivotIsPercent")->getSignal()->connect(boost::bind(&updatePivotIsPercent, _1));
-	gSavedSettings.getControl("AscentBuildPrefs_PivotX")->getSignal()->connect(boost::bind(&updatePivotX, _1));
-	gSavedSettings.getControl("AscentBuildPrefs_PivotY")->getSignal()->connect(boost::bind(&updatePivotY, _1));
-	gSavedSettings.getControl("AscentBuildPrefs_PivotZ")->getSignal()->connect(boost::bind(&updatePivotZ, _1));
+	gSavedSettings.getControl("PhoenixBuildPrefs_ActualRoot")->getSignal()->connect(boost::bind(&updateActualRoot,_1));
+	gSavedSettings.getControl("PhoenixBuildPrefs_PivotIsPercent")->getSignal()->connect(boost::bind(&updatePivotIsPercent,_1));
+	gSavedSettings.getControl("PhoenixBuildPrefs_PivotX")->getSignal()->connect(boost::bind(&updatePivotX,_1));
+	gSavedSettings.getControl("PhoenixBuildPrefs_PivotY")->getSignal()->connect(boost::bind(&updatePivotY,_1));
+	gSavedSettings.getControl("PhoenixBuildPrefs_PivotZ")->getSignal()->connect(boost::bind(&updatePivotZ,_1));
 }
 //static
 void LLManip::initPivot()
 {
-	sActualRoot = (bool)gSavedSettings.getBOOL("AscentBuildPrefs_ActualRoot");
-	sPivotPerc  = (bool)gSavedSettings.getBOOL("AscentBuildPrefs_PivotIsPercent");
-	sPivotX		= gSavedSettings.getF32("AscentBuildPrefs_PivotX");
-	sPivotY		= gSavedSettings.getF32("AscentBuildPrefs_PivotY");
-	sPivotZ		= gSavedSettings.getF32("AscentBuildPrefs_PivotZ");
+	sActualRoot = (bool)gSavedSettings.getBOOL("PhoenixBuildPrefs_ActualRoot");
+	sPivotPerc  = (bool)gSavedSettings.getBOOL("PhoenixBuildPrefs_PivotIsPercent");
+	sPivotX		= gSavedSettings.getF32("PhoenixBuildPrefs_PivotX");
+	sPivotY		= gSavedSettings.getF32("PhoenixBuildPrefs_PivotY");
+	sPivotZ		= gSavedSettings.getF32("PhoenixBuildPrefs_PivotZ");
 }
 //static
 void LLManip::updateActualRoot(const LLSD &data)
@@ -422,9 +420,9 @@ LLVector3 LLManip::getPivotPoint()
 		pos = pos + add;
 	}else
 	{
-		//pos[VX] = pos[VX] + gSavedSettings.getF32("AscentBuildPrefs_PivotX");
-		//pos[VY] = pos[VY] + gSavedSettings.getF32("AscentBuildPrefs_PivotY");
-		//pos[VZ] = pos[VZ] + gSavedSettings.getF32("AscentBuildPrefs_PivotZ");
+		//pos[VX] = pos[VX] + gSavedSettings.getF32("PhoenixBuildPrefs_PivotX");
+		//pos[VY] = pos[VY] + gSavedSettings.getF32("PhoenixBuildPrefs_PivotY");
+		//pos[VZ] = pos[VZ] + gSavedSettings.getF32("PhoenixBuildPrefs_PivotZ");
 		LLVector3 add(
 			sPivotX,
 			sPivotY,

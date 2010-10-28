@@ -10,7 +10,6 @@
 #include "llmessagetemplate.h"
 #include <boost/tokenizer.hpp>
 #include "llmenugl.h"
-
 #include "llagent.h"
 
 #include "llviewercontrol.h"
@@ -426,7 +425,7 @@ BOOL LLMessageLogFilterApply::tick()
 {
 	std::deque<LLMessageLogEntry>::iterator end = LLFloaterMessageLog::sMessageLogEntries.end();
 	if(mIter == end || !LLFloaterMessageLog::sInstance)
-	{
+		{
 		mFinished = TRUE;
 		if(LLFloaterMessageLog::sInstance)
 		{
@@ -705,7 +704,7 @@ void LLFloaterMessageLog::onLog(LLMessageLogEntry entry)
 	{
 		sMessageLogEntries.push_back(entry);
 		conditionalLog(LLFloaterMessageLogItem(entry));
-	}
+}
 }
 // static
 void LLFloaterMessageLog::conditionalLog(LLFloaterMessageLogItem item)

@@ -487,7 +487,7 @@ bool LLAppViewerWin32::initHardwareTest()
 
 		// Disable so debugger can work
 		std::ostringstream splash_msg;
-		splash_msg << "Loading " << LLAppViewer::instance()->getSecondLifeTitle() << "...";
+		splash_msg << "Loading " << LLAppViewer::instance()->getWindowTitle() << "...";
 
 		LLSplashScreen::update(splash_msg.str());
 	}

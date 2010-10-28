@@ -101,12 +101,6 @@ private:
 	// protected members
 	typedef std::map<LLUUID, S32> rights_map_t;
 	void refreshNames(U32 changed_mask);
-	// <dogmode> Contacts search and group system
-	void filterContacts();
-	void setContactGroup(std::string contact_grp);
-	void populateContactGroupSelect();
-	std::string cleanFileName(std::string filename);
-	// --
 	BOOL refreshNamesSync(const LLAvatarTracker::buddy_map_t & all_buddies);
 	BOOL refreshNamesPresence(const LLAvatarTracker::buddy_map_t & all_buddies);
 	void refreshUI();
@@ -128,14 +122,12 @@ private:
 
 	// callback methods
 	static void onSelectName(LLUICtrl* ctrl, void* user_data);
-	static void onChangeContactGroup(LLUICtrl* ctrl, void* user_data);
 	static bool callbackAddFriend(const LLSD& notification, const LLSD& response);
 	static bool callbackAddFriendWithMessage(const LLSD& notification, const LLSD& response);
 	static void onPickAvatar(const std::vector<std::string>& names, const std::vector<LLUUID>& ids, void* user_data);
 	static void onMaximumSelect(void* user_data);
-	static void onContactSearchKeystroke(LLLineEditor* caller, void* user_data);
+
 	static void onClickIM(void* user_data);
-	static void onClickAssign(void* user_data);
 	static void onClickProfile(void* user_data);
 	static void onClickAddFriend(void* user_data);
 	static void onClickRemove(void* user_data);
@@ -158,12 +150,10 @@ private:
 	LLUUID mAddFriendID;
 	std::string mAddFriendName;
 	LLScrollListCtrl* mFriendsList;
-	std::string mContactFilter;
 	BOOL mShowMaxSelectWarning;
 	BOOL mAllowRightsChange;
 	S32 mNumRightsChanged;
-	S32 mNumOnline;
-	std::string mLastContactSearch;
+
 	static bool merging;
 };
 

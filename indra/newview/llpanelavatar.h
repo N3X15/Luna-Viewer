@@ -100,7 +100,7 @@ public:
 
 	/*virtual*/ BOOL postBuild(void);
 	static void onClickImage(			void *userdata);
-
+	
 
 	void enableControls(BOOL own_avatar);
 };
@@ -261,8 +261,6 @@ public:
 private:
 	static void onClickNew(void* data);
 	static void onClickDelete(void* data);
-	
-	//Pick import and export - RK
 	static void onClickImport(void* data);
 	static void onClickExport(void* data);
 
@@ -272,7 +270,7 @@ private:
 
 class LLPanelAvatar : public LLPanel
 {
-
+	friend class JCProfileCallback;
 public:
 	LLPanelAvatar(const std::string& name, const LLRect &rect, BOOL allow_edit);
 	/*virtual*/ ~LLPanelAvatar();
@@ -305,6 +303,8 @@ public:
 	void sendAvatarNotesUpdate();
 
 	void sendAvatarPicksRequest();
+	
+	void sendAvatarRatingsRequest();
 
 	void selectTab(S32 tabnum);
 	void selectTabByName(std::string tab_name);
@@ -324,7 +324,6 @@ public:
 	static void onClickGroupInvite( void *userdata);
 	static void onClickOfferTeleport(	void *userdata);
 	static void onClickPay(	void *userdata);
-	static void onClickGetKey(void *userdata);
 	static void onClickAddFriend(void* userdata);
 	static void onClickOK(		void *userdata);
 	static void onClickCancel(	void *userdata);
@@ -333,7 +332,6 @@ public:
 	static void onClickUnfreeze(void *userdata);
 	static void onClickCSR(		void *userdata);
 	static void onClickMute(	void *userdata);
-	static void onCommitKey(LLUICtrl* ctrl, void* data);
 
 private:
 	void enableOKIfReady();
@@ -383,6 +381,17 @@ private:
 
 	typedef std::list<LLPanelAvatar*> panel_list_t;
 	static panel_list_t sAllPanels;
+};
+
+class LLPanelAvatarRatingsDownloader : public LLHTTPClient::Responder
+{
+public:
+	LLPanelAvatarRatingsDownloader(LLPanelAvatar *panel);
+	void error(U32 status, const std::string& reason);
+	void completedRaw(U32 status, const std::string& reason, const LLChannelDescriptors& channels, const LLIOPipe::buffer_ptr_t& buffer);
+	
+private:
+	LLPanelAvatar *mPanelAvatar;
 };
 
 // helper funcs

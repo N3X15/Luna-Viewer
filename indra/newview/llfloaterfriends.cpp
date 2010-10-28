@@ -69,12 +69,6 @@
 #include "llviewernetwork.h"
 #include "hippogridmanager.h"
 
-#include "llchat.h"
-#include "llfloaterchat.h"
-
-// <dogmode> stuff for Contact groups
-#include "ascentfloatercontactgroups.h"
-
 //Maximum number of people you can select to do an operation on at once.
 #define MAX_FRIEND_SELECT 20
 #define DEFAULT_PERIOD 5.0
@@ -125,8 +119,7 @@ LLPanelFriends::LLPanelFriends() :
 	mObserver(NULL),
 	mShowMaxSelectWarning(TRUE),
 	mAllowRightsChange(TRUE),
-	mNumRightsChanged(0),
-	mNumOnline(0)
+	mNumRightsChanged(0)
 {
 	mEventTimer.stop();
 	mObserver = new LLLocalFriendsObserver(this);
@@ -199,144 +192,6 @@ void LLPanelFriends::updateFriends(U32 changed_mask)
 	mShowMaxSelectWarning = true;
 }
 
-// <dogmode>
-// Contact search and group system.
-// 09/05/2010 - Charley Levenque
-std::string LLPanelFriends::cleanFileName(std::string filename)
-{
-	std::string invalidChars = "\"\'\\/?*:<>|";
-	S32 position = filename.find_first_of(invalidChars);
-	while (position != filename.npos)
-	{
-		filename[position] = '_';
-		position = filename.find_first_of(invalidChars, position);
-	}
-	return filename;
-}
-
-void LLPanelFriends::populateContactGroupSelect()
-{
-	LLComboBox* combo = getChild<LLComboBox>("buddy_group_combobox");
-
-	if (combo)
-	{
-		combo->removeall();
-		combo->add("All", ADD_BOTTOM);
-
-		std::string name;
-		gDirUtilp->getNextFileInDir(gDirUtilp->getPerAccountChatLogsDir(),"*",name,false);//stupid hack to clear last file search
-
-		std::string path_name(gDirUtilp->getPerAccountChatLogsDir() + gDirUtilp->getDirDelimiter());
-		bool found = true;	
-		while(found = gDirUtilp->getNextFileInDir(path_name, "*.grp", name, false)) 
-		{
-			if ((name == ".") || (name == "..")) continue;
-
-			//llinfos << "path name " << path_name << " and name " << name << " and found " << found << llendl;
-			if(found)
-			{
-				S32 periodIndex = name.find_last_of(".");
-				name = name.substr(0, periodIndex);
-
-				if ((name == ".") || (name == "..")) continue;
-
-				combo->add(name, ADD_BOTTOM);
-				//LLChat msg("Combo Add " + name);
-				//LLFloaterChat::addChat(msg);
-			}
-		}
-	}
-	else
-	{
-		LLChat msg("Null combo");
-		LLFloaterChat::addChat(msg);
-	}
-}
-
-void LLPanelFriends::setContactGroup(std::string contact_grp)
-{
-	std::string group_path = gDirUtilp->getPerAccountChatLogsDir() + gDirUtilp->getDirDelimiter();
-	std::string filename = group_path + cleanFileName(contact_grp + ".grp");
-
-	FILE* fp = LLFile::fopen(filename, "w");
-	
-	if (fp)
-	{
-		char buffer[10000];		/*Flawfinder: ignore*/
-		char *bptr;
-		S32 len = 0;
-
-		while ( fgets(buffer, 10000, fp)  && !feof(fp) ) 
-		{
-			len = strlen(buffer) - 1;		/*Flawfinder: ignore*/
-			for ( bptr = (buffer + len); (*bptr == '\n' || *bptr == '\r') && bptr>buffer; bptr--)	*bptr='\0';
-		}
-
-		std::string file_contents(buffer);
-		mContactFilter = file_contents;
-
-		LLChat msg(mContactFilter);
-		LLFloaterChat::addChat(msg);
-	}
-}
-
-void LLPanelFriends::filterContacts()
-{
-	//LLComboBox* combo = getChild<LLComboBox>("buddy_group_combobox");
-	//if (combo->getValue().asString() != "All")
-	std::string friend_name;
-	std::string search_name;
-
-	search_name = LLPanelFriends::getChild<LLLineEditor>("buddy_search_lineedit")->getValue().asString();
-
-	if (search_name != "" && search_name != mLastContactSearch)
-	{	
-		mLastContactSearch = search_name;
-		refreshNames(LLFriendObserver::ADD);
-
-		std::vector<LLScrollListItem*> vFriends = mFriendsList->getAllData(); // all of it.
-		for (std::vector<LLScrollListItem*>::iterator itr = vFriends.begin(); itr != vFriends.end(); ++itr)
-		{
-			friend_name = utf8str_tolower((*itr)->getColumn(LIST_FRIEND_NAME)->getValue().asString());
-			BOOL show_entry = (friend_name.find(utf8str_tolower(search_name)) != std::string::npos);
-			if (!show_entry)
-			{
-				mFriendsList->deleteItems((*itr)->getValue());
-			}
-		}
-
-		refreshUI();
-	}
-	else if (search_name == "" && search_name != mLastContactSearch) refreshNames(LLFriendObserver::ADD);
-}
-
-void LLPanelFriends::onContactSearchKeystroke(LLLineEditor* caller, void* user_data)
-{
-	if (caller)
-	{
-		LLPanelFriends* panelp = (LLPanelFriends*)caller->getParent();
-		if (panelp)
-		{
-			panelp->filterContacts();
-		}
-	}
-}
-
-void LLPanelFriends::onChangeContactGroup(LLUICtrl* ctrl, void* user_data)
-{
-	LLPanelFriends* panelp = (LLPanelFriends*)user_data;
-
-	if(panelp)
-	{
-		LLComboBox* combo = panelp->getChild<LLComboBox>("buddy_group_combobox");
-		if (combo->getValue().asString() != "All")
-		{
-			panelp->setContactGroup(combo->getValue().asString());
-		}
-	}
-}
-// --
-
 // virtual
 BOOL LLPanelFriends::postBuild()
 {
@@ -345,26 +200,12 @@ BOOL LLPanelFriends::postBuild()
 	mFriendsList->setMaximumSelectCallback(onMaximumSelect);
 	mFriendsList->setCommitOnSelectionChange(TRUE);
 	childSetCommitCallback("friend_list", onSelectName, this);
-	childSetCommitCallback("buddy_group_combobox", onChangeContactGroup, this);
 	childSetDoubleClickCallback("friend_list", onClickIM);
-
-	// <dogmode>
-	// Contact search and group system.
-	// 09/05/2010 - Charley Levenque
-	LLLineEditor* contact = getChild<LLLineEditor>("buddy_search_lineedit");
-	if (contact)
-	{
-		contact->setKeystrokeCallback(&onContactSearchKeystroke);
-	}
-
-	getChild<LLTextBox>("s_num")->setValue("0");
-	getChild<LLTextBox>("f_num")->setValue(llformat("%d", mFriendsList->getItemCount()));
 
 	U32 changed_mask = LLFriendObserver::ADD | LLFriendObserver::REMOVE | LLFriendObserver::ONLINE;
 	refreshNames(changed_mask);
 
 	childSetAction("im_btn", onClickIM, this);
-	childSetAction("assign_btn", onClickAssign, this);
 	childSetAction("profile_btn", onClickProfile, this);
 	childSetAction("offer_teleport_btn", onClickOfferTeleport, this);
 	childSetAction("pay_btn", onClickPay, this);
@@ -403,21 +244,19 @@ BOOL LLPanelFriends::addFriend(const LLUUID& agent_id)
 	friend_column["column"] = "friend_name";
 	friend_column["value"] = fullname;
 	friend_column["font"] = "SANSSERIF";
-	friend_column["font-style"] = "NORMAL";	
+	friend_column["font-style"] = "NORMAL";
 
 	LLSD& online_status_column = element["columns"][LIST_ONLINE_STATUS];
 	online_status_column["column"] = "icon_online_status";
 	online_status_column["type"] = "icon";
-
+	
 	if (isOnline)
 	{
-		mNumOnline++;
 		friend_column["font-style"] = "BOLD";	
 		online_status_column["value"] = "icon_avatar_online.tga";
 	}
 	else if(isOnlineSIP)
 	{
-		mNumOnline++;
 		friend_column["font-style"] = "BOLD";	
 		online_status_column["value"] = ONLINE_SIP_ICON_NAME;
 	}
@@ -436,26 +275,30 @@ BOOL LLPanelFriends::addFriend(const LLUUID& agent_id)
 	edit_my_object_column["column"] = "icon_edit_mine";
 	edit_my_object_column["type"] = "checkbox";
 	edit_my_object_column["value"] = relationInfo->isRightGrantedTo(LLRelationship::GRANT_MODIFY_OBJECTS);
-	
-	LLSD& see_online_them_column = element["columns"][LIST_VISIBLE_ONLINE_THEIRS];
-	see_online_them_column["column"] = "icon_visible_online_theirs";
-	see_online_them_column["type"] = "checkbox";
-	see_online_them_column["enabled"] = "";
-	see_online_them_column["value"] = relationInfo->isRightGrantedFrom(LLRelationship::GRANT_ONLINE_STATUS);
 
+	{
+		LLSD& lol_column = element["columns"][LIST_VISIBLE_ONLINE_THEIRS];
+		lol_column["column"] = "icon_visible_online_theirs";
+		lol_column["type"] = "checkbox";
+		lol_column["enabled"] = "";
+		lol_column["value"] = relationInfo->isRightGrantedFrom(LLRelationship::GRANT_ONLINE_STATUS);
+	}
 
+	{
+		LLSD& lol_column = element["columns"][LIST_VISIBLE_MAP_THEIRS];
+		lol_column["column"] = "icon_visible_map_theirs";
+		lol_column["type"] = "checkbox";
+		lol_column["enabled"] = "";
+		lol_column["value"] = relationInfo->isRightGrantedFrom(LLRelationship::GRANT_MAP_LOCATION);
+	}
 
-	LLSD& mapstalk_them_column = element["columns"][LIST_VISIBLE_MAP_THEIRS];
-	mapstalk_them_column["column"] = "icon_visible_map_theirs";
-	mapstalk_them_column["type"] = "checkbox";
-	mapstalk_them_column["enabled"] = "";
-	mapstalk_them_column["value"] = relationInfo->isRightGrantedFrom(LLRelationship::GRANT_MAP_LOCATION);
-
-	LLSD& edit_their_object_column = element["columns"][LIST_EDIT_THEIRS];
-	edit_their_object_column["column"] = "icon_edit_theirs";
-	edit_their_object_column["type"] = "checkbox";
-	edit_their_object_column["enabled"] = "";
-	edit_their_object_column["value"] = relationInfo->isRightGrantedFrom(LLRelationship::GRANT_MODIFY_OBJECTS);
+	{
+		LLSD& lol_column = element["columns"][LIST_EDIT_THEIRS];
+		lol_column["column"] = "icon_edit_theirs";
+		lol_column["type"] = "checkbox";
+		lol_column["enabled"] = "";
+		lol_column["value"] = relationInfo->isRightGrantedFrom(LLRelationship::GRANT_MODIFY_OBJECTS);
+	}
 
 	LLSD& update_gen_column = element["columns"][LIST_FRIEND_UPDATE_GEN];
 	update_gen_column["column"] = "friend_last_update_generation";
@@ -484,17 +327,11 @@ BOOL LLPanelFriends::updateFriendItem(const LLUUID& agent_id, const LLRelationsh
 	
 	if(isOnline)
 	{
-		mNumOnline++;
 		statusIcon = "icon_avatar_online.tga";
 	}
 	else if(isOnlineSIP)
 	{
-		mNumOnline++;
 		statusIcon = ONLINE_SIP_ICON_NAME;
-	}
-	else
-	{
-		mNumOnline--;
 	}
 
 	itemp->getColumn(LIST_ONLINE_STATUS)->setValue(statusIcon);
@@ -505,12 +342,12 @@ BOOL LLPanelFriends::updateFriendItem(const LLUUID& agent_id, const LLRelationsh
 	itemp->getColumn(LIST_VISIBLE_ONLINE)->setValue(info->isRightGrantedTo(LLRelationship::GRANT_ONLINE_STATUS));
 	itemp->getColumn(LIST_VISIBLE_MAP)->setValue(info->isRightGrantedTo(LLRelationship::GRANT_MAP_LOCATION));
 	itemp->getColumn(LIST_EDIT_MINE)->setValue(info->isRightGrantedTo(LLRelationship::GRANT_MODIFY_OBJECTS));
-	//Notes in the original code imply this may not always work. Good to know. -HgB
-	itemp->getColumn(LIST_VISIBLE_ONLINE_THEIRS)->setValue(info->isRightGrantedFrom(LLRelationship::GRANT_ONLINE_STATUS));
-	
 
+	itemp->getColumn(LIST_VISIBLE_ONLINE_THEIRS)->setValue(info->isRightGrantedFrom(LLRelationship::GRANT_ONLINE_STATUS));
+	//unreliable? broken?
 	itemp->getColumn(LIST_VISIBLE_MAP_THEIRS)->setValue(info->isRightGrantedFrom(LLRelationship::GRANT_MAP_LOCATION));
 	itemp->getColumn(LIST_EDIT_THEIRS)->setValue(info->isRightGrantedFrom(LLRelationship::GRANT_MODIFY_OBJECTS));
+
 
 	S32 change_generation = have_name ? info->getChangeSerialNum() : -1;
 	itemp->getColumn(LIST_FRIEND_UPDATE_GEN)->setValue(change_generation);
@@ -524,10 +361,9 @@ BOOL LLPanelFriends::updateFriendItem(const LLUUID& agent_id, const LLRelationsh
 
 void LLPanelFriends::refreshRightsChangeList()
 {
-
 	LLDynamicArray<LLUUID> friends = getSelectedIDs();
-	
 	S32 num_selected = friends.size();
+
 	bool can_offer_teleport = num_selected >= 1;
 	bool selected_friends_online = true;
 
@@ -547,6 +383,7 @@ void LLPanelFriends::refreshRightsChangeList()
 	{
 		processing_label->setVisible(false);
 	}
+
 	const LLRelationship* friend_status = NULL;
 	for(LLDynamicArray<LLUUID>::iterator itr = friends.begin(); itr != friends.end(); ++itr)
 	{
@@ -564,16 +401,10 @@ void LLPanelFriends::refreshRightsChangeList()
 			can_offer_teleport = false;
 		}
 	}
-
-	//Stuff for the online/total/select counts.
-	
-	getChild<LLTextBox>("s_num")->setValue(llformat("%d", num_selected));
-	getChild<LLTextBox>("f_num")->setValue(llformat("%d / %d", mNumOnline, mFriendsList->getItemCount()));
 	
 	if (num_selected == 0)  // nothing selected
 	{
 		childSetEnabled("im_btn", FALSE);
-		childSetEnabled("assign_btn", FALSE);
 		childSetEnabled("offer_teleport_btn", FALSE);
 	}
 	else // we have at least one friend selected...
@@ -582,7 +413,6 @@ void LLPanelFriends::refreshRightsChangeList()
 		// to be consistent with context menus in inventory and because otherwise
 		// offline friends would be silently dropped from the session
 		childSetEnabled("im_btn", selected_friends_online || num_selected == 1);
-		childSetEnabled("assign_btn", TRUE);
 		childSetEnabled("offer_teleport_btn", can_offer_teleport);
 	}
 }
@@ -632,7 +462,6 @@ void LLPanelFriends::refreshNames(U32 changed_mask)
 
 BOOL LLPanelFriends::refreshNamesSync(const LLAvatarTracker::buddy_map_t & all_buddies)
 {
-	mNumOnline = 0;
 	mFriendsList->deleteAllItems();
 
 	BOOL have_names = TRUE;
@@ -648,7 +477,6 @@ BOOL LLPanelFriends::refreshNamesSync(const LLAvatarTracker::buddy_map_t & all_b
 
 BOOL LLPanelFriends::refreshNamesPresence(const LLAvatarTracker::buddy_map_t & all_buddies)
 {
-
 	std::vector<LLScrollListItem*> items = mFriendsList->getAllData();
 	std::sort(items.begin(), items.end(), SortFriendsByID());
 
@@ -696,10 +524,9 @@ BOOL LLPanelFriends::refreshNamesPresence(const LLAvatarTracker::buddy_map_t & a
 
 	return have_names;
 }
-// meal disk
+
 void LLPanelFriends::refreshUI()
 {	
-	populateContactGroupSelect();
 	BOOL single_selected = FALSE;
 	BOOL multiple_selected = FALSE;
 	int num_selected = mFriendsList->getAllSelected().size();
@@ -721,6 +548,7 @@ void LLPanelFriends::refreshUI()
 		childSetText("friend_name_label", LLStringUtil::null);
 	}
 
+
 	//Options that can only be performed with one friend selected
 	childSetEnabled("profile_btn", single_selected && !multiple_selected);
 	childSetEnabled("pay_btn", single_selected && !multiple_selected);
@@ -729,7 +557,6 @@ void LLPanelFriends::refreshUI()
 	//(single_selected will always be true in this situations)
 	childSetEnabled("remove_btn", single_selected);
 	childSetEnabled("im_btn", single_selected);
-	childSetEnabled("assign_btn", single_selected);
 	childSetEnabled("friend_rights", single_selected);
 
 	refreshRightsChangeList();
@@ -747,7 +574,7 @@ LLDynamicArray<LLUUID> LLPanelFriends::getSelectedIDs()
 	return friend_ids;
 }
 
-// static 
+// static
 void LLPanelFriends::onSelectName(LLUICtrl* ctrl, void* user_data)
 {
 	LLPanelFriends* panelp = (LLPanelFriends*)user_data;
@@ -785,16 +612,6 @@ void LLPanelFriends::onClickProfile(void* user_data)
 }
 
 // static
-void LLPanelFriends::onClickAssign(void* user_data)
-{
-	LLPanelFriends* panelp = (LLPanelFriends*)user_data;
-	if (panelp)
-	{
-		LLDynamicArray<LLUUID> ids = panelp->getSelectedIDs();
-		ASFloaterContactGroups::show(ids);
-	}
-}
-
 void LLPanelFriends::onClickIM(void* user_data)
 {
 	LLPanelFriends* panelp = (LLPanelFriends*)user_data;
@@ -994,6 +811,7 @@ void LLPanelFriends::onClickExport(void* user_data)
 	std::string grid_uri = gHippoGridManager->getConnectedGrid()->getLoginUri();
 	//LLStringUtil::toLower(uris[0]);
 	llsd["GRID"] = grid_uri;
+
 
 	llofstream export_file;
 	export_file.open(filename);

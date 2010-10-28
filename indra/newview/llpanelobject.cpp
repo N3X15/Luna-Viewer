@@ -77,6 +77,9 @@
 #include "lldrawpool.h"
 
 #include "hippolimits.h"
+// [RLVa:KB]
+#include "rlvhandler.h"
+// [/RLVa:KB]
 #include <boost/lexical_cast.hpp>
 
 //
@@ -128,8 +131,10 @@ enum {
 LLVector3 LLPanelObject::mClipboardPos;
 LLVector3 LLPanelObject::mClipboardSize;
 LLVector3 LLPanelObject::mClipboardRot;
+
 LLVolumeParams LLPanelObject::mClipboardVolumeParams;
 BOOL LLPanelObject::hasParamClipboard = FALSE;
+
 
 //*TODO:translate (depricated, so very low priority)
 static const std::string LEGACY_FULLBRIGHT_DESC("Fullbright (Legacy)");
@@ -141,7 +146,7 @@ BOOL	LLPanelObject::postBuild()
 	//--------------------------------------------------------
 	// Top
 	//--------------------------------------------------------
-	
+
 	// Build constant tipsheet
 	childSetAction("build_math_constants",onClickBuildConstants,this);
 
@@ -217,7 +222,7 @@ BOOL	LLPanelObject::postBuild()
 	childSetAction("pasterot",onPasteRot, this);
 	mBtnPasteRotClip = getChild<LLButton>("pasterotclip");
 	childSetAction("pasterotclip",onPasteRotClip, this);
-	
+
 	mBtnCopyParams = getChild<LLButton>("copyparams");
 	childSetAction("copyparams",onCopyParams, this);
 	mBtnPasteParams = getChild<LLButton>("pasteparams");
@@ -230,8 +235,6 @@ BOOL	LLPanelObject::postBuild()
 	mComboMaterial = getChild<LLComboBox>("material");
 	childSetCommitCallback("material",onCommitMaterial,this);
 	mComboMaterial->removeall();
-	// <edit>
-	/*
 	// *TODO:translate
 	for (LLMaterialTable::info_list_t::iterator iter = LLMaterialTable::basic.mMaterialInfoList.begin();
 		 iter != LLMaterialTable::basic.mMaterialInfoList.end(); ++iter)
@@ -242,12 +245,6 @@ BOOL	LLPanelObject::postBuild()
 			mComboMaterial->add(minfop->mName);
 		}
 	}
-	*/
-	for(U8 mcode = 0; mcode < 0x10; mcode++)
-	{
-		mComboMaterial->add(LLMaterialTable::basic.getName(mcode));
-	}
-	// </edit>
 	mComboMaterialItemCount = mComboMaterial->getItemCount();
 
 	// Base Type
@@ -470,6 +467,7 @@ void LLPanelObject::getState( )
 	BOOL enable_scale	= objectp->permMove() && objectp->permModify();
 	//BOOL enable_rotate	= objectp->permMove() && ( (objectp->permModify() && !objectp->isAttachment()) || !gSavedSettings.getBOOL("EditLinkedParts"));
 	BOOL enable_rotate	= objectp->permMove() /*&& !objectp->isAttachment() */&& (objectp->permModify() || !gSavedSettings.getBOOL("EditLinkedParts"));
+	childSetEnabled("build_math_constants",true);
 
 	S32 selected_count = LLSelectMgr::getInstance()->getSelection()->getObjectCount();
 	BOOL single_volume = (LLSelectMgr::getInstance()->selectionAllPCode( LL_PCODE_VOLUME ))
@@ -482,14 +480,14 @@ void LLPanelObject::getState( )
 		enable_rotate = FALSE;
 	}
 
-
-
-
-
-
-
-
-
+// [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g)
+	if ( (rlv_handler_t::isEnabled()) && ((gRlvHandler.hasBehaviour(RLV_BHVR_UNSIT)) || (gRlvHandler.hasBehaviour(RLV_BHVR_SITTP))) )
+	{
+		LLVOAvatar* pAvatar = gAgent.getAvatarObject();
+		if ( (pAvatar) && (pAvatar->mIsSitting) && (pAvatar->getRoot() == objectp->getRootEdit()) )
+			enable_move = enable_scale = enable_rotate = FALSE;
+	}
+// [/RLVa:KB]
 
 	LLVector3 vec;
 	if (enable_move)
@@ -517,8 +515,44 @@ void LLPanelObject::getState( )
 	mCtrlPosX->setEnabled(enable_move);
 	mCtrlPosY->setEnabled(enable_move);
 	mCtrlPosZ->setEnabled(enable_move);
-	mBtnLinkObj->setEnabled((!single_volume));
-	mBtnUnlinkObj->setEnabled(((selected_count > 1)));
+
+	bool enable_link = false;
+	// check if there are at least 2 objects selected, and that the
+	// user can modify at least one of the selected objects.
+	// in component mode, can't link
+	if (!gSavedSettings.getBOOL("EditLinkedParts"))
+	{
+		if(LLSelectMgr::getInstance()->selectGetAllRootsValid() && LLSelectMgr::getInstance()->getSelection()->getRootObjectCount() >= 2)
+		{
+			struct f : public LLSelectedObjectFunctor
+			{
+				virtual bool apply(LLViewerObject* object)
+				{
+					return object->permModify();
+				}
+			} func;
+			const bool firstonly = true;
+			enable_link = LLSelectMgr::getInstance()->getSelection()->applyToRootObjects(&func, firstonly);
+		}
+	}
+	mBtnLinkObj->setEnabled( enable_link );
+
+	bool enable_unlink = LLSelectMgr::getInstance()->selectGetAllRootsValid() &&
+		LLSelectMgr::getInstance()->getSelection()->getFirstEditableObject() &&
+		!LLSelectMgr::getInstance()->getSelection()->getFirstEditableObject()->isAttachment();
+// [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g) | Modified: RLVa-0.2.0g
+		if ( (enable_unlink) && (gRlvHandler.hasBehaviour(RLV_BHVR_UNSIT)) && 
+		 (gAgent.getAvatarObject()) && (gAgent.getAvatarObject()->mIsSitting) )
+	{
+		// Allow if the avie isn't sitting on any of the selected objects
+		LLObjectSelectionHandle handleSel = LLSelectMgr::getInstance()->getSelection();
+		RlvSelectIsSittingOn func(gAgent.getAvatarObject()->getRoot());
+		if (handleSel->getFirstRootNode(&func, TRUE))
+			enable_unlink = false;
+	}
+// [/RLVa:KB]
+	mBtnUnlinkObj->setEnabled( enable_unlink );
+
 	mBtnCopyPos->setEnabled(enable_move);
 	mBtnPastePos->setEnabled(enable_move);
 	mBtnPastePosClip->setEnabled(enable_move);
@@ -590,9 +624,9 @@ void LLPanelObject::getState( )
 	mBtnCopyRot->setEnabled( enable_rotate );
 	mBtnPasteRot->setEnabled( enable_rotate );
 	mBtnPasteRotClip->setEnabled( enable_rotate );
-	
-	mBtnCopyParams->setEnabled( single_volume );
-	mBtnPasteParams->setEnabled( single_volume );
+
+	mBtnCopyParams->setEnabled( single_volume && objectp->permModify() );
+	mBtnPasteParams->setEnabled( single_volume && objectp->permModify() );
 
 	BOOL owners_identical;
 	LLUUID owner_id;
@@ -687,8 +721,6 @@ void LLPanelObject::getState( )
 	{
 		mComboMaterial->setEnabled( TRUE );
 		mLabelMaterial->setEnabled( TRUE );
-		// <edit>
-		/*
 		if (material_code == LL_MCODE_LIGHT)
 		{
 			if (mComboMaterial->getItemCount() == mComboMaterialItemCount)
@@ -707,9 +739,6 @@ void LLPanelObject::getState( )
 			if(material_code <= 8)
 				mComboMaterial->setSimple(std::string(LLMaterialTable::basic.getName(material_code)));
 		}
-		*/
-		mComboMaterial->setSimple(std::string(LLMaterialTable::basic.getName(material_code)));
-		// </edit>
 	}
 	else
 	{
@@ -790,12 +819,10 @@ void LLPanelObject::getState( )
 		{
 			selected_item = MI_PRISM;
 		}
-		// <edit> that was messin up my hemicylinder
-		//else if (path == LL_PCODE_PATH_FLEXIBLE) // shouldn't happen
-		//{
-		//	selected_item = MI_CYLINDER; // reasonable default
-		//}
-		// </edit>
+		else if (path == LL_PCODE_PATH_FLEXIBLE) // shouldn't happen
+		{
+			selected_item = MI_CYLINDER; // reasonable default
+		}
 		else if ( path == LL_PCODE_PATH_CIRCLE && profile == LL_PCODE_PROFILE_CIRCLE && scale_y > 0.75f)
 		{
 			selected_item = MI_SPHERE;
@@ -809,13 +836,6 @@ void LLPanelObject::getState( )
 			selected_item = MI_SPHERE;
 			//selected_item = MI_PATH_CIRCLE_PROFILE_CIRCLE_HALF;
 		}
-		// <edit> spirals are supported by me
-		//else if ( path == LL_PCODE_PATH_CIRCLE2 && profile == LL_PCODE_PROFILE_CIRCLE )
-		//{
-		//	// Spirals aren't supported.  Make it into a sphere.  JC
-		//	selected_item = MI_SPHERE;
-		//}
-		// </edit>
 		else if ( path == LL_PCODE_PATH_CIRCLE && profile == LL_PCODE_PROFILE_EQUALTRI )
 		{
 			selected_item = MI_RING;
@@ -943,11 +963,8 @@ void LLPanelObject::getState( )
 		// Cut interpretation varies based on base object type
 		F32 cut_begin, cut_end, adv_cut_begin, adv_cut_end;
 
-		// <edit>
-		//if ( selected_item == MI_SPHERE || selected_item == MI_TORUS || 
-		//	 selected_item == MI_TUBE   || selected_item == MI_RING )
-		if(!linear_path)
-		// </edit>
+		if ( selected_item == MI_SPHERE || selected_item == MI_TORUS ||
+			 selected_item == MI_TUBE   || selected_item == MI_RING )
 		{
 			cut_begin		= begin_t;
 			cut_end			= end_t;
@@ -975,10 +992,7 @@ void LLPanelObject::getState( )
 		F32 twist		= volume_params.getTwist();
 		F32 twist_begin = volume_params.getTwistBegin();
 		// Check the path type for conversion.
-		// <edit>
-		//if (path == LL_PCODE_PATH_LINE || path == LL_PCODE_PATH_FLEXIBLE)
-		if(linear_path)
-		// </edit>
+		if (path == LL_PCODE_PATH_LINE || path == LL_PCODE_PATH_FLEXIBLE)
 		{
 			twist		*= OBJECT_TWIST_LINEAR_MAX;
 			twist_begin	*= OBJECT_TWIST_LINEAR_MAX;
@@ -1013,7 +1027,7 @@ void LLPanelObject::getState( )
 		// Radius offset.
 		F32 radius_offset = volume_params.getRadiusOffset();
 		// Limit radius offset, based on taper and hole size y.
-		/* DISREGARD THAT LET'S GET CRAZY -HgB
+		/*
 		F32 radius_mag = fabs(radius_offset);
 		F32 hole_y_mag = fabs(scale_y);
 		F32 taper_y_mag  = fabs(taper_y);
@@ -1050,7 +1064,7 @@ void LLPanelObject::getState( )
 		// Skew
 		F32 skew	= volume_params.getSkew();
 		// Limit skew, based on revolutions hole size x.
-		/* SUCKS... NEVER MIND -HgB
+		/*
 		F32 skew_mag= fabs(skew);
 		F32 min_skew_mag = 1.0f - 1.0f / (revolutions * scale_x + 1.0f);
 		// Discontinuity; A revolution of 1 allows skews below 0.5.
@@ -1233,7 +1247,7 @@ void LLPanelObject::getState( )
 	*/
 	{
 		mSpinHollow->setMinValue(0.f);
-		mSpinHollow->setMaxValue(95.f); //Not that nuts. -HgB
+		mSpinHollow->setMaxValue(100.f);
 	}
 
 	// Update field enablement
@@ -1798,13 +1812,8 @@ void LLPanelObject::getVolumeParams(LLVolumeParams& volume_params)
 	F32 begin_s, end_s;
 	F32 begin_t, end_t;
 
-	// <edit>
-	//if (selected_type == MI_SPHERE || selected_type == MI_TORUS || 
-	//	selected_type == MI_TUBE   || selected_type == MI_RING)
-	BOOL linear_path =  (path == LL_PCODE_PATH_LINE) ||
-						(path == LL_PCODE_PATH_FLEXIBLE);
-	if(!linear_path)
-	// </edit>
+	if (selected_type == MI_SPHERE || selected_type == MI_TORUS ||
+		selected_type == MI_TUBE   || selected_type == MI_RING)
 	{
 		begin_s = adv_cut_begin;
 		end_s	= adv_cut_end;
@@ -1827,8 +1836,8 @@ void LLPanelObject::getVolumeParams(LLVolumeParams& volume_params)
 	// Hollowness
 	F32 hollow = mSpinHollow->get() / 100.f;
 
-	/* DUTCH PORN MODE -HgB
-	if (  selected_hole == MI_HOLE_SQUARE && 
+	/*
+	if (  selected_hole == MI_HOLE_SQUARE &&
 		( selected_type == MI_CYLINDER || selected_type == MI_TORUS ||
 		  selected_type == MI_PRISM    || selected_type == MI_RING  ||
 		  selected_type == MI_SPHERE ) )
@@ -2040,8 +2049,7 @@ void LLPanelObject::sendScale(BOOL btn_down)
 	LLVector3 newscale(mCtrlScaleX->get(), mCtrlScaleY->get(), mCtrlScaleZ->get());
 
 	LLVector3 delta = newscale - mObject->getScale();
-	//Saw this changed in some viewers to be more touchy than this, but it would likely cause more updates and higher lag for the client. -HgB
-	if (delta.magVec() >= 0.0005f)
+	if (delta.magVec() >= 0.0001f)
 	{
 		// scale changed by more than 1/2 millimeter
 
@@ -2080,10 +2088,7 @@ void LLPanelObject::sendPosition(BOOL btn_down)
 	// Clamp the Z height
 	const F32 height = newpos.mV[VZ];
 	const F32 min_height = LLWorld::getInstance()->getMinAllowedZ(mObject);
-	// <edit>
-	//const F32 max_height = LLWorld::getInstance()->getRegionMaxHeight();
-	const F32 max_height = F32(340282346638528859811704183484516925440.0f);
-	// </edit>
+	const F32 max_height = LLWorld::getInstance()->getRegionMaxHeight();
 
 	if (!mObject->isAttachment())
 	{
@@ -2115,9 +2120,8 @@ void LLPanelObject::sendPosition(BOOL btn_down)
 		LLVector3d old_pos_global = mObject->getPositionGlobal();
 		LLVector3d delta = new_pos_global - old_pos_global;
 		// moved more than 1/2 millimeter
-		//Saw this changed in some viewers to be more touchy than this, but it would likely cause more updates and higher lag for the client. -HgB
-		if (delta.magVec() >= 0.0005f)
-		{			
+		if (delta.magVec() >= 0.0001f)
+		{
 			if (mRootObject != mObject)
 			{
 				newpos = newpos - mRootObject->getPositionRegion();

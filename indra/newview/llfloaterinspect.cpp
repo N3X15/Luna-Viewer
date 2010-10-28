@@ -47,7 +47,9 @@
 #include "llviewerpartsource.h"
 #include "floaterblacklist.h"
 #include "llagent.h"
-
+// [RLVa:KB]
+#include "rlvhandler.h"
+// [/RLVa:KB]
 
 struct struct_tex
 {
@@ -169,7 +171,13 @@ void LLFloaterInspect::onClickOwnerProfile(void* ctrl)
 		if(node)
 		{
 			const LLUUID& owner_id = node->mPermissions->getOwner();
-			LLFloaterAvatarInfo::showFromDirectory(owner_id);
+// [RLVa:KB] - Checked: 2009-07-08 (RLVa-1.0.0e)
+			if (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES))
+			{
+				LLFloaterAvatarInfo::showFromDirectory(owner_id);
+			}
+// [/RLVa:KB]
+//			LLFloaterAvatarInfo::showFromDirectory(owner_id);
 		}
 	}
 }
@@ -187,7 +195,10 @@ void LLFloaterInspect::onSelectObject(LLUICtrl* ctrl, void* user_data)
 {
 	if(LLFloaterInspect::getSelectedUUID() != LLUUID::null)
 	{
-		sInstance->childSetEnabled("button owner", true);
+		//sInstance->childSetEnabled("button owner", true);
+// [RLVa:KB] - Checked: 2009-07-08 (RLVa-1.0.0e) | Added: RLVa-1.0.0e
+		sInstance->childSetEnabled("button owner", !gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES));
+// [/RLVa:KB]
 		sInstance->childSetEnabled("button creator", true);
 	}
 
@@ -198,7 +209,7 @@ void LLFloaterInspect::onSelectObject(LLUICtrl* ctrl, void* user_data)
 	{
 		sInstance->getChild<LLTextureCtrl>(llformat("tex%d",i))->setImageAssetID(LLUUID::null);
 		sInstance->getChild<LLTextureCtrl>(llformat("tex%d",i))->setEnabled(FALSE);
-//		sInstance->getChild<LLTextureCtrl>(llformat("tex%d",i))->setIsMasked(TRUE);
+		sInstance->getChild<LLTextureCtrl>(llformat("tex%d",i))->setIsMasked(TRUE);
 		sInstance->childSetText(llformat("line1_%d",i),std::string(""));
 		sInstance->childSetText(llformat("line2_%d",i),std::string(""));
 		sInstance->childSetText(llformat("line3_%d",i),std::string(""));
@@ -252,7 +263,7 @@ void LLFloaterInspect::onSelectObject(LLUICtrl* ctrl, void* user_data)
 				loader_tex.texpanel->setVisible(TRUE);
 				loader_tex.ctrl = sInstance->getChild<LLTextureCtrl>(llformat("tex%d",j));
 				loader_tex.ctrl->setEnabled(FALSE);
-//				loader_tex.ctrl->setIsMasked(TRUE);
+				loader_tex.ctrl->setIsMasked(TRUE);
 
 //				sInstance->childGetRect(llformat("texpanel%d",j), loader_tex.texpanel_rect);
 				loader_tex.line1 = sInstance->getChild<LLTextBox>(llformat("line1_%d",j));
@@ -286,7 +297,7 @@ void LLFloaterInspect::onSelectObject(LLUICtrl* ctrl, void* user_data)
 				//loader_tex.texpanel->setVisible(TRUE);
 				loader_tex.ctrl = sInstance->getChild<LLTextureCtrl>("texs");
 				loader_tex.ctrl->setEnabled(FALSE);
-//				loader_tex.ctrl->setIsMasked(TRUE);
+				loader_tex.ctrl->setIsMasked(TRUE);
 
 //				sInstance->childGetRect("texpanels", loader_tex.texpanel_rect);
 				loader_tex.line1 = sInstance->getChild<LLTextBox>("line1_s");
@@ -323,7 +334,7 @@ void LLFloaterInspect::onSelectObject(LLUICtrl* ctrl, void* user_data)
 				//loader_tex.texpanel->setVisible(TRUE);
 				loader_tex.ctrl = sInstance->getChild<LLTextureCtrl>("texp");
 				loader_tex.ctrl->setEnabled(FALSE);
-//				loader_tex.ctrl->setIsMasked(TRUE);
+				loader_tex.ctrl->setIsMasked(TRUE);
 
 //				sInstance->childGetRect("texpanelp", loader_tex.texpanel_rect);
 				loader_tex.line1 = sInstance->getChild<LLTextBox>("line1_p");
@@ -521,6 +532,13 @@ void LLFloaterInspect::refresh()
 		LLStringUtil::copy(time, ctime(&timestamp), MAX_STRING);
 		time[24] = '\0';
 		gCacheName->getFullName(obj->mPermissions->getOwner(), owner_name);
+// [RLVa:KB] - Checked: 2009-07-08 (RLVa-1.0.0e)
+		if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES))
+		{
+			// TODO-RLVa: shouldn't filter if this is a group-owned prim (will show "(nobody)")
+			owner_name = RlvStrings::getAnonym(owner_name);
+		}
+// [/RLVa:KB]
 		gCacheName->getFullName(obj->mPermissions->getCreator(), creator_name);
 		gCacheName->getFullName(obj->mPermissions->getLastOwner(), last_owner_name);
 

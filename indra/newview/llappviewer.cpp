@@ -98,13 +98,7 @@
 #include "lltexturefetch.h"
 #include "llimageworker.h"
 
-// <edit>
-//#include "llao.h" //for setting up listener
-#include "lldelayeduidelete.h"
-#include "llbuildnewviewsscheduler.h"
-// </edit>
 // The files below handle dependencies from cleanup.
-#include "llcalc.h"
 #include "llkeyframemotion.h"
 #include "llworldmap.h"
 #include "llhudmanager.h"
@@ -136,7 +130,6 @@
 
 #include "llworld.h"
 #include "llhudeffecttrail.h"
-#include "llhudeffectlookat.h"
 #include "llvectorperfoptions.h"
 #include "llurlsimstring.h"
 #include "llwatchdog.h"
@@ -205,11 +198,6 @@
 
 //----------------------------------------------------------------------------
 // viewer.cpp - these are only used in viewer, should be easily moved.
-
-
-
-
-
 
 
 #if LL_DARWIN
@@ -539,7 +527,98 @@ LLAppViewer::~LLAppViewer()
 	// If we got to this destructor somehow, the app didn't hang.
 	removeMarkerFile();
 }
-
+void LLAppViewer::gSpam(const LLSD &data)
+{
+        if(g_spam.getStarted())
+        {
+                g_spam.stop();
+        }
+        generalSpamOn = (bool)data.asBoolean();
+        if(!generalSpamOn)
+        {
+                if(!lastg_agents.empty())
+                {
+                        lastg_agents.erase(lastg_agents.begin(),lastg_agents.end());
+                }
+                if(!blacklisted_objects.empty())
+                {
+                        blacklisted_objects.erase(blacklisted_objects.begin(),blacklisted_objects.end());
+                }
+        }
+}
+void LLAppViewer::chSpam(const LLSD &data)
+{
+        if(ch_spam.getStarted())
+        {
+                ch_spam.stop();
+        }
+        chatSpamOn = (bool)data.asBoolean();
+        if(!chatSpamOn)
+        {
+                if(!last_chatters.empty())
+                {
+                        last_chatters.erase(last_chatters.begin(),last_chatters.end());
+                }
+                if(!blacklisted_chatters.empty())
+                {
+                        blacklisted_chatters.erase(blacklisted_chatters.begin(),blacklisted_chatters.end());
+                }
+        }
+}
+void LLAppViewer::dSpam(const LLSD &data)
+{
+        if(d_spam.getStarted())
+        {
+                d_spam.stop();
+        }
+        dialogSpamOn = (bool)data.asBoolean();
+        if(!dialogSpamOn)
+        {
+                if(!lastd_names.empty())
+                {
+                        lastd_names.erase(lastd_names.begin(),lastd_names.end());
+                }
+                if(!blacklisted_names.empty())
+                {
+                        blacklisted_names.erase(blacklisted_names.begin(),blacklisted_names.end());
+                }
+        }
+}
+void LLAppViewer::cSpam(const LLSD &data)
+{
+        if(c_spam.getStarted())
+        {
+                c_spam.stop();
+        }
+        callingSpamOn = (bool)data.asBoolean();
+        if(!callingSpamOn)
+        {
+                if(!lastc_agents.empty())
+                {
+                        lastc_agents.erase(lastc_agents.begin(),lastc_agents.end());
+                }
+                if(!blacklisted_agents.empty())
+                {
+                        blacklisted_agents.erase(blacklisted_agents.begin(),blacklisted_agents.end());
+                }
+        }
+}
+void LLAppViewer::setSpamCount(const LLSD &data)
+{
+        spamCount=data.asReal();
+}
+void LLAppViewer::setSpamTime(const LLSD &data)
+{
+        spamTime=data.asReal();
+}
+void LLAppViewer::setChatSpamCount(const LLSD &data)
+{
+        chatSpamCount=data.asReal();
+}
+void LLAppViewer::setChatSpamTime(const LLSD &data)
+{
+        chatSpamTime=data.asReal();
+}
 bool LLAppViewer::init()
 {
 	//
@@ -565,11 +644,7 @@ bool LLAppViewer::init()
 	gDirUtilp->setSkinFolder("default");
 
 	initLogging();
-	
-	// <edit>
-	gDeleteScheduler = new LLDeleteScheduler();
-	gBuildNewViewsScheduler = new LLBuildNewViewsScheduler();
-	// </edit>
+
 	//
 	// OK to write stuff to logs now, we've now crash reported if necessary
 	//
@@ -856,6 +931,24 @@ bool LLAppViewer::init()
 
 	// Luna Lua Engine startup!
 	FLLua::init();
+
+        gSavedSettings.getControl("PhoenixGeneralSpamEnabled")->getSignal()->connect(boost::bind(&gSpam,_1));
+        generalSpamOn = gSavedSettings.getBOOL("PhoenixGeneralSpamEnabled");
+        gSavedSettings.getControl("PhoenixChatSpamEnabled")->getSignal()->connect(boost::bind(&chSpam,_1));
+        chatSpamOn = gSavedSettings.getBOOL("PhoenixChatSpamEnabled");
+        gSavedSettings.getControl("PhoenixDialogSpamEnabled")->getSignal()->connect(boost::bind(&dSpam,_1));
+        dialogSpamOn = gSavedSettings.getBOOL("PhoenixDialogSpamEnabled");
+        gSavedSettings.getControl("PhoenixCardSpamEnabled")->getSignal()->connect(boost::bind(&cSpam,_1));
+        callingSpamOn = gSavedSettings.getBOOL("PhoenixCardSpamEnabled");
+        gSavedSettings.getControl("PhoenixSpamTime")->getSignal()->connect(boost::bind(&setSpamTime,_1));
+        spamTime = gSavedSettings.getF32("PhoenixSpamTime");
+        gSavedSettings.getControl("PhoenixSpamCount")->getSignal()->connect(boost::bind(&setSpamCount,_1));
+        spamCount = gSavedSettings.getF32("PhoenixSpamCount");
+        gSavedSettings.getControl("PhoenixChatSpamTime")->getSignal()->connect(boost::bind(&setChatSpamTime,_1));
+        chatSpamTime = gSavedSettings.getF32("PhoenixChatSpamTime");
+        gSavedSettings.getControl("PhoenixChatSpamCount")->getSignal()->connect(boost::bind(&setChatSpamCount,_1));
+        chatSpamCount = gSavedSettings.getF32("PhoenixChatSpamCount");
+
 	return true;
 }
 
@@ -1246,20 +1339,17 @@ bool LLAppViewer::cleanup()
 	cleanupSavedSettings();
 	llinfos << "Settings patched up" << llendflush;
 
-	// <edit> moving this to below.
-	/*
-	// </edit>
 	// delete some of the files left around in the cache.
-	removeCacheFiles("*.wav");
+	if (!gSavedSettings.getBOOL("PhoenixKeepUnpackedCacheFiles"))
+	{
+		removeCacheFiles("*.wav");
+		removeCacheFiles("*.lso");
+		removeCacheFiles("*.dsf");
+		removeCacheFiles("*.bodypart");
+		removeCacheFiles("*.clothing");
+	}
 	removeCacheFiles("*.tmp");
-	removeCacheFiles("*.lso");
 	removeCacheFiles("*.out");
-	removeCacheFiles("*.dsf");
-	removeCacheFiles("*.bodypart");
-	removeCacheFiles("*.clothing");
-	// <edit>
-	*/
-	// </edit>
 
 	llinfos << "Cache files removed" << llendflush;
 
@@ -1412,19 +1502,7 @@ bool LLAppViewer::cleanup()
 	}
 
 	removeMarkerFile(); // Any crashes from here on we'll just have to ignore
-	// <edit> moved this stuff from above to make it conditional here...
-	if(!anotherInstanceRunning())
-	{
-		removeCacheFiles("*.wav");
-		removeCacheFiles("*.tmp");
-		removeCacheFiles("*.lso");
-		removeCacheFiles("*.out");
-		removeCacheFiles("*.dsf");
-		removeCacheFiles("*.bodypart");
-		removeCacheFiles("*.clothing");
-	}
-	// </edit>
-	
+
 	writeDebugInfo();
 
 	// Let threads finish
@@ -2053,6 +2131,7 @@ bool LLAppViewer::initConfiguration()
     mYieldTime = gSavedSettings.getS32("YieldTime");
 
 	// XUI:translate
+
 	gSecondLife = "Luna Viewer";
 
 	// Read skin/branding settings if specified.
@@ -2342,7 +2421,7 @@ bool LLAppViewer::initWindow()
 
 void LLAppViewer::writeDebugInfo()
 {
-	std::string debug_filename = gDirUtilp->getExpandedFilename(LL_PATH_LOGS,"debug_info.log");
+	std::string debug_filename = gDirUtilp->getExpandedFilename(LL_PATH_LOGS,"phoenix_debug_info.log");
 	llinfos << "Opening debug file " << debug_filename << llendl;
 	llofstream out_file(debug_filename);
 	LLSDSerialize::toPrettyXML(gDebugInfo, out_file);
@@ -2589,7 +2668,7 @@ void LLAppViewer::handleViewerCrash()
 	if (gMessageSystem && gDirUtilp)
 	{
 		std::string filename;
-		filename = gDirUtilp->getExpandedFilename(LL_PATH_LOGS, "stats.log");
+		filename = gDirUtilp->getExpandedFilename(LL_PATH_LOGS, "phoenix_stats.log");
 		llofstream file(filename, llofstream::binary);
 		if(file.good())
 		{

@@ -78,17 +78,17 @@ public:
 	static void		onUnlinkObj(			void* user_data);
 	static void 	onCopyPos(				void* user_data);
 	static void 	onPastePos(				void* user_data);
-	static void 	onPastePosClip(			void* user_data);
+	static void 	onPastePosClip(				void* user_data);
 	static void 	onCopySize(				void* user_data);
 	static void 	onPasteSize(			void* user_data);
-	static void 	onPasteSizeClip(		void* user_data);
+	static void 	onPasteSizeClip(			void* user_data);
 	static void 	onCopyRot(				void* user_data);
 	static void 	onPasteRot(				void* user_data);
-	static void 	onPasteRotClip(			void* user_data);
+	static void 	onPasteRotClip(				void* user_data);
 	static void 	onCopyParams(			void* user_data);
 	static void 	onPasteParams(			void* user_data);
-	
-	static void 	onCommitParametric(		LLUICtrl* ctrl, void* userdata);
+
+	static void 	onCommitParametric(LLUICtrl* ctrl, void* userdata);
 
 	static void 	onCommitMaterial(		LLUICtrl* ctrl, void* userdata);
 
@@ -120,9 +120,9 @@ protected:
 	static LLVector3 mClipboardPos;
 	static LLVector3 mClipboardSize;
 	static LLVector3 mClipboardRot;
+
 	static LLVolumeParams mClipboardVolumeParams;
 	static BOOL hasParamClipboard;
-	
 
 	S32				mComboMaterialItemCount;
 

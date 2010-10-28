@@ -145,19 +145,19 @@ BOOL JCInvDropTarget::handleDragAndDrop(S32 x, S32 y, MASK mask, BOOL drop,
 }
 ////////end drop utility///////////////
 
-LLPanelAscent* LLPanelAscent::sInstance;
+LLPanelPhoenix* LLPanelPhoenix::sInstance;
 
-JCInvDropTarget * LLPanelAscent::mObjectDropTarget;
-JCInvDropTarget * LLPanelAscent::mBuildObjectDropTarget;
+JCInvDropTarget * LLPanelPhoenix::mObjectDropTarget;
+JCInvDropTarget * LLPanelPhoenix::mBuildObjectDropTarget;
 
-LLPanelAscent::LLPanelAscent()
+LLPanelPhoenix::LLPanelPhoenix()
 {
 	LLUICtrlFactory::getInstance()->buildPanel(this, "panel_preferences_phoenix.xml");
 	if(sInstance)delete sInstance;
 	sInstance = this;
 }
 
-LLPanelAscent::~LLPanelAscent()
+LLPanelPhoenix::~LLPanelPhoenix()
 {
 	sInstance = NULL;
 	delete mObjectDropTarget;
@@ -166,25 +166,25 @@ LLPanelAscent::~LLPanelAscent()
 	mBuildObjectDropTarget = NULL;
 }
 
-void LLPanelAscent::initHelpBtn(const std::string& name, const std::string& xml_alert)
+void LLPanelPhoenix::initHelpBtn(const std::string& name, const std::string& xml_alert)
 {
 	childSetAction(name, onClickHelp, new std::string(xml_alert));
 }
 
-void LLPanelAscent::onClickHelp(void* data)
+void LLPanelPhoenix::onClickHelp(void* data)
 {
 	std::string* xml_alert = (std::string*)data;
 	LLNotifications::instance().add(*xml_alert);
 }
 
-BOOL LLPanelAscent::postBuild()
+BOOL LLPanelPhoenix::postBuild()
 {
 	refresh();
 
 //	LLComboBox* tagcombo = getChild<LLComboBox>("TagCombo");
 
-	getChild<LLComboBox>("material")->setSimple(gSavedSettings.getString("AscentBuildPrefs_Material"));
-	getChild<LLComboBox>("combobox shininess")->setSimple(gSavedSettings.getString("AscentBuildPrefs_Shiny"));
+	getChild<LLComboBox>("material")->setSimple(gSavedSettings.getString("PhoenixBuildPrefs_Material"));
+	getChild<LLComboBox>("combobox shininess")->setSimple(gSavedSettings.getString("PhoenixBuildPrefs_Shiny"));
 	
 
 	//LLSliderCtrl* mShapeScaleSlider = getChild<LLSliderCtrl>("AscentBeamShapeScale",TRUE,FALSE);
@@ -197,12 +197,12 @@ BOOL LLPanelAscent::postBuild()
 
 	getChild<LLComboBox>("material")->setCommitCallback(onComboBoxCommit);
 	getChild<LLComboBox>("combobox shininess")->setCommitCallback(onComboBoxCommit);
-	getChild<LLComboBox>("AscentBeamShape_combo")->setCommitCallback(onComboBoxCommit);
+	getChild<LLComboBox>("PhoenixBeamShape_combo")->setCommitCallback(onComboBoxCommit);
 	getChild<LLComboBox>("BeamColor_combo")->setCommitCallback(onComboBoxCommit);
 	getChild<LLTextureCtrl>("texture control")->setDefaultImageAssetID(LLUUID("89556747-24cb-43ed-920b-47caed15465f"));
 	getChild<LLTextureCtrl>("texture control")->setCommitCallback(onTexturePickerCommit);
 
-	getChild<LLComboBox>("AscentSpellBase")->setCommitCallback(onSpellBaseComboBoxCommit);
+	getChild<LLComboBox>("PhoenixSpellBase")->setCommitCallback(onSpellBaseComboBoxCommit);
 
 	getChild<LLCheckBoxCtrl>("ColorTagsClient_toggle")->setCommitCallback(onTagsBoxCommit);
 
@@ -232,36 +232,36 @@ BOOL LLPanelAscent::postBuild()
 	getChild<LLButton>("revert_production_voice_btn")->setClickedCallback(onClickVoiceRevertProd, this);
 	getChild<LLButton>("revert_debug_voice_btn")->setClickedCallback(onClickVoiceRevertDebug, this);
 
-	getChild<LLButton>("AscentBreastReset")->setClickedCallback(onClickBoobReset, this);
+	getChild<LLButton>("PhoenixBreastReset")->setClickedCallback(onClickBoobReset, this);
 	
 
 	childSetCommitCallback("production_voice_field", onCommitApplyControl);//onCommitVoiceProductionServerName);
 	childSetCommitCallback("debug_voice_field", onCommitApplyControl);//onCommitVoiceDebugServerName);
 
-	childSetCommitCallback("AscentCmdLinePos", onCommitApplyControl);
-	childSetCommitCallback("AscentCmdLineGround", onCommitApplyControl);
-	childSetCommitCallback("AscentCmdLineHeight", onCommitApplyControl);
-	childSetCommitCallback("AscentCmdLineTeleportHome", onCommitApplyControl);
-	childSetCommitCallback("AscentCmdLineRezPlatform", onCommitApplyControl);
-	childSetCommitCallback("AscentCmdLineMapTo", onCommitApplyControl);	
-	childSetCommitCallback("AscentCmdLineCalc", onCommitApplyControl);
+	childSetCommitCallback("PhoenixCmdLinePos", onCommitApplyControl);
+	childSetCommitCallback("PhoenixCmdLineGround", onCommitApplyControl);
+	childSetCommitCallback("PhoenixCmdLineHeight", onCommitApplyControl);
+	childSetCommitCallback("PhoenixCmdLineTeleportHome", onCommitApplyControl);
+	childSetCommitCallback("PhoenixCmdLineRezPlatform", onCommitApplyControl);
+	childSetCommitCallback("PhoenixCmdLineMapTo", onCommitApplyControl);	
+	childSetCommitCallback("PhoenixCmdLineCalc", onCommitApplyControl);
 
-	childSetCommitCallback("AscentCmdLineDrawDistance", onCommitApplyControl);
-	childSetCommitCallback("AscentCmdTeleportToCam", onCommitApplyControl);
-	childSetCommitCallback("AscentCmdLineKeyToName", onCommitApplyControl);
-	childSetCommitCallback("AscentCmdLineOfferTp", onCommitApplyControl);
-	childSetCommitCallback("AscentCmdLineTP2", onCommitApplyControl);
-	childSetCommitCallback("AscentCmdLineAO", onCommitApplyControl);
-	childSetCommitCallback("AscentCmdLineClearChat", onCommitApplyControl);
+	childSetCommitCallback("PhoenixCmdLineDrawDistance", onCommitApplyControl);
+	childSetCommitCallback("PhoenixCmdTeleportToCam", onCommitApplyControl);
+	childSetCommitCallback("PhoenixCmdLineKeyToName", onCommitApplyControl);
+	childSetCommitCallback("PhoenixCmdLineOfferTp", onCommitApplyControl);
+	childSetCommitCallback("PhoenixCmdLineTP2", onCommitApplyControl);
+	childSetCommitCallback("PhoenixCmdLineAO", onCommitApplyControl);
+	childSetCommitCallback("PhoenixCmdLineClearChat", onCommitApplyControl);
 
 	childSetCommitCallback("X Modifier", onCommitAvatarModifier);
 	childSetCommitCallback("Y Modifier", onCommitAvatarModifier);
 	childSetCommitCallback("Z Modifier", onCommitAvatarModifier);
 	if(gAgent.getID() != LLUUID::null)
 	{
-		getChild<LLSpinCtrl>("X Modifier")->set(gSavedPerAccountSettings.getF32("AscentAvatarXModifier"));
-		getChild<LLSpinCtrl>("Y Modifier")->set(gSavedPerAccountSettings.getF32("AscentAvatarYModifier"));
-		getChild<LLSpinCtrl>("Z Modifier")->set(gSavedPerAccountSettings.getF32("AscentAvatarZModifier"));
+		getChild<LLSpinCtrl>("X Modifier")->set(gSavedPerAccountSettings.getF32("PhoenixAvatarXModifier"));
+		getChild<LLSpinCtrl>("Y Modifier")->set(gSavedPerAccountSettings.getF32("PhoenixAvatarYModifier"));
+		getChild<LLSpinCtrl>("Z Modifier")->set(gSavedPerAccountSettings.getF32("PhoenixAvatarZModifier"));
 	}else
 	{
 		getChild<LLSpinCtrl>("X Modifier")->setEnabled(FALSE);
@@ -270,23 +270,23 @@ BOOL LLPanelAscent::postBuild()
 	}
 
 
-	childSetValue("AscentUseOTR", LLSD((S32)gSavedSettings.getU32("AscentUseOTR"))); // [$PLOTR$]
+	childSetValue("PhoenixUseOTR", LLSD((S32)gSavedSettings.getU32("PhoenixUseOTR"))); // [$PLOTR$]
 	getChild<LLButton>("otr_help_btn")->setClickedCallback(onClickOtrHelp, this);      // [/$PLOTR$]
 
-	initHelpBtn("AscentHelp_TeleportLogin",	"AscentHelp_TeleportLogin");
-	initHelpBtn("AscentHelp_Voice",			"AscentHelp_Voice");
-	initHelpBtn("AscentHelp_Shields",			"AscentHelp_Shields");
-	initHelpBtn("AscentHelp_IM",				"AscentHelp_IM");
-	initHelpBtn("AscentHelp_Chat",				"AscentHelp_Chat");
-	initHelpBtn("AscentHelp_Misc",				"AscentHelp_Misc");
-	initHelpBtn("AscentHelp_CmdLine",			"AscentHelp_CmdLine");
-	initHelpBtn("AscentHelp_Avatar",			"AscentHelp_Avatar");
-	initHelpBtn("AscentHelp_Build",			"AscentHelp_Build");
-	initHelpBtn("AscentHelp_IRC",				"AscentHelp_IRC");
-	initHelpBtn("AscentHelp_UtilityStream",	"AscentHelp_UtilityStream");
-	initHelpBtn("AscentHelp_Inventory",		"AscentHelp_Inventory");
-	initHelpBtn("AscentHelp_Effects",			"AscentHelp_Effects");
-	initHelpBtn("AscentHelp_SpellCheck",		"AscentHelp_SpellCheck");
+	initHelpBtn("PhoenixHelp_TeleportLogin",	"PhoenixHelp_TeleportLogin");
+	initHelpBtn("PhoenixHelp_Voice",			"PhoenixHelp_Voice");
+	initHelpBtn("PhoenixHelp_Shields",			"PhoenixHelp_Shields");
+	initHelpBtn("PhoenixHelp_IM",				"PhoenixHelp_IM");
+	initHelpBtn("PhoenixHelp_Chat",				"PhoenixHelp_Chat");
+	initHelpBtn("PhoenixHelp_Misc",				"PhoenixHelp_Misc");
+	initHelpBtn("PhoenixHelp_CmdLine",			"PhoenixHelp_CmdLine");
+	initHelpBtn("PhoenixHelp_Avatar",			"PhoenixHelp_Avatar");
+	initHelpBtn("PhoenixHelp_Build",			"PhoenixHelp_Build");
+	initHelpBtn("PhoenixHelp_IRC",				"PhoenixHelp_IRC");
+	initHelpBtn("PhoenixHelp_UtilityStream",	"PhoenixHelp_UtilityStream");
+	initHelpBtn("PhoenixHelp_Inventory",		"PhoenixHelp_Inventory");
+	initHelpBtn("PhoenixHelp_Effects",			"PhoenixHelp_Effects");
+	initHelpBtn("PhoenixHelp_SpellCheck",		"PhoenixHelp_SpellCheck");
 
 	LLView *target_view = getChild<LLView>("im_give_drop_target_rect");
 	if(target_view)
@@ -308,7 +308,7 @@ BOOL LLPanelAscent::postBuild()
 
 	if(LLStartUp::getStartupState() == STATE_STARTED)
 	{
-		LLUUID itemid = (LLUUID)gSavedPerAccountSettings.getString("AscentInstantMessageResponseItemData");
+		LLUUID itemid = (LLUUID)gSavedPerAccountSettings.getString("PhoenixInstantMessageResponseItemData");
 		LLViewerInventoryItem* item = gInventory.getItem(itemid);
 		if(item)
 		{
@@ -320,7 +320,7 @@ BOOL LLPanelAscent::postBuild()
 		{
 			childSetValue("im_give_disp_rect_txt","Currently set to a item not on this account");
 		}
-		itemid = (LLUUID)gSavedSettings.getString("AscentBuildPrefs_Item");
+		itemid = (LLUUID)gSavedSettings.getString("PhoenixBuildPrefs_Item");
 		item = gInventory.getItem(itemid);
 		if(item)
 		{
@@ -338,24 +338,24 @@ BOOL LLPanelAscent::postBuild()
 		childSetValue("build_item_add_disp_rect_txt","Not logged in");
 	}
 
-	LLWString auto_response = utf8str_to_wstring( gSavedPerAccountSettings.getString("AscentInstantMessageResponse") );
+	LLWString auto_response = utf8str_to_wstring( gSavedPerAccountSettings.getString("PhoenixInstantMessageResponse") );
 	LLWStringUtil::replaceChar(auto_response, '^', '\n');
 	LLWStringUtil::replaceChar(auto_response, '%', ' ');
 	childSetText("im_response", wstring_to_utf8str(auto_response));
-	childSetValue("AscentInstantMessageResponseFriends", gSavedPerAccountSettings.getBOOL("AscentInstantMessageResponseFriends"));
-	childSetValue("AscentInstantMessageResponseMuted", gSavedPerAccountSettings.getBOOL("AscentInstantMessageResponseMuted"));
-	childSetValue("AscentInstantMessageResponseAnyone", gSavedPerAccountSettings.getBOOL("AscentInstantMessageResponseAnyone"));
-	childSetValue("AscentInstantMessageShowResponded", gSavedPerAccountSettings.getBOOL("AscentInstantMessageShowResponded"));
+	childSetValue("PhoenixInstantMessageResponseFriends", gSavedPerAccountSettings.getBOOL("PhoenixInstantMessageResponseFriends"));
+	childSetValue("PhoenixInstantMessageResponseMuted", gSavedPerAccountSettings.getBOOL("PhoenixInstantMessageResponseMuted"));
+	childSetValue("PhoenixInstantMessageResponseAnyone", gSavedPerAccountSettings.getBOOL("PhoenixInstantMessageResponseAnyone"));
+	childSetValue("PhoenixInstantMessageShowResponded", gSavedPerAccountSettings.getBOOL("PhoenixInstantMessageShowResponded"));
 	//Kadah - Force IMShowOnTyping to resolve a bug were if AnnounceIncoming was on, autoreply would not be sent
-	const bool AnnounceIncoming = gSavedPerAccountSettings.getBOOL("AscentInstantMessageAnnounceIncoming");
-	childSetValue("AscentInstantMessageShowOnTyping", AnnounceIncoming || gSavedPerAccountSettings.getBOOL("AscentInstantMessageShowOnTyping"));
-	getChild<LLCheckBoxCtrl>("AscentInstantMessageShowOnTyping")->setEnabled(!AnnounceIncoming);
-	childSetValue("AscentInstantMessageResponseRepeat", gSavedPerAccountSettings.getBOOL("AscentInstantMessageResponseRepeat" ));
-	childSetValue("AscentInstantMessageResponseItem", gSavedPerAccountSettings.getBOOL("AscentInstantMessageResponseItem"));
-	childSetValue("AscentInstantMessageAnnounceIncoming", AnnounceIncoming);
-	getChild<LLCheckBoxCtrl>("AscentInstantMessageAnnounceIncoming")->setCommitCallback(onAscentInstantMessageAnnounceIncoming);
-	childSetValue("AscentInstantMessageAnnounceStealFocus", gSavedPerAccountSettings.getBOOL("AscentInstantMessageAnnounceStealFocus"));
-	childSetValue("AscentShadowsON", gSavedSettings.getBOOL("AscentShadowsToggle"));
+	const bool AnnounceIncoming = gSavedPerAccountSettings.getBOOL("PhoenixInstantMessageAnnounceIncoming");
+	childSetValue("PhoenixInstantMessageShowOnTyping", AnnounceIncoming || gSavedPerAccountSettings.getBOOL("PhoenixInstantMessageShowOnTyping"));
+	getChild<LLCheckBoxCtrl>("PhoenixInstantMessageShowOnTyping")->setEnabled(!AnnounceIncoming);
+	childSetValue("PhoenixInstantMessageResponseRepeat", gSavedPerAccountSettings.getBOOL("PhoenixInstantMessageResponseRepeat" ));
+	childSetValue("PhoenixInstantMessageResponseItem", gSavedPerAccountSettings.getBOOL("PhoenixInstantMessageResponseItem"));
+	childSetValue("PhoenixInstantMessageAnnounceIncoming", AnnounceIncoming);
+	getChild<LLCheckBoxCtrl>("PhoenixInstantMessageAnnounceIncoming")->setCommitCallback(onPhoenixInstantMessageAnnounceIncoming);
+	childSetValue("PhoenixInstantMessageAnnounceStealFocus", gSavedPerAccountSettings.getBOOL("PhoenixInstantMessageAnnounceStealFocus"));
+	childSetValue("PhoenixShadowsON", gSavedSettings.getBOOL("PhoenixShadowsToggle"));
 
 	childSetAction("set_mirror", onClickSetMirror, this);
 	childSetCommitCallback("mirror_location", onCommitApplyControl);
@@ -363,38 +363,38 @@ BOOL LLPanelAscent::postBuild()
 	childSetAction("set_includeHDD", onClickSetHDDInclude, this);
 	childSetCommitCallback("include_location", onCommitApplyControl);
 
-	//AscentLSLExternalEditor
+	//PhoenixLSLExternalEditor
 	childSetAction("set_xed", onClickSetXed, this);
 	childSetCommitCallback("xed_location", onCommitApplyControl);
-	childSetValue("xed_location", gSavedSettings.getString("AscentLSLExternalEditor"));
+	childSetValue("xed_location", gSavedSettings.getString("PhoenixLSLExternalEditor"));
 
 	getChild<LLCheckBoxCtrl>("telerequest_toggle")->setCommitCallback(onConditionalPreferencesChanged);
 	getChild<LLCheckBoxCtrl>("mldct_toggle")->setCommitCallback(onConditionalPreferencesChanged);
 	
-	getChild<LLColorSwatchCtrl>("friend_tag_color_swatch")->set(gSavedSettings.getColor4("AscentFriendNameColor"));
+	getChild<LLColorSwatchCtrl>("friend_tag_color_swatch")->set(gSavedSettings.getColor4("PhoenixFriendNameColor"));
 
 	refresh();
 	return TRUE;
 }
 
-void LLPanelAscent::refresh()
+void LLPanelPhoenix::refresh()
 {
 	
 //	LLComboBox* comboBox = getChild<LLComboBox>("AscentBeamShape_combo");
 }
 
-void LLPanelAscent::IMAutoResponseItemDrop(LLViewerInventoryItem* item)
+void LLPanelPhoenix::IMAutoResponseItemDrop(LLViewerInventoryItem* item)
 {
-	gSavedPerAccountSettings.setString("AscentInstantMessageResponseItemData", item->getUUID().asString());
+	gSavedPerAccountSettings.setString("PhoenixInstantMessageResponseItemData", item->getUUID().asString());
 	sInstance->childSetValue("im_give_disp_rect_txt","Currently set to: "+item->getName());
 }
-void LLPanelAscent::BuildAutoResponseItemDrop(LLViewerInventoryItem* item)
+void LLPanelPhoenix::BuildAutoResponseItemDrop(LLViewerInventoryItem* item)
 {
-	gSavedSettings.setString("AscentBuildPrefs_Item", item->getUUID().asString());
+	gSavedSettings.setString("PhoenixBuildPrefs_Item", item->getUUID().asString());
 	sInstance->childSetValue("build_item_add_disp_rect_txt","Currently set to: "+item->getName());
 }
 
-void LLPanelAscent::apply()
+void LLPanelPhoenix::apply()
 {
 	LLTextEditor* im = sInstance->getChild<LLTextEditor>("im_response");
 	LLWString im_response;
@@ -402,117 +402,118 @@ void LLPanelAscent::apply()
 	LLWStringUtil::replaceTabsWithSpaces(im_response, 4);
 	LLWStringUtil::replaceChar(im_response, '\n', '^');
 	LLWStringUtil::replaceChar(im_response, ' ', '%');
-	gSavedPerAccountSettings.setString("AscentInstantMessageResponse", std::string(wstring_to_utf8str(im_response)));
+	gSavedPerAccountSettings.setString("PhoenixInstantMessageResponse", std::string(wstring_to_utf8str(im_response)));
 
-	gSavedPerAccountSettings.setBOOL("AscentInstantMessageResponseMuted", childGetValue("AscentInstantMessageResponseMuted").asBoolean());
-	gSavedPerAccountSettings.setBOOL("AscentInstantMessageResponseFriends", childGetValue("AscentInstantMessageResponseFriends").asBoolean());
-	gSavedPerAccountSettings.setBOOL("AscentInstantMessageResponseMuted", childGetValue("AscentInstantMessageResponseMuted").asBoolean());
-	gSavedPerAccountSettings.setBOOL("AscentInstantMessageResponseAnyone", childGetValue("AscentInstantMessageResponseAnyone").asBoolean());
-	gSavedPerAccountSettings.setBOOL("AscentInstantMessageShowResponded", childGetValue("AscentInstantMessageShowResponded").asBoolean());
-	gSavedPerAccountSettings.setBOOL("AscentInstantMessageShowOnTyping", childGetValue("AscentInstantMessageShowOnTyping").asBoolean());
-	gSavedPerAccountSettings.setBOOL("AscentInstantMessageResponseRepeat", childGetValue("AscentInstantMessageResponseRepeat").asBoolean());
-	gSavedPerAccountSettings.setBOOL("AscentInstantMessageResponseItem", childGetValue("AscentInstantMessageResponseItem").asBoolean());
-	gSavedPerAccountSettings.setBOOL("AscentInstantMessageAnnounceIncoming", childGetValue("AscentInstantMessageAnnounceIncoming").asBoolean());
-	gSavedPerAccountSettings.setBOOL("AscentInstantMessageAnnounceStealFocus", childGetValue("AscentInstantMessageAnnounceStealFocus").asBoolean());
-	if(((gSavedSettings.getU32("RenderQualityPerformance")>=3) && gSavedSettings.getBOOL("WindLightUseAtmosShaders") && gSavedSettings.getBOOL("VertexShaderEnable")) && childGetValue("AscentShadowsON").asBoolean())
+	gSavedPerAccountSettings.setBOOL("PhoenixInstantMessageResponseMuted", childGetValue("PhoenixInstantMessageResponseMuted").asBoolean());
+	gSavedPerAccountSettings.setBOOL("PhoenixInstantMessageResponseFriends", childGetValue("PhoenixInstantMessageResponseFriends").asBoolean());
+	gSavedPerAccountSettings.setBOOL("PhoenixInstantMessageResponseMuted", childGetValue("PhoenixInstantMessageResponseMuted").asBoolean());
+	gSavedPerAccountSettings.setBOOL("PhoenixInstantMessageResponseAnyone", childGetValue("PhoenixInstantMessageResponseAnyone").asBoolean());
+	gSavedPerAccountSettings.setBOOL("PhoenixInstantMessageShowResponded", childGetValue("PhoenixInstantMessageShowResponded").asBoolean());
+	gSavedPerAccountSettings.setBOOL("PhoenixInstantMessageShowOnTyping", childGetValue("PhoenixInstantMessageShowOnTyping").asBoolean());
+	gSavedPerAccountSettings.setBOOL("PhoenixInstantMessageResponseRepeat", childGetValue("PhoenixInstantMessageResponseRepeat").asBoolean());
+	gSavedPerAccountSettings.setBOOL("PhoenixInstantMessageResponseItem", childGetValue("PhoenixInstantMessageResponseItem").asBoolean());
+	gSavedPerAccountSettings.setBOOL("PhoenixInstantMessageAnnounceIncoming", childGetValue("PhoenixInstantMessageAnnounceIncoming").asBoolean());
+	gSavedPerAccountSettings.setBOOL("PhoenixInstantMessageAnnounceStealFocus", childGetValue("PhoenixInstantMessageAnnounceStealFocus").asBoolean());
+	if(((gSavedSettings.getU32("RenderQualityPerformance")>=3) && gSavedSettings.getBOOL("WindLightUseAtmosShaders") && gSavedSettings.getBOOL("VertexShaderEnable")) && childGetValue("PhoenixShadowsON").asBoolean())
 	{
-		gSavedSettings.setBOOL("RenderUseFBO", childGetValue("AscentShadowsON").asBoolean());
-		gSavedSettings.setBOOL("RenderDeferred", childGetValue("AscentShadowsON").asBoolean());
+		gSavedSettings.setBOOL("RenderUseFBO", childGetValue("PhoenixShadowsON").asBoolean());
+		gSavedSettings.setBOOL("RenderDeferred", childGetValue("PhoenixShadowsON").asBoolean());
 	}
-	else if(!childGetValue("AscentShadowsON").asBoolean())
+	else if(!childGetValue("PhoenixShadowsON").asBoolean())
 	{
 		if(gSavedSettings.getBOOL("RenderDeferred"))
 		{
-			gSavedSettings.setBOOL("RenderDeferred", childGetValue("AscentShadowsON").asBoolean());
-			gSavedSettings.setBOOL("RenderUseFBO", childGetValue("AscentShadowsON").asBoolean());
+			gSavedSettings.setBOOL("RenderDeferred", childGetValue("PhoenixShadowsON").asBoolean());
+			gSavedSettings.setBOOL("RenderUseFBO", childGetValue("PhoenixShadowsON").asBoolean());
 		}
 	}
-	else if(((gSavedSettings.getU32("RenderQualityPerformance")<3) && !gSavedSettings.getBOOL("WindLightUseAtmosShaders") && !gSavedSettings.getBOOL("VertexShaderEnable")) && childGetValue("AscentShadowsON").asBoolean())
+	else if(((gSavedSettings.getU32("RenderQualityPerformance")<3) && !gSavedSettings.getBOOL("WindLightUseAtmosShaders") && !gSavedSettings.getBOOL("VertexShaderEnable")) && childGetValue("PhoenixShadowsON").asBoolean())
 	{
-		childSetValue("AscentShadowsON",false);
+		childSetValue("PhoenixShadowsON",false);
 		LLNotifications::instance().add("NoShadows");
 		llwarns<<"Attempt to enable shadow rendering while graphics settings not on ultra!"<<llendl;
 	}
-	gSavedSettings.setBOOL("AscentShadowsToggle", childGetValue("AscentShadowsON").asBoolean());
-	gSavedSettings.setU32("AscentUseOTR", (U32)childGetValue("AscentUseOTR").asReal());
+	gSavedSettings.setBOOL("PhoenixShadowsToggle", childGetValue("PhoenixShadowsON").asBoolean());
+	gSavedSettings.setU32("PhoenixUseOTR", (U32)childGetValue("PhoenixUseOTR").asReal());
+//	gLggBeamMaps.forceUpdate();
 }
 
-void LLPanelAscent::cancel()
+void LLPanelPhoenix::cancel()
 {
 }
-void LLPanelAscent::onClickVoiceRevertProd(void* data)
+void LLPanelPhoenix::onClickVoiceRevertProd(void* data)
 {
-	LLPanelAscent* self = (LLPanelAscent*)data;
+	LLPanelPhoenix* self = (LLPanelPhoenix*)data;
 	gSavedSettings.setString("vivoxProductionServerName", "bhr.vivox.com");
 	self->getChild<LLLineEditor>("production_voice_field")->setValue("bhr.vivox.com");
 }
 
-void LLPanelAscent::onClickBoobReset(void* data)
+void LLPanelPhoenix::onClickBoobReset(void* data)
 {
-	LLPanelAscent* self = (LLPanelAscent*)data;
+	LLPanelPhoenix* self = (LLPanelPhoenix*)data;
 	LLControlVariable *var;
 
-	var = self->findControl("AscentBoobMass");
-	self->getChild<LLSliderCtrl>("AscentBoobMass")->setValue(var->getDefault());
+	var = self->findControl("PhoenixBoobMass");
+	self->getChild<LLSliderCtrl>("PhoenixBoobMass")->setValue(var->getDefault());
 	var->resetToDefault();
 
-	var = self->findControl("AscentBoobHardness");
-	self->getChild<LLSliderCtrl>("AscentBoobHardness")->setValue(var->getDefault());
+	var = self->findControl("PhoenixBoobHardness");
+	self->getChild<LLSliderCtrl>("PhoenixBoobHardness")->setValue(var->getDefault());
 	var->resetToDefault();
 
-	var = self->findControl("AscentBoobVelMax");
-	self->getChild<LLSliderCtrl>("AscentBoobVelMax")->setValue(var->getDefault());
+	var = self->findControl("PhoenixBoobVelMax");
+	self->getChild<LLSliderCtrl>("PhoenixBoobVelMax")->setValue(var->getDefault());
 	var->resetToDefault();
 
-	var = self->findControl("AscentBoobFriction");
-	self->getChild<LLSliderCtrl>("AscentBoobFriction")->setValue(var->getDefault());
+	var = self->findControl("PhoenixBoobFriction");
+	self->getChild<LLSliderCtrl>("PhoenixBoobFriction")->setValue(var->getDefault());
 	var->resetToDefault();
 
-	var = self->findControl("AscentBoobVelMin");
-	self->getChild<LLSliderCtrl>("AscentBoobVelMin")->setValue(var->getDefault());
+	var = self->findControl("PhoenixBoobVelMin");
+	self->getChild<LLSliderCtrl>("PhoenixBoobVelMin")->setValue(var->getDefault());
 	var->resetToDefault();
 }
 
-void LLPanelAscent::onCustomBeam(void* data)
+void LLPanelPhoenix::onCustomBeam(void* data)
 {
 	//LLPanelAscent* self =(LLPanelAscent*)data;
 	//LggBeamMap::show(true, data);
 
 }
-void LLPanelAscent::onKeywordAllertButton(void * data)
+void LLPanelPhoenix::onKeywordAllertButton(void * data)
 {
 //	MfdKeywordFloaterStart::show(true,data);
 }
-void LLPanelAscent::onAutoCorrectButton(void * data)
+void LLPanelPhoenix::onAutoCorrectButton(void * data)
 {
 //	lggAutoCorrectFloaterStart::show(TRUE,data);
 }
-void LLPanelAscent::onCustomBeamColor(void* data)
+void LLPanelPhoenix::onCustomBeamColor(void* data)
 {
 //	LggBeamColorMap::show(true,data);
 }
-void LLPanelAscent::onSpellAdd(void* data)
+void LLPanelPhoenix::onSpellAdd(void* data)
 {
 
 }
-void LLPanelAscent::onSpellRemove(void* data)
+void LLPanelPhoenix::onSpellRemove(void* data)
 {
 
 }
-void LLPanelAscent::onSpellGetMore(void* data)
+void LLPanelPhoenix::onSpellGetMore(void* data)
 {
 }
-void LLPanelAscent::onSpellEditCustom(void* data)
+void LLPanelPhoenix::onSpellEditCustom(void* data)
 {
 }
 
-void LLPanelAscent::beamUpdateCall(LLUICtrl* crtl, void* userdata)
+void LLPanelPhoenix::beamUpdateCall(LLUICtrl* crtl, void* userdata)
 {
 }
-void LLPanelAscent::onTagComboBoxCommit(LLUICtrl* ctrl, void* userdata)
-{	
+void LLPanelPhoenix::onTagComboBoxCommit(LLUICtrl* ctrl, void* userdata)
+{
 }
-void LLPanelAscent::onComboBoxCommit(LLUICtrl* ctrl, void* userdata)
+void LLPanelPhoenix::onComboBoxCommit(LLUICtrl* ctrl, void* userdata)
 {
 
 	LLComboBox* box = (LLComboBox*)ctrl;
@@ -521,11 +522,11 @@ void LLPanelAscent::onComboBoxCommit(LLUICtrl* ctrl, void* userdata)
 		gSavedSettings.setString(box->getControlName(),box->getValue().asString());
 	}	
 }
-void LLPanelAscent::onTagsBoxCommit(LLUICtrl* ctrl, void* userdata)
+void LLPanelPhoenix::onTagsBoxCommit(LLUICtrl* ctrl, void* userdata)
 {
-	AscentViewerLink::getInstance()->downloadClientTags();
+	PhoenixViewerLink::getInstance()->downloadClientTags();
 }
-void LLPanelAscent::onSpellBaseComboBoxCommit(LLUICtrl* ctrl, void* userdata)
+void LLPanelPhoenix::onSpellBaseComboBoxCommit(LLUICtrl* ctrl, void* userdata)
 {
 
 	LLComboBox* box = (LLComboBox*)ctrl;
@@ -536,44 +537,44 @@ void LLPanelAscent::onSpellBaseComboBoxCommit(LLUICtrl* ctrl, void* userdata)
 		if(sInstance)sInstance->refresh();
 
 	}
-	//LLPanelAscent* panel = (LLPanelAscent*)userdata;
+	//LLPanelPhoenix* panel = (LLPanelPhoenix*)userdata;
 	//if(panel)panel->refresh();
 }
-void LLPanelAscent::onTexturePickerCommit(LLUICtrl* ctrl, void* userdata)
+void LLPanelPhoenix::onTexturePickerCommit(LLUICtrl* ctrl, void* userdata)
 {
 	LLTextureCtrl*	image_ctrl = (LLTextureCtrl*)ctrl;
 	if(image_ctrl)
 	{
-		gSavedSettings.setString("AscentBuildPrefs_Texture", image_ctrl->getImageAssetID().asString());
+		gSavedSettings.setString("PhoenixBuildPrefs_Texture", image_ctrl->getImageAssetID().asString());
 	}
 }
 
-void LLPanelAscent::onClickOtrHelp(void* data)           // [$PLOTR$]
+void LLPanelPhoenix::onClickOtrHelp(void* data)           // [$PLOTR$]
 {
     LLWeb::loadURL("http://www.cypherpunks.ca/otr/");
 }                                                         // [/$PLOTR$]
 
-void LLPanelAscent::onRefresh(void* data)
+void LLPanelPhoenix::onRefresh(void* data)
 {
-	LLPanelAscent* self = (LLPanelAscent*)data;
+	LLPanelPhoenix* self = (LLPanelPhoenix*)data;
 	self->refresh();
 	
 	
 }
-void LLPanelAscent::onClickVoiceRevertDebug(void* data)
+void LLPanelPhoenix::onClickVoiceRevertDebug(void* data)
 {
-	LLPanelAscent* self = (LLPanelAscent*)data;
+	LLPanelPhoenix* self = (LLPanelPhoenix*)data;
 	gSavedSettings.setString("vivoxDebugServerName", "bhd.vivox.com");
 	self->getChild<LLLineEditor>("debug_voice_field")->setValue("bhd.vivox.com");
 
  
  
 }
-void LLPanelAscent::onBeamDelete(void* data)
+void LLPanelPhoenix::onBeamDelete(void* data)
 {
-	LLPanelAscent* self = (LLPanelAscent*)data;
+	LLPanelPhoenix* self = (LLPanelPhoenix*)data;
 	
-	LLComboBox* comboBox = self->getChild<LLComboBox>("AscentBeamShape_combo");
+	LLComboBox* comboBox = self->getChild<LLComboBox>("PhoenixBeamShape_combo");
 
 	if(comboBox != NULL) 
 	{
@@ -584,19 +585,19 @@ void LLPanelAscent::onBeamDelete(void* data)
 		if(gDirUtilp->fileExists(path_name1))
 		{
 			LLFile::remove(path_name1);
-			gSavedSettings.setString("AscentBeamShape","===OFF===");
+			gSavedSettings.setString("PhoenixBeamShape","===OFF===");
 		}
 		if(gDirUtilp->fileExists(path_name2))
 		{
 			LLFile::remove(path_name2);
-			gSavedSettings.setString("AscentBeamShape","===OFF===");
+			gSavedSettings.setString("PhoenixBeamShape","===OFF===");
 		}
 	}
 	self->refresh();
 }
-void LLPanelAscent::onBeamColorDelete(void* data)
+void LLPanelPhoenix::onBeamColorDelete(void* data)
 {
-	LLPanelAscent* self = (LLPanelAscent*)data;
+	LLPanelPhoenix* self = (LLPanelPhoenix*)data;
 
 	LLComboBox* comboBox = self->getChild<LLComboBox>("BeamColor_combo");
 
@@ -609,12 +610,12 @@ void LLPanelAscent::onBeamColorDelete(void* data)
 		if(gDirUtilp->fileExists(path_name1))
 		{
 			LLFile::remove(path_name1);
-			gSavedSettings.setString("AscentBeamColorFile","===OFF===");
+			gSavedSettings.setString("PhoenixBeamColorFile","===OFF===");
 		}
 		if(gDirUtilp->fileExists(path_name2))
 		{
 			LLFile::remove(path_name2);
-			gSavedSettings.setString("AscentBeamColorFile","===OFF===");
+			gSavedSettings.setString("PhoenixBeamColorFile","===OFF===");
 		}
 	}
 	self->refresh();
@@ -623,7 +624,7 @@ void LLPanelAscent::onBeamColorDelete(void* data)
 
 
 //workaround for lineeditor dumbness in regards to control_name
-void LLPanelAscent::onCommitApplyControl(LLUICtrl* caller, void* user_data)
+void LLPanelPhoenix::onCommitApplyControl(LLUICtrl* caller, void* user_data)
 {
 	LLLineEditor* line = (LLLineEditor*)caller;
 	if(line)
@@ -633,19 +634,19 @@ void LLPanelAscent::onCommitApplyControl(LLUICtrl* caller, void* user_data)
 	}
 }
 
-void LLPanelAscent::onCommitAvatarModifier(LLUICtrl* ctrl, void* userdata)
+void LLPanelPhoenix::onCommitAvatarModifier(LLUICtrl* ctrl, void* userdata)
 {
-	gSavedPerAccountSettings.setF32("AscentAvatarXModifier", sInstance->getChild<LLSpinCtrl>("X Modifier")->get());
-	gSavedPerAccountSettings.setF32("AscentAvatarYModifier", sInstance->getChild<LLSpinCtrl>("Y Modifier")->get());
-	gSavedPerAccountSettings.setF32("AscentAvatarZModifier", sInstance->getChild<LLSpinCtrl>("Z Modifier")->get());
+	gSavedPerAccountSettings.setF32("PhoenixAvatarXModifier", sInstance->getChild<LLSpinCtrl>("X Modifier")->get());
+	gSavedPerAccountSettings.setF32("PhoenixAvatarYModifier", sInstance->getChild<LLSpinCtrl>("Y Modifier")->get());
+	gSavedPerAccountSettings.setF32("PhoenixAvatarZModifier", sInstance->getChild<LLSpinCtrl>("Z Modifier")->get());
 	gAgent.sendAgentSetAppearance();
 }
 
-void LLPanelAscent::onClickSetMirror(void* user_data)
+void LLPanelPhoenix::onClickSetMirror(void* user_data)
 {
-	LLPanelAscent* self = (LLPanelAscent*)user_data;
+	LLPanelPhoenix* self = (LLPanelPhoenix*)user_data;
 
-	std::string cur_name(gSavedSettings.getString("AscentInvMirrorLocation"));
+	std::string cur_name(gSavedSettings.getString("PhoenixInvMirrorLocation"));
 	std::string proposed_name(cur_name);
 	
 	LLDirPicker& picker = LLDirPicker::instance();
@@ -658,15 +659,15 @@ void LLPanelAscent::onClickSetMirror(void* user_data)
 	if (!dir_name.empty() && dir_name != cur_name)
 	{
 		self->childSetText("mirror_location", dir_name);
-		gSavedSettings.setString("AscentInvMirrorLocation", dir_name);
+		gSavedSettings.setString("PhoenixInvMirrorLocation", dir_name);
 	}
 }
 
-void LLPanelAscent::onClickSetHDDInclude(void* user_data)
+void LLPanelPhoenix::onClickSetHDDInclude(void* user_data)
 {
-	LLPanelAscent* self = (LLPanelAscent*)user_data;
+	LLPanelPhoenix* self = (LLPanelPhoenix*)user_data;
 
-	std::string cur_name(gSavedSettings.getString("AscentHDDIncludeLocation"));
+	std::string cur_name(gSavedSettings.getString("PhoenixHDDIncludeLocation"));
 	std::string proposed_name(cur_name);
 	
 	LLDirPicker& picker = LLDirPicker::instance();
@@ -679,14 +680,14 @@ void LLPanelAscent::onClickSetHDDInclude(void* user_data)
 	if (!dir_name.empty() && dir_name != cur_name)
 	{
 		self->childSetText("include_location", dir_name);
-		gSavedSettings.setString("AscentHDDIncludeLocation", dir_name);
+		gSavedSettings.setString("PhoenixHDDIncludeLocation", dir_name);
 	}
 }
-void LLPanelAscent::onClickSetXed(void* user_data)
+void LLPanelPhoenix::onClickSetXed(void* user_data)
 {
-	LLPanelAscent* self = (LLPanelAscent*)user_data;
+	LLPanelPhoenix* self = (LLPanelPhoenix*)user_data;
 
-	std::string cur_name(gSavedSettings.getString("AscentLSLExternalEditor"));
+	std::string cur_name(gSavedSettings.getString("PhoenixLSLExternalEditor"));
 	
 	LLFilePicker& picker = LLFilePicker::instance();
 	if (! picker.getOpenFile(LLFilePicker::FFLOAD_APP) )
@@ -697,32 +698,32 @@ void LLPanelAscent::onClickSetXed(void* user_data)
 	if (!file_name.empty() && file_name != cur_name)
 	{
 		self->childSetText("xed_location", file_name);
-		gSavedSettings.setString("AscentLSLExternalEditor", file_name);
+		gSavedSettings.setString("PhoenixLSLExternalEditor", file_name);
 		
 	} else {
 		//self->childSetText("xed_location", " ");
-	  gSavedSettings.setString("AscentLSLExternalEditor", " ");
+	  gSavedSettings.setString("PhoenixLSLExternalEditor", " ");
 	}
 }
 
 //Kadah - Force IMShowOnTyping to resolve a bug were if AnnounceIncoming was on, autoreply would not be sent
-void LLPanelAscent::onAscentInstantMessageAnnounceIncoming(LLUICtrl* ctrl, void* userdata)
+void LLPanelPhoenix::onPhoenixInstantMessageAnnounceIncoming(LLUICtrl* ctrl, void* userdata)
 {
-	LLPanelAscent* self = (LLPanelAscent*)ctrl->getParent();
-	const bool AnnounceIncoming = self->childGetValue("AscentInstantMessageAnnounceIncoming").asBoolean();
-	LLCheckBoxCtrl* ShowOnTyping = self->getChild<LLCheckBoxCtrl>("AscentInstantMessageShowOnTyping");
+	LLPanelPhoenix* self = (LLPanelPhoenix*)ctrl->getParent();
+	const bool AnnounceIncoming = self->childGetValue("PhoenixInstantMessageAnnounceIncoming").asBoolean();
+	LLCheckBoxCtrl* ShowOnTyping = self->getChild<LLCheckBoxCtrl>("PhoenixInstantMessageShowOnTyping");
 	ShowOnTyping->setEnabled(!AnnounceIncoming);
 	if (AnnounceIncoming)
 	{
 		ShowOnTyping->setValue(true);
 	} else {
-		ShowOnTyping->setValue(gSavedPerAccountSettings.getBOOL("AscentInstantMessageShowOnTyping")); //restore to last value
+		ShowOnTyping->setValue(gSavedPerAccountSettings.getBOOL("PhoenixInstantMessageShowOnTyping")); //restore to last value
 	}
 }
 
-void LLPanelAscent::onConditionalPreferencesChanged(LLUICtrl* ctrl, void* userdata)
+void LLPanelPhoenix::onConditionalPreferencesChanged(LLUICtrl* ctrl, void* userdata)
 {
-	/*LLPanelAscent* self = (LLPanelAscent*)ctrl->getParent();
+	/*LLPanelPhoenix* self = (LLPanelPhoenix*)ctrl->getParent();
 	if(!self)return;
 	LLCheckBoxCtrl* teleport = self->getChild<LLCheckBoxCtrl>("telerequest_toggle");
 	LLCheckBoxCtrl* movelock = self->getChild<LLCheckBoxCtrl>("mldct_toggle");
@@ -736,16 +737,16 @@ void LLPanelAscent::onConditionalPreferencesChanged(LLUICtrl* ctrl, void* userda
 	else
 	{
 		teleport->setValue(LLSD(true));
-		gSavedSettings.setBOOL("AscentRequestLocalTeleports", true);
+		gSavedSettings.setBOOL("PhoenixRequestLocalTeleports", true);
 		teleport->setEnabled(false);
 	}*/
 }
 
 /*
 //static 
-void LLPanelAscent::onClickSilver(void* data)
+void LLPanelPhoenix::onClickSilver(void* data)
 {
-	LLPanelAscent* self = (LLPanelAscent*)data;
+	LLPanelPhoenix* self = (LLPanelPhoenix*)data;
 	gSavedSettings.setString("SkinCurrent", "silver");
 	self->getChild<LLRadioGroup>("skin_selection")->setValue("silver");
 }*/

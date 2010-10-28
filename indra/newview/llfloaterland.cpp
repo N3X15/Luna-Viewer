@@ -79,9 +79,9 @@
 #include "roles_constants.h"
 #include "llworld.h"
 
-
-
-
+// [RLVa:KB]
+#include "rlvhandler.h"
+// [/RLVa:KB]
 
 static std::string OWNER_ONLINE 	= "0";
 static std::string OWNER_OFFLINE	= "1";
@@ -861,6 +861,12 @@ void LLPanelLandGeneral::setGroup(const LLUUID& group_id)
 // static
 void LLPanelLandGeneral::onClickBuyLand(void* data)
 {
+// [RLVa:KB] - Checked: 2009-07-04 (RLVa-1.0.0a)
+	if ( (rlv_handler_t::isEnabled()) && (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC)) )
+	{
+		return;
+	}
+// [/RLVa:KB]
 	BOOL* for_group = (BOOL*)data;
 	LLViewerParcelMgr::getInstance()->startBuyLand(*for_group);
 }
@@ -2941,9 +2947,8 @@ void LLPanelLandCovenant::updateEstateOwnerName(const std::string& name)
 void LLFloaterLand::open()
 {
 	// We'll allow "About Land" as long as you have the ability to return prims (through ownership or through group powers)
-    // FUCK RLV
-	//if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC))
-	//{
+	if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC))
+	{
 		LLParcelSelection* pParcelSel = LLViewerParcelMgr::getInstance()->getFloatingParcelSelection();
 		if ( (!pParcelSel) || (pParcelSel->hasOthersSelected()) )
 			return;
@@ -2970,7 +2975,7 @@ void LLFloaterLand::open()
 			if (!fShow)
 				return;
 		}
-	//}
+	}
 
 	LLFloater::open();
 }

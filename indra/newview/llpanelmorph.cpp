@@ -198,7 +198,7 @@ void LLPanelMorph::updateSpinners(LLPolyMesh *mesh)
 		param = gAgent.getAvatarObject()->getNextVisualParam())
 	{
 		if (param->getID() == -1 ||
-			param->getGroup() != LLVisualParam::VISUAL_PARAM_GROUP_TWEAKABLE) continue;
+			!param->isTweakable()) continue;
 
 		F32 paramWeight = gAgent.getAvatarObject()->getVisualParamWeight(morphTargetp);
 
@@ -256,7 +256,7 @@ void LLPanelMorph::createSpinners(LLPolyMesh *mesh)
 		param = gAgent.getAvatarObject()->getNextVisualParam())
 	{
 		if(param->getID() != -1 &&
-			param->getGroup() == LLVisualParam::VISUAL_PARAM_GROUP_TWEAKABLE)
+			param->isTweakable())
 		{
 			numSpinners++;
 		}
@@ -317,7 +317,7 @@ void LLPanelMorph::createSpinners(LLPolyMesh *mesh)
 		param = gAgent.getAvatarObject()->getNextVisualParam())
 	{
 		if (param->getID() == -1 ||
-			param->getGroup() != LLVisualParam::VISUAL_PARAM_GROUP_TWEAKABLE) continue;
+			!param->isTweakable()) continue;
 		LLRect spinnerRect;
 		spinnerRect.setLeftTopAndSize(HPAD + LABEL_HOFF, 
 			cur_y, 

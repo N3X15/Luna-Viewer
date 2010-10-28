@@ -106,7 +106,7 @@ JCLSLBridge::JCLSLBridge() : LLEventTimer( (F32)1.0 )
 	}
 }
 
-void JCLSLBridge::updateBuildBridge(const LLSD &data)
+void JCLSLBridge::updateBuildBridge(const LLSD& data)
 {
 	BOOL newvalue = data.asBoolean();
 	if(sBuildBridge != newvalue)

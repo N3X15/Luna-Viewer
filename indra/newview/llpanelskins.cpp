@@ -44,6 +44,7 @@
 #include "llviewerwindow.h"
 #include "llcombobox.h"
 #include "llsdserialize.h"
+#include "floaterskinfinder.h"
 
 
 LLPanelSkins* LLPanelSkins::sInstance;
@@ -178,6 +179,6 @@ void LLPanelSkins::onComboBoxCommit(LLUICtrl* ctrl, void* userdata)
 
 void LLPanelSkins::onClickFindMore(void*)
 {
-//	FloaterSkinfinder::showInstance(LLSD());
+	FloaterSkinfinder::showInstance(LLSD());
 }
 

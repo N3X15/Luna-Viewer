@@ -65,9 +65,9 @@
 #include "lluictrlfactory.h"
 #include "roles_constants.h"
 
-
-
-
+// [RLVa:KB]
+#include "rlvhandler.h"
+// [/RLVa:KB]
 
 ///----------------------------------------------------------------------------
 /// Class llpanelpermissions
@@ -324,8 +324,8 @@ void LLPanelPermissions::refresh()
 		else
 		{
 			// Display last owner if public
-			std::string last_owner_name;
-			LLSelectMgr::getInstance()->selectGetLastOwner(mLastOwnerID, last_owner_name);
+			//std::string last_owner_name;
+			//LLSelectMgr::getInstance()->selectGetLastOwner(mLastOwnerID, last_owner_name);
 
 			// It should never happen that the last owner is null and the owner
 			// is null, but it seems to be a bug in the simulator right now. JC
@@ -337,41 +337,41 @@ void LLPanelPermissions::refresh()
 		}
 	}
 
+// [RLVa:KB] - Checked: 2009-07-08 (RLVa-1.0.0e)
+	bool fRlvEnableOwner = true; bool fRlvEnableLastOwner = true;
+	if ( (rlv_handler_t::isEnabled()) && (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES)) )
+	{
+		// Only filter the owner name if: the selection is all owned by the same avie and not group owned
+		if ( (owners_identical) && (!LLSelectMgr::getInstance()->selectIsGroupOwned()) )
+		{
+			owner_name = RlvStrings::getAnonym(owner_name);
+			fRlvEnableOwner = false;
+		}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+		// Phoenix specific code
+		// TODO-RLVa: need to test the last owner filtering more
+		if ( (owners_identical) && (mLastOwnerID.notNull()) && (!last_owner_name.empty()) )
+		{
+			last_owner_name = RlvStrings::getAnonym(last_owner_name);
+			fRlvEnableLastOwner = false;
+		}
+	}
+// [/RLVa:KB]
 
 	childSetText("Owner Name",owner_name);
 	childSetEnabled("Owner Name",TRUE);
-	childSetEnabled("button owner profile",owners_identical && (mOwnerID.notNull() || LLSelectMgr::getInstance()->selectIsGroupOwned()));
-
-
-
-
+//	childSetEnabled("button owner profile",owners_identical && (mOwnerID.notNull() || LLSelectMgr::getInstance()->selectIsGroupOwned()));
+// [RLVa:KB] - Checked: 2009-07-08 (RLVa-1.0.0e)
+	childSetEnabled("button owner profile",
+		fRlvEnableOwner && owners_identical && (mOwnerID.notNull() || LLSelectMgr::getInstance()->selectIsGroupOwned()));
+// [/RLVa:KB]
 
 	childSetText("Last Owner Name",last_owner_name);
 	childSetEnabled("Last Owner Name",TRUE);
-	childSetEnabled("button last owner profile",owners_identical && mLastOwnerID.notNull());
-
-
-
+//	childSetEnabled("button last owner profile",owners_identical && mLastOwnerID.notNull());
+// [RLVa:KB] - Alternate: Phoenix-370
+	childSetEnabled("button last owner profile", fRlvEnableLastOwner && owners_identical && mLastOwnerID.notNull());
+// [/RLVa:KB]
 
 	// update group text field
 	childSetEnabled("Group:",true);
@@ -889,15 +889,27 @@ void LLPanelPermissions::onClickOwner(void *data)
 	}
 	else
 	{
-		LLFloaterAvatarInfo::showFromObject(self->mOwnerID);
+// [RLVa:KB] - Checked: 2009-07-08 (RLVa-1.0.0e)
+		if (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES))
+		{
+			LLFloaterAvatarInfo::showFromObject(self->mOwnerID);
+		}
+// [/RLVa:KB]
+//		LLFloaterAvatarInfo::showFromObject(self->mOwnerID);
 	}
 }
 
 void LLPanelPermissions::onClickLastOwner(void *data)
 {
 	LLPanelPermissions *self = (LLPanelPermissions *)data;
-	if(self->mLastOwnerID.notNull())
+
+// [RLVa:KB] - Alternate: Phoenix-370
+	if ( (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES)) && (self->mLastOwnerID.notNull()) )
+	{
 		LLFloaterAvatarInfo::showFromObject(self->mLastOwnerID);
+	}
+// [/RLVa:KB]
+//	if(self->mLastOwnerID.notNull())LLFloaterAvatarInfo::showFromObject(self->mLastOwnerID);
 }
 
 void LLPanelPermissions::onClickGroup(void* data)
@@ -969,9 +981,8 @@ void LLPanelPermissions::onClickCopyObjKey(void* data)
 	//NAMESHORT - Was requested on the forums, was going to integrate a textbox with the ID, but due to lack of room on the floater,
 	//We now have a copy button :>
 	//Madgeek - Hacked together method to copy more than one key, separated by comma.
-	//At some point the separator was changed to read from the xml settings - I'll probably try to make this openly changable from settings. -HgB
 	std::string output;
-	std::string separator = gSavedSettings.getString("AscentDataSeparator");
+	std::string separator = gSavedSettings.getString("PhoenixCopyObjKeySeparator");
 	for (LLObjectSelection::root_iterator iter = LLSelectMgr::getInstance()->getSelection()->root_begin();
 		iter != LLSelectMgr::getInstance()->getSelection()->root_end(); iter++)
 	{

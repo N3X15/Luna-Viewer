@@ -81,6 +81,10 @@
 #include "llviewerwindow.h"
 #include "llvlcomposition.h"
 
+// [RLVa:KB]
+#include "rlvhandler.h"
+// [/RLVa:KB]
+
 #define ELAR_ENABLED 0 // Enable when server support is implemented
 
 const S32 TERRAIN_TEXTURE_COUNT = 4;
@@ -3280,7 +3284,7 @@ bool LLDispatchSetEstateAccess::operator()(
 void LLFloaterRegionInfo::open()
 {
 	// We'll allow access to the estate tools for estate managers (and for the sim owner)
-	//if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC))
+	if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC))
 	{
 		LLViewerRegion* pRegion = gAgent.getRegion();
 		if (!pRegion)

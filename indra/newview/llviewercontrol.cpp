@@ -71,6 +71,7 @@
 #include "llvowlsky.h"
 #include "llrender.h"
 #include "llfloaterchat.h"
+#include "llviewerobjectlist.h"
 #include "phoenixboobutils.h"
 
 #ifdef TOGGLE_HACKED_GODLIKE_VIEWER

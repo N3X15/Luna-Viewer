@@ -458,7 +458,7 @@ LLAgent::LLAgent() :
 
 	mFollowCam.setMaxCameraDistantFromSubject( MAX_CAMERA_DISTANCE_FROM_AGENT );
 	//AscentForceFly = gSavedSettings.getBOOL("AscentAlwaysFly");
-	//gSavedSettings.getControl("AscentAlwaysFly")->getSignal()->connect(&updateAscentForceFly);
+	//gSavedSettings.getControl("AscentAlwaysFly")->getSignal()->connect(boost::bind(&updateAscentForceFly,_1));
 }
 void LLAgent::updateAscentForceFly(const LLSD &data)
 {
@@ -500,9 +500,9 @@ void LLAgent::init()
 
 	mEffectColor = LLSavedSettingsGlue::getCOAColor4("EffectColor");
 	ignorePrejump = LLSavedSettingsGlue::getCOABOOL("AscentIgnoreFinishAnimation");
-	//LLSavedSettingsGlue::getCOAControl("AscentIgnoreFinishAnimation")->getSignal()->connect(&updateIgnorePrejump);
+	//LLSavedSettingsGlue::getCOAControl("AscentIgnoreFinishAnimation")->getSignal()->connect(boost::bind(&updateIgnorePrejump,_1));
 	AscentForceFly = LLSavedSettingsGlue::getCOABOOL("AscentAlwaysFly");
-	//LLSavedSettingsGlue::getCOAControl("AscentAlwaysFly")->getSignal()->connect(&updateAscentForceFly);
+	//LLSavedSettingsGlue::getCOAControl("AscentAlwaysFly")->getSignal()->connect(boost::bind(&updateAscentForceFly,_1));
 	mBlockSpam=LLSavedSettingsGlue::getCOABOOL("AscentBlockSpam");
 	
 	mInitialized = TRUE;

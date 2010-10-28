@@ -46,13 +46,13 @@ private:
 	void	(*mCallback)(U32, std::string);
 };
 
-class AscentViewerLink
+class PhoenixViewerLink
 {
-	AscentViewerLink();
-	~AscentViewerLink();
-	static AscentViewerLink* sInstance;
+	PhoenixViewerLink();
+	~PhoenixViewerLink();
+	static PhoenixViewerLink* sInstance;
 public:
-	static AscentViewerLink* getInstance();
+	static PhoenixViewerLink* getInstance();
 
 	void start_download();
 	void downloadClientTags();

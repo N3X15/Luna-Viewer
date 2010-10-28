@@ -867,6 +867,8 @@ void LLFloaterAO::onNotecardLoadComplete(LLVFS *vfs,const LLUUID& asset_uuid,LLA
 				std::string card = edit->getText();
 				edit->die();
 
+				LUA_CALL("OnAONotecardRead") << card << LUA_END;
+
 				mAOAllAnims.clear();
 				mAOStands.clear();
 				//mAODefaultAnims.clear();
