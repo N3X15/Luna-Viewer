@@ -831,9 +831,9 @@ private:
 	static BOOL mForceTPose;
 	bool mbTeleportKeepsLookAt; // try to keep look-at after teleport is complete
 	static BOOL ignorePrejump;
-	static BOOL AscentForceFly;
+	static BOOL PhoenixForceFly;
 	static void updateIgnorePrejump(const LLSD &data);
-	static void	updateAscentForceFly(const LLSD &data);
+	static void	updatePhoenixForceFly(const LLSD &data);
 	
 	static BOOL AscentPhantom;
 	bool mbAlwaysRun; // should the avatar run by default rather than walk

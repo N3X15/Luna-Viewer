@@ -245,7 +245,7 @@ public:
 
 	void			addChat(const LLChat& chat);
 	void			clearChat();
-	void			startTyping() { mTyping = TRUE; mTypingTimer.reset(); mIdleTimer.reset();}
+	void			startTyping() { mTyping = TRUE; mTypingTimer.reset(); mIdleTimer.reset(); }
 	void			stopTyping() { mTyping = FALSE; }
 	bool			isTyping() { return mTyping; }
 

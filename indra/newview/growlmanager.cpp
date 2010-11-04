@@ -140,7 +140,7 @@ void GrowlManager::loadConfig()
 
 void GrowlManager::notify(const std::string& notification_title, const std::string& notification_message, const std::string& notification_type)
 {
-	static BOOL* enabled = rebind_llcontrol<BOOL>("AscentEnableGrowl", &gSavedSettings, true);
+	static BOOL* enabled = rebind_llcontrol<BOOL>("PhoenixEnableGrowl", &gSavedSettings, true);
 	if(!*enabled)
 		return;
 	
@@ -174,7 +174,7 @@ bool GrowlManager::onLLNotification(const LLSD& notice)
 {
 	if(notice["sigtype"].asString() != "add")
 		return false;
-	static BOOL* enabled = rebind_llcontrol<BOOL>("AscentEnableGrowl", &gSavedSettings, true);
+	static BOOL* enabled = rebind_llcontrol<BOOL>("PhoenixEnableGrowl", &gSavedSettings, true);
 	if(!*enabled)
 		return false;
 	if(!shouldNotify())
@@ -209,7 +209,7 @@ bool GrowlManager::onLLNotification(const LLSD& notice)
 bool GrowlManager::shouldNotify()
 {
 	// This magic stolen from llappviewer.cpp. LLViewerWindow::getActive lies.
-	static BOOL* activated = rebind_llcontrol<BOOL>("AscentGrowlWhenActive", &gSavedSettings, true);
+	static BOOL* activated = rebind_llcontrol<BOOL>("PhoenixGrowlWhenActive", &gSavedSettings, true);
 	return (*activated || (!gViewerWindow->mWindow->getVisible() || !gFocusMgr.getAppHasFocus()));
 }
 

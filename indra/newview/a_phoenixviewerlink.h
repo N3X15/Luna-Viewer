@@ -82,10 +82,10 @@ public:
 
 	static std::string processRequestForInfo(LLUUID requester,std::string message, std::string name, LLUUID sessionid);
 	static std::string getMyInfo(int part =0);
-	static void callbackAscentReqInfo(const LLSD &notification, const LLSD &response);
+	static void callbackPhoenixReqInfo(const LLSD &notification, const LLSD &response);
 	static void sendInfo(LLUUID destination, LLUUID sessionid, std::string myName, EInstantMessage dialog);
 
-	static LLSD Ascent_tags;
+	static LLSD phoenix_tags;
 	std::set<std::string> blocked_versions;
 	static LLSD blocked_login_info;
 	std::string ms_motd;

@@ -6144,6 +6144,10 @@ class LLShowFloater : public view_listener_t
         {
         	LLFloaterAO::toggle(NULL);
         }
+		else if (floater_name == "lua console")
+		{
+			LLFloaterLuaConsole::toggle(NULL);
+		}
 		return true;
 	}
 };

@@ -99,6 +99,8 @@
 %import "../llviewerobject.h"
 %import "../llvovolume.h"
 %import "../llselectmgr.h"
+%import "../../llui/llview.h"
+%import "../../llui/lluictrl.h"
 %import "../../llui/llfloater.h"
 %import "../../llui/llpanel.h"
 %import "../../llui/llbutton.h"

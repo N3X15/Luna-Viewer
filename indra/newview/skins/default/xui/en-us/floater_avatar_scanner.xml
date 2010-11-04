@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<floater
+	name="avatar list"
+	title="Avatar List"
+	can_resize="true"
+	can_minimize="true"
+	can_close="true"
+	can_drag_on_left="false"
+	rect_control="FloaterAvatarListRect"
+	min_width="480"
+	min_height="240"
+  width="480" height="300"
+	>
+  <tab_container border="false" bottom_delta="-292" left="5" right="-1" height="268" mouse_opaque="false" name="actions_tab_container" tab_position="bottom" follows="top|left|right|bottom">
+    <panel border="false" bottom_delta="0" left="0" right="-1" follows="left|top|bottom|right" label="List" mouse_opaque="true" name="list_tab">
+      <scroll_list
+          border="false"
+          name="avatar_list"
+          top="10"
+          bottom="10"
+          left="0"
+          right="-6"
+          column_padding="2"
+          can_resize="true"
+          follows="left|top|right|bottom"
+          draw_heading="true"
+          multi_select="true"
+          search_column="0"
+          tool_tip="Hold shift or control while clicking to select multiple avatars">
+        <column name="avatar_name" label="Name" width="150"/>
+        <column name="voice" label="Voice" width="15"/>
+        <column name="distance" label="Distance" width="70"/>
+        <column name="time" label="Time" width="50" />
+        <column name="age" label="Age" width="45"/>
+        <column name="samesim" label="Sim" width="15"/>
+        <column name="payment_data" label="" width="20" />
+        <column name="client" label="Client" dynamicwidth="true" />
+      </scroll_list>
+    </panel>	
+		<panel border="false" bottom_delta="0" left="5" right="-1" follows="left|top|right|bottom" label="Options" mouse_opaque="true" name="options_tab">
+      <check_box height="16" label="Radar Alerts to Chat"
+				   left="5" bottom_delta="-10"
+				   width="200" follows="top|left"
+				   hidden="false" mouse_opaque="true" font="SansSerifSmall"
+		       enabled="true" radio_style="false"
+           control_name="PhoenixRadarChatAlerts"/>
+      <check_box bottom_delta="-20" enabled="true" follows="top|left" font="SansSerifSmall" height="16"
+					 label="Av entering / leaving simulator" left_delta="10"
+					 mouse_opaque="true" name="radar_chat_sim_toggle" radio_style="false" width="270"
+					 control_name="PhoenixRadarAlertSim"/>
+      <check_box bottom_delta="-20" enabled="true" follows="top|left" font="SansSerifSmall" height="16"
+           label="Av entering / leaving draw distance"
+           left_delta="0" mouse_opaque="true" name="radar_chat_draw_toggle" radio_style="false"
+           width="270" control_name="PhoenixRadarAlertDraw"/>
+      <check_box bottom_delta="-20" enabled="true" follows="top|left" font="SansSerifSmall" height="16"
+           label="Av entering / leaving chat range" left_delta="0"
+           mouse_opaque="true" name="radar_chat_chatrange_toggle" radio_style="false" width="270"
+           control_name="PhoenixRadarAlertChatRange"/>
+      <check_box height="16" label="Av Age Alert"
+				   left_delta="0" bottom_delta="-20" name="agealert"
+				   width="200" follows="top|left"
+				   hidden="false" mouse_opaque="true" font="SansSerifSmall"
+				   initial_value="true" enabled="true" radio_style="false"
+           control_name="PhoenixAvatarAgeAlert"
+  			   tool_tip="Enables Avatar Age Alert" />
+      <spinner bottom_delta="-1" decimal_digits="0" follows="top|left" height="16"
+           left_delta="90" increment="1" initial_val="3" max_val="999" min_val="0"
+           mouse_opaque="true" name="AgeAlertDays" label="Threshold" label_width="60"
+           tool_tip="Age Threshold" width="110" control_name="PhoenixAvatarAgeAlertDays" />
+
+      <check_box height="16" label="Update"
+				   left="5" bottom_delta="-30" name="update_enabled_cb" 
+				   width="200" follows="top|left"
+				   hidden="false" mouse_opaque="true" font="SansSerifSmall"
+				   initial_value="true" enabled="true" radio_style="false" 
+				   tool_tip="Set whether the avatar list should update" />
+      <check_box height="16" label="Update even when closed"
+				   left="10" bottom_delta="-21" name="keep_open"
+				   width="200" follows="top|left"
+				   hidden="false" mouse_opaque="true" font="SansSerifSmall"
+				   initial_value="true" enabled="true" radio_style="false"
+           control_name="PhoenixAvatarListKeepOpen"
+  			   tool_tip="Hides floater instead of closing to still announce in chat" />
+			<check_box height="16" label="Get avatar info"
+				   left="10" bottom_delta="-21" name="fetch_avdata_enabled_cb" 
+				   width="200" follows="top|left"
+				   hidden="false" mouse_opaque="true" font="SansSerifSmall"
+				   initial_value="true" enabled="true" radio_style="false" 
+	  		   tool_tip="Set whether avatar information should be retrieved" />
+			<check_box height="16" label="Announce keys to HUD"
+				   left="10" bottom_delta="-21" name="radar_chat_keys" 
+				   width="200" follows="top|left"
+				   hidden="false" mouse_opaque="true" font="SansSerifSmall"
+				   initial_value="true" enabled="true" radio_style="false" 
+           control_name="PhoenixRadarChatKeys"
+  			   tool_tip="Set whether to chat keys of avatars to LSL scripts" />
+
+      <text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+           bottom_delta="173" drop_shadow_visible="true" follows="left|top"
+           font="SansSerifSmall" h_pad="0" halign="left" height="16" left="250"
+           mouse_opaque="true" name="custom_text" v_pad="0" width="200">
+Send the selected avatar names/keys
+to scripts using following command
+
+syntax: /&lt;channel&gt; &lt;command text&gt;, 
+placeholders are #k = av key, #n = av name
+      </text>
+      <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom_delta="-80"
+           enabled="true" follows="left|right|top" font="SansSerifSmall"
+           handle_edit_keys_directly="false" height="18" label="Custom command."
+           left="250" max_length="2147483647" mouse_opaque="true" name="customcommand"
+           right="-10" select_all_on_focus_received="false" select_on_focus="false" control_name="PhoenixAvatarlistCustomAction"
+           tab_group="1" tool_tip="Custom chat command" />
+      <check_box height="16" label="Color friends and muted avatars"
+				   left="250" bottom_delta="-30" name="colorfriends"
+				   width="200" follows="top|left"
+				   hidden="false" mouse_opaque="true" font="SansSerifSmall"
+				   initial_value="false" enabled="true" radio_style="false"
+           control_name="PhoenixAvatarListColorEntries"
+				   tool_tip="Color names of friends and muted avatars" />
+
+
+    </panel>
+  </tab_container>
+  <!--
+  <button bottom_delta="0" follows="left|bottom" font="SansSerifSmall" halign="center" height="18" label="Profile" left="140" mouse_opaque="true" name="profile_btn" width="52" />
+  <button bottom_delta="0" follows="left|bottom" font="SansSerifSmall" halign="center" height="18" label="IM" left_delta="55" mouse_opaque="true" name="im_btn" width="42" />
+  -->
+  <button bottom_delta="0" follows="left|bottom" font="SansSerifSmall" halign="center" height="18" label="TP to" left_delta="140" mouse_opaque="true" name="tp_btn" width="42" />
+  <button bottom_delta="0" follows="left|bottom" font="SansSerifSmall" halign="center" height="18" label="TP offer" left_delta="44" mouse_opaque="true" name="offer_btn" width="54" />
+  <button bottom_delta="0" follows="left|bottom" font="SansSerifSmall" halign="center" height="18" label="Track" left_delta="57" mouse_opaque="true" name="track_btn" width="42" />
+  <button bottom_delta="0" follows="left|bottom" font="SansSerifSmall" halign="center" height="18" label="Cmd" left_delta="45" mouse_opaque="true" name="say_btn" width="42" />
+
+  <button bottom_delta="0" follows="left|bottom" font="SansSerifSmall" halign="center" height="18" label="Mark" left_delta="45" mouse_opaque="true" name="mark_btn" width="42" />
+  <button bottom_delta="0" follows="left|bottom" font="SansSerifSmall" halign="center" height="18" label="&lt;" left_delta="45" mouse_opaque="true" name="prev_marked_btn" width="22" />
+  <button bottom_delta="0" follows="left|bottom" font="SansSerifSmall" halign="center" height="18" label="&gt;" left_delta="25" mouse_opaque="true" name="next_marked_btn" width="22" />
+</floater>

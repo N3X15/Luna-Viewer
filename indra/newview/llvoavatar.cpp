@@ -3064,7 +3064,7 @@ void LLVOAvatar::idleUpdateLoadingEffect()
 			particle_parameters.mPartData.mFlags             = ( LLPartData::LL_PART_INTERP_COLOR_MASK | LLPartData::LL_PART_INTERP_SCALE_MASK |
 																 LLPartData::LL_PART_EMISSIVE_MASK | // LLPartData::LL_PART_FOLLOW_SRC_MASK |
 																 LLPartData::LL_PART_TARGET_POS_MASK );
-			
+
 			setParticleSource(particle_parameters, getID());
 */
 		}
@@ -3413,7 +3413,7 @@ void LLVOAvatar::idleUpdateNameTag(const LLVector3& root_pos_last)
 				LLColor4 avatar_name_color = (*sAvatarNameColor);
 				if(!mIsSelf)
 					resolveClient(avatar_name_color,client, this);
-				else if(gSavedSettings.getBOOL("AscentShowOwnClientColor") && LLVOAvatar::sClientResolutionList.has("isComplete") && LLVOAvatar::sClientResolutionList.has(LUNA_CLIENT_TAG))
+				else if(gSavedSettings.getBOOL("PhoenixShowOwnClientColor") && LLVOAvatar::sClientResolutionList.has("isComplete") && LLVOAvatar::sClientResolutionList.has(LUNA_CLIENT_TAG))
 				{
 						LLSD cllsd = LLVOAvatar::sClientResolutionList[LUNA_CLIENT_TAG];
 						LLColor4 colour;
@@ -3427,24 +3427,24 @@ void LLVOAvatar::idleUpdateNameTag(const LLVector3& root_pos_last)
 							avatar_name_color = colour;
 				}
 
-				static BOOL* sAscentChangeColorOnClient = rebind_llcontrol<BOOL>("AscentChangeColorOnClient", &gSavedSettings, true);
-				static BOOL* sAscentClientTagDisplay = rebind_llcontrol<BOOL>("AscentClientTagDisplay", &gSavedSettings, true);
+				static BOOL* sPhoenixChangeColorOnClient = rebind_llcontrol<BOOL>("PhoenixChangeColorOnClient", &gSavedSettings, true);
+				static BOOL* sPhoenixClientTagDisplay = rebind_llcontrol<BOOL>("PhoenixClientTagDisplay", &gSavedSettings, true);
 
-				if(!*sAscentChangeColorOnClient)
+				if(!*sPhoenixChangeColorOnClient)
 				{
 					avatar_name_color = (*sAvatarNameColor);
 				}
-				if(!*sAscentClientTagDisplay)
+				if(!*sPhoenixClientTagDisplay)
 				{
 					client = "";
 				}
 
-				//Ascent:KC - color friend's name tags
-				static BOOL* sAscentColorFriendsNameTags = rebind_llcontrol<BOOL>("AscentColorFriendsNameTags", &gSavedSettings, true);
-				if(*sAscentColorFriendsNameTags && LLAvatarTracker::instance().isBuddy(getID()))
+				//Phoenix:KC - color friend's name tags
+				static BOOL* sPhoenixColorFriendsNameTags = rebind_llcontrol<BOOL>("PhoenixColorFriendsNameTags", &gSavedSettings, true);
+				if(*sPhoenixColorFriendsNameTags && LLAvatarTracker::instance().isBuddy(getID()))
 				{
-					static LLCachedControl<LLColor4> AscentFriendNameColor("AscentFriendNameColor", LLColor4(0.447f, 0.784f, 0.663f, 1.f));
-					avatar_name_color = AscentFriendNameColor;
+					static LLCachedControl<LLColor4> PhoenixFriendNameColor("PhoenixFriendNameColor", LLColor4(0.447f, 0.784f, 0.663f, 1.f));
+					avatar_name_color = PhoenixFriendNameColor;
 				}
 
 				avatar_name_color.setAlpha(alpha);
@@ -4633,9 +4633,9 @@ U32 LLVOAvatar::renderSkinned(EAvatarRenderPass pass)
 
 	if (pass == AVATAR_RENDER_PASS_SINGLE)
 	{
-		static LLCachedControl<BOOL> AscentShowTransparentHidesAlpha("AscentShowTransparentHidesAlpha", 0);
+		static LLCachedControl<BOOL> PhoenixShowTransparentHidesAlpha("PhoenixShowTransparentHidesAlpha", 0);
 		bool should_alpha_mask;
-		if(AscentShowTransparentHidesAlpha)
+		if(PhoenixShowTransparentHidesAlpha)
 		{
 		    should_alpha_mask = mSupportsAlphaLayers && mHasBakedHair
 										    && !LLDrawPoolAvatar::sSkipTransparent;
@@ -6708,7 +6708,7 @@ void LLVOAvatar::sitOnObject(LLViewerObject *sit_object)
 		if (gAgent.mForceMouselook) gAgent.changeCameraToMouselook();
 
 		//Name Short - Revoke permissions for the object you've just sat on.
-		U32 state = gSavedSettings.getU32("AscentRevokePerms");
+		U32 state = gSavedSettings.getU32("PhoenixRevokePerms");
 		if(state == 1 || (state == 3 && !sit_object->permYouOwner()))
 		{
 			gMessageSystem->newMessageFast(_PREHASH_RevokePermissions);
@@ -6796,7 +6796,7 @@ void LLVOAvatar::getOffObject()
 		gAgent.setSitCamera(LLUUID::null);
 
 		//Name Short - Revoke permissions for the object you've just stood up from.
-		U32 state = gSavedSettings.getU32("AscentRevokePerms");
+		U32 state = gSavedSettings.getU32("PhoenixRevokePerms");
 		if(state == 2 || (state == 3 && !sit_object->permYouOwner()))
 		{
 			gMessageSystem->newMessageFast(_PREHASH_RevokePermissions);
@@ -8595,7 +8595,7 @@ void LLVOAvatar::processAvatarAppearance( LLMessageSystem* mesgsys )
 			for( S32 i = 0; i < num_blocks; i++ )
 			{
 				
-				while( param && (!param->isTweakable()) )
+				while( param && (param->getGroup() != VISUAL_PARAM_GROUP_TWEAKABLE) ) // should not be any of group VISUAL_PARAM_GROUP_TWEAKABLE_NO_TRANSMIT
 				{
 					param = getNextVisualParam();
 				}
@@ -8634,7 +8634,7 @@ void LLVOAvatar::processAvatarAppearance( LLMessageSystem* mesgsys )
 			}
 		}
 
-		while( param && (!param->isTweakable()) )
+		while( param && (param->getGroup() != VISUAL_PARAM_GROUP_TWEAKABLE) ) // don't worry about VISUAL_PARAM_GROUP_TWEAKABLE_NO_TRANSMIT
 		{
 			param = getNextVisualParam();
 		}
@@ -8720,7 +8720,7 @@ void LLVOAvatar::onBakedTextureMasksLoaded( BOOL success, LLViewerImage *src_vi,
 		{
 			if (!aux_src->getData())
 			{
-				llerrs << "No auxiliary source data for onBakedTextureMasksLoaded" << llendl;
+				//llerrs << "No auxiliary source data for onBakedTextureMasksLoaded" << llendl;
 				return;
 			}
 
@@ -8786,7 +8786,7 @@ void LLVOAvatar::onBakedTextureMasksLoaded( BOOL success, LLViewerImage *src_vi,
 		}
 		else
 		{
-            // this can happen when someone uses an old baked texture possibly provided by 
+            // this can happen when someone uses an old baked texture possibly provided by
             // viewer-side baked texture caching
 			llwarns << "Masks loaded callback but NO aux source!" << llendl;
 		}
@@ -8912,8 +8912,8 @@ void LLVOAvatar::dumpArchetypeXML( void* )
 		for( LLVisualParam* param = avatar->getFirstVisualParam(); param; param = avatar->getNextVisualParam() )
 		{
 			LLViewerVisualParam* viewer_param = (LLViewerVisualParam*)param;
-			if( (viewer_param->getWearableType() == type) && 
-				(viewer_param->isTweakable() ) )
+			if( (viewer_param->getWearableType() == type) &&
+				(param->isTweakable()) )
 			{
 				apr_file_printf( file, "\t\t<param id=\"%d\" name=\"%s\" value=\"%.3f\"/>\n",
 						 viewer_param->getID(), viewer_param->getName().c_str(), viewer_param->getWeight() );

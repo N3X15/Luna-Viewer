@@ -76,7 +76,8 @@ function ZHAOParser:CanParse(data)
 	tmp:write(data)
 	tmp:flush()
 	for line in tmp:lines() do
-		if string.starts(line,"[ Stands ]") then
+		print("[AO] "..line)
+		if string.starts(line,"[ Stands ]") or string.starts(line,"[ Standing ]") then
 			tmp:close()
 			return true
 		end

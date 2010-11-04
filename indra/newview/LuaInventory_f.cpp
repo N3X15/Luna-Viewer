@@ -18,6 +18,7 @@
 #include <boost/tokenizer.hpp>
 
 
+void requestInventoryAsset_Event(LLUUID reqID,LLUUID task_id,LLUUID item_id);
 void giveInventoryItem_Event(LLUUID to_agent, LLUUID item_id, LLUUID im_session_id);
 LLUUID TraverseCategories(const std::string& target_cat, LLViewerInventoryCategory *ccat=NULL, int i=0);
 void Lua_onAssetDownloaded(LLVFS *vfs,const LLUUID& asset_uuid,LLAssetType::EType type,void* user_data, S32 status, LLExtStat ext_status);
@@ -102,6 +103,7 @@ LLUUID getInventoryItemUUID(const std::string& name, int type)
 
 LLUUID getInventoryAssetUUID(const std::string& name, int type)
 {
+	llinfos << "getInventoryAssetUUID("<< name <<","<< type <<")" << llendl;
 	LLViewerInventoryCategory::cat_array_t cats;
 	LLViewerInventoryItem::item_array_t items;
 	LunaFindItemByName byn(name,(LLAssetType::EType)type);
@@ -114,6 +116,7 @@ LLUUID getInventoryAssetUUID(const std::string& name, int type)
 
 std::string getInventoryItemName(LLUUID key, int type)
 {
+	llinfos << "getInventoryItemName("<< key <<","<< type <<")" << llendl;
 	LLInventoryItem *item = gInventory.getItem(key);
 	if(!item)
 	{
@@ -205,56 +208,23 @@ void giveInventoryItem(LLUUID to_agent, LLUUID item_id, LLUUID im_session_id)
 	CB_Args3<LLUUID,LLUUID,LLUUID>(giveInventoryItem_Event,to_agent,item_id,im_session_id);
 }
 
-LLUUID requestInventoryAsset(LLUUID item_id,LLUUID task_id)
-{
-	LLUUID new_item_id=LLUUID::generateNewID();
-	LLViewerInventoryItem *item = gInventory.getItem(item_id);
-	if(!item)
-	{
-		LuaError(llformat("Could not find item %s.",item_id.asString()).c_str());
-		return LLUUID::null;
-	}
-	
-	if (!gAgent.allowOperation(PERM_COPY, item->getPermissions(),GP_OBJECT_MANIPULATE) && gAgent.isGodlike())
-	{
-		LuaError(llformat("You do not have copy permission on %s %s.",
-			LLAssetType::lookupHumanReadable(item->getActualType()),
-			item->getName()).c_str());
-		return LLUUID::null;
-	}
-	LLHost source_sim = LLHost::invalid;
-	LLUUID invfolderid = item->getParentUUID();
-	gAssetStorage->getInvItemAsset(source_sim,
-									gAgent.getID(),
-									gAgent.getSessionID(),
-									item->getPermissions().getOwner(),
-									LLUUID::null,
-									item->getUUID(),
-									item->getAssetUUID(),
-									item->getType(),
-									&Lua_onAssetDownloaded,
-									(void*)new LLUUID(new_item_id),
-									TRUE);
-	return new_item_id;
-}
-						   
-
 void Lua_onAssetDownloaded(LLVFS *vfs,const LLUUID& asset_uuid,LLAssetType::EType type,void* user_data, S32 status, LLExtStat ext_status)
 {
 	// Pointer juggling.  Yay.
 	LLUUID req_key = *((LLUUID*)user_data);
 	if(status == LL_ERR_NOERR)
 	{
+		llinfos << "requestInventoryAsset(): Asset received" << llendl;
 		S32 size = vfs->getSize(asset_uuid, type);
 		U8* buffer = new U8[size];
 		vfs->getData(asset_uuid, type, buffer, 0, size);
 		
+		LLViewerTextEditor* edit = new LLViewerTextEditor("",LLRect(0,0,0,0),S32_MAX,"");
 		switch(type)
 		{
 		// Text-based assets only.
 		case LLAssetType::AT_NOTECARD:
 		case LLAssetType::AT_LSL_TEXT:
-			LLViewerTextEditor* edit = new LLViewerTextEditor("",LLRect(0,0,0,0),S32_MAX,"");
 			if(edit->importBuffer((char*)buffer, (S32)size))
 			{
 				std::string card = edit->getText();
@@ -269,13 +239,87 @@ void Lua_onAssetDownloaded(LLVFS *vfs,const LLUUID& asset_uuid,LLAssetType::ETyp
 				return;
 			}
 			break;
-
+		default:
+			LuaError(llformat("[requestInventoryAsset] Unknown type %s.",LLAssetType::lookup(type)).c_str());
+			LUA_CALL("OnAssetFailed") << req_key << LUA_END;
+			break;
 		}
 	}
 	else
 	{
-		llinfos << "ao nc read error" << llendl;
+		llinfos << "requestInventoryAsset(): Asset read error: " << status << llendl;
+		LuaError("[requestInventoryAsset] Read error. ");
 		LUA_CALL("OnAssetFailed") << req_key << LUA_END;
 		return;
 	}
 }
+void requestInventoryAsset_Event(LLUUID &reqID,LLUUID &task_id,LLUUID &item_id)
+{
+	llinfos << "requestInventoryAsset_Event("<< reqID <<","<< task_id <<","<< item_id <<"): Requesting asset." << llendl;
+	//LLViewerInventoryItem *item = gInventory.getItem(item_id);
+
+	llinfos << "requestInventoryAsset("<< item_id <<","<< task_id <<"): Getting item" << llendl;
+	LLViewerInventoryItem *item = gInventory.getItem(item_id);
+	if(!item)
+	{
+		LuaError(llformat("Could not find item %s.",item_id.asString()).c_str());
+		return;
+	}
+	
+	
+	llinfos << "requestInventoryAsset("<< item_id <<","<< task_id <<"): Checking if asset download is allowed" << llendl;
+	if (!gAgent.allowOperation(PERM_COPY, item->getPermissions(),GP_OBJECT_MANIPULATE) && gAgent.isGodlike())
+	{
+		LuaError(llformat("You do not have copy permission on %s %s.",
+			LLAssetType::lookupHumanReadable(item->getActualType()),
+			item->getName()).c_str());
+		return;
+	}
+	
+	llinfos << "requestInventoryAsset("<< item_id <<","<< task_id <<"): Queueing asset request" << llendl;
+
+	LLHost source_sim = LLHost::invalid;
+	LLUUID invfolderid = item->getParentUUID();
+	gAssetStorage->getInvItemAsset(source_sim,
+									gAgent.getID(),
+									gAgent.getSessionID(),
+									item->getPermissions().getOwner(),
+									task_id,
+									item_id,
+									item->getAssetUUID(),
+									item->getType(),
+									&Lua_onAssetDownloaded,
+									(void*)new LLUUID(reqID),
+									TRUE);
+}
+						  
+
+LLUUID requestInventoryAsset(LLUUID item_id,LLUUID task_id)
+{
+	llinfos << "requestInventoryAsset("<< item_id <<","<< task_id <<"): Generating request key" << llendl;
+	LLUUID new_item_id=LLUUID::generateNewID();
+
+	/*
+	llinfos << "requestInventoryAsset("<< item_id <<","<< task_id <<"): Getting item" << llendl;
+	LLViewerInventoryItem *item = gInventory.getItem(item_id);
+	if(!item)
+	{
+		LuaError(llformat("Could not find item %s.",item_id.asString()).c_str());
+		return LLUUID::null;
+	}
+	
+	
+	llinfos << "requestInventoryAsset("<< item_id <<","<< task_id <<"): Checking if asset download is allowed" << llendl;
+	if (!gAgent.allowOperation(PERM_COPY, item->getPermissions(),GP_OBJECT_MANIPULATE) && gAgent.isGodlike())
+	{
+		LuaError(llformat("You do not have copy permission on %s %s.",
+			LLAssetType::lookupHumanReadable(item->getActualType()),
+			item->getName()).c_str());
+		return LLUUID::null;
+	}
+	*/
+	llinfos << "requestInventoryAsset("<< item_id <<","<< task_id <<"): Queueing asset request" << llendl;
+	CB_Args3<LLUUID,LLUUID,LLUUID>(requestInventoryAsset_Event,new_item_id,task_id,item_id);
+
+	return new_item_id;
+} 

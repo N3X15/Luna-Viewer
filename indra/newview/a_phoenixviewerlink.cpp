@@ -56,7 +56,7 @@
 
 std::string PhoenixViewerLink::blacklist_version;
 LLSD PhoenixViewerLink::blocked_login_info = 0;
-LLSD PhoenixViewerLink::Ascent_tags = 0;
+LLSD PhoenixViewerLink::phoenix_tags = 0;
 BOOL PhoenixViewerLink::msDataDone = FALSE;
 
 PhoenixViewerLink* PhoenixViewerLink::sInstance;
@@ -110,7 +110,7 @@ void PhoenixViewerLink::downloadClientTags()
 	{
 		//url = "http://viewertags.com/app/client_list.xml";
 		std::string url("http://viewertags.com/app/client_list.xml");
-		if(gSavedSettings.getBOOL("AscentDontUseMultipleColorTags"))
+		if(gSavedSettings.getBOOL("PhoenixDontUseMultipleColorTags"))
 		{
 			url="http://viewertags.com/app/client_list_unified_colours.xml";
 		}
@@ -359,7 +359,7 @@ std::string PhoenixViewerLink::processRequestForInfo(LLUUID requester, std::stri
 	args["NAME"] = name;
 	args["FROMUUID"]=requester;
 	args["SESSIONID"]=sessionid;
-	LLNotifications::instance().add("PhoenixReqInfo",args,LLSD(), callbackAscentReqInfo);
+	LLNotifications::instance().add("PhoenixReqInfo",args,LLSD(), callbackPhoenixReqInfo);
 
 	return outmessage;
 }
@@ -397,7 +397,7 @@ void PhoenixViewerLink::sendInfo(LLUUID destination, LLUUID sessionid, std::stri
 	gIMMgr->addMessage(gIMMgr->computeSessionID(dialog,destination),destination,myName,"Information Sent: "+
 		myInfo1+"\n"+myInfo2);
 }
-void PhoenixViewerLink::callbackAscentReqInfo(const LLSD &notification, const LLSD &response)
+void PhoenixViewerLink::callbackPhoenixReqInfo(const LLSD &notification, const LLSD &response)
 {
 	S32 option = LLNotification::getSelectedOption(notification, response);
 	std::string my_name;

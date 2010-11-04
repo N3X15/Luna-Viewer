@@ -137,20 +137,27 @@ BOOL AONoteCardDropTarget::handleDragAndDrop(S32 x, S32 y, MASK mask, BOOL drop,
 	if(getParent())
 	{
 		handled = TRUE;
+		llinfos << "AONoteCardDropTarget::handleDragAndDrop(): LLViewerInventoryItem* inv_item = (LLViewerInventoryItem*)cargo_data;" << llendl;
 		LLViewerInventoryItem* inv_item = (LLViewerInventoryItem*)cargo_data;
+		llinfos << "AONoteCardDropTarget::handleDragAndDrop(): if(gInventory.getItem(inv_item->getUUID()))" << llendl;
 		if(gInventory.getItem(inv_item->getUUID()))
 		{
+			llinfos << "AONoteCardDropTarget::handleDragAndDrop(): *accept=ACCEPT_YES_COPY_SINGLE;" << llendl;
 			*accept = ACCEPT_YES_COPY_SINGLE;
 			if(drop)
 			{
+				llinfos << "AONoteCardDropTarget::handleDragAndDrop(): mDropCallback(inv_item);" << llendl;
 				mDownCallback(inv_item);
 			}
 		}
 		else
 		{
+			llinfos << "AONoteCardDropTarget::handleDragAndDrop(): *accept=ACCEPT_NO;" << llendl;
 			*accept = ACCEPT_NO;
 		}
 	}
+	
+	llinfos << "AONoteCardDropTarget::handleDragAndDrop(): return handled;" << llendl;
 	return handled;
 }
 
@@ -460,8 +467,13 @@ void LLFloaterAO::setCurrentStandId(const LLUUID& id)
 
 void LLFloaterAO::AOItemDrop(LLViewerInventoryItem* item)
 {
+	llinfos << "LLFloaterAO::AOItemDrop("<< item->getUUID() <<"): LUA_CALL" << llendl;
 	LUA_CALL("OnAONotecard") << item->getUUID() << LUA_END;
+
+	llinfos << "LLFloaterAO::AOItemDrop("<< item->getUUID() <<"): gSavedPerAccountSettings" << llendl;
 	gSavedPerAccountSettings.setString("PhoenixAOConfigNotecardID",item->getAssetUUID().asString());
+	
+	llinfos << "LLFloaterAO::AOItemDrop("<< item->getUUID() <<"): childSetValue" << llendl;
 	sInstance->childSetValue("ao_nc_text","Currently set to: "+item->getName());
 }
 

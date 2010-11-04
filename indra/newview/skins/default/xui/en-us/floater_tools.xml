@@ -116,10 +116,10 @@
   <check_box bottom_delta="-17" control_name="SnapEnabled" follows="left|top"
 	     font="SansSerifSmall" height="16" initial_value="true" label="Use Grid"
 	     left_delta="0" mouse_opaque="true" name="checkbox snap to grid" width="134" />
-  <check_box bottom_delta="-17" control_name="AscentBuildPrefs_ActualRoot" follows="left|top"
+  <check_box bottom_delta="-17" control_name="PhoenixBuildPrefs_ActualRoot" follows="left|top"
     font="SansSerifSmall" height="16" initial_value="true" label="Edit axis at root"
     left_delta="0" mouse_opaque="true" name="checkbox actual root" width="134" />
-  <check_box bottom_delta="-17" control_name="AscentRenderHighlightSelections" follows="left|top"
+  <check_box bottom_delta="-17" control_name="PhoenixRenderHighlightSelections" follows="left|top"
       font="SansSerifSmall" height="16" initial_value="true" label="Show Highlight"
       left_delta="0" mouse_opaque="true" name="checkbox show highlight" width="134" />
 
@@ -310,9 +310,9 @@
 	     width="25" />
   <text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
          bottom="-151" left="118" drop_shadow_visible="true" follows="left|top"
-         font="SansSerifSmall" h_pad="0" halign="right" height="16"
-         mouse_opaque="true" name="obj_count" v_pad="0" width="143">
-    Selected objects: [COUNT]
+       font="SansSerifSmall" h_pad="0" halign="right" height="16" visible="false" 
+       mouse_opaque="true" name="link_num_obj_count" v_pad="0" width="143">
+    [DESC] [NUM]
   </text>
   <text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
        bottom="-163" left="118" drop_shadow_visible="true" follows="left|top"
@@ -605,6 +605,7 @@
 
     <panel border="true" bottom="-383" follows="left|top|right|bottom" height="367"
 		     label="Object" left="1" mouse_opaque="false" name="Object" width="270">
+<!--
       <text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
 			     bottom="-20" drop_shadow_visible="true" follows="left|top"
 			     font="SansSerifSmall" h_pad="0" halign="left" height="10" left="10"
@@ -617,6 +618,13 @@
 			     mouse_opaque="true" name="edit_object" v_pad="0" width="252">
         Edit object parameters:
       </text>
+-->
+			<button bottom="-26" follows="top|right" font="SansSerifSmall" halign="center"
+			     height="18" label="Link" left="10" mouse_opaque="true" name="link_obj"  enabled="true"
+			     tool_tip="He come to town..."  width="50" />
+			<button bottom_delta="0" follows="top|right" font="SansSerifSmall" halign="center"
+			     height="18" label="Unlink" left_delta="50" mouse_opaque="true" name="unlink_obj"  enabled="true"
+			     tool_tip="Unlinks linkset."  width="50" />
       <check_box bottom_delta="-26" follows="left|top" font="SansSerifSmall" height="16"
 			     initial_value="false" label="Locked" left="8" mouse_opaque="true"
 			     name="checkbox locked"
@@ -651,7 +659,7 @@
 			     text_enabled_color="0, 100, 40, 255" width="87" />
       <spinner bottom_delta="-18" decimal_digits="4" follows="left|top" height="16"
 			     increment="0.01" initial_val="0" label="Z" label_width="10" left="5"
-			     max_val="4096" min_val="0" mouse_opaque="true" name="Pos Z"
+			     max_val="4096" min_val="-10" mouse_opaque="true" name="Pos Z"
 			     text_enabled_color="0, 67, 132, 255" width="87" />
       <button bottom_delta="36" follows="top|right" font="SansSerifSmall" halign="center"
        height="18" label="C" left_delta="90" mouse_opaque="true" name="copypos" enabled="true"
@@ -665,7 +673,7 @@
 
 
       <text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
-			     bottom_delta="-26" drop_shadow_visible="true" follows="left|top"
+			     bottom_delta="-16" drop_shadow_visible="true" follows="left|top"
 			     font="SansSerifSmall" h_pad="0" halign="left" height="10" left="5"
 			     mouse_opaque="true" name="label size" v_pad="0" width="121">
         Size
@@ -754,6 +762,18 @@
         </combo_item>
       </combo_box>
       <text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+			    bottom="-20" drop_shadow_visible="true" follows="left|top"
+			    font="SansSerifSmall" h_pad="0" halign="left" height="10" left="121"
+			    mouse_opaque="true" name="edit_object" v_pad="0" width="252">
+				Params:
+			</text>
+			<button bottom="-24" follows="top|right" font="SansSerifSmall" halign="center"
+			    height="16" label="Copy" left="178" mouse_opaque="true" name="copyparams"  enabled="true"
+			    tool_tip="Copy Parameters from Clipboard"  width="42" />
+			<button bottom_delta="0" follows="top|right" font="SansSerifSmall" halign="center"
+			     height="16" label="Paste" left_delta="42" mouse_opaque="true" name="pasteparams"  enabled="true"
+     			 tool_tip="Paste Parameters from Clipboard"  width="42" />
+			<text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
 			     bottom="-36" drop_shadow_visible="true" follows="left|top"
 			     font="SansSerifSmall" h_pad="0" halign="left" height="10" left="121"
 			     mouse_opaque="true" name="label basetype" v_pad="0" width="141">
@@ -862,12 +882,12 @@
 			     increment="0.025" initial_val="0" left_delta="73" max_val="1.0"
 			     min_val="-0.95" mouse_opaque="true" name="Skew" width="68" />
       <text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
-			     bottom_delta="-15" drop_shadow_visible="true" follows="left|top"
+			     bottom_delta="-14" drop_shadow_visible="true" follows="left|top"
 			     font="SansSerifSmall" h_pad="0" halign="left" height="10" left="121"
 			     mouse_opaque="true" name="Hollow Shape" v_pad="0" width="141">
         Hollow Shape
       </text>
-      <combo_box allow_text_entry="false" bottom_delta="-24" follows="left|top" height="18"
+      <combo_box allow_text_entry="false" bottom_delta="-22" follows="left|top" height="18"
 			     left="121" max_chars="20" mouse_opaque="true" name="hole" width="141">
         <combo_item name="Default" value="Default">
           Default
@@ -883,7 +903,7 @@
         </combo_item>
       </combo_box>
       <text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
-			     bottom_delta="-12" drop_shadow_visible="true" follows="left|top"
+			     bottom_delta="-11" drop_shadow_visible="true" follows="left|top"
 			     font="SansSerifSmall" h_pad="0" halign="left" height="10" left="121"
 			     mouse_opaque="true" name="text twist" v_pad="0" width="141">
         Twist Begin and End
@@ -897,7 +917,7 @@
 			     max_val="180" min_val="-180" mouse_opaque="true" name="Twist End"
 			     width="68" />
       <text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
-			     bottom_delta="-14" drop_shadow_visible="true" follows="left|top"
+			     bottom_delta="-13" drop_shadow_visible="true" follows="left|top"
 			     font="SansSerifSmall" h_pad="0" halign="left" height="10" left="121"
 			     mouse_opaque="true" name="scale_taper" v_pad="0" width="141">
         Taper
@@ -917,7 +937,7 @@
 			     max_val="1" min_val="-1" mouse_opaque="true" name="Taper Scale Y"
 			     width="68" />
       <text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
-			     bottom_delta="-14" drop_shadow_visible="true" follows="left|top"
+			     bottom_delta="-13" drop_shadow_visible="true" follows="left|top"
 			     font="SansSerifSmall" h_pad="0" halign="left" height="10" left="121"
 			     mouse_opaque="true" name="text topshear" v_pad="0" width="141">
         Top Shear
@@ -929,7 +949,7 @@
 			     increment="0.025" initial_val="0" label="Y" label_width="10" left_delta="73"
 			     max_val="0.5" min_val="-0.5" mouse_opaque="true" name="Shear Y" width="68" />
       <text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
-			     bottom_delta="-14" drop_shadow_visible="true" follows="left|top"
+			     bottom_delta="-13" drop_shadow_visible="true" follows="left|top"
 			     font="SansSerifSmall" h_pad="0" halign="left" height="10" left="121"
 			     mouse_opaque="true" name="advanced_cut" v_pad="0" width="141">
         Profile Cut Begin and End
@@ -955,7 +975,7 @@
 			     max_val="1" min_val="0.05" mouse_opaque="true" name="Path Limit End"
 			     width="68" />
       <text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
-			     bottom_delta="-14" drop_shadow_visible="true" follows="left|top"
+			     bottom_delta="-13" drop_shadow_visible="true" follows="left|top"
 			     font="SansSerifSmall" h_pad="0" halign="left" height="10" left="121"
 			     mouse_opaque="true" name="text taper2" v_pad="0" width="141">
         Taper
@@ -1313,6 +1333,18 @@
       <button bottom="-360" follows="left|top" font="SansSerifSmall" halign="center"
 			     height="16" label="Align" label_selected="Align" left="112"
 			     mouse_opaque="true" name="button align" scale_image="TRUE" width="68" />
+			<text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+			     bottom="-322" drop_shadow_visible="true" follows="left|top"
+			     font="SansSerifSmall" h_pad="0" halign="left" height="20" left="185"
+			     mouse_opaque="true" name="textbox params" v_pad="0" width="160">
+				Texture Params
+			</text>
+			<button bottom_delta="-18" follows="top|right" font="SansSerifSmall" halign="center"
+			     height="20" label="Copy" left_delta="5" mouse_opaque="true" name="copytextures"  enabled="true"
+			     tool_tip="Copy Testure Params from Clipboard"  width="68" />
+	  		<button bottom_delta="-20" follows="top|right" font="SansSerifSmall" halign="center"
+			     height="20" label="Paste" left_delta="0" mouse_opaque="true" name="pastetextures"  enabled="true"
+			     tool_tip="Paste Texture Params from Clipboard"  width="68" />
     </panel>
     <panel border="true" bottom="-383" follows="left|top|right|bottom" height="367"
 		     label="Content" left="1" mouse_opaque="false" name="Contents" width="270">

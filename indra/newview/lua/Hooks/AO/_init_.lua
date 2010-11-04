@@ -285,9 +285,9 @@ end
 --                                             EVENT HANDLING                                                   --
 ------------------------------------------------------------------------------------------------------------------
 local function AO_OnAONotecard(id)
-	-- Download the notecard and decode it.
-	print ("[AO] Downloading notecard.")
+	-- Download the notecard and decode it
 	AO.NotecardRequestKey=requestInventoryAsset(id,UUID_null)
+	print ("[AO] Downloading notecard. (reqid: "..AO.NotecardRequestKey..")")
 end
 
 local function AO_OnAssetFailed(transfer_key)
@@ -299,6 +299,9 @@ end
 
 local function AO_OnAssetDownloaded(transfer_key,typ,data)
 	if AO.NotecardRequestKey == transfer_key then
+		f = io.open("_NotecardDump.txt","w")
+		f:write(data)
+		f:close()
 		AO.NotecardRequestKey=nil
 		print("[AO] Notecard successfully downloaded! Attempting to parse...")
 		AO:DetectNotecardType(data)

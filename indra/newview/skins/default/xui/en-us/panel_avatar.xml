@@ -36,11 +36,11 @@ Age-verified
       <string name="NotAgeVerified">
 Not Age-verified
       </string>
-      <string name="AscentDeveloper">
-Luna Developer
+      <string name="PhoenixDeveloper">
+Phoenix Developer
       </string>
-      <string name="AscentSupport">
-Luna Support
+      <string name="PhoenixSupport">
+Phoenix Support
       </string>
       <text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
 			     bottom="-24" drop_shadow_visible="true" follows="left|top"
@@ -53,10 +53,6 @@ Luna Support
 			     font="SansSerifSmall" height="16" is_unicode="false" left_delta="75"
 			     max_length="254" mouse_opaque="false" name="key_"
 			     width="256" />
-	  <button bottom="-24" follows="left|top" halign="center"
-				height="16" label="Copy" left_delta="256"
-				tool_tip="Copy key to clipboard" 
-				mouse_opaque="true" name="copy_key" width="70" />
       <text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
 			     bottom="-48" drop_shadow_visible="true" follows="left|top"
 			     font="SansSerifSmall" h_pad="0" halign="right" height="16" left="4"
@@ -132,22 +128,14 @@ Luna Support
 			     default_image_name="None" follows="left|top" height="151" label=""
 			     left="79" mouse_opaque="true" name="img"
 			     tool_tip="Click to choose a picture" width="180" />
-			<button bottom_delta="-37" follows="bottom|left" font="SansSerif" halign="center"
-			     height="32" label="" left_delta="-40"  width="32"  scale_image="true"
-			 image_selected="tool_zoom.tga" 
-			 image_unselected="tool_zoom.tga" 
-			 image_hover_selected="tool_zoom_active.tga" 
-			 image_hover_unselected="tool_zoom_active.tga" 
-			 mouse_opaque="true" 
-			  name="bigimg"/>
-			<text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+      <text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
 			     bottom="-207" drop_shadow_visible="true" follows="left|top"
 			     font="SansSerifSmall" h_pad="0" halign="right" height="16" left="4"
 			     mouse_opaque="true" name="Groups:" v_pad="0" width="70">
         Groups:
       </text>
       <button follows="left|top" left="40"  bottom="-280" height="20" halign="center"
-              label="+" label_selected="+" name="AscentGroupInvite_Button" tool_tip="Invite to Group." width="40" />
+              label="+" label_selected="+" name="PhoenixGroupInvite_Button" tool_tip="Invite to Group." width="40" />
       <scroll_list background_visible="true" bottom="-282" column_padding="5" draw_border="true"
 			     follows="left|top" height="90" left="79" mouse_opaque="false"
 			     multi_select="false" name="groups" width="321" />

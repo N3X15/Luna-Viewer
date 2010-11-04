@@ -43,7 +43,7 @@
 	     enabled="true" follows="left|top" height="47" label="IM" left_delta="54"
 	     mouse_opaque="true" name="im" width="44" />
 	<color_swatch border_color="0.45098 0.517647 0.607843 1" bottom="-100"
-	     can_apply_immediately="true" color="0.447 0.784 0.663 1" control_name="AscentFriendChatColor"
+	     can_apply_immediately="true" color="0.447 0.784 0.663 1" control_name="PhoenixFriendChatColor"
 	     enabled="true" follows="left|top" height="47" label="Friends" left_delta="54"
 	     mouse_opaque="true" name="friend" width="44" />
 	<color_swatch border_color="0.45098 0.517647 0.607843 1" bottom="-100"
@@ -84,7 +84,7 @@
 	     can_apply_immediately="true" color="0.6 0.6 1 1"
 	     enabled="true" follows="left|top" height="47"
 	     label="URLs" left_delta="54" mouse_opaque="true" name="links" width="44" />
-      <text bottom="-150" follows="left|top" font="SansSerifSmall" height="16" left_delta="54" name="AscentEncrypted" width="55">Encrypted</text>
+      <text bottom="-150" follows="left|top" font="SansSerifSmall" height="16" left_delta="54" name="PhoenixEncrypted" width="55">Encrypted</text>
 	<color_swatch border_color="0.45098 0.517647 0.607843 1" bottom="-150"
 	     can_apply_immediately="true" color="0.6 0.6 1 1"
 	     enabled="true" follows="left|top" height="47"
@@ -158,10 +158,10 @@
 	     follows="left|top" font="SansSerifSmall" height="16" initial_value="true"
 	     label="Play typing animation when chatting" left="148" mouse_opaque="true"
 	     name="play_typing_animation" radio_style="false" width="237" />
-	<check_box bottom_delta="-20" control_name="AscentColorFriendsChat" enabled="true"
+	<check_box bottom_delta="-20" control_name="PhoenixColorFriendsChat" enabled="true"
 	     follows="left|top" font="SansSerifSmall" height="16" initial_value="true"
 	     label="Color text in chat from my friends in a different color" left="148" mouse_opaque="true"
-	     name="AscentColorFriendsChat" radio_style="false" width="237" />
+	     name="PhoenixColorFriendsChat" radio_style="false" width="237" />
 	<text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
 	     bottom="-365" drop_shadow_visible="true" enabled="true" follows="left|top"
 	     font="SansSerifSmall" h_pad="0" halign="left" height="10" left="12"
@@ -227,9 +227,9 @@
 		<combo_item type="string" length="1" enabled="true" name="Dutch" value="nl">
 			Nederlands (Dutch)
 		</combo_item>
-    <combo_item type="string" length="1" enabled="true" name="Pirate" value="xx-pirate">
-      Pirate (English)
-    </combo_item>
+    	<combo_item type="string" length="1" enabled="true" name="Pirate" value="xx-pirate">
+      		Pirate (English)
+		</combo_item>
 		<combo_item type="string" length="1" enabled="true" name="Polish" value="pl">
 			Polski (Polish)
 		</combo_item>

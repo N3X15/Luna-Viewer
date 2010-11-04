@@ -14,7 +14,9 @@ set Settings=%Settings%RadarChatKeys=1;
 set Settings=%Settings%AscentBuildAlwaysEnabled=1;
 set Settings=%Settings%PrivateLookAt=1;
 set Settings=%Settings%DefaultGrid=inworldz;
-set Settings=%Settings%RenderUseStreamVBO=False
+set Settings=%Settings%RenderUseStreamVBO=False;
+set Settings=%Settings%LunaCmdLineMacro=/macro;
+set Settings=%Settings%LunaCmdLineShortMacro=/m
 
 @rem Fix types
 set Types=""

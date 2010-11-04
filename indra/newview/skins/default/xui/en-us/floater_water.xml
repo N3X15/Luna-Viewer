@@ -11,18 +11,31 @@
 	     width="110">
 		Water Presets:
 	</text>
-	<combo_box allow_text_entry="false" bottom="-50" follows="left|top" height="18"
-	     left_delta="110" max_chars="20" mouse_opaque="true"
+	<combo_box allow_text_entry="false" bottom="-52" follows="left|top" height="18"
+	     left_delta="120" max_chars="20" mouse_opaque="true"
 	     name="WaterPresetsCombo" width="150" />
+  <button bottom="-53" enabled="true" font="SansSerif" halign="center" height="20"
+	     label="" label_selected="" left_delta="-25" image_overlay="arrow_left.tga"
+	     mouse_opaque="true" name="prev" scale_image="true" width="20" />
+  <button bottom="-53" enabled="true" font="SansSerif" halign="center" height="20"
+	     label="" label_selected="" left_delta="180" image_overlay="arrow_right.tga"
+	     mouse_opaque="true" name="next" scale_image="true" width="20" />
 	<button bottom="-53" enabled="true" font="SansSerif" halign="center" height="20"
-	     label="New" label_selected="New" left_delta="170"
-	     mouse_opaque="true" name="WaterNewPreset" scale_image="true" width="70" />
+	     label="New" right="-270"
+	     mouse_opaque="true" name="WaterNewPreset" scale_image="true" width="100" />
+  <flyout_button bottom_delta="0" follows="left|top" height="20" label="Save to Disk"
+       right="-140" halign="center" list_position="above" enabled="true" 
+       mouse_opaque="true" width="125"  name="WaterSavePreset">
+    <flyout_button_item value="save_inventory_item" name="save_inventory_item">
+      Save to Inventory
+    </flyout_button_item>
+    <flyout_button_item value="save_disk_item" name="save_disk_item">
+      Save to Disk
+    </flyout_button_item>
+  </flyout_button>
 	<button bottom_delta="0" enabled="true" font="SansSerif" halign="center" height="20"
-	     label="Save" label_selected="Save" left_delta="80"
-	     mouse_opaque="true" name="WaterSavePreset" scale_image="true" width="70" />
-	<button bottom_delta="0" enabled="true" font="SansSerif" halign="center" height="20"
-	     label="Delete" label_selected="Delete" left_delta="80"
-	     mouse_opaque="true" name="WaterDeletePreset" scale_image="true" width="70" />
+	     label="Delete File" label_selected="Delete File" right="-10"
+	     mouse_opaque="true" name="WaterDeletePreset" scale_image="true" width="125" />
 	<tab_container bottom="-240" follows="left|top" height="180" left="0"
 	     mouse_opaque="false" name="Water Tabs" tab_position="top" width="700">
 		<panel border="true" bottom="-240" follows="left|top|right|bottom" height="180"

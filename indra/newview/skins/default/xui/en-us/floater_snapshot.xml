@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <floater bottom="-300" can_close="true" can_drag_on_left="false" can_minimize="false"
-     can_resize="false" follows="left|top" height="566" name="Snapshot"
+     can_resize="false" follows="left|top" height="546" name="Snapshot"
      rect_control="FloaterSnapshotRect" title="Snapshot Preview" width="215">
 	<text bottom_delta="-40" follows="top|left" height="15" left="10" name="type_label"
 	     width="195">
@@ -32,6 +32,7 @@
        list_position="below" mouse_opaque="true" name="save_btn" tool_tip="Save image to a file"
        width="105">
     <flyout_button_item value="save" name="save_item">Save</flyout_button_item>
+    <flyout_button_item value="save as" name="saveas_item">Save As...</flyout_button_item>
   </flyout_button>
 	<button bottom_delta="0" follows="left|top" height="20" label="Cancel" left="120"
 	     name="discard_btn" width="85" />
@@ -164,7 +165,7 @@
 	     left="10" name="freeze_frame_check" />
 	<check_box bottom_delta="-20" follows="left|top" label="Auto-refresh" left="10"
 	     name="auto_snapshot_check" />
-  <check_box bottom_delta="-20" follows="left|top" control_name="AscentTemporaryUpload" enabled="true"
+  <check_box bottom_delta="-20" follows="left|top" control_name="PhoenixTemporaryUpload" enabled="true"
 	     initial_value="false" label="Temporary Image (Free)" left="10"
 	     name="temp_check" tooltip="Sets the asset to be temporary, meaning its free, but in return, only good for a short time before it ceases to exist." />
 	<string name="unknown">

@@ -7,7 +7,7 @@
 		Media URL:
 	</text>
 	<combo_box allow_text_entry="true" bottom="-35" follows="left|top|right" height="19"
-	     left="90" max_chars="255" max_length="550" name="media_entry" width="370" />
+	     left="90" max_chars="1024" max_length="550" name="media_entry" width="370" />
 	<button bottom="10" bottom_delta="-35" follows="top|left" height="20" label="OK"
 	     left="20" name="ok_btn" width="64" />
 	<button bottom="10" bottom_delta="0" follows="top|left" height="20" label="Cancel"

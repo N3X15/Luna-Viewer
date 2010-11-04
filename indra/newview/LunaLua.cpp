@@ -254,7 +254,10 @@ bool operator> (const CB_Base& entry1, const CB_Base& entry2)
 void FLLua::execClientEvents()
 {
 	if(!sInstance)
+	{
+		llinfos << "LUA isn't running yet." << llendl;
 		return;
+	}
 	if(sInstance->mPendingEvents)
 	{
 		lldebugs << __LINE__ << ": Events pending.  Iterating through events." << llendl;

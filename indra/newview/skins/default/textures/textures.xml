@@ -368,6 +368,9 @@
   <texture name="icn_label_music.tga"/>
   <texture name="icn_label_media.tga"/>
   <texture name="arrow_down.tga"/>
+  <texture name="arrow_up.tga"/>
+  <texture name="arrow_left.tga"/>
+  <texture name="arrow_right.tga"/>
   <texture name="cloud-particle.j2c" use_mips="true"/>
   
   <texture name="skin_thumbnail_default.png" preload="true" />
@@ -399,5 +402,7 @@
   <texture name="media_btn_scrollup.png"/>
   <texture name="media_btn_stoploading.png"/>
   <texture name="media_panel_divider.png"/>
-
+   <!-- Kitty Viewer Art -->
+   <texture name="Inv_WindLight" file_name="Inv_WindLight.png" preload="false" />
+   <texture name="Inv_WaterLight" file_name="Inv_WaterLight.png" preload="false" />
 </textures>

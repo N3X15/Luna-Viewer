@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <panel label="Gráficos" name="Display panel">
 	<button label="?" name="GraphicsPreferencesHelpButton"/>
-	<check_box label="Abrir Snowglobe en una ventana" name="windowed mode"/>
+	<check_box label="Abrir Phoenix en una ventana" name="windowed mode"/>
 	<text_editor name="FullScreenInfo" width="480">
 		Si no está marcado, el visor se mostrará en pantalla completa cuando inicie sesión.
 	</text_editor>

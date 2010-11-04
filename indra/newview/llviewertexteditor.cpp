@@ -62,6 +62,10 @@
 
 #include "llappviewer.h" // for gPacificDaylightTime
 
+// [RLVa:KB]
+#include "rlvhandler.h"
+// [/RLVa:KB]
+
 static LLRegisterWidget<LLViewerTextEditor> r("text_editor");
 
 ///----------------------------------------------------------------------------
@@ -96,6 +100,14 @@ public:
 		}
 		else
 		{
+// [RLVa:KB] - Checked: 2009-11-11 (RLVa-1.1.0a) | Modified: RLVa-1.1.0a
+			if (gRlvHandler.hasBehaviour(RLV_BHVR_VIEWNOTE))
+			{
+				RlvNotifications::notifyBlockedViewNote();
+				return;
+			}
+// [/RLVa:KB]
+
 			// See if we can bring an existing preview to the front
 			if(!LLPreview::show(item->getUUID(), true))
 			{
@@ -1039,10 +1051,6 @@ BOOL LLViewerTextEditor::handleDragAndDrop(S32 x, S32 y, MASK mask,
 		{
 			switch( cargo_type )
 			{
-			// <edit>
-			// This does not even appear to be used maybe
-			// Throwing it out so I can embed calling cards
-			/*
 			case DAD_CALLINGCARD:
 				if(acceptsCallingCardNames())
 				{
@@ -1059,9 +1067,7 @@ BOOL LLViewerTextEditor::handleDragAndDrop(S32 x, S32 y, MASK mask,
 					*accept = ACCEPT_NO;
 				}
 				break;
-			*/
-			case DAD_CALLINGCARD:
-			// </edit>
+
 			case DAD_TEXTURE:
 			case DAD_SOUND:
 			case DAD_LANDMARK:
@@ -1074,32 +1080,10 @@ BOOL LLViewerTextEditor::handleDragAndDrop(S32 x, S32 y, MASK mask,
 			case DAD_GESTURE:
 				{
 					LLInventoryItem *item = (LLInventoryItem *)cargo_data;
-					// <edit>
-					/* <LUNA> I don't like this, disabling. - N3X15
-					if((item->getPermissions().getMaskOwner() & PERM_ITEM_UNRESTRICTED) != PERM_ITEM_UNRESTRICTED)
-					{
-						if(gSavedSettings.getBOOL("ForceNotecardDragCargoPermissive"))
-						{
-							item = new LLInventoryItem((LLInventoryItem *)cargo_data);
-							LLPermissions old = item->getPermissions();
-							LLPermissions perm;
-							perm.init(old.getCreator(), old.getOwner(), old.getLastOwner(), old.getGroup());
-							perm.setMaskBase(PERM_ITEM_UNRESTRICTED);
-							perm.setMaskEveryone(PERM_ITEM_UNRESTRICTED);
-							perm.setMaskGroup(PERM_ITEM_UNRESTRICTED);
-							perm.setMaskNext(PERM_ITEM_UNRESTRICTED);
-							perm.setMaskOwner(PERM_ITEM_UNRESTRICTED);
-							item->setPermissions(perm);
-						}
-					}
-					</LUNA> */
-					// </edit>
 					if( item && allowsEmbeddedItems() )
 					{
 						U32 mask_next = item->getPermissions().getMaskNextOwner();
-						// <edit>
-						//if((mask_next & PERM_ITEM_UNRESTRICTED) == PERM_ITEM_UNRESTRICTED)
-						if(((mask_next & PERM_ITEM_UNRESTRICTED) == PERM_ITEM_UNRESTRICTED))// I DOES NOT LIKING THIS, DISABLING || gSavedSettings.getBOOL("ForceNotecardDragCargoAcceptance"))
+						if((mask_next & PERM_ITEM_UNRESTRICTED) == PERM_ITEM_UNRESTRICTED)
 						{
 							if( drop )
 							{
@@ -1244,7 +1228,7 @@ std::string LLViewerTextEditor::appendTime(bool prepend_newline)
 	timep = utc_to_pacific_time(utc_time, gPacificDaylightTime);
 	std::string text;
 	
-	if (gSavedSettings.getBOOL("AscentAddSecondsInHistory"))
+	if (gSavedSettings.getBOOL("PhoenixAddSecondsInHistory"))
 		text = llformat("[%02d:%02d:%02d]  ", timep->tm_hour, timep->tm_min, timep->tm_sec);
 	else
 		text = llformat("[%02d:%02d]  ", timep->tm_hour, timep->tm_min);
@@ -1364,6 +1348,14 @@ BOOL LLViewerTextEditor::openEmbeddedItem(LLInventoryItem* item, llwchar wc)
 
 void LLViewerTextEditor::openEmbeddedTexture( LLInventoryItem* item, llwchar wc )
 {
+// [RLVa:KB] - Checked: 2009-11-11 (RLVa-1.1.0a) | Modified: RLVa-1.1.0a
+	if (gRlvHandler.hasBehaviour(RLV_BHVR_VIEWTEXTURE))
+	{
+		RlvNotifications::notifyBlockedViewTexture();
+		return;
+	}
+// [/RLVa:KB]
+
 	// See if we can bring an existing preview to the front
 	// *NOTE:  Just for embedded Texture , we should use getAssetUUID(), 
 	// not getUUID(), because LLPreviewTexture pass in AssetUUID into 

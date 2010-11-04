@@ -68,7 +68,7 @@ void init_audio()
 	if (!mute_audio && FALSE == gSavedSettings.getBOOL("NoPreload"))
 	{
 		gAudiop->preloadSound(LLUUID(gSavedSettings.getString("UISndAlert")));
-		gAudiop->preloadSound(LLUUID(gSavedSettings.getString("AscentAvatarAgeAlertSoundUUID")));
+		gAudiop->preloadSound(LLUUID(gSavedSettings.getString("PhoenixAvatarAgeAlertSoundUUID")));
 		gAudiop->preloadSound(LLUUID(gSavedSettings.getString("UISndBadKeystroke")));
 		//gAudiop->preloadSound(LLUUID(gSavedSettings.getString("UISndChatFromObject")));
 		gAudiop->preloadSound(LLUUID(gSavedSettings.getString("UISndClick")));

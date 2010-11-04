@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <panel bg_visible="false" border="false" border_visible="false" bottom="1"
-     follows="left|bottom" height="198" left="0" name="Adv_Settings"
+     follows="left|bottom" height="220" left="0" name="Adv_Settings"
      use_bounding_rect="true" width="200" >
-<panel bottom="0" filename="panel_bg_tab.xml" height="198" left="0" width="205" />
-<slider bottom="175" left="5" control_name="RenderFarClip"
+<panel bottom="0" filename="panel_bg_tab.xml" height="220" left="0" width="205" />
+<slider bottom="195" left="5" control_name="RenderFarClip"
 	     decimal_digits="0" enabled="true" follows="left|bottom" height="20"
 	     increment="8" label="Draw Dist.:" can_edit_text="true"
 	     label_width="66" max_val="1024" min_val="24" mouse_opaque="true"
@@ -38,9 +38,36 @@
 	   follows="left|bottom" label_width="66" height="20" increment="1" initial_val="20" max_val="30" can_edit_text="true"
 	   min_val="5" mouse_opaque="true" show_text="true" width="195" auto_resize="false" tool_tip="Interval in seconds between each draw distance increment"/>
 
+<button bottom_delta="-22" left="2" enabled="true" follows="left|bottom" height="14" width="14"
+	     image_overlay="Inv_WindLight.png" label="" mouse_opaque="true"
+	     name="EnvAdvancedSkyButton" scale_image="true" tool_tip="Sky Settings" />
+<combo_box name="WLPresetsCombo" bottom_delta="-0" left="16" follows="left|bottom" height="18" width="145" max_chars="20" mouse_opaque="true" allow_text_entry="false"
+       tool_tip="WindLight Presets for your Sky." />
+<button bottom_delta="-0" follows="left|bottom"  enabled="true" font="SansSerif" halign="center" height="20"
+	   label="" label_selected="" left_delta="146" image_overlay="arrow_left.tga"
+	   mouse_opaque="true" name="WLprev" scale_image="true" width="20" />
+<button bottom_delta="-0" follows="left|bottom" enabled="true" font="SansSerif" halign="center" height="20"
+	   label="" label_selected="" left_delta="20" image_overlay="arrow_right.tga"
+	   mouse_opaque="true" name="WLnext" scale_image="true" width="20" />	 
 
-  <combo_box name="WLPresetsCombo" bottom="5" left="10" follows="left|top" height="18" width="150" max_chars="20" mouse_opaque="true" allow_text_entry="false"
-           tool_tip="WindLight Presets for your Sky." />
+<button bottom_delta="-22" left="2" enabled="true" follows="left|bottom" height="14" width="14"
+	     image_overlay="Inv_WaterLight.png" label="" mouse_opaque="true"
+	     name="EnvAdvancedWaterButton" scale_image="true" tool_tip="Water Settings" />
+<combo_box name="WWPresetsCombo" bottom_delta="-0" left="16" follows="left|bottom" height="18" width="145" max_chars="20" mouse_opaque="true" allow_text_entry="false"
+	   tool_tip="WindLight Presets for your Water." />
+<button bottom_delta="-0" follows="left|bottom" enabled="true" font="SansSerif" halign="center" height="20"
+	   label="" label_selected="" left_delta="146" image_overlay="arrow_left.tga"
+	   mouse_opaque="true" name="WWprev" scale_image="true" width="20" />
+<button bottom_delta="-0" follows="left|bottom" enabled="true" font="SansSerif" halign="center" height="20"
+	   label="" label_selected="" left_delta="20" image_overlay="arrow_right.tga"
+	   mouse_opaque="true" name="WWnext" scale_image="true" width="20" />
+
+<icon bottom_delta="-18" follows="left|top" height="14"
+	   image_name="icon_day_cycle.tga" left="15" name="daycycle" width="150" />
+<slider bottom_delta="-8" can_edit_text="false" control_name="EnvTimeSlider"
+	   left="5" decimal_digits="2" follows="left|top" height="10" increment="0.0069444"
+	   initial_val="0.7" label="" max_val="0.99" min_val="0" mouse_opaque="true"
+	   name="EnvTimeSlider" show_text="false" value="0.0" width="160" />
 
 <button bottom="1" height="22" label=""
 	     left="173" name="expand" scale_image="true" toggle="true"

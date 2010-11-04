@@ -94,7 +94,7 @@ Detalles del error: no se ha encontrado en notifications.xml la alerta llamada &
 		<usetemplate name="okcancelbuttons" notext="Cancelar" yestext="Sí"/>
 	</notification>
 	<notification name="BadInstallation">
-		Ha habido un error al actualizar Second Life. Por favor, descargue la última versión desde secondlife.com.
+		Ha habido un error al actualizar Second Life. Por favor, descargue la última versión desde PhoenixViewer.com.
     <usetemplate
      name="okbutton"
      yestext="OK"/>
@@ -3042,7 +3042,13 @@ Pulse Aceptar para entrar al chat o Rehusar para declinar la invitación. Pulse 
 		Ha ocurrido un error intentando conectarle al [VOICE_CHANNEL_NAME]. Por favor, inténtelo más tarde.
 	</notification>
 	<notification name="ServerVersionChanged">
-		La región en la que ha entrado se ejecuta en un simulador con una versión diferente. Pulse este mensaje para ver más detalles.
+		La región que ha entrado está utilizando una versión diferente de simulador:
+Actual simulador: [NEWVERSION]
+Anterior simulador: [OLDVERSION]
+		<unique>
+		  <context key="OLDVERSION"/>
+		  <context key="NEWVERSION"/>
+		</unique>
 	</notification>
 	<notification name="UnableToOpenCommandURL">
 		No puede abrirse desde este navegador la URL que ha pulsado.

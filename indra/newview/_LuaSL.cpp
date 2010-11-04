@@ -1510,78 +1510,92 @@ SWIG_Lua_dostring(lua_State *L, const char* str) {
 /* -------- TYPES TABLE (BEGIN) -------- */
 
 #define SWIGTYPE_p_EAnimate swig_types[0]
-#define SWIGTYPE_p_ESex swig_types[1]
-#define SWIGTYPE_p_EVOType swig_types[2]
-#define SWIGTYPE_p_LLCharacter swig_types[3]
-#define SWIGTYPE_p_LLColor3 swig_types[4]
-#define SWIGTYPE_p_LLColor4 swig_types[5]
-#define SWIGTYPE_p_LLColor4U swig_types[6]
-#define SWIGTYPE_p_LLInventoryModel swig_types[7]
-#define SWIGTYPE_p_LLJoint swig_types[8]
-#define SWIGTYPE_p_LLMatrix3 swig_types[9]
-#define SWIGTYPE_p_LLMatrix4 swig_types[10]
-#define SWIGTYPE_p_LLMotion swig_types[11]
-#define SWIGTYPE_p_LLMotionConstructor swig_types[12]
-#define SWIGTYPE_p_LLMotionController swig_types[13]
-#define SWIGTYPE_p_LLParcel swig_types[14]
-#define SWIGTYPE_p_LLPartSysData swig_types[15]
-#define SWIGTYPE_p_LLPauseRequestHandle swig_types[16]
-#define SWIGTYPE_p_LLPointerT_LLPauseRequestHandle_t swig_types[17]
-#define SWIGTYPE_p_LLPolyMesh swig_types[18]
-#define SWIGTYPE_p_LLQuaternion swig_types[19]
-#define SWIGTYPE_p_LLSD swig_types[20]
-#define SWIGTYPE_p_LLSafeHandleT_LLObjectSelection_t swig_types[21]
-#define SWIGTYPE_p_LLUUID swig_types[22]
-#define SWIGTYPE_p_LLVOAvatar swig_types[23]
-#define SWIGTYPE_p_LLVector2 swig_types[24]
-#define SWIGTYPE_p_LLVector3 swig_types[25]
-#define SWIGTYPE_p_LLVector3d swig_types[26]
-#define SWIGTYPE_p_LLVector4 swig_types[27]
-#define SWIGTYPE_p_LLViewerRegion swig_types[28]
-#define SWIGTYPE_p_LLVisualParam swig_types[29]
-#define SWIGTYPE_p_LLWearable swig_types[30]
-#define SWIGTYPE_p_ParticleSystem swig_types[31]
-#define SWIGTYPE_p_WLSky swig_types[32]
-#define SWIGTYPE_p_WLWater swig_types[33]
-#define SWIGTYPE_p_cat_array_t swig_types[34]
-#define SWIGTYPE_p_child_list_t swig_types[35]
-#define SWIGTYPE_p_const_child_list_t swig_types[36]
-#define SWIGTYPE_p_double swig_types[37]
-#define SWIGTYPE_p_eLayoutOrientation swig_types[38]
-#define SWIGTYPE_p_eObjectPartitions swig_types[39]
-#define SWIGTYPE_p_e_action_type swig_types[40]
-#define SWIGTYPE_p_e_anim_request swig_types[41]
-#define SWIGTYPE_p_e_camera_modes swig_types[42]
-#define SWIGTYPE_p_e_camera_position swig_types[43]
-#define SWIGTYPE_p_e_grid_mode swig_types[44]
-#define SWIGTYPE_p_e_object_update_type swig_types[45]
-#define SWIGTYPE_p_e_selection_type swig_types[46]
-#define SWIGTYPE_p_e_send_type swig_types[47]
-#define SWIGTYPE_p_float swig_types[48]
-#define SWIGTYPE_p_int swig_types[49]
-#define SWIGTYPE_p_item_array_t swig_types[50]
-#define SWIGTYPE_p_iterator swig_types[51]
-#define SWIGTYPE_p_list_t swig_types[52]
-#define SWIGTYPE_p_long_long swig_types[53]
-#define SWIGTYPE_p_root_iterator swig_types[54]
-#define SWIGTYPE_p_root_object_iterator swig_types[55]
-#define SWIGTYPE_p_short swig_types[56]
-#define SWIGTYPE_p_signed_char swig_types[57]
-#define SWIGTYPE_p_skip_list_t swig_types[58]
-#define SWIGTYPE_p_std__mapT_std__string_double_t swig_types[59]
-#define SWIGTYPE_p_std__string swig_types[60]
-#define SWIGTYPE_p_std__vectorT_LLCharacter_p_t swig_types[61]
-#define SWIGTYPE_p_unsigned_char swig_types[62]
-#define SWIGTYPE_p_unsigned_int swig_types[63]
-#define SWIGTYPE_p_unsigned_long_long swig_types[64]
-#define SWIGTYPE_p_unsigned_short swig_types[65]
-#define SWIGTYPE_p_valid_iterator swig_types[66]
-#define SWIGTYPE_p_valid_root_iterator swig_types[67]
-#define SWIGTYPE_p_vobj_list_t swig_types[68]
-#define SWIGTYPE_p_void swig_types[69]
-#define SWIGTYPE_p_wchar_t swig_types[70]
-static swig_type_info *swig_types[72];
-static swig_module_info swig_module = {swig_types, 71, 0, 0, 0, 0};
+#define SWIGTYPE_p_EHitTestType swig_types[1]
+#define SWIGTYPE_p_ESex swig_types[2]
+#define SWIGTYPE_p_EVOType swig_types[3]
+#define SWIGTYPE_p_LLCharacter swig_types[4]
+#define SWIGTYPE_p_LLColor3 swig_types[5]
+#define SWIGTYPE_p_LLColor4 swig_types[6]
+#define SWIGTYPE_p_LLColor4U swig_types[7]
+#define SWIGTYPE_p_LLInventoryModel swig_types[8]
+#define SWIGTYPE_p_LLJoint swig_types[9]
+#define SWIGTYPE_p_LLMatrix3 swig_types[10]
+#define SWIGTYPE_p_LLMatrix4 swig_types[11]
+#define SWIGTYPE_p_LLMotion swig_types[12]
+#define SWIGTYPE_p_LLMotionConstructor swig_types[13]
+#define SWIGTYPE_p_LLMotionController swig_types[14]
+#define SWIGTYPE_p_LLParcel swig_types[15]
+#define SWIGTYPE_p_LLPartSysData swig_types[16]
+#define SWIGTYPE_p_LLPauseRequestHandle swig_types[17]
+#define SWIGTYPE_p_LLPointerT_LLPauseRequestHandle_t swig_types[18]
+#define SWIGTYPE_p_LLPolyMesh swig_types[19]
+#define SWIGTYPE_p_LLQuaternion swig_types[20]
+#define SWIGTYPE_p_LLSD swig_types[21]
+#define SWIGTYPE_p_LLSafeHandleT_LLObjectSelection_t swig_types[22]
+#define SWIGTYPE_p_LLUUID swig_types[23]
+#define SWIGTYPE_p_LLVOAvatar swig_types[24]
+#define SWIGTYPE_p_LLVector2 swig_types[25]
+#define SWIGTYPE_p_LLVector3 swig_types[26]
+#define SWIGTYPE_p_LLVector3d swig_types[27]
+#define SWIGTYPE_p_LLVector4 swig_types[28]
+#define SWIGTYPE_p_LLViewerRegion swig_types[29]
+#define SWIGTYPE_p_LLVisualParam swig_types[30]
+#define SWIGTYPE_p_LLWearable swig_types[31]
+#define SWIGTYPE_p_ParticleSystem swig_types[32]
+#define SWIGTYPE_p_WLSky swig_types[33]
+#define SWIGTYPE_p_WLWater swig_types[34]
+#define SWIGTYPE_p_cat_array_t swig_types[35]
+#define SWIGTYPE_p_child_list_const_iter_t swig_types[36]
+#define SWIGTYPE_p_child_list_const_reverse_iter_t swig_types[37]
+#define SWIGTYPE_p_child_list_iter_t swig_types[38]
+#define SWIGTYPE_p_child_list_reverse_iter_t swig_types[39]
+#define SWIGTYPE_p_child_list_t swig_types[40]
+#define SWIGTYPE_p_child_tab_order_const_iter_t swig_types[41]
+#define SWIGTYPE_p_child_tab_order_const_reverse_iter_t swig_types[42]
+#define SWIGTYPE_p_child_tab_order_iter_t swig_types[43]
+#define SWIGTYPE_p_child_tab_order_reverse_iter_t swig_types[44]
+#define SWIGTYPE_p_child_tab_order_t swig_types[45]
+#define SWIGTYPE_p_const_child_list_t swig_types[46]
+#define SWIGTYPE_p_ctrl_list_t swig_types[47]
+#define SWIGTYPE_p_double swig_types[48]
+#define SWIGTYPE_p_eLayoutOrientation swig_types[49]
+#define SWIGTYPE_p_eObjectPartitions swig_types[50]
+#define SWIGTYPE_p_e_action_type swig_types[51]
+#define SWIGTYPE_p_e_anim_request swig_types[52]
+#define SWIGTYPE_p_e_camera_modes swig_types[53]
+#define SWIGTYPE_p_e_camera_position swig_types[54]
+#define SWIGTYPE_p_e_grid_mode swig_types[55]
+#define SWIGTYPE_p_e_object_update_type swig_types[56]
+#define SWIGTYPE_p_e_selection_type swig_types[57]
+#define SWIGTYPE_p_e_send_type swig_types[58]
+#define SWIGTYPE_p_factory_map_t swig_types[59]
+#define SWIGTYPE_p_float swig_types[60]
+#define SWIGTYPE_p_int swig_types[61]
+#define SWIGTYPE_p_item_array_t swig_types[62]
+#define SWIGTYPE_p_iterator swig_types[63]
+#define SWIGTYPE_p_list_t swig_types[64]
+#define SWIGTYPE_p_long_long swig_types[65]
+#define SWIGTYPE_p_root_iterator swig_types[66]
+#define SWIGTYPE_p_root_object_iterator swig_types[67]
+#define SWIGTYPE_p_short swig_types[68]
+#define SWIGTYPE_p_signed_char swig_types[69]
+#define SWIGTYPE_p_skip_list_t swig_types[70]
+#define SWIGTYPE_p_std__mapT_std__string_double_t swig_types[71]
+#define SWIGTYPE_p_std__string swig_types[72]
+#define SWIGTYPE_p_std__vectorT_LLCharacter_p_t swig_types[73]
+#define SWIGTYPE_p_tab_order_pair_t swig_types[74]
+#define SWIGTYPE_p_tab_order_t swig_types[75]
+#define SWIGTYPE_p_unsigned_char swig_types[76]
+#define SWIGTYPE_p_unsigned_int swig_types[77]
+#define SWIGTYPE_p_unsigned_long_long swig_types[78]
+#define SWIGTYPE_p_unsigned_short swig_types[79]
+#define SWIGTYPE_p_valid_iterator swig_types[80]
+#define SWIGTYPE_p_valid_root_iterator swig_types[81]
+#define SWIGTYPE_p_vobj_list_t swig_types[82]
+#define SWIGTYPE_p_void swig_types[83]
+#define SWIGTYPE_p_wchar_t swig_types[84]
+static swig_type_info *swig_types[86];
+static swig_module_info swig_module = {swig_types, 85, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -21918,6 +21932,7 @@ static swig_lua_const_info swig_constants[] = {
 /* -------- TYPE CONVERSION AND EQUIVALENCE RULES (BEGIN) -------- */
 
 static swig_type_info _swigt__p_EAnimate = {"_p_EAnimate", "EAnimate *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_EHitTestType = {"_p_EHitTestType", "EHitTestType *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_ESex = {"_p_ESex", "ESex *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_EVOType = {"_p_EVOType", "EVOType *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_LLCharacter = {"_p_LLCharacter", "LLCharacter *", 0, 0, (void*)&_wrap_class_LLCharacter, 0};
@@ -21952,8 +21967,18 @@ static swig_type_info _swigt__p_ParticleSystem = {"_p_ParticleSystem", "Particle
 static swig_type_info _swigt__p_WLSky = {"_p_WLSky", "WLSky *", 0, 0, (void*)&_wrap_class_WLSky, 0};
 static swig_type_info _swigt__p_WLWater = {"_p_WLWater", "WLWater *", 0, 0, (void*)&_wrap_class_WLWater, 0};
 static swig_type_info _swigt__p_cat_array_t = {"_p_cat_array_t", "cat_array_t *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_child_list_const_iter_t = {"_p_child_list_const_iter_t", "child_list_const_iter_t *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_child_list_const_reverse_iter_t = {"_p_child_list_const_reverse_iter_t", "child_list_const_reverse_iter_t *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_child_list_iter_t = {"_p_child_list_iter_t", "child_list_iter_t *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_child_list_reverse_iter_t = {"_p_child_list_reverse_iter_t", "child_list_reverse_iter_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_child_list_t = {"_p_child_list_t", "child_list_t *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_child_tab_order_const_iter_t = {"_p_child_tab_order_const_iter_t", "child_tab_order_const_iter_t *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_child_tab_order_const_reverse_iter_t = {"_p_child_tab_order_const_reverse_iter_t", "child_tab_order_const_reverse_iter_t *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_child_tab_order_iter_t = {"_p_child_tab_order_iter_t", "child_tab_order_iter_t *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_child_tab_order_reverse_iter_t = {"_p_child_tab_order_reverse_iter_t", "child_tab_order_reverse_iter_t *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_child_tab_order_t = {"_p_child_tab_order_t", "child_tab_order_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_const_child_list_t = {"_p_const_child_list_t", "const_child_list_t *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_ctrl_list_t = {"_p_ctrl_list_t", "ctrl_list_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_double = {"_p_double", "double *|F64 *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_eLayoutOrientation = {"_p_eLayoutOrientation", "eLayoutOrientation *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_eObjectPartitions = {"_p_eObjectPartitions", "eObjectPartitions *", 0, 0, (void*)0, 0};
@@ -21965,6 +21990,7 @@ static swig_type_info _swigt__p_e_grid_mode = {"_p_e_grid_mode", "enum e_grid_mo
 static swig_type_info _swigt__p_e_object_update_type = {"_p_e_object_update_type", "enum e_object_update_type *|EObjectUpdateType *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_e_selection_type = {"_p_e_selection_type", "enum e_selection_type *|ESelectType *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_e_send_type = {"_p_e_send_type", "enum e_send_type *|ESendType *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_factory_map_t = {"_p_factory_map_t", "factory_map_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_float = {"_p_float", "float *|F32 *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_int = {"_p_int", "BOOL *|int *|S32 *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_item_array_t = {"_p_item_array_t", "item_array_t *", 0, 0, (void*)0, 0};
@@ -21979,6 +22005,8 @@ static swig_type_info _swigt__p_skip_list_t = {"_p_skip_list_t", "skip_list_t *"
 static swig_type_info _swigt__p_std__mapT_std__string_double_t = {"_p_std__mapT_std__string_double_t", "std::map< std::string,double > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__string = {"_p_std__string", "std::string *", 0, 0, (void*)&_wrap_class_std_string, 0};
 static swig_type_info _swigt__p_std__vectorT_LLCharacter_p_t = {"_p_std__vectorT_LLCharacter_p_t", "std::vector< LLCharacter * > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_tab_order_pair_t = {"_p_tab_order_pair_t", "tab_order_pair_t *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_tab_order_t = {"_p_tab_order_t", "tab_order_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_unsigned_char = {"_p_unsigned_char", "unsigned char *|KEY *|U8 *|LLPCode *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_unsigned_int = {"_p_unsigned_int", "unsigned int *|U32 *|MASK *|TPACKETID *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_unsigned_long_long = {"_p_unsigned_long_long", "unsigned long long *|U64 *", 0, 0, (void*)0, 0};
@@ -21991,6 +22019,7 @@ static swig_type_info _swigt__p_wchar_t = {"_p_wchar_t", "llwchar *|wchar_t *", 
 
 static swig_type_info *swig_type_initial[] = {
   &_swigt__p_EAnimate,
+  &_swigt__p_EHitTestType,
   &_swigt__p_ESex,
   &_swigt__p_EVOType,
   &_swigt__p_LLCharacter,
@@ -22025,8 +22054,18 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_WLSky,
   &_swigt__p_WLWater,
   &_swigt__p_cat_array_t,
+  &_swigt__p_child_list_const_iter_t,
+  &_swigt__p_child_list_const_reverse_iter_t,
+  &_swigt__p_child_list_iter_t,
+  &_swigt__p_child_list_reverse_iter_t,
   &_swigt__p_child_list_t,
+  &_swigt__p_child_tab_order_const_iter_t,
+  &_swigt__p_child_tab_order_const_reverse_iter_t,
+  &_swigt__p_child_tab_order_iter_t,
+  &_swigt__p_child_tab_order_reverse_iter_t,
+  &_swigt__p_child_tab_order_t,
   &_swigt__p_const_child_list_t,
+  &_swigt__p_ctrl_list_t,
   &_swigt__p_double,
   &_swigt__p_eLayoutOrientation,
   &_swigt__p_eObjectPartitions,
@@ -22038,6 +22077,7 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_e_object_update_type,
   &_swigt__p_e_selection_type,
   &_swigt__p_e_send_type,
+  &_swigt__p_factory_map_t,
   &_swigt__p_float,
   &_swigt__p_int,
   &_swigt__p_item_array_t,
@@ -22052,6 +22092,8 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_std__mapT_std__string_double_t,
   &_swigt__p_std__string,
   &_swigt__p_std__vectorT_LLCharacter_p_t,
+  &_swigt__p_tab_order_pair_t,
+  &_swigt__p_tab_order_t,
   &_swigt__p_unsigned_char,
   &_swigt__p_unsigned_int,
   &_swigt__p_unsigned_long_long,
@@ -22064,6 +22106,7 @@ static swig_type_info *swig_type_initial[] = {
 };
 
 static swig_cast_info _swigc__p_EAnimate[] = {  {&_swigt__p_EAnimate, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_EHitTestType[] = {  {&_swigt__p_EHitTestType, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_ESex[] = {  {&_swigt__p_ESex, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_EVOType[] = {  {&_swigt__p_EVOType, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_LLCharacter[] = {  {&_swigt__p_LLCharacter, 0, 0, 0},{0, 0, 0, 0}};
@@ -22098,8 +22141,18 @@ static swig_cast_info _swigc__p_ParticleSystem[] = {  {&_swigt__p_ParticleSystem
 static swig_cast_info _swigc__p_WLSky[] = {  {&_swigt__p_WLSky, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_WLWater[] = {  {&_swigt__p_WLWater, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_cat_array_t[] = {  {&_swigt__p_cat_array_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_child_list_const_iter_t[] = {  {&_swigt__p_child_list_const_iter_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_child_list_const_reverse_iter_t[] = {  {&_swigt__p_child_list_const_reverse_iter_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_child_list_iter_t[] = {  {&_swigt__p_child_list_iter_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_child_list_reverse_iter_t[] = {  {&_swigt__p_child_list_reverse_iter_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_child_list_t[] = {  {&_swigt__p_child_list_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_child_tab_order_const_iter_t[] = {  {&_swigt__p_child_tab_order_const_iter_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_child_tab_order_const_reverse_iter_t[] = {  {&_swigt__p_child_tab_order_const_reverse_iter_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_child_tab_order_iter_t[] = {  {&_swigt__p_child_tab_order_iter_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_child_tab_order_reverse_iter_t[] = {  {&_swigt__p_child_tab_order_reverse_iter_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_child_tab_order_t[] = {  {&_swigt__p_child_tab_order_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_const_child_list_t[] = {  {&_swigt__p_const_child_list_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_ctrl_list_t[] = {  {&_swigt__p_ctrl_list_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_double[] = {  {&_swigt__p_double, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_eLayoutOrientation[] = {  {&_swigt__p_eLayoutOrientation, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_eObjectPartitions[] = {  {&_swigt__p_eObjectPartitions, 0, 0, 0},{0, 0, 0, 0}};
@@ -22111,6 +22164,7 @@ static swig_cast_info _swigc__p_e_grid_mode[] = {  {&_swigt__p_e_grid_mode, 0, 0
 static swig_cast_info _swigc__p_e_object_update_type[] = {  {&_swigt__p_e_object_update_type, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_e_selection_type[] = {  {&_swigt__p_e_selection_type, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_e_send_type[] = {  {&_swigt__p_e_send_type, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_factory_map_t[] = {  {&_swigt__p_factory_map_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_float[] = {  {&_swigt__p_float, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_int[] = {  {&_swigt__p_int, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_item_array_t[] = {  {&_swigt__p_item_array_t, 0, 0, 0},{0, 0, 0, 0}};
@@ -22125,6 +22179,8 @@ static swig_cast_info _swigc__p_skip_list_t[] = {  {&_swigt__p_skip_list_t, 0, 0
 static swig_cast_info _swigc__p_std__mapT_std__string_double_t[] = {  {&_swigt__p_std__mapT_std__string_double_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__string[] = {  {&_swigt__p_std__string, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__vectorT_LLCharacter_p_t[] = {  {&_swigt__p_std__vectorT_LLCharacter_p_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_tab_order_pair_t[] = {  {&_swigt__p_tab_order_pair_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_tab_order_t[] = {  {&_swigt__p_tab_order_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_unsigned_char[] = {  {&_swigt__p_unsigned_char, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_unsigned_int[] = {  {&_swigt__p_unsigned_int, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_unsigned_long_long[] = {  {&_swigt__p_unsigned_long_long, 0, 0, 0},{0, 0, 0, 0}};
@@ -22137,6 +22193,7 @@ static swig_cast_info _swigc__p_wchar_t[] = {  {&_swigt__p_wchar_t, 0, 0, 0},{0,
 
 static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_EAnimate,
+  _swigc__p_EHitTestType,
   _swigc__p_ESex,
   _swigc__p_EVOType,
   _swigc__p_LLCharacter,
@@ -22171,8 +22228,18 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_WLSky,
   _swigc__p_WLWater,
   _swigc__p_cat_array_t,
+  _swigc__p_child_list_const_iter_t,
+  _swigc__p_child_list_const_reverse_iter_t,
+  _swigc__p_child_list_iter_t,
+  _swigc__p_child_list_reverse_iter_t,
   _swigc__p_child_list_t,
+  _swigc__p_child_tab_order_const_iter_t,
+  _swigc__p_child_tab_order_const_reverse_iter_t,
+  _swigc__p_child_tab_order_iter_t,
+  _swigc__p_child_tab_order_reverse_iter_t,
+  _swigc__p_child_tab_order_t,
   _swigc__p_const_child_list_t,
+  _swigc__p_ctrl_list_t,
   _swigc__p_double,
   _swigc__p_eLayoutOrientation,
   _swigc__p_eObjectPartitions,
@@ -22184,6 +22251,7 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_e_object_update_type,
   _swigc__p_e_selection_type,
   _swigc__p_e_send_type,
+  _swigc__p_factory_map_t,
   _swigc__p_float,
   _swigc__p_int,
   _swigc__p_item_array_t,
@@ -22198,6 +22266,8 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_std__mapT_std__string_double_t,
   _swigc__p_std__string,
   _swigc__p_std__vectorT_LLCharacter_p_t,
+  _swigc__p_tab_order_pair_t,
+  _swigc__p_tab_order_t,
   _swigc__p_unsigned_char,
   _swigc__p_unsigned_int,
   _swigc__p_unsigned_long_long,

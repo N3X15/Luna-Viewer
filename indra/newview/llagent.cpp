@@ -241,7 +241,7 @@ BOOL LLAgent::sFirstPersonBtnState;
 BOOL LLAgent::sMouselookBtnState;
 BOOL LLAgent::sThirdPersonBtnState;
 BOOL LLAgent::sBuildBtnState;
-BOOL LLAgent::AscentForceFly;
+BOOL LLAgent::PhoenixForceFly;
 
 BOOL LLAgent::lure_show = FALSE;
 std::string LLAgent::lure_name;
@@ -457,12 +457,12 @@ LLAgent::LLAgent() :
 	}
 
 	mFollowCam.setMaxCameraDistantFromSubject( MAX_CAMERA_DISTANCE_FROM_AGENT );
-	//AscentForceFly = gSavedSettings.getBOOL("AscentAlwaysFly");
-	//gSavedSettings.getControl("AscentAlwaysFly")->getSignal()->connect(boost::bind(&updateAscentForceFly,_1));
+	//PhoenixForceFly = gSavedSettings.getBOOL("PhoenixAlwaysFly");
+	//gSavedSettings.getControl("PhoenixAlwaysFly")->getSignal()->connect(&updatePhoenixForceFly);
 }
-void LLAgent::updateAscentForceFly(const LLSD &data)
+void LLAgent::updatePhoenixForceFly(const LLSD &data)
 {
-	AscentForceFly = data.asBoolean();
+	PhoenixForceFly = data.asBoolean();
 }
 
 void LLAgent::updateIgnorePrejump(const LLSD &data)
@@ -498,13 +498,12 @@ void LLAgent::init()
 
 //	LLDebugVarMessageBox::show("Camera Lag", &CAMERA_FOCUS_HALF_LIFE, 0.5f, 0.01f);
 
-	mEffectColor = LLSavedSettingsGlue::getCOAColor4("EffectColor");
-	ignorePrejump = LLSavedSettingsGlue::getCOABOOL("AscentIgnoreFinishAnimation");
-	//LLSavedSettingsGlue::getCOAControl("AscentIgnoreFinishAnimation")->getSignal()->connect(boost::bind(&updateIgnorePrejump,_1));
-	AscentForceFly = LLSavedSettingsGlue::getCOABOOL("AscentAlwaysFly");
-	//LLSavedSettingsGlue::getCOAControl("AscentAlwaysFly")->getSignal()->connect(boost::bind(&updateAscentForceFly,_1));
-	mBlockSpam=LLSavedSettingsGlue::getCOABOOL("AscentBlockSpam");
-	
+	mEffectColor = gSavedSettings.getColor4("EffectColor");
+	ignorePrejump = gSavedSettings.getBOOL("PhoenixIgnoreFinishAnimation");
+	gSavedSettings.getControl("PhoenixIgnoreFinishAnimation")->getSignal()->connect(boost::bind(&updateIgnorePrejump,_1));
+	PhoenixForceFly = gSavedSettings.getBOOL("PhoenixAlwaysFly");
+	gSavedSettings.getControl("PhoenixAlwaysFly")->getSignal()->connect(boost::bind(&updatePhoenixForceFly,_1));
+	mBlockSpam=gSavedSettings.getBOOL("PhoenixBlockSpam");
 	mInitialized = TRUE;
 
 	// @hook OnAgentInit(name, is_godlike) On login, tells the Lua engine the name of the user and whether it's a Linden or not.
@@ -830,7 +829,7 @@ BOOL LLAgent::canFly()
 // [/RLVa:KB]
 	if (isGodlike()) return TRUE;
 	//LGG always fly code
-	if(AscentForceFly) return TRUE;
+	if(PhoenixForceFly) return TRUE;
 	LLViewerRegion* regionp = getRegion();
 	if (regionp && regionp->getBlockFly()) return FALSE;
 	
@@ -2986,11 +2985,11 @@ static const LLFloaterView::skip_list_t& get_skip_list()
 {
 	static LLFloaterView::skip_list_t skip_list;
 	skip_list.insert(LLFloaterMap::getInstance());
-//	static BOOL *sPhoenixShowStatusBarInMouselook = rebind_llcontrol<BOOL>("PhoenixShowStatusBarInMouselook", &gSavedSettings, true);
-//	if(*sPhoenixShowStatusBarInMouselook)
-//	{
+	static BOOL *sPhoenixShowStatusBarInMouselook = rebind_llcontrol<BOOL>("PhoenixShowStatusBarInMouselook", &gSavedSettings, true);
+	if(*sPhoenixShowStatusBarInMouselook)
+	{
 //		skip_list.insert(LLFloaterStats::getInstance());
-//	}
+	}
 	return skip_list;
 }
 
@@ -4155,7 +4154,8 @@ void LLAgent::changeCameraToMouselook(BOOL animate)
 	if( mCameraMode != CAMERA_MODE_MOUSELOOK )
 	{
 		gFocusMgr.setKeyboardFocus( NULL );
-		
+
+
 		mLastCameraMode = mCameraMode;
 		mCameraMode = CAMERA_MODE_MOUSELOOK;
 		U32 old_flags = mControlFlags;

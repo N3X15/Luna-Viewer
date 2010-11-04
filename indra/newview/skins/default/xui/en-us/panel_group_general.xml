@@ -28,7 +28,7 @@ Hover your mouse over the options for more help.
 	     mouse_opaque="true" name="founder_name" v_pad="0" width="200">
 		(waiting)
 	</text>
-	<text font="SansSerifSmall" name="Ascent_guuid-pre" follows="left|top" left="7" bottom="-50">
+	<text font="SansSerifSmall" name="phoenix_guuid-pre" follows="left|top" left="7" bottom="-50">
 		Group Key:
 	</text>
       <name_editor bevel_style="in" border_style="line"

@@ -85,11 +85,15 @@
 #include "llvoavatar.h"
 #include "llvovolume.h"
 #include "pipeline.h"
-// <edit>
-#include "llfloaterexport.h"
-// </edit>
 
 #include "llglheaders.h"
+
+#include "llparcel.h" // moymod
+#include "llviewerparcelmgr.h" // moymod
+
+// [RLVa:KB]
+#include "rlvhandler.h"
+// [/RLVa:KB]
 
 LLViewerObject* getSelectedParentObject(LLViewerObject *object) ;
 //
@@ -1449,19 +1453,12 @@ void LLSelectMgr::selectionSetImage(const LLUUID& imageid)
 			if (!mItem)
 			{
 				object->sendTEUpdate();
-				// 1 particle effect per object	
-				// <edit>
-				if(!gSavedSettings.getBOOL("DisablePointAtAndBeam"))
-				{
-				// </edit>
-					LLHUDEffectSpiral *effectp = (LLHUDEffectSpiral *)LLHUDManager::getInstance()->createViewerEffect(LLHUDObject::LL_HUD_EFFECT_BEAM, TRUE);
-					effectp->setSourceObject(gAgent.getAvatarObject());
-					effectp->setTargetObject(object);
-					effectp->setDuration(LL_HUD_DUR_SHORT);
-					effectp->setColor(LLColor4U(gAgent.getEffectColor()));
-				// <edit>
-				}
-				// </edit>
+				// 1 particle effect per object				
+				LLHUDEffectSpiral *effectp = (LLHUDEffectSpiral *)LLHUDManager::getInstance()->createViewerEffect(LLHUDObject::LL_HUD_EFFECT_BEAM, TRUE);
+				effectp->setSourceObject(gAgent.getAvatarObject());
+				effectp->setTargetObject(object);
+				effectp->setDuration(LL_HUD_DUR_SHORT);
+				effectp->setColor(LLColor4U(gAgent.getEffectColor()));
 			}
 			return true;
 		}
@@ -2798,17 +2795,14 @@ bool LLSelectMgr::confirmDelete(const LLSD& notification, const LLSD& response, 
 										  (void*)info,
 										  SEND_ONLY_ROOTS);
 			// VEFFECT: Delete Object - one effect for all deletes
-			if(!gSavedSettings.getBOOL("DisablePointAtAndBeam"))
+			if (LLSelectMgr::getInstance()->mSelectedObjects->mSelectType != SELECT_TYPE_HUD)
 			{
-				if (LLSelectMgr::getInstance()->mSelectedObjects->mSelectType != SELECT_TYPE_HUD)
-				{
-					LLHUDEffectSpiral *effectp = (LLHUDEffectSpiral *)LLHUDManager::getInstance()->createViewerEffect(LLHUDObject::LL_HUD_EFFECT_POINT, TRUE);
-					effectp->setPositionGlobal( LLSelectMgr::getInstance()->getSelectionCenterGlobal() );
-					effectp->setColor(LLColor4U(gAgent.getEffectColor()));
-					F32 duration = 0.5f;
-					duration += LLSelectMgr::getInstance()->mSelectedObjects->getObjectCount() / 64.f;
-					effectp->setDuration(duration);
-				}
+				LLHUDEffectSpiral *effectp = (LLHUDEffectSpiral *)LLHUDManager::getInstance()->createViewerEffect(LLHUDObject::LL_HUD_EFFECT_POINT, TRUE);
+				effectp->setPositionGlobal( LLSelectMgr::getInstance()->getSelectionCenterGlobal() );
+				effectp->setColor(LLColor4U(gAgent.getEffectColor()));
+				F32 duration = 0.5f;
+				duration += LLSelectMgr::getInstance()->mSelectedObjects->getObjectCount() / 64.f;
+				effectp->setDuration(duration);
 			}
 
 			gAgent.setLookAt(LOOKAT_TARGET_CLEAR);
@@ -3155,7 +3149,21 @@ void LLSelectMgr::packDuplicateOnRayHead(void *user_data)
 	msg->nextBlockFast(_PREHASH_AgentData);
 	msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID() );
 	msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID() );
-	msg->addUUIDFast(_PREHASH_GroupID, gAgent.getGroupID() );
+	LLUUID group_id = gAgent.getGroupID();
+
+	//KC: lets make sure that shift-copied stuff also gets the right group set >_>
+	//MOYMOD 2009-05, If avatar is in land group/land owner group,
+	//	it rezzes it with it to prevent autoreturn/whatever...
+	if(gSavedSettings.getBOOL("mm_alwaysRezWithLandGroup")){
+		LLParcel *parcel = LLViewerParcelMgr::getInstance()->getAgentParcel();
+		if(gAgent.isInGroup(parcel->getGroupID())){
+			msg->addUUIDFast(_PREHASH_GroupID, parcel->getGroupID());
+		}else if(gAgent.isInGroup(parcel->getOwnerID())){
+			msg->addUUIDFast(_PREHASH_GroupID, parcel->getOwnerID());
+		}else msg->addUUIDFast(_PREHASH_GroupID, gAgent.getGroupID());
+	}else msg->addUUIDFast(_PREHASH_GroupID, gAgent.getGroupID());
+	
+	msg->addUUIDFast(_PREHASH_GroupID, group_id);
 	msg->addVector3Fast(_PREHASH_RayStart, data->mRayStartRegion );
 	msg->addVector3Fast(_PREHASH_RayEnd, data->mRayEndRegion );
 	msg->addBOOLFast(_PREHASH_BypassRaycast, data->mBypassRaycast );
@@ -3451,6 +3459,17 @@ void LLSelectMgr::deselectAllIfTooFar()
 		return;
 	}
 
+// [RLVa:KB] - Checked: 2010-01-02 (RLVa-1.1.0l) | Modified: RLVa-1.1.0l
+#ifdef RLV_EXTENSION_CMD_INTERACT
+	// [Fall-back code] Don't allow an active selection (except for HUD attachments - see above) when @interact=n restricted
+	if (gRlvHandler.hasBehaviour(RLV_BHVR_INTERACT))
+	{
+		deselectAll();
+		return;
+	}
+#endif // RLV_EXTENSION_CMD_INTERACT
+// [/RLVa:KB]
+
 	// HACK: Don't deselect when we're navigating to rate an object's
 	// owner or creator.  JC
 	if (gPieObject->getVisible() || gPieRate->getVisible() )
@@ -3459,12 +3478,20 @@ void LLSelectMgr::deselectAllIfTooFar()
 	}
 
 	LLVector3d selectionCenter = getSelectionCenterGlobal();
-	if (gSavedSettings.getBOOL("LimitSelectDistance")
+
+//	if (gSavedSettings.getBOOL("LimitSelectDistance")
+// [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g) | Modified: RLVa-0.2.0f
+	BOOL fRlvFartouch = gRlvHandler.hasBehaviour(RLV_BHVR_FARTOUCH) && gFloaterTools->getVisible();
+	if ( (gSavedSettings.getBOOL("LimitSelectDistance") || (fRlvFartouch) )
+// [/RLVa:KB]
 		&& (!mSelectedObjects->getPrimaryObject() || !mSelectedObjects->getPrimaryObject()->isAvatar())
 		&& !mSelectedObjects->isAttachment()
 		&& !selectionCenter.isExactlyZero())
 	{
-		F32 deselect_dist = gSavedSettings.getF32("MaxSelectDistance");
+//		F32 deselect_dist = gSavedSettings.getF32("MaxSelectDistance");
+// [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g) | Modified: RLVa-0.2.0f
+		F32 deselect_dist = (!fRlvFartouch) ? gSavedSettings.getF32("MaxSelectDistance") : 1.5f;
+// [/RLVa:KB]
 		F32 deselect_dist_sq = deselect_dist * deselect_dist;
 
 		LLVector3d select_delta = gAgent.getPositionGlobal() - selectionCenter;
@@ -3919,6 +3946,19 @@ void LLSelectMgr::packAgentAndSessionAndGroupID(void* user_data)
 void LLSelectMgr::packDuplicateHeader(void* data)
 {
 	LLUUID group_id(gAgent.getGroupID());
+	
+	//KC: lets make sure that shift-copied stuff also gets the right group set >_>
+	//MOYMOD 2009-05, If avatar is in land group/land owner group,
+	//	it rezzes it with it to prevent autoreturn/whatever...
+	if(gSavedSettings.getBOOL("mm_alwaysRezWithLandGroup")){
+		LLParcel *parcel = LLViewerParcelMgr::getInstance()->getAgentParcel();
+		if(gAgent.isInGroup(parcel->getGroupID())){
+			group_id = parcel->getGroupID();
+		}else if(gAgent.isInGroup(parcel->getOwnerID())){
+			group_id = parcel->getOwnerID();
+		}
+	}
+	
 	packAgentAndSessionAndGroupID(&group_id);
 
 	LLDuplicateData* dup_data = (LLDuplicateData*) data;
@@ -4586,7 +4626,7 @@ void LLSelectMgr::processForceObjectSelect(LLMessageSystem* msg, void**)
 //Banana:KC - I'll just put this back so it will work again
 void LLSelectMgr::enableSilhouette(BOOL enable)
 {
-	if(gSavedSettings.getBOOL("AscentRenderHighlightSelections"))
+	if(gSavedSettings.getBOOL("PhoenixRenderHighlightSelections"))
 	{
 		mRenderSilhouettes = enable;
 	}
@@ -4915,11 +4955,8 @@ void LLSelectMgr::renderSilhouettes(BOOL for_hud)
 	{
 		LLUUID inspect_item_id = LLFloaterInspect::getSelectedUUID();
 		LLUUID focus_item_id = LLViewerMediaFocus::getInstance()->getSelectedUUID();
-		
-		// <edit>
-		//for (S32 pass = 0; pass < 2; pass++)
-		//{
-		// </edit>
+		for (S32 pass = 0; pass < 2; pass++)
+		{
 			for (LLObjectSelection::iterator iter = mSelectedObjects->begin();
 				 iter != mSelectedObjects->end(); iter++)
 			{
@@ -4955,9 +4992,7 @@ void LLSelectMgr::renderSilhouettes(BOOL for_hud)
 					node->renderOneSilhouette(sSilhouetteChildColor);
 				}
 			}
-		// <edit>
-		//}
-		// </edit>
+		}
 	}
 
 	if (mHighlightedObjects->getNumNodes())
@@ -5837,10 +5872,8 @@ BOOL LLSelectMgr::canSelectObject(LLViewerObject* object)
 	// Can't select land
 	if (object->getPCode() == LLViewerObject::LL_VO_SURFACE_PATCH) return FALSE;
 
-	// <edit>
-	//ESelectType selection_type = getSelectTypeForObject(object);
-	//if (mSelectedObjects->getObjectCount() > 0 && mSelectedObjects->mSelectType != selection_type) return FALSE;
-	// </edit>
+	ESelectType selection_type = getSelectTypeForObject(object);
+	if (mSelectedObjects->getObjectCount() > 0 && mSelectedObjects->mSelectType != selection_type) return FALSE;
 
 	return TRUE;
 }

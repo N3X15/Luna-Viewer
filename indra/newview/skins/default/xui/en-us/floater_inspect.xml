@@ -18,11 +18,11 @@
 		<column dynamicwidth="true" label="Creation Date" name="creation_date"/>
 	</scroll_list>
 
-  <!-- Don't hide it, flaunt it -->
+  <!--
   <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false" 
         bottom_delta="-20" drop_shadow_visible="true" enabled="true" follows="right|top" font="SansSerifSmall" h_pad="0" halign="left"
         right="-104" height="16"  mouse_opaque="true" name="uploadtime txt" v_pad="0" width="80">Uploaded on:</text>
-  
+  -->
 
   <panel name="texpanels" visible="true" bottom="-84" right="-5" follows="right|top" width="250" height="80" border="false" mouse_opaque="false" bevel_style="in" can_resize="false">
     <texture_picker bottom_delta="-78" left_delta="5" follows="left|top" width="50" height="63" label="Sculptie" name="texs" />
