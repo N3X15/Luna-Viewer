@@ -27,9 +27,9 @@ Other Features
 
 Lua is not the only item Luna has to offer.
 
-### Ascent
+### Singularity
 
-Luna is based off of the powerful and sleek Ascent viewer, offering many client-side features
+Luna is based off of the powerful and sleek Singularity viewer, offering many client-side features
 and tools not offered by the base Second Life viewer.  Many of the features that were present in 
 the now-infamous Emerald viewer were re-implemented in Ascent.
 
